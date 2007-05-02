@@ -1,6 +1,6 @@
 /* 
- * This file is part of the Echo2 Extras Project.
- * Copyright (C) 2005-2006 NextApp, Inc.
+ * This file is part of the Echo Extras Project.
+ * Copyright (C) 2005-2007 NextApp, Inc.
  *
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -64,14 +64,14 @@ public class WelcomePane extends ContentPane {
         label = new Label(Styles.NEXTAPP_LOGO);
         column.add(label);
         
-        label = new Label(Styles.ECHO2_IMAGE);
+        label = new Label(Styles.ECHO_IMAGE);
         column.add(label);
         
         label = new Label(Styles.INTERACTIVE_TEST_APPLICATION_IMAGE);
         column.add(label);
         
         WindowPane loginWindow = new WindowPane();
-        loginWindow.setTitle("Welcome to the NextApp Echo2 Extras Test Application");
+        loginWindow.setTitle("Welcome to the NextApp Echo3 Extras Test Application");
         loginWindow.setStyleName("WelcomePane");
         loginWindow.setClosable(false);
         add(loginWindow);
@@ -101,10 +101,10 @@ public class WelcomePane extends ContentPane {
         label.setFont(new Font(null, Font.BOLD, null));
         infoColumn.add(label);
         
-        label = new Label("This application provides an interactive test for the Echo2 Extras Library.");
+        label = new Label("This application provides an interactive test for the Echo3 Extras Library.");
         infoColumn.add(label);
 
-        label = new Label("Please visit the Echo2 Home Page @ http://www.nextapp.com/products/echo2 for more information.");
+        label = new Label("Please visit the Echo3 Home Page @ http://www.nextapp.com/products/echo3 for more information.");
         infoColumn.add(label);
     }
 }

@@ -1,6 +1,6 @@
 /* 
- * This file is part of the Echo2 Extras Project.
- * Copyright (C) 2005-2006 NextApp, Inc.
+ * This file is part of the Echo Extras Project.
+ * Copyright (C) 2005-2007 NextApp, Inc.
  *
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -77,7 +77,7 @@ public class Styles {
     
     public static final ImageReference ICON_24_NO = new ResourceImageReference(IMAGE_PATH + "Icon24No.gif"); 
     public static final ImageReference ICON_24_YES = new ResourceImageReference(IMAGE_PATH + "Icon24Yes.gif");
-    public static final ImageReference ECHO2_IMAGE = new ResourceImageReference(IMAGE_PATH + "Echo2.png");
+    public static final ImageReference ECHO_IMAGE = new ResourceImageReference(IMAGE_PATH + "Echo.png");
     public static final ImageReference INTERACTIVE_TEST_APPLICATION_IMAGE 
             = new ResourceImageReference(IMAGE_PATH + "InteractiveTestApplication.png");
     public static final ImageReference NEXTAPP_LOGO = new ResourceImageReference(IMAGE_PATH + "NextAppLogo.png");

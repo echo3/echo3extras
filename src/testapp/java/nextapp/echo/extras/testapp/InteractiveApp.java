@@ -1,6 +1,6 @@
 /* 
- * This file is part of the Echo2 Extras Project.
- * Copyright (C) 2005-2006 NextApp, Inc.
+ * This file is part of the Echo Extras Project.
+ * Copyright (C) 2005-2007 NextApp, Inc.
  *
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -51,14 +51,14 @@ public class InteractiveApp extends ApplicationInstance {
     /**
      * A boolean flag indicating whether the application is running on a live
      * demo server.  This flag is used to disable certain tests based on 
-     * whether the <code>nextapp.echo2.demoserver</code> system property is
+     * whether the <code>nextapp.echo.demoserver</code> system property is
      * set.
      */
     public static final boolean LIVE_DEMO_SERVER;
     static {
         boolean liveDemoServer;
         try {
-            if ("true".equals(System.getProperties().getProperty("nextapp.echo2.demoserver"))) {
+            if ("true".equals(System.getProperties().getProperty("nextapp.echo.demoserver"))) {
                 liveDemoServer = true;
             } else {
                 liveDemoServer = false;
@@ -123,12 +123,12 @@ public class InteractiveApp extends ApplicationInstance {
     }
 
     /**
-     * @see nextapp.echo2.app.ApplicationInstance#init()
+     * @see nextapp.echo.app.ApplicationInstance#init()
      */
     public Window init() {
         setStyleSheet(Styles.DEFAULT_STYLE_SHEET);
         mainWindow = new Window();
-        mainWindow.setTitle("NextApp Echo2 Test Application");
+        mainWindow.setTitle("NextApp Echo3 Test Application");
         mainWindow.setContent(new WelcomePane());
         
         return mainWindow;
