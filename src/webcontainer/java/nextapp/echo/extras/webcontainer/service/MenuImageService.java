@@ -49,6 +49,7 @@ public class MenuImageService extends StreamImageService {
     public static final MenuImageService INSTANCE = new MenuImageService();
 
     private static final String IMAGE_PREFIX = "/nextapp/echo/extras/webcontainer/resource/image/";
+    private static final ImageReference DEFAULT_ICON_SUBMENU_DOWN = new ResourceImageReference(IMAGE_PREFIX + "ArrowDown.gif");
     private static final ImageReference DEFAULT_ICON_SUBMENU_LEFT = new ResourceImageReference(IMAGE_PREFIX + "ArrowLeft.gif");
     private static final ImageReference DEFAULT_ICON_SUBMENU_RIGHT = new ResourceImageReference(IMAGE_PREFIX + "ArrowRight.gif");
     private static final ImageReference DEFAULT_ICON_TOGGLE_OFF = new ResourceImageReference(IMAGE_PREFIX + "ToggleOff.gif");
@@ -56,6 +57,7 @@ public class MenuImageService extends StreamImageService {
     private static final ImageReference DEFAULT_ICON_RADIO_OFF = new ResourceImageReference(IMAGE_PREFIX + "RadioOff.gif");
     private static final ImageReference DEFAULT_ICON_RADIO_ON = new ResourceImageReference(IMAGE_PREFIX + "RadioOn.gif");
     
+    private static final String IMAGE_ID_SUBMENU_DOWN = "submenuDown";
     private static final String IMAGE_ID_SUBMENU_LEFT = "submenuLeft";
     private static final String IMAGE_ID_SUBMENU_RIGHT = "submenuRight";
     
@@ -83,7 +85,9 @@ public class MenuImageService extends StreamImageService {
      * @see StreamImageService#getImage(UserInstance, String)
      */
     public ImageReference getImage(UserInstance userInstance, String imageId) {
-        if (IMAGE_ID_SUBMENU_LEFT.equals(imageId)) {
+        if (IMAGE_ID_SUBMENU_DOWN.equals(imageId)) {
+            return DEFAULT_ICON_SUBMENU_DOWN;
+        } else if (IMAGE_ID_SUBMENU_LEFT.equals(imageId)) {
             return DEFAULT_ICON_SUBMENU_LEFT;
         } else if (IMAGE_ID_SUBMENU_RIGHT.equals(imageId)) {
             return DEFAULT_ICON_SUBMENU_RIGHT;

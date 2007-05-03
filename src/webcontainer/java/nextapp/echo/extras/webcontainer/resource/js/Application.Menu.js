@@ -51,6 +51,14 @@ ExtrasApp.MenuModel.prototype.indexOfItem = function(item) {
     return -1;
 };
 
+ExtrasApp.MenuModel.prototype.getItemModelFromPositions = function(itemPositions) {
+    var menuModel = this;
+    for (var i = 0; i < itemPositions.length; ++i) {
+        menuModel = menuModel.items[parseInt(itemPositions[i])];
+    }
+    return menuModel;
+};
+
 /**
  * toString() implementation.
  */

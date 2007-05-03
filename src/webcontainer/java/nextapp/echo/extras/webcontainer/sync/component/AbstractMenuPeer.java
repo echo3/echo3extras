@@ -127,13 +127,58 @@ abstract class AbstractMenuPeer extends AbstractComponentSynchronizePeer {
         // FIXME
     }
 
+    ItemModel getItemModelById(AbstractMenuComponent menu, String id) {
+        return getItemModelById(menu.getModel(), id);
+    }
+    
+    ItemModel getItemModelById(MenuModel menuModel, String id) {
+        int size = menuModel.getItemCount();
+        for (int i = 0; i < size; ++i) {
+            ItemModel itemModel = menuModel.getItem(i);
+            if (id.equals(itemModel.getId())) {
+                return itemModel;
+            }
+            if (itemModel instanceof MenuModel) {
+                itemModel = getItemModelById((MenuModel) itemModel, id);
+                if (itemModel != null) {
+                    return itemModel;
+                }
+            }
+        }
+        return null;
+    }
+    
     ItemModel getItemModel(AbstractMenuComponent menu, String itemPath) {
         ItemModel itemModel = menu.getModel();
-        String[] tokens = itemPath.split(".");
+        String[] tokens = itemPath.split("\\.");
         for (int i = 0; i < tokens.length; i++) {
             int index = Integer.parseInt(tokens[i]);
             itemModel = ((MenuModel)itemModel).getItem(index);
         }
         return itemModel;
+    }
+
+    String getItemPath(MenuModel menuModel, ItemModel targetItemModel) {
+        StringBuffer out = new StringBuffer();
+        getItemPath(menuModel, targetItemModel, out);
+        return out.length() == 0 ? null : out.toString();
+    }
+    
+    void getItemPath(MenuModel menuModel, ItemModel targetItemModel, StringBuffer out) {
+        int itemCount = menuModel.getItemCount();
+        for (int i = 0; i < itemCount; ++i) {
+            ItemModel currentItemModel = menuModel.getItem(i);
+            if (targetItemModel.equals(currentItemModel)) {
+                out.append(i);
+                return;
+            }
+            if (currentItemModel instanceof MenuModel) {
+                getItemPath((MenuModel) currentItemModel, targetItemModel, out); 
+            }
+            if (out.length() != 0) {
+                out.insert(0, i + ".");
+                return;
+            }
+        }
     }
 }

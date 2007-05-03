@@ -60,6 +60,8 @@ public class Styles {
             = new ResourceImageReference(IMAGE_PATH + "TabPaneIcon16.gif"); 
     public static final ImageReference ICON_16_TRANSITION_PANE 
             = new ResourceImageReference(IMAGE_PATH + "TransitionPaneIcon16.gif"); 
+    public static final ImageReference DROPDOWN_TOGGLE_IMAGE
+    		= new ResourceImageReference(IMAGE_PATH + "DropDownToggle.png");
 
     public static final FillImage FILL_IMAGE_SHADOW_BACKGROUND_DARK_BLUE = new FillImage(
             new ResourceImageReference(IMAGE_PATH + "ShadowBackgroundDarkBlue.png"));
@@ -74,6 +76,8 @@ public class Styles {
 
     public static final FillImage FILL_IMAGE_EXTRAS_BACKGROUND = new FillImage(
             new ResourceImageReference(IMAGE_PATH + "ExtrasBackground.jpg"));
+    public static final FillImage FILL_IMAGE_DROPDOWN_MENU_BACKGROUND = new FillImage(
+    		new ResourceImageReference(IMAGE_PATH + "DropDownBackground.png"));
     
     public static final ImageReference ICON_24_NO = new ResourceImageReference(IMAGE_PATH + "Icon24No.gif"); 
     public static final ImageReference ICON_24_YES = new ResourceImageReference(IMAGE_PATH + "Icon24Yes.gif");

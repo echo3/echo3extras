@@ -34,8 +34,6 @@ ExtrasRender.ComponentSync.Menu.prototype.renderAdd = function(update, parentEle
 	EchoWebCore.EventProcessor.addSelectionDenialListener(element);
     
     parentElement.appendChild(element);
-    
-    EchoWebCore.VirtualPosition.register(element.id);
 };
 
 ExtrasRender.ComponentSync.Menu.prototype.renderUpdate = function(update) {
@@ -48,6 +46,9 @@ ExtrasRender.ComponentSync.Menu.prototype.renderUpdate = function(update) {
 ExtrasRender.ComponentSync.Menu.prototype.renderDispose = function(update) {
     var element = document.getElementById(this.component.renderId);
 	EchoWebCore.EventProcessor.removeAll(element);
+	this._menuModel = null;
+	this._stateModel = null;
+    this._openMenuPath = new Array();
 };
 
 ExtrasRender.ComponentSync.Menu.prototype._activateItem = function(itemModel) {
@@ -69,8 +70,8 @@ ExtrasRender.ComponentSync.Menu.prototype._activateItem = function(itemModel) {
 ExtrasRender.ComponentSync.Menu.prototype._prepareOpenMenu = function(menuModel) {
     if (this._openMenuPath.length != 0) {
         var openMenu = this._openMenuPath[this._openMenuPath.length - 1];
-        if (openMenu.id == menuModel.id) {
-            // Do nothing: menu is already open.
+        if (openMenu.id == menuModel.id || menuModel.parent == null) {
+            // Do nothing: menu is already open
             return false;
         }
         if (openMenu.id != menuModel.parent.id) {
@@ -428,6 +429,8 @@ ExtrasRender.ComponentSync.MenuBarPane.prototype._renderMain = function() {
     EchoWebCore.EventProcessor.add(menuBarDivElement, "click", new EchoCore.MethodRef(this, this._processClick), false);
     EchoWebCore.EventProcessor.add(menuBarDivElement, "mouseover", new EchoCore.MethodRef(this, this._processItemEnter), false);
     EchoWebCore.EventProcessor.add(menuBarDivElement, "mouseout", new EchoCore.MethodRef(this, this._processItemExit), false);
+
+    EchoWebCore.VirtualPosition.register(menuBarDivElement.id);
     
     return menuBarDivElement;
 };
@@ -532,13 +535,6 @@ ExtrasRender.ComponentSync.MenuBarPane.prototype._removeMask = function() {
     }
 };
 
-ExtrasRender.ComponentSync.MenuBarPane.prototype._doAction = function(menuModel) {
-    var path = menuModel.getItemPositionPath().join(".");
-    // FIXME broken
-    this.component.setProperty("selection", path);
-    this.component.fireEvent(new EchoCore.Event(this.component, "select"));
-};
-
 ExtrasRender.ComponentSync.MenuBarPane.prototype._processClick = function(e) {
     if (!this.component.isActive()) {
         return;
@@ -555,4 +551,262 @@ ExtrasRender.ComponentSync.MenuBarPane.prototype._processClick = function(e) {
     }
 };
 
+ExtrasRender.ComponentSync.MenuBarPane.prototype._doAction = function(menuModel) {
+    var path = menuModel.getItemPositionPath().join(".");
+    // FIXME broken
+    this.component.setProperty("selection", path);
+    this.component.fireEvent(new EchoCore.Event(this.component, "select"));
+};
+
+/**
+ * Component rendering peer: DropDownMenu
+ */
+ExtrasRender.ComponentSync.DropDownMenu = function() {
+	this._selectedItem = null;
+};
+
+ExtrasRender.ComponentSync.DropDownMenu.prototype = new ExtrasRender.ComponentSync.Menu;
+
+ExtrasRender.ComponentSync.DropDownMenu.prototype._renderMain = function() {
+    var dropDownDivElement = document.createElement("div");
+    dropDownDivElement.id = this.component.renderId;
+    dropDownDivElement.style.cursor = "pointer";
+    dropDownDivElement.style.overflow = "hidden";
+    var width = this.component.getRenderProperty("width");
+    if (width) {
+        dropDownDivElement.style.width = width.toString();
+    } else {
+    	// if the width is not set, IE won't fire click events.
+    	dropDownDivElement.style.width = "100%";
+    }
+    var height = this.component.getRenderProperty("height");
+    if (height) {
+        dropDownDivElement.style.height = height.toString();
+    }
+    EchoRender.Property.Color.renderFB(this.component, dropDownDivElement);
+    
+    var relativeContainerDivElement = document.createElement("div");
+    relativeContainerDivElement.style.position = "relative";
+    relativeContainerDivElement.style.height = "100%";
+    //EchoRender.Property.Insets.renderComponentProperty(this.component, "insets", null, relativeContainerDivElement, "padding");
+    relativeContainerDivElement.appendChild(document.createTextNode("\u00a0"));
+    
+    var expandIcon = this.component.getRenderProperty("expandIcon", ExtrasRender.ComponentSync.Menu._getImageUri("submenuDown"));
+    var expandIconWidth = this.component.getRenderProperty("expandIconWidth", new EchoApp.Property.Extent("10px"));
+    
+    var expandElement = document.createElement("span");
+    expandElement.style.position = "absolute";
+    expandElement.style.height = "100%";
+    expandElement.style.top = "0px";
+    expandElement.style.right = "0px";
+    var imgElement = document.createElement("img");
+    imgElement.src = expandIcon.url ? expandIcon.url : expandIcon;
+    expandElement.appendChild(imgElement);
+    relativeContainerDivElement.appendChild(expandElement);
+    
+    var contentDivElement = document.createElement("div");
+    contentDivElement.id = this.component.renderId + "_contentwrapper";
+    contentDivElement.style.position = "absolute";
+    contentDivElement.style.top = "0px";
+    contentDivElement.style.left = "0px";
+	contentDivElement.style.right = expandIconWidth.toString();
+	var insets = this.component.getRenderProperty("insets");
+	if (insets) {
+	    EchoRender.Property.Insets.renderPixel(insets, contentDivElement, "padding");
+	    if (height) {
+	    	var compensatedHeight = Math.max(0, height.value - insets.top.value - insets.bottom.value);
+		    contentDivElement.style.height = compensatedHeight + "px";
+	    }
+	} else {
+	    contentDivElement.style.height = "100%";
+	}
+    EchoRender.Property.FillImage.renderComponentProperty(this.component, "backgroundImage", null, contentDivElement); 
+    
+    var contentSpanElement = document.createElement("div");
+    contentSpanElement.id = this.component.renderId + "_content";
+    contentSpanElement.style.height = "100%";
+    contentSpanElement.style.width = "100%";
+    contentSpanElement.style.overflow = "hidden";
+    contentSpanElement.style.whiteSpace = "nowrap";
+    EchoRender.Property.Font.renderDefault(this.component, contentSpanElement, null);
+    contentDivElement.appendChild(contentSpanElement);
+    
+    relativeContainerDivElement.appendChild(contentDivElement);
+    dropDownDivElement.appendChild(relativeContainerDivElement);
+
+    EchoWebCore.EventProcessor.add(dropDownDivElement, "click", new EchoCore.MethodRef(this, this._processClick), false);
+    
+    EchoWebCore.VirtualPosition.register(contentDivElement.id);
+
+    if (this._isSelectionEnabled()) {
+    	var selection = this.component.getRenderProperty("selection");
+    	if (selection) {
+	    	this._setSelection(this._menuModel.getItemModelFromPositions(selection.split(".")), contentSpanElement);
+    	}
+    }
+    
+    return dropDownDivElement;
+};
+
+ExtrasRender.ComponentSync.DropDownMenu.prototype._renderMenu = function(menuModel, xPosition, yPosition) {
+	var menuDivElement = ExtrasRender.ComponentSync.Menu.prototype._renderMenu.call(this, menuModel, xPosition, yPosition);
+    
+    var menuWidth = this.component.getRenderProperty("menuWidth");
+    if (menuWidth) {
+	    menuDivElement.style.width = menuWidth;
+	    menuDivElement.style.overflowX = "hidden";
+	    menuDivElement.firstChild.style.width = "100%";
+	}
+    var menuHeight = this.component.getRenderProperty("menuHeight");
+    if (menuHeight) {
+	    if (EchoWebCore.Environment.NOT_SUPPORTED_CSS_MAX_HEIGHT) {
+		    var measure = new EchoWebCore.Render.Measure(menuDivElement);
+		    if (measure.height > menuHeight.value) {
+			    menuDivElement.style.height = menuHeight.value + "px";
+		    }
+	    } else {
+		    menuDivElement.style.maxHeight = menuHeight;
+	    }
+	    menuDivElement.style.overflowY = "auto";
+	}
+	return menuDivElement;
+};
+
+ExtrasRender.ComponentSync.DropDownMenu.prototype.renderDispose = function(update) {
+	ExtrasRender.ComponentSync.Menu.prototype.renderDispose.call(this, update);
+	this._selectedItem = null;
+};
+
+ExtrasRender.ComponentSync.DropDownMenu.prototype._isSelectionEnabled = function() {
+    return this.component.getRenderProperty("selectionEnabled");
+};
+
+ExtrasRender.ComponentSync.DropDownMenu.prototype._isTopMenuElement = function(element) {
+    return element.id == this.component.renderId;
+};
+
+ExtrasRender.ComponentSync.DropDownMenu.prototype._getMenuElement = function(itemModel) {
+    var menuElement = document.getElementById(this.component.renderId + "_tr_item_" + itemModel.id);
+    if (menuElement == null) {
+        menuElement = document.getElementById(this.component.renderId);
+    }
+    return menuElement;
+};
+
+ExtrasRender.ComponentSync.DropDownMenu.prototype._renderMask = function() {
+    if (this.maskDeployed) {
+        return;
+    }
+    this.maskDeployed = true;
+    
+    var bodyElement = document.getElementsByTagName("body")[0];    
+    
+    var blockDivElement = document.createElement("div");
+    blockDivElement.id = this.component.renderId + "_block";
+    blockDivElement.style.position = "absolute";
+    blockDivElement.style.top = "0px";
+    blockDivElement.style.left = "0px";
+    blockDivElement.style.width = "100%";
+    blockDivElement.style.height = "100%";
+    blockDivElement.style.backgroundImage = "url(" + EchoRender.Util.TRANSPARENT_IMAGE + ")";
+    bodyElement.appendChild(blockDivElement);
+
+    EchoWebCore.EventProcessor.add(blockDivElement, "click", new EchoCore.MethodRef(this, this._processCancel), false);
+};
+
+ExtrasRender.ComponentSync.DropDownMenu.prototype._removeMask = function() {
+    if (!this.maskDeployed) {
+        return;
+    }
+    this.maskDeployed = false;
+
+    var bodyElement = document.getElementsByTagName("body")[0];    
+    var blockDivElement = document.getElementById(this.component.renderId + "_block");
+    if (blockDivElement) {
+		EchoWebCore.EventProcessor.removeAll(blockDivElement);
+        bodyElement.removeChild(blockDivElement);
+    }
+};
+
+/**
+ * Sets the selection to the given menu model.
+ *
+ * @param menuModel the model to select
+ * @param contentElement the contentElement element, may be null
+ */
+ExtrasRender.ComponentSync.DropDownMenu.prototype._setSelection = function(menuModel, contentElement) {
+	if (this._selectedItem == menuModel) {
+		return;
+	}
+	this._selectedItem = menuModel;
+    
+    if (!contentElement) {
+    	contentElement = document.getElementById(this.component.renderId + "_content");
+    }
+    for (var i = contentElement.childNodes.length - 1; i >= 0; --i) {
+        contentElement.removeChild(contentElement.childNodes[i]);
+    }
+    
+    if (menuModel.text) {
+        if (menuModel.icon) {
+            // Render Text and Icon
+            var tableElement = document.createElement("table");
+            var tbodyElement = document.createElement("tbody");
+            var trElement = document.createElement("tr");
+            var tdElement = document.createElement("td");
+            var imgElement = document.createElement("img");
+            imgElement.src = menuModel.icon.url;
+            tdElement.appendChild(imgElement);
+            trElement.appendChild(tdElement);
+            tdElement = document.createElement("td");
+            tdElement.style.width = "3px";
+            trElement.appendChild(tdElement);
+            tdElement = document.createElement("td");
+            tdElement.appendChild(document.createTextNode(menuModel.text));
+            trElement.appendChild(tdElement);
+            tbodyElement.appendChild(trElement);
+            tableElement.appendChild(tbodyElement);
+            contentElement.appendChild(tableElement);
+        } else {
+            // Render Text Only
+            contentElement.appendChild(document.createTextNode(menuModel.text));
+        }
+    } else if (menuModel.icon) {
+        // Render Icon Only
+        var imgElement = document.createElement("img");
+        imgElement.src = menuModel.icon.url;
+        contentElement.appendChild(imgElement);
+    }
+};
+
+ExtrasRender.ComponentSync.DropDownMenu.prototype._processClick = function(e) {
+    if (!this.component.isActive()) {
+        return;
+    }
+    
+    EchoWebCore.DOM.preventEventDefault(e);
+
+    var modelId = ExtrasRender.ComponentSync.Menu._getElementModelId(e.target);
+    var model;
+    if (modelId) {
+    	model = this._menuModel.getItem(modelId);
+    } else {
+    	model = this._menuModel;
+    }
+    
+    this._renderMask();
+    this._activateItem(model);
+};
+
+ExtrasRender.ComponentSync.DropDownMenu.prototype._doAction = function(menuModel) {
+    if (this._isSelectionEnabled()) {
+    	this._setSelection(menuModel);
+    }
+    var path = menuModel.getItemPositionPath().join(".");
+    // FIXME broken
+    this.component.setProperty("selection", path);
+    this.component.fireEvent(new EchoCore.Event(this.component, "select"));
+};
+
 EchoRender.registerPeer("nextapp.echo.extras.app.MenuBarPane", ExtrasRender.ComponentSync.MenuBarPane);
+EchoRender.registerPeer("nextapp.echo.extras.app.DropDownMenu", ExtrasRender.ComponentSync.DropDownMenu);
