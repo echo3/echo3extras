@@ -37,6 +37,7 @@ import nextapp.echo.extras.app.menu.AbstractMenuComponent;
 import nextapp.echo.extras.app.menu.ItemModel;
 import nextapp.echo.extras.app.menu.MenuModel;
 import nextapp.echo.extras.webcontainer.service.CommonService;
+import nextapp.echo.extras.webcontainer.service.MenuImageService;
 import nextapp.echo.webcontainer.AbstractComponentSynchronizePeer;
 import nextapp.echo.webcontainer.ComponentSynchronizePeer;
 import nextapp.echo.webcontainer.ServerMessage;
@@ -64,6 +65,7 @@ abstract class AbstractMenuPeer extends AbstractComponentSynchronizePeer {
     private static final String PROPERTY_STATE_MODEL = "stateModel";
     
     static {
+        MenuImageService.install();
         TransparentImageService.install();
         
         WebContainerServlet.getServiceRegistry().add(MENU_SERVICE);

@@ -204,17 +204,15 @@ ExtrasRender.ComponentSync.Menu.prototype._renderMenu = function(menuModel, xPos
                 var menuItemIconTdElement = document.createElement("td");
 	            EchoRender.Property.Insets.renderPixel(iconPadding, menuItemIconTdElement, "padding");
                 if (item instanceof ExtrasApp.ToggleOptionModel) {
-                    var iconSrc;
-                    // FIXME handle icons
-                    /*
+                    var iconIdentifier;
+                    var selected = this._stateModel.isSelected(item.id);
                     if (item instanceof ExtrasApp.RadioOptionModel) {
-                        iconSrc = item.selected ? this.radioOnIcon : this.radioOffIcon;
+                        iconIdentifier = selected ? "radioOn" : "radioOff";
                     } else {
-                        iconSrc = item.selected ? this.toggleOnIcon : this.toggleOffIcon;
+                        iconIdentifier = selected ? "toggleOn" : "toggleOff";
                     }
-                    */
                     var imgElement = document.createElement("img");
-                    imgElement.setAttribute("src", iconSrc);
+                    imgElement.setAttribute("src", ExtrasRender.ComponentSync.Menu._getImageUri(iconIdentifier));
                     imgElement.setAttribute("alt", "");
                     menuItemIconTdElement.appendChild(imgElement);
                 } else if (item.icon) {
@@ -243,15 +241,10 @@ ExtrasRender.ComponentSync.Menu.prototype._renderMenu = function(menuModel, xPos
                 // Submenus have adjacent column containing 'expand' icons.
                 var menuItemArrowTdElement = document.createElement("td");
                 menuItemArrowTdElement.style.textAlign = "right";
-                // FIXME handle submenu images
-                if (false && this.submenuImage) {
-                    var imgElement = document.createElement("img");
-                    imgElement.setAttribute("src", this.submenuImage);
-                    imgElement.setAttribute("alt", "");
-                    menuItemArrowTdElement.appendChild(imgElement);
-                } else {
-                    menuItemArrowTdElement.appendChild(document.createTextNode(">"));
-                }
+                var imgElement = document.createElement("img");
+                imgElement.setAttribute("src", ExtrasRender.ComponentSync.Menu._getImageUri("submenuRight"));
+                imgElement.setAttribute("alt", "");
+                menuItemArrowTdElement.appendChild(imgElement);
                 menuItemTrElement.appendChild(menuItemArrowTdElement);
             } else {
                 // Menu items fill both columns.
@@ -337,6 +330,18 @@ ExtrasRender.ComponentSync.Menu.prototype._closeDescendantMenus = function(menuM
         this._disposeMenu(this._openMenuPath[i]);
         --this._openMenuPath.length;
     }
+};
+
+/**
+ * Gets an URI for default menu images.
+ * 
+ * @param {String} identifier the image identifier
+ * @return the image URI
+ * @type {String}
+ */
+ExtrasRender.ComponentSync.Menu._getImageUri = function(identifier) {
+	// FIXME abstract this somehow so it works with FreeClient too
+	return "?sid=EchoExtras.Menu.Image&imageuid=" + identifier;
 };
 
 ExtrasRender.ComponentSync.Menu._getElementModelId = function(element) {
