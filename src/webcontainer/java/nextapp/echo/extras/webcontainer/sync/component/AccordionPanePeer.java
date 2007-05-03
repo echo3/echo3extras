@@ -101,7 +101,10 @@ public class AccordionPanePeer extends AbstractComponentSynchronizePeer implemen
         return super.getPropertyClass(propertyName);
     }
 
-    public Object getOutputProperty(Context context, Component component, String propertyName) {
+    /**
+     * @see ComponentSynchronizePeer#getOutputProperty(Context, Component, String, int)
+     */
+    public Object getOutputProperty(Context context, Component component, String propertyName, int propertyIndex) {
         if (PROPERTY_ACTIVE_TAB.equals(propertyName)) {
             AccordionPane accordionPane = (AccordionPane) component;
             int activeTabIndex = accordionPane.getActiveTabIndex();
@@ -110,15 +113,14 @@ public class AccordionPanePeer extends AbstractComponentSynchronizePeer implemen
             }
             return null;
         } else {
-            return super.getOutputProperty(context, component, propertyName);
+            return super.getOutputProperty(context, component, propertyName, propertyIndex);
         }
     }
     
     /**
-     * @see ComponentSynchronizePeer#storeInputProperty(Context, Component, String, Object)
+     * @see ComponentSynchronizePeer#storeInputProperty(Context, Component, String, int, Object)
      */
-    public void storeInputProperty(Context context, Component component, String propertyName, Object newValue) {
-        super.storeInputProperty(context, component, propertyName, newValue);
+    public void storeInputProperty(Context context, Component component, String propertyName, int index, Object newValue) {
         if (PROPERTY_ACTIVE_TAB.equals(propertyName)) {
             Component[] children = component.getVisibleComponents();
             for (int i = 0; i < children.length; ++i) {

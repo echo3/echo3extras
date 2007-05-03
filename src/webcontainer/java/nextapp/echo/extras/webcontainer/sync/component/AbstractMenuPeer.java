@@ -105,23 +105,23 @@ abstract class AbstractMenuPeer extends AbstractComponentSynchronizePeer {
     }
     
     /**
-     * @see ComponentSynchronizePeer#getOutputProperty(Context, Component, String)
+     * @see ComponentSynchronizePeer#getOutputProperty(Context, Component, String, int)
      */
-    public Object getOutputProperty(Context context, Component component, String propertyName) {
+    public Object getOutputProperty(Context context, Component component, String propertyName, int propertyIndex) {
         AbstractMenuComponent menu = (AbstractMenuComponent)component;
         if (PROPERTY_MODEL.equals(propertyName)) {
             return menu.getModel();
         } else if (PROPERTY_STATE_MODEL.equals(propertyName)) {
             return menu.getStateModel();
         }
-        return super.getOutputProperty(context, component, propertyName);
+        return super.getOutputProperty(context, component, propertyName, propertyIndex);
     }
     
     /**
-     * @see ComponentSynchronizePeer#storeInputProperty(Context, Component, String, Object)
+     * @see ComponentSynchronizePeer#storeInputProperty(Context, Component, String, int, Object)
      */
-    public void storeInputProperty(Context context, Component component, String propertyName, Object newValue) {
-        super.storeInputProperty(context, component, propertyName, newValue);
+    public void storeInputProperty(Context context, Component component, String propertyName, int index, Object newValue) {
+        super.storeInputProperty(context, component, propertyName, index, newValue);
         // FIXME
     }
 

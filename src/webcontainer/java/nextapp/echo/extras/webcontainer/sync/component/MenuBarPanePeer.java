@@ -63,9 +63,9 @@ public class MenuBarPanePeer extends AbstractMenuPeer {
     }
     
     /**
-     * @see ComponentSynchronizePeer#getOutputProperty(Context, Component, String)
+     * @see ComponentSynchronizePeer#getOutputProperty(Context, Component, String, int)
      */
-    public Object getOutputProperty(Context context, Component component, String propertyName) {
+    public Object getOutputProperty(Context context, Component component, String propertyName, int propertyIndex) {
 //        Table table = (Table)component;
 //        if (PROPERTY_COLUMN_COUNT.equals(propertyName)) {
 //            return new Integer(table.getModel().getColumnCount());
@@ -78,14 +78,14 @@ public class MenuBarPanePeer extends AbstractMenuPeer {
 //        } else if (PROPERTY_SELECTION_MODE.equals(propertyName)) {
 //            return new Integer(table.getSelectionModel().getSelectionMode());
 //        }
-        return super.getOutputProperty(context, component, propertyName);
+        return super.getOutputProperty(context, component, propertyName, propertyIndex);
     }
     
     /**
-     * @see ComponentSynchronizePeer#storeInputProperty(Context, Component, String, Object)
+     * @see ComponentSynchronizePeer#storeInputProperty(Context, Component, String, int, Object)
      */
-    public void storeInputProperty(Context context, Component component, String propertyName, Object newValue) {
-        super.storeInputProperty(context, component, propertyName, newValue);
+    public void storeInputProperty(Context context, Component component, String propertyName, int index, Object newValue) {
+        super.storeInputProperty(context, component, propertyName, index, newValue);
 //        if (PROPERTY_SELECTION.equals(propertyName)) {
 //            String[] tokens = ((String)newValue).split(",");
 //            int[] selectedIndices = new int[tokens.length];
