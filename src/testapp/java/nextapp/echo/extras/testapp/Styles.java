@@ -78,6 +78,8 @@ public class Styles {
             new ResourceImageReference(IMAGE_PATH + "ExtrasBackground.jpg"));
     public static final FillImage FILL_IMAGE_DROPDOWN_MENU_BACKGROUND = new FillImage(
     		new ResourceImageReference(IMAGE_PATH + "DropDownBackground.png"));
+    public static final FillImage FILL_IMAGE_TAB_BACKGROUND = new FillImage(
+    		new ResourceImageReference(IMAGE_PATH + "TabBackground.png"));
     
     public static final ImageReference ICON_24_NO = new ResourceImageReference(IMAGE_PATH + "Icon24No.gif"); 
     public static final ImageReference ICON_24_YES = new ResourceImageReference(IMAGE_PATH + "Icon24Yes.gif");

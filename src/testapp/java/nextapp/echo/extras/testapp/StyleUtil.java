@@ -82,7 +82,7 @@ public class StyleUtil {
     public static final FillImage[] TEST_FILL_IMAGES = new FillImage[] { null, 
             Styles.FILL_IMAGE_SHADOW_BACKGROUND_DARK_BLUE, Styles.FILL_IMAGE_SHADOW_BACKGROUND_LIGHT_BLUE,
             Styles.FILL_IMAGE_PEWTER_LINE, Styles.FILL_IMAGE_LIGHT_BLUE_LINE,
-            Styles.FILL_IMAGE_SILVER_LINE};
+            Styles.FILL_IMAGE_SILVER_LINE, Styles.FILL_IMAGE_TAB_BACKGROUND};
     
     private static final int[] BORDER_STYLES 
             = new int[]{Border.STYLE_NONE, Border.STYLE_INSET, Border.STYLE_OUTSET, Border.STYLE_SOLID,
