@@ -57,8 +57,7 @@ public class TabPanePeer extends AbstractComponentSynchronizePeer implements Laz
      * Component property to enabled/disable lazy rendering of child tabs.
      * Default value is interpreted to be true.
      */
-    public static final String PROPERTY_LAZY_RENDER_ENABLED 
-            = "nextapp.echo.extras.webcontainer.sync.component.TabPanePeer.lazyRenderEnabled";
+    public static final String PROPERTY_LAZY_RENDER_ENABLED = "lazyRenderEnabled";
 
     private static final Service TAB_PANE_SERVICE = JavaScriptService.forResources("EchoExtras.TabPane",
             new String[] {  "/nextapp/echo/extras/webcontainer/resource/js/Application.TabPane.js",  

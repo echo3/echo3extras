@@ -56,8 +56,7 @@ public class AccordionPanePeer extends AbstractComponentSynchronizePeer implemen
      * Component property to enabled/disable lazy rendering of child tabs.
      * Default value is interpreted to be true.
      */
-    public static final String PROPERTY_LAZY_RENDER_ENABLED 
-            = "nextapp.echo.extras.webcontainer.sync.component.AccordionPanePeer.lazyRenderEnabled";
+    public static final String PROPERTY_LAZY_RENDER_ENABLED = "lazyRenderEnabled";
 
     private static final Service ACCORDION_PANE_SERVICE = JavaScriptService.forResources("EchoExtras.AccordionPane",
             new String[] {  "/nextapp/echo/extras/webcontainer/resource/js/Application.AccordionPane.js",  
