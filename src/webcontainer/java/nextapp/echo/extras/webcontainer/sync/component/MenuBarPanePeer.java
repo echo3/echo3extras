@@ -29,10 +29,7 @@
 
 package nextapp.echo.extras.webcontainer.sync.component;
 
-import nextapp.echo.app.Component;
-import nextapp.echo.app.util.Context;
 import nextapp.echo.extras.app.MenuBarPane;
-import nextapp.echo.webcontainer.ComponentSynchronizePeer;
 
 /**
  * Synchronization peer for <code>MenuBarPane</code>s.
@@ -41,75 +38,10 @@ import nextapp.echo.webcontainer.ComponentSynchronizePeer;
  */
 public class MenuBarPanePeer extends AbstractMenuPeer {
 
-    public Class getEventDataClass(String eventType) {
-        if ("select".equals(eventType)) {
-            return String.class;
-        } else {
-            return super.getEventDataClass(eventType);
-        }
-    }
-
-    public void processEvent(Context context, Component component, String eventType, Object eventData) {
-        if ("select".equals(eventType)) {
-            System.err.println("Select event:" + eventData);
-        } else {
-            super.processEvent(context, component, eventType, eventData);
-        }
-    }
-
-    public MenuBarPanePeer() {
-        super();
-    }
-    
     /**
      * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#getComponentClass()
      */
     public Class getComponentClass() {
         return MenuBarPane.class;
-    }
-    
-    /**
-     * @see ComponentSynchronizePeer#getPropertyClass(String)
-     */
-    public Class getPropertyClass(String propertyName) {
-//        if (PROPERTY_SELECTION.equals(propertyName)) {
-//            return String.class;
-//        }
-        return super.getPropertyClass(propertyName);
-    }
-    
-    /**
-     * @see ComponentSynchronizePeer#getOutputProperty(Context, Component, String, int)
-     */
-    public Object getOutputProperty(Context context, Component component, String propertyName, int propertyIndex) {
-//        Table table = (Table)component;
-//        if (PROPERTY_COLUMN_COUNT.equals(propertyName)) {
-//            return new Integer(table.getModel().getColumnCount());
-//        } else if (PROPERTY_HEADER_VISIBLE.equals(propertyName)) {
-//            return Boolean.valueOf(table.isHeaderVisible());
-//        } else if (PROPERTY_ROW_COUNT.equals(propertyName)) {
-//            return new Integer(table.getModel().getRowCount());
-//        } else if (PROPERTY_SELECTION.equals(propertyName)) {
-//            return getSelectionString(table.getSelectionModel(), table.getModel());
-//        } else if (PROPERTY_SELECTION_MODE.equals(propertyName)) {
-//            return new Integer(table.getSelectionModel().getSelectionMode());
-//        }
-        return super.getOutputProperty(context, component, propertyName, propertyIndex);
-    }
-    
-    /**
-     * @see ComponentSynchronizePeer#storeInputProperty(Context, Component, String, int, Object)
-     */
-    public void storeInputProperty(Context context, Component component, String propertyName, int index, Object newValue) {
-        super.storeInputProperty(context, component, propertyName, index, newValue);
-//        if (PROPERTY_SELECTION.equals(propertyName)) {
-//            String[] tokens = ((String)newValue).split(",");
-//            int[] selectedIndices = new int[tokens.length];
-//            for (int i = 0; i < tokens.length; ++i) {
-//                selectedIndices[i] = Integer.parseInt(tokens[i]);
-//            }
-//            ClientUpdateManager clientUpdateManager = (ClientUpdateManager) context.get(ClientUpdateManager.class);
-//            clientUpdateManager.setComponentProperty(component, Table.SELECTION_CHANGED_PROPERTY, selectedIndices);
-//        }
     }
 }

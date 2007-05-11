@@ -553,12 +553,7 @@ ExtrasRender.ComponentSync.MenuBarPane.prototype._processClick = function(e) {
 
 ExtrasRender.ComponentSync.MenuBarPane.prototype._doAction = function(menuModel) {
     var path = menuModel.getItemPositionPath().join(".");
-    // FIXME broken
-    this.component.setProperty("selection", path);
-    var e = new EchoCore.Event(this.component, "select");
-    e.data = path;
-    EchoCore.Debug.consoleWrite("data=" + e.data);
-    this.component.fireEvent(e);
+    this.component.fireEvent(new EchoCore.Event(this.component, "select", path));
 };
 
 /**
@@ -806,10 +801,8 @@ ExtrasRender.ComponentSync.DropDownMenu.prototype._doAction = function(menuModel
     	this._setSelection(menuModel);
     }
     var path = menuModel.getItemPositionPath().join(".");
-    // FIXME broken
     this.component.setProperty("selection", path);
-    var e = new EchoCore.Event(this.component, "select");
-    this.component.fireEvent(e);
+    this.component.fireEvent(new EchoCore.Event(this.component, "select", path));
 };
 
 EchoRender.registerPeer("nextapp.echo.extras.app.MenuBarPane", ExtrasRender.ComponentSync.MenuBarPane);

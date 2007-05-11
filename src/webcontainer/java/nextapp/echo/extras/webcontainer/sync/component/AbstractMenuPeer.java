@@ -32,6 +32,7 @@ package nextapp.echo.extras.webcontainer.sync.component;
 import java.util.Iterator;
 
 import nextapp.echo.app.Component;
+import nextapp.echo.app.update.ClientUpdateManager;
 import nextapp.echo.app.util.Context;
 import nextapp.echo.extras.app.menu.AbstractMenuComponent;
 import nextapp.echo.extras.app.menu.ItemModel;
@@ -88,22 +89,36 @@ abstract class AbstractMenuPeer extends AbstractComponentSynchronizePeer {
     }
 
     /**
+     * @see ComponentSynchronizePeer#getEventDataClass(String)
+     */
+    public Class getEventDataClass(String eventType) {
+        if (AbstractMenuComponent.INPUT_SELECT.equals(eventType)) {
+            return String.class;
+        } else {
+            return super.getEventDataClass(eventType);
+        }
+    }
+
+    /**
+     * @see ComponentSynchronizePeer#processEvent(Context, Component, String, Object)
+     */
+    public void processEvent(Context context, Component component, String eventType, Object eventData) {
+        if (AbstractMenuComponent.INPUT_SELECT.equals(eventType)) {
+            ClientUpdateManager clientUpdateManager = (ClientUpdateManager) context.get(ClientUpdateManager.class);
+            AbstractMenuComponent menuComponent = (AbstractMenuComponent)component;
+            clientUpdateManager.setComponentAction(component, AbstractMenuComponent.INPUT_SELECT, getItemModel(menuComponent, (String)eventData));
+        } else {
+            super.processEvent(context, component, eventType, eventData);
+        }
+    }
+
+    /**
      * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#init(nextapp.echo.app.util.Context)
      */
     public void init(Context context) {
         ServerMessage serverMessage = (ServerMessage) context.get(ServerMessage.class);
         serverMessage.addLibrary(CommonService.INSTANCE.getId());
         serverMessage.addLibrary(MENU_SERVICE.getId());
-    }
-    
-    /**
-     * @see ComponentSynchronizePeer#getPropertyClass(String)
-     */
-    public Class getPropertyClass(String propertyName) {
-//        if (PROPERTY_SELECTION.equals(propertyName)) {
-//            return String.class;
-//        }
-        return super.getPropertyClass(propertyName);
     }
     
     /**
@@ -119,19 +134,11 @@ abstract class AbstractMenuPeer extends AbstractComponentSynchronizePeer {
         return super.getOutputProperty(context, component, propertyName, propertyIndex);
     }
     
-    /**
-     * @see ComponentSynchronizePeer#storeInputProperty(Context, Component, String, int, Object)
-     */
-    public void storeInputProperty(Context context, Component component, String propertyName, int index, Object newValue) {
-        super.storeInputProperty(context, component, propertyName, index, newValue);
-        // FIXME
-    }
-
-    ItemModel getItemModelById(AbstractMenuComponent menu, String id) {
+    protected ItemModel getItemModelById(AbstractMenuComponent menu, String id) {
         return getItemModelById(menu.getModel(), id);
     }
     
-    ItemModel getItemModelById(MenuModel menuModel, String id) {
+    protected ItemModel getItemModelById(MenuModel menuModel, String id) {
         int size = menuModel.getItemCount();
         for (int i = 0; i < size; ++i) {
             ItemModel itemModel = menuModel.getItem(i);
@@ -148,7 +155,7 @@ abstract class AbstractMenuPeer extends AbstractComponentSynchronizePeer {
         return null;
     }
     
-    ItemModel getItemModel(AbstractMenuComponent menu, String itemPath) {
+    protected ItemModel getItemModel(AbstractMenuComponent menu, String itemPath) {
         ItemModel itemModel = menu.getModel();
         String[] tokens = itemPath.split("\\.");
         for (int i = 0; i < tokens.length; i++) {
@@ -158,13 +165,13 @@ abstract class AbstractMenuPeer extends AbstractComponentSynchronizePeer {
         return itemModel;
     }
 
-    String getItemPath(MenuModel menuModel, ItemModel targetItemModel) {
+    protected String getItemPath(MenuModel menuModel, ItemModel targetItemModel) {
         StringBuffer out = new StringBuffer();
         getItemPath(menuModel, targetItemModel, out);
         return out.length() == 0 ? null : out.toString();
     }
     
-    void getItemPath(MenuModel menuModel, ItemModel targetItemModel, StringBuffer out) {
+    private void getItemPath(MenuModel menuModel, ItemModel targetItemModel, StringBuffer out) {
         int itemCount = menuModel.getItemCount();
         for (int i = 0; i < itemCount; ++i) {
             ItemModel currentItemModel = menuModel.getItem(i);
