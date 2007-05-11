@@ -41,6 +41,22 @@ import nextapp.echo.webcontainer.ComponentSynchronizePeer;
  */
 public class MenuBarPanePeer extends AbstractMenuPeer {
 
+    public Class getEventDataClass(String eventType) {
+        if ("select".equals(eventType)) {
+            return String.class;
+        } else {
+            return super.getEventDataClass(eventType);
+        }
+    }
+
+    public void processEvent(Context context, Component component, String eventType, Object eventData) {
+        if ("select".equals(eventType)) {
+            System.err.println("Select event:" + eventData);
+        } else {
+            super.processEvent(context, component, eventType, eventData);
+        }
+    }
+
     public MenuBarPanePeer() {
         super();
     }

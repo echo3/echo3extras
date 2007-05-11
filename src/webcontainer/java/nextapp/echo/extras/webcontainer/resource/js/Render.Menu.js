@@ -555,7 +555,10 @@ ExtrasRender.ComponentSync.MenuBarPane.prototype._doAction = function(menuModel)
     var path = menuModel.getItemPositionPath().join(".");
     // FIXME broken
     this.component.setProperty("selection", path);
-    this.component.fireEvent(new EchoCore.Event(this.component, "select"));
+    var e = new EchoCore.Event(this.component, "select");
+    e.data = path;
+    EchoCore.Debug.consoleWrite("data=" + e.data);
+    this.component.fireEvent(e);
 };
 
 /**
@@ -805,7 +808,8 @@ ExtrasRender.ComponentSync.DropDownMenu.prototype._doAction = function(menuModel
     var path = menuModel.getItemPositionPath().join(".");
     // FIXME broken
     this.component.setProperty("selection", path);
-    this.component.fireEvent(new EchoCore.Event(this.component, "select"));
+    var e = new EchoCore.Event(this.component, "select");
+    this.component.fireEvent(e);
 };
 
 EchoRender.registerPeer("nextapp.echo.extras.app.MenuBarPane", ExtrasRender.ComponentSync.MenuBarPane);
