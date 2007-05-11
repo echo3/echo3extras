@@ -1,6 +1,6 @@
 /* 
- * This file is part of the Echo Web Application Framework (hereinafter "Echo").
- * Copyright (C) 2002-2007 NextApp, Inc.
+ * This file is part of the Echo Extras Project.
+ * Copyright (C) 2005-2007 NextApp, Inc.
  *
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
