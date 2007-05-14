@@ -31,6 +31,7 @@ package nextapp.echo.extras.webcontainer.sync.component;
 
 import nextapp.echo.app.util.Context;
 import nextapp.echo.extras.app.BorderPane;
+import nextapp.echo.extras.webcontainer.service.CommonService;
 import nextapp.echo.webcontainer.AbstractComponentSynchronizePeer;
 import nextapp.echo.webcontainer.ServerMessage;
 import nextapp.echo.webcontainer.Service;
@@ -64,6 +65,7 @@ public class BorderPanePeer extends AbstractComponentSynchronizePeer {
      */
     public void init(Context context) {
         ServerMessage serverMessage = (ServerMessage) context.get(ServerMessage.class);
+        serverMessage.addLibrary(CommonService.INSTANCE.getId());
         serverMessage.addLibrary(BORDER_PANE_SERVICE.getId());
     }
 }
