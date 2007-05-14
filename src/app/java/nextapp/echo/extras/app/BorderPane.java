@@ -79,4 +79,25 @@ implements Pane, PaneContainer {
     public void setInsets(Insets newValue) {
         setProperty(PROPERTY_INSETS, newValue);
     }
+    
+    /**
+     * @see nextapp.echo.app.Component#isValidChild(nextapp.echo.app.Component)
+     */
+    public boolean isValidChild(Component child) {
+        if (!super.isValidChild(child)) {
+            return false;
+        }
+        return getComponentCount() == 0 || indexOf(child) != -1;
+    }
+    
+    /**
+     * @see nextapp.echo.app.Component#isValidParent(nextapp.echo.app.Component)
+     */
+    public boolean isValidParent(Component c) {
+        if (!super.isValidParent(c)) {
+            return false;
+        }
+        // Ensure parent is a PaneContainer.
+        return c instanceof PaneContainer;
+    }
 }
