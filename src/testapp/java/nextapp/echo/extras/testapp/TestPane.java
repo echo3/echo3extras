@@ -129,6 +129,8 @@ public class TestPane extends ContentPane {
         testsMenu.addItem(new DefaultOptionModel(
                 "Launch_DropDownMenuTest", "Drop Down Menu", Styles.ICON_16_MENU_BAR_PANE));
         testsMenu.addItem(new DefaultOptionModel(
+                "Launch_GroupTest", "Group", Styles.ICON_16_GROUP));
+        testsMenu.addItem(new DefaultOptionModel(
                 "Launch_MenuBarPaneTest", "Menu Bar Pane", Styles.ICON_16_MENU_BAR_PANE));
         testsMenu.addItem(new DefaultOptionModel(
                 "Launch_TabPaneTest", "Tab Pane", Styles.ICON_16_TAB_PANE));
