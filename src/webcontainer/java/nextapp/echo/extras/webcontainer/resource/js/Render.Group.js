@@ -126,6 +126,7 @@ ExtrasRender.ComponentSync.Group.prototype._renderBorder = function(contentElem)
 	} else {
 		var topElem = document.createElement("div");
     	topElem.style.width = "100%";
+    	topElem.style.height = borderPixelInsets.top + "px";
     	EchoRender.Property.FillImage.render(this._getRepeatingBorderImage(1, EchoApp.Property.FillImage.REPEAT_HORIZONTAL, "0px", "100%"), topElem, flags);
     	topLeftElem.appendChild(topElem);
 	}
