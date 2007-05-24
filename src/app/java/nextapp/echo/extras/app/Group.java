@@ -31,6 +31,7 @@ package nextapp.echo.extras.app;
 
 import nextapp.echo.app.Component;
 import nextapp.echo.app.Extent;
+import nextapp.echo.app.FillImage;
 import nextapp.echo.app.Font;
 import nextapp.echo.app.ImageReference;
 import nextapp.echo.app.Insets;
@@ -52,6 +53,7 @@ public class Group extends Component {
     public static final int BOTTOM = 6;
     public static final int BOTTOM_RIGHT = 7;
     
+    public static final String PROPERTY_BACKGROUND_IMAGE = "backgroundImage";
     public static final String PROPERTY_BORDER_IMAGE = "borderImage";
     public static final String PROPERTY_BORDER_INSETS = "borderInsets";
     public static final String PROPERTY_INSETS = "insets";
@@ -60,6 +62,15 @@ public class Group extends Component {
     public static final String PROPERTY_TITLE_FONT = "titleFont";
     public static final String PROPERTY_TITLE_INSETS = "titleInsets";
     public static final String PROPERTY_TITLE_POSITION = "titlePosition";
+    
+    /**
+     * Returns the background image.
+     * 
+     * @return the background image.
+     */
+    public FillImage getBackgroundImage() {
+        return (FillImage) getProperty(PROPERTY_BACKGROUND_IMAGE);
+    }
 
     /**
      * Returns the configured border image.
@@ -133,6 +144,15 @@ public class Group extends Component {
      */
     public Extent getTitlePosition() {
         return (Extent) getProperty(PROPERTY_TITLE_POSITION);
+    }
+    
+    /**
+     * Sets the background image.
+     * 
+     * @param backgroundImage the background image
+     */
+    public void setBackgroundImage(FillImage backgroundImage) {
+        setProperty(PROPERTY_BACKGROUND_IMAGE, backgroundImage);
     }
     
     /**

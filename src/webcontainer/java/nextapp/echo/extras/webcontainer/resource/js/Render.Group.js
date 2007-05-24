@@ -170,6 +170,7 @@ ExtrasRender.ComponentSync.Group.prototype._renderContent = function(update) {
     var contentDivElement = document.createElement("div");
     contentDivElement.id = this.component.renderId + "_content";
     
+    EchoRender.Property.FillImage.renderComponentProperty(this.component, "backgroundImage", null, contentDivElement);
     EchoRender.Property.Color.renderComponentProperty(this.component, "background", null, contentDivElement, "backgroundColor")
     EchoRender.Property.Font.renderDefault(this.component, contentDivElement);
     EchoRender.Property.Insets.renderComponentProperty(this.component, "insets", null, contentDivElement, "padding");
