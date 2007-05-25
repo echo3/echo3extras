@@ -394,6 +394,7 @@ ExtrasRender.ComponentSync.MenuBarPane.prototype._renderMain = function() {
     EchoRender.Property.Border.renderSide(border, menuBarDivElement, "borderTop");
     EchoRender.Property.Border.renderSide(border, menuBarDivElement, "borderBottom");
     EchoRender.Property.FillImage.renderComponentProperty(this.component, "backgroundImage", null, menuBarDivElement); 
+    EchoRender.Property.Font.renderDefault(this.component, menuBarDivElement, null);
     
     var menuBarTableElement = document.createElement("table");
     menuBarTableElement.style.height = "100%";
