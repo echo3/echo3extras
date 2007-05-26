@@ -97,7 +97,7 @@ public class TestPane extends ContentPane {
                     InteractiveApp.getApp().displayWelcomePane();
                 }
             } catch (ClassNotFoundException ex) {
-                throw new RuntimeException(ex.toString());
+                add(new MessageDialog("Cannot Load Test", ex.toString(), Styles.ICON_64_ERROR, MessageDialog.CONTROLS_OK));
             } catch (InstantiationException ex) {
                 throw new RuntimeException(ex.toString());
             } catch (IllegalAccessException ex) {

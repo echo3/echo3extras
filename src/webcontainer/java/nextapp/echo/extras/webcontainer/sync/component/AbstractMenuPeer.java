@@ -31,12 +31,18 @@ package nextapp.echo.extras.webcontainer.sync.component;
 
 import java.util.Iterator;
 
+import org.w3c.dom.Element;
+
 import nextapp.echo.app.Component;
+import nextapp.echo.app.serial.SerialException;
+import nextapp.echo.app.serial.SerialPropertyPeer;
 import nextapp.echo.app.update.ClientUpdateManager;
 import nextapp.echo.app.util.Context;
 import nextapp.echo.extras.app.menu.AbstractMenuComponent;
 import nextapp.echo.extras.app.menu.ItemModel;
 import nextapp.echo.extras.app.menu.MenuModel;
+import nextapp.echo.extras.app.menu.MenuStateModel;
+import nextapp.echo.extras.app.serial.property.SerialPropertyPeerConstants;
 import nextapp.echo.extras.webcontainer.service.CommonService;
 import nextapp.echo.extras.webcontainer.service.MenuImageService;
 import nextapp.echo.webcontainer.AbstractComponentSynchronizePeer;
@@ -55,15 +61,55 @@ import nextapp.echo.webcontainer.util.ArrayIterator;
  */
 abstract class AbstractMenuPeer extends AbstractComponentSynchronizePeer {
 
+    private static class RenderedMenuStateModel {
+        
+        private MenuModel menuModel;
+        private MenuStateModel menuStateModel;
+        
+        RenderedMenuStateModel(MenuModel menuModel, MenuStateModel menuStateModel) {
+            super();
+            this.menuModel = menuModel;
+            this.menuStateModel = menuStateModel;
+        }
+
+        MenuModel getMenuModel() {
+            return menuModel;
+        }
+
+        MenuStateModel getMenuStateModel() {
+            return menuStateModel;
+        }
+    }
+    
+    public static class RenderedMenuStateModelPropertyPeer 
+    implements SerialPropertyPeer {
+
+        /**
+         * @see nextapp.echo.app.serial.SerialPropertyPeer#toProperty(Context,
+         *      Class, org.w3c.dom.Element)
+         */
+        public Object toProperty(Context context, Class objectClass, Element propertyElement) 
+        throws SerialException {
+            throw new UnsupportedOperationException();
+        }
+
+        /**
+         * @see nextapp.echo.app.serial.SerialPropertyPeer#toXml(nextapp.echo.app.util.Context,
+         *      java.lang.Class, org.w3c.dom.Element, java.lang.Object)
+         */
+        public void toXml(Context context, Class objectClass, Element propertyElement, Object propertyValue) {
+            RenderedMenuStateModel menuData = (RenderedMenuStateModel) propertyValue;
+            propertyElement.setAttribute("t", SerialPropertyPeerConstants.PROPERTY_TYPE_PREFIX + "MenuStateModel");
+            propertyElement.setAttribute("v", menuData.toString());
+        }
+    }
+    
     private static final Service MENU_SERVICE = JavaScriptService.forResources("EchoExtras.Menu", 
             new String[] {  "/nextapp/echo/extras/webcontainer/resource/js/Application.Menu.js",  
                             "/nextapp/echo/extras/webcontainer/resource/js/Serial.Menu.js",
                             "/nextapp/echo/extras/webcontainer/resource/js/Render.Menu.js"});
     
     private static final String[] EVENT_TYPES_ACTION = new String[] { AbstractMenuComponent.INPUT_SELECT };
-    
-    private static final String PROPERTY_MODEL = "model";
-    private static final String PROPERTY_STATE_MODEL = "stateModel";
     
     static {
         MenuImageService.install();
@@ -73,21 +119,11 @@ abstract class AbstractMenuPeer extends AbstractComponentSynchronizePeer {
     }
     
     public AbstractMenuPeer() {
-        addOutputProperty(PROPERTY_MODEL);
-        addOutputProperty(PROPERTY_STATE_MODEL);
+        super();
+        addOutputProperty(AbstractMenuComponent.STATE_MODEL_CHANGED_PROPERTY);
+        addOutputProperty(AbstractMenuComponent.MODEL_CHANGED_PROPERTY);
     }
     
-    /**
-     * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#getImmediateEventTypes(Context, nextapp.echo.app.Component)
-     */
-    public Iterator getImmediateEventTypes(Context context, Component component) {
-        AbstractMenuComponent menu = (AbstractMenuComponent)component;
-        if (menu.hasActionListeners()) {
-            return new ArrayIterator(EVENT_TYPES_ACTION);
-        }
-        return super.getImmediateEventTypes(context, component);
-    }
-
     /**
      * @see ComponentSynchronizePeer#getEventDataClass(String)
      */
@@ -100,40 +136,26 @@ abstract class AbstractMenuPeer extends AbstractComponentSynchronizePeer {
     }
 
     /**
-     * @see ComponentSynchronizePeer#processEvent(Context, Component, String, Object)
+     * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#getImmediateEventTypes(Context, nextapp.echo.app.Component)
      */
-    public void processEvent(Context context, Component component, String eventType, Object eventData) {
-        if (AbstractMenuComponent.INPUT_SELECT.equals(eventType)) {
-            ClientUpdateManager clientUpdateManager = (ClientUpdateManager) context.get(ClientUpdateManager.class);
-            AbstractMenuComponent menuComponent = (AbstractMenuComponent)component;
-            clientUpdateManager.setComponentAction(component, AbstractMenuComponent.INPUT_SELECT, getItemModel(menuComponent, (String)eventData));
-        } else {
-            super.processEvent(context, component, eventType, eventData);
+    public Iterator getImmediateEventTypes(Context context, Component component) {
+        AbstractMenuComponent menu = (AbstractMenuComponent)component;
+        if (menu.hasActionListeners()) {
+            return new ArrayIterator(EVENT_TYPES_ACTION);
         }
+        return super.getImmediateEventTypes(context, component);
     }
 
-    /**
-     * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#init(nextapp.echo.app.util.Context)
-     */
-    public void init(Context context) {
-        ServerMessage serverMessage = (ServerMessage) context.get(ServerMessage.class);
-        serverMessage.addLibrary(CommonService.INSTANCE.getId());
-        serverMessage.addLibrary(MENU_SERVICE.getId());
-    }
-    
-    /**
-     * @see ComponentSynchronizePeer#getOutputProperty(Context, Component, String, int)
-     */
-    public Object getOutputProperty(Context context, Component component, String propertyName, int propertyIndex) {
-        AbstractMenuComponent menu = (AbstractMenuComponent)component;
-        if (PROPERTY_MODEL.equals(propertyName)) {
-            return menu.getModel();
-        } else if (PROPERTY_STATE_MODEL.equals(propertyName)) {
-            return menu.getStateModel();
+    protected ItemModel getItemModel(AbstractMenuComponent menu, String itemPath) {
+        ItemModel itemModel = menu.getModel();
+        String[] tokens = itemPath.split("\\.");
+        for (int i = 0; i < tokens.length; i++) {
+            int index = Integer.parseInt(tokens[i]);
+            itemModel = ((MenuModel)itemModel).getItem(index);
         }
-        return super.getOutputProperty(context, component, propertyName, propertyIndex);
+        return itemModel;
     }
-    
+
     protected ItemModel getItemModelById(AbstractMenuComponent menu, String id) {
         return getItemModelById(menu.getModel(), id);
     }
@@ -155,16 +177,6 @@ abstract class AbstractMenuPeer extends AbstractComponentSynchronizePeer {
         return null;
     }
     
-    protected ItemModel getItemModel(AbstractMenuComponent menu, String itemPath) {
-        ItemModel itemModel = menu.getModel();
-        String[] tokens = itemPath.split("\\.");
-        for (int i = 0; i < tokens.length; i++) {
-            int index = Integer.parseInt(tokens[i]);
-            itemModel = ((MenuModel)itemModel).getItem(index);
-        }
-        return itemModel;
-    }
-
     protected String getItemPath(MenuModel menuModel, ItemModel targetItemModel) {
         StringBuffer out = new StringBuffer();
         getItemPath(menuModel, targetItemModel, out);
@@ -186,6 +198,41 @@ abstract class AbstractMenuPeer extends AbstractComponentSynchronizePeer {
                 out.insert(0, i + ".");
                 return;
             }
+        }
+    }
+    
+    /**
+     * @see ComponentSynchronizePeer#getOutputProperty(Context, Component, String, int)
+     */
+    public Object getOutputProperty(Context context, Component component, String propertyName, int propertyIndex) {
+        AbstractMenuComponent menu = (AbstractMenuComponent)component;
+        if (AbstractMenuComponent.MODEL_CHANGED_PROPERTY.equals(propertyName)) {
+            return menu.getModel();
+        } else if (AbstractMenuComponent.STATE_MODEL_CHANGED_PROPERTY.equals(propertyName)) {
+            return new RenderedMenuStateModel(menu.getModel(), menu.getStateModel());
+        }
+        return super.getOutputProperty(context, component, propertyName, propertyIndex);
+    }
+
+    /**
+     * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#init(nextapp.echo.app.util.Context)
+     */
+    public void init(Context context) {
+        ServerMessage serverMessage = (ServerMessage) context.get(ServerMessage.class);
+        serverMessage.addLibrary(CommonService.INSTANCE.getId());
+        serverMessage.addLibrary(MENU_SERVICE.getId());
+    }
+    
+    /**
+     * @see ComponentSynchronizePeer#processEvent(Context, Component, String, Object)
+     */
+    public void processEvent(Context context, Component component, String eventType, Object eventData) {
+        if (AbstractMenuComponent.INPUT_SELECT.equals(eventType)) {
+            ClientUpdateManager clientUpdateManager = (ClientUpdateManager) context.get(ClientUpdateManager.class);
+            AbstractMenuComponent menuComponent = (AbstractMenuComponent)component;
+            clientUpdateManager.setComponentAction(component, AbstractMenuComponent.INPUT_SELECT, getItemModel(menuComponent, (String)eventData));
+        } else {
+            super.processEvent(context, component, eventType, eventData);
         }
     }
 }

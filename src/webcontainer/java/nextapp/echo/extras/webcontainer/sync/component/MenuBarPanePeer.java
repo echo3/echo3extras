@@ -37,7 +37,7 @@ import nextapp.echo.extras.app.MenuBarPane;
  * @author n.beekman
  */
 public class MenuBarPanePeer extends AbstractMenuPeer {
-
+    
     /**
      * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#getComponentClass()
      */
