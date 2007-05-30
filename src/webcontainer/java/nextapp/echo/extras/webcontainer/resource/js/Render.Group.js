@@ -132,6 +132,7 @@ ExtrasRender.ComponentSync.Group.prototype._renderBorder = function(contentElem)
 		var topElem = document.createElement("div");
     	topElem.style.width = "100%";
     	topElem.style.height = borderPixelInsets.top + "px";
+    	topElem.style.fontSize = "1px";
     	EchoRender.Property.FillImage.render(this._getRepeatingBorderImage(1, EchoApp.Property.FillImage.REPEAT_HORIZONTAL, "0px", "100%"), topElem, flags);
     	topLeftElem.appendChild(topElem);
 	}
@@ -153,6 +154,7 @@ ExtrasRender.ComponentSync.Group.prototype._renderBorder = function(contentElem)
 	var bottomRightElem = document.createElement("div");
     bottomRightElem.style.width = "100%";
     bottomRightElem.style.height = borderPixelInsets.bottom + "px";
+    bottomRightElem.style.fontSize = "1px";
     EchoRender.Property.FillImage.render(this._getBorderImage(7, "100%", "100%"), bottomRightElem, flags);
     
     var bottomLeftElem = document.createElement("div");
@@ -164,6 +166,7 @@ ExtrasRender.ComponentSync.Group.prototype._renderBorder = function(contentElem)
 	var bottomElem = document.createElement("div");
     bottomElem.style.width = "100%";
     bottomElem.style.height = borderPixelInsets.bottom + "px";
+    bottomElem.style.fontSize = "1px";
     EchoRender.Property.FillImage.render(this._getRepeatingBorderImage(6, EchoApp.Property.FillImage.REPEAT_HORIZONTAL, "0px", "100%"), bottomElem, flags);
 	bottomLeftElem.appendChild(bottomElem);
 	borderParts.push(bottomRightElem);
