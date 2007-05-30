@@ -2,6 +2,7 @@
  * Component rendering peer: Group
  */
 ExtrasRender.ComponentSync.Group = function() {
+	this._groupDivElement = null;
 	this._borderImages = null;
 };
 
@@ -23,20 +24,24 @@ ExtrasRender.ComponentSync.Group._getImageUri = function(identifier) {
 	return "?sid=EchoExtras.Group.Image&imageuid=" + identifier;
 };
 
+ExtrasRender.ComponentSync.Group.prototype.getElement = function() {
+	return this._groupDivElement;
+};
+
 ExtrasRender.ComponentSync.Group.prototype.renderAdd = function(update, parentElement) {
 	this._borderImages = this.component.getRenderProperty("borderImage");
 	
-    var groupDivElement = document.createElement("div");
-    groupDivElement.id = this.component.renderId;
-    EchoRender.Property.Color.renderComponentProperty(this.component, "foreground", null, groupDivElement, "color")
+    this._groupDivElement = document.createElement("div");
+    this._groupDivElement.id = this.component.renderId;
+    EchoRender.Property.Color.renderComponentProperty(this.component, "foreground", null, this._groupDivElement, "color")
 
     var contentElement = this._renderContent();
     var borderParts = this._renderBorder(contentElement);
     for (var i = 0; i < borderParts.length; i++) {
-	    groupDivElement.appendChild(borderParts[i]);
+	    this._groupDivElement.appendChild(borderParts[i]);
     }
     
-    parentElement.appendChild(groupDivElement);
+    parentElement.appendChild(this._groupDivElement);
 };
 
 ExtrasRender.ComponentSync.Group.prototype._getRepeatingBorderImage = function(position, repeat, x, y) {
@@ -168,7 +173,6 @@ ExtrasRender.ComponentSync.Group.prototype._renderBorder = function(contentElem)
 
 ExtrasRender.ComponentSync.Group.prototype._renderContent = function(update) {
     var contentDivElement = document.createElement("div");
-    contentDivElement.id = this.component.renderId + "_content";
     
     EchoRender.Property.FillImage.renderComponentProperty(this.component, "backgroundImage", null, contentDivElement);
     EchoRender.Property.Color.renderComponentProperty(this.component, "background", null, contentDivElement, "backgroundColor")
@@ -185,14 +189,18 @@ ExtrasRender.ComponentSync.Group.prototype._renderContent = function(update) {
 };
 
 ExtrasRender.ComponentSync.Group.prototype.renderUpdate = function(update) {
-    EchoRender.Util.renderRemove(update, update.parent);
-    var containerElement = EchoRender.Util.getContainerElement(update.parent);
+    var element = this._groupDivElement;
+    var containerElement = element.parentNode;
+    EchoRender.renderComponentDispose(update, update.parent);
+    containerElement.removeChild(element);
     this.renderAdd(update, containerElement);
     return true;
 };
 
 ExtrasRender.ComponentSync.Group.prototype.renderDispose = function(update) {
 	this._borderImages = null;
+	this._groupDivElement.id = "";
+	this._groupDivElement = null;
 };
 
 EchoRender.registerPeer("nextapp.echo.extras.app.Group", ExtrasRender.ComponentSync.Group);
