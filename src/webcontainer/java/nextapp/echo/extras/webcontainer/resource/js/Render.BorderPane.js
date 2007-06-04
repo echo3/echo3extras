@@ -1,14 +1,16 @@
 /**
  * Component rendering peer: BorderPane
  */
-ExtrasRender.ComponentSync.BorderPane = function() { };
+ExtrasRender.ComponentSync.BorderPane = function() {
+	this._element = null;
+};
 
 ExtrasRender.ComponentSync.BorderPane.prototype = new EchoRender.ComponentSync;
 
 ExtrasRender.ComponentSync.BorderPane.prototype.renderAdd = function(update, parentElement) {
-    var element = this._renderMain(update);
+    this._element = this._renderMain(update);
     
-    parentElement.appendChild(element);
+    parentElement.appendChild(this._element);
 };
 
 ExtrasRender.ComponentSync.BorderPane.prototype._renderMain = function(update) {
@@ -163,13 +165,22 @@ ExtrasRender.ComponentSync.BorderPane.prototype._getContentInsets = function(chi
 };
 
 ExtrasRender.ComponentSync.BorderPane.prototype.renderUpdate = function(update) {
-    EchoRender.Util.renderRemove(update, update.parent);
-    var containerElement = EchoRender.Util.getContainerElement(update.parent);
+    var element = this._element;
+    var containerElement = element.parentNode;
+    EchoRender.renderComponentDispose(update, update.parent);
+    containerElement.removeChild(element);
     this.renderAdd(update, containerElement);
     return true;
 };
 
 ExtrasRender.ComponentSync.BorderPane.prototype.renderDispose = function(update) {
+    var childElement = this._element.firstChild;
+    while (childElement) {
+        childElement.id = "";
+        childElement = childElement.nextSibling;
+    }
+	this._element.id = "";
+	this._element = null;
 };
 
 EchoRender.registerPeer("nextapp.echo.extras.app.BorderPane", ExtrasRender.ComponentSync.BorderPane);

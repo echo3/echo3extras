@@ -4,6 +4,7 @@
  * Component rendering peer: AccordionPane
  */
 ExtrasRender.ComponentSync.AccordionPane = function() {
+	this._paneDivElement = null;
 	this._activeTabId = null;
 	this._tabs = new EchoCore.Collections.List();
 	this._rotation = null;
@@ -26,7 +27,7 @@ ExtrasRender.ComponentSync.AccordionPane.prototype = new EchoRender.ComponentSyn
 ExtrasRender.ComponentSync.AccordionPane.prototype.renderAdd = function(update, parentElement) {
 	this._activeTabId = this.component.getProperty("activeTab");
 	
-    var element = this._render();
+    this._paneDivElement = this._render();
     
     var componentCount = this.component.getComponentCount();
     for (var i = 0; i < componentCount; ++i) {
@@ -34,19 +35,21 @@ ExtrasRender.ComponentSync.AccordionPane.prototype.renderAdd = function(update, 
 		var tab = new ExtrasRender.ComponentSync.AccordionPane.Tab(child, this);
 	    this._tabs.add(tab);
 	    tab._render(update);
-	    element.appendChild(tab._tabDivElement);
-	    element.appendChild(tab._contentDivElement);
+	    this._paneDivElement.appendChild(tab._tabDivElement);
+	    this._paneDivElement.appendChild(tab._contentDivElement);
     }
     
     this._redrawTabs();
     
-    parentElement.appendChild(element);
+    parentElement.appendChild(this._paneDivElement);
 };
 
 ExtrasRender.ComponentSync.AccordionPane.prototype.renderUpdate = function(update) {
     // FIXME partial update / lazy rendering
-    EchoRender.Util.renderRemove(update, update.parent);
-    var containerElement = EchoRender.Util.getContainerElement(update.parent);
+    var element = this._paneDivElement;
+    var containerElement = element.parentNode;
+    EchoRender.renderComponentDispose(update, update.parent);
+    containerElement.removeChild(element);
     this.renderAdd(update, containerElement);
     return true;
 };
@@ -60,6 +63,8 @@ ExtrasRender.ComponentSync.AccordionPane.prototype.renderDispose = function(upda
 		this._tabs.get(i)._dispose();
 	}
 	this._tabs = new EchoCore.Collections.List();
+	this._paneDivElement.id = "";
+	this._paneDivElement = null;
 };
 
 ExtrasRender.ComponentSync.AccordionPane.prototype._render = function() {
@@ -268,7 +273,9 @@ ExtrasRender.ComponentSync.AccordionPane.Tab.prototype._dispose = function() {
 	
 	this._parent = null;
 	this._childComponent = null;
+	this._tabDivElement.id = "";
 	this._tabDivElement = null;
+	this._contentDivElement.id = "";
 	this._contentDivElement = null;
 };
 
