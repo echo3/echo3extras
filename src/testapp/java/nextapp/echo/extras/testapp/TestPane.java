@@ -121,6 +121,8 @@ public class TestPane extends ContentPane {
         testsMenu.addItem(new DefaultOptionModel( 
                 "Launch_BorderPaneTest", "Border Pane", Styles.ICON_16_BORDER_PANE));
         testsMenu.addItem(new DefaultOptionModel(
+                "Launch_ContextMenuTest", "Context Menu", Styles.ICON_16_MENU_BAR_PANE));
+        testsMenu.addItem(new DefaultOptionModel(
                 "Launch_CalendarSelectTest", "Calendar Select", Styles.ICON_16_CALENDAR_SELECT));
         testsMenu.addItem(new DefaultOptionModel(
                 "Launch_ColorSelectTest", "Color Select", Styles.ICON_16_COLOR_SELECT));

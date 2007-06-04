@@ -814,5 +814,126 @@ ExtrasRender.ComponentSync.DropDownMenu.prototype._doAction = function(menuModel
     this.component.fireEvent(new EchoCore.Event(this.component, "select", path));
 };
 
+/**
+ * Component rendering peer: ContextMenu
+ */
+ExtrasRender.ComponentSync.ContextMenu = function() {
+	this._contextEvent = null;
+};
+
+ExtrasRender.ComponentSync.ContextMenu.prototype = new ExtrasRender.ComponentSync.Menu;
+
+ExtrasRender.ComponentSync.ContextMenu.prototype._renderMain = function(update) {
+    var contextMenuDivElement = document.createElement("div");
+    contextMenuDivElement.id = this.component.renderId;
+    
+    EchoWebCore.EventProcessor.add(contextMenuDivElement, "click", new EchoCore.MethodRef(this, this._processClick), false);
+    EchoWebCore.EventProcessor.add(contextMenuDivElement, "contextmenu", new EchoCore.MethodRef(this, this._processContextClick), false);
+    
+    var componentCount = this.component.getComponentCount();
+    if (componentCount > 0) {
+	    EchoRender.renderComponentAdd(update, this.component.getComponent(0), contextMenuDivElement);
+    }
+    
+    return contextMenuDivElement;
+};
+
+ExtrasRender.ComponentSync.ContextMenu.prototype._renderTopMenu = function(menuModel) {
+	var e = this._contextEvent;
+	var x = e.pageX || (e.clientX + (document.documentElement.scrollLeft || document.body.scrollLeft));
+	var y = e.pageY || (e.clientY + (document.documentElement.scrollTop || document.body.scrollTop));
+	
+    this._renderMenu(menuModel, x, y);
+};
+
+ExtrasRender.ComponentSync.ContextMenu.prototype.renderUpdate = function(update) {
+	ExtrasRender.ComponentSync.Menu.prototype.renderUpdate.call(this, update);
+	return false;
+};
+
+ExtrasRender.ComponentSync.ContextMenu.prototype.renderDispose = function(update) {
+	ExtrasRender.ComponentSync.Menu.prototype.renderDispose.call(this, update);
+	this._contextEvent = null;
+};
+
+ExtrasRender.ComponentSync.ContextMenu.prototype._isTopMenuElement = function(element) {
+    return element.id == this.component.renderId;
+};
+
+ExtrasRender.ComponentSync.ContextMenu.prototype._getMenuElement = function(itemModel) {
+    var menuElement = document.getElementById(this.component.renderId + "_tr_item_" + itemModel.id);
+    if (menuElement == null) {
+        menuElement = document.getElementById(this.component.renderId);
+    }
+    return menuElement;
+};
+
+ExtrasRender.ComponentSync.ContextMenu.prototype._renderMask = function() {
+    if (this.maskDeployed) {
+        return;
+    }
+    this.maskDeployed = true;
+    
+    var bodyElement = document.getElementsByTagName("body")[0];    
+    
+    var blockDivElement = document.createElement("div");
+    blockDivElement.id = this.component.renderId + "_block";
+    blockDivElement.style.position = "absolute";
+    blockDivElement.style.top = "0px";
+    blockDivElement.style.left = "0px";
+    blockDivElement.style.width = "100%";
+    blockDivElement.style.height = "100%";
+    blockDivElement.style.backgroundImage = "url(" + EchoRender.Util.TRANSPARENT_IMAGE + ")";
+    bodyElement.appendChild(blockDivElement);
+
+    EchoWebCore.EventProcessor.add(blockDivElement, "click", new EchoCore.MethodRef(this, this._processCancel), false);
+};
+
+ExtrasRender.ComponentSync.ContextMenu.prototype._removeMask = function() {
+    if (!this.maskDeployed) {
+        return;
+    }
+    this.maskDeployed = false;
+
+    var bodyElement = document.getElementsByTagName("body")[0];    
+    var blockDivElement = document.getElementById(this.component.renderId + "_block");
+    if (blockDivElement) {
+		EchoWebCore.EventProcessor.removeAll(blockDivElement);
+        bodyElement.removeChild(blockDivElement);
+    }
+};
+
+ExtrasRender.ComponentSync.ContextMenu.prototype._processClick = function(e) {
+    if (!this.component.isActive()) {
+        return;
+    }
+    
+    EchoWebCore.DOM.preventEventDefault(e);
+
+    var modelId = ExtrasRender.ComponentSync.Menu._getElementModelId(e.target);
+    if (modelId) {
+	    this._renderMask();
+	    this._activateItem(this._menuModel.getItem(modelId));
+    }
+};
+
+ExtrasRender.ComponentSync.ContextMenu.prototype._processContextClick = function(e) {
+    if (!this.component.isActive()) {
+        return;
+    }
+
+    EchoWebCore.DOM.preventEventDefault(e);
+    
+    this._contextEvent = e;
+    this._renderMask();
+    this._activateItem(this._menuModel);
+};
+
+ExtrasRender.ComponentSync.ContextMenu.prototype._doAction = function(menuModel) {
+    var path = menuModel.getItemPositionPath().join(".");
+    this.component.fireEvent(new EchoCore.Event(this.component, "select", path));
+};
+
+EchoRender.registerPeer("nextapp.echo.extras.app.ContextMenu", ExtrasRender.ComponentSync.ContextMenu);
 EchoRender.registerPeer("nextapp.echo.extras.app.MenuBarPane", ExtrasRender.ComponentSync.MenuBarPane);
 EchoRender.registerPeer("nextapp.echo.extras.app.DropDownMenu", ExtrasRender.ComponentSync.DropDownMenu);
