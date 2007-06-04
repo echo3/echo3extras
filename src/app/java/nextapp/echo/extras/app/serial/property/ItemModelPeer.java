@@ -79,7 +79,7 @@ public class ItemModelPeer implements SerialPropertyPeer {
         SerialContext serialContext = (SerialContext) context.get(SerialContext.class);
         
         propertyElement.setAttribute("t", SerialPropertyPeerConstants.PROPERTY_TYPE_PREFIX + "MenuModel");
-        writeIconAndText(context, objectClass, propertyElement, model.getText(), model.getIcon());
+        writeIdIconAndText(context, objectClass, propertyElement, model.getId(), model.getText(), model.getIcon());
         int length = model.getItemCount();
         for (int i = 0; i < length; ++i) {
             Element subElement = serialContext.getDocument().createElement("item");
@@ -100,14 +100,17 @@ public class ItemModelPeer implements SerialPropertyPeer {
             type = "OptionModel";
         }
         propertyElement.setAttribute("t", SerialPropertyPeerConstants.PROPERTY_TYPE_PREFIX + type);
-        writeIconAndText(context, objectClass, propertyElement, model.getText(), model.getIcon());
+        writeIdIconAndText(context, objectClass, propertyElement, model.getId(), model.getText(), model.getIcon());
     }
     
     private void toXml(Context context, Class objectClass, Element propertyElement, SeparatorModel model) {
         propertyElement.setAttribute("t", SerialPropertyPeerConstants.PROPERTY_TYPE_PREFIX + "SeparatorModel");
     }
     
-    private void writeIconAndText(Context context, Class objectClass, Element propertyElement, String text, ImageReference icon) throws SerialException {
+    private void writeIdIconAndText(Context context, Class objectClass, Element propertyElement, String id, String text, ImageReference icon) throws SerialException {
+        if (id != null) {
+            propertyElement.setAttribute("id", id);
+        }
         if (text != null) {
             propertyElement.setAttribute("text", text);
         }

@@ -24,9 +24,10 @@ ExtrasSerial.PropertyTranslator.ItemModel.toProperty = function(client, property
 ExtrasSerial.PropertyTranslator.MenuModel = function() { };
 
 ExtrasSerial.PropertyTranslator.MenuModel.toProperty = function(client, propertyElement) {
+    var id = propertyElement.getAttribute("id");
     var text = propertyElement.getAttribute("text");
     var icon = ExtrasSerial.PropertyTranslator.ItemModel._parseIcon(client, propertyElement);
-    var model = new ExtrasApp.MenuModel(text, icon);
+    var model = new ExtrasApp.MenuModel(id, text, icon);
     
     var children = EchoWebCore.DOM.getChildElementsByTagName(propertyElement, "item");
     for (var i = 0; i < children.length; i++) {
@@ -40,25 +41,28 @@ ExtrasSerial.PropertyTranslator.MenuModel.toProperty = function(client, property
 ExtrasSerial.PropertyTranslator.OptionModel = function() { };
 
 ExtrasSerial.PropertyTranslator.OptionModel.toProperty = function(client, propertyElement) {
+    var id = propertyElement.getAttribute("id");
     var text = propertyElement.getAttribute("text");
     var icon = ExtrasSerial.PropertyTranslator.ItemModel._parseIcon(client, propertyElement);
-    return new ExtrasApp.OptionModel(text, icon);
+    return new ExtrasApp.OptionModel(id, text, icon);
 };
 
 ExtrasSerial.PropertyTranslator.RadioOptionModel = function() { };
 
 ExtrasSerial.PropertyTranslator.RadioOptionModel.toProperty = function(client, propertyElement) {
+    var id = propertyElement.getAttribute("id");
     var text = propertyElement.getAttribute("text");
     var icon = ExtrasSerial.PropertyTranslator.ItemModel._parseIcon(client, propertyElement);
-    return new ExtrasApp.RadioOptionModel(text, icon);
+    return new ExtrasApp.RadioOptionModel(id, text, icon);
 };
 
 ExtrasSerial.PropertyTranslator.ToggleOptionModel = function() { };
 
 ExtrasSerial.PropertyTranslator.ToggleOptionModel.toProperty = function(client, propertyElement) {
+    var id = propertyElement.getAttribute("id");
     var text = propertyElement.getAttribute("text");
     var icon = ExtrasSerial.PropertyTranslator.ItemModel._parseIcon(client, propertyElement);
-    return new ExtrasApp.ToggleOptionModel(text, icon);
+    return new ExtrasApp.ToggleOptionModel(id, text, icon);
 };
 
 ExtrasSerial.PropertyTranslator.SeparatorModel = function() { };
@@ -76,8 +80,18 @@ EchoSerial.addPropertyTranslator("ExtrasSerial.SeparatorModel", ExtrasSerial.Pro
 ExtrasSerial.PropertyTranslator.MenuStateModel = function() { };
 
 ExtrasSerial.PropertyTranslator.MenuStateModel.toProperty = function(client, propertyElement) {
-	// FIXME implement this
-    return new ExtrasApp.MenuStateModel();
+	var stateModel = new ExtrasApp.MenuStateModel();
+    var children = EchoWebCore.DOM.getChildElementsByTagName(propertyElement, "i");
+    for (var i = 0; i < children.length; i++) {
+    	var childElement = children[i];
+    	if (childElement.hasAttribute("enabled")) {
+    		stateModel.setEnabled(childElement.getAttribute("id"), childElement.getAttribute("enabled") == "true");
+    	}
+    	if (childElement.hasAttribute("selected")) {
+    		stateModel.setSelected(childElement.getAttribute("id"), childElement.getAttribute("selected") == "true");
+    	}
+	}
+    return stateModel;
 };
 
 EchoSerial.addPropertyTranslator("ExtrasSerial.MenuStateModel", ExtrasSerial.PropertyTranslator.MenuStateModel);

@@ -31,9 +31,8 @@ package nextapp.echo.extras.webcontainer.sync.component;
 
 import java.util.Iterator;
 
-import org.w3c.dom.Element;
-
 import nextapp.echo.app.Component;
+import nextapp.echo.app.serial.SerialContext;
 import nextapp.echo.app.serial.SerialException;
 import nextapp.echo.app.serial.SerialPropertyPeer;
 import nextapp.echo.app.update.ClientUpdateManager;
@@ -42,6 +41,7 @@ import nextapp.echo.extras.app.menu.AbstractMenuComponent;
 import nextapp.echo.extras.app.menu.ItemModel;
 import nextapp.echo.extras.app.menu.MenuModel;
 import nextapp.echo.extras.app.menu.MenuStateModel;
+import nextapp.echo.extras.app.menu.ToggleOptionModel;
 import nextapp.echo.extras.app.serial.property.SerialPropertyPeerConstants;
 import nextapp.echo.extras.webcontainer.service.CommonService;
 import nextapp.echo.extras.webcontainer.service.MenuImageService;
@@ -53,6 +53,8 @@ import nextapp.echo.webcontainer.WebContainerServlet;
 import nextapp.echo.webcontainer.service.JavaScriptService;
 import nextapp.echo.webcontainer.service.TransparentImageService;
 import nextapp.echo.webcontainer.util.ArrayIterator;
+
+import org.w3c.dom.Element;
 
 /**
  * Base synchronization peer for <code>AbstractMenuComponent</code>s.
@@ -100,7 +102,33 @@ abstract class AbstractMenuPeer extends AbstractComponentSynchronizePeer {
         public void toXml(Context context, Class objectClass, Element propertyElement, Object propertyValue) {
             RenderedMenuStateModel menuData = (RenderedMenuStateModel) propertyValue;
             propertyElement.setAttribute("t", SerialPropertyPeerConstants.PROPERTY_TYPE_PREFIX + "MenuStateModel");
-            propertyElement.setAttribute("v", menuData.toString());
+            
+            SerialContext serialContext = (SerialContext) context.get(SerialContext.class);
+            writeMenuModel(serialContext, propertyElement, menuData.getMenuModel(), menuData.getMenuStateModel());
+        }
+        
+        private void writeMenuModel(SerialContext serialContext, Element propertyElement, ItemModel itemModel, MenuStateModel menuStateModel) {
+            String id = itemModel.getId();
+            if (id != null) {
+                Element itemElement = serialContext.getDocument().createElement("i");
+                itemElement.setAttribute("id", id);
+                if (!menuStateModel.isEnabled(id)) {
+                    itemElement.setAttribute("enabled", "false");
+                }
+                if (itemModel instanceof ToggleOptionModel && menuStateModel.isSelected(id)) {
+                    itemElement.setAttribute("selected", "true");
+                }
+                if (itemElement.getAttributes().getLength() > 1) {
+                    propertyElement.appendChild(itemElement);
+                }
+            }
+            if (itemModel instanceof MenuModel) {
+                MenuModel menuModel = (MenuModel)itemModel;
+                int size = menuModel.getItemCount();
+                for (int i = 0; i < size; ++i) {
+                    writeMenuModel(serialContext, propertyElement, menuModel.getItem(i), menuStateModel);
+                }
+            }
         }
     }
     

@@ -1,12 +1,14 @@
 /**
  * Representation of a menu that may contain submenus, options, and separators.
  *
+ * @param modelId {String} the id of the menu model
  * @param text {String} the title of the menu model which will appear in its parent menu
  *        when this menu is used as a submenu
  * @param icon {String} the icon of the menu model which will appear in its parent menu
  *        when this menu is used as a submenu
  */
-ExtrasApp.MenuModel = function(text, icon) {
+ExtrasApp.MenuModel = function(modelId, text, icon) {
+    this.modelId = modelId;
     this.id = ExtrasApp.uniqueId++;
     this.parent = null;
     this.text = text;
@@ -66,7 +68,8 @@ ExtrasApp.MenuModel.prototype.toString = function() {
     return "MenuModel \"" + this.text + "\" Items:" + this.items.length;
 };
 
-ExtrasApp.OptionModel = function(text, icon) {
+ExtrasApp.OptionModel = function(modelId, text, icon) {
+    this.modelId = modelId;
     this.id = ExtrasApp.uniqueId++;
     this.parent = null;
     this.text = text;
@@ -97,7 +100,8 @@ ExtrasApp.OptionModel.prototype.toString = function() {
     return "OptionModel \"" + this.text + "\"";
 };
 
-ExtrasApp.ToggleOptionModel = function(text, selected) {
+ExtrasApp.ToggleOptionModel = function(modelId, text, selected) {
+    this.modelId = modelId;
     this.id = ExtrasApp.uniqueId++;
     this.text = text;
     this.selected = selected;
@@ -105,7 +109,8 @@ ExtrasApp.ToggleOptionModel = function(text, selected) {
 
 ExtrasApp.ToggleOptionModel.prototype = new ExtrasApp.OptionModel(null, null);
 
-ExtrasApp.RadioOptionModel = function(text, selected) {
+ExtrasApp.RadioOptionModel = function(modelId, text, selected) {
+    this.modelId = modelId;
     this.id = ExtrasApp.uniqueId++;
     this.text = text;
     this.selected = selected;
@@ -121,24 +126,40 @@ ExtrasApp.SeparatorModel = function() {
 };
 
 ExtrasApp.MenuStateModel = function() {
-    this._enabledItems = new Array();
+    this._disabledItems = new Array();
     this._selectedItems = new Array();
 };
 
-ExtrasApp.MenuStateModel.prototype.isEnabled = function(id) {
-	// FIXME implement this
-	if (id) {
-		return true;
-	} else {
-		return false;
+ExtrasApp.MenuStateModel.prototype.isEnabled = function(modelId) {
+	if (modelId) {
+		for (var i = 0; i < this._disabledItems.length; i++) {
+			if (this._disabledItems[i] == modelId) {
+				return false;
+			}
+		}
+	}
+	return true;
+};
+
+ExtrasApp.MenuStateModel.prototype.isSelected = function(modelId) {
+	if (modelId) {
+		for (var i = 0; i < this._selectedItems.length; i++) {
+			if (this._selectedItems[i] == modelId) {
+				return true;
+			}
+		}
+	}
+	return false;
+};
+
+ExtrasApp.MenuStateModel.prototype.setEnabled = function(modelId, enabled) {
+	if (!enabled) {
+		this._disabledItems.push(modelId);
 	}
 };
 
-ExtrasApp.MenuStateModel.prototype.isSelected = function(id) {
-	// FIXME implement this
-	if (id) {
-		return true;
-	} else {
-		return false;
+ExtrasApp.MenuStateModel.prototype.setSelected = function(modelId, selected) {
+	if (selected) {
+		this._selectedItems.push(modelId);
 	}
 };

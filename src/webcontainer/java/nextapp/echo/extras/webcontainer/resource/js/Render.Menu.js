@@ -4,6 +4,7 @@
  * Component rendering peer: Menu
  */
 ExtrasRender.ComponentSync.Menu = function() {
+	this._element = null;
 	this._menuModel = null;
 	this._stateModel = null;
     /**
@@ -29,30 +30,33 @@ ExtrasRender.ComponentSync.Menu.prototype.renderAdd = function(update, parentEle
 	this._menuModel = this.component.getProperty("model");
 	this._stateModel = this.component.getProperty("stateModel");
 	
-    var element = this._renderMain();
+    this._element = this._renderMain(update);
     
-	EchoWebCore.EventProcessor.addSelectionDenialListener(element);
+	EchoWebCore.EventProcessor.addSelectionDenialListener(this._element);
     
-    parentElement.appendChild(element);
+    parentElement.appendChild(this._element);
 };
 
 ExtrasRender.ComponentSync.Menu.prototype.renderUpdate = function(update) {
-    EchoRender.Util.renderRemove(update, update.parent);
-    var containerElement = EchoRender.Util.getContainerElement(update.parent);
+    var element = this._element;
+    var containerElement = element.parentNode;
+    EchoRender.renderComponentDispose(update, update.parent);
+    containerElement.removeChild(element);
     this.renderAdd(update, containerElement);
-    return true;
+    return false;
 };
 
 ExtrasRender.ComponentSync.Menu.prototype.renderDispose = function(update) {
-    var element = document.getElementById(this.component.renderId);
-	EchoWebCore.EventProcessor.removeAll(element);
+	EchoWebCore.EventProcessor.removeAll(this._element);
+	this._element.id = "";
+	this._element = null;
 	this._menuModel = null;
 	this._stateModel = null;
     this._openMenuPath = new Array();
 };
 
 ExtrasRender.ComponentSync.Menu.prototype._activateItem = function(itemModel) {
-    if (!this._stateModel.isEnabled(itemModel.id)) {
+    if (!this._stateModel.isEnabled(itemModel.modelId)) {
         return;
     }
     if (itemModel instanceof ExtrasApp.OptionModel) {
@@ -206,7 +210,7 @@ ExtrasRender.ComponentSync.Menu.prototype._renderMenu = function(menuModel, xPos
 	            EchoRender.Property.Insets.renderPixel(iconPadding, menuItemIconTdElement, "padding");
                 if (item instanceof ExtrasApp.ToggleOptionModel) {
                     var iconIdentifier;
-                    var selected = this._stateModel.isSelected(item.id);
+                    var selected = this._stateModel.isSelected(item.modelId);
                     if (item instanceof ExtrasApp.RadioOptionModel) {
                         iconIdentifier = selected ? "radioOn" : "radioOff";
                     } else {
@@ -231,7 +235,7 @@ ExtrasRender.ComponentSync.Menu.prototype._renderMenu = function(menuModel, xPos
             if (lineWrap != null && !lineWrap) {
 	            menuItemContentTdElement.style.whiteSpace = "nowrap";
             }
-            if (!this._stateModel.isEnabled(item.id)) {
+            if (!this._stateModel.isEnabled(item.modelId)) {
             	EchoRender.Property.Color.renderComponentProperty(this.component, "disabledForeground", ExtrasRender.ComponentSync.Menu._defaultDisabledForeground, menuItemContentTdElement, "color");
             }
             menuItemContentTdElement.title = item.text;
@@ -288,7 +292,7 @@ ExtrasRender.ComponentSync.Menu.prototype._disposeMenu = function(menuModel) {
 };
 
 ExtrasRender.ComponentSync.Menu.prototype._highlight = function(menuModel, state) {
-    if (!this._stateModel.isEnabled(menuModel.id)) {
+    if (!this._stateModel.isEnabled(menuModel.modelId)) {
         return;
     }
     var menuElement = this._getMenuElement(menuModel);
@@ -305,12 +309,16 @@ ExtrasRender.ComponentSync.Menu.prototype._highlight = function(menuModel, state
 
 ExtrasRender.ComponentSync.Menu.prototype._processItemEnter = function(e) {
     var modelId = ExtrasRender.ComponentSync.Menu._getElementModelId(e.target);
-	this._highlight(this._menuModel.getItem(modelId), true);
+    if (modelId) {
+		this._highlight(this._menuModel.getItem(modelId), true);
+    }
 };
 
 ExtrasRender.ComponentSync.Menu.prototype._processItemExit = function(e) {
     var modelId = ExtrasRender.ComponentSync.Menu._getElementModelId(e.target);
-	this._highlight(this._menuModel.getItem(modelId), false);
+    if (modelId) {
+		this._highlight(this._menuModel.getItem(modelId), false);
+    }
 };
 
 ExtrasRender.ComponentSync.Menu.prototype._processCancel = function() {
