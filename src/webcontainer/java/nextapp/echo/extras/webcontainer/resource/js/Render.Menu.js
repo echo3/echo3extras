@@ -908,12 +908,13 @@ ExtrasRender.ComponentSync.ContextMenu.prototype._processClick = function(e) {
         return;
     }
     
-    EchoWebCore.DOM.preventEventDefault(e);
-
     var modelId = ExtrasRender.ComponentSync.Menu._getElementModelId(e.target);
     if (modelId) {
+	    EchoWebCore.DOM.preventEventDefault(e);
 	    this._renderMask();
 	    this._activateItem(this._menuModel.getItem(modelId));
+    } else {
+	    return true;
     }
 };
 
