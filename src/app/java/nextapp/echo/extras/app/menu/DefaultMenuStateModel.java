@@ -66,6 +66,7 @@ public class DefaultMenuStateModel extends AbstractMenuStateModel {
         } else { 
             disabledIdSet.add(id);
         }
+        fireStateChanged();
     }
     
     /**

@@ -5,6 +5,8 @@ import java.util.EventListener;
 import nextapp.echo.app.Component;
 import nextapp.echo.app.event.ActionEvent;
 import nextapp.echo.app.event.ActionListener;
+import nextapp.echo.app.event.ChangeEvent;
+import nextapp.echo.app.event.ChangeListener;
 
 public abstract class AbstractMenuComponent extends Component {
 
@@ -14,7 +16,20 @@ public abstract class AbstractMenuComponent extends Component {
 
     private MenuModel model;
     private MenuStateModel stateModel;
-    
+
+    /**
+     * Listener to monitor changes to state model.
+     */
+    private ChangeListener stateModelListener = new ChangeListener() {
+
+        /**
+         * @see nextapp.echo.app.event.ChangeListener#stateChanged(nextapp.echo.app.event.ChangeEvent)
+         */
+        public void stateChanged(ChangeEvent e) {
+            firePropertyChange(STATE_MODEL_CHANGED_PROPERTY, null, stateModel);
+        }
+    };
+
     /**
      * Creates a new <code>AbstractMenuComponent</code> displaying the specified 
      * <code>MenuModel</code> and using the specified 
@@ -168,16 +183,20 @@ public abstract class AbstractMenuComponent extends Component {
     }
     
     /**
-     * Sets the selection model.
+     * Sets the state model.
      * 
-     * @param newValue the new selection model
+     * @param newValue the new state model
      */
     public void setStateModel(MenuStateModel newValue) {
         if (newValue == null) {
-            throw new IllegalArgumentException("Selection model may not be null.");
+            throw new IllegalArgumentException("State model may not be null.");
         }
         MenuStateModel oldValue = stateModel;
+        if (oldValue != null) {
+            oldValue.removeChangeListener(stateModelListener);
+        }
         stateModel = newValue;
-        firePropertyChange(MODEL_CHANGED_PROPERTY, oldValue, newValue);
+        newValue.addChangeListener(stateModelListener);
+        firePropertyChange(STATE_MODEL_CHANGED_PROPERTY, oldValue, newValue);
     }
 }
