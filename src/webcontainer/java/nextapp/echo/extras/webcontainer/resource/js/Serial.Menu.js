@@ -84,11 +84,13 @@ ExtrasSerial.PropertyTranslator.MenuStateModel.toProperty = function(client, pro
     var children = EchoWebCore.DOM.getChildElementsByTagName(propertyElement, "i");
     for (var i = 0; i < children.length; i++) {
     	var childElement = children[i];
-    	if (childElement.hasAttribute("enabled")) {
-    		stateModel.setEnabled(childElement.getAttribute("id"), childElement.getAttribute("enabled") == "true");
-    	}
-    	if (childElement.hasAttribute("selected")) {
-    		stateModel.setSelected(childElement.getAttribute("id"), childElement.getAttribute("selected") == "true");
+	    var enabledValue = childElement.getAttribute("enabled");
+	    if (enabledValue != null) {
+			stateModel.setEnabled(childElement.getAttribute("id"), enabledValue == "true");
+	    }
+    	var selectedValue = childElement.getAttribute("selected");
+    	if (selectedValue != null) {
+	   		stateModel.setSelected(childElement.getAttribute("id"), selectedValue == "true");
     	}
 	}
     return stateModel;
