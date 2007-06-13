@@ -47,6 +47,7 @@ ExtrasRender.ComponentSync.Menu.prototype.renderUpdate = function(update) {
 };
 
 ExtrasRender.ComponentSync.Menu.prototype.renderDispose = function(update) {
+    this._processCancel();
 	EchoWebCore.EventProcessor.removeAll(this._element);
 	this._element.id = "";
 	this._element = null;
@@ -818,8 +819,9 @@ ExtrasRender.ComponentSync.DropDownMenu.prototype._doAction = function(menuModel
  * Component rendering peer: ContextMenu
  */
 ExtrasRender.ComponentSync.ContextMenu = function() {
-	this._contextEvent = null;
 };
+
+ExtrasRender.ComponentSync.ContextMenu._supportedPartialProperties = new Array("model", "stateModel");
 
 ExtrasRender.ComponentSync.ContextMenu.prototype = new ExtrasRender.ComponentSync.Menu;
 
@@ -839,21 +841,47 @@ ExtrasRender.ComponentSync.ContextMenu.prototype._renderMain = function(update) 
 };
 
 ExtrasRender.ComponentSync.ContextMenu.prototype._renderTopMenu = function(menuModel) {
-	var e = this._contextEvent;
-	var x = e.pageX || (e.clientX + (document.documentElement.scrollLeft || document.body.scrollLeft));
-	var y = e.pageY || (e.clientY + (document.documentElement.scrollTop || document.body.scrollTop));
-	
-    this._renderMenu(menuModel, x, y);
+    this._renderMenu(menuModel, this._mousePosX, this._mousePosY);
 };
 
 ExtrasRender.ComponentSync.ContextMenu.prototype.renderUpdate = function(update) {
+	if (EchoCore.Arrays.containsAll(ExtrasRender.ComponentSync.ContextMenu._supportedPartialProperties, update.getUpdatedPropertyNames())) {
+	    // partial update
+	    var removedChildren = update.getRemovedChildren();
+	    if (removedChildren) {
+	        EchoWebCore.DOM.removeNode(this._element.firstChild);
+	    }
+	    var addedChildren = update.getAddedChildren();
+	    if (addedChildren) {
+		    EchoRender.renderComponentAdd(update, addedChildren[0], this._element);
+	    }
+		var modelUpdate = update.getUpdatedProperty("model");
+		var stateModelUpdate = update.getUpdatedProperty("stateModel");
+		
+		var reOpenMenu = this.maskDeployed && (modelUpdate || stateModelUpdate);
+		if (reOpenMenu) {
+	        this._closeDescendantMenus(null);
+		}
+		if (modelUpdate) {
+			this._menuModel = modelUpdate.newValue;
+		}
+		if (stateModelUpdate) {
+			this._stateModel = stateModelUpdate.newValue;
+		}
+		if (reOpenMenu) {
+		    this._activateItem(this._menuModel);
+		}
+		return false;
+	}
+	// full update
 	ExtrasRender.ComponentSync.Menu.prototype.renderUpdate.call(this, update);
-	return false;
+	return true;
 };
 
 ExtrasRender.ComponentSync.ContextMenu.prototype.renderDispose = function(update) {
 	ExtrasRender.ComponentSync.Menu.prototype.renderDispose.call(this, update);
-	this._contextEvent = null;
+	this._mousePosX = null;
+	this._mousePosY = null;
 };
 
 ExtrasRender.ComponentSync.ContextMenu.prototype._isTopMenuElement = function(element) {
@@ -925,7 +953,9 @@ ExtrasRender.ComponentSync.ContextMenu.prototype._processContextClick = function
 
     EchoWebCore.DOM.preventEventDefault(e);
     
-    this._contextEvent = e;
+	this._mousePosX = e.pageX || (e.clientX + (document.documentElement.scrollLeft || document.body.scrollLeft));
+	this._mousePosY = e.pageY || (e.clientY + (document.documentElement.scrollTop || document.body.scrollTop));
+	
     this._renderMask();
     this._activateItem(this._menuModel);
 };
