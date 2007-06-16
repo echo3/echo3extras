@@ -8,6 +8,7 @@ ExtrasRender.ComponentSync.TabPane = function() {
 	this._activeTabId = null;
 	this._tabs = new EchoCore.Collections.List();
     // elements
+    this._element = null;
     this._headerContainerTrElement = null;
     this._contentContainerDivElement = null;
 };
@@ -35,10 +36,10 @@ ExtrasRender.ComponentSync.TabPane.prototype = new EchoRender.ComponentSync;
 ExtrasRender.ComponentSync.TabPane.prototype.renderAdd = function(update, parentElement) {
 	this._activeTabId = this.component.getProperty("activeTab");
 	
-    var element = this._render();
+    this._element = this._render();
     
-    this._headerContainerTrElement = element.childNodes[0].firstChild.rows[0];
-    this._contentContainerDivElement = element.childNodes[1];
+    this._headerContainerTrElement = this._element.childNodes[0].firstChild.rows[0];
+    this._contentContainerDivElement = this._element.childNodes[1];
     
     var componentCount = this.component.getComponentCount();
     for (var i = 0; i < componentCount; ++i) {
@@ -50,13 +51,15 @@ ExtrasRender.ComponentSync.TabPane.prototype.renderAdd = function(update, parent
 	    this._contentContainerDivElement.appendChild(tab._contentDivElement);
     }
     
-    parentElement.appendChild(element);
+    parentElement.appendChild(this._element);
 };
 
 ExtrasRender.ComponentSync.TabPane.prototype.renderUpdate = function(update) {
     // FIXME partial update / lazy rendering
-    EchoRender.Util.renderRemove(update, update.parent);
-    var containerElement = EchoRender.Util.getContainerElement(update.parent);
+    var element = this._element;
+    var containerElement = element.parentNode;
+    EchoRender.renderComponentDispose(update, update.parent);
+    containerElement.removeChild(element);
     this.renderAdd(update, containerElement);
     return true;
 };
@@ -67,6 +70,7 @@ ExtrasRender.ComponentSync.TabPane.prototype.renderDispose = function(update) {
 		this._tabs.get(i)._dispose();
 	}
 	this._tabs = new EchoCore.Collections.List();
+    this._element = null;
     this._headerContainerTrElement = null;
     this._contentContainerDivElement = null;
 };
