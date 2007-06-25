@@ -447,6 +447,8 @@ ExtrasRender.ComponentSync.TabPane.Tab.prototype._renderCloseIconElement = funct
 	}
 	if (closeImage) {
 		imgElement.src = closeImage.url;
+	} else {
+		imgElement.src = EchoRender.Util.TRANSPARENT_IMAGE;
 	}
 	if (EchoWebCore.Environment.BROWSER_INTERNET_EXPLORER) {
     	// remove auto-calculated width & height, to prevent problems with different image sizes
@@ -710,6 +712,7 @@ ExtrasRender.ComponentSync.TabPane.Tab.prototype._processEnter = function(e) {
 		this._closeImageTdElement.firstChild.src = closeImage.url;
 	   	this._closeImageTdElement.firstChild.style.visibility = "visible";
 	} else {
+	   	this._closeImageTdElement.firstChild.src = EchoRender.Util.TRANSPARENT_IMAGE;
 	   	this._closeImageTdElement.firstChild.style.visibility = "hidden";
 	}
 };
