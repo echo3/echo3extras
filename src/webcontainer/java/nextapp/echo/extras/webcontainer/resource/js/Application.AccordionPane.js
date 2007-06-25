@@ -6,7 +6,8 @@
  * @base EchoApp.Component
  */
 ExtrasApp.AccordionPane = function(renderId) {
-    EchoApp.Component.call(this, "ExtrasApp.AccordionPane", renderId);
+    EchoApp.Component.call(this, renderId);
+    this.componentType = "ExtrasApp.AccordionPane";
 };
 
 ExtrasApp.AccordionPane.prototype = new EchoApp.Component;

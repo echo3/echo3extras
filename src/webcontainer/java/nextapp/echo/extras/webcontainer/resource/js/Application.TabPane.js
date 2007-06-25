@@ -6,7 +6,8 @@
  * @base EchoApp.Component
  */
 ExtrasApp.TabPane = function(renderId) {
-    EchoApp.Component.call(this, "ExtrasApp.TabPane", renderId);
+    EchoApp.Component.call(this, renderId);
+    this.componentType = "ExtrasApp.TabPane";
 };
 
 ExtrasApp.TabPane.prototype = new EchoApp.Component;

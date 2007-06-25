@@ -6,7 +6,8 @@
  * @base EchoApp.Component
  */
 ExtrasApp.BorderPane = function(renderId) {
-    EchoApp.Component.call(this, "ExtrasApp.BorderPane", renderId);
+    EchoApp.Component.call(this, renderId);
+    this.componentType = "ExtrasApp.BorderPane";
 };
 
 ExtrasApp.BorderPane.prototype = new EchoApp.Component;
