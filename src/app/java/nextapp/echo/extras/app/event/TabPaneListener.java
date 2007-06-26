@@ -32,7 +32,7 @@ package nextapp.echo.extras.app.event;
 import java.util.EventListener;
 
 /**
- * Listener interface for receiving <code>WindowPaneEvent</code>s.
+ * Listener interface for receiving <code>TabPaneEvent</code>s.
  * 
  * @author n.beekman
  */
