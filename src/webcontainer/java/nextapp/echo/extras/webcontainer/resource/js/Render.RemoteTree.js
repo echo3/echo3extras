@@ -12,30 +12,39 @@ ExtrasRender.ComponentSync.RemoteTree.prototype.getContainerElement = function(c
 
 ExtrasRender.ComponentSync.RemoteTree.prototype.renderAdd = function(update, parentElement) {
     var tableElement = document.createElement("table");
+    tableElement.style.borderCollapse = "collapse";
+    tableElement.style.border = "1px solid black";
     
     var tbodyElement = document.createElement("tbody");
     tableElement.appendChild(tbodyElement);
     
     var treeStructure = this.component.getProperty("treeStructure");
     var maxDepth = treeStructure.getMaxDepth();
-    //var nodes = treeStructure.getNodes();
     var childCount = this.component.getComponentCount();
     for (var i = 0; i < childCount; ++i) {
 	    var trElement = document.createElement("tr");
 	    
-	    //var span = maxDepth - depth;
 	    var child = this.component.getComponent(i);
 	    var childNode = treeStructure.getNode(child.renderId);
-	    EchoCore.Debug.consoleWrite("get node for renderid: " + child.renderId + ", childNode: " + childNode);
 	    var depth = childNode.getDepth();
 	    
 	    for (var c = 0; c < depth; ++c) {
 	        var rowHeaderElement = document.createElement("td");
-	        rowHeaderElement.appendChild(document.createTextNode("-"));
+	        rowHeaderElement.appendChild(document.createTextNode("|"));
+	        rowHeaderElement.style.borderCollapse = "collapse";
+	        rowHeaderElement.style.border = "1px solid black";
 	        trElement.appendChild(rowHeaderElement);
 	    }
 	    
+	    var expandoElement = document.createElement("td");
+	    expandoElement.appendChild(document.createTextNode("+"));
+	    trElement.appendChild(expandoElement);
+	    
 	    var tdElement = document.createElement("td");
+	    var span = maxDepth - depth + 1;
+	    tdElement.colSpan = span;
+        tdElement.style.borderCollapse = "collapse";
+        tdElement.style.border = "1px solid black";
 	    trElement.appendChild(tdElement);
 	    
 	    

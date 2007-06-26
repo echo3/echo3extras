@@ -11,9 +11,7 @@ ExtrasApp.RemoteTree.TreeStructure.prototype.getNode = function(id) {
 };
 
 ExtrasApp.RemoteTree.TreeStructure.prototype.addNode = function(node) {
-	EchoCore.Debug.consoleWrite("add node to treestructure: " + node.getId());
 	this.idNodeMap.put(node.getId(), node);
-	EchoCore.Debug.consoleWrite(this.idNodeMap.toString());
 };
 
 ExtrasApp.RemoteTree.TreeStructure.prototype.getMaxDepth = function() {
