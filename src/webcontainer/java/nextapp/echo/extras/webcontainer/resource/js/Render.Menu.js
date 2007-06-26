@@ -965,6 +965,7 @@ ExtrasRender.ComponentSync.ContextMenu.prototype._doAction = function(menuModel)
     this.component.fireEvent(new EchoCore.Event(this.component, "select", path));
 };
 
+//FIXME. Inconsistent.
 EchoRender.registerPeer("nextapp.echo.extras.app.ContextMenu", ExtrasRender.ComponentSync.ContextMenu);
 EchoRender.registerPeer("nextapp.echo.extras.app.MenuBarPane", ExtrasRender.ComponentSync.MenuBarPane);
 EchoRender.registerPeer("nextapp.echo.extras.app.DropDownMenu", ExtrasRender.ComponentSync.DropDownMenu);
