@@ -22,10 +22,12 @@ public class Tree extends Component {
             Component cellComponent = cellRenderer.getTreeCellRendererComponent(Tree.this, value, 0, row);
             add(cellComponent);
             ++row;
-            int childCount = model.getChildCount(value);
-            for (int i = 0; i < childCount; ++i) {
-                Object childValue = model.getChild(value, i);
-                doRenderNode(childValue);
+            if (isExpanded(row)) {
+                int childCount = model.getChildCount(value);
+                for (int i = 0; i < childCount; ++i) {
+                    Object childValue = model.getChild(value, i);
+                    doRenderNode(childValue);
+                }
             }
         }
         
@@ -72,7 +74,7 @@ public class Tree extends Component {
     public Tree() {
         this(new DefaultTreeModel());
     }
-
+    
     public Tree(TreeModel model) {
         super();
         setModel(model);
@@ -82,6 +84,14 @@ public class Tree extends Component {
     public TreeCellRenderer getCellRenderer() {
         return cellRenderer;
     }
+    
+    public void dispose() {
+        model.removeTreeModelListener(modelListener);
+    }
+    
+    public void init() {
+        model.addTreeModelListener(modelListener);
+    }
 
     public TreeModel getModel() {
         return model;
@@ -89,7 +99,7 @@ public class Tree extends Component {
     
     public boolean isExpanded(int row) {
         //FIXME duh
-        return true;
+        return row < 6;
     }
 
     /**

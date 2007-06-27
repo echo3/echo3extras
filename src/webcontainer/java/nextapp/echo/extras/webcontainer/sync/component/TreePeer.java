@@ -83,6 +83,7 @@ extends AbstractComponentSynchronizePeer {
         
         private void renderNode(Object value, int depth) {
             Component component = tree.getComponent(row * columnCount);
+            boolean expanded = tree.isExpanded(row);
             String id = UserInstance.getElementId(component);
             Element eElement = document.createElement("e");
 //            eElement.setAttribute("x", Integer.toString(row));
@@ -91,11 +92,13 @@ extends AbstractComponentSynchronizePeer {
 //                eElement.setAttribute("p", parentId);
 //            }
             eElement.setAttribute("d", "" + depth);
+            if (expanded) {
+                eElement.setAttribute("ex", "1");
+            }
             propertyElement.appendChild(eElement);
 
             int childCount = model.getChildCount(value);
 
-            boolean expanded = tree.isExpanded(row);
             ++row;
             
             if (expanded) {
