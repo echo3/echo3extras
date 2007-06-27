@@ -6,10 +6,6 @@ ExtrasRender.ComponentSync.RemoteTree = function() {
 
 ExtrasRender.ComponentSync.RemoteTree.prototype = new EchoRender.ComponentSync;
 
-ExtrasRender.ComponentSync.RemoteTree.prototype.getContainerElement = function(component) {
-    throw new Exception("FIXME");
-};
-
 ExtrasRender.ComponentSync.RemoteTree.prototype.renderAdd = function(update, parentElement) {
     var tableElement = document.createElement("table");
     this._element = tableElement;
