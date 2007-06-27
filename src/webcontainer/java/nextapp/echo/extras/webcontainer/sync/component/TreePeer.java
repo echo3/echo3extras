@@ -2,18 +2,13 @@ package nextapp.echo.extras.webcontainer.sync.component;
 
 import java.util.Iterator;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 import nextapp.echo.app.Component;
-import nextapp.echo.app.Table;
 import nextapp.echo.app.serial.SerialException;
 import nextapp.echo.app.serial.SerialPropertyPeer;
 import nextapp.echo.app.update.ServerComponentUpdate;
 import nextapp.echo.app.util.Context;
 import nextapp.echo.extras.app.Tree;
 import nextapp.echo.extras.app.tree.TreeModel;
-import nextapp.echo.extras.webcontainer.service.CommonService;
 import nextapp.echo.webcontainer.AbstractComponentSynchronizePeer;
 import nextapp.echo.webcontainer.ServerMessage;
 import nextapp.echo.webcontainer.Service;
@@ -22,6 +17,9 @@ import nextapp.echo.webcontainer.WebContainerServlet;
 import nextapp.echo.webcontainer.service.JavaScriptService;
 import nextapp.echo.webcontainer.util.ArrayIterator;
 import nextapp.echo.webcontainer.util.MultiIterator;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public class TreePeer 
 extends AbstractComponentSynchronizePeer {
@@ -78,20 +76,20 @@ extends AbstractComponentSynchronizePeer {
         }
         
         private void render() {
-            renderNode(model.getRoot(), 0);
+            renderNode(null, model.getRoot());
         }
         
-        private void renderNode(Object value, int depth) {
+        private void renderNode(String parentId, Object value) {
             Component component = tree.getComponent(row * columnCount);
             boolean expanded = tree.isExpanded(row);
             String id = UserInstance.getElementId(component);
             Element eElement = document.createElement("e");
 //            eElement.setAttribute("x", Integer.toString(row));
             eElement.setAttribute("i", id);
-//            if (parentId != null) {
-//                eElement.setAttribute("p", parentId);
-//            }
-            eElement.setAttribute("d", "" + depth);
+            if (parentId != null) {
+                eElement.setAttribute("p", parentId);
+            }
+//            eElement.setAttribute("d", "" + depth);
             if (expanded) {
                 eElement.setAttribute("ex", "1");
             }
@@ -103,7 +101,7 @@ extends AbstractComponentSynchronizePeer {
             
             if (expanded) {
                 for (int i = 0; i < childCount; ++i) {
-                    renderNode(model.getChild(value, i), depth + 1);
+                    renderNode(id, model.getChild(value, i));
                 }
             }
             
@@ -126,7 +124,6 @@ extends AbstractComponentSynchronizePeer {
                     "/nextapp/echo/extras/webcontainer/resource/js/Render.RemoteTree.js" });
     
     static {
-        WebContainerServlet.getServiceRegistry().add(CommonService.INSTANCE);
         WebContainerServlet.getServiceRegistry().add(TREE_SERVICE);
     }
     
@@ -173,9 +170,11 @@ extends AbstractComponentSynchronizePeer {
             ServerComponentUpdate update) {
         Iterator normalPropertyIterator = super.getUpdatedOutputPropertyNames(context, component, update);
         
-        if (update.hasUpdatedProperty(Table.MODEL_CHANGED_PROPERTY)) {
+        if (update.hasUpdatedProperty(Tree.MODEL_CHANGED_PROPERTY)) {
             return new MultiIterator(
                     new Iterator[]{ normalPropertyIterator, new ArrayIterator(MODEL_CHANGED_UPDATE_PROPERTIES) });
+        } else if (update.hasUpdatedProperty(Tree.EXPANSION_STATE_CHANGED_PROPERTY)) {
+            return new ArrayIterator(new String[] {PROPERTY_TREE_STRUCTURE});
         } else {
             return normalPropertyIterator;
         }

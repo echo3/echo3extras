@@ -1,11 +1,10 @@
 package nextapp.echo.extras.testapp.testscreen;
 
-import nextapp.echo.app.Label;
 import nextapp.echo.app.event.ActionEvent;
 import nextapp.echo.app.event.ActionListener;
 import nextapp.echo.extras.app.Tree;
 import nextapp.echo.extras.app.tree.AbstractTreeModel;
-import nextapp.echo.extras.app.tree.TreeModel;
+import nextapp.echo.extras.app.tree.TreePath;
 import nextapp.echo.extras.testapp.AbstractTest;
 import nextapp.echo.extras.testapp.Styles;
 import nextapp.echo.extras.testapp.TestControlPane;
@@ -19,14 +18,9 @@ public class TreeTest extends AbstractTest {
         
         tree = new Tree();
         add(tree);
-        setTestComponent(this, tree);
         
+        setTestComponent(this, tree);
         // Add/Remove Tabs
-
-        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Foo", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-            }
-        });
         
         tree.setModel(new AbstractTreeModel() {
 
@@ -53,20 +47,15 @@ public class TreeTest extends AbstractTest {
                 return objectValue == 0;
             }
         });
-    }
-    
-    public static void main(String[] args) {
-        TreeTest test = new TreeTest();
-        TreeModel model = test.tree.getModel();
-        printModel(model, model.getRoot());
-    }
-    
-    public static void printModel(TreeModel model, Object parent) {
-        int childCount = model.getChildCount(parent);
-        for (int i = 0; i < childCount; ++i) {
-            Object child = model.getChild(parent, i);
-            System.out.println(child);
-            printModel(model, child);
-        }
+
+        Object root = tree.getModel().getRoot();
+        final TreePath path = new TreePath(new Object[] {root, tree.getModel().getChild(root, 2)});
+        tree.setExpandedState(path, false);
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Foo", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tree.setExpandedState(path, !tree.isExpanded(path));
+            }
+        });
     }
 }
