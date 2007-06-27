@@ -3,8 +3,10 @@ package nextapp.echo.extras.webcontainer.sync.component;
 import java.util.Iterator;
 
 import nextapp.echo.app.Component;
+import nextapp.echo.app.Table;
 import nextapp.echo.app.serial.SerialException;
 import nextapp.echo.app.serial.SerialPropertyPeer;
+import nextapp.echo.app.update.ClientUpdateManager;
 import nextapp.echo.app.update.ServerComponentUpdate;
 import nextapp.echo.app.util.Context;
 import nextapp.echo.extras.app.Tree;
@@ -117,7 +119,9 @@ extends AbstractComponentSynchronizePeer {
     
     private static final String[] MODEL_CHANGED_UPDATE_PROPERTIES = new String[] { PROPERTY_TREE_STRUCTURE,
             PROPERTY_COLUMN_COUNT };
-
+    
+    private static final String[] EVENT_TYPES_ACTION = new String[] { Table.INPUT_ACTION };
+    
     private static final Service TREE_SERVICE = JavaScriptService.forResources("EchoExtras.RemoteTree",  
             new String[]{ "/nextapp/echo/extras/webcontainer/resource/js/Application.RemoteTree.js",
                     "/nextapp/echo/extras/webcontainer/resource/js/Serial.RemoteTree.js",
@@ -160,6 +164,13 @@ extends AbstractComponentSynchronizePeer {
         return super.getOutputProperty(context, component, propertyName, propertyIndex);
     }
     
+    public Class getEventDataClass(String eventType) {
+        if (Tree.INPUT_ACTION.equals(eventType)) {
+            return Integer.class;
+        }
+        return super.getPropertyClass(eventType);
+    }
+    
     /**
      * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#getUpdatedOutputPropertyNames(
      *      nextapp.echo.app.util.Context,
@@ -177,6 +188,31 @@ extends AbstractComponentSynchronizePeer {
             return new ArrayIterator(new String[] {PROPERTY_TREE_STRUCTURE});
         } else {
             return normalPropertyIterator;
+        }
+    }
+    
+    /**
+     * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#getImmediateEventTypes(
+     *      nextapp.echo.app.util.Context, 
+     *      nextapp.echo.app.Component)
+     */
+    public Iterator getImmediateEventTypes(Context context, Component component) {
+        Tree tree = (Tree)component;
+        return new ArrayIterator(EVENT_TYPES_ACTION);
+//        return super.getImmediateEventTypes(context, component);
+    }
+    
+    /**
+     * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#processEvent(
+     *      nextapp.echo.app.util.Context, 
+     *      nextapp.echo.app.Component, 
+     *      java.lang.String, 
+     *      java.lang.Object)
+     */
+    public void processEvent(Context context, Component component, String eventType, Object eventData) {
+        if (Tree.INPUT_ACTION.equals(eventType)) {
+            ClientUpdateManager clientUpdateManager = (ClientUpdateManager) context.get(ClientUpdateManager.class);
+            clientUpdateManager.setComponentAction(component, Tree.INPUT_ACTION, eventData);
         }
     }
     

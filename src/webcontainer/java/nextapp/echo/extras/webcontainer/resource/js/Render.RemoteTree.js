@@ -40,8 +40,6 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNode = function(node, dep
         trElement.appendChild(rowHeaderElement);
     }
     
-    EchoCore.Debug.consoleWrite("render the node with id: " + node.getId());
-    
     var expandoElement = document.createElement("td");
     expandoElement.id = this.component.renderId + "_expando_" + node.getId();
     expandoElement.appendChild(document.createTextNode("+"));
@@ -55,13 +53,9 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNode = function(node, dep
     tdElement.style.border = "1px solid black";
     trElement.appendChild(tdElement);
     
-    EchoCore.Debug.consoleWrite("creating methd ref");
     var clickRef = new EchoCore.MethodRef(this, this._processClick);
-    EchoCore.Debug.consoleWrite("adding listener to expando element");
     EchoWebCore.EventProcessor.add(expandoElement, "click", clickRef, false);
-    EchoCore.Debug.consoleWrite("adding listener to tr element");
     EchoWebCore.EventProcessor.add(tdElement, "click", clickRef, false);
-    EchoCore.Debug.consoleWrite("done adding listener");
     
     var component = this.component.application.getComponentByRenderId(node.getId());
     EchoRender.renderComponentAdd(update, component, tdElement);
@@ -101,17 +95,16 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._getRowIndex = function(element)
 };
 
 ExtrasRender.ComponentSync.RemoteTree.prototype._doAction = function(rowIndex) {
-    this.component.fireEvent(new EchoCore.Event(this.component, "action"));
+    this.component.fireEvent(new EchoCore.Event(this.component, "action", rowIndex));
 };
 
 ExtrasRender.ComponentSync.RemoteTree.prototype._processClick = function(e) {
     var nodeId = this._getNodeIdFromElement(e.target);
     var rowIndex = this._getRowIndex(e.target.parentNode);
-    EchoCore.Debug.consoleWrite("-click- | " + rowIndex);
+    this._doAction(rowIndex);
 };
 
 ExtrasRender.ComponentSync.RemoteTree.prototype.renderDispose = function(update) {
-    EchoCore.Debug.consoleWrite("disposing ...");
     //FIXME this will blow up performance, maybe cache all elements that have a click listener, 
     // but that will probably blow memory usage...
     var trElement = this._element.firstChild.firstChild;

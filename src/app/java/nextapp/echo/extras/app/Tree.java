@@ -53,6 +53,8 @@ public class Tree extends Component {
     public static final String CELL_RENDERER_CHANGED_PROPERTY = "cellRenderer";
     public static final String MODEL_CHANGED_PROPERTY = "model";
     public static final String EXPANSION_STATE_CHANGED_PROPERTY = "expansionState";
+    
+    public static final String INPUT_ACTION = "action";
 
     private static final TreeCellRenderer DEFAULT_TREE_CELL_RENDERER = new DefaultTreeCellRenderer();
     
@@ -108,6 +110,14 @@ public class Tree extends Component {
 
     public TreeModel getModel() {
         return model;
+    }
+    
+    public void processInput(String inputName, Object inputValue) {
+        if (INPUT_ACTION.equals(inputName)) {
+            int row = ((Integer)inputValue).intValue();
+            TreePath path = getPathForRow(row);
+            setExpandedState(path, !isExpanded(path));
+        }
     }
     
     public void setExpandedState(TreePath treePath, boolean state) {
