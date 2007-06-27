@@ -31,41 +31,20 @@ package nextapp.echo.extras.app;
 import nextapp.echo.app.Component;
 
 /**
- * Applies a given tooltip, represented by a Component, to a given Component.
- * This code was previously available in the echo2contrib project.
+ * Applies a tooltip represented by a Component to another Component. This code
+ * was previously available in the echo2contrib project.
+ * <p>
+ * When the first child component is hovered, the second component will show up
+ * as a tooltip. If only one component is present, no tooltip will be shown.
  * 
  * @author unascribed
  */
 public class ToolTipContainer extends Component {
-    private Component toolTip;
-    private Component applyTo;
-
+    
     /**
-     * Creates a ToolTipContainer with the given tooltip component and component to apply
-     * the tooltip to.
-     * 
-     * @param toolTip the tooltip.
-     * @param applyTo the component to apply it to.
+     * @see nextapp.echo.app.Component#isValidChild(nextapp.echo.app.Component)
      */
-    public ToolTipContainer(Component toolTip, Component applyTo) {
-        this.toolTip = toolTip;
-        this.applyTo = applyTo;
-
-        add(toolTip);
-        add(applyTo);
-    }
-
-    /**
-     * @return the Component which the ToolTip is being applied to.
-     */
-    public Component getApplyTo() {
-        return applyTo;
-    }
-
-    /**
-     * @return the Component representing the tooltip.
-     */
-    public Component getToolTip() {
-        return toolTip;
+    public boolean isValidChild(Component child) {
+        return getComponentCount() < 2;
     }
 }

@@ -9,25 +9,26 @@ ExtrasRender.ComponentSync.ToolTipContainer = function() {
 
 ExtrasRender.ComponentSync.ToolTipContainer.prototype = new EchoRender.ComponentSync;
 
-ExtrasRender.ComponentSync.ToolTipContainer.prototype.getElement = function() {
-	return this._divElement;
-};
-
 ExtrasRender.ComponentSync.ToolTipContainer.prototype.renderAdd = function(update, parentElement) {
     this._divElement = document.createElement("div");
-    this._divElement.id = this.component.renderId;
     
-    this._applyDivElement = this._createApplyTo(update);
-    this._divElement.appendChild(this._applyDivElement);
+    var componentCount = this.component.getComponentCount();
     
-    this._tooltipDivElement = this._createToolTip(update);
-	document.getElementsByTagName("body")[0].appendChild(this._tooltipDivElement);
+    if (componentCount > 0) {
+	    this._applyDivElement = this._createApplyTo(update);
+	    this._divElement.appendChild(this._applyDivElement);
+    }
+    
+    if (componentCount > 1) {
+	    this._tooltipDivElement = this._createToolTip(update);
+		document.getElementsByTagName("body")[0].appendChild(this._tooltipDivElement);
+    }
     
     parentElement.appendChild(this._divElement);
 };
 
 ExtrasRender.ComponentSync.ToolTipContainer.prototype.renderUpdate = function(update) {
-    var element = this.getElement();
+    var element = this._divElement;
     var containerElement = element.parentNode;
     EchoRender.renderComponentDispose(update, update.parent);
     containerElement.removeChild(element);
@@ -36,12 +37,13 @@ ExtrasRender.ComponentSync.ToolTipContainer.prototype.renderUpdate = function(up
 };
 
 ExtrasRender.ComponentSync.ToolTipContainer.prototype.renderDispose = function(update) {
-	this._divElement.id = "";
 	this._divElement = null;
 	
-    EchoWebCore.EventProcessor.removeAll(this._applyDivElement);
-	this._applyDivElement.id = "";
-	this._applyDivElement = null;
+	if (this._applyDivElement) {
+	    EchoWebCore.EventProcessor.removeAll(this._applyDivElement);
+		this._applyDivElement.id = "";
+		this._applyDivElement = null;
+	}
 	
 	if (this._tooltipDivElement && this._tooltipDivElement.parentNode) {
 		this._tooltipDivElement.parentNode.removeChild(this._tooltipDivElement);
@@ -53,23 +55,25 @@ ExtrasRender.ComponentSync.ToolTipContainer.prototype._createToolTip = function(
     var tooltipDivElement = document.createElement("div");
     tooltipDivElement.style.visibility = "hidden";
     tooltipDivElement.style.position = "absolute";
-	EchoRender.renderComponentAdd(update, this.component.getComponent(0), tooltipDivElement);
+	EchoRender.renderComponentAdd(update, this.component.getComponent(1), tooltipDivElement);
     return tooltipDivElement;
 };
 
 ExtrasRender.ComponentSync.ToolTipContainer.prototype._createApplyTo = function(update) {
-	var applyToComponent = this.component.getComponent(1);
+	var applyToComponent = this.component.getComponent(0);
 	
     var applyDivElement = document.createElement("div");
     applyDivElement.id = applyToComponent.renderId;
 	EchoRender.renderComponentAdd(update, applyToComponent, applyDivElement);
     
-    var mouseEnterLeaveSupport = EchoWebCore.Environment.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED;
-    var enterEvent = mouseEnterLeaveSupport ? "mouseenter" : "mouseover";
-    var exitEvent = mouseEnterLeaveSupport ? "mouseleave" : "mouseout";
-    EchoWebCore.EventProcessor.add(applyDivElement, enterEvent, new EchoCore.MethodRef(this, this._processRolloverEnter), false);
-	EchoWebCore.EventProcessor.add(applyDivElement, exitEvent, new EchoCore.MethodRef(this, this._processRolloverExit), false);
-	EchoWebCore.EventProcessor.add(applyDivElement, "mousemove", new EchoCore.MethodRef(this, this._processMove), false);
+    if (this.component.getComponentCount() > 1) {
+	    var mouseEnterLeaveSupport = EchoWebCore.Environment.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED;
+	    var enterEvent = mouseEnterLeaveSupport ? "mouseenter" : "mouseover";
+	    var exitEvent = mouseEnterLeaveSupport ? "mouseleave" : "mouseout";
+	    EchoWebCore.EventProcessor.add(applyDivElement, enterEvent, new EchoCore.MethodRef(this, this._processRolloverEnter), false);
+		EchoWebCore.EventProcessor.add(applyDivElement, exitEvent, new EchoCore.MethodRef(this, this._processRolloverExit), false);
+		EchoWebCore.EventProcessor.add(applyDivElement, "mousemove", new EchoCore.MethodRef(this, this._processMove), false);
+    }
     
     return applyDivElement;
 };
