@@ -34,16 +34,24 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNode = function(node, dep
 	
 	for (var c = 0; c < depth; ++c) {
         var rowHeaderElement = document.createElement("td");
-        rowHeaderElement.appendChild(document.createTextNode("|"));
+        rowHeaderElement.appendChild(document.createTextNode("\u00a0"));
         rowHeaderElement.style.borderCollapse = "collapse";
         rowHeaderElement.style.border = "1px solid black";
         trElement.appendChild(rowHeaderElement);
     }
     
+    var clickRef = new EchoCore.MethodRef(this, this._processClick);
+    
     var expandoElement = document.createElement("td");
     expandoElement.id = this.component.renderId + "_expando_" + node.getId();
-    expandoElement.appendChild(document.createTextNode("+"));
+    var expandoText = "\u00a0";
+    if (!node.isLeaf()) {
+       expandoText = node.isExpanded() ? "-" : "+";
+    }
+    expandoElement.appendChild(document.createTextNode(expandoText));
     trElement.appendChild(expandoElement);
+    
+    EchoWebCore.EventProcessor.add(expandoElement, "click", clickRef, false);
     
     var tdElement = document.createElement("td");
     tdElement.id = this.component.renderId + "_node_" + node.getId();
@@ -53,8 +61,6 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNode = function(node, dep
     tdElement.style.border = "1px solid black";
     trElement.appendChild(tdElement);
     
-    var clickRef = new EchoCore.MethodRef(this, this._processClick);
-    EchoWebCore.EventProcessor.add(expandoElement, "click", clickRef, false);
     EchoWebCore.EventProcessor.add(tdElement, "click", clickRef, false);
     
     var component = this.component.application.getComponentByRenderId(node.getId());
@@ -79,6 +85,10 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._getNodeIdFromElement = function
         nodeId = id.substring(id.indexOf("_node_") + 6);
     }
     return nodeId;
+};
+
+ExtrasRender.ComponentSync.RemoteTree.prototype._getExpandoElementForNodeId = function(nodeId) {
+    return document.getElementById(this.component.renderId + "_expando_" + nodeId);
 };
 
 ExtrasRender.ComponentSync.RemoteTree.prototype._getRowIndex = function(element) {

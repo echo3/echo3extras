@@ -37,6 +37,8 @@ ExtrasApp.RemoteTree.TreeStructure.prototype._getDepth = function(node) {
 ExtrasApp.RemoteTree.TreeNode = function(id) { 
 	this.id = id;
 	this.childNodes = new Array();
+	this.expanded = false;
+	this.leaf = false;
 };
 
 ExtrasApp.RemoteTree.TreeNode.prototype.getId = function() {
@@ -53,4 +55,20 @@ ExtrasApp.RemoteTree.TreeNode.prototype.getChildNode = function(index) {
 
 ExtrasApp.RemoteTree.TreeNode.prototype.getChildNodeCount = function() {
 	return this.childNodes.length;
+};
+
+ExtrasApp.RemoteTree.TreeNode.prototype.setExpanded = function(newState) {
+	this.expanded = newState;
+};
+
+ExtrasApp.RemoteTree.TreeNode.prototype.isExpanded = function() {
+	return this.expanded;
+};
+
+ExtrasApp.RemoteTree.TreeNode.prototype.setLeaf = function(newValue) {
+	this.leaf = newValue;
+};
+
+ExtrasApp.RemoteTree.TreeNode.prototype.isLeaf = function() {
+	return this.leaf;
 };

@@ -95,6 +95,9 @@ extends AbstractComponentSynchronizePeer {
             if (expanded) {
                 eElement.setAttribute("ex", "1");
             }
+            if (model.isLeaf(value)) {
+                eElement.setAttribute("l", "1");
+            }
             propertyElement.appendChild(eElement);
 
             int childCount = model.getChildCount(value);

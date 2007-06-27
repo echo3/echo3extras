@@ -9,6 +9,9 @@ ExtrasSerial.PropertyTranslator.RemoteTree.TreeStructure.toProperty = function(c
     	var childElement = children[i];
     	var id = childElement.getAttribute("i");
         var node = new ExtrasApp.RemoteTree.TreeNode(id);
+		var expandedState = childElement.getAttribute("ex") == "1";
+		node.setExpanded(expandedState);
+		node.setLeaf(childElement.getAttribute("l") == "1");
 		var parentId = childElement.getAttribute("p");
 		if (parentId) {
 			var parentNode = treeStructure.getNode(parentId);
