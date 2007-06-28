@@ -845,7 +845,7 @@ ExtrasRender.ComponentSync.ContextMenu.prototype._renderTopMenu = function(menuM
 };
 
 ExtrasRender.ComponentSync.ContextMenu.prototype.renderUpdate = function(update) {
-	if (EchoCore.Arrays.containsAll(ExtrasRender.ComponentSync.ContextMenu._supportedPartialProperties, update.getUpdatedPropertyNames())) {
+	if (EchoCore.Arrays.containsAll(ExtrasRender.ComponentSync.ContextMenu._supportedPartialProperties, update.getUpdatedPropertyNames(), true)) {
 	    // partial update
 	    var removedChildren = update.getRemovedChildren();
 	    if (removedChildren) {
