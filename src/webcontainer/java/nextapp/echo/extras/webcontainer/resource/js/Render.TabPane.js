@@ -44,6 +44,10 @@ ExtrasRender.ComponentSync.TabPane.prototype.renderAdd = function(update, parent
     var componentCount = this.component.getComponentCount();
     for (var i = 0; i < componentCount; ++i) {
         var child = this.component.getComponent(i);
+		if (!this._activeTabId) {
+			this._activeTabId = child.renderId;
+			this.component.setProperty("activeTab", this._activeTabId);
+		}
 		var tab = new ExtrasRender.ComponentSync.TabPane.Tab(child, this);
 	    this._tabs.add(tab);
 	    tab._render(update);
@@ -515,21 +519,18 @@ ExtrasRender.ComponentSync.TabPane.Tab.prototype._highlight = function(state) {
     	background = this._parent.component.getRenderProperty("tabInactiveBackground");
     	border = this._parent._getTabInactiveBorder();
     }
-    EchoRender.Property.Color.render(foreground, headerContentTableElement, "color");
-    EchoRender.Property.Color.render(background, headerContentTableElement, "backgroundColor");
+    EchoRender.Property.Color.renderClear(foreground, headerContentTableElement, "color");
+    EchoRender.Property.Color.renderClear(background, headerContentTableElement, "backgroundColor");
     headerContentTableElement.style.cursor = state ? "default" : "pointer";
 	headerContentTableElement.style.height = this._parent._calculateTabHeight(state) + "px";
     
-    var activeBackgroundImage = this._parent.component.getRenderProperty("tabActiveBackgroundImage");
-    var inactiveBackgroundImage = this._parent.component.getRenderProperty("tabInactiveBackgroundImage");
-    if (activeBackgroundImage || inactiveBackgroundImage) {
-        EchoRender.Property.FillImage.clear(centerTdElement);
-        if (state && activeBackgroundImage) {
-			EchoRender.Property.FillImage.render(activeBackgroundImage, centerTdElement, null);
-        } else if (!state && inactiveBackgroundImage) {
-			EchoRender.Property.FillImage.render(inactiveBackgroundImage, centerTdElement, null);
-        }
+    var backgroundImage;
+    if (state) {
+	    backgroundImage = this._parent.component.getRenderProperty("tabActiveBackgroundImage");
+    } else {
+	    backgroundImage = this._parent.component.getRenderProperty("tabInactiveBackgroundImage");
     }
+    EchoRender.Property.FillImage.renderClear(backgroundImage, centerTdElement, null);
     
     var tabPosition = this._parent._getTabPosition();
     if (tabPosition == ExtrasApp.TabPane.TAB_POSITION_BOTTOM) {
@@ -543,51 +544,28 @@ ExtrasRender.ComponentSync.TabPane.Tab.prototype._highlight = function(state) {
     EchoRender.Property.Border.renderSide(border, headerContentTableElement, "borderLeft");
     EchoRender.Property.Border.renderSide(border, headerContentTableElement, "borderRight");
     
-    var activeFont = this._parent.component.getRenderProperty("tabActiveFont");
-    var inactiveFont = this._parent.component.getRenderProperty("tabInactiveFont");
-    if (activeFont || inactiveFont) {
-    	EchoRender.Property.Font.clear(headerContentTableElement);
-    	if (state && activeFont) {
-    		EchoRender.Property.Font.render(activeFont, headerContentTableElement);
-    	} else if (!state && inactiveFont) {
-    		EchoRender.Property.Font.render(inactiveFont, headerContentTableElement);
-    	}
+    var font;
+    if (state) {
+    	font = this._parent.component.getRenderProperty("tabActiveFont");
+    } else {
+    	font = this._parent.component.getRenderProperty("tabInactiveFont");
     }
+	EchoRender.Property.Font.renderClear(font, headerContentTableElement);
 
     if (this._leftTdElement) {
-	    var activeLeftImage = this._getLeftImage(true);
-	    var inactiveLeftImage = this._getLeftImage(false);
-        
-        EchoRender.Property.FillImage.clear(this._leftTdElement);
-        if (state && activeLeftImage) {
-			EchoRender.Property.FillImage.render(activeLeftImage, this._leftTdElement, null);
-			if (activeLeftImage.width) {
-	            this._leftTdElement.style.width = activeLeftImage.width.toString();
-			}
-        } else if (!state && inactiveLeftImage) {
-			EchoRender.Property.FillImage.render(inactiveLeftImage, this._leftTdElement, null);
-			if (inactiveLeftImage.width) {
-	            this._leftTdElement.style.width = inactiveLeftImage.width.toString();
-			}
-        }
+        var leftImage = this._getLeftImage(state); 
+        EchoRender.Property.FillImage.renderClear(leftImage, this._leftTdElement, null);
+		if (leftImage && leftImage.width) {
+            this._leftTdElement.style.width = leftImage.width.toString();
+		}
     }
     
     if (this._rightTdElement) {
-	    var activeRightImage = this._getRightImage(true);
-	    var inactiveRightImage = this._getRightImage(false);
-        
-        EchoRender.Property.FillImage.clear(this._rightTdElement);
-        if (state && activeRightImage) {
-			EchoRender.Property.FillImage.render(activeRightImage, this._rightTdElement, null);
-			if (activeRightImage.width) {
-	            this._rightTdElement.style.width = activeRightImage.width.toString();
-			}
-        } else if (!state && inactiveRightImage) {
-			EchoRender.Property.FillImage.render(inactiveRightImage, this._rightTdElement, null);
-			if (inactiveRightImage.width) {
-	            this._rightTdElement.style.width = inactiveRightImage.width.toString();
-			}
-        }
+        var rightImage = this._getRightImage(state); 
+        EchoRender.Property.FillImage.renderClear(rightImage, this._rightTdElement, null);
+		if (rightImage && rightImage.width) {
+            this._rightTdElement.style.width = rightImage.width.toString();
+		}
     }
 	
 	// show/hide content

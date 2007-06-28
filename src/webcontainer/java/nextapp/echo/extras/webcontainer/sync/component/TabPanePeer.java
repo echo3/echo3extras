@@ -29,8 +29,11 @@
 
 package nextapp.echo.extras.webcontainer.sync.component;
 
+import java.util.Iterator;
+
 import nextapp.echo.app.Component;
 import nextapp.echo.app.update.ClientUpdateManager;
+import nextapp.echo.app.update.ServerComponentUpdate;
 import nextapp.echo.app.util.Context;
 import nextapp.echo.extras.app.TabPane;
 import nextapp.echo.extras.webcontainer.service.CommonService;
@@ -42,6 +45,8 @@ import nextapp.echo.webcontainer.Service;
 import nextapp.echo.webcontainer.UserInstance;
 import nextapp.echo.webcontainer.WebContainerServlet;
 import nextapp.echo.webcontainer.service.JavaScriptService;
+import nextapp.echo.webcontainer.util.ArrayIterator;
+import nextapp.echo.webcontainer.util.MultiIterator;
 
 /**
  * Synchronization peer for <code>TabPane</code>s.
@@ -126,6 +131,16 @@ public class TabPanePeer extends AbstractComponentSynchronizePeer implements Laz
         } else {
             return super.getOutputProperty(context, component, propertyName, propertyIndex);
         }
+    }
+    
+    public Iterator getUpdatedOutputPropertyNames(Context context, Component component, ServerComponentUpdate update) {
+        Iterator normalPropertyIterator = super.getUpdatedOutputPropertyNames(context, component, update);
+        
+        if (update.hasUpdatedProperty(TabPane.ACTIVE_TAB_INDEX_CHANGED_PROPERTY)) {
+            return new MultiIterator(
+                    new Iterator[]{ normalPropertyIterator, new ArrayIterator(new String[] {PROPERTY_ACTIVE_TAB}) });
+        }
+        return normalPropertyIterator;
     }
     
     /**
