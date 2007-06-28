@@ -35,18 +35,17 @@ ExtrasRender.ComponentSync.TabPane.prototype = new EchoRender.ComponentSync;
 
 ExtrasRender.ComponentSync.TabPane.prototype.renderAdd = function(update, parentElement) {
 	this._activeTabId = this.component.getProperty("activeTab");
-	
     this._element = this._render();
     
     this._headerContainerTrElement = this._element.childNodes[0].firstChild.rows[0];
     this._contentContainerDivElement = this._element.childNodes[1];
     
+    var activeTabFound = false;
     var componentCount = this.component.getComponentCount();
     for (var i = 0; i < componentCount; ++i) {
         var child = this.component.getComponent(i);
-		if (!this._activeTabId) {
-			this._activeTabId = child.renderId;
-			this.component.setProperty("activeTab", this._activeTabId);
+		if (this._activeTabId == child.renderId) {
+			activeTabFound = true;
 		}
 		var tab = new ExtrasRender.ComponentSync.TabPane.Tab(child, this);
 	    this._tabs.add(tab);
@@ -55,6 +54,14 @@ ExtrasRender.ComponentSync.TabPane.prototype.renderAdd = function(update, parent
 	    this._contentContainerDivElement.appendChild(tab._contentDivElement);
     }
     
+	if (!activeTabFound) {
+		this._activeTabId = null;
+		if (componentCount > 0) {
+			this._selectTab(this.component.getComponent(0).renderId);
+			this.component.setProperty("activeTab", this._activeTabId);
+		}
+	}
+	
     parentElement.appendChild(this._element);
 };
 
@@ -205,7 +212,6 @@ ExtrasRender.ComponentSync.TabPane.prototype._selectTab = function(tabId) {
     	this._getTabById(this._activeTabId)._highlight(false);
     }
     
-    this.component.setProperty("activeTab", tabId);
     this._activeTabId = tabId;
    	
    	this._getTabById(this._activeTabId)._highlight(true);
@@ -222,10 +228,9 @@ ExtrasRender.ComponentSync.TabPane.prototype._closeTab = function(tabId) {
     if (tabId == this._activeTabId) {
     	this._activeTabId = null;
     }
-    this.component.setProperty("closeTab", tabId);
    	this._removeTab(this._getTabById(tabId));
    	
-   	if (this._tabs.size() > 0) {
+   	if (!this._activeTabId && this._tabs.size() > 0) {
    		this._selectTab(this._tabs.get(this._tabs.size() - 1)._childComponent.renderId);
    	}
 };
@@ -670,12 +675,13 @@ ExtrasRender.ComponentSync.TabPane.Tab.prototype._processClick = function(e) {
     	if (!this._isTabCloseEnabled()) {
     		return;
     	}
-    	this._parent._closeTab(this._childComponent.renderId);
+	    this._parent.component.fireEvent(new EchoCore.Event(this._parent.component, "tabClose", this._childComponent.renderId));
     } else {
     	// tab clicked
 	    this._parent._selectTab(this._childComponent.renderId);
+	    this._parent.component.setProperty("activeTab", this._childComponent.renderId);
+	    this._parent.component.fireEvent(new EchoCore.Event(this._parent.component, "tabSelect", this._childComponent.renderId));
     }
-    // FIXME notify server
 };
 
 ExtrasRender.ComponentSync.TabPane.Tab.prototype._processEnter = function(e) {

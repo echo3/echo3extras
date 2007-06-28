@@ -42,9 +42,9 @@ import nextapp.echo.app.ImageReference;
 import nextapp.echo.app.Insets;
 import nextapp.echo.app.Pane;
 import nextapp.echo.app.PaneContainer;
-
 import nextapp.echo.extras.app.event.TabPaneEvent;
-import nextapp.echo.extras.app.event.TabPaneListener;
+import nextapp.echo.extras.app.event.TabClosingListener;
+import nextapp.echo.extras.app.event.TabSelectionListener;
 import nextapp.echo.extras.app.layout.TabPaneLayoutData;
 
 /**
@@ -53,8 +53,9 @@ import nextapp.echo.extras.app.layout.TabPaneLayoutData;
 public class TabPane extends Component 
 implements Pane, PaneContainer {
     
-    public static final String INPUT_TAB_INDEX = "inputTabIndex";
-    public static final String INPUT_TAB_CLOSE = "inputTabClose";
+    public static final String INPUT_TAB_SELECT = "tabSelect";
+    public static final String INPUT_TAB_CLOSE = "tabClose";
+    
     public static final String ACTIVE_TAB_INDEX_CHANGED_PROPERTY = "activeTabIndex";
     
     public static final String PROPERTY_BORDER_TYPE = "borderType";
@@ -68,6 +69,7 @@ implements Pane, PaneContainer {
     public static final String PROPERTY_TAB_ACTIVE_BORDER = "tabActiveBorder";
     public static final String PROPERTY_TAB_ACTIVE_FONT = "tabActiveFont";
     public static final String PROPERTY_TAB_ACTIVE_FOREGROUND = "tabActiveForeground";
+    public static final String PROPERTY_TAB_DEFAULT_CLOSE_OPERATION = "tabDefaultCloseOperation";
     public static final String PROPERTY_TAB_HEIGHT = "tabHeight";
     public static final String PROPERTY_TAB_ACTIVE_HEIGHT_INCREASE = "tabActiveHeightIncrease";
     public static final String PROPERTY_TAB_INACTIVE_LEFT_IMAGE = "tabInactiveLeftImage";
@@ -135,17 +137,43 @@ implements Pane, PaneContainer {
     public static final int TAB_POSITION_TOP = 0;
     
     /**
+     * A constant for the <code>tabDefaultCloseOperation</code> property 
+     * indicating that nothing should be done when the user attempts 
+     * to close a tab.
+     */
+    public static final int TAB_DO_NOTHING_ON_CLOSE = 0;
+
+    /**
+     * A constant for the <code>tabDefaultCloseOperation</code> property 
+     * indicating that a tab should be removed from the component
+     * hierarchy when a user attempts to close it.
+     */
+    public static final int TAB_DISPOSE_ON_CLOSE = 1;
+
+    /**
      * Index of active tab.
      */ 
     private int activeTabIndex = -1;
+    
+    /**
+     * Determines if any <code>TabClosingListener</code>s are registered.
+     * 
+     * @return true if any <code>TabClosingListener</code>s are registered
+     */
+    public boolean hasTabClosingListeners() {
+        if (!hasEventListenerList()) {
+            return false;
+        }
+        return getEventListenerList().getListenerCount(TabClosingListener.class) > 0;
+    }
     
     /**
      * Adds a <code>TabPaneListener</code> to receive event notifications.
      * 
      * @param l the <code>TabPaneListener</code> to add
      */
-    public void addTabPaneListener(TabPaneListener l) {
-        getEventListenerList().addListener(TabPaneListener.class, l);
+    public void addTabClosingListener(TabClosingListener l) {
+        getEventListenerList().addListener(TabClosingListener.class, l);
     }
     
     /**
@@ -153,46 +181,78 @@ implements Pane, PaneContainer {
      * 
      * @param l the <code>TabPaneListener</code> to remove
      */
-    public void removeTabPaneListener(TabPaneListener l) {
+    public void removeTabClosingListener(TabClosingListener l) {
         if (!hasEventListenerList()) {
             return;
         }
-        getEventListenerList().removeListener(TabPaneListener.class, l);
+        getEventListenerList().removeListener(TabClosingListener.class, l);
     }
 
     /**
-	 * Notifies <code>TabPaneListener</code>s that the user has requested to
+	 * Notifies <code>TabClosingListener</code>s that the user has requested to
 	 * close a tab.
 	 */
     protected void fireTabClosing(int tabIndex) {
         if (!hasEventListenerList()) {
             return;
         }
-        EventListener[] listeners = getEventListenerList().getListeners(TabPaneListener.class);
+        EventListener[] listeners = getEventListenerList().getListeners(TabClosingListener.class);
         if (listeners.length == 0) {
             return;
         }
         TabPaneEvent e = new TabPaneEvent(this, tabIndex);
         for (int i = 0; i < listeners.length; ++i) {
-            ((TabPaneListener) listeners[i]).tabClosing(e);
+            ((TabClosingListener) listeners[i]).tabClosing(e);
         }
     }
     
     /**
-     * Notifies <code>TabPaneListener</code>s that the user has requested to
-     * activate a tab.
+     * Determines the any <code>TabSelectionListener</code>s are registered.
+     * 
+     * @return true if any <code>TabSelectionListener</code>s are registered
      */
-    protected void fireTabActivating(int tabIndex) {
+    public boolean hasTabSelectionListeners() {
+        if (!hasEventListenerList()) {
+            return false;
+        }
+        return getEventListenerList().getListenerCount(TabSelectionListener.class) > 0;
+    }
+    
+    /**
+     * Adds a <code>TabSelectionListener</code> to receive event notifications.
+     * 
+     * @param l the <code>TabSelectionListener</code> to add
+     */
+    public void addTabSelectionListener(TabSelectionListener l) {
+        getEventListenerList().addListener(TabSelectionListener.class, l);
+    }
+    
+    /**
+     * Removes a <code>TabSelectionListener</code> from receiving event notifications.
+     * 
+     * @param l the <code>TabSelectionListener</code> to remove
+     */
+    public void removeTabSelectionListener(TabSelectionListener l) {
+        if (!hasEventListenerList()) {
+            return;
+        }
+        getEventListenerList().removeListener(TabSelectionListener.class, l);
+    }
+    
+    /**
+     * Notifies <code>TabSelectionListener</code>s that the user has selected a tab.
+     */
+    protected void fireTabSelected(int tabIndex) {
     	if (!hasEventListenerList()) {
     		return;
     	}
-    	EventListener[] listeners = getEventListenerList().getListeners(TabPaneListener.class);
+    	EventListener[] listeners = getEventListenerList().getListeners(TabSelectionListener.class);
     	if (listeners.length == 0) {
     		return;
     	}
     	TabPaneEvent e = new TabPaneEvent(this, tabIndex);
     	for (int i = 0; i < listeners.length; ++i) {
-    		((TabPaneListener) listeners[i]).tabActivating(e);
+    		((TabSelectionListener) listeners[i]).tabSelected(e);
     	}
     }
     
@@ -307,7 +367,22 @@ implements Pane, PaneContainer {
     public Border getTabActiveBorder() {
         return (Border) getProperty(PROPERTY_TAB_ACTIVE_BORDER);
     }
+
     
+    /**
+     * Returns the default tab close operation.
+     * 
+     * @return the default tab close operation, one of the following values:
+     *         <ul>
+     *          <li>TAB_DO_NOTHING_ON_CLOSE</li>
+     *          <li>TAB_DISPOSE_ON_CLOSE</li>
+     *         </ul>
+     */
+    public int getTabDefaultCloseOperation() {
+        Integer defaultCloseOperationValue = (Integer) getProperty(PROPERTY_TAB_DEFAULT_CLOSE_OPERATION);
+        return defaultCloseOperationValue == null ? TAB_DISPOSE_ON_CLOSE : defaultCloseOperationValue.intValue();
+    }
+
     /**
      * Returns the font used to render active tabs.
      * 
@@ -486,10 +561,12 @@ implements Pane, PaneContainer {
      */
     public void processInput(String inputName, Object inputValue) {
         super.processInput(inputName, inputValue);
-        if (INPUT_TAB_INDEX.equals(inputName)) {
-            setActiveTabIndex(((Integer) inputValue).intValue());
+        if (ACTIVE_TAB_INDEX_CHANGED_PROPERTY.equals(inputName)) {
+            setActiveTabIndex(((Integer)inputValue).intValue());
+        } else if (INPUT_TAB_SELECT.equals(inputName)) {
+            userTabSelect(((Integer) inputValue).intValue());
         } else if (INPUT_TAB_CLOSE.equals(inputName)) {
-        	remove(getVisibleComponent(((Integer)inputValue).intValue()));
+            userTabClose(((Integer)inputValue).intValue());
         }
     }
     
@@ -502,19 +579,7 @@ implements Pane, PaneContainer {
     public void setActiveTabIndex(int newValue) {
         int oldValue = activeTabIndex;
         activeTabIndex = newValue;
-        // keep property change event for backwards compatibility
         firePropertyChange(ACTIVE_TAB_INDEX_CHANGED_PROPERTY, new Integer(oldValue), new Integer(newValue));
-        fireTabActivating(newValue);
-    }
-
-    /**
-     * @see nextapp.echo.app.Component#remove(nextapp.echo.app.Component)
-     */
-    public void remove(Component c) {
-    	if (c.isVisible()) {
-    		fireTabClosing(visibleIndexOf(c));
-    	}
-    	super.remove(c);
     }
     
     /**
@@ -644,6 +709,20 @@ implements Pane, PaneContainer {
        setProperty(PROPERTY_TAB_BACKGROUND_IMAGE, newValue);
     }
     
+    /**
+     * Sets the default tab close operation.
+     * 
+     * @param newValue the new default tab close operation, one of the following 
+     *        values:
+     *        <ul>
+     *         <li>TAB_DO_NOTHING_ON_CLOSE</li>
+     *         <li>TAB_DISPOSE_ON_CLOSE</li>
+     *        </ul>
+     */
+    public void setTabDefaultCloseOperation(int newValue) {
+        setProperty(PROPERTY_TAB_DEFAULT_CLOSE_OPERATION, new Integer(newValue));
+    }
+
     /**
      * Sets the height of an individual tab.
      * <code>Extent</code> values for this property must be in pixel units.
@@ -877,5 +956,26 @@ implements Pane, PaneContainer {
 	 */
     public void setTabRolloverCloseIcon(ImageReference newValue) {
     	setProperty(PROPERTY_TAB_ROLLOVER_CLOSE_ICON, newValue);
+    }
+
+    /**
+     * Processes a user request to close the tab with the given index (via the close button).
+     */
+    public void userTabClose(int tabIndex) {
+        fireTabClosing(tabIndex);
+        Integer defaultCloseOperationValue = (Integer) getRenderProperty(PROPERTY_TAB_DEFAULT_CLOSE_OPERATION);
+        int defaultCloseOperation = defaultCloseOperationValue == null 
+                ? TAB_DISPOSE_ON_CLOSE : defaultCloseOperationValue.intValue();
+        if (defaultCloseOperation == TAB_DISPOSE_ON_CLOSE) {
+            remove(getVisibleComponent(tabIndex));
+        }
+    }
+    
+    /**
+     * Processes a user request to select the tab with the given index.
+     */
+    public void userTabSelect(int tabIndex) {
+        fireTabSelected(tabIndex);
+        setActiveTabIndex(tabIndex);
     }
 }

@@ -56,7 +56,6 @@ import nextapp.echo.webcontainer.util.MultiIterator;
 public class TabPanePeer extends AbstractComponentSynchronizePeer implements LazyRenderContainer {
 
     private static final String PROPERTY_ACTIVE_TAB = "activeTab";
-    private static final String PROPERTY_CLOSE_TAB = "closeTab";
 
     /**
      * Component property to enabled/disable lazy rendering of child tabs.
@@ -97,12 +96,29 @@ public class TabPanePeer extends AbstractComponentSynchronizePeer implements Laz
     }
 
     /**
+     * @see ComponentSynchronizePeer#getImmediateEventTypes(Context, Component)
+     */
+    public Iterator getImmediateEventTypes(Context context, Component component) {
+        TabPane tabPane = (TabPane) component;
+        
+        boolean closeEvent = tabPane.isTabCloseEnabled();
+        boolean selectionEvent = tabPane.hasTabSelectionListeners();
+        
+        if (closeEvent && selectionEvent) {
+            return new ArrayIterator(new String[] { TabPane.INPUT_TAB_CLOSE, TabPane.INPUT_TAB_SELECT });
+        } else if (closeEvent) {
+            return new ArrayIterator(new String[] { TabPane.INPUT_TAB_CLOSE });
+        } else if (selectionEvent) {
+            return new ArrayIterator(new String[] { TabPane.INPUT_TAB_SELECT });
+        }
+        return super.getImmediateEventTypes(context, component);
+    }
+    
+    /**
      * @see ComponentSynchronizePeer#getPropertyClass(String)
      */
     public Class getPropertyClass(String propertyName) {
         if (PROPERTY_ACTIVE_TAB.equals(propertyName)) {
-            return String.class;
-        } else if (PROPERTY_CLOSE_TAB.equals(propertyName)) {
             return String.class;
         }
         return super.getPropertyClass(propertyName);
@@ -147,19 +163,33 @@ public class TabPanePeer extends AbstractComponentSynchronizePeer implements Laz
      * @see ComponentSynchronizePeer#storeInputProperty(Context, Component, String, int, Object)
      */
     public void storeInputProperty(Context context, Component component, String propertyName, int index, Object newValue) {
-        if (PROPERTY_ACTIVE_TAB.equals(propertyName) || PROPERTY_CLOSE_TAB.equals(propertyName)) {
-            Component[] children = component.getVisibleComponents();
-            for (int i = 0; i < children.length; ++i) {
-                if (UserInstance.getElementId(children[i]).equals(newValue)) {
-                    ClientUpdateManager clientUpdateManager = (ClientUpdateManager) context.get(ClientUpdateManager.class);
-                    if (PROPERTY_ACTIVE_TAB.equals(propertyName)) {
-                        clientUpdateManager.setComponentProperty(component, TabPane.INPUT_TAB_INDEX, new Integer(i));
-                    } else if (PROPERTY_CLOSE_TAB.equals(propertyName)) {
-                        clientUpdateManager.setComponentProperty(component, TabPane.INPUT_TAB_CLOSE, new Integer(i));
-                    }
-                    return;
-                }
-            }
+        if (PROPERTY_ACTIVE_TAB.equals(propertyName)) {
+            ClientUpdateManager clientUpdateManager = (ClientUpdateManager) context.get(ClientUpdateManager.class);
+            clientUpdateManager.setComponentProperty(component, TabPane.ACTIVE_TAB_INDEX_CHANGED_PROPERTY, getTabIndex((TabPane)component, (String)newValue));
+        }
+    }
+    
+    /**
+     * @see ComponentSynchronizePeer#getEventDataClass(String)
+     */
+    public Class getEventDataClass(String eventType) {
+        if (TabPane.INPUT_TAB_CLOSE.equals(eventType)) {
+            return String.class;
+        } else if (TabPane.INPUT_TAB_SELECT.equals(eventType)) {
+            return String.class;
+        }
+        return null;
+    }
+    
+    /**
+     * @see ComponentSynchronizePeer#processEvent(Context, Component, String, Object)
+     */
+    public void processEvent(Context context, Component component, String eventType, Object eventData) {
+        ClientUpdateManager clientUpdateManager = (ClientUpdateManager) context.get(ClientUpdateManager.class);
+        if (TabPane.INPUT_TAB_CLOSE.equals(eventType)) {
+            clientUpdateManager.setComponentAction(component, TabPane.INPUT_TAB_CLOSE, getTabIndex((TabPane)component, (String)eventData));
+        } else if (TabPane.INPUT_TAB_SELECT.equals(eventType)) {
+            clientUpdateManager.setComponentAction(component, TabPane.INPUT_TAB_SELECT, getTabIndex((TabPane)component, (String)eventData));
         }
     }
     
@@ -169,5 +199,22 @@ public class TabPanePeer extends AbstractComponentSynchronizePeer implements Laz
     public boolean isRendered(Context context, Component component, Component child) {
         // FIXME implement lazy behavior
         return true;
+    }
+    
+    /**
+     * Gets the index of the component with the given element id.
+     * 
+     * @param tabPane
+     * @param elementId
+     * @return the index if found, <code>null</code> otherwise.
+     */
+    private Integer getTabIndex(TabPane tabPane, String elementId) {
+        Component[] children = tabPane.getVisibleComponents();
+        for (int i = 0; i < children.length; ++i) {
+            if (UserInstance.getElementId(children[i]).equals(elementId)) {
+                return new Integer(i);
+            }
+        }
+        return null;
     }
 }
