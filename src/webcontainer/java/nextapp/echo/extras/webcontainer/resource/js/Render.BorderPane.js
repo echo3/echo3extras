@@ -114,7 +114,7 @@ ExtrasRender.ComponentSync.BorderPane.prototype._renderBorderPart = function(bor
     }
     
     if ((top != null && bottom != null) || (left != null && right != null)) {
-	    EchoWebCore.VirtualPosition.register(borderDivElement.id);
+	    EchoWebCore.VirtualPosition.register(borderDivElement);
     }
     
     return borderDivElement;
@@ -151,7 +151,7 @@ ExtrasRender.ComponentSync.BorderPane.prototype._renderContent = function(update
         throw new Error("Too many children: " + componentCount);
     }
     
-    EchoWebCore.VirtualPosition.register(contentDivElement.id);
+    EchoWebCore.VirtualPosition.register(contentDivElement);
     
     return contentDivElement;
 };

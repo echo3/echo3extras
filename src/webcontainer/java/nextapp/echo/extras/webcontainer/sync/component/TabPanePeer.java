@@ -53,7 +53,8 @@ import nextapp.echo.webcontainer.util.MultiIterator;
  * 
  * @author n.beekman
  */
-public class TabPanePeer extends AbstractComponentSynchronizePeer implements LazyRenderContainer {
+public class TabPanePeer extends AbstractComponentSynchronizePeer 
+implements LazyRenderContainer {
 
     private static final String PROPERTY_ACTIVE_TAB = "activeTab";
 

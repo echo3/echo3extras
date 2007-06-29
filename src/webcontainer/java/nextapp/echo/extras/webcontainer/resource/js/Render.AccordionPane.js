@@ -256,8 +256,8 @@ ExtrasRender.ComponentSync.AccordionPane.Tab.prototype._render = function(update
     EchoRender.Property.Insets.renderPixel(this._getContentInsets(), contentDivElement, "padding");
     contentDivElement.style.overflow = "auto";
 
-    EchoWebCore.VirtualPosition.register(tabDivElement.id);
-    EchoWebCore.VirtualPosition.register(contentDivElement.id);
+    EchoWebCore.VirtualPosition.register(tabDivElement);
+    EchoWebCore.VirtualPosition.register(contentDivElement);
     
 	EchoRender.renderComponentAdd(update, this._childComponent, contentDivElement);
 	

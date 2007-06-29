@@ -440,7 +440,7 @@ ExtrasRender.ComponentSync.MenuBarPane.prototype._renderMain = function() {
     EchoWebCore.EventProcessor.add(menuBarDivElement, "mouseover", new EchoCore.MethodRef(this, this._processItemEnter), false);
     EchoWebCore.EventProcessor.add(menuBarDivElement, "mouseout", new EchoCore.MethodRef(this, this._processItemExit), false);
 
-    EchoWebCore.VirtualPosition.register(menuBarDivElement.id);
+    EchoWebCore.VirtualPosition.register(menuBarDivElement);
     
     return menuBarDivElement;
 };
@@ -644,7 +644,7 @@ ExtrasRender.ComponentSync.DropDownMenu.prototype._renderMain = function() {
 
     EchoWebCore.EventProcessor.add(dropDownDivElement, "click", new EchoCore.MethodRef(this, this._processClick), false);
     
-    EchoWebCore.VirtualPosition.register(contentDivElement.id);
+    EchoWebCore.VirtualPosition.register(contentDivElement);
 
     if (this._isSelectionEnabled()) {
     	var selection = this.component.getRenderProperty("selection");

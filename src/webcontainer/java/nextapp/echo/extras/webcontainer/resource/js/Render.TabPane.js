@@ -96,7 +96,7 @@ ExtrasRender.ComponentSync.TabPane.prototype._render = function() {
     tabPaneDivElement.appendChild(this._renderHeaderContainer());
     tabPaneDivElement.appendChild(this._renderContentContainer());
     
-    EchoWebCore.VirtualPosition.register(tabPaneDivElement.id);
+    EchoWebCore.VirtualPosition.register(tabPaneDivElement);
     
     return tabPaneDivElement;
 };
@@ -194,7 +194,7 @@ ExtrasRender.ComponentSync.TabPane.prototype._renderContentContainer = function(
         EchoRender.Property.Border.renderSide(activeBorder, contentContainerDivElement, "borderTop")
     }
     
-    EchoWebCore.VirtualPosition.register(contentContainerDivElement.id);
+    EchoWebCore.VirtualPosition.register(contentContainerDivElement);
     
     return contentContainerDivElement;
 };
@@ -486,7 +486,7 @@ ExtrasRender.ComponentSync.TabPane.Tab.prototype._renderContentContainer = funct
     EchoRender.Property.Insets.renderPixel(this._getContentInsets(), contentDivElement, "padding");
     contentDivElement.style.overflow = "auto";
 	
-    EchoWebCore.VirtualPosition.register(contentDivElement.id);
+    EchoWebCore.VirtualPosition.register(contentDivElement);
 	
 	EchoRender.renderComponentAdd(update, this._childComponent, contentDivElement);
 	
