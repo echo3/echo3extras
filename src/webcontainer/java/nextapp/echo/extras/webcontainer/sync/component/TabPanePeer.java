@@ -101,7 +101,7 @@ public class TabPanePeer extends AbstractComponentSynchronizePeer implements Laz
     public Iterator getImmediateEventTypes(Context context, Component component) {
         TabPane tabPane = (TabPane) component;
         
-        boolean closeEvent = tabPane.isTabCloseEnabled();
+        boolean closeEvent = ((Boolean)tabPane.getRenderProperty(TabPane.PROPERTY_TAB_CLOSE_ENABLED, Boolean.FALSE)).booleanValue();
         boolean selectionEvent = tabPane.hasTabSelectionListeners();
         
         if (closeEvent && selectionEvent) {
