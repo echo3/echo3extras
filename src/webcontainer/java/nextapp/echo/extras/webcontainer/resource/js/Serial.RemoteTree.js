@@ -6,20 +6,18 @@ ExtrasSerial.PropertyTranslator.RemoteTree.TreeStructure.toProperty = function(c
     var children = EchoWebCore.DOM.getChildElementsByTagName(propertyElement, "e");
     var treeStructure;
     for (var i = 0; i < children.length; i++) {
-    	var childElement = children[i];
-    	var id = childElement.getAttribute("i");
-        var node = new ExtrasApp.RemoteTree.TreeNode(id);
-		var expandedState = childElement.getAttribute("ex") == "1";
-		node.setExpanded(expandedState);
-		node.setLeaf(childElement.getAttribute("l") == "1");
-		var parentId = childElement.getAttribute("p");
-		if (parentId) {
-			var parentNode = treeStructure.getNode(parentId);
-			parentNode.addChildNode(node);
+        var childElement = children[i];
+        var id = childElement.getAttribute("i");
+        var parentId = childElement.getAttribute("p");
+        var node = new ExtrasApp.RemoteTree.TreeNode(id, parentId);
+        var expandedState = childElement.getAttribute("ex") == "1";
+        node.setExpanded(expandedState);
+        node.setLeaf(childElement.getAttribute("l") == "1");
+        if (i == 0) {
+            treeStructure = new ExtrasApp.RemoteTree.TreeStructure(node);
+        } else {
             treeStructure.addNode(node);
-		} else {
-			treeStructure = new ExtrasApp.RemoteTree.TreeStructure(node);
-		}
+        }
     }
     return treeStructure;
 };

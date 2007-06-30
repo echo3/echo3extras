@@ -11,7 +11,9 @@ import nextapp.echo.app.update.ServerComponentUpdate;
 import nextapp.echo.app.util.Context;
 import nextapp.echo.extras.app.Tree;
 import nextapp.echo.extras.app.tree.TreeModel;
+import nextapp.echo.extras.app.tree.TreePath;
 import nextapp.echo.webcontainer.AbstractComponentSynchronizePeer;
+import nextapp.echo.webcontainer.RenderState;
 import nextapp.echo.webcontainer.ServerMessage;
 import nextapp.echo.webcontainer.Service;
 import nextapp.echo.webcontainer.UserInstance;
@@ -26,6 +28,19 @@ import org.w3c.dom.Element;
 public class TreePeer 
 extends AbstractComponentSynchronizePeer {
 
+    private class TreeRenderState 
+    implements RenderState {
+        private int row;
+        
+        public TreeRenderState(int row) {
+            this.row = row;
+        }
+        
+        public int getRow() {
+            return row;
+        }
+    }
+    
     private class TreeStructure {
         
         Tree tree;
@@ -56,7 +71,10 @@ extends AbstractComponentSynchronizePeer {
             Tree tree = ((TreeStructure) propertyValue).tree;
             TreeStructureRenderer renderer = new TreeStructureRenderer(propertyElement, tree);
             propertyElement.setAttribute("t", "ExtrasSerial.TreeStructure");
-            renderer.render();
+            UserInstance userInstance = (UserInstance) context.get(UserInstance.class);
+            TreeRenderState renderState = (TreeRenderState) userInstance.getRenderState(tree);
+            renderer.render(renderState);
+            userInstance.removeRenderState(tree);
         }
     }
     
@@ -77,25 +95,32 @@ extends AbstractComponentSynchronizePeer {
             model = tree.getModel();
         }
         
-        private void render() {
-            renderNode(null, model.getRoot());
+        private void render(TreeRenderState renderState) {
+            Object value = null;
+            String parentId = null;
+            if (renderState == null || renderState.getRow() == 0) {
+                value = model.getRoot();
+            } else {
+                row = renderState.getRow();
+                TreePath path = tree.getPathForRow(renderState.getRow());
+                value = path.getLastPathComponent();
+                parentId = UserInstance.getElementId(tree.getComponent(path.getParentPath(), 0));
+            }
+            renderNode(parentId, value);
         }
         
         private void renderNode(String parentId, Object value) {
-            Component component = tree.getComponent(row * columnCount);
+            Component component = tree.getComponent(row, 0);
             boolean expanded = tree.isExpanded(row);
             String id = UserInstance.getElementId(component);
             Element eElement = document.createElement("e");
-//            eElement.setAttribute("x", Integer.toString(row));
             eElement.setAttribute("i", id);
             if (parentId != null) {
                 eElement.setAttribute("p", parentId);
             }
-//            eElement.setAttribute("d", "" + depth);
             if (expanded) {
                 eElement.setAttribute("ex", "1");
-            }
-            if (model.isLeaf(value)) {
+            } else if (model.isLeaf(value)) {
                 eElement.setAttribute("l", "1");
             }
             propertyElement.appendChild(eElement);
@@ -214,6 +239,10 @@ extends AbstractComponentSynchronizePeer {
      */
     public void processEvent(Context context, Component component, String eventType, Object eventData) {
         if (Tree.INPUT_ACTION.equals(eventType)) {
+            TreeRenderState renderState = new TreeRenderState(((Integer)eventData).intValue());
+            UserInstance userInstance = (UserInstance) context.get(UserInstance.class);
+            userInstance.setRenderState(component, renderState);
+            
             ClientUpdateManager clientUpdateManager = (ClientUpdateManager) context.get(ClientUpdateManager.class);
             clientUpdateManager.setComponentAction(component, Tree.INPUT_ACTION, eventData);
         }
