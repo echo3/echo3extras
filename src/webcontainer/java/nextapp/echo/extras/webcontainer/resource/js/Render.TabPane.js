@@ -256,6 +256,7 @@ ExtrasRender.ComponentSync.TabPane.prototype._selectTab = function(tabId) {
    	
    	this._getTabById(this._activeTabId)._highlight(true);
    	
+    EchoRender.notifyResize(this.component);
 	EchoWebCore.VirtualPosition.redraw();
 };
 
