@@ -92,7 +92,7 @@ ExtrasRender.ComponentSync.TabPane.prototype._render = function() {
     tabPaneDivElement.appendChild(this._renderHeaderContainer());
     tabPaneDivElement.appendChild(this._renderContentContainer());
     
-    EchoWebCore.VirtualPosition.register(tabPaneDivElement);
+//    EchoWebCore.VirtualPosition.register(tabPaneDivElement);
     
     return tabPaneDivElement;
 };
@@ -176,7 +176,7 @@ ExtrasRender.ComponentSync.TabPane.prototype._renderContentContainer = function(
         EchoRender.Property.Border.renderSide(this._tabActiveBorder, contentContainerDivElement, "borderTop")
     }
     
-    EchoWebCore.VirtualPosition.register(contentContainerDivElement);
+//    EchoWebCore.VirtualPosition.register(contentContainerDivElement);
     
     return contentContainerDivElement;
 };
@@ -229,6 +229,14 @@ ExtrasRender.ComponentSync.TabPane.prototype._renderHeaderContainer = function()
     return headerContainerDivElement;
 };
 
+ExtrasRender.ComponentSync.TabPane.prototype.renderSizeUpdate = function() {
+    EchoWebCore.VirtualPosition.redraw(this._element);
+    EchoWebCore.VirtualPosition.redraw(this._contentContainerDivElement);
+    for (var i = 0; i < this._tabs.items.length; ++i) {
+        this._tabs.items[i]._renderSizeUpdate();
+    }
+};
+
 ExtrasRender.ComponentSync.TabPane.prototype.renderUpdate = function(update) {
     // FIXME partial update / lazy rendering
     var element = this._element;
@@ -257,7 +265,7 @@ ExtrasRender.ComponentSync.TabPane.prototype._selectTab = function(tabId) {
    	this._getTabById(this._activeTabId)._highlight(true);
    	
     EchoRender.notifyResize(this.component);
-	EchoWebCore.VirtualPosition.redraw();
+//	EchoWebCore.VirtualPosition.redraw();
 };
 
 /**
@@ -460,11 +468,15 @@ ExtrasRender.ComponentSync.TabPane.Tab.prototype._renderContentContainer = funct
     EchoRender.Property.Insets.renderPixel(this._getContentInsets(), contentDivElement, "padding");
     contentDivElement.style.overflow = "auto";
 	
-    EchoWebCore.VirtualPosition.register(contentDivElement);
+//    EchoWebCore.VirtualPosition.register(contentDivElement);
 	
 	EchoRender.renderComponentAdd(update, this._childComponent, contentDivElement);
 	
 	return contentDivElement;
+};
+
+ExtrasRender.ComponentSync.TabPane.Tab.prototype._renderSizeUpdate = function() {
+    EchoWebCore.VirtualPosition.redraw(this._contentDivElement);
 };
 
 ExtrasRender.ComponentSync.TabPane.Tab.prototype._dispose = function() {

@@ -44,6 +44,12 @@ ExtrasRender.ComponentSync.AccordionPane.prototype.renderAdd = function(update, 
     parentElement.appendChild(this._paneDivElement);
 };
 
+ExtrasRender.ComponentSync.AccordionPane.prototype.renderSizeUpdate = function() {
+    for (var i = 0; i < this._tabs.items.length; ++i) {
+        this._tabs.items[i]._renderSizeUpdate();
+    }
+};
+
 ExtrasRender.ComponentSync.AccordionPane.prototype.renderUpdate = function(update) {
     // FIXME partial update / lazy rendering
     var element = this._paneDivElement;
@@ -157,8 +163,6 @@ ExtrasRender.ComponentSync.AccordionPane.prototype._redrawTabs = function() {
             contentDivElement.style.display = "none";
         }
     }
-    
-	EchoWebCore.VirtualPosition.redraw();
 };
 
 /**
@@ -236,36 +240,35 @@ ExtrasRender.ComponentSync.AccordionPane.Tab = function(childComponent, parent) 
 };
 
 ExtrasRender.ComponentSync.AccordionPane.Tab.prototype._render = function(update) {
-    var tabDivElement = document.createElement("div");
-    tabDivElement.id = this._parent.component.renderId + "_tab_" + this._childComponent.renderId;
-    tabDivElement.style.cursor = "pointer";
-    tabDivElement.style.height = ExtrasRender.ComponentSync.AccordionPane._defaultTabHeight;
-    EchoRender.Property.Insets.renderPixel(this._parent._getTabInsets(), tabDivElement, "padding");
-    tabDivElement.style.position = "absolute";
-    tabDivElement.style.left = "0px";
-    tabDivElement.style.right = "0px";
-    tabDivElement.style.overflow = "hidden";
-    tabDivElement.appendChild(document.createTextNode(this._getTitle()));
+    this._tabDivElement = document.createElement("div");
+    this._tabDivElement.id = this._parent.component.renderId + "_tab_" + this._childComponent.renderId;
+    this._tabDivElement.style.cursor = "pointer";
+    this._tabDivElement.style.height = ExtrasRender.ComponentSync.AccordionPane._defaultTabHeight;
+    EchoRender.Property.Insets.renderPixel(this._parent._getTabInsets(), this._tabDivElement, "padding");
+    this._tabDivElement.style.position = "absolute";
+    this._tabDivElement.style.left = "0px";
+    this._tabDivElement.style.right = "0px";
+    this._tabDivElement.style.overflow = "hidden";
+    this._tabDivElement.appendChild(document.createTextNode(this._getTitle()));
 
-    var contentDivElement = document.createElement("div");
-    contentDivElement.id = this._parent.component.renderId + "_content_" + this._childComponent.renderId;
-    contentDivElement.style.display = "none";
-    contentDivElement.style.position = "absolute";
-    contentDivElement.style.left = "0px";
-    contentDivElement.style.right = "0px";
-    EchoRender.Property.Insets.renderPixel(this._getContentInsets(), contentDivElement, "padding");
-    contentDivElement.style.overflow = "auto";
+    this._contentDivElement = document.createElement("div");
+    this._contentDivElement.id = this._parent.component.renderId + "_content_" + this._childComponent.renderId;
+    this._contentDivElement.style.display = "none";
+    this._contentDivElement.style.position = "absolute";
+    this._contentDivElement.style.left = "0px";
+    this._contentDivElement.style.right = "0px";
+    EchoRender.Property.Insets.renderPixel(this._getContentInsets(), this._contentDivElement, "padding");
+    this._contentDivElement.style.overflow = "auto";
 
-    EchoWebCore.VirtualPosition.register(tabDivElement);
-    EchoWebCore.VirtualPosition.register(contentDivElement);
-    
-	EchoRender.renderComponentAdd(update, this._childComponent, contentDivElement);
+	EchoRender.renderComponentAdd(update, this._childComponent, this._contentDivElement);
 	
-    this._tabDivElement = tabDivElement;
-    this._contentDivElement = contentDivElement;
-    
     this._highlight(false);
     this._addEventListeners();
+};
+
+ExtrasRender.ComponentSync.AccordionPane.Tab.prototype._renderSizeUpdate = function() {
+    EchoWebCore.VirtualPosition.redraw(this._tabDivElement);
+    EchoWebCore.VirtualPosition.redraw(this._contentDivElement);
 };
 
 ExtrasRender.ComponentSync.AccordionPane.Tab.prototype._dispose = function() {

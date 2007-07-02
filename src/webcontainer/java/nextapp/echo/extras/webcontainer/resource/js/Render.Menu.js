@@ -440,8 +440,6 @@ ExtrasRender.ComponentSync.MenuBarPane.prototype._renderMain = function() {
     EchoWebCore.EventProcessor.add(menuBarDivElement, "mouseover", new EchoCore.MethodRef(this, this._processItemEnter), false);
     EchoWebCore.EventProcessor.add(menuBarDivElement, "mouseout", new EchoCore.MethodRef(this, this._processItemExit), false);
 
-    EchoWebCore.VirtualPosition.register(menuBarDivElement);
-    
     return menuBarDivElement;
 };
 
@@ -545,6 +543,10 @@ ExtrasRender.ComponentSync.MenuBarPane.prototype._removeMask = function() {
     }
 };
 
+ExtrasRender.ComponentSync.MenuBarPane.prototype.renderSizeUpdate = function() {
+    EchoWebCore.VirtualPosition.redraw(this._element);
+};
+
 ExtrasRender.ComponentSync.MenuBarPane.prototype._processClick = function(e) {
     if (!this.component.isActive()) {
         return;
@@ -643,8 +645,9 @@ ExtrasRender.ComponentSync.DropDownMenu.prototype._renderMain = function() {
     dropDownDivElement.appendChild(relativeContainerDivElement);
 
     EchoWebCore.EventProcessor.add(dropDownDivElement, "click", new EchoCore.MethodRef(this, this._processClick), false);
-    
-    EchoWebCore.VirtualPosition.register(contentDivElement);
+  
+//  FIXME.port to new virtual pos api.    
+//    EchoWebCore.VirtualPosition.register(contentDivElement);
 
     if (this._isSelectionEnabled()) {
     	var selection = this.component.getRenderProperty("selection");
