@@ -13,6 +13,8 @@ ExtrasRender.ComponentSync.TabPane = function() {
     this._contentContainerDivElement = null;
 };
 
+ExtrasRender.ComponentSync.TabPane._supportedPartialProperties = new Array("activeTab");
+
 ExtrasRender.ComponentSync.TabPane._paneInsets = new EchoApp.Property.Insets(0);
 
 ExtrasRender.ComponentSync.TabPane._defaultBorderType = ExtrasApp.TabPane.BORDER_TYPE_ADJACENT_TO_TABS;
@@ -91,8 +93,6 @@ ExtrasRender.ComponentSync.TabPane.prototype._render = function() {
     
     tabPaneDivElement.appendChild(this._renderHeaderContainer());
     tabPaneDivElement.appendChild(this._renderContentContainer());
-    
-//    EchoWebCore.VirtualPosition.register(tabPaneDivElement);
     
     return tabPaneDivElement;
 };
@@ -232,12 +232,23 @@ ExtrasRender.ComponentSync.TabPane.prototype._renderHeaderContainer = function()
 ExtrasRender.ComponentSync.TabPane.prototype.renderSizeUpdate = function() {
     EchoWebCore.VirtualPosition.redraw(this._element);
     EchoWebCore.VirtualPosition.redraw(this._contentContainerDivElement);
-    for (var i = 0; i < this._tabs.items.length; ++i) {
-        this._tabs.items[i]._renderSizeUpdate();
+    if (this._activeTabId) {
+	    var tab = this._getTabById(this._activeTabId);
+    	tab._renderSizeUpdate();
     }
 };
 
 ExtrasRender.ComponentSync.TabPane.prototype.renderUpdate = function(update) {
+	if (!update.hasUpdatedLayoutDataChildren() && !update.getAddedChildren() && !update.getRemovedChildren()) {
+		if (EchoCore.Arrays.containsAll(ExtrasRender.ComponentSync.TabPane._supportedPartialProperties, update.getUpdatedPropertyNames(), true)) {
+		    // partial update
+			var activeTabUpdate = update.getUpdatedProperty("activeTab");
+			if (activeTabUpdate) {
+				this._selectTab(activeTabUpdate.newValue);
+			}
+		    return false;
+		}
+	}
     // FIXME partial update / lazy rendering
     var element = this._element;
     var containerElement = element.parentNode;
@@ -265,7 +276,6 @@ ExtrasRender.ComponentSync.TabPane.prototype._selectTab = function(tabId) {
    	this._getTabById(this._activeTabId)._highlight(true);
    	
     EchoRender.notifyResize(this.component);
-//	EchoWebCore.VirtualPosition.redraw();
 };
 
 /**
