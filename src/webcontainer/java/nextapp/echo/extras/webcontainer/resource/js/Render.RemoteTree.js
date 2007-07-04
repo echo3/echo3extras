@@ -8,12 +8,27 @@ ExtrasRender.ComponentSync.RemoteTree.prototype = new EchoRender.ComponentSync;
 
 ExtrasRender.ComponentSync.RemoteTree._supportedPartialProperties = new Array("treeStructure");
 
+/**
+ * Gets an URI for default tree images
+ * 
+ * @param {String} identifier the image identifier
+ * @return the image URI
+ * @type {String}
+ */
+ExtrasRender.ComponentSync.RemoteTree.prototype._getImageUri = function(identifier) {
+	// FIXME abstract this somehow so it works with FreeClient too
+	return "?sid=EchoExtras.Tree.Image&imageuid=" + identifier;
+};
+
 ExtrasRender.ComponentSync.RemoteTree.prototype.renderAdd = function(update, parentElement) {
+    var lineStyle = this.component.getRenderProperty("lineStyle", 1);
+    var lineImageIdSuffix = lineStyle == 0 ? "Solid" : "Dotted";
+    this.verticalLineImage = this._getImageUri("lineVertical" + lineImageIdSuffix);
+    this.horizontalLineImage = this._getImageUri("lineHorizontal" + lineImageIdSuffix);
+    
     var tableElement = document.createElement("table");
     this._element = tableElement;
-//    tableElement.style.borderCollapse = "collapse";
-    tableElement.borderCollapse = "collapse";
-    tableElement.border = "1";
+    tableElement.style.borderCollapse = "collapse";
 //    tableElement.style.border = "1px solid black";
     
     var tbodyElement = document.createElement("tbody");
@@ -63,53 +78,75 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._rerenderNode = function(update,
 };
 
 ExtrasRender.ComponentSync.RemoteTree.prototype._renderNode = function(context, node, depth, update) {
-    var row = context.row;
-
     var trElement = this._getRowElementForNodeId(node.getId());
     var tdElement;
     var expandoElement;
-    if (trElement) {
+    if (!trElement) {
+        var elems = this._renderNodeRowStructure(context, node, depth, update);
+        trElement = elems.trElement;
+        tdElement = elems.tdElement;
+        expandoElement = elems.expandoElement;
+    } else {
         tdElement = this._getNodeElementForNodeId(node.getId());
         expandoElement = this._getExpandoElementForNodeId(node.getId());
-        
-        EchoWebCore.DOM.removeAllChildren(tdElement);
-        EchoWebCore.DOM.removeAllChildren(expandoElement);
-    } else {
-        trElement = this._element.insertRow(row);
-        trElement.id = this.component.renderId + "_tr_" + node.getId();
-        
-        for (var c = 0; c < depth; ++c) {
-            var rowHeaderElement = document.createElement("td");
-            rowHeaderElement.appendChild(document.createTextNode("\u00a0"));
-//            rowHeaderElement.style.borderCollapse = "collapse";
-//            rowHeaderElement.style.border = "1px solid black";
-            trElement.appendChild(rowHeaderElement);
-        }
-        
-        var clickRef = new EchoCore.MethodRef(this, this._processClick);
-        
-        var expandoElement = document.createElement("td");
-        expandoElement.id = this.component.renderId + "_expando_" + node.getId();
-        trElement.appendChild(expandoElement);
-        
-        EchoWebCore.EventProcessor.add(expandoElement, "click", clickRef, false);
-        
-        var tdElement = document.createElement("td");
-        tdElement.id = this.component.renderId + "_node_" + node.getId();
-//        tdElement.style.borderCollapse = "collapse";
-//        tdElement.style.border = "1px solid black";
-        trElement.appendChild(tdElement);
-        
-        EchoWebCore.EventProcessor.add(tdElement, "click", clickRef, false);
     }
+
+    EchoWebCore.DOM.removeAllChildren(tdElement);
+    EchoWebCore.DOM.removeAllChildren(expandoElement);
+    
     var expandoText = "\u00a0";
-    if (!node.isLeaf()) {
-       expandoText = node.isExpanded() ? "-" : "+";
+    expandoElement.style.height = "100%"; // IE hacking
+    var wrapperElement = document.createElement("div");
+    if (node.getParentId()) { // don't show tree lines for the root
+        var horizontalLineElement = document.createElement("div");
+        var verticalLineElement = document.createElement("div");
+        
+        wrapperElement.style.position = "relative";
+        wrapperElement.style.height = "100%";
+        wrapperElement.style.width = "100%";
+        
+        verticalLineElement.style.position = "absolute";
+        verticalLineElement.style.top = "0";
+        if (this._treeStructure.hasNodeNextSibling(node)) {
+           verticalLineElement.style.height = "100%";
+        } else {
+           verticalLineElement.style.height = "50%";
+        }
+        verticalLineElement.style.width = "100%";
+        verticalLineElement.style.backgroundImage = "url('" + this.verticalLineImage + "')";
+        verticalLineElement.style.backgroundPosition = "center top";
+        verticalLineElement.style.backgroundRepeat = "repeat-y";
+        verticalLineElement.style.fontSize = "0px";        
+        
+        horizontalLineElement.style.position = "absolute";
+        horizontalLineElement.style.top = "0";
+        horizontalLineElement.style.left = "50%";
+        horizontalLineElement.style.height = "100%";
+        horizontalLineElement.style.width = "50%";
+        horizontalLineElement.style.backgroundImage = "url('" + this.horizontalLineImage + "')";
+        horizontalLineElement.style.backgroundPosition = "center center";
+        horizontalLineElement.style.backgroundRepeat = "repeat-x";
+        horizontalLineElement.style.fontSize = "0px";
+        
+        verticalLineElement.appendChild(document.createTextNode(expandoText));
+        horizontalLineElement.appendChild(document.createTextNode(expandoText));
+
+        wrapperElement.appendChild(verticalLineElement);
+        wrapperElement.appendChild(horizontalLineElement);
     }
-    expandoElement.appendChild(document.createTextNode(expandoText));
+    if (!node.isLeaf()) {
+        expandoText = node.isExpanded() ? "-" : "+";
+    }
+    wrapperElement.appendChild(document.createTextNode(expandoText));
+    expandoElement.appendChild(wrapperElement);
     
     var component = this.component.application.getComponentByRenderId(node.getId());
     EchoRender.renderComponentAdd(update, component, tdElement);
+    
+    var hackElement = document.createElement("div");
+    hackElement.style.height = "100%";
+    hackElement.style.fontSize = "0px";
+    tdElement.appendChild(hackElement);
     
     var childCount = node.getChildNodeCount();
     for (var i = 0; i < childCount; ++i) {
@@ -118,6 +155,62 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNode = function(context, 
         this._renderNode(context, childNode, depth + 1, update);
     }
 };
+
+ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRowStructure = function(context, node, depth, update) {
+    var trElement = this._element.insertRow(context.row);
+    trElement.style.heigth = "100%"; // IE hacking
+    trElement.id = this.component.renderId + "_tr_" + node.getId();
+    
+    var parentNode = this._treeStructure.getNode(node.getParentId());
+    for (var c = 0; c < depth; ++c) {
+        var rowHeaderElement = trElement.insertCell(0);
+//            rowHeaderElement.style.border = "1px solid black";
+        rowHeaderElement.style.padding = "0";
+        rowHeaderElement.style.width = "0.6em";
+        
+        if (parentNode && this._treeStructure.hasNodeNextSibling(parentNode)) {
+            rowHeaderElement.style.backgroundImage = "url('" + this.verticalLineImage + "')";
+            rowHeaderElement.style.backgroundPosition = "center top";
+            rowHeaderElement.style.backgroundRepeat = "repeat-y";
+        }
+        if (parentNode.getParentId()) {
+            parentNode = this._treeStructure.getNode(parentNode.getParentId());
+        } else {
+            parentNode = null;
+        }
+        
+        // make sure the background images of the cell below this one size correctly
+        var hackElement = document.createElement("div");
+        hackElement.style.height = "100%";
+        hackElement.style.fontSize = "0px";
+        rowHeaderElement.appendChild(hackElement);
+    }
+    
+    var clickRef = new EchoCore.MethodRef(this, this._processClick);
+    
+    var expandoElement = document.createElement("td");
+    expandoElement.id = this.component.renderId + "_expando_" + node.getId();
+//        expandoElement.style.border = "1px solid black";
+    expandoElement.style.padding = "0";
+    expandoElement.style.width = "0.6em";
+    trElement.appendChild(expandoElement);
+    
+    EchoWebCore.EventProcessor.add(expandoElement, "click", clickRef, false);
+    
+    var tdElement = document.createElement("td");
+    tdElement.id = this.component.renderId + "_node_" + node.getId();
+//        tdElement.style.border = "1px solid black";
+    tdElement.style.padding = "0";
+    trElement.appendChild(tdElement);
+    
+    EchoWebCore.EventProcessor.add(tdElement, "click", clickRef, false);
+    
+    return {
+        trElement: trElement,
+        tdElement: tdElement,
+        expandoElement: expandoElement
+    };
+}
 
 ExtrasRender.ComponentSync.RemoteTree.prototype._updateSpans = function(update, startNode, maxDepth) {
     var depth = this._treeStructure.getNodeDepth(startNode);
@@ -178,12 +271,12 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._doAction = function(rowIndex) {
 };
 
 ExtrasRender.ComponentSync.RemoteTree.prototype._processClick = function(e) {
-    var nodeId = this._getNodeIdFromElement(e.target);
+    var nodeId = this._getNodeIdFromElement(e.registeredTarget);
     var node = this._treeStructure.getNode(nodeId);
     if (node.isLeaf()) {
         return;
     }
-    var rowIndex = this._getRowIndex(e.target.parentNode);
+    var rowIndex = this._getRowIndex(e.registeredTarget.parentNode);
     this._doAction(rowIndex);
 };
 

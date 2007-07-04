@@ -1,5 +1,7 @@
 package nextapp.echo.extras.webcontainer.sync.component;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import nextapp.echo.app.Component;
@@ -12,6 +14,7 @@ import nextapp.echo.app.util.Context;
 import nextapp.echo.extras.app.Tree;
 import nextapp.echo.extras.app.tree.TreeModel;
 import nextapp.echo.extras.app.tree.TreePath;
+import nextapp.echo.extras.webcontainer.service.TreeImageService;
 import nextapp.echo.webcontainer.AbstractComponentSynchronizePeer;
 import nextapp.echo.webcontainer.RenderState;
 import nextapp.echo.webcontainer.ServerMessage;
@@ -163,6 +166,8 @@ extends AbstractComponentSynchronizePeer {
         super();
         addOutputProperty(PROPERTY_TREE_STRUCTURE);
         addOutputProperty(PROPERTY_COLUMN_COUNT);
+        
+        TreeImageService.install();
     }
     
     /**
@@ -209,14 +214,16 @@ extends AbstractComponentSynchronizePeer {
             ServerComponentUpdate update) {
         Iterator normalPropertyIterator = super.getUpdatedOutputPropertyNames(context, component, update);
         
+        HashSet extraProperties = new HashSet();
+        
         if (update.hasUpdatedProperty(Tree.MODEL_CHANGED_PROPERTY)) {
-            return new MultiIterator(
-                    new Iterator[]{ normalPropertyIterator, new ArrayIterator(MODEL_CHANGED_UPDATE_PROPERTIES) });
-        } else if (update.hasUpdatedProperty(Tree.EXPANSION_STATE_CHANGED_PROPERTY)) {
-            return new ArrayIterator(new String[] {PROPERTY_TREE_STRUCTURE});
-        } else {
-            return normalPropertyIterator;
-        }
+            extraProperties.addAll(Arrays.asList(MODEL_CHANGED_UPDATE_PROPERTIES));
+        } 
+        if (update.hasUpdatedProperty(Tree.EXPANSION_STATE_CHANGED_PROPERTY)) {
+            extraProperties.add(PROPERTY_TREE_STRUCTURE);
+        } 
+        
+        return new MultiIterator(new Iterator[] { normalPropertyIterator, extraProperties.iterator() });
     }
     
     /**

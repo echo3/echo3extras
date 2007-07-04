@@ -110,10 +110,16 @@ public class Tree extends Component {
 
     private Renderer renderer = new Renderer();
 
+    public static final String PROPERTY_LINE_STYLE = "lineStyle";
+    
     public static final String CELL_RENDERER_CHANGED_PROPERTY = "cellRenderer";
     public static final String MODEL_CHANGED_PROPERTY = "model";
     public static final String EXPANSION_STATE_CHANGED_PROPERTY = "expansionState";
     public static final String INPUT_ACTION = "action";
+    
+    public static final int LINE_STYLE_SOLID = 0;
+    public static final int LINE_STYLE_DOTTED = 1;
+    
     private static final TreeCellRenderer DEFAULT_TREE_CELL_RENDERER = new DefaultTreeCellRenderer();
 
     /**
@@ -357,6 +363,23 @@ public class Tree extends Component {
         // FIXME column
         return (Component) treePathToComponentCache.get(path);
     }
+    
+    /**
+     * Retrieves the line style that is used to render the lines that connect the nodes.
+     * 
+     * @return the line style, one of the following values:
+     *         <ul>
+     *           <li><code>LINE_STYLE_SOLID</code></li>
+     *           <li><code>LINE_STYLE_DOTTED</code></li>
+     *         </ul>
+     */
+    public int getLineStyle() {
+        Integer oLineStyle = (Integer) getProperty(PROPERTY_LINE_STYLE);
+        if (oLineStyle == null) {
+            return LINE_STYLE_DOTTED;
+        }
+        return oLineStyle.intValue();
+    }
 
     /**
      * Marks the tree as needing to be re-rendered.
@@ -398,6 +421,19 @@ public class Tree extends Component {
         model = newValue;
 
         firePropertyChange(MODEL_CHANGED_PROPERTY, oldValue, newValue);
+    }
+    
+    /**
+     * Sets the line style that is used to render the lines that connect the nodes.
+     * 
+     * @param newValue the line style, one of the following values:
+     *        <ul>
+     *          <li><code>LINE_STYLE_SOLID</code></li>
+     *          <li><code>LINE_STYLE_DOTTED</code></li>
+     *        </ul>
+     */
+    public void setLineStyle(int newValue) {
+        setProperty(PROPERTY_LINE_STYLE, new Integer(newValue));
     }
 
     /**

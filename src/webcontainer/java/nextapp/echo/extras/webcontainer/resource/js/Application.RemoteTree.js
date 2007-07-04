@@ -78,6 +78,14 @@ ExtrasApp.RemoteTree.TreeStructure.prototype.getNodeDepth = function(node) {
     return depth;
 };
 
+ExtrasApp.RemoteTree.TreeStructure.prototype.hasNodeNextSibling = function(node) {
+    if (!node.getParentId()) {
+        return false;
+    }
+    var parentNode = this.getNode(node.getParentId());
+    return parentNode.indexOf(node) < (parentNode.getChildNodeCount() - 1);
+};
+
 ExtrasApp.RemoteTree.TreeStructure.prototype.toString = function() {
     var str = "treeStructure [\n";
     str += this.getNodeString(this.getRootNode(), "  ");
@@ -147,6 +155,10 @@ ExtrasApp.RemoteTree.TreeNode.prototype.setLeaf = function(newValue) {
 
 ExtrasApp.RemoteTree.TreeNode.prototype.isLeaf = function() {
     return this._leaf;
+};
+
+ExtrasApp.RemoteTree.TreeNode.prototype.indexOf = function(node) {
+    return this._childNodes.indexOf(node);
 };
 
 ExtrasApp.RemoteTree.TreeNode.prototype.equals = function(that) {
