@@ -314,7 +314,6 @@ ExtrasRender.ComponentSync.TabPane.prototype._selectTab = function(tabId) {
 	    this._activeTabId = tabId;
 	    tab._highlight(true);
 	    tab._renderSizeUpdate();
-	    EchoRender.notifyResize(this.component);
     } else {
 	    this._activeTabId = null;
     }
@@ -721,6 +720,7 @@ ExtrasRender.ComponentSync.TabPane.Tab.prototype._processClick = function(e) {
     } else {
         // tab clicked
         this._parent._selectTab(this._childComponent.renderId);
+        EchoRender.notifyResize(this._parent.component);
         this._parent.component.setProperty("activeTab", this._childComponent.renderId);
         this._parent.component.fireEvent(new EchoCore.Event(this._parent.component, 
                 "tabSelect", this._childComponent.renderId));
