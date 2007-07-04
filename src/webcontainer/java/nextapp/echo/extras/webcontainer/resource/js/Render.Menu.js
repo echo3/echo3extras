@@ -47,7 +47,7 @@ ExtrasRender.ComponentSync.Menu.prototype.renderUpdate = function(update) {
 };
 
 ExtrasRender.ComponentSync.Menu.prototype.renderDispose = function(update) {
-    this._processCancel();
+    this._closeMenu();
 	EchoWebCore.EventProcessor.removeAll(this._element);
 	this._element.id = "";
 	this._element = null;
@@ -309,20 +309,50 @@ ExtrasRender.ComponentSync.Menu.prototype._highlight = function(menuModel, state
 };
 
 ExtrasRender.ComponentSync.Menu.prototype._processItemEnter = function(e) {
-    var modelId = ExtrasRender.ComponentSync.Menu._getElementModelId(e.target);
+    var modelId = this._getElementModelId(e.target);
     if (modelId) {
 		this._highlight(this._menuModel.getItem(modelId), true);
     }
 };
 
 ExtrasRender.ComponentSync.Menu.prototype._processItemExit = function(e) {
-    var modelId = ExtrasRender.ComponentSync.Menu._getElementModelId(e.target);
+    var modelId = this._getElementModelId(e.target);
     if (modelId) {
 		this._highlight(this._menuModel.getItem(modelId), false);
     }
 };
 
-ExtrasRender.ComponentSync.Menu.prototype._processCancel = function() {
+ExtrasRender.ComponentSync.Menu.prototype._renderMask = function() {
+    if (this.maskDeployed) {
+        return;
+    }
+    this.maskDeployed = true;
+    
+    var bodyElement = document.getElementsByTagName("body")[0];    
+    EchoWebCore.EventProcessor.add(bodyElement, "click", new EchoCore.MethodRef(this, this._processMaskClick), true);
+    EchoWebCore.EventProcessor.add(bodyElement, "contextmenu", new EchoCore.MethodRef(this, this._processMaskClick), true);
+};
+
+ExtrasRender.ComponentSync.Menu.prototype._removeMask = function() {
+    if (!this.maskDeployed) {
+        return;
+    }
+    this.maskDeployed = false;
+
+    var bodyElement = document.getElementsByTagName("body")[0];
+    EchoWebCore.EventProcessor.remove(bodyElement, "click", new EchoCore.MethodRef(this, this._processMaskClick), true);
+    EchoWebCore.EventProcessor.remove(bodyElement, "contextmenu", new EchoCore.MethodRef(this, this._processMaskClick), true);
+};
+
+ExtrasRender.ComponentSync.Menu.prototype._processMaskClick = function(e) {
+    var modelId = this._getElementModelId(e.target);
+    if (!modelId) {
+		this._closeMenu();
+    }
+    return true;
+};
+
+ExtrasRender.ComponentSync.Menu.prototype._closeMenu = function() {
     this._removeMask();
     this._closeDescendantMenus(null);
 };
@@ -354,11 +384,11 @@ ExtrasRender.ComponentSync.Menu._getImageUri = function(identifier) {
 	return "?sid=EchoExtras.Menu.Image&imageuid=" + identifier;
 };
 
-ExtrasRender.ComponentSync.Menu._getElementModelId = function(element) {
+ExtrasRender.ComponentSync.Menu.prototype._getElementModelId = function(element) {
     if (!element.id) {
-        return ExtrasRender.ComponentSync.Menu._getElementModelId(element.parentNode);
+        return this._getElementModelId(element.parentNode);
     }
-    if (element.id.indexOf("_item_") == -1) {
+    if (element.id.indexOf(this.component.renderId + "_") != 0 || element.id.indexOf("_item_") == -1) {
         return null;
     }
     return element.id.substring(element.id.lastIndexOf("_") + 1);
@@ -455,94 +485,6 @@ ExtrasRender.ComponentSync.MenuBarPane.prototype._getMenuElement = function(item
     return menuElement;
 };
 
-ExtrasRender.ComponentSync.MenuBarPane.prototype._renderMask = function() {
-    if (this.maskDeployed) {
-        return;
-    }
-    this.maskDeployed = true;
-    
-    var menuElement = document.getElementById(this.component.renderId);
-    var bounds = new EchoWebCore.Render.Measure.Bounds(menuElement);
-    
-    var bodyElement = document.getElementsByTagName("body")[0];    
-    
-    var topBlockDivElement = document.createElement("div");
-    topBlockDivElement.id = this.component.renderId + "_block_top";
-    topBlockDivElement.style.position = "absolute";
-    topBlockDivElement.style.top = "0px";
-    topBlockDivElement.style.left = "0px";
-    topBlockDivElement.style.width = "100%";
-    topBlockDivElement.style.height = bounds.top + "px";
-    topBlockDivElement.style.backgroundImage = "url(" + EchoRender.Util.TRANSPARENT_IMAGE + ")";
-    bodyElement.appendChild(topBlockDivElement);
-
-    var bottomBlockDivElement = document.createElement("div");
-    bottomBlockDivElement.id = this.component.renderId + "_block_bottom";
-    bottomBlockDivElement.style.position = "absolute";
-    var height = Math.max(0, (document.documentElement.clientHeight - (bounds.top + bounds.height)));
-    bottomBlockDivElement.style.height = height + "px";
-    bottomBlockDivElement.style.left = "0px";
-    bottomBlockDivElement.style.width = "100%";
-    bottomBlockDivElement.style.bottom = "0px";
-    bottomBlockDivElement.style.backgroundImage = "url(" + EchoRender.Util.TRANSPARENT_IMAGE + ")";
-    bodyElement.appendChild(bottomBlockDivElement);
-
-    var leftBlockDivElement = document.createElement("div");
-    leftBlockDivElement.id = this.component.renderId + "_block_left";
-    leftBlockDivElement.style.position = "absolute";
-    leftBlockDivElement.style.top = bounds.top + "px";
-    leftBlockDivElement.style.left = "0px";
-    leftBlockDivElement.style.width = bounds.left + "px";
-    leftBlockDivElement.style.height = bounds.height + "px";
-    leftBlockDivElement.style.backgroundImage = "url(" + EchoRender.Util.TRANSPARENT_IMAGE + ")";
-    bodyElement.appendChild(leftBlockDivElement);
-
-    var rightBlockDivElement = document.createElement("div");
-    rightBlockDivElement.id = this.component.renderId + "_block_right";
-    rightBlockDivElement.style.position = "absolute";
-    rightBlockDivElement.style.top = bounds.top + "px";
-    rightBlockDivElement.style.right = "0px";
-    rightBlockDivElement.style.height = bounds.height + "px";
-    rightBlockDivElement.style.width = (document.documentElement.clientWidth - (bounds.left + bounds.width)) + "px";
-    rightBlockDivElement.style.backgroundImage = "url(" + EchoRender.Util.TRANSPARENT_IMAGE + ")";
-    bodyElement.appendChild(rightBlockDivElement);
-
-	var cancelRef = new EchoCore.MethodRef(this, this._processCancel);
-    EchoWebCore.EventProcessor.add(topBlockDivElement, "click", cancelRef, false);
-    EchoWebCore.EventProcessor.add(bottomBlockDivElement, "click", cancelRef, false);
-    EchoWebCore.EventProcessor.add(leftBlockDivElement, "click", cancelRef, false);
-    EchoWebCore.EventProcessor.add(rightBlockDivElement, "click", cancelRef, false);
-};
-
-ExtrasRender.ComponentSync.MenuBarPane.prototype._removeMask = function() {
-    if (!this.maskDeployed) {
-        return;
-    }
-    this.maskDeployed = false;
-
-    var bodyElement = document.getElementsByTagName("body")[0];    
-    var topBlockDivElement = document.getElementById(this.component.renderId + "_block_top");
-    if (topBlockDivElement) {
-		EchoWebCore.EventProcessor.removeAll(topBlockDivElement);
-        bodyElement.removeChild(topBlockDivElement);
-    }
-    var bottomBlockDivElement = document.getElementById(this.component.renderId + "_block_bottom");
-    if (bottomBlockDivElement) {
-		EchoWebCore.EventProcessor.removeAll(bottomBlockDivElement);
-        bodyElement.removeChild(bottomBlockDivElement);
-    }
-    var leftBlockDivElement = document.getElementById(this.component.renderId + "_block_left");
-    if (leftBlockDivElement) {
-		EchoWebCore.EventProcessor.removeAll(leftBlockDivElement);
-        bodyElement.removeChild(leftBlockDivElement);
-    }
-    var rightBlockDivElement = document.getElementById(this.component.renderId + "_block_right");
-    if (rightBlockDivElement) {
-		EchoWebCore.EventProcessor.removeAll(rightBlockDivElement);
-        bodyElement.removeChild(rightBlockDivElement);
-    }
-};
-
 ExtrasRender.ComponentSync.MenuBarPane.prototype.renderSizeUpdate = function() {
     EchoWebCore.VirtualPosition.redraw(this._element);
 };
@@ -554,12 +496,12 @@ ExtrasRender.ComponentSync.MenuBarPane.prototype._processClick = function(e) {
     
     EchoWebCore.DOM.preventEventDefault(e);
 
-    var modelId = ExtrasRender.ComponentSync.Menu._getElementModelId(e.target);
+    var modelId = this._getElementModelId(e.target);
     if (modelId) {
 	    this._renderMask();
 	    this._activateItem(this._menuModel.getItem(modelId));
     } else {
-        this._processCancel();
+        this._closeMenu();
     }
 };
 
@@ -704,41 +646,6 @@ ExtrasRender.ComponentSync.DropDownMenu.prototype._getMenuElement = function(ite
     return menuElement;
 };
 
-ExtrasRender.ComponentSync.DropDownMenu.prototype._renderMask = function() {
-    if (this.maskDeployed) {
-        return;
-    }
-    this.maskDeployed = true;
-    
-    var bodyElement = document.getElementsByTagName("body")[0];    
-    
-    var blockDivElement = document.createElement("div");
-    blockDivElement.id = this.component.renderId + "_block";
-    blockDivElement.style.position = "absolute";
-    blockDivElement.style.top = "0px";
-    blockDivElement.style.left = "0px";
-    blockDivElement.style.width = "100%";
-    blockDivElement.style.height = "100%";
-    blockDivElement.style.backgroundImage = "url(" + EchoRender.Util.TRANSPARENT_IMAGE + ")";
-    bodyElement.appendChild(blockDivElement);
-
-    EchoWebCore.EventProcessor.add(blockDivElement, "click", new EchoCore.MethodRef(this, this._processCancel), false);
-};
-
-ExtrasRender.ComponentSync.DropDownMenu.prototype._removeMask = function() {
-    if (!this.maskDeployed) {
-        return;
-    }
-    this.maskDeployed = false;
-
-    var bodyElement = document.getElementsByTagName("body")[0];    
-    var blockDivElement = document.getElementById(this.component.renderId + "_block");
-    if (blockDivElement) {
-		EchoWebCore.EventProcessor.removeAll(blockDivElement);
-        bodyElement.removeChild(blockDivElement);
-    }
-};
-
 /**
  * Sets the selection to the given menu model.
  *
@@ -797,7 +704,7 @@ ExtrasRender.ComponentSync.DropDownMenu.prototype._processClick = function(e) {
     
     EchoWebCore.DOM.preventEventDefault(e);
 
-    var modelId = ExtrasRender.ComponentSync.Menu._getElementModelId(e.target);
+    var modelId = this._getElementModelId(e.target);
     var model;
     if (modelId) {
     	model = this._menuModel.getItem(modelId);
@@ -899,47 +806,12 @@ ExtrasRender.ComponentSync.ContextMenu.prototype._getMenuElement = function(item
     return menuElement;
 };
 
-ExtrasRender.ComponentSync.ContextMenu.prototype._renderMask = function() {
-    if (this.maskDeployed) {
-        return;
-    }
-    this.maskDeployed = true;
-    
-    var bodyElement = document.getElementsByTagName("body")[0];    
-    
-    var blockDivElement = document.createElement("div");
-    blockDivElement.id = this.component.renderId + "_block";
-    blockDivElement.style.position = "absolute";
-    blockDivElement.style.top = "0px";
-    blockDivElement.style.left = "0px";
-    blockDivElement.style.width = "100%";
-    blockDivElement.style.height = "100%";
-    blockDivElement.style.backgroundImage = "url(" + EchoRender.Util.TRANSPARENT_IMAGE + ")";
-    bodyElement.appendChild(blockDivElement);
-
-    EchoWebCore.EventProcessor.add(blockDivElement, "click", new EchoCore.MethodRef(this, this._processCancel), false);
-};
-
-ExtrasRender.ComponentSync.ContextMenu.prototype._removeMask = function() {
-    if (!this.maskDeployed) {
-        return;
-    }
-    this.maskDeployed = false;
-
-    var bodyElement = document.getElementsByTagName("body")[0];    
-    var blockDivElement = document.getElementById(this.component.renderId + "_block");
-    if (blockDivElement) {
-		EchoWebCore.EventProcessor.removeAll(blockDivElement);
-        bodyElement.removeChild(blockDivElement);
-    }
-};
-
 ExtrasRender.ComponentSync.ContextMenu.prototype._processClick = function(e) {
     if (!this.component.isActive()) {
         return;
     }
     
-    var modelId = ExtrasRender.ComponentSync.Menu._getElementModelId(e.target);
+    var modelId = this._getElementModelId(e.target);
     if (modelId) {
 	    EchoWebCore.DOM.preventEventDefault(e);
 	    this._renderMask();
