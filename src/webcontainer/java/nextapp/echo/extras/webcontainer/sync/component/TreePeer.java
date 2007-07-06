@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import nextapp.echo.app.Component;
-import nextapp.echo.app.Table;
 import nextapp.echo.app.serial.SerialException;
 import nextapp.echo.app.serial.SerialPropertyPeer;
 import nextapp.echo.app.update.ClientUpdateManager;
@@ -34,13 +33,23 @@ extends AbstractComponentSynchronizePeer {
     private class TreeRenderState 
     implements RenderState {
         private int row;
+        private boolean send;
+        
+        public TreeRenderState(boolean send) {
+            this.send = send;
+        }
         
         public TreeRenderState(int row) {
             this.row = row;
+            this.send = true;
         }
         
         public int getRow() {
             return row;
+        }
+        
+        public boolean isSend() {
+            return send;
         }
     }
     
@@ -148,10 +157,12 @@ extends AbstractComponentSynchronizePeer {
     private static final String PROPERTY_TREE_STRUCTURE = "treeStructure";
     private static final String PROPERTY_COLUMN_COUNT = "columnCount";
     
+    private static final String INPUT_AND_LOAD_ACTION = Tree.INPUT_ACTION + "Load";
+    
     private static final String[] MODEL_CHANGED_UPDATE_PROPERTIES = new String[] { PROPERTY_TREE_STRUCTURE,
             PROPERTY_COLUMN_COUNT };
     
-    private static final String[] EVENT_TYPES_ACTION = new String[] { Table.INPUT_ACTION };
+    private static final String[] EVENT_TYPES_ACTION = new String[] { Tree.INPUT_ACTION, INPUT_AND_LOAD_ACTION };
     
     private static final Service TREE_SERVICE = JavaScriptService.forResources("EchoExtras.RemoteTree",  
             new String[]{ "/nextapp/echo/extras/webcontainer/resource/js/Application.RemoteTree.js",
@@ -198,7 +209,7 @@ extends AbstractComponentSynchronizePeer {
     }
     
     public Class getEventDataClass(String eventType) {
-        if (Tree.INPUT_ACTION.equals(eventType)) {
+        if (Tree.INPUT_ACTION.equals(eventType) || INPUT_AND_LOAD_ACTION.equals(eventType)) {
             return Integer.class;
         }
         return super.getPropertyClass(eventType);
@@ -220,7 +231,11 @@ extends AbstractComponentSynchronizePeer {
             extraProperties.addAll(Arrays.asList(MODEL_CHANGED_UPDATE_PROPERTIES));
         } 
         if (update.hasUpdatedProperty(Tree.EXPANSION_STATE_CHANGED_PROPERTY)) {
-            extraProperties.add(PROPERTY_TREE_STRUCTURE);
+            UserInstance userInstance = (UserInstance) context.get(UserInstance.class);
+            TreeRenderState renderState = (TreeRenderState) userInstance.getRenderState(component);
+            if (renderState == null || renderState.isSend()) {
+                extraProperties.add(PROPERTY_TREE_STRUCTURE);
+            }
         } 
         
         return new MultiIterator(new Iterator[] { normalPropertyIterator, extraProperties.iterator() });
@@ -232,9 +247,7 @@ extends AbstractComponentSynchronizePeer {
      *      nextapp.echo.app.Component)
      */
     public Iterator getImmediateEventTypes(Context context, Component component) {
-        Tree tree = (Tree)component;
         return new ArrayIterator(EVENT_TYPES_ACTION);
-//        return super.getImmediateEventTypes(context, component);
     }
     
     /**
@@ -245,8 +258,13 @@ extends AbstractComponentSynchronizePeer {
      *      java.lang.Object)
      */
     public void processEvent(Context context, Component component, String eventType, Object eventData) {
-        if (Tree.INPUT_ACTION.equals(eventType)) {
-            TreeRenderState renderState = new TreeRenderState(((Integer)eventData).intValue());
+        if (Tree.INPUT_ACTION.equals(eventType) || INPUT_AND_LOAD_ACTION.equals(eventType)) {
+            TreeRenderState renderState;
+            if (INPUT_AND_LOAD_ACTION.equals(eventType)) {
+                renderState = new TreeRenderState(((Integer)eventData).intValue());
+            } else {
+                renderState = new TreeRenderState(false);
+            }
             UserInstance userInstance = (UserInstance) context.get(UserInstance.class);
             userInstance.setRenderState(component, renderState);
             
