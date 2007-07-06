@@ -147,12 +147,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNode = function(insertBef
     
     var component = this.component.application.getComponentByRenderId(node.getId());
     EchoRender.renderComponentAdd(update, component, tdElement);
-    
-    var hackElement = document.createElement("div");
-    hackElement.style.height = "100%";
-    hackElement.style.fontSize = "0px";
-    tdElement.appendChild(hackElement);
-    
+        
     var childCount = node.getChildNodeCount();
     for (var i = 0; i < childCount; ++i) {
         var childNode = node.getChildNode(i);
@@ -195,12 +190,6 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRowStructure = functi
         } else {
             parentNode = null;
         }
-
-        // make sure the background images of the cell below this one size correctly
-        var hackElement = document.createElement("div");
-        hackElement.style.height = "100%";
-        hackElement.style.fontSize = "0px";
-        rowHeaderElement.appendChild(hackElement);
 
         trElement.insertBefore(rowHeaderElement, trElement.firstChild);
     }
