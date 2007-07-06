@@ -52,16 +52,13 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._rerenderNode = function(update,
     var maxDepth = this._treeStructure.getMaxDepth();
     var nodeDepth = this._treeStructure.getNodeDepth(node);
     
-    var context = {
-        row: rowIndex,
-        nextRow: function() {
-            if (this.row != -1) {
-                ++this.row;
-            }
-        }
-    };
-    this._renderNode(context, node, nodeDepth, update);
-    
+    var insertBefore = null;
+    if (rowElement) {
+        insertBefore = rowElement.nextSibling;
+    }
+
+    this._renderNode(insertBefore, node, nodeDepth, update);
+        
     // update the col spans of the node cells
     if (this._prevMaxDepth || this._prevMaxDepth == 0) {
         var startNode;
@@ -77,12 +74,12 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._rerenderNode = function(update,
     this._prevMaxDepth = maxDepth;
 };
 
-ExtrasRender.ComponentSync.RemoteTree.prototype._renderNode = function(context, node, depth, update) {
+ExtrasRender.ComponentSync.RemoteTree.prototype._renderNode = function(insertBefore, node, depth, update) {
     var trElement = this._getRowElementForNodeId(node.getId());
     var tdElement;
     var expandoElement;
     if (!trElement) {
-        var elems = this._renderNodeRowStructure(context, node, depth, update);
+        var elems = this._renderNodeRowStructure(insertBefore, node, depth, update);
         trElement = elems.trElement;
         tdElement = elems.tdElement;
         expandoElement = elems.expandoElement;
@@ -97,9 +94,10 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNode = function(context, 
     var expandoText = "\u00a0";
     expandoElement.style.height = "100%"; // IE hacking
     var wrapperElement = document.createElement("div");
+    var verticalLineElement;
     if (node.getParentId()) { // don't show tree lines for the root
         var horizontalLineElement = document.createElement("div");
-        var verticalLineElement = document.createElement("div");
+        verticalLineElement = document.createElement("div");
         
         wrapperElement.style.position = "relative";
         wrapperElement.style.height = "100%";
@@ -108,16 +106,24 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNode = function(context, 
         verticalLineElement.style.position = "absolute";
         verticalLineElement.style.top = "0";
         if (this._treeStructure.hasNodeNextSibling(node)) {
-           verticalLineElement.style.height = "100%";
+            verticalLineElement.style.height = "100%";
+            verticalLineElement.style.bottom = "0";
         } else {
-           verticalLineElement.style.height = "50%";
+            verticalLineElement.style.height = "50%";
+            verticalLineElement.style.bottom = "50%";
+            if (EchoWebCore.Environment.BROWSER_INTERNET_EXPLORER && EchoWebCore.Environment.BROWSER_MAJOR_VERSION <= 6) {
+                if (!this._vpElements) {
+                    this._vpElements = new Array();
+                }
+                this._vpElements.push(verticalLineElement);
+                verticalLineElement.style.fontSize = "1px";
+            }
         }
         verticalLineElement.style.width = "100%";
         verticalLineElement.style.backgroundImage = "url('" + this.verticalLineImage + "')";
         verticalLineElement.style.backgroundPosition = "center top";
         verticalLineElement.style.backgroundRepeat = "repeat-y";
-        verticalLineElement.style.fontSize = "0px";        
-        
+                
         horizontalLineElement.style.position = "absolute";
         horizontalLineElement.style.top = "0";
         horizontalLineElement.style.left = "50%";
@@ -126,7 +132,6 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNode = function(context, 
         horizontalLineElement.style.backgroundImage = "url('" + this.horizontalLineImage + "')";
         horizontalLineElement.style.backgroundPosition = "center center";
         horizontalLineElement.style.backgroundRepeat = "repeat-x";
-        horizontalLineElement.style.fontSize = "0px";
         
         verticalLineElement.appendChild(document.createTextNode(expandoText));
         horizontalLineElement.appendChild(document.createTextNode(expandoText));
@@ -151,23 +156,35 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNode = function(context, 
     var childCount = node.getChildNodeCount();
     for (var i = 0; i < childCount; ++i) {
         var childNode = node.getChildNode(i);
-        context.nextRow();
-        this._renderNode(context, childNode, depth + 1, update);
+        this._renderNode(insertBefore, childNode, depth + 1, update);
     }
 };
 
-ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRowStructure = function(context, node, depth, update) {
-    var trElement = this._element.insertRow(context.row);
+ExtrasRender.ComponentSync.RemoteTree.prototype.renderSizeUpdate = function() {
+    if (!this._vpElements) {
+        return;
+    }
+    for (var i in this._vpElements) {
+        var parentHeight = this._vpElements[i].parentNode.offsetHeight;
+        EchoCore.Debug.consoleWrite("parentHeight: " + parentHeight);
+        this._vpElements[i].style.height = (parentHeight / 2) + "px";
+    }
+    delete this._vpElements;
+};
+
+ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRowStructure = function(insertBefore, node, depth, update) {
+    var trElement = document.createElement("tr");
     trElement.style.heigth = "100%"; // IE hacking
     trElement.id = this.component.renderId + "_tr_" + node.getId();
     
     var parentNode = this._treeStructure.getNode(node.getParentId());
     for (var c = 0; c < depth; ++c) {
-        var rowHeaderElement = trElement.insertCell(0);
+        var rowHeaderElement = document.createElement("td");
 //            rowHeaderElement.style.border = "1px solid black";
         rowHeaderElement.style.padding = "0";
         rowHeaderElement.style.width = "0.6em";
-        
+        rowHeaderElement.style.height = "100%";
+
         if (parentNode && this._treeStructure.hasNodeNextSibling(parentNode)) {
             rowHeaderElement.style.backgroundImage = "url('" + this.verticalLineImage + "')";
             rowHeaderElement.style.backgroundPosition = "center top";
@@ -178,14 +195,15 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRowStructure = functi
         } else {
             parentNode = null;
         }
-        
+
         // make sure the background images of the cell below this one size correctly
         var hackElement = document.createElement("div");
         hackElement.style.height = "100%";
         hackElement.style.fontSize = "0px";
         rowHeaderElement.appendChild(hackElement);
+
+        trElement.insertBefore(rowHeaderElement, trElement.firstChild);
     }
-    
     var clickRef = new EchoCore.MethodRef(this, this._processClick);
     
     var expandoElement = document.createElement("td");
@@ -193,16 +211,18 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRowStructure = functi
 //        expandoElement.style.border = "1px solid black";
     expandoElement.style.padding = "0";
     expandoElement.style.width = "0.6em";
+    expandoElement.style.height = "100%";
     trElement.appendChild(expandoElement);
     
     EchoWebCore.EventProcessor.add(expandoElement, "click", clickRef, false);
-    
     var tdElement = document.createElement("td");
     tdElement.id = this.component.renderId + "_node_" + node.getId();
 //        tdElement.style.border = "1px solid black";
     tdElement.style.padding = "0";
     trElement.appendChild(tdElement);
-    
+
+    this._tbodyElement.insertBefore(trElement, insertBefore);
+
     EchoWebCore.EventProcessor.add(tdElement, "click", clickRef, false);
     
     return {
@@ -254,7 +274,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._getNodeElementForNodeId = funct
 };
 
 ExtrasRender.ComponentSync.RemoteTree.prototype._getRowIndex = function(element) {
-    var testElement = this._element.firstChild.firstChild;
+    var testElement = this._tbodyElement.firstChild;
     var index = 0;
     while (testElement) {
         if (testElement == element) {
@@ -277,6 +297,9 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._processClick = function(e) {
         return;
     }
     var rowIndex = this._getRowIndex(e.registeredTarget.parentNode);
+    if (rowIndex == -1) {
+        alert("hoo! cannot find row...\n" + e.registeredTarget.parentNode.id);
+    }
     this._doAction(rowIndex);
 };
 
@@ -293,7 +316,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._removeRowListeners = function(r
 ExtrasRender.ComponentSync.RemoteTree.prototype.renderDispose = function(update) {
     //FIXME this will blow up performance, maybe cache all elements that have a click listener, 
     // but that will probably blow memory usage...
-    var trElement = this._element.firstChild.firstChild;
+    var trElement = this._tbodyElement.firstChild;
     while (trElement) {
         this._removeRowListeners(trElement);
         trElement = trElement.nextSibling;
