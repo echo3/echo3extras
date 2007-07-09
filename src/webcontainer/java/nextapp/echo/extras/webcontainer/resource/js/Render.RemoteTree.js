@@ -36,8 +36,12 @@ ExtrasRender.ComponentSync.RemoteTree.prototype.renderAdd = function(update, par
     this._tbodyElement = tbodyElement;
     
     this._treeStructure = this.component.getProperty("treeStructure");
+    this.columnCount = this.component.getProperty("columnCount");
     
     var rootNode = this._treeStructure.getRootNode();
+    EchoCore.Debug.consoleWrite("rendering header: " + this._treeStructure.getHeaderNode());
+    this._rerenderNode(update, this._treeStructure.getHeaderNode());
+    EchoCore.Debug.consoleWrite("rendering root: " + rootNode);
     this._rerenderNode(update, rootNode);
     
     parentElement.appendChild(tableElement);
@@ -65,8 +69,12 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._rerenderNode = function(update,
     }
 
     this._renderNode(insertBefore, node, nodeDepth, update);
-        
+    
     // update the col spans of the node cells
+    if (node == this._treeStructure.getHeaderNode()) {
+        // don't touch the spans if only the header node is re-rendered
+        return;
+    }
     if (this._prevMaxDepth || this._prevMaxDepth == 0) {
         var startNode;
         if (this._prevMaxDepth == maxDepth) {
@@ -75,6 +83,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._rerenderNode = function(update,
         } else {
             // max depth has changed, update all nodes
             startNode = this._treeStructure.getRootNode();
+            this._updateSpans(update, this._treeStructure.getHeaderNode(), maxDepth);
         }
         this._updateSpans(update, startNode, maxDepth);
     }
@@ -97,65 +106,79 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNode = function(insertBef
         expandoElement = this._getExpandoElementForNodeId(node.getId());
     }
 
-    EchoWebCore.DOM.removeAllChildren(expandoElement);
-    
-    var expandoText = "\u00a0";
-    expandoElement.style.height = "100%"; // IE hacking
-    var wrapperElement = document.createElement("div");
-    var verticalLineElement;
-    if (node.getParentId()) { // don't show tree lines for the root
-        var horizontalLineElement = document.createElement("div");
-        verticalLineElement = document.createElement("div");
+    if (expandoElement) {
+        EchoWebCore.DOM.removeAllChildren(expandoElement);
         
-        wrapperElement.style.position = "relative";
-        wrapperElement.style.height = "100%";
-        wrapperElement.style.width = "100%";
-        
-        verticalLineElement.style.position = "absolute";
-        verticalLineElement.style.top = "0";
-        if (this._treeStructure.hasNodeNextSibling(node)) {
-            verticalLineElement.style.height = "100%";
-            verticalLineElement.style.bottom = "0";
-        } else {
-            verticalLineElement.style.height = "50%";
-            verticalLineElement.style.bottom = "50%";
-            if (EchoWebCore.Environment.BROWSER_INTERNET_EXPLORER && EchoWebCore.Environment.BROWSER_MAJOR_VERSION <= 6) {
-                if (!this._vpElements) {
-                    this._vpElements = new Array();
+        var expandoText = "\u00a0";
+        expandoElement.style.height = "100%"; // IE hacking
+        var wrapperElement = document.createElement("div");
+        var verticalLineElement;
+        if (node.getParentId()) { // don't show tree lines for the root
+            var horizontalLineElement = document.createElement("div");
+            verticalLineElement = document.createElement("div");
+            
+            wrapperElement.style.position = "relative";
+            wrapperElement.style.height = "100%";
+            wrapperElement.style.width = "100%";
+            
+            verticalLineElement.style.position = "absolute";
+            verticalLineElement.style.top = "0";
+            if (this._treeStructure.hasNodeNextSibling(node)) {
+                verticalLineElement.style.height = "100%";
+                verticalLineElement.style.bottom = "0";
+            } else {
+                verticalLineElement.style.height = "50%";
+                verticalLineElement.style.bottom = "50%";
+                if (EchoWebCore.Environment.BROWSER_INTERNET_EXPLORER && EchoWebCore.Environment.BROWSER_MAJOR_VERSION <= 6) {
+                    if (!this._vpElements) {
+                        this._vpElements = new Array();
+                    }
+                    this._vpElements.push(verticalLineElement);
+                    verticalLineElement.style.fontSize = "1px";
                 }
-                this._vpElements.push(verticalLineElement);
-                verticalLineElement.style.fontSize = "1px";
+            }
+            verticalLineElement.style.width = "100%";
+            verticalLineElement.style.backgroundImage = "url('" + this.verticalLineImage + "')";
+            verticalLineElement.style.backgroundPosition = "center top";
+            verticalLineElement.style.backgroundRepeat = "repeat-y";
+                    
+            horizontalLineElement.style.position = "absolute";
+            horizontalLineElement.style.top = "0";
+            horizontalLineElement.style.left = "50%";
+            horizontalLineElement.style.height = "100%";
+            horizontalLineElement.style.width = "50%";
+            horizontalLineElement.style.backgroundImage = "url('" + this.horizontalLineImage + "')";
+            horizontalLineElement.style.backgroundPosition = "center center";
+            horizontalLineElement.style.backgroundRepeat = "repeat-x";
+            
+            verticalLineElement.appendChild(document.createTextNode(expandoText));
+            horizontalLineElement.appendChild(document.createTextNode(expandoText));
+    
+            wrapperElement.appendChild(verticalLineElement);
+            wrapperElement.appendChild(horizontalLineElement);
+        }
+        if (!node.isLeaf()) {
+            expandoText = node.isExpanded() ? "-" : "+";
+        }
+        wrapperElement.appendChild(document.createTextNode(expandoText));
+        expandoElement.appendChild(wrapperElement);
+    }
+    
+    if (!tdElement.firstChild) {
+        var component = this.component.application.getComponentByRenderId(node.getId());
+        EchoRender.renderComponentAdd(update, component, tdElement);
+        
+        if (this.columnCount > 1) {
+            for (var c = 0; c < this.columnCount - 1; ++c) {
+                var columnElement = document.createElement("td");
+                columnElement.style.border = "1px solid black";
+                
+                var columnComponent = this.component.application.getComponentByRenderId(node.getColumn(c));
+                EchoRender.renderComponentAdd(update, columnComponent, columnElement);
+                
+                trElement.appendChild(columnElement);
             }
         }
-        verticalLineElement.style.width = "100%";
-        verticalLineElement.style.backgroundImage = "url('" + this.verticalLineImage + "')";
-        verticalLineElement.style.backgroundPosition = "center top";
-        verticalLineElement.style.backgroundRepeat = "repeat-y";
-                
-        horizontalLineElement.style.position = "absolute";
-        horizontalLineElement.style.top = "0";
-        horizontalLineElement.style.left = "50%";
-        horizontalLineElement.style.height = "100%";
-        horizontalLineElement.style.width = "50%";
-        horizontalLineElement.style.backgroundImage = "url('" + this.horizontalLineImage + "')";
-        horizontalLineElement.style.backgroundPosition = "center center";
-        horizontalLineElement.style.backgroundRepeat = "repeat-x";
-        
-        verticalLineElement.appendChild(document.createTextNode(expandoText));
-        horizontalLineElement.appendChild(document.createTextNode(expandoText));
-
-        wrapperElement.appendChild(verticalLineElement);
-        wrapperElement.appendChild(horizontalLineElement);
-    }
-    if (!node.isLeaf()) {
-        expandoText = node.isExpanded() ? "-" : "+";
-    }
-    wrapperElement.appendChild(document.createTextNode(expandoText));
-    expandoElement.appendChild(wrapperElement);
-    
-    var component = this.component.application.getComponentByRenderId(node.getId());
-    if (!tdElement.firstChild) {
-        EchoRender.renderComponentAdd(update, component, tdElement);
     }
     
     var expanded = node.isExpanded();    
@@ -211,19 +234,28 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRowStructure = functi
     }
     var clickRef = new EchoCore.MethodRef(this, this._processClick);
     
-    var expandoElement = document.createElement("td");
-    expandoElement.id = this.component.renderId + "_expando_" + node.getId();
-//        expandoElement.style.border = "1px solid black";
-    expandoElement.style.padding = "0";
-    expandoElement.style.width = "0.6em";
-    expandoElement.style.height = "100%";
-    trElement.appendChild(expandoElement);
+    var header = node == this._treeStructure.getHeaderNode();
     
-    EchoWebCore.EventProcessor.add(expandoElement, "click", clickRef, false);
+    var expandoElement;
+    if (!header) {
+        expandoElement = document.createElement("td");
+        expandoElement.id = this.component.renderId + "_expando_" + node.getId();
+    //        expandoElement.style.border = "1px solid black";
+        expandoElement.style.padding = "0";
+        expandoElement.style.width = "0.6em";
+        expandoElement.style.height = "100%";
+        trElement.appendChild(expandoElement);
+        
+        EchoWebCore.EventProcessor.add(expandoElement, "click", clickRef, false);
+    }
+    
     var tdElement = document.createElement("td");
     tdElement.id = this.component.renderId + "_node_" + node.getId();
 //        tdElement.style.border = "1px solid black";
     tdElement.style.padding = "0";
+    if (header) {
+        tdElement.colSpan = 2;
+    }
     trElement.appendChild(tdElement);
 
     this._tbodyElement.insertBefore(trElement, insertBefore);
@@ -240,6 +272,9 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRowStructure = functi
 ExtrasRender.ComponentSync.RemoteTree.prototype._updateSpans = function(update, startNode, maxDepth) {
     var depth = this._treeStructure.getNodeDepth(startNode);
     var span = maxDepth - depth + 1;
+    if (startNode == this._treeStructure.getHeaderNode()) {
+        ++span;
+    }
     var nodeElement = this._getNodeElementForNodeId(startNode.getId());
     nodeElement.colSpan = span;
     
@@ -280,10 +315,11 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._getNodeElementForNodeId = funct
 
 ExtrasRender.ComponentSync.RemoteTree.prototype._getRowIndex = function(element) {
     if (element.style.display == "none") {
-        return -1;
+        return null;
     }
     var testElement = this._tbodyElement.firstChild;
-    var index = 0;
+    var headerVisible = this.component.getProperty("headerVisible");
+    var index = headerVisible ? -1 : 0;
     while (testElement) {
         if (testElement == element) {
             return index;
@@ -294,7 +330,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._getRowIndex = function(element)
             ++index;
         }
     }
-    return -1;
+    return null;
 };
 
 ExtrasRender.ComponentSync.RemoteTree.prototype._doAction = function(node, e) {
@@ -315,7 +351,9 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._doAction = function(node, e) {
         eventType += "Load";
     }
     var rowIndex = this._getRowIndex(e.registeredTarget.parentNode);
-    this.component.fireEvent(new EchoCore.Event(this.component, eventType, rowIndex));
+    if (rowIndex != -1) {
+        this.component.fireEvent(new EchoCore.Event(this.component, eventType, rowIndex));
+    }
 };
 
 ExtrasRender.ComponentSync.RemoteTree.prototype._processClick = function(e) {
@@ -336,7 +374,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._removeRowListeners = function(r
 }
 
 ExtrasRender.ComponentSync.RemoteTree.prototype.renderDispose = function(update) {
-    //FIXME this will blow up performance, maybe cache all elements that have a click listener, 
+    //FIXME this might blow up performance, maybe cache all elements that have a click listener, 
     // but that will probably blow memory usage...
     var trElement = this._tbodyElement.firstChild;
     while (trElement) {

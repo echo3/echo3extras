@@ -32,6 +32,17 @@ public class TreeTest extends AbstractTest {
                 int parentValue = ((Integer) parent).intValue();
                 return parentValue;
             }
+            
+            public int getColumnCount() {
+                return 5;
+            }
+            
+            public Object getValueAt(Object node, int column) {
+                if (0 == column) {
+                    return node;
+                }
+                return ((Integer) node).intValue() + " - " + column;
+            }
 
             public int getIndexOfChild(Object parent, Object child) {
                 int childValue = ((Integer) child).intValue();

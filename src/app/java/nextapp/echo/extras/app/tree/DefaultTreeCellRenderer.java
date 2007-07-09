@@ -14,7 +14,7 @@ implements TreeCellRenderer {
      * @see nextapp.echo.extras.app.tree.TreeCellRenderer#getTreeCellRendererComponent(
      *      nextapp.echo.extras.app.Tree, java.lang.Object, int, int)
      */
-    public Component getTreeCellRendererComponent(Tree tree, Object value, int column, int row) {
+    public Component getTreeCellRendererComponent(Tree tree, TreePath treePath, Object value, int column, int row) {
         return value == null ? new Label() : new Label(value.toString());
     }
 

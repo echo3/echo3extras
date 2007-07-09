@@ -3,6 +3,7 @@ ExtrasApp.RemoteTree = function() { };
 ExtrasApp.RemoteTree.TreeStructure = function(rootNode) { 
     this._idNodeMap = new EchoCore.Collections.Map();
     this._rootNode = rootNode;
+    this._headerNode = null;
     this.addNode(rootNode);
 };
 
@@ -86,6 +87,15 @@ ExtrasApp.RemoteTree.TreeStructure.prototype.hasNodeNextSibling = function(node)
     return parentNode.indexOf(node) < (parentNode.getChildNodeCount() - 1);
 };
 
+ExtrasApp.RemoteTree.TreeStructure.prototype.setHeaderNode = function(node) {
+    this._headerNode = node;
+    this.addNode(node);
+};
+
+ExtrasApp.RemoteTree.TreeStructure.prototype.getHeaderNode = function() {
+    return this._headerNode;
+};
+
 ExtrasApp.RemoteTree.TreeStructure.prototype.toString = function() {
     var str = "treeStructure [\n";
     str += this.getNodeString(this.getRootNode(), "  ");
@@ -107,6 +117,7 @@ ExtrasApp.RemoteTree.TreeNode = function(id, parentId) {
     this._id = id;
     this._parentId = parentId;
     this._childNodes = new EchoCore.Collections.List();
+    this._columns = new Array();
     this._expanded = false;
     this._leaf = false;
 };
@@ -139,6 +150,14 @@ ExtrasApp.RemoteTree.TreeNode.prototype.getChildNode = function(index) {
 
 ExtrasApp.RemoteTree.TreeNode.prototype.getChildNodeCount = function() {
     return this._childNodes.size();
+};
+
+ExtrasApp.RemoteTree.TreeNode.prototype.addColumn = function(columnId) {
+    this._columns.push(columnId);
+};
+
+ExtrasApp.RemoteTree.TreeNode.prototype.getColumn = function(index) {
+    return this._columns[index];
 };
 
 ExtrasApp.RemoteTree.TreeNode.prototype.setExpanded = function(newState) {

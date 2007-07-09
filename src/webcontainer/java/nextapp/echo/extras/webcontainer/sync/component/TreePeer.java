@@ -105,12 +105,21 @@ extends AbstractComponentSynchronizePeer {
             this.tree = tree;
             columnCount = getColumnCount(tree);
             model = tree.getModel();
+            if (tree.isHeaderVisible()) {
+                row = -1;
+            } else {
+                row = 0;
+            }
         }
         
         private void render(TreeRenderState renderState) {
             Object value = null;
             String parentId = null;
             if (renderState == null || renderState.getRow() == 0) {
+                if (tree.isHeaderVisible()) {
+                    // header
+                    renderNode(null, null);
+                }
                 value = model.getRoot();
             } else {
                 row = renderState.getRow();
@@ -130,37 +139,55 @@ extends AbstractComponentSynchronizePeer {
             if (parentId != null) {
                 eElement.setAttribute("p", parentId);
             }
-            if (expanded) {
-                eElement.setAttribute("ex", "1");
-            } else if (model.isLeaf(value)) {
-                eElement.setAttribute("l", "1");
+            if (row == -1) {
+                eElement.setAttribute("h", "1");
+            } else {
+                if (expanded) {
+                    eElement.setAttribute("ex", "1");
+                } else if (model.isLeaf(value)) {
+                    eElement.setAttribute("l", "1");
+                }
             }
+            
+            for (int i = 1; i < columnCount; ++i) {
+                Component columnComponent = tree.getComponent(row, i);
+                Element columnElement = document.createElement("c");
+                columnElement.setAttribute("i", UserInstance.getElementId(columnComponent));
+                eElement.appendChild(columnElement);
+            }
+            
             propertyElement.appendChild(eElement);
 
-            int childCount = model.getChildCount(value);
-
             ++row;
+            
+            if (row == 0) {
+                // no child nodes for the header
+                return;
+            }
+            
+            int childCount = model.getChildCount(value);
             
             if (expanded) {
                 for (int i = 0; i < childCount; ++i) {
                     renderNode(id, model.getChild(value, i));
                 }
             }
-            
         }
     }
     
     private static int getColumnCount(Tree tree) {
-        return 1; // FIXME
+        return tree.getColumnModel().getColumnCount();
     }
 
     private static final String PROPERTY_TREE_STRUCTURE = "treeStructure";
     private static final String PROPERTY_COLUMN_COUNT = "columnCount";
+    private static final String PROPERTY_HEADER_VISIBLE = "headerVisible";
     
     private static final String INPUT_AND_LOAD_ACTION = Tree.INPUT_ACTION + "Load";
     
     private static final String[] MODEL_CHANGED_UPDATE_PROPERTIES = new String[] { PROPERTY_TREE_STRUCTURE,
-            PROPERTY_COLUMN_COUNT };
+            PROPERTY_COLUMN_COUNT,
+            PROPERTY_HEADER_VISIBLE};
     
     private static final String[] EVENT_TYPES_ACTION = new String[] { Tree.INPUT_ACTION, INPUT_AND_LOAD_ACTION };
     
@@ -177,6 +204,7 @@ extends AbstractComponentSynchronizePeer {
         super();
         addOutputProperty(PROPERTY_TREE_STRUCTURE);
         addOutputProperty(PROPERTY_COLUMN_COUNT);
+        addOutputProperty(PROPERTY_HEADER_VISIBLE);
         
         TreeImageService.install();
     }
@@ -204,6 +232,8 @@ extends AbstractComponentSynchronizePeer {
             return new TreeStructure((Tree) component);
         } else if (PROPERTY_COLUMN_COUNT.equals(propertyName)) {
             return new Integer(getColumnCount((Tree) component));
+        } else if (PROPERTY_HEADER_VISIBLE.equals(propertyName)) {
+            return Boolean.valueOf(((Tree)component).isHeaderVisible());
         }
         return super.getOutputProperty(context, component, propertyName, propertyIndex);
     }
@@ -261,7 +291,11 @@ extends AbstractComponentSynchronizePeer {
         if (Tree.INPUT_ACTION.equals(eventType) || INPUT_AND_LOAD_ACTION.equals(eventType)) {
             TreeRenderState renderState;
             if (INPUT_AND_LOAD_ACTION.equals(eventType)) {
-                renderState = new TreeRenderState(((Integer)eventData).intValue());
+                int row = 0;
+                if (eventData != null) {
+                    row = ((Integer)eventData).intValue();
+                }
+                renderState = new TreeRenderState(row);
             } else {
                 renderState = new TreeRenderState(false);
             }
