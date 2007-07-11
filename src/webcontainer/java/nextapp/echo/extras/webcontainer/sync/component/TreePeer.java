@@ -15,6 +15,7 @@ import nextapp.echo.app.util.Context;
 import nextapp.echo.extras.app.Tree;
 import nextapp.echo.extras.app.tree.TreeModel;
 import nextapp.echo.extras.app.tree.TreePath;
+import nextapp.echo.extras.webcontainer.service.CommonService;
 import nextapp.echo.webcontainer.AbstractComponentSynchronizePeer;
 import nextapp.echo.webcontainer.RenderState;
 import nextapp.echo.webcontainer.ServerMessage;
@@ -328,6 +329,7 @@ extends AbstractComponentSynchronizePeer {
      */
     public void init(Context context) {
         ServerMessage serverMessage = (ServerMessage) context.get(ServerMessage.class);
+        serverMessage.addLibrary(CommonService.INSTANCE.getId());
         serverMessage.addLibrary(TREE_SERVICE.getId());
     }
 }
