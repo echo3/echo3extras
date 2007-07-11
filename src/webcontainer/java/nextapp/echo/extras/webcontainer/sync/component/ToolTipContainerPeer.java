@@ -32,7 +32,6 @@ package nextapp.echo.extras.webcontainer.sync.component;
 import nextapp.echo.app.util.Context;
 import nextapp.echo.extras.app.ToolTipContainer;
 import nextapp.echo.extras.webcontainer.service.CommonService;
-import nextapp.echo.extras.webcontainer.service.GroupImageService;
 import nextapp.echo.webcontainer.AbstractComponentSynchronizePeer;
 import nextapp.echo.webcontainer.ServerMessage;
 import nextapp.echo.webcontainer.Service;
@@ -50,8 +49,6 @@ public class ToolTipContainerPeer extends AbstractComponentSynchronizePeer {
             "/nextapp/echo/extras/webcontainer/resource/js/Render.ToolTipContainer.js");
     
     static {
-        GroupImageService.install();
-        
         WebContainerServlet.getServiceRegistry().add(TOOLTIP_CONTAINER_SERVICE);
     }
     
