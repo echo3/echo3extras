@@ -259,7 +259,7 @@ extends AbstractComponentSynchronizePeer {
         if (Tree.INPUT_ACTION.equals(eventType) || INPUT_AND_LOAD_ACTION.equals(eventType)) {
             return Integer.class;
         }
-        return super.getPropertyClass(eventType);
+        return super.getEventDataClass(eventType);
     }
     
     /**

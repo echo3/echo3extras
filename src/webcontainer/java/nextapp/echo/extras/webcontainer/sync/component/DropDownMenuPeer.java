@@ -62,15 +62,15 @@ public class DropDownMenuPeer extends AbstractMenuPeer {
     }
     
     /**
-     * @see ComponentSynchronizePeer#getPropertyClass(String)
+     * @see ComponentSynchronizePeer#getInputPropertyClass(String)
      */
-    public Class getPropertyClass(String propertyName) {
+    public Class getInputPropertyClass(String propertyName) {
         if (PROPERTY_SELECTION.equals(propertyName)) {
             return String.class;
         } else if (PROPERTY_SELECTION_ENABLED.equals(propertyName)) {
             return Boolean.class;
         }
-        return super.getPropertyClass(propertyName);
+        return super.getInputPropertyClass(propertyName);
     }
     
     /**

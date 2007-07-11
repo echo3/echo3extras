@@ -116,13 +116,13 @@ implements LazyRenderContainer {
     }
     
     /**
-     * @see ComponentSynchronizePeer#getPropertyClass(String)
+     * @see ComponentSynchronizePeer#getInputPropertyClass(String)
      */
-    public Class getPropertyClass(String propertyName) {
+    public Class getInputPropertyClass(String propertyName) {
         if (PROPERTY_ACTIVE_TAB.equals(propertyName)) {
             return String.class;
         }
-        return super.getPropertyClass(propertyName);
+        return super.getInputPropertyClass(propertyName);
     }
 
     /**
