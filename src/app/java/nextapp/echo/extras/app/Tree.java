@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import nextapp.echo.app.Border;
 import nextapp.echo.app.Component;
 import nextapp.echo.app.Label;
 import nextapp.echo.extras.app.event.TreeColumnModelEvent;
@@ -198,6 +199,7 @@ public class Tree extends Component {
 
     private Renderer renderer = new Renderer();
 
+    public static final String PROPERTY_BORDER = "border";
     public static final String PROPERTY_LINE_STYLE = "lineStyle";
     
     public static final String CELL_RENDERER_CHANGED_PROPERTY = "cellRenderer";
@@ -361,6 +363,15 @@ public class Tree extends Component {
     }
     
     /**
+     * Returns the <code>Border</code>.
+     * 
+     * @return the border
+     */
+    public Border getBorder() {
+        return (Border) getProperty(PROPERTY_BORDER);
+    }
+    
+    /**
      * Retrieves the <code>TreeCellRenderer</code> used to render values
      * contained in the tree. The value of this property may be null, in which
      * case the tree should revert to using its default cell renderer.
@@ -459,6 +470,15 @@ public class Tree extends Component {
         
         firePropertyChange(AUTO_CREATE_COLUMNS_FROM_MODEL_CHANGED_PROPERTY, 
                 Boolean.valueOf(oldValue), Boolean.valueOf(newValue));
+    }
+    
+    /**
+     * Sets the <code>Border</code>.
+     * 
+     * @param newValue the new border
+     */
+    public void setBorder(Border newValue) {
+        setProperty(PROPERTY_BORDER, newValue);
     }
     
     /** 

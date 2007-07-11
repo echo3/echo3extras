@@ -62,17 +62,17 @@ ExtrasApp.RemoteTree.TreeStructure.prototype._getMaxDepth = function(node) {
         var childCount = node.getChildNodeCount();
         for (var i = 0; i < childCount; ++i) {
             var childNode = node.getChildNode(i);
-            var childDepth = this._getMaxDepth(childNode) + 1;
+            var childDepth = this._getMaxDepth(childNode);
             if (childDepth > maxDepth) {
                 maxDepth = childDepth;
             }
         }
     }
-    return maxDepth;
+    return maxDepth + 1;
 };
 
 ExtrasApp.RemoteTree.TreeStructure.prototype.getNodeDepth = function(node) {
-    var depth = 0;
+    var depth = 1;
     var parentNode = this.getNode(node.getParentId());
     while (parentNode) {
         ++depth;

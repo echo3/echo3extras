@@ -63,6 +63,8 @@ public class TreeTest extends AbstractTest {
         final TreePath path = new TreePath(new Object[] {root, tree.getModel().getChild(root, 2)});
         tree.setExpandedState(path, false);
         
+        addBorderPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_BORDER);
+        
         testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Foo", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tree.setExpandedState(path, !tree.isExpanded(path));
