@@ -381,7 +381,7 @@ ExtrasRender.ComponentSync.Menu.prototype._closeDescendantMenus = function(menuM
  */
 ExtrasRender.ComponentSync.Menu._getImageUri = function(identifier) {
 	// FIXME abstract this somehow so it works with FreeClient too
-	return "?sid=EchoExtras.Menu.Image&imageuid=" + identifier;
+	return "?sid=Echo.Image&iid=EchoExtras.Menu." + identifier;
 };
 
 ExtrasRender.ComponentSync.Menu.prototype._getElementModelId = function(element) {

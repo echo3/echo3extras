@@ -21,7 +21,7 @@ ExtrasRender.ComponentSync.Group.DEFAULT_BORDER_INSETS = new EchoApp.Property.In
  */
 ExtrasRender.ComponentSync.Group._getImageUri = function(identifier) {
 	// FIXME abstract this somehow so it works with FreeClient too
-	return "?sid=EchoExtras.Group.Image&imageuid=" + identifier;
+	return "?sid=Echo.Image&iid=EchoExtras.Group." + identifier;
 };
 
 ExtrasRender.ComponentSync.Group.prototype.getElement = function() {

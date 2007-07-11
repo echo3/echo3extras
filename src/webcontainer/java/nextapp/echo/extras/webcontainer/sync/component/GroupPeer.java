@@ -29,14 +29,16 @@
 
 package nextapp.echo.extras.webcontainer.sync.component;
 
+import nextapp.echo.app.ImageReference;
+import nextapp.echo.app.ResourceImageReference;
 import nextapp.echo.app.util.Context;
 import nextapp.echo.extras.app.Group;
 import nextapp.echo.extras.webcontainer.service.CommonService;
-import nextapp.echo.extras.webcontainer.service.GroupImageService;
 import nextapp.echo.webcontainer.AbstractComponentSynchronizePeer;
 import nextapp.echo.webcontainer.ServerMessage;
 import nextapp.echo.webcontainer.Service;
 import nextapp.echo.webcontainer.WebContainerServlet;
+import nextapp.echo.webcontainer.service.ImageService;
 import nextapp.echo.webcontainer.service.JavaScriptService;
 
 /**
@@ -46,11 +48,40 @@ import nextapp.echo.webcontainer.service.JavaScriptService;
  */
 public class GroupPeer extends AbstractComponentSynchronizePeer {
 
+    private static final String IMAGE_ID_PREFIX = "EchoExtras.Group.";
+    
+    private static final String IMAGE_ID_BORDER_TOP_LEFT = IMAGE_ID_PREFIX + "border0";
+    private static final String IMAGE_ID_BORDER_TOP = IMAGE_ID_PREFIX + "border1";
+    private static final String IMAGE_ID_BORDER_TOP_RIGHT = IMAGE_ID_PREFIX + "border2";
+    private static final String IMAGE_ID_BORDER_LEFT = IMAGE_ID_PREFIX + "border3";
+    private static final String IMAGE_ID_BORDER_RIGHT = IMAGE_ID_PREFIX + "border4";
+    private static final String IMAGE_ID_BORDER_BOTTOM_LEFT = IMAGE_ID_PREFIX + "border5";
+    private static final String IMAGE_ID_BORDER_BOTTOM = IMAGE_ID_PREFIX + "border6";
+    private static final String IMAGE_ID_BORDER_BOTTOM_RIGHT = IMAGE_ID_PREFIX + "border7";
+    
+    private static final String IMAGE_PREFIX = "/nextapp/echo/extras/webcontainer/resource/image/";
+    private static final ImageReference DEFAULT_BORDER_TOP_LEFT = new ResourceImageReference(IMAGE_PREFIX + "GroupBorderTopLeft.png");
+    private static final ImageReference DEFAULT_BORDER_TOP = new ResourceImageReference(IMAGE_PREFIX + "GroupBorderTop.png");
+    private static final ImageReference DEFAULT_BORDER_TOP_RIGHT = new ResourceImageReference(IMAGE_PREFIX + "GroupBorderTopRight.png");
+    private static final ImageReference DEFAULT_BORDER_LEFT = new ResourceImageReference(IMAGE_PREFIX + "GroupBorderLeft.png");
+    private static final ImageReference DEFAULT_BORDER_RIGHT = new ResourceImageReference(IMAGE_PREFIX + "GroupBorderRight.png");
+    private static final ImageReference DEFAULT_BORDER_BOTTOM_LEFT = new ResourceImageReference(IMAGE_PREFIX + "GroupBorderBottomLeft.png");
+    private static final ImageReference DEFAULT_BORDER_BOTTOM = new ResourceImageReference(IMAGE_PREFIX + "GroupBorderBottom.png");
+    private static final ImageReference DEFAULT_BORDER_BOTTOM_RIGHT = new ResourceImageReference(IMAGE_PREFIX + "GroupBorderBottomRight.png");
+    
     private static final Service GROUP_SERVICE = JavaScriptService.forResource("EchoExtras.Group",
             "/nextapp/echo/extras/webcontainer/resource/js/Render.Group.js");
     
     static {
-        GroupImageService.install();
+        ImageService.install();
+        ImageService.addGlobalImage(IMAGE_ID_BORDER_TOP_LEFT, DEFAULT_BORDER_TOP_LEFT);
+        ImageService.addGlobalImage(IMAGE_ID_BORDER_TOP, DEFAULT_BORDER_TOP);
+        ImageService.addGlobalImage(IMAGE_ID_BORDER_TOP_RIGHT, DEFAULT_BORDER_TOP_RIGHT);
+        ImageService.addGlobalImage(IMAGE_ID_BORDER_LEFT, DEFAULT_BORDER_LEFT);
+        ImageService.addGlobalImage(IMAGE_ID_BORDER_RIGHT, DEFAULT_BORDER_RIGHT);
+        ImageService.addGlobalImage(IMAGE_ID_BORDER_BOTTOM_LEFT, DEFAULT_BORDER_BOTTOM_LEFT);
+        ImageService.addGlobalImage(IMAGE_ID_BORDER_BOTTOM, DEFAULT_BORDER_BOTTOM);
+        ImageService.addGlobalImage(IMAGE_ID_BORDER_BOTTOM_RIGHT, DEFAULT_BORDER_BOTTOM_RIGHT);
         
         WebContainerServlet.getServiceRegistry().add(GROUP_SERVICE);
     }
