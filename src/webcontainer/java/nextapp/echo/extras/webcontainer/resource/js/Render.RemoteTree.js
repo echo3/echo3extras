@@ -153,7 +153,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderExpandoElement = function
             }
         }
         verticalLineElement.style.width = "100%";
-        var verticalLineFillImage = new EchoApp.Property.FillImage(this.verticalLineImage, EchoApp.Property.FillImage.REPEAT_Y, "50%", 0);
+        var verticalLineFillImage = new EchoApp.Property.FillImage(this.verticalLineImage, EchoApp.Property.FillImage.REPEAT_VERTICAL, "50%", 0);
         EchoRender.Property.FillImage.render(verticalLineFillImage, verticalLineElement);
                 
         horizontalLineElement.style.position = "absolute";
@@ -161,7 +161,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderExpandoElement = function
         horizontalLineElement.style.left = "50%";
         horizontalLineElement.style.height = "100%";
         horizontalLineElement.style.width = "50%";
-        var horizontalLineFillImage = new EchoApp.Property.FillImage(this.horizontalLineImage, EchoApp.Property.FillImage.REPEAT_X, "50%", "50%");
+        var horizontalLineFillImage = new EchoApp.Property.FillImage(this.horizontalLineImage, EchoApp.Property.FillImage.REPEAT_HORIZONTAL, "50%", "50%");
         EchoRender.Property.FillImage.render(horizontalLineFillImage, horizontalLineElement);
         
         verticalLineElement.appendChild(document.createTextNode(expandoText));
@@ -204,7 +204,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRowStructure = functi
         rowHeaderElement.style.height = "100%";
 
         if (parentNode && this._treeStructure.hasNodeNextSibling(parentNode)) {
-            var verticalLineFillImage = new EchoApp.Property.FillImage(this.verticalLineImage, EchoApp.Property.FillImage.REPEAT_Y, "50%", 0);
+            var verticalLineFillImage = new EchoApp.Property.FillImage(this.verticalLineImage, EchoApp.Property.FillImage.REPEAT_VERTICAL, "50%", 0);
             EchoRender.Property.FillImage.render(verticalLineFillImage, rowHeaderElement);
         }
         if (parentNode.getParentId()) {
