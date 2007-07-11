@@ -58,13 +58,15 @@ ExtrasApp.RemoteTree.TreeStructure.prototype.getMaxDepth = function() {
 ExtrasApp.RemoteTree.TreeStructure.prototype._getMaxDepth = function(node) {
     //FIXME what about performance?
     var maxDepth = 0;
-    var childCount = node.getChildNodeCount();
-    for (var i = 0; i < childCount; ++i) {
-        var childNode = node.getChildNode(i);
+    if (node.isExpanded()) {
+        var childCount = node.getChildNodeCount();
+        for (var i = 0; i < childCount; ++i) {
+            var childNode = node.getChildNode(i);
             var childDepth = this._getMaxDepth(childNode) + 1;
             if (childDepth > maxDepth) {
                 maxDepth = childDepth;
             }
+        }
     }
     return maxDepth;
 };

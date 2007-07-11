@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import nextapp.echo.app.Component;
+import nextapp.echo.app.ImageReference;
+import nextapp.echo.app.ResourceImageReference;
 import nextapp.echo.app.serial.SerialException;
 import nextapp.echo.app.serial.SerialPropertyPeer;
 import nextapp.echo.app.update.ClientUpdateManager;
@@ -13,13 +15,13 @@ import nextapp.echo.app.util.Context;
 import nextapp.echo.extras.app.Tree;
 import nextapp.echo.extras.app.tree.TreeModel;
 import nextapp.echo.extras.app.tree.TreePath;
-import nextapp.echo.extras.webcontainer.service.TreeImageService;
 import nextapp.echo.webcontainer.AbstractComponentSynchronizePeer;
 import nextapp.echo.webcontainer.RenderState;
 import nextapp.echo.webcontainer.ServerMessage;
 import nextapp.echo.webcontainer.Service;
 import nextapp.echo.webcontainer.UserInstance;
 import nextapp.echo.webcontainer.WebContainerServlet;
+import nextapp.echo.webcontainer.service.ImageService;
 import nextapp.echo.webcontainer.service.JavaScriptService;
 import nextapp.echo.webcontainer.util.ArrayIterator;
 import nextapp.echo.webcontainer.util.MultiIterator;
@@ -178,6 +180,16 @@ extends AbstractComponentSynchronizePeer {
     private static int getColumnCount(Tree tree) {
         return tree.getColumnModel().getColumnCount();
     }
+    
+    private static final String IMAGE_PREFIX = "/nextapp/echo/extras/webcontainer/resource/image/";
+    private static final ImageReference DEFAULT_ICON_LINE_SOLID = new ResourceImageReference(IMAGE_PREFIX + "Dot.gif");
+    private static final ImageReference DEFAULT_ICON_VERTICAL_LINE_DOTTED = new ResourceImageReference(IMAGE_PREFIX + "TreeVerticalLineDotted.gif");
+    private static final ImageReference DEFAULT_ICON_HORIZONTAL_LINE_DOTTED = new ResourceImageReference(IMAGE_PREFIX + "TreeHorizontalLineDotted.gif");
+    
+    private static final String IMAGE_ID_LINE_VERTICAL_SOLID = "EchoExtras.Tree.lineVerticalSolid";
+    private static final String IMAGE_ID_LINE_HORIZONTAL_SOLID = "EchoExtras.Tree.lineHorizontalSolid";
+    private static final String IMAGE_ID_LINE_VERTICAL_DOTTED = "EchoExtras.Tree.lineVerticalDotted";
+    private static final String IMAGE_ID_LINE_HORIZONTAL_DOTTED = "EchoExtras.Tree.lineHorizontalDotted";
 
     private static final String PROPERTY_TREE_STRUCTURE = "treeStructure";
     private static final String PROPERTY_COLUMN_COUNT = "columnCount";
@@ -197,6 +209,12 @@ extends AbstractComponentSynchronizePeer {
                     "/nextapp/echo/extras/webcontainer/resource/js/Render.RemoteTree.js" });
     
     static {
+        ImageService.install();
+        ImageService.addGlobalImage(IMAGE_ID_LINE_HORIZONTAL_SOLID, DEFAULT_ICON_LINE_SOLID);
+        ImageService.addGlobalImage(IMAGE_ID_LINE_VERTICAL_SOLID, DEFAULT_ICON_LINE_SOLID);
+        ImageService.addGlobalImage(IMAGE_ID_LINE_HORIZONTAL_DOTTED, DEFAULT_ICON_HORIZONTAL_LINE_DOTTED);
+        ImageService.addGlobalImage(IMAGE_ID_LINE_VERTICAL_DOTTED, DEFAULT_ICON_VERTICAL_LINE_DOTTED);
+        
         WebContainerServlet.getServiceRegistry().add(TREE_SERVICE);
     }
     
@@ -205,8 +223,6 @@ extends AbstractComponentSynchronizePeer {
         addOutputProperty(PROPERTY_TREE_STRUCTURE);
         addOutputProperty(PROPERTY_COLUMN_COUNT);
         addOutputProperty(PROPERTY_HEADER_VISIBLE);
-        
-        TreeImageService.install();
     }
     
     /**

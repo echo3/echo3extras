@@ -17,14 +17,15 @@ ExtrasRender.ComponentSync.RemoteTree._supportedPartialProperties = new Array("t
  */
 ExtrasRender.ComponentSync.RemoteTree.prototype._getImageUri = function(identifier) {
 	// FIXME abstract this somehow so it works with FreeClient too
-	return "?sid=EchoExtras.Tree.Image&imageuid=" + identifier;
+	return "?sid=Echo.Image&iid=" + identifier;
 };
 
 ExtrasRender.ComponentSync.RemoteTree.prototype.renderAdd = function(update, parentElement) {
     var lineStyle = this.component.getRenderProperty("lineStyle", 1);
     var lineImageIdSuffix = lineStyle == 0 ? "Solid" : "Dotted";
-    this.verticalLineImage = this._getImageUri("lineVertical" + lineImageIdSuffix);
-    this.horizontalLineImage = this._getImageUri("lineHorizontal" + lineImageIdSuffix);
+    this.verticalLineImage = this._getImageUri("EchoExtras.Tree.lineVertical" + lineImageIdSuffix);
+    this.horizontalLineImage = this._getImageUri("EchoExtras.Tree.lineHorizontal" + lineImageIdSuffix);
+    this._headerVisible = this.component.getProperty("headerVisible");
     
     var tableElement = document.createElement("table");
     this._element = tableElement;
@@ -39,9 +40,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype.renderAdd = function(update, par
     this.columnCount = this.component.getProperty("columnCount");
     
     var rootNode = this._treeStructure.getRootNode();
-    EchoCore.Debug.consoleWrite("rendering header: " + this._treeStructure.getHeaderNode());
     this._rerenderNode(update, this._treeStructure.getHeaderNode());
-    EchoCore.Debug.consoleWrite("rendering root: " + rootNode);
     this._rerenderNode(update, rootNode);
     
     parentElement.appendChild(tableElement);
@@ -60,34 +59,16 @@ ExtrasRender.ComponentSync.RemoteTree.prototype.renderSizeUpdate = function() {
 
 ExtrasRender.ComponentSync.RemoteTree.prototype._rerenderNode = function(update, node) {
     var rowElement = this._getRowElementForNodeId(node.getId());
-    var maxDepth = this._treeStructure.getMaxDepth();
     var nodeDepth = this._treeStructure.getNodeDepth(node);
     
     var insertBefore = null;
     if (rowElement) {
         insertBefore = rowElement.nextSibling;
     }
-
+    
     this._renderNode(insertBefore, node, nodeDepth, update);
     
-    // update the col spans of the node cells
-    if (node == this._treeStructure.getHeaderNode()) {
-        // don't touch the spans if only the header node is re-rendered
-        return;
-    }
-    if (this._prevMaxDepth || this._prevMaxDepth == 0) {
-        var startNode;
-        if (this._prevMaxDepth == maxDepth) {
-            // no need to traverse the whole tree, update only changed nodes
-            startNode = node;
-        } else {
-            // max depth has changed, update all nodes
-            startNode = this._treeStructure.getRootNode();
-            this._updateSpans(update, this._treeStructure.getHeaderNode(), maxDepth);
-        }
-        this._updateSpans(update, startNode, maxDepth);
-    }
-    this._prevMaxDepth = maxDepth;
+    this._updateSpans(node);
 };
 
 ExtrasRender.ComponentSync.RemoteTree.prototype._renderNode = function(insertBefore, node, depth, update) {
@@ -96,7 +77,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNode = function(insertBef
     var expandoElement;
     
     if (!trElement) {
-        var elems = this._renderNodeRowStructure(insertBefore, node, depth, update);
+        var elems = this._renderNodeRowStructure(insertBefore, node, depth);
         trElement = elems.trElement;
         tdElement = elems.tdElement;
         expandoElement = elems.expandoElement;
@@ -107,61 +88,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNode = function(insertBef
     }
 
     if (expandoElement) {
-        EchoWebCore.DOM.removeAllChildren(expandoElement);
-        
-        var expandoText = "\u00a0";
-        expandoElement.style.height = "100%"; // IE hacking
-        var wrapperElement = document.createElement("div");
-        var verticalLineElement;
-        if (node.getParentId()) { // don't show tree lines for the root
-            var horizontalLineElement = document.createElement("div");
-            verticalLineElement = document.createElement("div");
-            
-            wrapperElement.style.position = "relative";
-            wrapperElement.style.height = "100%";
-            wrapperElement.style.width = "100%";
-            
-            verticalLineElement.style.position = "absolute";
-            verticalLineElement.style.top = "0";
-            if (this._treeStructure.hasNodeNextSibling(node)) {
-                verticalLineElement.style.height = "100%";
-                verticalLineElement.style.bottom = "0";
-            } else {
-                verticalLineElement.style.height = "50%";
-                verticalLineElement.style.bottom = "50%";
-                if (EchoWebCore.Environment.BROWSER_INTERNET_EXPLORER && EchoWebCore.Environment.BROWSER_MAJOR_VERSION <= 6) {
-                    if (!this._vpElements) {
-                        this._vpElements = new Array();
-                    }
-                    this._vpElements.push(verticalLineElement);
-                    verticalLineElement.style.fontSize = "1px";
-                }
-            }
-            verticalLineElement.style.width = "100%";
-            verticalLineElement.style.backgroundImage = "url('" + this.verticalLineImage + "')";
-            verticalLineElement.style.backgroundPosition = "center top";
-            verticalLineElement.style.backgroundRepeat = "repeat-y";
-                    
-            horizontalLineElement.style.position = "absolute";
-            horizontalLineElement.style.top = "0";
-            horizontalLineElement.style.left = "50%";
-            horizontalLineElement.style.height = "100%";
-            horizontalLineElement.style.width = "50%";
-            horizontalLineElement.style.backgroundImage = "url('" + this.horizontalLineImage + "')";
-            horizontalLineElement.style.backgroundPosition = "center center";
-            horizontalLineElement.style.backgroundRepeat = "repeat-x";
-            
-            verticalLineElement.appendChild(document.createTextNode(expandoText));
-            horizontalLineElement.appendChild(document.createTextNode(expandoText));
-    
-            wrapperElement.appendChild(verticalLineElement);
-            wrapperElement.appendChild(horizontalLineElement);
-        }
-        if (!node.isLeaf()) {
-            expandoText = node.isExpanded() ? "-" : "+";
-        }
-        wrapperElement.appendChild(document.createTextNode(expandoText));
-        expandoElement.appendChild(wrapperElement);
+        this._renderExpandoElement(node, expandoElement);
     }
     
     if (!tdElement.firstChild) {
@@ -193,6 +120,64 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNode = function(insertBef
     }
 };
 
+ExtrasRender.ComponentSync.RemoteTree.prototype._renderExpandoElement = function(node, expandoElement) {
+    EchoWebCore.DOM.removeAllChildren(expandoElement);
+        
+    var expandoText = "\u00a0";
+    expandoElement.style.height = "100%"; // IE hacking
+    var wrapperElement = document.createElement("div");
+    var verticalLineElement;
+    if (node.getParentId()) { // don't show tree lines for the root
+        var horizontalLineElement = document.createElement("div");
+        verticalLineElement = document.createElement("div");
+        
+        wrapperElement.style.position = "relative";
+        wrapperElement.style.height = "100%";
+        wrapperElement.style.width = "100%";
+        
+        verticalLineElement.style.position = "absolute";
+        verticalLineElement.style.top = "0";
+        if (this._treeStructure.hasNodeNextSibling(node)) {
+            verticalLineElement.style.height = "100%";
+            verticalLineElement.style.bottom = "0";
+        } else {
+            verticalLineElement.style.height = "50%";
+            verticalLineElement.style.bottom = "50%";
+            if (EchoWebCore.Environment.BROWSER_INTERNET_EXPLORER && EchoWebCore.Environment.BROWSER_MAJOR_VERSION <= 6) {
+                if (!this._vpElements) {
+                    this._vpElements = new Array();
+                }
+                this._vpElements.push(verticalLineElement);
+                verticalLineElement.style.fontSize = "1px";
+            }
+        }
+        verticalLineElement.style.width = "100%";
+        verticalLineElement.style.backgroundImage = "url('" + this.verticalLineImage + "')";
+        verticalLineElement.style.backgroundPosition = "center top";
+        verticalLineElement.style.backgroundRepeat = "repeat-y";
+                
+        horizontalLineElement.style.position = "absolute";
+        horizontalLineElement.style.top = "0";
+        horizontalLineElement.style.left = "50%";
+        horizontalLineElement.style.height = "100%";
+        horizontalLineElement.style.width = "50%";
+        horizontalLineElement.style.backgroundImage = "url('" + this.horizontalLineImage + "')";
+        horizontalLineElement.style.backgroundPosition = "center center";
+        horizontalLineElement.style.backgroundRepeat = "repeat-x";
+        
+        verticalLineElement.appendChild(document.createTextNode(expandoText));
+        horizontalLineElement.appendChild(document.createTextNode(expandoText));
+
+        wrapperElement.appendChild(verticalLineElement);
+        wrapperElement.appendChild(horizontalLineElement);
+    }
+    if (!node.isLeaf()) {
+        expandoText = node.isExpanded() ? "-" : "+";
+    }
+    wrapperElement.appendChild(document.createTextNode(expandoText));
+    expandoElement.appendChild(wrapperElement);
+};
+
 ExtrasRender.ComponentSync.RemoteTree.prototype._hideNode = function(node) {
     var trElement = this._getRowElementForNodeId(node.getId());
     if (!trElement || trElement.style.display == "none") {
@@ -206,7 +191,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._hideNode = function(node) {
     }
 };
 
-ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRowStructure = function(insertBefore, node, depth, update) {
+ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRowStructure = function(insertBefore, node, depth) {
     var trElement = document.createElement("tr");
     trElement.style.heigth = "100%"; // IE hacking
     trElement.id = this.component.renderId + "_tr_" + node.getId();
@@ -253,9 +238,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRowStructure = functi
     tdElement.id = this.component.renderId + "_node_" + node.getId();
 //        tdElement.style.border = "1px solid black";
     tdElement.style.padding = "0";
-    if (header) {
-        tdElement.colSpan = 2;
-    }
+
     trElement.appendChild(tdElement);
 
     this._tbodyElement.insertBefore(trElement, insertBefore);
@@ -267,21 +250,87 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRowStructure = functi
         tdElement: tdElement,
         expandoElement: expandoElement
     };
-}
+};
 
-ExtrasRender.ComponentSync.RemoteTree.prototype._updateSpans = function(update, startNode, maxDepth) {
+ExtrasRender.ComponentSync.RemoteTree.prototype._updateSpans = function(node) {
+    // update the col spans of the node cells
+    if (node == this._treeStructure.getHeaderNode()) {
+        // don't touch the spans if only the header node is re-rendered
+        return;
+    }
+    var maxDepth = this._treeStructure.getMaxDepth();
+    var tbodyElement = this._tbodyElement;
+    var context = {
+        startRow : tbodyElement.firstChild,
+        rowElement : null,
+        
+        nextRow : function() {
+            if (this.rowElement) {
+                this.rowElement = this.rowElement.nextSibling;
+            } else {
+                this.rowElement = this.startRow;
+            }
+            return this.rowElement;
+        },
+        
+        nextNodeElement : function() {
+            this.nextRow();
+            if (!this.rowElement) {
+                return null;
+            }
+            var cellElement = this.rowElement.firstChild;
+            while (cellElement) {
+                if (cellElement.id && cellElement.id.indexOf("_node_") != -1) {
+                    return cellElement;
+                }
+                cellElement = cellElement.nextSibling;
+            }
+            return null;
+        },
+    };
+    var startNode;
+    if (this._prevMaxDepth == maxDepth) {
+        // no need to traverse the whole tree, update only changed nodes
+        startNode = node;
+    } else {
+        // max depth has changed, update all nodes
+        startNode = this._treeStructure.getRootNode();
+        if (this._headerVisible) {
+            this._updateSpansRecursive(this._treeStructure.getHeaderNode(), maxDepth, context);
+        }
+    }
+    var element = this._getRowElementForNodeId(startNode.getId());
+    if (element) {
+        context.startRow = element;
+    } else {
+        while (context.startRow) {
+            if (context.startRow.id == this.component.renderId + "_tr_" + startNode.getId()) {
+                break;
+            }
+            context.startRow = context.startRow.nextSibling;
+        }
+    }
+    
+    this._updateSpansRecursive(startNode, maxDepth, context);
+    this._prevMaxDepth = maxDepth;
+};
+
+ExtrasRender.ComponentSync.RemoteTree.prototype._updateSpansRecursive = function(startNode, maxDepth, context) {
     var depth = this._treeStructure.getNodeDepth(startNode);
     var span = maxDepth - depth + 1;
     if (startNode == this._treeStructure.getHeaderNode()) {
         ++span;
     }
-    var nodeElement = this._getNodeElementForNodeId(startNode.getId());
+    var nodeElement = context.nextNodeElement();
+    if (!nodeElement) {
+        return;
+    }
     nodeElement.colSpan = span;
     
     var childCount = startNode.getChildNodeCount();
     for (var i = 0; i < childCount; ++i) {
         var childNode = startNode.getChildNode(i);
-        this._updateSpans(update, childNode, maxDepth);
+        this._updateSpansRecursive(childNode, maxDepth, context);
     }
 };
 
@@ -318,8 +367,8 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._getRowIndex = function(element)
         return null;
     }
     var testElement = this._tbodyElement.firstChild;
-    var headerVisible = this.component.getProperty("headerVisible");
-    var index = headerVisible ? -1 : 0;
+    
+    var index = this._headerVisible ? -1 : 0;
     while (testElement) {
         if (testElement == element) {
             return index;

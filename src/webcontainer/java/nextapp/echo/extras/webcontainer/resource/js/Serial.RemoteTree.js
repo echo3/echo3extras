@@ -32,7 +32,9 @@ ExtrasSerial.PropertyTranslator.RemoteTree.TreeStructure.toProperty = function(c
             node.addColumn(columnId);
         }
     }
-    treeStructure.setHeaderNode(headerNode);
+    if (headerNode) {
+        treeStructure.setHeaderNode(headerNode);
+    }
     return treeStructure;
 };
 
