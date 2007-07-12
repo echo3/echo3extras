@@ -1,5 +1,6 @@
 package nextapp.echo.extras.testapp.testscreen;
 
+import nextapp.echo.app.FillImage;
 import nextapp.echo.app.event.ActionEvent;
 import nextapp.echo.app.event.ActionListener;
 import nextapp.echo.extras.app.Tree;
@@ -8,9 +9,15 @@ import nextapp.echo.extras.app.tree.TreePath;
 import nextapp.echo.extras.testapp.AbstractTest;
 import nextapp.echo.extras.testapp.Styles;
 import nextapp.echo.extras.testapp.TestControlPane;
+import nextapp.echo.testapp.interactive.StyleUtil;
 
 public class TreeTest extends AbstractTest {
-
+    
+    private static final FillImage[] TEST_FILL_IMAGES = new FillImage[] { null, 
+        Styles.FILL_IMAGE_SHADOW_BACKGROUND_DARK_BLUE, Styles.FILL_IMAGE_SHADOW_BACKGROUND_LIGHT_BLUE,
+        Styles.FILL_IMAGE_PEWTER_LINE, Styles.FILL_IMAGE_LIGHT_BLUE_LINE,
+        Styles.FILL_IMAGE_SILVER_LINE};
+    
     final Tree tree;
     public TreeTest() {
         
@@ -64,6 +71,22 @@ public class TreeTest extends AbstractTest {
         tree.setExpandedState(path, false);
         
         addBorderPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_BORDER);
+        
+//        testControlsPane.
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Enable Rollover Effects", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tree.setRolloverEnabled(true);
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Disable Rollover Effects", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tree.setRolloverEnabled(false);
+            }
+        });
+        addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_ROLLOVER_FOREGROUND);
+        addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_ROLLOVER_BACKGROUND);
+        addFontPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_ROLLOVER_FONT);
+        addFillImagePropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_ROLLOVER_BACKGROUND_IMAGE, TEST_FILL_IMAGES);
         
         testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Foo", new ActionListener() {
             public void actionPerformed(ActionEvent e) {

@@ -9,7 +9,10 @@ import java.util.Map;
 import java.util.Set;
 
 import nextapp.echo.app.Border;
+import nextapp.echo.app.Color;
 import nextapp.echo.app.Component;
+import nextapp.echo.app.FillImage;
+import nextapp.echo.app.Font;
 import nextapp.echo.app.Label;
 import nextapp.echo.extras.app.event.TreeColumnModelEvent;
 import nextapp.echo.extras.app.event.TreeColumnModelListener;
@@ -201,6 +204,11 @@ public class Tree extends Component {
 
     public static final String PROPERTY_BORDER = "border";
     public static final String PROPERTY_LINE_STYLE = "lineStyle";
+    public static final String PROPERTY_ROLLOVER_BACKGROUND = "rolloverBackground";
+    public static final String PROPERTY_ROLLOVER_BACKGROUND_IMAGE = "rolloverBackgroundImage";
+    public static final String PROPERTY_ROLLOVER_ENABLED = "rolloverEnabled";
+    public static final String PROPERTY_ROLLOVER_FONT = "rolloverFont";
+    public static final String PROPERTY_ROLLOVER_FOREGROUND = "rolloverForeground";
     
     public static final String CELL_RENDERER_CHANGED_PROPERTY = "cellRenderer";
     public static final String MODEL_CHANGED_PROPERTY = "model";
@@ -655,6 +663,17 @@ public class Tree extends Component {
     public boolean isHeaderVisible() {
         return headerVisible;
     }
+    
+    /**
+     * Determines if rollover effects are enabled.
+     * 
+     * @return true if rollover effects are enabled
+     * @see #setRolloverEnabled(boolean)
+     */
+    public boolean isRolloverEnabled() {
+        Boolean value = (Boolean) getProperty(PROPERTY_ROLLOVER_ENABLED);
+        return value == null ? false : value.booleanValue();
+    }
 
     /**
      * @param row the row to get the path for
@@ -676,6 +695,46 @@ public class Tree extends Component {
             }
         }
         return -1;
+    }
+    
+    /**
+     * Return the rollover background color displayed when the mouse is within
+     * the bounds of a row.
+     * 
+     * @return the color
+     */
+    public Color getRolloverBackground() {
+        return (Color) getProperty(PROPERTY_ROLLOVER_BACKGROUND);
+    }
+
+    /**
+     * Return the rollover background image displayed when the mouse is within
+     * the bounds of a row.
+     * 
+     * @return the background image
+     */
+    public FillImage getRolloverBackgroundImage() {
+        return (FillImage) getProperty(PROPERTY_ROLLOVER_BACKGROUND_IMAGE);
+    }
+
+    /**
+     * Return the rollover font displayed when the mouse is within
+     * the bounds of a row.
+     * 
+     * @return the font
+     */
+    public Font getRolloverFont() {
+        return (Font) getProperty(PROPERTY_ROLLOVER_FONT);
+    }
+
+    /**
+     * Return the rollover foreground color displayed when the mouse is within
+     * the bounds of a row.
+     * 
+     * @return the color
+     */
+    public Color getRolloverForeground() {
+        return (Color) getProperty(PROPERTY_ROLLOVER_FOREGROUND);
     }
 
     /**
@@ -790,6 +849,57 @@ public class Tree extends Component {
      */
     public void setLineStyle(int newValue) {
         setProperty(PROPERTY_LINE_STYLE, new Integer(newValue));
+    }
+
+    /**
+     * Sets the rollover background color displayed when the mouse is within
+     * the bounds of a row.
+     * 
+     * @param newValue the new <code>Color</code>
+     */
+    public void setRolloverBackground(Color newValue) {
+        setProperty(PROPERTY_ROLLOVER_BACKGROUND, newValue);
+    }
+
+    /**
+     * Sets the rollover background image displayed when the mouse is within
+     * the bounds of a row.
+     * 
+     * @param newValue the new background image
+     */
+    public void setRolloverBackgroundImage(FillImage newValue) {
+        setProperty(PROPERTY_ROLLOVER_BACKGROUND_IMAGE, newValue);
+    }
+
+    /**
+     * Sets whether rollover effects are enabled when the mouse cursor is 
+     * within the bounds of a row. Rollover properties have no effect unless 
+     * this property is set to true. The default value is false.
+     * 
+     * @param newValue true if rollover effects should be enabled
+     */
+    public void setRolloverEnabled(boolean newValue) {
+        setProperty(PROPERTY_ROLLOVER_ENABLED, new Boolean(newValue));
+    }
+
+    /**
+     * Sets the rollover font displayed when the mouse is within
+     * the bounds of a row.
+     * 
+     * @param newValue the new <code>Font</code>
+     */
+    public void setRolloverFont(Font newValue) {
+        setProperty(PROPERTY_ROLLOVER_FONT, newValue);
+    }
+
+    /**
+     * Sets the rollover foreground color displayed when the mouse is within
+     * the bounds of a row.
+     * 
+     * @param newValue the new <code>Color</code>
+     */
+    public void setRolloverForeground(Color newValue) {
+        setProperty(PROPERTY_ROLLOVER_FOREGROUND, newValue);
     }
 
     /**
