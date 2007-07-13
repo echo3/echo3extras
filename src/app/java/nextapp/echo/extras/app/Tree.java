@@ -13,6 +13,7 @@ import nextapp.echo.app.Color;
 import nextapp.echo.app.Component;
 import nextapp.echo.app.FillImage;
 import nextapp.echo.app.Font;
+import nextapp.echo.app.Insets;
 import nextapp.echo.app.Label;
 import nextapp.echo.extras.app.event.TreeColumnModelEvent;
 import nextapp.echo.extras.app.event.TreeColumnModelListener;
@@ -203,6 +204,7 @@ public class Tree extends Component {
     private Renderer renderer = new Renderer();
 
     public static final String PROPERTY_BORDER = "border";
+    public static final String PROPERTY_INSETS = "insets";
     public static final String PROPERTY_LINE_STYLE = "lineStyle";
     public static final String PROPERTY_ROLLOVER_BACKGROUND = "rolloverBackground";
     public static final String PROPERTY_ROLLOVER_BACKGROUND_IMAGE = "rolloverBackgroundImage";
@@ -423,6 +425,15 @@ public class Tree extends Component {
     public TreeCellRenderer getDefaultRenderer(Class columnClass) {
         return (TreeCellRenderer) defaultRendererMap.get(columnClass);
     }
+    
+    /**
+     * Returns the default cell insets.
+     * 
+     * @return the default cell insets
+     */
+    public Insets getInsets() {
+        return (Insets) getProperty(PROPERTY_INSETS);
+    }
 
     /**
      * @see nextapp.echo.app.Component#dispose()
@@ -593,6 +604,15 @@ public class Tree extends Component {
         boolean oldValue = headerVisible;
         headerVisible = newValue;
         firePropertyChange(HEADER_VISIBLE_CHANGED_PROPERTY, Boolean.valueOf(oldValue), Boolean.valueOf(newValue));
+    }
+    
+    /**
+     * Sets the default cell insets.
+     * 
+     * @param newValue the new default cell insets
+     */
+    public void setInsets(Insets newValue) {
+        setProperty(PROPERTY_INSETS, newValue);
     }
 
     /**

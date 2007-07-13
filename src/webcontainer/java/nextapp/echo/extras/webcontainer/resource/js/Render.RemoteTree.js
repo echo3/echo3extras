@@ -28,6 +28,12 @@ ExtrasRender.ComponentSync.RemoteTree.prototype.renderAdd = function(update, par
     this._headerVisible = this.component.getProperty("headerVisible");
     this._rolloverEnabled = this.component.getRenderProperty("rolloverEnabled");
     
+    this._defaultInsets = this.component.getRenderProperty("insets");
+    if (!this._defaultInsets) {
+        this._defaultInsets = new EchoApp.Property.Insets(0);
+    }
+    this._defaultCellPadding = EchoRender.Property.Insets.toCssValue(this._defaultInsets);
+    
     var tableElement = document.createElement("table");
     this._element = tableElement;
     this._element.id = this.component.renderId;
@@ -56,9 +62,71 @@ ExtrasRender.ComponentSync.RemoteTree.prototype.renderSizeUpdate = function() {
     }
     for (var i in this._vpElements) {
         var parentHeight = this._vpElements[i].parentNode.offsetHeight;
-        this._vpElements[i].style.height = (parentHeight / 2) + "px";
+        var height = parentHeight;
+        if (this._vpElements[i].style.bottom == "50%") {
+            height /= 2;
+        }
+        this._vpElements[i].style.height = height + "px";
     }
     delete this._vpElements;
+};
+
+/**
+ * Creates an iterator object for easy navigating through the tree table.
+ * 
+ * @param startRow the row element to start with, 
+ *          this element will be returned on the first call to nextRow().
+ * @param endRow the row that ends the iteration. When endRow is encountered 
+ *          while iterating the iterator will return null, and will not advance to the next row.
+ */
+ExtrasRender.ComponentSync.RemoteTree.prototype._elementIterator = function(startRow, endRow) {
+    return {
+        startRow : startRow,
+        rowElement : null,
+        
+        nextRow : function() {
+            if (this.rowElement) {
+                if (this.rowElement.nextSibling == endRow) {
+                    return null;
+                }
+                this.rowElement = this.rowElement.nextSibling;
+            } else {
+                this.rowElement = this.startRow;
+            }
+            
+            return this.rowElement;
+        },
+        
+        nextNodeElement : function() {
+            this.nextRow();
+            if (!this.rowElement) {
+                return null;
+            }
+            return this.currentNodeElement();
+        },
+        
+        currentNodeElement : function() {
+            var cellElement = this.rowElement.firstChild;
+            while (cellElement) {
+                if (cellElement.__ExtrasTreeCellType == "node") {
+                    return cellElement;
+                }
+                cellElement = cellElement.nextSibling;
+            }
+            return null;
+        },
+
+        currentExpandoElement : function() {
+            var cellElement = this.rowElement.firstChild;
+            while (cellElement) {
+                if (cellElement.__ExtrasTreeCellType == "expando") {
+                    return cellElement;
+                }
+                cellElement = cellElement.nextSibling;
+            }
+            return null;
+        }
+    };
 };
 
 ExtrasRender.ComponentSync.RemoteTree.prototype._renderNode = function(update, node) {
@@ -69,26 +137,34 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNode = function(update, n
     if (rowElement) {
         insertBefore = rowElement.nextSibling;
     }
-    
-    this._renderNodeRecursive(update, node, nodeDepth, insertBefore);
+
+    var nodeSibling = this._treeStructure.getNodeNextSibling(node, true);
+    var endRow = null;
+    if (nodeSibling) {
+        endRow = this._getRowElementForNodeId(nodeSibling.getId());
+    }
+    var iterator = this._elementIterator(rowElement, endRow);
+    this._renderNodeRecursive(update, node, iterator, nodeDepth, insertBefore);
     
     this._updateSpans(node);
 };
 
-ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRecursive = function(update, node, depth, insertBefore) {
-    var trElement = this._getRowElementForNodeId(node.getId());
+ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRecursive = function(update, node, iterator, depth, insertBefore) {
+    var trElement = iterator.nextRow();
     var tdElement;
     var expandoElement;
     
     if (!trElement) {
         var elems = this._renderNodeRowStructure(insertBefore, node, depth);
+        // skip the just created row element
+        iterator.nextRow();
         trElement = elems.trElement;
         tdElement = elems.tdElement;
         expandoElement = elems.expandoElement;
     } else {
         trElement.style.display = ""; // unhide
-        tdElement = this._getNodeElementForNodeId(node.getId());
-        expandoElement = this._getExpandoElementForNodeId(node.getId());
+        tdElement = iterator.currentNodeElement();
+        expandoElement = iterator.currentExpandoElement();
     }
 
     if (expandoElement) {
@@ -104,6 +180,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRecursive = function(
             for (var c = 0; c < this.columnCount - 1; ++c) {
                 var columnElement = document.createElement("td");
                 EchoRender.Property.Border.renderComponentProperty(this.component, "border", null, columnElement);
+                EchoRender.Property.Insets.renderPixel(this._defaultInsets, columnElement, "padding");
                 
                 var columnComponent = this.component.application.getComponentByRenderId(node.getColumn(c));
                 EchoRender.renderComponentAdd(update, columnComponent, columnElement);
@@ -118,9 +195,9 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRecursive = function(
     for (var i = 0; i < childCount; ++i) {
         var childNode = node.getChildNode(i);
         if (expanded) {
-            this._renderNodeRecursive(update, childNode, depth + 1, insertBefore);
+            this._renderNodeRecursive(update, childNode, iterator, depth + 1, insertBefore);
         } else {
-            this._hideNode(childNode);
+            this._hideNode(childNode, iterator);
         }
     }
 };
@@ -139,22 +216,23 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderExpandoElement = function
         wrapperElement.style.position = "relative";
         wrapperElement.style.height = "100%";
         wrapperElement.style.width = "100%";
+        this._applyInsets(this._defaultInsets, [0,2], wrapperElement);
         
         verticalLineElement.style.position = "absolute";
         verticalLineElement.style.top = "0";
         if (this._treeStructure.hasNodeNextSibling(node)) {
-            verticalLineElement.style.height = "100%";
             verticalLineElement.style.bottom = "0";
         } else {
-            verticalLineElement.style.height = "50%";
             verticalLineElement.style.bottom = "50%";
-            if (EchoWebCore.Environment.BROWSER_INTERNET_EXPLORER && EchoWebCore.Environment.BROWSER_MAJOR_VERSION <= 6) {
-                if (!this._vpElements) {
-                    this._vpElements = new Array();
-                }
-                this._vpElements.push(verticalLineElement);
-                verticalLineElement.style.fontSize = "1px";
+        }
+        if (EchoWebCore.Environment.BROWSER_INTERNET_EXPLORER && EchoWebCore.Environment.BROWSER_MAJOR_VERSION <= 6) {
+            if (!this._vpElements) {
+                this._vpElements = new Array();
             }
+            this._vpElements.push(verticalLineElement);
+            verticalLineElement.style.fontSize = "1px";
+            this._vpElements.push(horizontalLineElement);
+            horizontalLineElement.style.fontSize = "1px";
         }
         verticalLineElement.style.width = "100%";
         var verticalLineFillImage = new EchoApp.Property.FillImage(this.verticalLineImage, EchoApp.Property.FillImage.REPEAT_VERTICAL, "50%", 0);
@@ -162,8 +240,8 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderExpandoElement = function
                 
         horizontalLineElement.style.position = "absolute";
         horizontalLineElement.style.top = "0";
+        horizontalLineElement.style.bottom = "0";
         horizontalLineElement.style.left = "50%";
-        horizontalLineElement.style.height = "100%";
         horizontalLineElement.style.width = "50%";
         var horizontalLineFillImage = new EchoApp.Property.FillImage(this.horizontalLineImage, EchoApp.Property.FillImage.REPEAT_HORIZONTAL, "50%", "50%");
         EchoRender.Property.FillImage.render(horizontalLineFillImage, horizontalLineElement);
@@ -181,16 +259,16 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderExpandoElement = function
     expandoElement.appendChild(wrapperElement);
 };
 
-ExtrasRender.ComponentSync.RemoteTree.prototype._hideNode = function(node) {
-    var trElement = this._getRowElementForNodeId(node.getId());
-    if (!trElement || trElement.style.display == "none") {
+ExtrasRender.ComponentSync.RemoteTree.prototype._hideNode = function(node, iterator) {
+    var rowElement = iterator.nextRow();
+    if (!rowElement || rowElement.style.display == "none") {
         return;
     }
-    trElement.style.display = "none";
+    rowElement.style.display = "none";
     var childCount = node.getChildNodeCount();
     for (var i = 0; i < childCount; ++i) {
         var childNode = node.getChildNode(i);
-        this._hideNode(childNode);
+        this._hideNode(childNode, iterator);
     }
 };
 
@@ -229,6 +307,35 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._applyBorder = function(border, 
     }
 };
 
+ExtrasRender.ComponentSync.RemoteTree.prototype._applyInsets = function(insets, sides, element) {
+    var newValues = new Array();
+    var setInset = function(side, value) {
+        switch (side) {
+            case 0:
+                newValues[0] = value ? value : insets.top;
+                break;
+            case 1:
+                newValues[1] = value ? value : insets.right;
+                break;
+            case 2:
+                newValues[2] = value ? value : insets.bottom;
+                break;
+            case 3:
+                newValues[3] = value ? value : insets.left;
+                break;
+        }
+    };
+    for (var i = 0; i < 4; ++i) {
+        if (!insets || EchoCore.Arrays.indexOf(sides, i) == -1) {
+            setInset(i, new EchoApp.Property.Extent(0, "px"));
+        } else {
+            setInset(i, null);
+        }
+    }
+    var newInsets = new EchoApp.Property.Insets(newValues);
+    EchoRender.Property.Insets.renderPixel(newInsets, element, "padding");
+};
+
 ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRowStructure = function(insertBefore, node, depth) {
     var trElement = document.createElement("tr");
     if (EchoWebCore.Environment.BROWSER_INTERNET_EXPLORER) {
@@ -237,21 +344,31 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRowStructure = functi
     trElement.id = this.component.renderId + "_tr_" + node.getId();
     
     var border = this._createMultiSidedBorder(this.component.getRenderProperty("border"));
+    var insets = this._defaultInsets;
 
     var parentNode = this._treeStructure.getNode(node.getParentId());
-    for (var c = 0; c < depth; ++c) {
+    for (var c = 0; c < depth - 1; ++c) {
         var rowHeaderElement = document.createElement("td");
         rowHeaderElement.style.padding = "0";
         rowHeaderElement.style.width = "0.6em";
         rowHeaderElement.style.height = "100%";
         
-        // apply border and bottom style
-        this._applyBorder(border, new Array(0, 2), rowHeaderElement);
+        // apply top and bottom border style
+        this._applyBorder(border, [0,2], rowHeaderElement);
 
         if (parentNode) {
             if (this._treeStructure.hasNodeNextSibling(parentNode)) {
                 var verticalLineFillImage = new EchoApp.Property.FillImage(this.verticalLineImage, EchoApp.Property.FillImage.REPEAT_VERTICAL, "50%", 0);
-                EchoRender.Property.FillImage.render(verticalLineFillImage, rowHeaderElement);
+                var verticalLineElement = document.createElement("div");
+                verticalLineElement.style.position = "relative";
+                verticalLineElement.style.height = "100%";
+                verticalLineElement.style.width = "100%";
+                this._applyInsets(this._defaultInsets, [0, 2], verticalLineElement);
+                
+                verticalLineElement.appendChild(document.createTextNode("\u00a0"));
+                
+                EchoRender.Property.FillImage.render(verticalLineFillImage, verticalLineElement);
+                rowHeaderElement.appendChild(verticalLineElement);
             }
             parentNode = this._treeStructure.getNode(parentNode.getParentId());
         }
@@ -262,9 +379,9 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRowStructure = functi
     var expandoElement;
     if (!isHeader) {
         expandoElement = document.createElement("td");
-        expandoElement.id = this.component.renderId + "_expando_" + node.getId();
+        expandoElement.__ExtrasTreeCellType = "expando";
         // apply border and bottom style
-        this._applyBorder(border, new Array(0, 2), expandoElement);
+        this._applyBorder(border, [0,2], expandoElement);
         expandoElement.style.padding = "0";
         expandoElement.style.width = "0.6em";
         expandoElement.style.height = "100%";
@@ -272,14 +389,21 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRowStructure = functi
     }
     
     var tdElement = document.createElement("td");
-    tdElement.id = this.component.renderId + "_node_" + node.getId();
-    // apply border, bottom and right style
-    this._applyBorder(border, new Array(0, 1, 2), tdElement);
-    tdElement.style.padding = "0";
+    tdElement.__ExtrasTreeCellType = "node";
     trElement.appendChild(tdElement);
-    
-    // apply border left side
-    this._applyBorder(border, new Array(3), trElement.firstChild);
+
+    if (tdElement == trElement.firstChild) {
+        // apply border, bottom and right style
+        this._applyBorder(border, [0,1,2,3], tdElement);
+        this._applyInsets(insets, [0,1,2,3], tdElement);
+    } else {
+        this._applyBorder(border, [0,1,2], tdElement);
+        this._applyInsets(insets, [0,1,2], tdElement);
+        
+        // apply border left side
+        this._applyBorder(border, [3], trElement.firstChild);
+        this._applyInsets(insets, [3], trElement.firstChild);
+    }   
     
     this._tbodyElement.insertBefore(trElement, insertBefore);
 
@@ -303,35 +427,8 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._updateSpans = function(node) {
     }
     var maxDepth = this._treeStructure.getMaxDepth();
     var tbodyElement = this._tbodyElement;
-    // context object for easy navigating through the tree structure
-    var context = {
-        startRow : tbodyElement.firstChild,
-        rowElement : null,
-        
-        nextRow : function() {
-            if (this.rowElement) {
-                this.rowElement = this.rowElement.nextSibling;
-            } else {
-                this.rowElement = this.startRow;
-            }
-            return this.rowElement;
-        },
-        
-        nextNodeElement : function() {
-            this.nextRow();
-            if (!this.rowElement) {
-                return null;
-            }
-            var cellElement = this.rowElement.firstChild;
-            while (cellElement) {
-                if (cellElement.id && cellElement.id.indexOf("_node_") != -1) {
-                    return cellElement;
-                }
-                cellElement = cellElement.nextSibling;
-            }
-            return null;
-        }
-    };
+    // iterator object for easy navigating through the tree structure
+    var iterator = this._elementIterator(tbodyElement.firstChild);
     var startNode;
     if (this._prevMaxDepth == maxDepth) {
         // no need to traverse the whole tree, update only changed nodes
@@ -341,35 +438,35 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._updateSpans = function(node) {
         startNode = this._treeStructure.getRootNode();
         if (this._headerVisible) {
             // the header node is not part of the tree node structure, so it needs to be handled separately
-            this._updateSpansRecursive(this._treeStructure.getHeaderNode(), maxDepth, context);
+            this._updateSpansRecursive(this._treeStructure.getHeaderNode(), maxDepth, iterator);
         }
     }
     // find the row to start with. The table element may not have been added to the DOM, 
     // so navigate it's children to find the correct row.
     var element = this._getRowElementForNodeId(startNode.getId());
     if (element) {
-        context.startRow = element;
+        iterator.startRow = element;
     } else {
-        while (context.startRow) {
-            if (context.startRow.id == this.component.renderId + "_tr_" + startNode.getId()) {
+        while (iterator.startRow) {
+            if (iterator.startRow.id == this.component.renderId + "_tr_" + startNode.getId()) {
                 break;
             }
-            context.startRow = context.startRow.nextSibling;
+            iterator.startRow = iterator.startRow.nextSibling;
         }
     }
     
-    this._updateSpansRecursive(startNode, maxDepth, context);
+    this._updateSpansRecursive(startNode, maxDepth, iterator);
     this._prevMaxDepth = maxDepth;
 };
 
-ExtrasRender.ComponentSync.RemoteTree.prototype._updateSpansRecursive = function(startNode, maxDepth, context) {
+ExtrasRender.ComponentSync.RemoteTree.prototype._updateSpansRecursive = function(startNode, maxDepth, iterator) {
     var depth = this._treeStructure.getNodeDepth(startNode);
     var span = maxDepth - depth + 1;
     if (startNode == this._treeStructure.getHeaderNode()) {
         // the header row has no expando cell, it needs to span one extra column
         ++span;
     }
-    var nodeElement = context.nextNodeElement();
+    var nodeElement = iterator.nextNodeElement();
     if (!nodeElement) {
         return;
     }
@@ -382,7 +479,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._updateSpansRecursive = function
     var childCount = startNode.getChildNodeCount();
     for (var i = 0; i < childCount; ++i) {
         var childNode = startNode.getChildNode(i);
-        this._updateSpansRecursive(childNode, maxDepth, context);
+        this._updateSpansRecursive(childNode, maxDepth, iterator);
     }
 };
 
@@ -406,29 +503,14 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._setRolloverState = function(row
 ExtrasRender.ComponentSync.RemoteTree.prototype._getNodeIdFromElement = function(element) {
     var id = element.id;
     var nodeId;
-    if (id.indexOf("_expando_") != -1) {
-        nodeId = id.substring(id.indexOf("_expando_") + 9);
-    } else if (id.indexOf("_node_") != -1) {
-        nodeId = id.substring(id.indexOf("_node_") + 6);
+    if (id.indexOf("_tr_") != -1) {
+        nodeId = id.substring(id.indexOf("_tr_") + 4);
     }
     return nodeId;
 };
 
 ExtrasRender.ComponentSync.RemoteTree.prototype._getRowElementForNodeId = function(nodeId) {
-    var nodeElement = document.getElementById(this.component.renderId + "_node_" + nodeId);
-    if (nodeElement) {
-        return nodeElement.parentNode;
-    } else {
-        return null;
-    }
-};
-
-ExtrasRender.ComponentSync.RemoteTree.prototype._getExpandoElementForNodeId = function(nodeId) {
-    return document.getElementById(this.component.renderId + "_expando_" + nodeId);
-};
-
-ExtrasRender.ComponentSync.RemoteTree.prototype._getNodeElementForNodeId = function(nodeId) {
-    return document.getElementById(this.component.renderId + "_node_" + nodeId);
+    return document.getElementById(this.component.renderId + "_tr_" + nodeId);
 };
 
 ExtrasRender.ComponentSync.RemoteTree.prototype._getRowIndex = function(element) {
@@ -511,7 +593,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._processClick = function(e) {
     if (isRow) {
         EchoCore.Debug.consoleWrite("selection rowid: " + e.registeredTarget.id);
     } else {
-        var nodeId = this._getNodeIdFromElement(e.registeredTarget);
+        var nodeId = this._getNodeIdFromElement(e.registeredTarget.parentNode);
         var node = this._treeStructure.getNode(nodeId);
         
         this._doAction(node, e);
@@ -523,26 +605,14 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._processRolloverEnter = function
     if (!this.component.isActive()) {
         return;
     }
-    var trElement = e.registeredTarget;
-//    var rowIndex = this._getRowIndex(trElement);
-//    if (rowIndex == -1) {
-//        return;
-//    }
-    
-    this._setRolloverState(trElement, true);
+    this._setRolloverState(e.registeredTarget, true);
 };
 
 ExtrasRender.ComponentSync.RemoteTree.prototype._processRolloverExit = function(e) {
     if (!this.component.isActive()) {
         return;
     }
-    var trElement = e.registeredTarget;
-//    var rowIndex = this._getRowIndex(trElement);
-//    if (rowIndex == -1) {
-//        return;
-//    }
-
-    this._setRolloverState(trElement, false);
+    this._setRolloverState(e.registeredTarget, false);
 };
 
 ExtrasRender.ComponentSync.RemoteTree.prototype._removeRowListeners = function(rowElement) {

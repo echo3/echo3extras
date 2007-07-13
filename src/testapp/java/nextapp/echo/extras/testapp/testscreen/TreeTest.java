@@ -71,6 +71,7 @@ public class TreeTest extends AbstractTest {
         tree.setExpandedState(path, false);
         
         addBorderPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_BORDER);
+        addInsetsPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_INSETS);
         
 //        testControlsPane.
         testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Enable Rollover Effects", new ActionListener() {
@@ -87,7 +88,7 @@ public class TreeTest extends AbstractTest {
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_ROLLOVER_BACKGROUND);
         addFontPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_ROLLOVER_FONT);
         addFillImagePropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_ROLLOVER_BACKGROUND_IMAGE, TEST_FILL_IMAGES);
-        
+                
         testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Foo", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tree.setExpandedState(path, !tree.isExpanded(path));

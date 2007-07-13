@@ -89,6 +89,21 @@ ExtrasApp.RemoteTree.TreeStructure.prototype.hasNodeNextSibling = function(node)
     return parentNode.indexOf(node) < (parentNode.getChildNodeCount() - 1);
 };
 
+ExtrasApp.RemoteTree.TreeStructure.prototype.getNodeNextSibling = function(node, useParentSibling) {
+    if (!node.getParentId()) {
+        return null;
+    }
+    var parentNode = this.getNode(node.getParentId());
+    if (!this.hasNodeNextSibling(node)) {
+        if (useParentSibling) {
+            return this.getNodeNextSibling(parentNode, true);
+        } else {
+            return null;
+        }
+    }
+    return parentNode.getChildNode(parentNode.indexOf(node) + 1);
+};
+
 ExtrasApp.RemoteTree.TreeStructure.prototype.setHeaderNode = function(node) {
     this._headerNode = node;
     this.addNode(node);
