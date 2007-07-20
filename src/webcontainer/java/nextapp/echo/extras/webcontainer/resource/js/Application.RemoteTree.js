@@ -368,11 +368,18 @@ ExtrasApp.RemoteTree.TreeNode.prototype.containsChildNode = function(node) {
 };
 
 /**
- * Adds node as a child node to this node.
+ * Adds node as a child node to this node, if an equal node already exists
+ * in the child array, the original child node is replaced with the specified one.
  * 
  * @param {ExtrasApp.RemoteTree.TreeNode} node the node to add
  */
 ExtrasApp.RemoteTree.TreeNode.prototype.addChildNode = function(node) {
+    var index = this._childNodes.indexOf(node);
+    if (index == -1) {
+        this._childNodes.add(node);
+    } else {
+        this._childNodes.set(index, node);
+    }
     if (!this.containsChildNode(node)) {
         this._childNodes.add(node);
     }

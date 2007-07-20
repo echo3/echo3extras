@@ -67,9 +67,7 @@ public class TreeTest extends AbstractTest {
             }
         });
 
-        Object root = tree.getModel().getRoot();
-        final TreePath path = new TreePath(new Object[] {root, tree.getModel().getChild(root, 2)});
-        tree.setExpandedState(path, false);
+        
         
         addBorderPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_BORDER);
         addInsetsPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_INSETS);
@@ -96,9 +94,21 @@ public class TreeTest extends AbstractTest {
         addFontPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_SELECTION_FONT);
         addFillImagePropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_SELECTION_BACKGROUND_IMAGE, TEST_FILL_IMAGES);
                 
-        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Foo", new ActionListener() {
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Expand / Collapse [4][2]", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                Object root = tree.getModel().getRoot();
+                final TreePath path = new TreePath(new Object[] {root, tree.getModel().getChild(root, 2)});
                 tree.setExpandedState(path, !tree.isExpanded(path));
+            }
+        });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Expand / Collapse [4][2] and [4][3]", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Object root = tree.getModel().getRoot();
+                final TreePath path1 = new TreePath(new Object[] {root, tree.getModel().getChild(root, 2)});
+                final TreePath path2 = new TreePath(new Object[] {root, tree.getModel().getChild(root, 3)});
+                tree.setExpandedState(path1, !tree.isExpanded(path1));
+                tree.setExpandedState(path2, !tree.isExpanded(path2));
             }
         });
     }

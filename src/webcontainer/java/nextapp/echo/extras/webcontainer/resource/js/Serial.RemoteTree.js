@@ -33,6 +33,9 @@ ExtrasSerial.PropertyTranslator.RemoteTree.TreeStructure = function() { };
 
 ExtrasSerial.PropertyTranslator.RemoteTree.TreeStructure.toProperty = function(client, propertyElement) {
     var children = EchoWebCore.DOM.getChildElementsByTagName(propertyElement, "e");
+    
+    var structures = new Array();
+    
     var treeStructure;
     var headerNode;
     for (var i = 0; i < children.length; ++i) {
@@ -41,14 +44,20 @@ ExtrasSerial.PropertyTranslator.RemoteTree.TreeStructure.toProperty = function(c
         var parentId = childElement.getAttribute("p");
         var node = new ExtrasApp.RemoteTree.TreeNode(id, parentId);
         var expandedState = childElement.getAttribute("ex") == "1";
+        var root = childElement.getAttribute("r") == "1";
         node.setExpanded(expandedState);
         node.setLeaf(childElement.getAttribute("l") == "1");
         var header = childElement.getAttribute("h") == "1";
         if (header) {
             headerNode = node;
         } else {
-            if (!treeStructure) {
+            if (root) {
                 treeStructure = new ExtrasApp.RemoteTree.TreeStructure(node);
+                if (headerNode) {
+                    treeStructure.setHeaderNode(headerNode);
+                    headerNode = null;
+                }
+                structures.push(treeStructure);
             } else {
                 treeStructure.addNode(node);
             }
@@ -64,7 +73,10 @@ ExtrasSerial.PropertyTranslator.RemoteTree.TreeStructure.toProperty = function(c
     if (headerNode) {
         treeStructure.setHeaderNode(headerNode);
     }
-    return treeStructure;
+    if (structures.length == 1) {
+        return treeStructure;
+    }
+    return structures;
 };
 
 EchoSerial.addPropertyTranslator("ExtrasSerial.TreeStructure", ExtrasSerial.PropertyTranslator.RemoteTree.TreeStructure);

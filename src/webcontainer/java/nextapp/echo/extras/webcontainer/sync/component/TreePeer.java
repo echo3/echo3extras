@@ -162,7 +162,7 @@ extends AbstractComponentSynchronizePeer {
         }
         
         public boolean hasChangedPaths() {
-            return !changedPaths.isEmpty();
+            return clientPath != null || !changedPaths.isEmpty();
         }
         
         public boolean isPathChanged(TreePath path) {
@@ -245,21 +245,21 @@ extends AbstractComponentSynchronizePeer {
             if (renderState.isFullRender()) {
                 if (tree.isHeaderVisible()) {
                     // header
-                    renderNode(null, null);
+                    renderNode(null, null, false);
                 }
                 Object value = model.getRoot();
-                renderNode(value, new TreePath(value));
+                renderNode(value, new TreePath(value), true);
                 renderState.setFullRender(false);
             } else if (renderState.hasChangedPaths()) {
                 for (Iterator iterator = renderState.changedPaths(); iterator.hasNext();) {
                     TreePath path = (TreePath) iterator.next();
-                    renderNode(path.getLastPathComponent(), path);
+                    renderNode(path.getLastPathComponent(), path, true);
                     renderedPaths.add(path);
                 }
             }
         }
         
-        private void renderNode(Object value, TreePath path) {
+        private void renderNode(Object value, TreePath path, boolean root) {
             if (renderedPaths.contains(path)) {
                 return;
             }
@@ -278,13 +278,19 @@ extends AbstractComponentSynchronizePeer {
                     eElement.setAttribute("p", UserInstance.getElementId(tree.getComponent(parentPath, 0)));
                 }
             }
+            boolean leaf = value != null && model.isLeaf(value);
             if (path == null) {
                 eElement.setAttribute("h", "1");
             } else {
                 if (expanded) {
                     eElement.setAttribute("ex", "1");
-                } else if (model.isLeaf(value)) {
-                    eElement.setAttribute("l", "1");
+                } else {
+                    if (leaf) {
+                        eElement.setAttribute("l", "1");
+                    }
+                }
+                if (root) {
+                    eElement.setAttribute("r", "1");
                 }
             }
             
@@ -306,8 +312,10 @@ extends AbstractComponentSynchronizePeer {
                 int childCount = model.getChildCount(value);
                 for (int i = 0; i < childCount; ++i) {
                     Object childValue = model.getChild(value, i);
-                    renderNode(childValue, path.pathByAddingChild(childValue));
+                    renderNode(childValue, path.pathByAddingChild(childValue), false);
                 }
+            }
+            if (expanded || leaf) {
                 renderState.addSentPath(path);
             }
         }
@@ -445,7 +453,9 @@ extends AbstractComponentSynchronizePeer {
             }
             if (renderState.hasUnsentSelections()) {
                 extraProperties.add(Tree.SELECTION_CHANGED_PROPERTY);
-            }
+            } /*else {
+                renderState.clearChangedPaths();
+            }*/
         }
         return new MultiIterator(new Iterator[] { normalPropertyIterator, extraProperties.iterator() });
     }

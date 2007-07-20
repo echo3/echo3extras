@@ -120,11 +120,28 @@ ExtrasRender.ComponentSync.RemoteTree.prototype.renderSizeUpdate = function() {
  *          while iterating the iterator will return null, and will not advance to the next row.
  */
 ExtrasRender.ComponentSync.RemoteTree.prototype._elementIterator = function(startRow, endRow) {
+    var component = this.component;
     return {
         startRow : startRow,
         rowElement : null,
         
-        nextRow : function() {
+        /**
+         * Advance to the next row. If node is provided rows will be skipped until the row is 
+         * found that node is rendered to.
+         */
+        nextRow : function(node) {
+            var result = this._nextRow();
+            if (!node) {
+                return result;
+            }
+            var id = component.renderId + "_tr_" + node.getId();
+            while (result && result.id != id) {
+                result = this._nextRow();
+            }
+            return result;
+        },
+        
+        _nextRow : function() {
             if (this.rowElement) {
                 if (this.rowElement.nextSibling == endRow) {
                     return null;
@@ -193,7 +210,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRecursive = function(
     if (visible == null) {
         visible = true;
     }
-    var trElement = iterator.nextRow();
+    var trElement = iterator.nextRow(node);
     var tdElement;
     var expandoElement;
     
@@ -306,7 +323,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderExpandoElement = function
 };
 
 ExtrasRender.ComponentSync.RemoteTree.prototype._hideNode = function(node, iterator) {
-    var rowElement = iterator.nextRow();
+    var rowElement = iterator.nextRow(node);
     if (!rowElement || rowElement.style.display == "none") {
         return;
     }
@@ -819,6 +836,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._doExpansion = function(node, e)
         // no other peers will be called, so update may be null
         this._renderNode(null, node);
     } else if (node.getChildNodeCount() > 0) {
+        debugger;
         node.setExpanded(true);
         // no other peers will be called, so update may be null
         this._renderNode(null, node);
@@ -992,17 +1010,25 @@ ExtrasRender.ComponentSync.RemoteTree.prototype.renderUpdate = function(update) 
 };
 
 ExtrasRender.ComponentSync.RemoteTree.prototype._renderTreeStructureUpdate = function(treeStructureUpdate, update) {
-    var updateRootNode = treeStructureUpdate.getRootNode();
-    var node = this._treeStructure.getNode(updateRootNode.getId());
-    if (node) {
-        this._treeStructure.addChildNodes(updateRootNode);
-        node.setExpanded(updateRootNode.isExpanded());
-    } else {
-        node = this._treeStructure.getNode(updateRootNode.getParentId());
-        node.setExpanded(true);
-        this._treeStructure.addNode(updateRootNode);
+    debugger;
+    var structs = treeStructureUpdate;
+    if (!(treeStructureUpdate instanceof Array)) {
+        structs = new Array(treeStructureUpdate);
     }
-    this._renderNode(update, node);
+    for (var i = 0; i < structs.length; ++i) {
+        var struct = structs[i]; 
+        var updateRootNode = struct.getRootNode();
+        var node = this._treeStructure.getNode(updateRootNode.getId());
+        if (node) {
+            this._treeStructure.addChildNodes(updateRootNode);
+            node.setExpanded(updateRootNode.isExpanded());
+        } else {
+            node = this._treeStructure.getNode(updateRootNode.getParentId());
+            node.setExpanded(true);
+            this._treeStructure.addNode(updateRootNode);
+        }
+        this._renderNode(update, node);
+    }
 };
 
 EchoRender.registerPeer("nextapp.echo.extras.app.RemoteTree", ExtrasRender.ComponentSync.RemoteTree);
