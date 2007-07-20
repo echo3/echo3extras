@@ -1,5 +1,36 @@
+/* 
+ * This file is part of the Echo Web Application Framework (hereinafter "Echo").
+ * Copyright (C) 2002-2007 NextApp, Inc.
+ *
+ * Version: MPL 1.1/GPL 2.0/LGPL 2.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * Alternatively, the contents of this file may be used under the terms of
+ * either the GNU General Public License Version 2 or later (the "GPL"), or
+ * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+ * in which case the provisions of the GPL or the LGPL are applicable instead
+ * of those above. If you wish to allow use of your version of this file only
+ * under the terms of either the GPL or the LGPL, and not to allow others to
+ * use your version of this file under the terms of the MPL, indicate your
+ * decision by deleting the provisions above and replace them with the notice
+ * and other provisions required by the GPL or the LGPL. If you do not delete
+ * the provisions above, a recipient may use your version of this file under
+ * the terms of any one of the MPL, the GPL or the LGPL.
+ */
+
 package nextapp.echo.extras.app;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.EventListener;
 import java.util.HashMap;
@@ -15,6 +46,10 @@ import nextapp.echo.app.FillImage;
 import nextapp.echo.app.Font;
 import nextapp.echo.app.Insets;
 import nextapp.echo.app.Label;
+import nextapp.echo.app.event.ActionEvent;
+import nextapp.echo.app.event.ActionListener;
+import nextapp.echo.app.event.ChangeEvent;
+import nextapp.echo.app.event.ChangeListener;
 import nextapp.echo.extras.app.event.TreeColumnModelEvent;
 import nextapp.echo.extras.app.event.TreeColumnModelListener;
 import nextapp.echo.extras.app.event.TreeExpansionEvent;
@@ -24,11 +59,13 @@ import nextapp.echo.extras.app.event.TreeModelListener;
 import nextapp.echo.extras.app.tree.DefaultTreeCellRenderer;
 import nextapp.echo.extras.app.tree.DefaultTreeColumnModel;
 import nextapp.echo.extras.app.tree.DefaultTreeModel;
+import nextapp.echo.extras.app.tree.DefaultTreeSelectionModel;
 import nextapp.echo.extras.app.tree.TreeCellRenderer;
 import nextapp.echo.extras.app.tree.TreeColumn;
 import nextapp.echo.extras.app.tree.TreeColumnModel;
 import nextapp.echo.extras.app.tree.TreeModel;
 import nextapp.echo.extras.app.tree.TreePath;
+import nextapp.echo.extras.app.tree.TreeSelectionModel;
 
 public class Tree extends Component {
 
@@ -203,6 +240,7 @@ public class Tree extends Component {
 
     private Renderer renderer = new Renderer();
 
+    public static final String PROPERTY_ACTION_COMMAND = "actionCommand";
     public static final String PROPERTY_BORDER = "border";
     public static final String PROPERTY_INSETS = "insets";
     public static final String PROPERTY_LINE_STYLE = "lineStyle";
@@ -211,16 +249,27 @@ public class Tree extends Component {
     public static final String PROPERTY_ROLLOVER_ENABLED = "rolloverEnabled";
     public static final String PROPERTY_ROLLOVER_FONT = "rolloverFont";
     public static final String PROPERTY_ROLLOVER_FOREGROUND = "rolloverForeground";
+    public static final String PROPERTY_SELECTION_BACKGROUND = "selectionBackground";
+    public static final String PROPERTY_SELECTION_BACKGROUND_IMAGE = "selectionBackgroundImage";
+    public static final String PROPERTY_SELECTION_ENABLED = "selectionEnabled";
+    public static final String PROPERTY_SELECTION_FONT = "selectionFont";
+    public static final String PROPERTY_SELECTION_FOREGROUND= "selectionForeground";
     
-    public static final String CELL_RENDERER_CHANGED_PROPERTY = "cellRenderer";
-    public static final String MODEL_CHANGED_PROPERTY = "model";
-    public static final String EXPANSION_STATE_CHANGED_PROPERTY = "expansionState";
+    public static final String EXPAND_ACTION = "expand";
+    public static final String INPUT_ACTION = "action";
+
+    public static final String ACTION_LISTENERS_CHANGED_PROPERTY = "actionListeners";
     public static final String AUTO_CREATE_COLUMNS_FROM_MODEL_CHANGED_PROPERTY = "autoCreateColumnsFromModel";
+    public static final String CELL_RENDERER_CHANGED_PROPERTY = "cellRenderer";
     public static final String COLUMN_MODEL_CHANGED_PROPERTY = "columnModel";
     public static final String DEFAULT_HEADER_RENDERER_CHANGED_PROPERTY = "defaultHeaderRenderer";
     public static final String DEFAULT_RENDERER_CHANGED_PROPERTY = "defaultRenderer";
+    public static final String EXPANSION_STATE_CHANGED_PROPERTY = "expansionState";
     public static final String HEADER_VISIBLE_CHANGED_PROPERTY = "headerVisible";
-    public static final String INPUT_ACTION = "action";
+    public static final String MODEL_CHANGED_PROPERTY = "model";
+    public static final String SELECTION_CHANGED_PROPERTY = "selection";
+    public static final String SELECTION_MODEL_CHANGED_PROPERTY = "selectionModel";
+    public static final String SELECTION_MODE_CHANGED_PROPERTY = "selectionMode";
     
     public static final int LINE_STYLE_SOLID = 0;
     public static final int LINE_STYLE_DOTTED = 1;
@@ -306,9 +355,26 @@ public class Tree extends Component {
         }
         
     };
+    
+    private ChangeListener changeListener = new ChangeListener() {
+        public void stateChanged(ChangeEvent e) {
+            if (!suppressChangeNotifications) {
+                firePropertyChange(SELECTION_CHANGED_PROPERTY, null, null);
+            }
+        }
+    };
+    
+    private PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
+        public void propertyChange(PropertyChangeEvent evt) {
+            if (TreeSelectionModel.SELECTION_MODE_PROPERTY.equals(evt.getPropertyName())) {
+                firePropertyChange(SELECTION_MODE_CHANGED_PROPERTY, evt.getOldValue(), evt.getNewValue());
+            }
+        }
+    };
 
     private TreeModel model;
     private TreeColumnModel columnModel;
+    private TreeSelectionModel selectionModel;
     private Map defaultRendererMap = new HashMap();
     private TreeCellRenderer defaultHeaderRenderer;
     private Set expandedPaths = new HashSet();
@@ -318,6 +384,7 @@ public class Tree extends Component {
     private TreeCellRenderer cellRenderer;
     private boolean autoCreateColumnsFromModel;
     private boolean headerVisible = true;
+    private boolean suppressChangeNotifications = false;
 
     /**
      * Constructs a new <code>Tree</code> with a default tree model.
@@ -350,7 +417,22 @@ public class Tree extends Component {
             setColumnModel(columnModel);
         }
         setModel(model);
+        setSelectionModel(new DefaultTreeSelectionModel());
         setCellRenderer(DEFAULT_TREE_CELL_RENDERER);
+    }
+    
+    /**
+     * Adds an <code>ActionListener</code> to the <code>Tree</code>.
+     * <code>ActionListener</code>s will be invoked when the user
+     * selects a row.
+     * 
+     * @param l the <code>ActionListener</code> to add
+     */
+    public void addActionListener(ActionListener l) {
+        getEventListenerList().addListener(ActionListener.class, l);
+        // Notification of action listener changes is provided due to 
+        // existence of hasActionListeners() method. 
+        firePropertyChange(ACTION_LISTENERS_CHANGED_PROPERTY, null, l);
     }
 
     /**
@@ -370,6 +452,34 @@ public class Tree extends Component {
                 columnModel.addColumn(new TreeColumn(index));
             }
         }
+    }
+    
+    /**
+     * Fires an action event to all listeners.
+     */
+    private void fireActionEvent() {
+        if (!hasEventListenerList()) {
+            return;
+        }
+        EventListener[] listeners = getEventListenerList().getListeners(ActionListener.class);
+        ActionEvent e = null;
+        for (int i = 0; i < listeners.length; ++i) {
+            if (e == null) {
+                e = new ActionEvent(this, (String) getRenderProperty(PROPERTY_ACTION_COMMAND));
+            } 
+            ((ActionListener) listeners[i]).actionPerformed(e);
+        }
+    }
+    
+    /**
+     * Returns the action command which will be provided in 
+     * <code>ActionEvent</code>s fired by this 
+     * <code>Tree</code>.
+     * 
+     * @return the action command
+     */
+    public String getActionCommand() {
+        return (String) getProperty(PROPERTY_ACTION_COMMAND);
     }
     
     /**
@@ -464,10 +574,16 @@ public class Tree extends Component {
      *      java.lang.Object)
      */
     public void processInput(String inputName, Object inputValue) {
-        if (INPUT_ACTION.equals(inputName)) {
+        System.out.println("Tree#processInput | inputName: " + inputName + ", inputValue: " + inputValue);
+        super.processInput(inputName, inputValue);
+        if (SELECTION_CHANGED_PROPERTY.equals(inputName)) {
+            setSelectedIndices((int[]) inputValue);
+        } else if (EXPANSION_STATE_CHANGED_PROPERTY.equals(inputName)) {
             int row = ((Integer) inputValue).intValue();
             TreePath path = getPathForRow(row);
             setExpandedState(path, !isExpanded(path));
+        } else if (INPUT_ACTION.equals(inputName)) {
+            fireActionEvent();
         }
     }
     
@@ -489,6 +605,17 @@ public class Tree extends Component {
         
         firePropertyChange(AUTO_CREATE_COLUMNS_FROM_MODEL_CHANGED_PROPERTY, 
                 Boolean.valueOf(oldValue), Boolean.valueOf(newValue));
+    }
+    
+    /**
+     * Sets the action command which will be provided in
+     * <code>ActionEvent</code>s fired by this 
+     * <code>Tree</code>.
+     * 
+     * @param newValue the new action command
+     */
+    public void setActionCommand(String newValue) {
+        setProperty(PROPERTY_ACTION_COMMAND, newValue);
     }
     
     /**
@@ -577,6 +704,7 @@ public class Tree extends Component {
                 if (!expandedPaths.contains(parentPath)) {
                     expandedPaths.add(parentPath);
                     topExpanded = parentPath;
+                    fireExpansionStateUpdate(parentPath, state);
                 }
                 parentPath = parentPath.getParentPath();
             }
@@ -590,8 +718,9 @@ public class Tree extends Component {
             }
             expandedPaths.remove(treePath);
             renderer.update(treePath, false);
+            fireExpansionStateUpdate(treePath, state);
         }
-        fireExpansionStateUpdate(treePath, state);
+//        fireExpansionStateUpdate(treePath, state);
     }
     
     /**
@@ -694,6 +823,17 @@ public class Tree extends Component {
         Boolean value = (Boolean) getProperty(PROPERTY_ROLLOVER_ENABLED);
         return value == null ? false : value.booleanValue();
     }
+    
+    /**
+     * Determines if selection is enabled.
+     * 
+     * @return true if selection is enabled
+     * @see #setSelectionEnabled(boolean)
+     */
+    public boolean isSelectionEnabled() {
+        Boolean value = (Boolean) getProperty(PROPERTY_SELECTION_ENABLED);
+        return value == null ? false : value.booleanValue();
+    }
 
     /**
      * @param row the row to get the path for
@@ -708,7 +848,13 @@ public class Tree extends Component {
         }
     }
 
-    private int getRowForPath(TreePath path) {
+    /**
+     * Returns the index of the row the path is currently rendered to.
+     * 
+     * @param path the path
+     * @return the row index, or -1 if the path is not visible
+     */
+    public int getRowForPath(TreePath path) {
         for (int i = 0; i < rowToTreePathCache.size(); ++i) {
             if (rowToTreePathCache.get(i).equals(path)) {
                 return i;
@@ -755,6 +901,51 @@ public class Tree extends Component {
      */
     public Color getRolloverForeground() {
         return (Color) getProperty(PROPERTY_ROLLOVER_FOREGROUND);
+    }
+
+    /**
+     * Returns the row selection background color.
+     * 
+     * @return the background color
+     */
+    public Color getSelectionBackground() {
+        return (Color) getProperty(PROPERTY_SELECTION_BACKGROUND);
+    }
+
+    /**
+     * Returns the row selection background image.
+     * 
+     * @return the background image
+     */
+    public FillImage getSelectionBackgroundImage() {
+        return (FillImage) getProperty(PROPERTY_SELECTION_BACKGROUND_IMAGE);
+    }
+    
+    /**
+     * Returns the row selection font.
+     * 
+     * @return the font
+     */
+    public Font getSelectionFont() {
+        return (Font) getProperty(PROPERTY_SELECTION_FONT);
+    }
+    
+    /**
+     * Returns the row selection foreground color.
+     * 
+     * @return the foreground color
+     */
+    public Color getSelectionForeground() {
+        return (Color) getProperty(PROPERTY_SELECTION_FOREGROUND);
+    }
+    
+    /**
+     * Returns the row selection model.
+     * 
+     * @return the selection model
+     */
+    public TreeSelectionModel getSelectionModel() {
+        return selectionModel;
     }
 
     /**
@@ -817,6 +1008,23 @@ public class Tree extends Component {
      */
     private void invalidate() {
         valid = false;
+    }
+    
+    /**
+     * Removes an <code>ActionListener</code> from the <code>Tree</code>.
+     * <code>ActionListener</code>s will be invoked when the user
+     * selects a row.
+     * 
+     * @param l the <code>ActionListener</code> to remove
+     */
+    public void removeActionListener(ActionListener l) {
+        if (!hasEventListenerList()) {
+            return;
+        }
+        getEventListenerList().removeListener(ActionListener.class, l);
+        // Notification of action listener changes is provided due to 
+        // existence of hasActionListeners() method. 
+        firePropertyChange(ACTION_LISTENERS_CHANGED_PROPERTY, l, null);
     }
 
     /**
@@ -920,6 +1128,90 @@ public class Tree extends Component {
      */
     public void setRolloverForeground(Color newValue) {
         setProperty(PROPERTY_ROLLOVER_FOREGROUND, newValue);
+    }
+
+    /**
+     * Selects only the specified row indices.
+     * 
+     * @param selectedIndices the indices to select
+     */
+    private void setSelectedIndices(int[] selectedIndices) {
+        // Temporarily suppress the Tables selection event notifier.
+        suppressChangeNotifications = true;
+        TreeSelectionModel selectionModel = getSelectionModel();
+        selectionModel.clearSelection();
+        for (int i = 0; i < selectedIndices.length; ++i) {
+            selectionModel.addSelectionPath(getPathForRow(selectedIndices[i]));
+        }
+        // End temporary suppression.
+        suppressChangeNotifications = false;
+        firePropertyChange(SELECTION_CHANGED_PROPERTY, null, selectedIndices);
+    }
+
+    /**
+     * Sets the row selection background color.
+     * 
+     * @param newValue the new background color
+     */
+    public void setSelectionBackground(Color newValue) {
+        setProperty(PROPERTY_SELECTION_BACKGROUND, newValue);
+    }
+    
+    /**
+     * Sets the row selection background image.
+     * 
+     * @param newValue the new background image
+     */
+    public void setSelectionBackgroundImage(FillImage newValue) {
+        setProperty(PROPERTY_SELECTION_BACKGROUND_IMAGE, newValue);
+    }
+    
+    /**
+     * Sets whether selection is enabled.
+     * 
+     * @param newValue true to enable selection
+     */
+    public void setSelectionEnabled(boolean newValue) {
+        setProperty(PROPERTY_SELECTION_ENABLED, Boolean.valueOf(newValue));
+    }
+
+    /**
+     * Sets the row selection foreground color.
+     * 
+     * @param newValue the new foreground color
+     */
+    public void setSelectionForeground(Color newValue) {
+        setProperty(PROPERTY_SELECTION_FOREGROUND, newValue);
+    }
+    
+    /**
+     * Sets the row selection font.
+     * 
+     * @param newValue the new font
+     */
+    public void setSelectionFont(Font newValue) {
+        setProperty(PROPERTY_SELECTION_FONT, newValue);
+    }
+    
+    /**
+     * Sets the row selection model.
+     * The selection model may not be null.
+     * 
+     * @param newValue the new selection model
+     */
+    public void setSelectionModel(TreeSelectionModel newValue) {
+        if (newValue == null) {
+            throw new IllegalArgumentException("Selection model may not be null.");
+        }
+        TreeSelectionModel oldValue = selectionModel;
+        if (oldValue != null) {
+            oldValue.removeChangeListener(changeListener);
+            oldValue.removePropertyChangeListener(propertyChangeListener);
+        }
+        newValue.addChangeListener(changeListener);
+        newValue.addPropertyChangeListener(propertyChangeListener);
+        selectionModel = newValue;
+        firePropertyChange(SELECTION_MODEL_CHANGED_PROPERTY, oldValue, newValue);
     }
 
     /**

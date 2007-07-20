@@ -39,3 +39,21 @@ ExtrasSerial.PropertyTranslator.RemoteTree.TreeStructure.toProperty = function(c
 };
 
 EchoSerial.addPropertyTranslator("ExtrasSerial.TreeStructure", ExtrasSerial.PropertyTranslator.RemoteTree.TreeStructure);
+
+ExtrasSerial.PropertyTranslator.RemoteTree.SelectionUpdate = function() { };
+
+ExtrasSerial.PropertyTranslator.RemoteTree.SelectionUpdate.toXml = function(client, propertyElement, propertyValue) {
+    if (propertyValue.clear) {
+        propertyElement.setAttribute("c", "true");
+    }
+    if (propertyValue.hasRemovedSelections()) {
+        propertyElement.setAttribute("r", propertyValue.getRemovedSelections().join());
+    }
+    if (propertyValue.hasAddedSelections()) {
+        EchoCore.Debug.consoleWrite("a: " + propertyValue.getAddedSelections());
+        EchoCore.Debug.consoleWrite("a(b): " + propertyValue.getAddedSelections().join());
+        propertyElement.setAttribute("a", propertyValue.getAddedSelections().join());
+    }
+};
+
+EchoSerial.addPropertyTranslator("ExtrasApp.RemoteTree.SelectionUpdate", ExtrasSerial.PropertyTranslator.RemoteTree.SelectionUpdate);

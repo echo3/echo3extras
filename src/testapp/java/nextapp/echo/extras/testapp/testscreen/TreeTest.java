@@ -6,6 +6,7 @@ import nextapp.echo.app.event.ActionListener;
 import nextapp.echo.extras.app.Tree;
 import nextapp.echo.extras.app.tree.AbstractTreeModel;
 import nextapp.echo.extras.app.tree.TreePath;
+import nextapp.echo.extras.app.tree.TreeSelectionModel;
 import nextapp.echo.extras.testapp.AbstractTest;
 import nextapp.echo.extras.testapp.Styles;
 import nextapp.echo.extras.testapp.TestControlPane;
@@ -73,21 +74,27 @@ public class TreeTest extends AbstractTest {
         addBorderPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_BORDER);
         addInsetsPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_INSETS);
         
-//        testControlsPane.
-        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Enable Rollover Effects", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                tree.setRolloverEnabled(true);
-            }
-        });
-        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Disable Rollover Effects", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                tree.setRolloverEnabled(false);
-            }
-        });
+        addBooleanPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_ROLLOVER_ENABLED);
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_ROLLOVER_FOREGROUND);
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_ROLLOVER_BACKGROUND);
         addFontPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_ROLLOVER_FONT);
         addFillImagePropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_ROLLOVER_BACKGROUND_IMAGE, TEST_FILL_IMAGES);
+        
+        addBooleanPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_SELECTION_ENABLED);
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set SelectionMode = Single", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_SELECTION);
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set SelectionMode = Multiple", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tree.getSelectionModel().setSelectionMode(TreeSelectionModel.MULTIPLE_SELECTION);
+            }
+        });
+        addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_SELECTION_FOREGROUND);
+        addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_SELECTION_BACKGROUND);
+        addFontPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_SELECTION_FONT);
+        addFillImagePropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_SELECTION_BACKGROUND_IMAGE, TEST_FILL_IMAGES);
                 
         testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Foo", new ActionListener() {
             public void actionPerformed(ActionEvent e) {

@@ -6,7 +6,7 @@ ExtrasRender.ComponentSync.RemoteTree = function() {
 
 ExtrasRender.ComponentSync.RemoteTree.prototype = new EchoRender.ComponentSync;
 
-ExtrasRender.ComponentSync.RemoteTree._supportedPartialProperties = new Array("treeStructure");
+ExtrasRender.ComponentSync.RemoteTree._supportedPartialProperties = new Array("treeStructure", "selection");
 
 /**
  * Gets an URI for default tree images
@@ -27,6 +27,10 @@ ExtrasRender.ComponentSync.RemoteTree.prototype.renderAdd = function(update, par
     this.horizontalLineImage = this._getImageUri("EchoExtras.Tree.lineHorizontal" + lineImageIdSuffix);
     this._headerVisible = this.component.getProperty("headerVisible");
     this._rolloverEnabled = this.component.getRenderProperty("rolloverEnabled");
+    this._selectionEnabled = this.component.getRenderProperty("selectionEnabled");
+    if (this._selectionEnabled) {
+        this.selectionModel = new ExtrasApp.TreeSelectionModel(parseInt(this.component.getProperty("selectionMode")));
+    }
     
     this._defaultInsets = this.component.getRenderProperty("insets");
     if (!this._defaultInsets) {
@@ -44,7 +48,9 @@ ExtrasRender.ComponentSync.RemoteTree.prototype.renderAdd = function(update, par
     tableElement.appendChild(tbodyElement);
     this._tbodyElement = tbodyElement;
     
-    this._treeStructure = this.component.getProperty("treeStructure");
+    if (!this._treeStructure) {
+        this._treeStructure = this.component.getProperty("treeStructure");
+    }
     this.columnCount = this.component.getProperty("columnCount");
     
     if (this._headerVisible) {
@@ -54,6 +60,11 @@ ExtrasRender.ComponentSync.RemoteTree.prototype.renderAdd = function(update, par
     this._renderNode(update, rootNode);
     
     parentElement.appendChild(tableElement);
+
+    var selection = this.component.getRenderProperty("selection");
+    if (selection && this._selectionEnabled) {
+        this._setSelectedFromProperty(selection);
+    }
 };
 
 ExtrasRender.ComponentSync.RemoteTree.prototype.renderSizeUpdate = function() {
@@ -130,7 +141,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._elementIterator = function(star
 };
 
 ExtrasRender.ComponentSync.RemoteTree.prototype._renderNode = function(update, node) {
-    var rowElement = this._getRowElementForNodeId(node.getId());
+    var rowElement = this._getRowElementForNode(node);
     var nodeDepth = this._treeStructure.getNodeDepth(node);
     
     var insertBefore = null;
@@ -141,7 +152,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNode = function(update, n
     var nodeSibling = this._treeStructure.getNodeNextSibling(node, true);
     var endRow = null;
     if (nodeSibling) {
-        endRow = this._getRowElementForNodeId(nodeSibling.getId());
+        endRow = this._getRowElementForNode(nodeSibling);
     }
     var iterator = this._elementIterator(rowElement, endRow);
     this._renderNodeRecursive(update, node, iterator, nodeDepth, insertBefore);
@@ -149,30 +160,24 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNode = function(update, n
     this._updateSpans(node);
 };
 
-ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRecursive = function(update, node, iterator, depth, insertBefore) {
+ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRecursive = function(update, node, iterator, depth, insertBefore, visible) {
+    if (visible == null) {
+        visible = true;
+    }
     var trElement = iterator.nextRow();
     var tdElement;
     var expandoElement;
     
-    if (!trElement) {
+    var rendered = trElement != null;
+    
+    if (!rendered) {
         var elems = this._renderNodeRowStructure(insertBefore, node, depth);
         // skip the just created row element
         iterator.nextRow();
         trElement = elems.trElement;
         tdElement = elems.tdElement;
         expandoElement = elems.expandoElement;
-    } else {
-        trElement.style.display = ""; // unhide
-        tdElement = iterator.currentNodeElement();
-        expandoElement = iterator.currentExpandoElement();
-    }
-
-    if (expandoElement) {
-        this._renderExpandoElement(node, expandoElement);
-    }
-    
-    // check whether the components of the row are already rendered 
-    if (!tdElement.firstChild) {
+        
         var component = this.component.application.getComponentByRenderId(node.getId());
         EchoRender.renderComponentAdd(update, component, tdElement);
         
@@ -188,14 +193,26 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRecursive = function(
                 trElement.appendChild(columnElement);
             }
         }
+    } else {
+        trElement.style.display = ""; // unhide
+        tdElement = iterator.currentNodeElement();
+        expandoElement = iterator.currentExpandoElement();
+    }
+
+    if (expandoElement) {
+        this._renderExpandoElement(node, expandoElement);
+    }
+    
+    if (!visible) {
+        trElement.style.display = "none";
     }
     
     var expanded = node.isExpanded();    
     var childCount = node.getChildNodeCount();
     for (var i = 0; i < childCount; ++i) {
         var childNode = node.getChildNode(i);
-        if (expanded) {
-            this._renderNodeRecursive(update, childNode, iterator, depth + 1, insertBefore);
+        if (expanded || !rendered) {
+            this._renderNodeRecursive(update, childNode, iterator, depth + 1, insertBefore, expanded);
         } else {
             this._hideNode(childNode, iterator);
         }
@@ -272,6 +289,18 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._hideNode = function(node, itera
     }
 };
 
+/**
+ * Creates a multisided border based on the given border. If the provided border is not
+ * multisided, a new border will be created with the values set to one side. If the border
+ * is multisided, no new border will be created.
+ * <p>
+ * If border is null, this method returns silently.
+ * 
+ * @param {EchoApp.Property.Border} border the border
+ * 
+ * @return the resulting multisided border
+ * @type EchoApp.Property.Border
+ */
 ExtrasRender.ComponentSync.RemoteTree.prototype._createMultiSidedBorder = function(border) {
     if (!border) {
         return null;
@@ -289,6 +318,22 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._createMultiSidedBorder = functi
 };
 ExtrasRender.ComponentSync.RemoteTree._BORDER_SIDE_STYLE_NAMES = new Array("borderTop", "borderRight", "borderBottom", "borderLeft");
 
+/**
+ * Renders border to element, only the sides provided in the sides argument will be applied.
+ * <p>
+ * If border is null, this method returns silently.
+ * 
+ * @param {EchoApp.Property.Border} border the border to render
+ * @param {Array} sides the indices of the border sides to render, possible values are:
+ *          <ul>
+ *              <li>0 (top)</li>
+ *              <li>1 (right)</li>
+ *              <li>2 (bottom)</li>
+ *              <li>3 (left)</li>
+ *          </ul>
+ *          The elements of the array need not be ordered.
+ * @param element the element to render border to
+ */
 ExtrasRender.ComponentSync.RemoteTree.prototype._applyBorder = function(border, sides, element) {
     if (!border) {
         return;
@@ -307,6 +352,20 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._applyBorder = function(border, 
     }
 };
 
+/**
+ * Renders insets to element, only the sides provided in the sides argument will be applied.
+ * 
+ * @param {EchoApp.Property.Insets} insets the insets to render, may not be null
+ * @param {Array} sides the indices of the insets sides to render, possible values are:
+ *          <ul>
+ *              <li>0 (top)</li>
+ *              <li>1 (right)</li>
+ *              <li>2 (bottom)</li>
+ *              <li>3 (left)</li>
+ *          </ul>
+ *          The elements of the array need not be ordered.
+ * @param element the element to render insets to
+ */
 ExtrasRender.ComponentSync.RemoteTree.prototype._applyInsets = function(insets, sides, element) {
     var newValues = new Array();
     var setInset = function(side, value) {
@@ -336,6 +395,26 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._applyInsets = function(insets, 
     EchoRender.Property.Insets.renderPixel(newInsets, element, "padding");
 };
 
+/**
+ * Creates the row structure for node. The resulting row will be inserted in the current table element
+ * (this._element) before insertBefore. If insertBefore is null, the row will be appended to the end
+ * of the table.
+ * 
+ * @param {HTMLTableRowElement} insertBefore the row element to insert the resulting row before, if null
+ *          the resulting row will be appended to the end of the table
+ * @param {ExtrasApp.RemoteTree.TreeNode} node the node to create the row structure for
+ * @param {Integer} depth the depth of this node, the root node has depth 1
+ * 
+ * @return an object containing three elements that were created in this method. The object
+ *          the following elements:
+ *          <ul>
+ *              <li>trElement (the row element)</li>
+ *              <li>tdElement (the cell element in which the node component is rendered (column 0))</li>
+ *              <li>expandoElement (the cell element in which the expando icon is rendered, 
+ *                                  this element is null for the header row)</li>
+ *          </ul>
+ * @type Object
+ */
 ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRowStructure = function(insertBefore, node, depth) {
     var trElement = document.createElement("tr");
     if (EchoWebCore.Environment.BROWSER_INTERNET_EXPLORER) {
@@ -419,6 +498,17 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRowStructure = functi
     return elements;
 };
 
+/**
+ * Updates the column spans of the node cell element. This ensures all subsequent columns
+ * will be lined out correctly.
+ * <p>
+ * If the maximum depth (depth of the deepest visible node) is changed, all nodes will be 
+ * updated (including the header), if not, only the changed node 
+ * and the nodes below will be updated.
+ * 
+ * @param {ExtrasApp.RemoteTree.TreeNode} node the changed node, if node is the header node
+ *          nothing is done. 
+ */
 ExtrasRender.ComponentSync.RemoteTree.prototype._updateSpans = function(node) {
     // update the col spans of the node cells
     if (node == this._treeStructure.getHeaderNode()) {
@@ -443,7 +533,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._updateSpans = function(node) {
     }
     // find the row to start with. The table element may not have been added to the DOM, 
     // so navigate it's children to find the correct row.
-    var element = this._getRowElementForNodeId(startNode.getId());
+    var element = this._getRowElementForNode(startNode);
     if (element) {
         iterator.startRow = element;
     } else {
@@ -466,7 +556,9 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._updateSpansRecursive = function
         // the header row has no expando cell, it needs to span one extra column
         ++span;
     }
-    var nodeElement = iterator.nextNodeElement();
+    do {
+        var nodeElement = iterator.nextNodeElement();
+    } while (iterator.rowElement.style.display == "none")
     if (!nodeElement) {
         return;
     }
@@ -483,11 +575,26 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._updateSpansRecursive = function
     }
 };
 
-ExtrasRender.ComponentSync.RemoteTree.prototype._setRolloverState = function(rowElement, rolloverState) {
-    var foreground = EchoRender.Property.getEffectProperty(this.component, "foreground", "rolloverForeground", rolloverState);
-    var background = EchoRender.Property.getEffectProperty(this.component, "background", "rolloverBackground", rolloverState);
-    var backgroundImage = EchoRender.Property.getEffectProperty(this.component, "backgroundImage", "rolloverBackgroundImage", rolloverState);
-    var font = EchoRender.Property.getEffectProperty(this.component, "font", "rolloverFont", rolloverState);
+/**
+ * Sets the style for rowElement. This method renders the following css properties:
+ * <ul>
+ *  <li>foreground</li>
+ *  <li>background</li>
+ *  <li>backgroundImage</li>
+ *  <li>font</li>
+ * </ul>
+ * 
+ * @param {HTMLTableRowElement} rowElement the row element to apply the style on
+ * @param {Boolean} state the effect state, true if the effect should be rendered, false if not
+ * @param {String} prefix the prefix used for the component properties. For example, when rendering
+ *          a rollover effect prefix should be "rollover", this will result in rendering of 
+ *          "rolloverForeground"
+ */
+ExtrasRender.ComponentSync.RemoteTree.prototype._setRowStyle = function(rowElement, state, prefix) {
+    var foreground = EchoRender.Property.getEffectProperty(this.component, "foreground", prefix + "Foreground", state);
+    var background = EchoRender.Property.getEffectProperty(this.component, "background", prefix + "Background", state);
+    var backgroundImage = EchoRender.Property.getEffectProperty(this.component, "backgroundImage", prefix + "BackgroundImage", state);
+    var font = EchoRender.Property.getEffectProperty(this.component, "font", prefix + "Font", state);
     
     var cellElement = rowElement.firstChild;
     while (cellElement) {
@@ -500,19 +607,129 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._setRolloverState = function(row
     }
 };
 
-ExtrasRender.ComponentSync.RemoteTree.prototype._getNodeIdFromElement = function(element) {
+/**
+ * Sets the selection state for the given node.
+ * 
+ * @param {ExtrasApp.RemoteTree.TreeNode} node the node to set the selection state for
+ * @param {Boolean} selectionState the new selection state of node
+ * @param {HTMLTableRowElement} rowElement (optional) the row element node is rendered to,
+ *          if not provided this method will look it up automatically.
+ */
+ExtrasRender.ComponentSync.RemoteTree.prototype._setSelectionState = function(node, selectionState, rowElement) {
+    if (!rowElement) {
+        rowElement = this._getRowElementForNode(node);
+    }
+    this.selectionModel.setSelectionState(node, selectionState);
+    this._setRowStyle(rowElement, selectionState, "selection");
+};
+
+/**
+ * Deselects all selected rows.
+ */
+ExtrasRender.ComponentSync.RemoteTree.prototype._clearSelected = function() {
+    var selected = this.selectionModel.getSelectedNodes();
+    while (selected.length > 0) {
+        this._setSelectionState(selected[0], false);
+    }
+};
+
+/**
+ * Sets the selection state based on the given selection property value.
+ *
+ * @param {String} value the value of the selection property
+ * @param {Boolean} clearPrevious if the previous selection state should be overwritten
+ */
+ExtrasRender.ComponentSync.RemoteTree.prototype._setSelectedFromProperty = function(value, clearPrevious) {
+    var selectedIds = value.split(",");
+    if (this.selectionModel.equalsSelectionIdArray(selectedIds)) {
+        return;
+    }
+	if (clearPrevious) {
+		this._clearSelected();
+	}
+    for (var i = 0; i < selectedIds.length; i++) {
+        if (selectedIds[i] == "") {
+            continue;
+        }
+        var node = this._treeStructure.getNode(selectedIds[i]);
+        this._setSelectionState(node, true);
+    }
+};
+
+/**
+ * Renders the rollover state for the given row element. If rolloverState is false,
+ * and the node is selected, the selected state will be rendered.
+ * 
+ * @param {HTMLTableRowElement} rowElement the element to render the rollover state to
+ * @param {Boolean} rolloverState true if the rollover state should be rendered, false
+ *          for the default (or selection) state
+ */
+ExtrasRender.ComponentSync.RemoteTree.prototype._setRolloverState = function(rowElement, rolloverState) {
+    var node = this._getNodeFromElement(rowElement);
+    if (this._selectionEnabled && !rolloverState && this.selectionModel.isNodeSelected(node)) {
+        this._setRowStyle(rowElement, true, "selection");
+    } else {
+        this._setRowStyle(rowElement, rolloverState, "rollover");
+    }
+};
+
+/**
+ * Gets the node that is rendered to the given element.
+ */
+ExtrasRender.ComponentSync.RemoteTree.prototype._getNodeFromElement = function(element) {
     var id = element.id;
     var nodeId;
     if (id.indexOf("_tr_") != -1) {
         nodeId = id.substring(id.indexOf("_tr_") + 4);
     }
-    return nodeId;
+    return this._treeStructure.getNode(nodeId);
 };
 
-ExtrasRender.ComponentSync.RemoteTree.prototype._getRowElementForNodeId = function(nodeId) {
-    return document.getElementById(this.component.renderId + "_tr_" + nodeId);
+/**
+ * Gets the row element the node is rendered to.
+ * 
+ * @param {ExtrasApp.RemoteTree.TreeNode} node the node to get the row element for
+ * 
+ * @return the row element
+ * @type HTMLTableRowElement  
+ */
+ExtrasRender.ComponentSync.RemoteTree.prototype._getRowElementForNode = function(node) {
+    return document.getElementById(this.component.renderId + "_tr_" + node.getId());
 };
 
+/**
+ * Gets the visible row index of node. If node is not visible, -1 is returned.
+ * 
+ * @param {ExtrasApp.RemoteTree.TreeNode} node the node to get the row index for
+ * 
+ * @return the row index
+ * @type Integer 
+ */
+ExtrasRender.ComponentSync.RemoteTree.prototype._getRowIndexForNode = function(node) {
+    var testElement = this._tbodyElement.firstChild;
+    
+    var index = this._headerVisible ? -1 : 0;
+    while (testElement) {
+        if (testElement.id == this.component.renderId + "_tr_" + node.getId()) {
+            return index;
+        }
+        testElement = testElement.nextSibling;
+        if (testElement.style.display != "none") {
+            // non-expanded nodes should not be taken into account
+            ++index;
+        }
+    }
+    return null;
+};
+
+/**
+ * Gets the visible row index of element. If element is not visible, -1 is returned.
+ * 
+ * @param {HTMLTableRowElement} element the row element to get the row index for
+ * 
+ * @return the row index
+ * @type Integer 
+ */
 ExtrasRender.ComponentSync.RemoteTree.prototype._getRowIndex = function(element) {
     if (element.style.display == "none") {
         return null;
@@ -542,9 +759,6 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._addEventListeners = function(el
     EchoWebCore.EventProcessor.add(elements.tdElement, "click", clickRef, false);
     
     if (this._selectionEnabled || this._rolloverEnabled) {
-        if (this._rowCount == 0) {
-            return;
-        }
         var mouseEnterLeaveSupport = EchoWebCore.Environment.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED;
         var enterEvent = mouseEnterLeaveSupport ? "mouseenter" : "mouseover";
         var exitEvent = mouseEnterLeaveSupport ? "mouseleave" : "mouseout";
@@ -557,17 +771,20 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._addEventListeners = function(el
         }
         if (this._selectionEnabled) {
             EchoWebCore.EventProcessor.add(elements.trElement, "click", clickRef, false);
-//            EchoWebCore.EventProcessor.addSelectionDenialListener(trElement);
+            EchoWebCore.EventProcessor.addSelectionDenialListener(elements.trElement);
         }
     }
 };
 
-ExtrasRender.ComponentSync.RemoteTree.prototype._doAction = function(node, e) {
+ExtrasRender.ComponentSync.RemoteTree.prototype._doExpansion = function(node, e) {
     if (node.isLeaf()) {
-        // FIXME selection event?
-        return;
+        return false;
     }
-    var eventType = "action";
+    if (node.isExpanded() && e.registeredTarget.__ExtrasTreeCellType == "node") {
+        // only collapse when the expando element is clicked
+        // this behavior is consistent with at least Windows Explorer and qooxdoo tree
+        return false;
+    } 
     if (node.isExpanded()) {
         node.setExpanded(false);
         // no other peers will be called, so update may be null
@@ -576,29 +793,91 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._doAction = function(node, e) {
         node.setExpanded(true);
         // no other peers will be called, so update may be null
         this._renderNode(null, node);
-    } else {
-        eventType += "Load";
     }
     var rowIndex = this._getRowIndex(e.registeredTarget.parentNode);
-    if (rowIndex != -1) {
-        this.component.fireEvent(new EchoCore.Event(this.component, eventType, rowIndex));
+    this.component.setProperty("expansion", rowIndex);
+    return true;
+};
+
+ExtrasRender.ComponentSync.RemoteTree.prototype._doSelection = function(node, e) {
+    var trElement = e.registeredTarget;
+    var rowIndex = this._getRowIndex(trElement);
+    
+    EchoWebCore.DOM.preventEventDefault(e);
+    
+    var update = new ExtrasApp.RemoteTree.SelectionUpdate();
+
+    if (!this.selectionModel.isSelectionEmpty() && (this.selectionModel.isSingleSelection() || !(e.shiftKey || e.ctrlKey || e.metaKey || e.altKey))) {
+        update.clear = true;
+        this._clearSelected();
     }
+
+    if (!this.selectionModel.isSingleSelection() && e.shiftKey && this.lastSelectedNode) {
+        if (this.lastSelectedNode.equals(node)) {
+            return;
+        }
+        var startNode;
+        var endNode;
+        var row = trElement;
+        var lastSelectedIndex = this._getRowIndexForNode(this.lastSelectedNode);
+        if (lastSelectedIndex < rowIndex) {
+            startNode = this.lastSelectedNode;
+            endNode = node;
+        } else {
+            startNode = node;
+            endNode = this.lastSelectedNode;
+        }
+        
+        var iterator = this._treeStructure.iterator(startNode, false, endNode);
+        var i = lastSelectedIndex < rowIndex ? lastSelectedIndex : rowIndex;
+        trElement = this._getRowElementForNode(startNode);
+        while (iterator.hasNext()) {
+            node = iterator.nextNode();
+            this._setSelectionState(node, true, trElement);
+            update.addSelection(i++);
+            do {
+                trElement = trElement.nextSibling;
+            } while (trElement && trElement.style.display == "none")
+        }
+    } else {
+        this.lastSelectedNode = node;
+        var selected = !this.selectionModel.isNodeSelected(node);
+        if (selected || !update.clear) {
+            this._setSelectionState(node, selected, trElement);
+        }
+        if (selected) {
+            update.addSelection(rowIndex);
+        } else if (!update.clear) {
+            update.removeSelection(rowIndex);
+        }
+    }
+    
+    this.component.setProperty("selectionUpdate", update);
+    return true;
 };
 
 ExtrasRender.ComponentSync.RemoteTree.prototype._processClick = function(e) {
     if (!this.component.isActive()) {
         return;
     }
+    var doAction = true;
     var isRow = e.registeredTarget.nodeName.toLowerCase() == "tr";
-    if (isRow) {
-        EchoCore.Debug.consoleWrite("selection rowid: " + e.registeredTarget.id);
-    } else {
-        var nodeId = this._getNodeIdFromElement(e.registeredTarget.parentNode);
-        var node = this._treeStructure.getNode(nodeId);
-        
-        this._doAction(node, e);
-        return true;
+    
+    if (isRow && this._selectionEnabled) { // click event on row element means selection
+        var node = this._getNodeFromElement(e.registeredTarget);
+        this._doSelection(node, e);
+    } else if (!isRow) {
+        var node = this._getNodeFromElement(e.registeredTarget.parentNode);
+        this._doExpansion(node, e);
+        // the selection listener is on the row element, so do not fire on expansion because the selection
+        // listener will handle that. Unless selection is disabled. 
+        doAction = !this._selectionEnabled;
     }
+    
+    if (doAction) {
+        this.component.fireEvent(new EchoCore.Event(this.component, "action"));
+    }
+    return true;
 };
 
 ExtrasRender.ComponentSync.RemoteTree.prototype._processRolloverEnter = function(e) {
@@ -641,18 +920,42 @@ ExtrasRender.ComponentSync.RemoteTree.prototype.renderDispose = function(update)
 };
 
 ExtrasRender.ComponentSync.RemoteTree.prototype.renderUpdate = function(update) {
-    if (EchoCore.Arrays.containsAll(ExtrasRender.ComponentSync.RemoteTree._supportedPartialProperties, update.getUpdatedPropertyNames(), true)) {
-        // partial update
-        var treeStructureUpdate = update.getUpdatedProperty("treeStructure");
-        if (treeStructureUpdate) {
-            this._renderTreeStructureUpdate(treeStructureUpdate.newValue, update);
-        }
+    var propertyNames = update.getUpdatedPropertyNames();
+    // remove properties that are only changed on the client
+    EchoCore.Arrays.remove(propertyNames, "expansion");
+    EchoCore.Arrays.remove(propertyNames, "selectionUpdate");
+    if (propertyNames.length == 0 && !update.getRemovedChildren()) {
         return false;
     }
-    // FIXME partial update / lazy rendering
+    // end of the hack
+    if (!update.getRemovedChildren()) {
+        // removal of children indicates that the tree was invalidated, 
+        // and thus all components are re-rendered, and the tree structure we have at the client 
+        // is no longer valid.
+        var treeStructureUpdate = update.getUpdatedProperty("treeStructure");
+        if (treeStructureUpdate && treeStructureUpdate.newValue) {
+            // tree structure updates are always partial, even when there are other updates we can't handle
+            this._renderTreeStructureUpdate(treeStructureUpdate.newValue, update);
+        }
+        
+        if (EchoCore.Arrays.containsAll(ExtrasRender.ComponentSync.RemoteTree._supportedPartialProperties, propertyNames, true)) {
+            var selection = update.getUpdatedProperty("selection");
+            if (selection && this._selectionEnabled) {
+                this._setSelectedFromProperty(selection.newValue, true);
+            }
+            
+            // partial update
+            return false;
+        }
+    }
+    
     var element = this._element;
     var containerElement = element.parentNode;
+    var treeStructure = this._treeStructure;
     EchoRender.renderComponentDispose(update, update.parent);
+    if (!update.getRemovedChildren()) {
+        this._treeStructure = treeStructure;
+    }
     containerElement.removeChild(element);
     this.renderAdd(update, containerElement);
     
@@ -662,10 +965,15 @@ ExtrasRender.ComponentSync.RemoteTree.prototype.renderUpdate = function(update) 
 ExtrasRender.ComponentSync.RemoteTree.prototype._renderTreeStructureUpdate = function(treeStructureUpdate, update) {
     var updateRootNode = treeStructureUpdate.getRootNode();
     var node = this._treeStructure.getNode(updateRootNode.getId());
-    this._treeStructure.addChildNodes(updateRootNode);
-    node.setExpanded(updateRootNode.isExpanded());
+    if (node) {
+        this._treeStructure.addChildNodes(updateRootNode);
+        node.setExpanded(updateRootNode.isExpanded());
+    } else {
+        node = this._treeStructure.getNode(updateRootNode.getParentId());
+        node.setExpanded(true);
+        this._treeStructure.addNode(updateRootNode);
+    }
     this._renderNode(update, node);
-    this.component.setProperty("treeStructure", this._treeStructure);
 };
 
 EchoRender.registerPeer("nextapp.echo.extras.app.RemoteTree", ExtrasRender.ComponentSync.RemoteTree);
