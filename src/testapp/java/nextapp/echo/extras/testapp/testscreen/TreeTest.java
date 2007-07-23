@@ -10,7 +10,6 @@ import nextapp.echo.extras.app.tree.TreeSelectionModel;
 import nextapp.echo.extras.testapp.AbstractTest;
 import nextapp.echo.extras.testapp.Styles;
 import nextapp.echo.extras.testapp.TestControlPane;
-import nextapp.echo.testapp.interactive.StyleUtil;
 
 public class TreeTest extends AbstractTest {
     
