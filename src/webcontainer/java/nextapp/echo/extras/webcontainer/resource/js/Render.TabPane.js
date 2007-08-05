@@ -251,7 +251,8 @@ ExtrasRender.ComponentSync.TabPane.prototype.renderUpdate = function(update) {
         fullRender = true;
     }
     if (!fullRender) {
-        if (!EchoCore.Arrays.containsAll(ExtrasRender.ComponentSync.TabPane._supportedPartialProperties, update.getUpdatedPropertyNames(), true)) {
+        if (!EchoCore.Arrays.containsAll(ExtrasRender.ComponentSync.TabPane._supportedPartialProperties, 
+                update.getUpdatedPropertyNames(), true)) {
             // Update contains property changes that cannot be partially re-rendered.
             fullRender = true;
         }
