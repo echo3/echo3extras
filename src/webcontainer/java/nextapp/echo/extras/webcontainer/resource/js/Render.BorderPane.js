@@ -5,7 +5,7 @@ ExtrasRender.ComponentSync.BorderPane = function() {
 	this._element = null;
 };
 
-ExtrasRender.ComponentSync.BorderPane.prototype = new EchoRender.ComponentSync;
+ExtrasRender.ComponentSync.BorderPane.prototype = EchoCore.derive(EchoRender.ComponentSync);
 
 ExtrasRender.ComponentSync.BorderPane.prototype.renderAdd = function(update, parentElement) {
     this._element = document.createElement("div");

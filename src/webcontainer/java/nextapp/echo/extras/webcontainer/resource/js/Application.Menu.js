@@ -101,22 +101,17 @@ ExtrasApp.OptionModel.prototype.toString = function() {
 };
 
 ExtrasApp.ToggleOptionModel = function(modelId, text, selected) {
-    this.modelId = modelId;
-    this.id = ExtrasApp.uniqueId++;
-    this.text = text;
+    ExtrasApp.OptionModel.call(this, modelId, text, null)
     this.selected = selected;
 };
 
-ExtrasApp.ToggleOptionModel.prototype = new ExtrasApp.OptionModel(null, null);
+ExtrasApp.ToggleOptionModel.prototype = EchoCore.derive(ExtrasApp.OptionModel);
 
 ExtrasApp.RadioOptionModel = function(modelId, text, selected) {
-    this.modelId = modelId;
-    this.id = ExtrasApp.uniqueId++;
-    this.text = text;
-    this.selected = selected;
+    ExtrasApp.ToggleOptionModel.call(this, modelId, text, selected)
 };
 
-ExtrasApp.RadioOptionModel.prototype = new ExtrasApp.ToggleOptionModel(null, null);
+ExtrasApp.RadioOptionModel.prototype = EchoCore.derive(ExtrasApp.ToggleOptionModel);
 
 /**
  * A representation of a menu separator.

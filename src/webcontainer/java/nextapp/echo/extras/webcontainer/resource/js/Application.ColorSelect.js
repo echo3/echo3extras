@@ -10,6 +10,6 @@ ExtrasApp.ColorSelect = function(renderId) {
     this.componentType = "ExtrasApp.ColorSelect";
 };
 
-ExtrasApp.ColorSelect.prototype = new EchoApp.Component;
+ExtrasApp.ColorSelect.prototype = EchoCore.derive(EchoApp.Component);
 
 EchoApp.ComponentFactory.registerType("ExtrasApp.ColorSelect", ExtrasApp.ColorSelect);

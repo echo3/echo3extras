@@ -10,7 +10,7 @@ ExtrasApp.TransitionPane = function(renderId) {
     this.componentType = "ExtrasApp.TransitionPane";
 };
 
-ExtrasApp.TransitionPane.prototype = new EchoApp.Component;
+ExtrasApp.TransitionPane.prototype = EchoCore.derive(EchoApp.Component);
 
 /**
  * Transition setting indicating new content should immediately 

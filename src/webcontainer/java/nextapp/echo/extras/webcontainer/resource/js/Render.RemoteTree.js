@@ -33,7 +33,7 @@
 ExtrasRender.ComponentSync.RemoteTree = function() {
 };
 
-ExtrasRender.ComponentSync.RemoteTree.prototype = new EchoRender.ComponentSync;
+ExtrasRender.ComponentSync.RemoteTree.prototype = EchoCore.derive(EchoRender.ComponentSync);
 
 ExtrasRender.ComponentSync.RemoteTree._supportedPartialProperties = new Array("treeStructure", "selection");
 

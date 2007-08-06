@@ -22,7 +22,7 @@ ExtrasRender.ComponentSync.AccordionPane._defaultTabHeight = new EchoApp.Propert
 ExtrasRender.ComponentSync.AccordionPane._defaultTabInsets = new EchoApp.Property.Insets(2, 5);
 ExtrasRender.ComponentSync.AccordionPane._defaultTabContentInsets = ExtrasRender.ComponentSync.AccordionPane._paneInsets;
 
-ExtrasRender.ComponentSync.AccordionPane.prototype = new EchoRender.ComponentSync;
+ExtrasRender.ComponentSync.AccordionPane.prototype = EchoCore.derive(EchoRender.ComponentSync);
 
 ExtrasRender.ComponentSync.AccordionPane.prototype.renderAdd = function(update, parentElement) {
 	this._activeTabId = this.component.getProperty("activeTab");

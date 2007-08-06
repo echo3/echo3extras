@@ -10,7 +10,7 @@ ExtrasApp.BorderPane = function(renderId) {
     this.componentType = "ExtrasApp.BorderPane";
 };
 
-ExtrasApp.BorderPane.prototype = new EchoApp.Component;
+ExtrasApp.BorderPane.prototype = EchoCore.derive(EchoApp.Component);
 
 ExtrasApp.BorderPane.DEFAULT_BORDER = new EchoApp.Property.FillImageBorder("#00007f", 
         new EchoApp.Property.Insets("20px"), new EchoApp.Property.Insets("3px"));

@@ -1,3 +1,3 @@
 ExtrasRender.ComponentSync.TransitionPane = function() { };
 
-ExtrasRender.ComponentSync.TransitionPane.prototype = new EchoRender.ComponentSync;
+ExtrasRender.ComponentSync.TransitionPane.prototype = EchoCore.derive(EchoRender.ComponentSync);

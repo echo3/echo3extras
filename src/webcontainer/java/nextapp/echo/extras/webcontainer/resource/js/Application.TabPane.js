@@ -10,7 +10,7 @@ ExtrasApp.TabPane = function(renderId) {
     this.componentType = "ExtrasApp.TabPane";
 };
 
-ExtrasApp.TabPane.prototype = new EchoApp.Component;
+ExtrasApp.TabPane.prototype = EchoCore.derive(EchoApp.Component);
 
 /**
  * Constant for the <code>borderType</code> property indicating that no 

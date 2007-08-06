@@ -7,7 +7,7 @@ ExtrasRender.ComponentSync.ToolTipContainer = function() {
 	this._tooltipDivElement = null;
 };
 
-ExtrasRender.ComponentSync.ToolTipContainer.prototype = new EchoRender.ComponentSync;
+ExtrasRender.ComponentSync.ToolTipContainer.prototype = EchoCore.derive(EchoRender.ComponentSync);
 
 ExtrasRender.ComponentSync.ToolTipContainer.prototype.renderAdd = function(update, parentElement) {
     this._divElement = document.createElement("div");

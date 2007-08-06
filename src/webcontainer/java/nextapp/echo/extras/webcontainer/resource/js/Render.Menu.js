@@ -24,7 +24,7 @@ ExtrasRender.ComponentSync.Menu._defaultSelectionBackground = new EchoApp.Proper
 
 ExtrasRender.ComponentSync.Menu.MAX_Z_INDEX = 65535;
 
-ExtrasRender.ComponentSync.Menu.prototype = new EchoRender.ComponentSync;
+ExtrasRender.ComponentSync.Menu.prototype = EchoCore.derive(EchoRender.ComponentSync);
 
 ExtrasRender.ComponentSync.Menu.prototype.renderAdd = function(update, parentElement) {
 	this._menuModel = this.component.getProperty("model");
@@ -414,10 +414,11 @@ ExtrasRender.ComponentSync.Menu.prototype._getMenuBorder = function() {
  * Component rendering peer: MenuBarPane
  */
 ExtrasRender.ComponentSync.MenuBarPane = function() {
-    this._itemInsets = new EchoApp.Property.Insets("0px 12px");
+	ExtrasRender.ComponentSync.Menu.call(this);
+	this._itemInsets = new EchoApp.Property.Insets("0px 12px");
 };
 
-ExtrasRender.ComponentSync.MenuBarPane.prototype = new ExtrasRender.ComponentSync.Menu;
+ExtrasRender.ComponentSync.MenuBarPane.prototype = EchoCore.derive(ExtrasRender.ComponentSync.Menu);
 
 ExtrasRender.ComponentSync.MenuBarPane.prototype._renderMain = function() {
     var menuBarDivElement = document.createElement("div");
@@ -514,10 +515,11 @@ ExtrasRender.ComponentSync.MenuBarPane.prototype._doAction = function(menuModel)
  * Component rendering peer: DropDownMenu
  */
 ExtrasRender.ComponentSync.DropDownMenu = function() {
+	ExtrasRender.ComponentSync.Menu.call(this);
 	this._selectedItem = null;
 };
 
-ExtrasRender.ComponentSync.DropDownMenu.prototype = new ExtrasRender.ComponentSync.Menu;
+ExtrasRender.ComponentSync.DropDownMenu.prototype = EchoCore.derive(ExtrasRender.ComponentSync.Menu);
 
 ExtrasRender.ComponentSync.DropDownMenu.prototype._renderMain = function() {
     var dropDownDivElement = document.createElement("div");
@@ -729,11 +731,12 @@ ExtrasRender.ComponentSync.DropDownMenu.prototype._doAction = function(menuModel
  * Component rendering peer: ContextMenu
  */
 ExtrasRender.ComponentSync.ContextMenu = function() {
+	ExtrasRender.ComponentSync.Menu.call(this);
 };
 
 ExtrasRender.ComponentSync.ContextMenu._supportedPartialProperties = new Array("model", "stateModel");
 
-ExtrasRender.ComponentSync.ContextMenu.prototype = new ExtrasRender.ComponentSync.Menu;
+ExtrasRender.ComponentSync.ContextMenu.prototype = EchoCore.derive(ExtrasRender.ComponentSync.Menu);
 
 ExtrasRender.ComponentSync.ContextMenu.prototype._renderMain = function(update) {
     var contextMenuDivElement = document.createElement("div");

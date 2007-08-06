@@ -10,6 +10,6 @@ ExtrasApp.AccordionPane = function(renderId) {
     this.componentType = "ExtrasApp.AccordionPane";
 };
 
-ExtrasApp.AccordionPane.prototype = new EchoApp.Component;
+ExtrasApp.AccordionPane.prototype = EchoCore.derive(EchoApp.Component);
 
 EchoApp.ComponentFactory.registerType("ExtrasApp.AccordionPane", ExtrasApp.AccordionPane);

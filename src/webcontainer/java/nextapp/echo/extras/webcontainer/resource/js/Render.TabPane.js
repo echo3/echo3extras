@@ -34,7 +34,7 @@ ExtrasRender.ComponentSync.TabPane._defaultTabInsets = new EchoApp.Property.Inse
 ExtrasRender.ComponentSync.TabPane._defaultTabPosition = ExtrasApp.TabPane.TAB_POSITION_TOP;
 ExtrasRender.ComponentSync.TabPane._defaultTabSpacing = new EchoApp.Property.Extent(0);
 
-ExtrasRender.ComponentSync.TabPane.prototype = new EchoRender.ComponentSync;
+ExtrasRender.ComponentSync.TabPane.prototype = EchoCore.derive(EchoRender.ComponentSync);
 
 /**
  * Adds a tab.

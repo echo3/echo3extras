@@ -6,7 +6,7 @@ ExtrasRender.ComponentSync.Group = function() {
 	this._borderImages = null;
 };
 
-ExtrasRender.ComponentSync.Group.prototype = new EchoRender.ComponentSync;
+ExtrasRender.ComponentSync.Group.prototype = EchoCore.derive(EchoRender.ComponentSync);
 
 ExtrasRender.ComponentSync.Group.DEFAULT_TITLE_INSETS = new EchoApp.Property.Insets(0, 2);
 

@@ -1,6 +1,6 @@
 ExtrasRender.ComponentSync.ColorSelect = function() { };
 
-ExtrasRender.ComponentSync.ColorSelect.prototype = new EchoRender.ComponentSync;
+ExtrasRender.ComponentSync.ColorSelect.prototype = EchoCore.derive(EchoRender.ComponentSync);
 
 ExtrasRender.ComponentSync.ColorSelect.prototype.renderAdd = function(update, parentElement) {
     this.colorSelectDivElement = document.createElement("div");
