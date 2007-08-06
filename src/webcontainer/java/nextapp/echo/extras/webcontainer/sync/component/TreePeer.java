@@ -33,7 +33,6 @@ import nextapp.echo.webcontainer.UserInstance;
 import nextapp.echo.webcontainer.WebContainerServlet;
 import nextapp.echo.webcontainer.service.ImageService;
 import nextapp.echo.webcontainer.service.JavaScriptService;
-import nextapp.echo.webcontainer.sync.component.TablePeer;
 import nextapp.echo.webcontainer.util.ArrayIterator;
 import nextapp.echo.webcontainer.util.MultiIterator;
 
@@ -218,7 +217,7 @@ extends AbstractComponentSynchronizePeer {
                 renderState = new TreeRenderState(tree);
                 userInstance.setRenderState(tree, renderState);
             }
-            renderer.render(renderState);
+            renderer.render(context, renderState);
             renderState.clearChangedPaths();
         }
     }
@@ -240,42 +239,45 @@ extends AbstractComponentSynchronizePeer {
             model = tree.getModel();
         }
         
-        private void render(TreeRenderState renderState) {
+        private void render(Context context, TreeRenderState renderState) {
             this.renderState = renderState;
             if (renderState.isFullRender()) {
                 if (tree.isHeaderVisible()) {
                     // header
-                    renderNode(null, null, false);
+                    renderNode(context, null, null, false);
                 }
                 Object value = model.getRoot();
-                renderNode(value, new TreePath(value), true);
+                renderNode(context, value, new TreePath(value), true);
                 renderState.setFullRender(false);
             } else if (renderState.hasChangedPaths()) {
                 for (Iterator iterator = renderState.changedPaths(); iterator.hasNext();) {
                     TreePath path = (TreePath) iterator.next();
-                    renderNode(path.getLastPathComponent(), path, true);
+                    renderNode(context, path.getLastPathComponent(), path, true);
                     renderedPaths.add(path);
                 }
             }
         }
         
-        private void renderNode(Object value, TreePath path, boolean root) {
+        private void renderNode(Context context, Object value, TreePath path, boolean root) {
             if (renderedPaths.contains(path)) {
                 return;
             }
             if (renderState.isSent(path) && !renderState.isPathChanged(path)) {
                 return;
             }
+            
+            UserInstance userInstance = (UserInstance) context.get(UserInstance.class);
+            
             renderedPaths.add(path);
             Component component = tree.getComponent(path, 0);
             boolean expanded = tree.isExpanded(path);
-            String id = UserInstance.getElementId(component);
+            String id = userInstance.getClientRenderId(component);
             Element eElement = document.createElement("e");
             eElement.setAttribute("i", id);
             if (path != null) {
                 TreePath parentPath = path.getParentPath();
                 if (parentPath != null) {
-                    eElement.setAttribute("p", UserInstance.getElementId(tree.getComponent(parentPath, 0)));
+                    eElement.setAttribute("p", userInstance.getClientRenderId(tree.getComponent(parentPath, 0)));
                 }
             }
             boolean leaf = value != null && model.isLeaf(value);
@@ -298,7 +300,7 @@ extends AbstractComponentSynchronizePeer {
                 for (int i = 1; i < columnCount; ++i) {
                     Component columnComponent = tree.getComponent(path, i);
                     Element columnElement = document.createElement("c");
-                    columnElement.setAttribute("i", UserInstance.getElementId(columnComponent));
+                    columnElement.setAttribute("i", userInstance.getClientRenderId(columnComponent));
                     eElement.appendChild(columnElement);
                 }
             }
@@ -312,7 +314,7 @@ extends AbstractComponentSynchronizePeer {
                 int childCount = model.getChildCount(value);
                 for (int i = 0; i < childCount; ++i) {
                     Object childValue = model.getChild(value, i);
-                    renderNode(childValue, path.pathByAddingChild(childValue), false);
+                    renderNode(context, childValue, path.pathByAddingChild(childValue), false);
                 }
             }
             if (expanded || leaf) {
@@ -337,7 +339,7 @@ extends AbstractComponentSynchronizePeer {
             if (component == null) {
                 renderState.addUnsentSelection(path);
             } else {
-                String id = UserInstance.getElementId(component);
+                String id = userInstance.getClientRenderId(component);
                 renderState.removeUnsentSelection(path);
                 if (selection.length() > 0) {
                     selection.append(",");
@@ -545,6 +547,5 @@ extends AbstractComponentSynchronizePeer {
         ServerMessage serverMessage = (ServerMessage) context.get(ServerMessage.class);
         serverMessage.addLibrary(CommonService.INSTANCE.getId());
         serverMessage.addLibrary(TREE_SERVICE.getId());
-        serverMessage.addLibrary(TablePeer.LIST_SELECTION_MODEL_SERVICE.getId());
     }
 }

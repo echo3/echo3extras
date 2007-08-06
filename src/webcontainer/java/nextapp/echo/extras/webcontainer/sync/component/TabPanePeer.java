@@ -144,7 +144,8 @@ implements LazyRenderContainer {
             } else {
                 activeTab = tabPane.getVisibleComponent(componentCount - 1);
             }
-            return UserInstance.getElementId(activeTab);
+            UserInstance userInstance = (UserInstance) context.get(UserInstance.class);
+            return userInstance.getClientRenderId(activeTab);
         } else {
             return super.getOutputProperty(context, component, propertyName, propertyIndex);
         }
@@ -166,7 +167,7 @@ implements LazyRenderContainer {
     public void storeInputProperty(Context context, Component component, String propertyName, int index, Object newValue) {
         if (PROPERTY_ACTIVE_TAB.equals(propertyName)) {
             ClientUpdateManager clientUpdateManager = (ClientUpdateManager) context.get(ClientUpdateManager.class);
-            clientUpdateManager.setComponentProperty(component, TabPane.ACTIVE_TAB_INDEX_CHANGED_PROPERTY, getTabIndex((TabPane)component, (String)newValue));
+            clientUpdateManager.setComponentProperty(component, TabPane.ACTIVE_TAB_INDEX_CHANGED_PROPERTY, getTabIndex(null, (TabPane)component, (String)newValue));
         }
     }
     
@@ -188,9 +189,9 @@ implements LazyRenderContainer {
     public void processEvent(Context context, Component component, String eventType, Object eventData) {
         ClientUpdateManager clientUpdateManager = (ClientUpdateManager) context.get(ClientUpdateManager.class);
         if (TabPane.INPUT_TAB_CLOSE.equals(eventType)) {
-            clientUpdateManager.setComponentAction(component, TabPane.INPUT_TAB_CLOSE, getTabIndex((TabPane)component, (String)eventData));
+            clientUpdateManager.setComponentAction(component, TabPane.INPUT_TAB_CLOSE, getTabIndex(context, (TabPane)component, (String)eventData));
         } else if (TabPane.INPUT_TAB_SELECT.equals(eventType)) {
-            clientUpdateManager.setComponentAction(component, TabPane.INPUT_TAB_SELECT, getTabIndex((TabPane)component, (String)eventData));
+            clientUpdateManager.setComponentAction(component, TabPane.INPUT_TAB_SELECT, getTabIndex(context, (TabPane)component, (String)eventData));
         }
     }
     
@@ -205,14 +206,16 @@ implements LazyRenderContainer {
     /**
      * Gets the index of the component with the given element id.
      * 
+     * @param context
      * @param tabPane
      * @param elementId
      * @return the index if found, <code>null</code> otherwise.
      */
-    private Integer getTabIndex(TabPane tabPane, String elementId) {
+    private Integer getTabIndex(Context context, TabPane tabPane, String elementId) {
+        UserInstance userInstance = (UserInstance) context.get(UserInstance.class);
         Component[] children = tabPane.getVisibleComponents();
         for (int i = 0; i < children.length; ++i) {
-            if (UserInstance.getElementId(children[i]).equals(elementId)) {
+            if (userInstance.getClientRenderId(children[i]).equals(elementId)) {
                 return new Integer(i);
             }
         }

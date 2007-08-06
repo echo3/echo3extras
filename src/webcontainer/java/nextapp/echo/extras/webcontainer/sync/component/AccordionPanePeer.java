@@ -108,7 +108,8 @@ public class AccordionPanePeer extends AbstractComponentSynchronizePeer implemen
             AccordionPane accordionPane = (AccordionPane) component;
             int activeTabIndex = accordionPane.getActiveTabIndex();
             if (activeTabIndex != -1 && activeTabIndex < accordionPane.getVisibleComponentCount()) {
-                return UserInstance.getElementId(accordionPane.getVisibleComponent(activeTabIndex));
+                UserInstance userInstance = (UserInstance) context.get(UserInstance.class);
+                return userInstance.getClientRenderId(accordionPane.getVisibleComponent(activeTabIndex));
             }
             return null;
         } else {
@@ -121,9 +122,10 @@ public class AccordionPanePeer extends AbstractComponentSynchronizePeer implemen
      */
     public void storeInputProperty(Context context, Component component, String propertyName, int index, Object newValue) {
         if (PROPERTY_ACTIVE_TAB.equals(propertyName)) {
+            UserInstance userInstance = (UserInstance) context.get(UserInstance.class);
             Component[] children = component.getVisibleComponents();
             for (int i = 0; i < children.length; ++i) {
-                if (UserInstance.getElementId(children[i]).equals(newValue)) {
+                if (userInstance.getClientRenderId(children[i]).equals(newValue)) {
                     ClientUpdateManager clientUpdateManager = (ClientUpdateManager) context.get(ClientUpdateManager.class);
                     clientUpdateManager.setComponentProperty(component, AccordionPane.INPUT_TAB_INDEX, new Integer(i));
                     return;
