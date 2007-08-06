@@ -228,6 +228,13 @@ public class TestPane extends ContentPane {
                     return Styles.FILL_IMAGE_SILVER_LINE.equals(background);
                 } else if ("BackgroundBlue".equals(id)) {
                     return Styles.FILL_IMAGE_LIGHT_BLUE_LINE.equals(background);
+                } else if (id.startsWith("Locale_")) {
+                    String language = id.substring("Locale_".length());
+                    if ("Default".equals(language)) {
+                        return Locale.getDefault().equals(InteractiveApp.getApp().getLocale());
+                    } else {
+                        return language.equals(InteractiveApp.getApp().getLocale().getLanguage());
+                    }
                 } else {
                     return false;
                 }
