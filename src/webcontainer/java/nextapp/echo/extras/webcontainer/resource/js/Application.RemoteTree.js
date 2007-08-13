@@ -543,7 +543,7 @@ ExtrasApp.RemoteTree.SelectionUpdate.prototype.addSelection = function(row) {
  * @param row the row to add
  */
 ExtrasApp.RemoteTree.SelectionUpdate.prototype.removeSelection = function(row) {
-    this._removedSelections.pus(row);
+    this._removedSelections.push(row);
 };
 
 /**
