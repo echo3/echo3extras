@@ -91,8 +91,6 @@ ExtrasSerial.PropertyTranslator.RemoteTree.SelectionUpdate.toXml = function(clie
         propertyElement.setAttribute("r", propertyValue.getRemovedSelections().join());
     }
     if (propertyValue.hasAddedSelections()) {
-        EchoCore.Debug.consoleWrite("a: " + propertyValue.getAddedSelections());
-        EchoCore.Debug.consoleWrite("a(b): " + propertyValue.getAddedSelections().join());
         propertyElement.setAttribute("a", propertyValue.getAddedSelections().join());
     }
 };
