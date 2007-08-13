@@ -692,11 +692,11 @@ public class Tree extends Component {
      * @param state the new expansion state
      */
     public void setExpandedState(TreePath treePath, boolean state) {
+        if (expandedPaths.contains(treePath) == state) {
+            // do not fire any events when we are already in the desired state.
+            return;
+        }
         if (state) {
-            if (expandedPaths.contains(treePath)) {
-                // do not fire any events when we are already expanded
-                return;
-            }
             // make sure the parent path is expanded
             // do not go into recursion, that will cause too much event
             // notifications
@@ -714,10 +714,6 @@ public class Tree extends Component {
                 renderer.update(topExpanded, true);
             }
         } else {
-            if (!expandedPaths.contains(treePath)) {
-                // do not fire any events when we are already collapsed
-                return;
-            }
             expandedPaths.remove(treePath);
             renderer.update(treePath, false);
             fireExpansionStateUpdate(treePath, state);
