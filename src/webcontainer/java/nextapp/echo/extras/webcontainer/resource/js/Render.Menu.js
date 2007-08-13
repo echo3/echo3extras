@@ -716,6 +716,8 @@ ExtrasRender.ComponentSync.DropDownMenu.prototype._processClick = function(e) {
     
     this._renderMask();
     this._activateItem(model);
+    
+    return true;
 };
 
 ExtrasRender.ComponentSync.DropDownMenu.prototype._doAction = function(menuModel) {
