@@ -202,9 +202,11 @@ public class Tree extends Component {
             // remove all rows that are between the current path and its next
             // sibling
             int startRow = getRowForPath(path) + 1;
-            int endRow = rowToTreePathCache.size() - 1;
+            int endRow;
             TreePath siblingPath = getSiblingPath(path);
-            if (siblingPath != null) {
+            if (siblingPath == null) {
+                endRow = rowToTreePathCache.size();
+            } else {
                 endRow = getRowForPath(siblingPath);
             }
             for (int i = startRow; i < endRow; ++i) {
@@ -720,7 +722,6 @@ public class Tree extends Component {
             renderer.update(treePath, false);
             fireExpansionStateUpdate(treePath, state);
         }
-//        fireExpansionStateUpdate(treePath, state);
     }
     
     /**
