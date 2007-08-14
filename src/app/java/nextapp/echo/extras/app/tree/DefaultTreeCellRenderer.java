@@ -30,7 +30,9 @@
 package nextapp.echo.extras.app.tree;
 
 import nextapp.echo.app.Component;
+import nextapp.echo.app.ImageReference;
 import nextapp.echo.app.Label;
+import nextapp.echo.app.ResourceImageReference;
 import nextapp.echo.extras.app.Tree;
 
 /**
@@ -40,11 +42,18 @@ public class DefaultTreeCellRenderer
 implements TreeCellRenderer {
 
     /**
-     * @see nextapp.echo.extras.app.tree.TreeCellRenderer#getTreeCellRendererComponent(
-     *      nextapp.echo.extras.app.Tree, java.lang.Object, int, int)
+     * @see nextapp.echo.extras.app.tree.TreeCellRenderer#getTreeCellRendererComponent(nextapp.echo.extras.app.Tree, nextapp.echo.extras.app.tree.TreePath, java.lang.Object, int, int, boolean, boolean)
      */
-    public Component getTreeCellRendererComponent(Tree tree, TreePath treePath, Object value, int column, int row) {
-        return value == null ? new Label() : new Label(value.toString());
+    public Component getTreeCellRendererComponent(Tree tree, TreePath treePath, Object value, int column, int row, boolean leaf) {
+        ImageReference icon = null;
+        if (column == 0 && row != -1) {
+            if (leaf) {
+                icon = new ResourceImageReference("nextapp/echo/extras/app/resource/image/TreeLeaf.gif");
+            } else {
+                icon = new ResourceImageReference("nextapp/echo/extras/app/resource/image/TreeFolder.gif");
+            }
+        }
+        return value == null ? new Label(icon) : new Label(value.toString(), icon);
     }
 
 }

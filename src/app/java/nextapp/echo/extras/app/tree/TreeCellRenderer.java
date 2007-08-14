@@ -34,5 +34,5 @@ import nextapp.echo.extras.app.Tree;
 
 public interface TreeCellRenderer {
     
-    public Component getTreeCellRendererComponent(Tree tree, TreePath treePath, Object value, int column, int row);
+    public Component getTreeCellRendererComponent(Tree tree, TreePath treePath, Object value, int column, int row, boolean leaf);
 }

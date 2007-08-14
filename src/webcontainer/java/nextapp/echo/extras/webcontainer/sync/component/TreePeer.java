@@ -128,6 +128,10 @@ extends AbstractComponentSynchronizePeer {
             sentPaths.add(path);
         }
         
+        public void removeSentPath(TreePath path) {
+            sentPaths.remove(path);
+        }
+        
         public boolean isSent(TreePath path) {
             return sentPaths.contains(path);
         }
@@ -354,11 +358,15 @@ extends AbstractComponentSynchronizePeer {
     private static final ImageReference DEFAULT_ICON_LINE_SOLID = new ResourceImageReference(IMAGE_PREFIX + "Dot.gif");
     private static final ImageReference DEFAULT_ICON_VERTICAL_LINE_DOTTED = new ResourceImageReference(IMAGE_PREFIX + "TreeVerticalLineDotted.gif");
     private static final ImageReference DEFAULT_ICON_HORIZONTAL_LINE_DOTTED = new ResourceImageReference(IMAGE_PREFIX + "TreeHorizontalLineDotted.gif");
+    private static final ImageReference DEFAULT_ICON_PLUS = new ResourceImageReference(IMAGE_PREFIX + "TreePlus.gif");
+    private static final ImageReference DEFAULT_ICON_MINUS = new ResourceImageReference(IMAGE_PREFIX + "TreeMinus.gif");
     
     private static final String IMAGE_ID_LINE_VERTICAL_SOLID = "EchoExtras.Tree.lineVerticalSolid";
     private static final String IMAGE_ID_LINE_HORIZONTAL_SOLID = "EchoExtras.Tree.lineHorizontalSolid";
     private static final String IMAGE_ID_LINE_VERTICAL_DOTTED = "EchoExtras.Tree.lineVerticalDotted";
     private static final String IMAGE_ID_LINE_HORIZONTAL_DOTTED = "EchoExtras.Tree.lineHorizontalDotted";
+    private static final String IMAGE_ID_PLUS = "EchoExtras.Tree.plus";
+    private static final String IMAGE_ID_MINUS = "EchoExtras.Tree.minus";
 
     private static final String PROPERTY_TREE_STRUCTURE = "treeStructure";
     private static final String PROPERTY_COLUMN_COUNT = "columnCount";
@@ -385,6 +393,8 @@ extends AbstractComponentSynchronizePeer {
         ImageService.addGlobalImage(IMAGE_ID_LINE_VERTICAL_SOLID, DEFAULT_ICON_LINE_SOLID);
         ImageService.addGlobalImage(IMAGE_ID_LINE_HORIZONTAL_DOTTED, DEFAULT_ICON_HORIZONTAL_LINE_DOTTED);
         ImageService.addGlobalImage(IMAGE_ID_LINE_VERTICAL_DOTTED, DEFAULT_ICON_VERTICAL_LINE_DOTTED);
+        ImageService.addGlobalImage(IMAGE_ID_PLUS, DEFAULT_ICON_PLUS);
+        ImageService.addGlobalImage(IMAGE_ID_MINUS, DEFAULT_ICON_MINUS);
         
         WebContainerServlet.getServiceRegistry().add(TREE_SERVICE);
     }
@@ -485,7 +495,9 @@ extends AbstractComponentSynchronizePeer {
                 renderState = new TreeRenderState(tree);
                 userInstance.setRenderState(component, renderState);
             }
-            renderState.setClientPath(tree.getPathForRow(row));
+            TreePath path = tree.getPathForRow(row);
+            renderState.setClientPath(path);
+            renderState.removeSentPath(path);
             
             ClientUpdateManager clientUpdateManager = (ClientUpdateManager) context.get(ClientUpdateManager.class);
             clientUpdateManager.setComponentProperty(component, Tree.EXPANSION_STATE_CHANGED_PROPERTY, newValue);

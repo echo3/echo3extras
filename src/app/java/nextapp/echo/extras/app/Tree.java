@@ -120,7 +120,7 @@ public class Tree extends Component {
                     }
                 }
                 Component renderedComponent 
-                        = headerRenderer.getTreeCellRendererComponent(Tree.this, null, headerValue, modelColumnIndex, HEADER_ROW);
+                        = headerRenderer.getTreeCellRendererComponent(Tree.this, null, headerValue, modelColumnIndex, HEADER_ROW, false);
                 if (renderedComponent == null) {
                     renderedComponent = new Label();
                 }
@@ -130,8 +130,6 @@ public class Tree extends Component {
         }
 
         private void doRenderNode(TreePath treePath) {
-            // FIXME rerender when expansion state changes (to change node icon
-            // between open/closed folder for example)
             Object value = treePath.getLastPathComponent();
             if (!treePathToComponentCache.containsKey(treePath)) {
                 renderNodeComponents(treePath);
@@ -154,11 +152,12 @@ public class Tree extends Component {
         private void renderNodeComponents(TreePath treePath) {
             Object node = treePath.getLastPathComponent();
             
+            boolean leaf = model.getChildCount(node) == 0;
             for (int i = 0; i < columnCount; ++i) {
                 int modelColumnIndex = treeColumns[i].getModelIndex();
                 Object modelValue = model.getValueAt(node, modelColumnIndex);
                 Component renderedComponent 
-                        = columnRenderers[i].getTreeCellRendererComponent(Tree.this, treePath, modelValue, modelColumnIndex, row);
+                        = columnRenderers[i].getTreeCellRendererComponent(Tree.this, treePath, modelValue, modelColumnIndex, row, leaf);
                 if (renderedComponent == null) {
                     renderedComponent = new Label();
                 }
@@ -273,8 +272,9 @@ public class Tree extends Component {
     public static final String SELECTION_MODEL_CHANGED_PROPERTY = "selectionModel";
     public static final String SELECTION_MODE_CHANGED_PROPERTY = "selectionMode";
     
-    public static final int LINE_STYLE_SOLID = 0;
-    public static final int LINE_STYLE_DOTTED = 1;
+    public static final int LINE_STYLE_NONE = 0;
+    public static final int LINE_STYLE_SOLID = 1;
+    public static final int LINE_STYLE_DOTTED = 2;
     
     public static final int HEADER_ROW = -1;
     
@@ -1068,6 +1068,7 @@ public class Tree extends Component {
      * 
      * @param newValue the line style, one of the following values:
      *        <ul>
+     *          <li><code>LINE_STYLE_NONE</code></li>
      *          <li><code>LINE_STYLE_SOLID</code></li>
      *          <li><code>LINE_STYLE_DOTTED</code></li>
      *        </ul>
