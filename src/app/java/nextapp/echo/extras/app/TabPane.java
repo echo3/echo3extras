@@ -58,6 +58,9 @@ implements Pane, PaneContainer {
     
     public static final String ACTIVE_TAB_INDEX_CHANGED_PROPERTY = "activeTabIndex";
     
+    public static final String TAB_CLOSING_LISTENERS_CHANGED_PROPERTY = "tabClosingListeners";
+    public static final String TAB_SELECTION_LISTENERS_CHANGED_PROPERTY = "tabSelectionListeners";
+    
     public static final String PROPERTY_BORDER_TYPE = "borderType";
     public static final String PROPERTY_DEFAULT_CONTENT_INSETS = "defaultContentInsets";
     public static final String PROPERTY_INSETS = "insets";
@@ -174,6 +177,7 @@ implements Pane, PaneContainer {
      */
     public void addTabClosingListener(TabClosingListener l) {
         getEventListenerList().addListener(TabClosingListener.class, l);
+        firePropertyChange(TAB_CLOSING_LISTENERS_CHANGED_PROPERTY, null, l);
     }
     
     /**
@@ -186,6 +190,7 @@ implements Pane, PaneContainer {
             return;
         }
         getEventListenerList().removeListener(TabClosingListener.class, l);
+        firePropertyChange(TAB_CLOSING_LISTENERS_CHANGED_PROPERTY, l, null);
     }
 
     /**
@@ -225,6 +230,7 @@ implements Pane, PaneContainer {
      */
     public void addTabSelectionListener(TabSelectionListener l) {
         getEventListenerList().addListener(TabSelectionListener.class, l);
+        firePropertyChange(TAB_SELECTION_LISTENERS_CHANGED_PROPERTY, null, l);
     }
     
     /**
@@ -237,6 +243,7 @@ implements Pane, PaneContainer {
             return;
         }
         getEventListenerList().removeListener(TabSelectionListener.class, l);
+        firePropertyChange(TAB_SELECTION_LISTENERS_CHANGED_PROPERTY, null, l);
     }
     
     /**

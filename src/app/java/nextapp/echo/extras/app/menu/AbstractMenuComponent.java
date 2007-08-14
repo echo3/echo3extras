@@ -10,9 +10,11 @@ import nextapp.echo.app.event.ChangeListener;
 
 public abstract class AbstractMenuComponent extends Component {
 
-    public static final String INPUT_SELECT = "select";
+    public static final String INPUT_ACTION = "action";
     public static final String MODEL_CHANGED_PROPERTY = "model";
     public static final String STATE_MODEL_CHANGED_PROPERTY = "stateModel";
+    
+    public static final String ACTION_LISTENERS_CHANGED_PROPERTY = "actionListeners";
 
     private MenuModel model;
     private MenuStateModel stateModel;
@@ -152,7 +154,7 @@ public abstract class AbstractMenuComponent extends Component {
      * @see nextapp.echo.app.Component#processInput(java.lang.String, java.lang.Object)
      */
     public void processInput(String name, Object value) {
-        if (INPUT_SELECT.equals(name)) {
+        if (INPUT_ACTION.equals(name)) {
             OptionModel optionModel = (OptionModel) value;
             doAction(optionModel);
         }

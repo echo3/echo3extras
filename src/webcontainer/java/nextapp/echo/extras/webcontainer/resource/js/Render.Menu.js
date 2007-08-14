@@ -508,7 +508,7 @@ ExtrasRender.ComponentSync.MenuBarPane.prototype._processClick = function(e) {
 
 ExtrasRender.ComponentSync.MenuBarPane.prototype._doAction = function(menuModel) {
     var path = menuModel.getItemPositionPath().join(".");
-    this.component.fireEvent(new EchoCore.Event(this.component, "select", path));
+    this.component.fireEvent(new EchoCore.Event(this.component, "action", path));
 };
 
 /**
@@ -726,7 +726,7 @@ ExtrasRender.ComponentSync.DropDownMenu.prototype._doAction = function(menuModel
     }
     var path = menuModel.getItemPositionPath().join(".");
     this.component.setProperty("selection", path);
-    this.component.fireEvent(new EchoCore.Event(this.component, "select", path));
+    this.component.fireEvent(new EchoCore.Event(this.component, "action", path));
 };
 
 /**
@@ -842,7 +842,7 @@ ExtrasRender.ComponentSync.ContextMenu.prototype._processContextClick = function
 
 ExtrasRender.ComponentSync.ContextMenu.prototype._doAction = function(menuModel) {
     var path = menuModel.getItemPositionPath().join(".");
-    this.component.fireEvent(new EchoCore.Event(this.component, "select", path));
+    this.component.fireEvent(new EchoCore.Event(this.component, "action", path));
 };
 
 //FIXME. Inconsistent.

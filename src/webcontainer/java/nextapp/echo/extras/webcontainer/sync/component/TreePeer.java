@@ -33,7 +33,6 @@ import nextapp.echo.webcontainer.UserInstance;
 import nextapp.echo.webcontainer.WebContainerServlet;
 import nextapp.echo.webcontainer.service.ImageService;
 import nextapp.echo.webcontainer.service.JavaScriptService;
-import nextapp.echo.webcontainer.util.ArrayIterator;
 import nextapp.echo.webcontainer.util.MultiIterator;
 
 import org.w3c.dom.Document;
@@ -380,8 +379,6 @@ extends AbstractComponentSynchronizePeer {
             PROPERTY_COLUMN_COUNT,
             PROPERTY_HEADER_VISIBLE};
     
-    private static final String[] EVENT_TYPES_ACTION = new String[] { Tree.INPUT_ACTION };
-    
     private static final Service TREE_SERVICE = JavaScriptService.forResources("EchoExtras.RemoteTree",  
             new String[]{ "/nextapp/echo/extras/webcontainer/resource/js/Application.RemoteTree.js",
                     "/nextapp/echo/extras/webcontainer/resource/js/Serial.RemoteTree.js",
@@ -406,6 +403,8 @@ extends AbstractComponentSynchronizePeer {
         addOutputProperty(PROPERTY_HEADER_VISIBLE);
         addOutputProperty(PROPERTY_SELECTION_MODE);
         addOutputProperty(Tree.SELECTION_CHANGED_PROPERTY);
+        
+        addEvent(new AbstractComponentSynchronizePeer.EventPeer(Tree.INPUT_ACTION, Tree.ACTION_LISTENERS_CHANGED_PROPERTY));
     }
     
     /**
@@ -473,15 +472,6 @@ extends AbstractComponentSynchronizePeer {
     }
     
     /**
-     * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#getImmediateEventTypes(
-     *      nextapp.echo.app.util.Context, 
-     *      nextapp.echo.app.Component)
-     */
-    public Iterator getImmediateEventTypes(Context context, Component component) {
-        return new ArrayIterator(EVENT_TYPES_ACTION);
-    }
-    
-    /**
      * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#storeInputProperty(nextapp.echo.app.util.Context, nextapp.echo.app.Component, java.lang.String, int, java.lang.Object)
      */
     public void storeInputProperty(Context context, Component component,
@@ -538,18 +528,6 @@ extends AbstractComponentSynchronizePeer {
             return TreeSelectionUpdate.class;
         }
         return super.getInputPropertyClass(propertyName);
-    }
-    
-    /**
-     * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#processEvent(
-     *      nextapp.echo.app.util.Context, 
-     *      nextapp.echo.app.Component, 
-     *      java.lang.String, 
-     *      java.lang.Object)
-     */
-    public void processEvent(Context context, Component component, String eventType, Object eventData) {
-        ClientUpdateManager clientUpdateManager = (ClientUpdateManager) context.get(ClientUpdateManager.class);
-        clientUpdateManager.setComponentAction(component, Tree.INPUT_ACTION, null);
     }
     
     /**
