@@ -50,7 +50,7 @@ ExtrasRender.ComponentSync.RemoteTree.LINE_STYLE_DOTTED = 2;
  */
 ExtrasRender.ComponentSync.RemoteTree.prototype._getImageUri = function(identifier) {
 	// FIXME abstract this somehow so it works with FreeClient too
-	return "?sid=Echo.Image&iid=" + identifier;
+	return "?sid=Echo.Image&iid=EchoExtras.Tree." + identifier;
 };
 
 ExtrasRender.ComponentSync.RemoteTree.prototype.renderAdd = function(update, parentElement) {
@@ -58,8 +58,8 @@ ExtrasRender.ComponentSync.RemoteTree.prototype.renderAdd = function(update, par
     this._showLines = lineStyle != ExtrasRender.ComponentSync.RemoteTree.LINE_STYLE_NONE;
     if (this._showLines) {
         var lineImageIdSuffix = lineStyle == ExtrasRender.ComponentSync.RemoteTree.LINE_STYLE_SOLID ? "Solid" : "Dotted";
-        this.verticalLineImage = this._getImageUri("EchoExtras.Tree.lineVertical" + lineImageIdSuffix);
-        this.horizontalLineImage = this._getImageUri("EchoExtras.Tree.lineHorizontal" + lineImageIdSuffix);
+        this.verticalLineImage = this._getImageUri("lineVertical" + lineImageIdSuffix);
+        this.horizontalLineImage = this._getImageUri("lineHorizontal" + lineImageIdSuffix);
     }
     this._headerVisible = this.component.getProperty("headerVisible");
     this._rolloverEnabled = this.component.getRenderProperty("rolloverEnabled");
@@ -85,7 +85,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype.renderAdd = function(update, par
     this._tbodyElement = tbodyElement;
     
     if (!this._treeStructure) {
-        this._treeStructure = this.component.getProperty("treeStructure");
+        this._treeStructure = this.component.getProperty("treeStructure")[0];
     }
     this.columnCount = this.component.getProperty("columnCount");
     
@@ -325,11 +325,20 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderExpandoElement = function
         }
     }
     if (!node.isLeaf()) {
-//        expandoText = node.isExpanded() ? "-" : "+";
-        var expandoIconName = node.isExpanded() ? "minus" : "plus";
-        var expandoIcon = this._getImageUri("EchoExtras.Tree." + expandoIconName);
+        var expandoIcon;
+        if (node.isExpanded()) {
+            expandoIcon = this.component.getRenderProperty("nodeOpenIcon");
+            if (!expandoIcon) {
+                expandoIcon = new EchoApp.Property.ImageReference(this._getImageUri("nodeOpen"));
+            }
+        } else {
+            expandoIcon = this.component.getRenderProperty("nodeClosedIcon");
+            if (!expandoIcon) {
+                expandoIcon = new EchoApp.Property.ImageReference(this._getImageUri("nodeClosed"));
+            }
+        }
         var iconElement = document.createElement("img");
-        iconElement.src = expandoIcon;
+        iconElement.src = expandoIcon.url;
         wrapperElement.appendChild(iconElement);
     } else {
         wrapperElement.appendChild(document.createTextNode(expandoText));
@@ -490,7 +499,6 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRowStructure = functi
     for (var c = 0; c < depth - 1; ++c) {
         var rowHeaderElement = document.createElement("td");
         rowHeaderElement.style.padding = "0";
-//        rowHeaderElement.style.width = "0.6em";
         rowHeaderElement.style.width = "19px";
         rowHeaderElement.style.height = "100%";
         
@@ -524,7 +532,6 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRowStructure = functi
         // apply border and bottom style
         this._applyBorder(border, [0,2], expandoElement);
         expandoElement.style.padding = "0";
-//        expandoElement.style.width = "0.6em";
         expandoElement.style.width = "19px";
         expandoElement.style.height = "100%";
         expandoElement.style.textAlign = "center";
@@ -993,7 +1000,10 @@ ExtrasRender.ComponentSync.RemoteTree.prototype.renderUpdate = function(update) 
         return false;
     }
     // end of the hack
-    if (!update.getRemovedChildren()) {
+    
+    var treeStructureUpdate = update.getUpdatedProperty("treeStructure");
+    var fullStructure = (treeStructureUpdate && treeStructureUpdate.newValue && treeStructureUpdate.newValue.fullRefresh);
+    if (!fullStructure) {
         // removal of children indicates that the tree was invalidated, 
         // and thus all components are re-rendered, and the tree structure we have at the client 
         // is no longer valid.
@@ -1018,7 +1028,8 @@ ExtrasRender.ComponentSync.RemoteTree.prototype.renderUpdate = function(update) 
     var containerElement = element.parentNode;
     var treeStructure = this._treeStructure;
     EchoRender.renderComponentDispose(update, update.parent);
-    if (!update.getRemovedChildren()) {
+//    if (!update.getRemovedChildren()) {
+    if (!fullStructure) {
         this._treeStructure = treeStructure;
     }
     containerElement.removeChild(element);
@@ -1030,9 +1041,12 @@ ExtrasRender.ComponentSync.RemoteTree.prototype.renderUpdate = function(update) 
 ExtrasRender.ComponentSync.RemoteTree.prototype._renderTreeStructureUpdate = function(treeStructureUpdate, update) {
 //    debugger;
     var structs = treeStructureUpdate;
-    if (!(treeStructureUpdate instanceof Array)) {
-        structs = new Array(treeStructureUpdate);
-    }
+//    if (structs.fullRefresh) {
+//        this._treeStructure = structs[0];
+//    }
+//    if (!(treeStructureUpdate instanceof Array)) {
+//        structs = new Array(treeStructureUpdate);
+//    }
     for (var i = 0; i < structs.length; ++i) {
         var struct = structs[i]; 
         var updateRootNode = struct.getRootNode();

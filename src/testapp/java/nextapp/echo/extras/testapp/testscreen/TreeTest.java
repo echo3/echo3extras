@@ -1,10 +1,13 @@
 package nextapp.echo.extras.testapp.testscreen;
 
 import nextapp.echo.app.FillImage;
+import nextapp.echo.app.ImageReference;
+import nextapp.echo.app.ResourceImageReference;
 import nextapp.echo.app.event.ActionEvent;
 import nextapp.echo.app.event.ActionListener;
 import nextapp.echo.extras.app.Tree;
 import nextapp.echo.extras.app.tree.AbstractTreeModel;
+import nextapp.echo.extras.app.tree.DefaultTreeCellRenderer;
 import nextapp.echo.extras.app.tree.TreePath;
 import nextapp.echo.extras.app.tree.TreeSelectionModel;
 import nextapp.echo.extras.testapp.AbstractTest;
@@ -17,6 +20,9 @@ public class TreeTest extends AbstractTest {
         Styles.FILL_IMAGE_SHADOW_BACKGROUND_DARK_BLUE, Styles.FILL_IMAGE_SHADOW_BACKGROUND_LIGHT_BLUE,
         Styles.FILL_IMAGE_PEWTER_LINE, Styles.FILL_IMAGE_LIGHT_BLUE_LINE,
         Styles.FILL_IMAGE_SILVER_LINE};
+    
+    private static final ImageReference DEFAULT_FOLDER_ICON = new ResourceImageReference("nextapp/echo/extras/app/resource/image/TreeFolder.gif");
+    private static final ImageReference DEFAULT_LEAF_ICON = new ResourceImageReference("nextapp/echo/extras/app/resource/image/TreeLeaf.gif");
     
     final Tree tree;
     public TreeTest() {
@@ -94,7 +100,25 @@ public class TreeTest extends AbstractTest {
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_SELECTION_BACKGROUND);
         addFontPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_SELECTION_FONT);
         addFillImagePropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_SELECTION_BACKGROUND_IMAGE, TEST_FILL_IMAGES);
-                
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Use default node icons", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ((DefaultTreeCellRenderer)tree.getCellRenderer()).setFolderIcon(DEFAULT_FOLDER_ICON);
+                ((DefaultTreeCellRenderer)tree.getCellRenderer()).setLeafIcon(DEFAULT_LEAF_ICON);
+                // hack to invalidate the tree
+                tree.setCellRenderer(tree.getCellRenderer());
+            }
+        });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Use no node icons", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ((DefaultTreeCellRenderer)tree.getCellRenderer()).setFolderIcon(null);
+                ((DefaultTreeCellRenderer)tree.getCellRenderer()).setLeafIcon(null);
+                // hack to invalidate the tree
+                tree.setCellRenderer(tree.getCellRenderer());
+            }
+        });
+        
         testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Expand / Collapse [4][2]", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Object root = tree.getModel().getRoot();

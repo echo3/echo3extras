@@ -38,9 +38,18 @@ import nextapp.echo.extras.app.Tree;
 /**
  * Default <code>TreeCellRenderer</code> implementation.
  */
+//FIXME reconsider the icon setters.
 public class DefaultTreeCellRenderer 
 implements TreeCellRenderer {
+    
+    private ImageReference leafIcon;
+    private ImageReference folderIcon;
 
+    public DefaultTreeCellRenderer() {
+        leafIcon = new ResourceImageReference("nextapp/echo/extras/app/resource/image/TreeLeaf.gif");
+        folderIcon = new ResourceImageReference("nextapp/echo/extras/app/resource/image/TreeFolder.gif");
+    }
+    
     /**
      * @see nextapp.echo.extras.app.tree.TreeCellRenderer#getTreeCellRendererComponent(nextapp.echo.extras.app.Tree, nextapp.echo.extras.app.tree.TreePath, java.lang.Object, int, int, boolean, boolean)
      */
@@ -48,12 +57,20 @@ implements TreeCellRenderer {
         ImageReference icon = null;
         if (column == 0 && row != -1) {
             if (leaf) {
-                icon = new ResourceImageReference("nextapp/echo/extras/app/resource/image/TreeLeaf.gif");
+                icon = leafIcon;
             } else {
-                icon = new ResourceImageReference("nextapp/echo/extras/app/resource/image/TreeFolder.gif");
+                icon = folderIcon;
             }
         }
         return value == null ? new Label(icon) : new Label(value.toString(), icon);
+    }
+    
+    public void setLeafIcon(ImageReference newValue) {
+        this.leafIcon = newValue;
+    }
+    
+    public void setFolderIcon(ImageReference newValue) {
+        this.folderIcon = newValue;
     }
 
 }

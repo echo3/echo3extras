@@ -252,6 +252,7 @@ extends AbstractComponentSynchronizePeer {
                 Object value = model.getRoot();
                 renderNode(context, value, new TreePath(value), true);
                 renderState.setFullRender(false);
+                propertyElement.setAttribute("fr", "1");
             } else if (renderState.hasChangedPaths()) {
                 for (Iterator iterator = renderState.changedPaths(); iterator.hasNext();) {
                     TreePath path = (TreePath) iterator.next();
@@ -357,15 +358,15 @@ extends AbstractComponentSynchronizePeer {
     private static final ImageReference DEFAULT_ICON_LINE_SOLID = new ResourceImageReference(IMAGE_PREFIX + "Dot.gif");
     private static final ImageReference DEFAULT_ICON_VERTICAL_LINE_DOTTED = new ResourceImageReference(IMAGE_PREFIX + "TreeVerticalLineDotted.gif");
     private static final ImageReference DEFAULT_ICON_HORIZONTAL_LINE_DOTTED = new ResourceImageReference(IMAGE_PREFIX + "TreeHorizontalLineDotted.gif");
-    private static final ImageReference DEFAULT_ICON_PLUS = new ResourceImageReference(IMAGE_PREFIX + "TreePlus.gif");
-    private static final ImageReference DEFAULT_ICON_MINUS = new ResourceImageReference(IMAGE_PREFIX + "TreeMinus.gif");
+    private static final ImageReference DEFAULT_ICON_NODE_CLOSED = new ResourceImageReference(IMAGE_PREFIX + "TreeClosed.gif");
+    private static final ImageReference DEFAULT_ICON_NODE_OPEN = new ResourceImageReference(IMAGE_PREFIX + "TreeOpen.gif");
     
     private static final String IMAGE_ID_LINE_VERTICAL_SOLID = "EchoExtras.Tree.lineVerticalSolid";
     private static final String IMAGE_ID_LINE_HORIZONTAL_SOLID = "EchoExtras.Tree.lineHorizontalSolid";
     private static final String IMAGE_ID_LINE_VERTICAL_DOTTED = "EchoExtras.Tree.lineVerticalDotted";
     private static final String IMAGE_ID_LINE_HORIZONTAL_DOTTED = "EchoExtras.Tree.lineHorizontalDotted";
-    private static final String IMAGE_ID_PLUS = "EchoExtras.Tree.plus";
-    private static final String IMAGE_ID_MINUS = "EchoExtras.Tree.minus";
+    private static final String IMAGE_ID_NODE_CLOSED = "EchoExtras.Tree.nodeClosed";
+    private static final String IMAGE_ID_NODE_OPEN = "EchoExtras.Tree.nodeOpen";
 
     private static final String PROPERTY_TREE_STRUCTURE = "treeStructure";
     private static final String PROPERTY_COLUMN_COUNT = "columnCount";
@@ -390,8 +391,8 @@ extends AbstractComponentSynchronizePeer {
         ImageService.addGlobalImage(IMAGE_ID_LINE_VERTICAL_SOLID, DEFAULT_ICON_LINE_SOLID);
         ImageService.addGlobalImage(IMAGE_ID_LINE_HORIZONTAL_DOTTED, DEFAULT_ICON_HORIZONTAL_LINE_DOTTED);
         ImageService.addGlobalImage(IMAGE_ID_LINE_VERTICAL_DOTTED, DEFAULT_ICON_VERTICAL_LINE_DOTTED);
-        ImageService.addGlobalImage(IMAGE_ID_PLUS, DEFAULT_ICON_PLUS);
-        ImageService.addGlobalImage(IMAGE_ID_MINUS, DEFAULT_ICON_MINUS);
+        ImageService.addGlobalImage(IMAGE_ID_NODE_CLOSED, DEFAULT_ICON_NODE_CLOSED);
+        ImageService.addGlobalImage(IMAGE_ID_NODE_OPEN, DEFAULT_ICON_NODE_OPEN);
         
         WebContainerServlet.getServiceRegistry().add(TREE_SERVICE);
     }
@@ -449,15 +450,23 @@ extends AbstractComponentSynchronizePeer {
      */
     public Iterator getUpdatedOutputPropertyNames(Context context, Component component, 
             ServerComponentUpdate update) {
-        Iterator normalPropertyIterator = super.getUpdatedOutputPropertyNames(context, component, update);
+        UserInstance userInstance = (UserInstance) context.get(UserInstance.class);
         
+        Iterator normalPropertyIterator = super.getUpdatedOutputPropertyNames(context, component, update);
         HashSet extraProperties = new HashSet();
+        
+        // FIXME change when issue #45 is solved.
+        if (update.hasUpdatedProperty("valid")) {
+            System.out.println("remove render state");
+            userInstance.removeRenderState(component);
+            extraProperties.add(PROPERTY_TREE_STRUCTURE);
+            extraProperties.add(Tree.SELECTION_CHANGED_PROPERTY);
+        }
         
         if (update.hasUpdatedProperty(Tree.MODEL_CHANGED_PROPERTY)) {
             extraProperties.addAll(Arrays.asList(MODEL_CHANGED_UPDATE_PROPERTIES));
         } 
         if (update.hasUpdatedProperty(Tree.EXPANSION_STATE_CHANGED_PROPERTY)) {
-            UserInstance userInstance = (UserInstance) context.get(UserInstance.class);
             TreeRenderState renderState = (TreeRenderState) userInstance.getRenderState(component);
             if (renderState == null || renderState.hasChangedPaths()) {
                 extraProperties.add(PROPERTY_TREE_STRUCTURE);

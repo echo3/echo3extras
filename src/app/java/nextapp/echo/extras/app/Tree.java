@@ -44,6 +44,7 @@ import nextapp.echo.app.Color;
 import nextapp.echo.app.Component;
 import nextapp.echo.app.FillImage;
 import nextapp.echo.app.Font;
+import nextapp.echo.app.ImageReference;
 import nextapp.echo.app.Insets;
 import nextapp.echo.app.Label;
 import nextapp.echo.app.event.ActionEvent;
@@ -245,6 +246,8 @@ public class Tree extends Component {
     public static final String PROPERTY_BORDER = "border";
     public static final String PROPERTY_INSETS = "insets";
     public static final String PROPERTY_LINE_STYLE = "lineStyle";
+    public static final String PROPERTY_NODE_CLOSED_ICON = "nodeClosedIcon";
+    public static final String PROPERTY_NODE_OPEN_ICON = "nodeOpenIcon";
     public static final String PROPERTY_ROLLOVER_BACKGROUND = "rolloverBackground";
     public static final String PROPERTY_ROLLOVER_BACKGROUND_IMAGE = "rolloverBackgroundImage";
     public static final String PROPERTY_ROLLOVER_ENABLED = "rolloverEnabled";
@@ -628,6 +631,20 @@ public class Tree extends Component {
     public void setBorder(Border newValue) {
         setProperty(PROPERTY_BORDER, newValue);
     }
+
+    /**
+     * Sets the <code>TreeCellRenderer</code> used to render values contained
+     * in the tree. The value of this property may be null, in which case the
+     * tree should revert to using its default cell renderer.
+     * 
+     * @param newValue the new cell renderer
+     */
+    public void setCellRenderer(TreeCellRenderer newValue) {
+        invalidate();
+        TreeCellRenderer oldValue = cellRenderer;
+        cellRenderer = newValue;
+        firePropertyChange(CELL_RENDERER_CHANGED_PROPERTY, oldValue, newValue);
+    }
     
     /** 
      * Sets the <code>TreeColumnModel</code> describing this tree's 
@@ -999,11 +1016,31 @@ public class Tree extends Component {
         }
         return oLineStyle.intValue();
     }
+    
+    /**
+     * Retrieves the icon that is rendered for closed nodes. The default icon is a + sign.
+     * 
+     * @return the icon
+     */
+    public ImageReference getNodeClosedIcon() {
+        return (ImageReference) getProperty(PROPERTY_NODE_CLOSED_ICON);
+    }
+    
+    /**
+     * Retrieves the icon that is rendered for opened nodes. The default icon is a - sign.
+     * 
+     * @param newValue the icon
+     */
+    public ImageReference getNodeOpenIcon() {
+        return (ImageReference) getProperty(PROPERTY_NODE_OPEN_ICON);
+    }
 
     /**
      * Marks the tree as needing to be re-rendered.
      */
     private void invalidate() {
+        // FIXME remove when issue #45 is solved.
+        firePropertyChange("valid", null, null);
         valid = false;
     }
     
@@ -1022,19 +1059,6 @@ public class Tree extends Component {
         // Notification of action listener changes is provided due to 
         // existence of hasActionListeners() method. 
         firePropertyChange(ACTION_LISTENERS_CHANGED_PROPERTY, l, null);
-    }
-
-    /**
-     * Sets the <code>TreeCellRenderer</code> used to render values contained
-     * in the tree. The value of this property may be null, in which case the
-     * tree should revert to using its default cell renderer.
-     * 
-     * @param newValue the new cell renderer
-     */
-    public void setCellRenderer(TreeCellRenderer newValue) {
-        TreeCellRenderer oldValue = cellRenderer;
-        cellRenderer = newValue;
-        firePropertyChange(CELL_RENDERER_CHANGED_PROPERTY, oldValue, newValue);
     }
 
     /**
@@ -1075,6 +1099,24 @@ public class Tree extends Component {
      */
     public void setLineStyle(int newValue) {
         setProperty(PROPERTY_LINE_STYLE, new Integer(newValue));
+    }
+    
+    /**
+     * Sets the icon that is rendered for closed nodes. The default icon is a + sign.
+     * 
+     * @param newValue the icon
+     */
+    public void setNodeClosedIcon(ImageReference newValue) {
+        setProperty(PROPERTY_NODE_CLOSED_ICON, newValue);
+    }
+    
+    /**
+     * Sets the icon that is rendered for opened nodes. The default icon is a - sign.
+     * 
+     * @param newValue the icon
+     */
+    public void setNodeOpenIcon(ImageReference newValue) {
+        setProperty(PROPERTY_NODE_OPEN_ICON, newValue);
     }
 
     /**

@@ -73,9 +73,7 @@ ExtrasSerial.PropertyTranslator.RemoteTree.TreeStructure.toProperty = function(c
     if (headerNode) {
         treeStructure.setHeaderNode(headerNode);
     }
-    if (structures.length == 1) {
-        return treeStructure;
-    }
+    structures.fullRefresh = (propertyElement.getAttribute("fr") == "1");
     return structures;
 };
 
