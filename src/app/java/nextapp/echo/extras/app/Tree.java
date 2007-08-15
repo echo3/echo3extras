@@ -185,6 +185,9 @@ public class Tree extends Component {
         void update(TreePath path, boolean newState) {
             init();
             row = getRowForPath(path);
+            if (row == -1 && path.getLastPathComponent().equals(model.getRoot())) {
+                row = 0;
+            }
             if (newState) {
                 doRenderNode(path);
             } else {
@@ -401,6 +404,8 @@ public class Tree extends Component {
     
     /**
      * Constructs a new <code>Tree</code> with the specified model.
+     * <p>
+     * If the model has a root node, it will be expanded by default.
      * 
      * @param model the model
      */
@@ -410,6 +415,8 @@ public class Tree extends Component {
 
     /**
      * Constructs a new <code>Tree</code> with the specified model.
+     * <p>
+     * If the model has a root node, it will be expanded by default.
      * 
      * @param model the model
      */
@@ -1074,6 +1081,8 @@ public class Tree extends Component {
 
     /**
      * Sets the <code>TreeModel</code> begin visualized.
+     * <p>
+     * If the root node is not null, it will be expanded automatically.
      * 
      * @param newValue the new model (may not be null)
      */
@@ -1096,6 +1105,10 @@ public class Tree extends Component {
         }
 
         firePropertyChange(MODEL_CHANGED_PROPERTY, oldValue, newValue);
+        
+        if (model.getRoot() != null) {
+            setExpandedState(new TreePath(model.getRoot()), true);
+        }
     }
     
     /**
