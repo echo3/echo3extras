@@ -82,12 +82,27 @@ implements LazyRenderContainer {
             public boolean hasListeners(Context context, Component component) {
                 return ((TabPane) component).hasTabSelectionListeners();
             }
+            
+            public void processEvent(Context context, Component component, Object eventData) {
+                TabPane tabPane = (TabPane) component;
+                Integer tabIndex = getTabIndex(context, tabPane, (String)eventData);
+                ClientUpdateManager clientUpdateManager = (ClientUpdateManager) context.get(ClientUpdateManager.class);
+                clientUpdateManager.setComponentAction(component, TabPane.INPUT_TAB_SELECT, tabIndex);
+            }
         });
 
         addEvent(new AbstractComponentSynchronizePeer.EventPeer(TabPane.INPUT_TAB_CLOSE, 
-                TabPane.TAB_CLOSING_LISTENERS_CHANGED_PROPERTY, String.class) {
+                TabPane.PROPERTY_TAB_CLOSE_ENABLED, String.class) {
             public boolean hasListeners(Context context, Component component) {
-                return ((TabPane) component).hasTabClosingListeners();
+                // server should always be notified since component hierarchy is modified
+                return ((Boolean) component.getRenderProperty(TabPane.PROPERTY_TAB_CLOSE_ENABLED, Boolean.FALSE)).booleanValue();                
+            }
+            
+            public void processEvent(Context context, Component component, Object eventData) {
+                TabPane tabPane = (TabPane) component;
+                Integer tabIndex = getTabIndex(context, tabPane, (String)eventData);
+                ClientUpdateManager clientUpdateManager = (ClientUpdateManager) context.get(ClientUpdateManager.class);
+                clientUpdateManager.setComponentAction(component, TabPane.INPUT_TAB_CLOSE, tabIndex);
             }
         });
     }

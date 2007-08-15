@@ -568,6 +568,9 @@ implements Pane, PaneContainer {
      */
     public void processInput(String inputName, Object inputValue) {
         super.processInput(inputName, inputValue);
+        if (inputValue == null) {
+            return;
+        }
         if (ACTIVE_TAB_INDEX_CHANGED_PROPERTY.equals(inputName)) {
             setActiveTabIndex(((Integer)inputValue).intValue());
         } else if (INPUT_TAB_SELECT.equals(inputName)) {
