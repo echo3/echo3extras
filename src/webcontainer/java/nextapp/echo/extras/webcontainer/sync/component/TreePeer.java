@@ -370,15 +370,13 @@ extends AbstractComponentSynchronizePeer {
 
     private static final String PROPERTY_TREE_STRUCTURE = "treeStructure";
     private static final String PROPERTY_COLUMN_COUNT = "columnCount";
-    private static final String PROPERTY_HEADER_VISIBLE = "headerVisible";
     private static final String PROPERTY_SELECTION_MODE = "selectionMode";
     
     private static final String EXPANSION_PROPERTY = "expansion"; 
     private static final String SELECTION_PROPERTY = "selectionUpdate";
     
     private static final String[] MODEL_CHANGED_UPDATE_PROPERTIES = new String[] { PROPERTY_TREE_STRUCTURE,
-            PROPERTY_COLUMN_COUNT,
-            PROPERTY_HEADER_VISIBLE};
+            PROPERTY_COLUMN_COUNT};
     
     private static final Service TREE_SERVICE = JavaScriptService.forResources("EchoExtras.RemoteTree",  
             new String[]{ "/nextapp/echo/extras/webcontainer/resource/js/Application.RemoteTree.js",
@@ -401,7 +399,6 @@ extends AbstractComponentSynchronizePeer {
         super();
         addOutputProperty(PROPERTY_TREE_STRUCTURE);
         addOutputProperty(PROPERTY_COLUMN_COUNT);
-        addOutputProperty(PROPERTY_HEADER_VISIBLE);
         addOutputProperty(PROPERTY_SELECTION_MODE);
         addOutputProperty(Tree.SELECTION_CHANGED_PROPERTY);
         
@@ -432,8 +429,6 @@ extends AbstractComponentSynchronizePeer {
             return new TreeStructure(tree);
         } else if (PROPERTY_COLUMN_COUNT.equals(propertyName)) {
             return new Integer(getColumnCount(tree));
-        } else if (PROPERTY_HEADER_VISIBLE.equals(propertyName)) {
-            return Boolean.valueOf(tree.isHeaderVisible());
         } else if (PROPERTY_SELECTION_MODE.equals(propertyName)) {
             return new Integer(tree.getSelectionModel().getSelectionMode());
         } else if (Tree.SELECTION_CHANGED_PROPERTY.equals(propertyName)) {
@@ -471,7 +466,7 @@ extends AbstractComponentSynchronizePeer {
             if (renderState == null || renderState.hasChangedPaths()) {
                 extraProperties.add(PROPERTY_TREE_STRUCTURE);
             }
-            if (renderState.hasUnsentSelections()) {
+            if (renderState == null || renderState.hasUnsentSelections()) {
                 extraProperties.add(Tree.SELECTION_CHANGED_PROPERTY);
             } /*else {
                 renderState.clearChangedPaths();

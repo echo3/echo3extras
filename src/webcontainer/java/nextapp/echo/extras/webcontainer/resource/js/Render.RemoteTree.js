@@ -61,8 +61,9 @@ ExtrasRender.ComponentSync.RemoteTree.prototype.renderAdd = function(update, par
         this.verticalLineImage = this._getImageUri("lineVertical" + lineImageIdSuffix);
         this.horizontalLineImage = this._getImageUri("lineHorizontal" + lineImageIdSuffix);
     }
+    this._showsRootHandle = this.component.getRenderProperty("showsRootHandle", false);
     this._rootVisible = this.component.getRenderProperty("rootVisible", true);
-    this._headerVisible = this.component.getProperty("headerVisible");
+    this._headerVisible = this.component.getRenderProperty("headerVisible", false);
     this._rolloverEnabled = this.component.getRenderProperty("rolloverEnabled");
     this._selectionEnabled = this.component.getRenderProperty("selectionEnabled");
     if (this._selectionEnabled) {
@@ -504,7 +505,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRowStructure = functi
     var border = this._createMultiSidedBorder(this.component.getRenderProperty("border"));
     var insets = this._defaultInsets;
 
-    if (!this._rootVisible) {
+    if (!this._rootVisible || (!this._showsRootHandle && node != this._treeStructure.getRootNode())) {
         --depth;
     }
     var parentNode = this._treeStructure.getNode(node.getParentId());
@@ -538,7 +539,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRowStructure = functi
     
     var isHeader = node == this._treeStructure.getHeaderNode();
     var expandoElement;
-    if (!isHeader) {
+    if (!isHeader && !(!this._showsRootHandle && node == this._treeStructure.getRootNode())) {
         expandoElement = document.createElement("td");
         expandoElement.__ExtrasTreeCellType = "expando";
         // apply border and bottom style
@@ -641,7 +642,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._updateSpansRecursive = function
         --depth;
     }
     var span = maxDepth - depth + 1;
-    if (startNode == this._treeStructure.getHeaderNode() && this._rootVisible) {
+    if (startNode == this._treeStructure.getHeaderNode() && this._rootVisible && this.showsRootHandle) {
         // the header row has no expando cell, it needs to span one extra column
         ++span;
     }
@@ -885,10 +886,8 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._doExpansion = function(node, e)
     if (node.isExpanded()) {
         node.setExpanded(false);
         // no other peers will be called, so update may be null
-        debugger;
         this._renderNode(null, node);
     } else if (node.getChildNodeCount() > 0) {
-//        debugger;
         node.setExpanded(true);
         // no other peers will be called, so update may be null
         this._renderNode(null, node);
@@ -956,8 +955,6 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._doSelection = function(node, e)
 };
 
 ExtrasRender.ComponentSync.RemoteTree.prototype._processClick = function(e) {
-    EchoCore.Debug.consoleWrite("process click ENTERED");
-    try {
     if (!this.component.isActive()) {
         return;
     }
@@ -978,11 +975,6 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._processClick = function(e) {
     if (doAction) {
         this.component.fireEvent(new EchoCore.Event(this.component, "action"));
     }
-    } catch (e) {
-        alert("error in process click: \n " + e.message);
-        throw e;
-    }
-    EchoCore.Debug.consoleWrite("process click LEAVING");
     return true;
 };
 
@@ -1062,7 +1054,6 @@ ExtrasRender.ComponentSync.RemoteTree.prototype.renderUpdate = function(update) 
     var containerElement = element.parentNode;
     var treeStructure = this._treeStructure;
     EchoRender.renderComponentDispose(update, update.parent);
-//    if (!update.getRemovedChildren()) {
     if (!fullStructure) {
         this._treeStructure = treeStructure;
     }
@@ -1073,14 +1064,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype.renderUpdate = function(update) 
 };
 
 ExtrasRender.ComponentSync.RemoteTree.prototype._renderTreeStructureUpdate = function(treeStructureUpdate, update) {
-//    debugger;
     var structs = treeStructureUpdate;
-//    if (structs.fullRefresh) {
-//        this._treeStructure = structs[0];
-//    }
-//    if (!(treeStructureUpdate instanceof Array)) {
-//        structs = new Array(treeStructureUpdate);
-//    }
     for (var i = 0; i < structs.length; ++i) {
         var struct = structs[i]; 
         var updateRootNode = struct.getRootNode();

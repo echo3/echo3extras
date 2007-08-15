@@ -59,7 +59,6 @@ import nextapp.echo.extras.app.event.TreeModelEvent;
 import nextapp.echo.extras.app.event.TreeModelListener;
 import nextapp.echo.extras.app.tree.DefaultTreeCellRenderer;
 import nextapp.echo.extras.app.tree.DefaultTreeColumnModel;
-import nextapp.echo.extras.app.tree.DefaultTreeModel;
 import nextapp.echo.extras.app.tree.DefaultTreeSelectionModel;
 import nextapp.echo.extras.app.tree.TreeCellRenderer;
 import nextapp.echo.extras.app.tree.TreeColumn;
@@ -68,6 +67,11 @@ import nextapp.echo.extras.app.tree.TreeModel;
 import nextapp.echo.extras.app.tree.TreePath;
 import nextapp.echo.extras.app.tree.TreeSelectionModel;
 
+/**
+ * A control that displays a set of hierarchical data as an outline.
+ * Each row in the tree can have a number of columns, so this tree 
+ * implementation is in fact a tree table. 
+ */
 public class Tree extends Component {
 
     private class Renderer {
@@ -247,6 +251,7 @@ public class Tree extends Component {
 
     public static final String PROPERTY_ACTION_COMMAND = "actionCommand";
     public static final String PROPERTY_BORDER = "border";
+    public static final String PROPERTY_HEADER_VISIBLE = "headerVisible";
     public static final String PROPERTY_INSETS = "insets";
     public static final String PROPERTY_LINE_STYLE = "lineStyle";
     public static final String PROPERTY_NODE_CLOSED_ICON = "nodeClosedIcon";
@@ -261,7 +266,8 @@ public class Tree extends Component {
     public static final String PROPERTY_SELECTION_BACKGROUND_IMAGE = "selectionBackgroundImage";
     public static final String PROPERTY_SELECTION_ENABLED = "selectionEnabled";
     public static final String PROPERTY_SELECTION_FONT = "selectionFont";
-    public static final String PROPERTY_SELECTION_FOREGROUND= "selectionForeground";
+    public static final String PROPERTY_SELECTION_FOREGROUND = "selectionForeground";
+    public static final String PROPERTY_SHOWS_ROOT_HANDLE = "showsRootHandle";
     
     public static final String EXPAND_ACTION = "expand";
     public static final String INPUT_ACTION = "action";
@@ -273,7 +279,6 @@ public class Tree extends Component {
     public static final String DEFAULT_HEADER_RENDERER_CHANGED_PROPERTY = "defaultHeaderRenderer";
     public static final String DEFAULT_RENDERER_CHANGED_PROPERTY = "defaultRenderer";
     public static final String EXPANSION_STATE_CHANGED_PROPERTY = "expansionState";
-    public static final String HEADER_VISIBLE_CHANGED_PROPERTY = "headerVisible";
     public static final String MODEL_CHANGED_PROPERTY = "model";
     public static final String SELECTION_CHANGED_PROPERTY = "selection";
     public static final String SELECTION_MODEL_CHANGED_PROPERTY = "selectionModel";
@@ -392,15 +397,15 @@ public class Tree extends Component {
     private boolean valid = false;
     private TreeCellRenderer cellRenderer;
     private boolean autoCreateColumnsFromModel;
-    private boolean headerVisible = true;
     private boolean suppressChangeNotifications = false;
 
-    /**
-     * Constructs a new <code>Tree</code> with a default tree model.
-     */
-    public Tree() {
-        this(new DefaultTreeModel());
-    }
+// FIXME enable this ctor when a default tree model implementation is available. 
+//    /**
+//     * Constructs a new <code>Tree</code> with a default tree model.
+//     */
+//    public Tree() {
+//        this(new DefaultTreeModel(new DefaultMutableTreeNode("root")));
+//    }
     
     /**
      * Constructs a new <code>Tree</code> with the specified model.
@@ -752,9 +757,7 @@ public class Tree extends Component {
      */
     public void setHeaderVisible(boolean newValue) {
         invalidate();
-        boolean oldValue = headerVisible;
-        headerVisible = newValue;
-        firePropertyChange(HEADER_VISIBLE_CHANGED_PROPERTY, Boolean.valueOf(oldValue), Boolean.valueOf(newValue));
+        setProperty(PROPERTY_HEADER_VISIBLE, Boolean.valueOf(newValue));
     }
     
     /**
@@ -832,7 +835,8 @@ public class Tree extends Component {
      * @return the header visibility state
      */
     public boolean isHeaderVisible() {
-        return headerVisible;
+        Boolean value = (Boolean)getProperty(PROPERTY_HEADER_VISIBLE);
+        return value == null ? false : value.booleanValue();
     }
     
     /**
@@ -853,7 +857,8 @@ public class Tree extends Component {
      * @see #setRootVisible(boolean)
      */
     public boolean isRootVisible() {
-        return ((Boolean)getProperty(PROPERTY_ROOT_VISIBLE)).booleanValue();
+        Boolean value = (Boolean) getProperty(PROPERTY_ROOT_VISIBLE);
+        return value == null ? true : value.booleanValue();
     }
     
     /**
@@ -864,6 +869,17 @@ public class Tree extends Component {
      */
     public boolean isSelectionEnabled() {
         Boolean value = (Boolean) getProperty(PROPERTY_SELECTION_ENABLED);
+        return value == null ? false : value.booleanValue();
+    }
+    
+    /**
+     * Determines whether the handle of the root node should be shown. 
+     * 
+     * @return <code>true</code> if the root handle should be visible.
+     * @see #setShowsRootHandle(boolean)
+     */
+    public boolean isShowsRootHandle() {
+        Boolean value = (Boolean) getProperty(PROPERTY_SHOWS_ROOT_HANDLE);
         return value == null ? false : value.booleanValue();
     }
 
@@ -1288,6 +1304,16 @@ public class Tree extends Component {
         newValue.addPropertyChangeListener(propertyChangeListener);
         selectionModel = newValue;
         firePropertyChange(SELECTION_MODEL_CHANGED_PROPERTY, oldValue, newValue);
+    }
+    
+    /**
+     * Determines whether the handle of the root node should be shown. 
+     * 
+     * @param newValue <code>true</code> if the root handle should be visible.
+     * @see #isShowsRootHandle()
+     */
+    public void setShowsRootHandle(boolean newValue) {
+        setProperty(PROPERTY_SHOWS_ROOT_HANDLE, Boolean.valueOf(newValue));
     }
 
     /**

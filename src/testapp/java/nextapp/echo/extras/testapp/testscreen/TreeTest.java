@@ -8,7 +8,7 @@ import nextapp.echo.app.event.ActionListener;
 import nextapp.echo.extras.app.Tree;
 import nextapp.echo.extras.app.tree.AbstractTreeModel;
 import nextapp.echo.extras.app.tree.DefaultTreeCellRenderer;
-import nextapp.echo.extras.app.tree.TreePath;
+import nextapp.echo.extras.app.tree.TreeModel;
 import nextapp.echo.extras.app.tree.TreeSelectionModel;
 import nextapp.echo.extras.testapp.AbstractTest;
 import nextapp.echo.extras.testapp.Styles;
@@ -16,26 +16,37 @@ import nextapp.echo.extras.testapp.TestControlPane;
 
 public class TreeTest extends AbstractTest {
     
-    private static final FillImage[] TEST_FILL_IMAGES = new FillImage[] { null, 
-        Styles.FILL_IMAGE_SHADOW_BACKGROUND_DARK_BLUE, Styles.FILL_IMAGE_SHADOW_BACKGROUND_LIGHT_BLUE,
-        Styles.FILL_IMAGE_PEWTER_LINE, Styles.FILL_IMAGE_LIGHT_BLUE_LINE,
-        Styles.FILL_IMAGE_SILVER_LINE};
+ // FIXME enable when default tree model is available.    
+//    private static TreeModel generateSimpleTreeModel() {
+//        DefaultMutableTreeNode      root = new DefaultMutableTreeNode("Tree");
+//        DefaultMutableTreeNode      parent;
+//
+//        parent = new DefaultMutableTreeNode("colors");
+//        root.add(parent);
+//        parent.add(new DefaultMutableTreeNode("blue"));
+//        parent.add(new DefaultMutableTreeNode("violet"));
+//        parent.add(new DefaultMutableTreeNode("red"));
+//        parent.add(new DefaultMutableTreeNode("yellow"));
+//
+//        parent = new DefaultMutableTreeNode("sports");
+//        root.add(parent);
+//        parent.add(new DefaultMutableTreeNode("basketball"));
+//        parent.add(new DefaultMutableTreeNode("soccer"));
+//        parent.add(new DefaultMutableTreeNode("football"));
+//        parent.add(new DefaultMutableTreeNode("hockey"));
+//
+//        parent = new DefaultMutableTreeNode("food");
+//        root.add(parent);
+//        parent.add(new DefaultMutableTreeNode("hot dogs"));
+//        parent.add(new DefaultMutableTreeNode("pizza"));
+//        parent.add(new DefaultMutableTreeNode("ravioli"));
+//        parent.add(new DefaultMutableTreeNode("bananas"));
+//        
+//        return new DefaultTreeModel(root);
+//    }
     
-    private static final ImageReference DEFAULT_FOLDER_ICON = new ResourceImageReference("nextapp/echo/extras/app/resource/image/TreeFolder.gif");
-    private static final ImageReference DEFAULT_LEAF_ICON = new ResourceImageReference("nextapp/echo/extras/app/resource/image/TreeLeaf.gif");
-    
-    final Tree tree;
-    public TreeTest() {
-        
-        super("Tree", Styles.ICON_16_TAB_PANE);
-        
-        tree = new Tree();
-        add(tree);
-        
-        setTestComponent(this, tree);
-        // Add/Remove Tabs
-        
-        tree.setModel(new AbstractTreeModel() {
+    private static TreeModel generateSimpleTreeTableModel() {
+        return new AbstractTreeModel() {
 
             public Object getChild(Object parent, int index) {
                 return new Integer(index);
@@ -70,9 +81,27 @@ public class TreeTest extends AbstractTest {
                 int objectValue = ((Integer) object).intValue();
                 return objectValue == 0;
             }
-        });
-
+        };
+    }
+    
+    private static final FillImage[] TEST_FILL_IMAGES = new FillImage[] { null, 
+        Styles.FILL_IMAGE_SHADOW_BACKGROUND_DARK_BLUE, Styles.FILL_IMAGE_SHADOW_BACKGROUND_LIGHT_BLUE,
+        Styles.FILL_IMAGE_PEWTER_LINE, Styles.FILL_IMAGE_LIGHT_BLUE_LINE,
+        Styles.FILL_IMAGE_SILVER_LINE};
+    
+    private static final ImageReference DEFAULT_FOLDER_ICON = new ResourceImageReference("nextapp/echo/extras/app/resource/image/TreeFolder.gif");
+    private static final ImageReference DEFAULT_LEAF_ICON = new ResourceImageReference("nextapp/echo/extras/app/resource/image/TreeLeaf.gif");
+    
+    final Tree tree;
+    public TreeTest() {
         
+        super("Tree", Styles.ICON_16_TAB_PANE);
+        
+        tree = new Tree(generateSimpleTreeTableModel());
+        add(tree);
+        
+        setTestComponent(this, tree);
+        // Add/Remove Tabs
         
         addBorderPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_BORDER);
         addInsetsPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_INSETS);
@@ -119,23 +148,22 @@ public class TreeTest extends AbstractTest {
             }
         });
         
+        addBooleanPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_HEADER_VISIBLE);
         addBooleanPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_ROOT_VISIBLE);
+        addBooleanPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_SHOWS_ROOT_HANDLE);
         
-        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Expand / Collapse [4][2]", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Object root = tree.getModel().getRoot();
-                final TreePath path = new TreePath(new Object[] {root, tree.getModel().getChild(root, 2)});
-                tree.setExpandedState(path, !tree.isExpanded(path));
-            }
-        });
+// FIXME enable when default tree model is available.        
+//        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Simple tree model", new ActionListener() {
+//            public void actionPerformed(ActionEvent e) {
+//                tree.setModel(generateSimpleTreeModel());
+//                tree.setHeaderVisible(false);
+//            }
+//        });
         
-        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Expand / Collapse [4][2] and [4][3]", new ActionListener() {
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Simple treetable model", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Object root = tree.getModel().getRoot();
-                final TreePath path1 = new TreePath(new Object[] {root, tree.getModel().getChild(root, 2)});
-                final TreePath path2 = new TreePath(new Object[] {root, tree.getModel().getChild(root, 3)});
-                tree.setExpandedState(path1, !tree.isExpanded(path1));
-                tree.setExpandedState(path2, !tree.isExpanded(path2));
+                tree.setModel(generateSimpleTreeTableModel());
+                tree.setHeaderVisible(true);
             }
         });
     }
