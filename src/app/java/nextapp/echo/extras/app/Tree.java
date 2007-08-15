@@ -253,6 +253,7 @@ public class Tree extends Component {
     public static final String PROPERTY_ROLLOVER_ENABLED = "rolloverEnabled";
     public static final String PROPERTY_ROLLOVER_FONT = "rolloverFont";
     public static final String PROPERTY_ROLLOVER_FOREGROUND = "rolloverForeground";
+    public static final String PROPERTY_ROOT_VISIBLE = "rootVisible";
     public static final String PROPERTY_SELECTION_BACKGROUND = "selectionBackground";
     public static final String PROPERTY_SELECTION_BACKGROUND_IMAGE = "selectionBackgroundImage";
     public static final String PROPERTY_SELECTION_ENABLED = "selectionEnabled";
@@ -839,6 +840,16 @@ public class Tree extends Component {
     }
     
     /**
+     * Returns true if the root node of the tree is displayed.
+     *
+     * @return true if the root node of the tree is displayed
+     * @see #setRootVisible(boolean)
+     */
+    public boolean isRootVisible() {
+        return ((Boolean)getProperty(PROPERTY_ROOT_VISIBLE)).booleanValue();
+    }
+    
+    /**
      * Determines if selection is enabled.
      * 
      * @return true if selection is enabled
@@ -1168,6 +1179,18 @@ public class Tree extends Component {
      */
     public void setRolloverForeground(Color newValue) {
         setProperty(PROPERTY_ROLLOVER_FOREGROUND, newValue);
+    }
+    
+    /**
+     * Determines whether or not the root node from the <code>TreeModel</code>
+     * is visible.
+     * 
+     * @param newValue <code>true</code> if the root node of the tree is
+     *                 to be displayed.
+     * @see #isRootVisible()                
+     */
+    public void setRootVisible(boolean newValue) {
+        setProperty(PROPERTY_ROOT_VISIBLE, Boolean.valueOf(newValue));
     }
 
     /**

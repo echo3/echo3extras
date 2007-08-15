@@ -61,6 +61,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype.renderAdd = function(update, par
         this.verticalLineImage = this._getImageUri("lineVertical" + lineImageIdSuffix);
         this.horizontalLineImage = this._getImageUri("lineHorizontal" + lineImageIdSuffix);
     }
+    this._rootVisible = this.component.getRenderProperty("rootVisible", true);
     this._headerVisible = this.component.getProperty("headerVisible");
     this._rolloverEnabled = this.component.getRenderProperty("rolloverEnabled");
     this._selectionEnabled = this.component.getRenderProperty("selectionEnabled");
@@ -110,7 +111,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype.renderSizeUpdate = function() {
     for (var i in this._vpElements) {
         var parentHeight = this._vpElements[i].parentNode.offsetHeight;
         var height = parentHeight;
-        if (this._vpElements[i].style.bottom == "50%") {
+        if (this._vpElements[i].style.bottom == "50%" || this._vpElements[i].style.top == "50%") {
             height /= 2;
         }
         this._vpElements[i].style.height = height + "px";
@@ -217,6 +218,9 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRecursive = function(
     if (visible == null) {
         visible = true;
     }
+    if (!this._rootVisible && node == this._treeStructure.getRootNode()) {
+        visible = false;
+    }
     var trElement = iterator.nextRow(node);
     var tdElement;
     var expandoElement;
@@ -290,11 +294,16 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderExpandoElement = function
         
         if (this._showLines) {
             verticalLineElement.style.position = "absolute";
-            verticalLineElement.style.top = "0";
-            if (this._treeStructure.hasNodeNextSibling(node)) {
+            if (!this._rootVisible && this._treeStructure.getRootNode().indexOf(node) == 0) {
+                verticalLineElement.style.top = "50%";
                 verticalLineElement.style.bottom = "0";
             } else {
-                verticalLineElement.style.bottom = "50%";
+                verticalLineElement.style.top = "0";
+                if (this._treeStructure.hasNodeNextSibling(node)) {
+                    verticalLineElement.style.bottom = "0";
+                } else {
+                    verticalLineElement.style.bottom = "50%";
+                }
             }
             if (EchoWebCore.Environment.BROWSER_INTERNET_EXPLORER && EchoWebCore.Environment.BROWSER_MAJOR_VERSION <= 6) {
                 if (!this._vpElements) {
@@ -495,6 +504,9 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRowStructure = functi
     var border = this._createMultiSidedBorder(this.component.getRenderProperty("border"));
     var insets = this._defaultInsets;
 
+    if (!this._rootVisible) {
+        --depth;
+    }
     var parentNode = this._treeStructure.getNode(node.getParentId());
     for (var c = 0; c < depth - 1; ++c) {
         var rowHeaderElement = document.createElement("td");
@@ -530,7 +542,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRowStructure = functi
         expandoElement = document.createElement("td");
         expandoElement.__ExtrasTreeCellType = "expando";
         // apply border and bottom style
-        this._applyBorder(border, [0,2], expandoElement);
+        this._applyBorder(border, [0, 2], expandoElement);
         expandoElement.style.padding = "0";
         expandoElement.style.width = "19px";
         expandoElement.style.height = "100%";
@@ -587,6 +599,9 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._updateSpans = function(node) {
         return;
     }
     var maxDepth = this._treeStructure.getMaxDepth();
+    if (!this._rootVisible) {
+        --maxDepth;
+    }
     var tbodyElement = this._tbodyElement;
     // iterator object for easy navigating through the tree structure
     var iterator = this._elementIterator(tbodyElement.firstChild);
@@ -622,18 +637,23 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._updateSpans = function(node) {
 
 ExtrasRender.ComponentSync.RemoteTree.prototype._updateSpansRecursive = function(startNode, maxDepth, iterator) {
     var depth = this._treeStructure.getNodeDepth(startNode);
+    if (!this._rootVisible) {
+        --depth;
+    }
     var span = maxDepth - depth + 1;
-    if (startNode == this._treeStructure.getHeaderNode()) {
+    if (startNode == this._treeStructure.getHeaderNode() && this._rootVisible) {
         // the header row has no expando cell, it needs to span one extra column
         ++span;
     }
-    do {
-        var nodeElement = iterator.nextNodeElement();
-    } while (iterator.rowElement.style.display == "none")
-    if (!nodeElement) {
-        return;
+    if (this._rootVisible || startNode != this._treeStructure.getRootNode()) {
+        do {
+            var nodeElement = iterator.nextNodeElement();
+        } while (iterator.rowElement.style.display == "none")
+        if (!nodeElement) {
+            return;
+        }
+        nodeElement.colSpan = span;
     }
-    nodeElement.colSpan = span;
     
     if (!startNode.isExpanded()) {
         return;
@@ -782,6 +802,9 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._getRowIndexForNode = function(n
     var index = this._headerVisible ? -1 : 0;
     while (testElement) {
         if (testElement.id == this.component.renderId + "_tr_" + node.getId()) {
+            if (index != -1 && !this._rootVisible) {
+                ++index;
+            }
             return index;
         }
         testElement = testElement.nextSibling;
@@ -810,6 +833,9 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._getRowIndex = function(element)
     var index = this._headerVisible ? -1 : 0;
     while (testElement) {
         if (testElement == element) {
+            if (index != -1 && !this._rootVisible) {
+                ++index;
+            }
             return index;
         }
         testElement = testElement.nextSibling;
@@ -859,6 +885,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._doExpansion = function(node, e)
     if (node.isExpanded()) {
         node.setExpanded(false);
         // no other peers will be called, so update may be null
+        debugger;
         this._renderNode(null, node);
     } else if (node.getChildNodeCount() > 0) {
 //        debugger;
@@ -929,6 +956,8 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._doSelection = function(node, e)
 };
 
 ExtrasRender.ComponentSync.RemoteTree.prototype._processClick = function(e) {
+    EchoCore.Debug.consoleWrite("process click ENTERED");
+    try {
     if (!this.component.isActive()) {
         return;
     }
@@ -949,6 +978,11 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._processClick = function(e) {
     if (doAction) {
         this.component.fireEvent(new EchoCore.Event(this.component, "action"));
     }
+    } catch (e) {
+        alert("error in process click: \n " + e.message);
+        throw e;
+    }
+    EchoCore.Debug.consoleWrite("process click LEAVING");
     return true;
 };
 

@@ -119,6 +119,8 @@ public class TreeTest extends AbstractTest {
             }
         });
         
+        addBooleanPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_ROOT_VISIBLE);
+        
         testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Expand / Collapse [4][2]", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Object root = tree.getModel().getRoot();
