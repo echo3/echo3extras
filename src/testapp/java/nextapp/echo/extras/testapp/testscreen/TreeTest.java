@@ -84,6 +84,40 @@ public class TreeTest extends AbstractTest {
         };
     }
     
+    private static final TreeModel generateEndlessOneNodeTreeModel() {
+        return new AbstractTreeModel() {
+
+            public Object getChild(Object parent, int index) {
+                return new Integer(((Integer)parent).intValue() + 1);
+            }
+
+            public int getChildCount(Object parent) {
+                return 1;
+            }
+
+            public int getColumnCount() {
+                return 1;
+            }
+
+            public int getIndexOfChild(Object parent, Object child) {
+                return 0;
+            }
+
+            public Object getRoot() {
+                return new Integer(0);
+            }
+
+            public Object getValueAt(Object node, int column) {
+                return node;
+            }
+
+            public boolean isLeaf(Object object) {
+                return false;
+            }
+            
+        };
+    }
+    
     private static final FillImage[] TEST_FILL_IMAGES = new FillImage[] { null, 
         Styles.FILL_IMAGE_SHADOW_BACKGROUND_DARK_BLUE, Styles.FILL_IMAGE_SHADOW_BACKGROUND_LIGHT_BLUE,
         Styles.FILL_IMAGE_PEWTER_LINE, Styles.FILL_IMAGE_LIGHT_BLUE_LINE,
@@ -164,6 +198,13 @@ public class TreeTest extends AbstractTest {
             public void actionPerformed(ActionEvent e) {
                 tree.setModel(generateSimpleTreeTableModel());
                 tree.setHeaderVisible(true);
+            }
+        });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Tree model (always one child)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tree.setModel(generateEndlessOneNodeTreeModel());
+                tree.setHeaderVisible(false);
             }
         });
     }

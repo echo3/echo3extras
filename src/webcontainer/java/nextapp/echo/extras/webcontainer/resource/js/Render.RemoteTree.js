@@ -283,41 +283,48 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderExpandoElement = function
     var expandoText = "\u00a0";
     expandoElement.style.height = "100%"; // IE hacking
     var wrapperElement = document.createElement("div");
-    var verticalLineElement;
     if (node.getParentId()) { // don't show tree lines for the root
         wrapperElement.style.position = "relative";
         wrapperElement.style.height = "100%";
         wrapperElement.style.width = "100%";
         this._applyInsets(this._defaultInsets, [0,2], wrapperElement);
 
-        var horizontalLineElement = document.createElement("div");
-        verticalLineElement = document.createElement("div");
         
         if (this._showLines) {
-            verticalLineElement.style.position = "absolute";
-            if (!this._rootVisible && this._treeStructure.getRootNode().indexOf(node) == 0) {
-                verticalLineElement.style.top = "50%";
-                verticalLineElement.style.bottom = "0";
-            } else {
-                verticalLineElement.style.top = "0";
-                if (this._treeStructure.hasNodeNextSibling(node)) {
+            var horizontalLineElement = document.createElement("div");
+            var showVerticalLine = this._rootVisible || !this._treeStructure.getRootNode().indexOf(node) == 0 || this._treeStructure.hasNodeNextSibling(node);
+            var verticalLineElement;
+            if (showVerticalLine) {
+                verticalLineElement = document.createElement("div");
+                verticalLineElement.style.position = "absolute";
+                if (!this._rootVisible && this._treeStructure.getRootNode().indexOf(node) == 0) {
+                    verticalLineElement.style.top = "50%";
                     verticalLineElement.style.bottom = "0";
                 } else {
-                    verticalLineElement.style.bottom = "50%";
+                    verticalLineElement.style.top = "0";
+                    if (this._treeStructure.hasNodeNextSibling(node)) {
+                        verticalLineElement.style.bottom = "0";
+                    } else {
+                        verticalLineElement.style.bottom = "50%";
+                    }
                 }
+                verticalLineElement.style.width = "100%";
+                var verticalLineFillImage = new EchoApp.Property.FillImage(this.verticalLineImage, EchoApp.Property.FillImage.REPEAT_VERTICAL, "50%", 0);
+                EchoRender.Property.FillImage.render(verticalLineFillImage, verticalLineElement);
+                verticalLineElement.appendChild(document.createTextNode(expandoText));
+                wrapperElement.appendChild(verticalLineElement);
             }
             if (EchoWebCore.Environment.BROWSER_INTERNET_EXPLORER && EchoWebCore.Environment.BROWSER_MAJOR_VERSION <= 6) {
                 if (!this._vpElements) {
                     this._vpElements = new Array();
                 }
-                this._vpElements.push(verticalLineElement);
-                verticalLineElement.style.fontSize = "1px";
+                if (showVerticalLine) {
+                    this._vpElements.push(verticalLineElement);
+                    verticalLineElement.style.fontSize = "1px";
+                }
                 this._vpElements.push(horizontalLineElement);
                 horizontalLineElement.style.fontSize = "1px";
             }
-            verticalLineElement.style.width = "100%";
-            var verticalLineFillImage = new EchoApp.Property.FillImage(this.verticalLineImage, EchoApp.Property.FillImage.REPEAT_VERTICAL, "50%", 0);
-            EchoRender.Property.FillImage.render(verticalLineFillImage, verticalLineElement);
                     
             horizontalLineElement.style.position = "absolute";
             horizontalLineElement.style.top = "0";
@@ -326,11 +333,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderExpandoElement = function
             horizontalLineElement.style.width = "50%";
             var horizontalLineFillImage = new EchoApp.Property.FillImage(this.horizontalLineImage, EchoApp.Property.FillImage.REPEAT_HORIZONTAL, "50%", "50%");
             EchoRender.Property.FillImage.render(horizontalLineFillImage, horizontalLineElement);
-            
-            verticalLineElement.appendChild(document.createTextNode(expandoText));
             horizontalLineElement.appendChild(document.createTextNode(expandoText));
-    
-            wrapperElement.appendChild(verticalLineElement);
             wrapperElement.appendChild(horizontalLineElement);
         }
     }
