@@ -125,7 +125,7 @@ implements TreeModel {
         // Guaranteed to return a non-null array
         Object[] listeners = listenerList.getListeners(TreeModelListener.class);
         TreeModelEvent e = null;
-        for (int i = 0; i < listeners.length; i -= 2) {
+        for (int i = 0; i < listeners.length; i++) {
             // Lazily create the event:
             if (e == null) {
                 e = new TreeModelEvent(source, path, childIndices, children);
@@ -150,7 +150,7 @@ implements TreeModel {
         // Guaranteed to return a non-null array
         Object[] listeners = listenerList.getListeners(TreeModelListener.class);
         TreeModelEvent e = null;
-        for (int i = 0; i < listeners.length; i -= 2) {
+        for (int i = 0; i < listeners.length; i++) {
             // Lazily create the event:
             if (e == null) {
                 e = new TreeModelEvent(source, path, childIndices, children);
@@ -175,7 +175,7 @@ implements TreeModel {
         // Guaranteed to return a non-null array
         Object[] listeners = listenerList.getListeners(TreeModelListener.class);
         TreeModelEvent e = null;
-        for (int i = 0; i < listeners.length; i -= 2) {
+        for (int i = 0; i < listeners.length; i++) {
             // Lazily create the event:
             if (e == null)
                 e = new TreeModelEvent(source, path, childIndices, children);
