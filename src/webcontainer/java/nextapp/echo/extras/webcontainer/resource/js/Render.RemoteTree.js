@@ -806,6 +806,9 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._getRowIndexForNode = function(n
     var index = this._headerVisible ? -1 : 0;
     while (testElement) {
         if (testElement.id == this.component.renderId + "_tr_" + node.getId()) {
+            if (index != -1 && !this._rootVisible && this._headerVisible) {
+                ++index;
+            }
             return index;
         }
         testElement = testElement.nextSibling;
@@ -834,6 +837,9 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._getRowIndex = function(element)
     var index = this._headerVisible ? -1 : 0;
     while (testElement) {
         if (testElement == element) {
+            if (index != -1 && !this._rootVisible && this._headerVisible) {
+                ++index;
+            }
             return index;
         }
         testElement = testElement.nextSibling;
