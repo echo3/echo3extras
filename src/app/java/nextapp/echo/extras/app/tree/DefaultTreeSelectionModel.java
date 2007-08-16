@@ -60,7 +60,7 @@ public class DefaultTreeSelectionModel implements TreeSelectionModel {
     }
 
     /**
-     * @see nextapp.echo.extras.app.tree.TreeSelectionModel#addSelectionPath(javax.swing.tree.TreePath)
+     * @see nextapp.echo.extras.app.tree.TreeSelectionModel#addSelectionPath(nextapp.echo.extras.app.tree.TreePath)
      */
     public void addSelectionPath(TreePath path) {
         if (path == null) {
@@ -72,7 +72,7 @@ public class DefaultTreeSelectionModel implements TreeSelectionModel {
     }
 
     /**
-     * @see nextapp.echo.extras.app.tree.TreeSelectionModel#addSelectionPaths(javax.swing.tree.TreePath[])
+     * @see nextapp.echo.extras.app.tree.TreeSelectionModel#addSelectionPaths(nextapp.echo.extras.app.tree.TreePath[])
      */
     public void addSelectionPaths(TreePath[] paths) {
         if (paths == null) {
@@ -130,7 +130,7 @@ public class DefaultTreeSelectionModel implements TreeSelectionModel {
     }
 
     /**
-     * @see nextapp.echo.extras.app.tree.TreeSelectionModel#isPathSelected(javax.swing.tree.TreePath)
+     * @see nextapp.echo.extras.app.tree.TreeSelectionModel#isPathSelected(nextapp.echo.extras.app.tree.TreePath)
      */
     public boolean isPathSelected(TreePath path) {
         return paths.contains(path);
@@ -158,7 +158,7 @@ public class DefaultTreeSelectionModel implements TreeSelectionModel {
     }
 
     /**
-     * @see nextapp.echo.extras.app.tree.TreeSelectionModel#removeSelectionPath(javax.swing.tree.TreePath)
+     * @see nextapp.echo.extras.app.tree.TreeSelectionModel#removeSelectionPath(nextapp.echo.extras.app.tree.TreePath)
      */
     public void removeSelectionPath(TreePath path) {
         if (paths.remove(path)) {
@@ -167,7 +167,7 @@ public class DefaultTreeSelectionModel implements TreeSelectionModel {
     }
 
     /**
-     * @see nextapp.echo.extras.app.tree.TreeSelectionModel#removeSelectionPaths(javax.swing.tree.TreePath[])
+     * @see nextapp.echo.extras.app.tree.TreeSelectionModel#removeSelectionPaths(nextapp.echo.extras.app.tree.TreePath[])
      */
     public void removeSelectionPaths(TreePath[] paths) {
         if (this.paths.removeAll(Arrays.asList(paths))) {
@@ -207,7 +207,7 @@ public class DefaultTreeSelectionModel implements TreeSelectionModel {
     }
 
     /**
-     * @see nextapp.echo.extras.app.tree.TreeSelectionModel#setSelectionPath(javax.swing.tree.TreePath)
+     * @see nextapp.echo.extras.app.tree.TreeSelectionModel#setSelectionPath(nextapp.echo.extras.app.tree.TreePath)
      */
     public void setSelectionPath(TreePath path) {
         boolean wasEmpty = isSelectionEmpty();
@@ -219,7 +219,7 @@ public class DefaultTreeSelectionModel implements TreeSelectionModel {
     }
 
     /**
-     * @see nextapp.echo.extras.app.tree.TreeSelectionModel#setSelectionPaths(javax.swing.tree.TreePath[])
+     * @see nextapp.echo.extras.app.tree.TreeSelectionModel#setSelectionPaths(nextapp.echo.extras.app.tree.TreePath[])
      */
     public void setSelectionPaths(TreePath[] paths) {
         boolean wasEmpty = isSelectionEmpty();

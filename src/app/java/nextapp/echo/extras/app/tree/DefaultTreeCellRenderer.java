@@ -54,7 +54,7 @@ implements TreeCellRenderer {
     }
     
     /**
-     * @see nextapp.echo.extras.app.tree.TreeCellRenderer#getTreeCellRendererComponent(nextapp.echo.extras.app.Tree, nextapp.echo.extras.app.tree.TreePath, java.lang.Object, int, int, boolean, boolean)
+     * @see nextapp.echo.extras.app.tree.TreeCellRenderer#getTreeCellRendererComponent(nextapp.echo.extras.app.Tree, nextapp.echo.extras.app.tree.TreePath, java.lang.Object, int, int, boolean)
      */
     public Component getTreeCellRendererComponent(Tree tree, TreePath treePath, Object value, int column, int row, boolean leaf) {
         ImageReference icon = null;

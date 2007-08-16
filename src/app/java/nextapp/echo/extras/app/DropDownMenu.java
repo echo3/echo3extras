@@ -589,7 +589,7 @@ public class DropDownMenu extends AbstractMenuComponent {
     /**
      * Sets the selection model to use.
      * 
-     * @param selectionModel the new selection model
+     * @param newValue the new selection model
      */
     public void setSelectionModel(MenuSelectionModel newValue) {
         MenuSelectionModel oldValue = selectionModel;

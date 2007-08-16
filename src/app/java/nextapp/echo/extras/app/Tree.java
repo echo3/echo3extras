@@ -517,7 +517,7 @@ public class Tree extends Component {
      * contained in the tree. The value of this property may be null, in which
      * case the tree should revert to using its default cell renderer.
      * 
-     * @param newValue the new cell renderer
+     * @return the cell renderer
      */
     public TreeCellRenderer getCellRenderer() {
         return cellRenderer;
@@ -1066,7 +1066,7 @@ public class Tree extends Component {
     /**
      * Retrieves the icon that is rendered for opened nodes. The default icon is a - sign.
      * 
-     * @param newValue the icon
+     * @return the icon
      */
     public ImageReference getNodeOpenIcon() {
         return (ImageReference) getProperty(PROPERTY_NODE_OPEN_ICON);
