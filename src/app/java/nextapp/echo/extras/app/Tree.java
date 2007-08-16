@@ -103,7 +103,10 @@ public class Tree extends Component {
                     Class columnClass = model.getColumnClass(treeColumns[columnIndex].getModelIndex());
                     renderer = getDefaultRenderer(columnClass);
                     if (renderer == null) {
-                        renderer = DEFAULT_TREE_CELL_RENDERER;
+                        renderer = getCellRenderer();
+                        if (renderer == null) {
+                            renderer = DEFAULT_TREE_CELL_RENDERER;
+                        }
                     }
                 }
                 columnRenderers[columnIndex] = renderer;

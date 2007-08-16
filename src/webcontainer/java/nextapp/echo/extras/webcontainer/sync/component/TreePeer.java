@@ -341,7 +341,9 @@ extends AbstractComponentSynchronizePeer {
             TreePath path = paths[i];
             Component component = tree.getComponent(path, 0);
             if (component == null) {
-                renderState.addUnsentSelection(path);
+                if (renderState != null) {
+                    renderState.addUnsentSelection(path);
+                }
             } else {
                 String id = userInstance.getClientRenderId(component);
                 if (renderState != null) {

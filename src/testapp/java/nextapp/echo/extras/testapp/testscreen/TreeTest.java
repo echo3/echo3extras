@@ -208,5 +208,11 @@ public class TreeTest extends AbstractTest {
                 tree.setHeaderVisible(false);
             }
         });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_INTEGRATION, "toggle visibility", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tree.setVisible(!tree.isVisible());
+            }
+        });
     }
 }

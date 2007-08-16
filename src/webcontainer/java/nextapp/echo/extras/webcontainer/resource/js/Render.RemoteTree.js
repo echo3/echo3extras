@@ -125,11 +125,15 @@ ExtrasRender.ComponentSync.RemoteTree.prototype.renderSizeUpdate = function() {
  * 
  * @param startRow the row element to start with, 
  *          this element will be returned on the first call to nextRow().
+ *          If null, the iteration will start at the first row.
  * @param endRow the row that ends the iteration. When endRow is encountered 
  *          while iterating the iterator will return null, and will not advance to the next row.
  */
 ExtrasRender.ComponentSync.RemoteTree.prototype._elementIterator = function(startRow, endRow) {
     var component = this.component;
+    if (!startRow && this._tbodyElement.firstChild) {
+        startRow = this._tbodyElement.firstChild;
+    }
     return {
         startRow : startRow,
         rowElement : null,
@@ -819,7 +823,21 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._getNodeFromElement = function(e
  * @type HTMLTableRowElement  
  */
 ExtrasRender.ComponentSync.RemoteTree.prototype._getRowElementForNode = function(node) {
-    return document.getElementById(this.component.renderId + "_tr_" + node.getId());
+    var testId = this.component.renderId + "_tr_" + node.getId();
+    var rowElement = document.getElementById(testId);
+    if (rowElement) {
+        return rowElement;
+    }
+    // the table element is not yet added to the dom structure, iterate over the rows.
+    var iterator = this._elementIterator();
+    rowElement = iterator.nextRow();
+    while (rowElement) {
+        if (rowElement.id == testId) {
+            return rowElement;
+        }
+        rowElement = iterator.nextRow();
+    }
+    return null;
 };
 
 /**
