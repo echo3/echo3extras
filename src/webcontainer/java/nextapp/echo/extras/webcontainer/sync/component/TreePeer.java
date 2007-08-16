@@ -344,7 +344,9 @@ extends AbstractComponentSynchronizePeer {
                 renderState.addUnsentSelection(path);
             } else {
                 String id = userInstance.getClientRenderId(component);
-                renderState.removeUnsentSelection(path);
+                if (renderState != null) {
+                    renderState.removeUnsentSelection(path);
+                }
                 if (selection.length() > 0) {
                     selection.append(",");
                 }

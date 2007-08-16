@@ -137,6 +137,7 @@ public class TreeTest extends AbstractTest {
         setTestComponent(this, tree);
         // Add/Remove Tabs
         
+        addFontPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_FONT);
         addBorderPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_BORDER);
         addInsetsPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_INSETS);
         

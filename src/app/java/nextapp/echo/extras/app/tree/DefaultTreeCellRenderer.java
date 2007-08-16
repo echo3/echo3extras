@@ -38,7 +38,10 @@ import nextapp.echo.extras.app.Tree;
 /**
  * Default <code>TreeCellRenderer</code> implementation.
  */
-//FIXME reconsider the icon setters.
+//FIXME reconsider the icon setters. 
+//FIXME maybe set the icon in a LayoutData or something, 
+//          text-decoration property doesn't inherit through html table elements (label with icon is rendered as a table).
+//          and maybe we do not want de background of the icon change on rollover / selection
 public class DefaultTreeCellRenderer 
 implements TreeCellRenderer {
     

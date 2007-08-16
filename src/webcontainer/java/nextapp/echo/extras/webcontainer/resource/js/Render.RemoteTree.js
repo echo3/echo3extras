@@ -251,6 +251,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRecursive = function(
                 trElement.appendChild(columnElement);
             }
         }
+        this._setDefaultRowStyle(trElement);
     } else {
         trElement.style.display = ""; // unhide
         tdElement = iterator.currentNodeElement();
@@ -283,6 +284,12 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderExpandoElement = function
     var expandoText = "\u00a0";
     expandoElement.style.height = "100%"; // IE hacking
     var wrapperElement = document.createElement("div");
+    // compute the height for the wrapper element, otherwise it will scale down to the 
+    // size of the image.
+    if (!this._vpElements) {
+        this._vpElements = new Array();
+    }
+    this._vpElements.push(wrapperElement);
     if (node.getParentId()) { // don't show tree lines for the root
         wrapperElement.style.position = "relative";
         wrapperElement.style.height = "100%";
@@ -671,6 +678,22 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._updateSpansRecursive = function
 };
 
 /**
+ * Applies the default style for rowElement. This method renders the following css properties:
+ * <ul>
+ *  <li>foreground</li>
+ *  <li>background</li>
+ *  <li>backgroundImage</li>
+ *  <li>font</li>
+ * </ul>
+ * 
+ * @param {HTMLTableRowElement} rowElement the row element to apply the style on
+ */
+ExtrasRender.ComponentSync.RemoteTree.prototype._setDefaultRowStyle = function(rowElement) {
+    // HACKHACK
+    this._setRowStyle(rowElement, "rollover", false);
+};
+
+/**
  * Sets the style for rowElement. This method renders the following css properties:
  * <ul>
  *  <li>foreground</li>
@@ -692,11 +715,18 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._setRowStyle = function(rowEleme
     var font = EchoRender.Property.getEffectProperty(this.component, "font", prefix + "Font", state);
     
     var cellElement = rowElement.firstChild;
+    var visitedNodeCell = false;
     while (cellElement) {
         EchoRender.Property.Color.renderClear(foreground, cellElement, "color");
         EchoRender.Property.Color.renderClear(background, cellElement, "backgroundColor");
         EchoRender.Property.FillImage.renderClear(backgroundImage, cellElement, "backgroundColor");
         EchoRender.Property.Font.renderClear(font, cellElement);
+        
+        // prevent text decoration for spacing cells, otherwise the nbsp will show up
+        visitedNodeCell = cellElement.__ExtrasTreeCellType == "node";
+        if (!visitedNodeCell) {
+            cellElement.style.textDecoration = "none";
+        }
         
         cellElement = cellElement.nextSibling;
     }
