@@ -76,6 +76,13 @@ ExtrasRender.ComponentSync.RemoteTree.prototype.renderAdd = function(update, par
     }
     this._defaultCellPadding = EchoRender.Property.Insets.toCssValue(this._defaultInsets);
     
+    /**
+     * Array holding elements of which the size should be computed.
+     * We do not use the VPS here since that is both unsufficient and overkill
+     * for this computation. 
+     */
+    this._vpElements = new Array();
+    
     var tableElement = document.createElement("table");
     this._element = tableElement;
     this._element.id = this.component.renderId;
@@ -117,7 +124,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype.renderSizeUpdate = function() {
         }
         this._vpElements[i].style.height = height + "px";
     }
-    delete this._vpElements;
+    this._vpElements = new Array();
 };
 
 /**
@@ -283,23 +290,22 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRecursive = function(
 };
 
 ExtrasRender.ComponentSync.RemoteTree.prototype._renderExpandoElement = function(node, expandoElement) {
+    var oldWrapper = expandoElement.firstChild;
+    EchoCore.Arrays.remove(this._vpElements, oldWrapper);
     EchoWebCore.DOM.removeAllChildren(expandoElement);
         
     var expandoText = "\u00a0";
     expandoElement.style.height = "100%"; // IE hacking
     var wrapperElement = document.createElement("div");
+    wrapperElement.id = node.getId() + "_expandoWrapper";
     // compute the height for the wrapper element, otherwise it will scale down to the 
     // size of the image.
-    if (!this._vpElements) {
-        this._vpElements = new Array();
-    }
     this._vpElements.push(wrapperElement);
     if (node.getParentId()) { // don't show tree lines for the root
         wrapperElement.style.position = "relative";
         wrapperElement.style.height = "100%";
         wrapperElement.style.width = "100%";
-        this._applyInsets(this._defaultInsets, [0,2], wrapperElement);
-
+        this._applyInsets(this._defaultInsets, [0, 2], wrapperElement);
         
         if (this._showLines) {
             var horizontalLineElement = document.createElement("div");
@@ -326,9 +332,6 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderExpandoElement = function
                 wrapperElement.appendChild(verticalLineElement);
             }
             if (EchoWebCore.Environment.BROWSER_INTERNET_EXPLORER && EchoWebCore.Environment.BROWSER_MAJOR_VERSION <= 6) {
-                if (!this._vpElements) {
-                    this._vpElements = new Array();
-                }
                 if (showVerticalLine) {
                     this._vpElements.push(verticalLineElement);
                     verticalLineElement.style.fontSize = "1px";
@@ -721,13 +724,16 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._setRowStyle = function(rowEleme
     var cellElement = rowElement.firstChild;
     var visitedNodeCell = false;
     while (cellElement) {
-        EchoRender.Property.Color.renderClear(foreground, cellElement, "color");
-        EchoRender.Property.Color.renderClear(background, cellElement, "backgroundColor");
-        EchoRender.Property.FillImage.renderClear(backgroundImage, cellElement, "backgroundColor");
+        visitedNodeCell |= cellElement.__ExtrasTreeCellType == "node";
+        if (visitedNodeCell) {
+            EchoRender.Property.Color.renderClear(foreground, cellElement, "color");
+            EchoRender.Property.Color.renderClear(background, cellElement, "backgroundColor");
+            EchoRender.Property.FillImage.renderClear(backgroundImage, cellElement, "backgroundColor");
+        }
+        EchoRender.Property.Font.renderClear(null, cellElement);
         EchoRender.Property.Font.renderClear(font, cellElement);
         
         // prevent text decoration for spacing cells, otherwise the nbsp will show up
-        visitedNodeCell = cellElement.__ExtrasTreeCellType == "node";
         if (!visitedNodeCell) {
             cellElement.style.textDecoration = "none";
         }
@@ -1062,6 +1068,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype.renderDispose = function(update)
         this._removeRowListeners(trElement);
         trElement = trElement.nextSibling;
     }
+    this._vpElements = null;
     this._prevMaxDepth = null;
     this._treeStructure = null;
     this._tbodyElement = null;
