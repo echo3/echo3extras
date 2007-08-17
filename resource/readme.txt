@@ -6,8 +6,7 @@ http://www.nextapp.com/products/echo3/extras
 
 ----------------------------------------------------------------------
 Echo Extras is licensed under the Mozilla Public License.
-Please see the "licensing.txt" file in the /Licensing folder for more
-information.
+Please see the files in the /Licensing folder for more information.
 
 ----------------------------------------------------------------------
 This archive/package contains the following directory structure:
