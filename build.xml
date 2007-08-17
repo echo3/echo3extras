@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 
 <!--
- * This file is part of the Echo Web Application Framework (hereinafter "Echo").
- * Copyright (C) 2002-2004 NextApp, Inc.
+ * This file is part of the Echo Extras Project.
+ * Copyright (C) 2005-2007 NextApp, Inc.
  *
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -60,7 +60,7 @@
         <delete dir="${dir.release}"/>
     </target>
     
-    <target name="compile.app" description="Compile File Transfer Library">
+    <target name="compile.app" description="Compile Application source files">
         <mkdir dir="${dir.build.app}"/>
         <javac srcdir="${dir.src.app}" destdir="${dir.build.app}" debug="${debug}" deprecation="yes">
         	<classpath>
@@ -79,8 +79,7 @@
         <jar jarfile="${dir.dist.lib}/${jarfile.extras.app}" basedir="${dir.build.app}"/>
     </target>
             
-    <target name="compile.webcontainer" depends="compile.app" 
-            description="Compile Echo Web Application Container">
+    <target name="compile.webcontainer" depends="compile.app" description="Compile Web Container source files">
         <mkdir dir="${dir.build.webcontainer}"/>
         <javac srcdir="${dir.src.webcontainer}" destdir="${dir.build.webcontainer}" debug="${debug}" deprecation="yes">
             <classpath>
@@ -140,7 +139,7 @@
     </target>
 	
 	<target name="doc.app"
-            description="Create public/protected JavaDoc Document for Echo3Extras Library">
+            description="Create public/protected JavaDoc documentation for Application">
         <mkdir dir="${dir.javadoc.app.public}"/>
         <javadoc sourcepath="${dir.src.app}" packagenames="nextapp.echo.extras.app.*" 
                 stylesheetfile="${javadoc.cssfile}"
@@ -156,7 +155,7 @@
     </target>
     
     <target name="doc.app.private"
-            description="Create private JavaDoc Document for Echo3Extras Library">
+            description="Create private JavaDoc documentation for Application">
         <mkdir dir="${dir.javadoc.app.private}"/>
         <javadoc sourcepath="${dir.src.app}" packagenames="nextapp.echo.extras.app.*" 
                 stylesheetfile="${javadoc.cssfile}"
@@ -173,7 +172,7 @@
     </target>
    
     <target name="doc.webcontainer"
-            description="Create public/protected JavaDoc Document for Echo File Transfer Web Container">
+            description="Create public/protected JavaDoc documentation for Web Container">
         <mkdir dir="${dir.javadoc.webcontainer.public}"/>
         <javadoc sourcepath="${dir.src.app};${dir.src.webcontainer}" packagenames="nextapp.echo.extras.webcontainer.*" 
                 stylesheetfile="${javadoc.cssfile}"
@@ -191,7 +190,7 @@
     </target>
     
     <target name="doc.webcontainer.private"
-            description="Create private JavaDoc Document for Echo Web Application Container">
+            description="Create private JavaDoc documentation for Web Container">
         <mkdir dir="${dir.javadoc.webcontainer.private}"/>
         <javadoc sourcepath="${dir.src.app};${dir.src.webcontainer}" packagenames="nextapp.echo.extras.webcontainer.*" 
                 stylesheetfile="${javadoc.cssfile}"
