@@ -128,7 +128,7 @@ public class InteractiveApp extends ApplicationInstance {
     public Window init() {
         setStyleSheet(Styles.DEFAULT_STYLE_SHEET);
         mainWindow = new Window();
-        mainWindow.setTitle("NextApp Echo3 Test Application");
+        mainWindow.setTitle("NextApp Echo3 Extras Test Application");
         mainWindow.setContent(new WelcomePane());
         
         return mainWindow;
