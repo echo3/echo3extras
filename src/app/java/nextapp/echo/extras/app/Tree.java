@@ -192,8 +192,8 @@ public class Tree extends Component {
         void update(TreePath path, boolean newState) {
             init();
             row = getRowForPath(path);
-            if (row == -1 && path.getLastPathComponent().equals(model.getRoot())) {
-                row = 0;
+            if (row == -1) {
+                row = rowToTreePathCache.size();
             }
             if (newState) {
                 doRenderNode(path);
@@ -1076,8 +1076,6 @@ public class Tree extends Component {
      * Marks the tree as needing to be re-rendered.
      */
     private void invalidate() {
-        // FIXME remove when issue #45 is solved.
-        firePropertyChange("valid", null, null);
         valid = false;
     }
     

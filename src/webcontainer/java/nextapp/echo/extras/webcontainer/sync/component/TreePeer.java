@@ -454,9 +454,7 @@ extends AbstractComponentSynchronizePeer {
         Iterator normalPropertyIterator = super.getUpdatedOutputPropertyNames(context, component, update);
         HashSet extraProperties = new HashSet();
         
-        // FIXME change when issue #45 is solved.
-        if (update.hasUpdatedProperty("valid")) {
-            System.out.println("remove render state");
+        if (update.hasRemovedChildren()) {
             userInstance.removeRenderState(component);
             extraProperties.add(PROPERTY_TREE_STRUCTURE);
             extraProperties.add(Tree.SELECTION_CHANGED_PROPERTY);
