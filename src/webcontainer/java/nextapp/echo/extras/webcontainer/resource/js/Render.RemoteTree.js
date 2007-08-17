@@ -297,7 +297,6 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderExpandoElement = function
     var expandoText = "\u00a0";
     expandoElement.style.height = "100%"; // IE hacking
     var wrapperElement = document.createElement("div");
-    wrapperElement.id = node.getId() + "_expandoWrapper";
     // compute the height for the wrapper element, otherwise it will scale down to the 
     // size of the image.
     this._vpElements.push(wrapperElement);
