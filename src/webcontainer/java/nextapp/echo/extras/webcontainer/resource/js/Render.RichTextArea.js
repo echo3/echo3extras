@@ -2,11 +2,24 @@
  * Component rendering peer: RichTextArea
  */
 ExtrasRender.ComponentSync.RichTextArea = function() {
+    
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype = EchoCore.derive(EchoRender.ComponentSync);
 
+ExtrasRender.ComponentSync.RichTextArea.DEFAULT_TOOLBAR_BUTTON_CSS 
+        = "border:1px outset #abcdef; padding: 1px 5px; background-color: #abcdef; color: #000000;";
+
+ExtrasRender.ComponentSync.RichTextArea.prototype.addToolbarItem = function(toolbarItem) {
+    var divElement = document.createElement("div");
+    divElement.appendChild(document.createTextNode(toolbarItem.content));
+    divElement.style.cssText = "float: left;" + this._baseCssText + (toolbarItem.cssText ? toolbarItem.cssText : "");
+    this._toolbarContainerDivElement.appendChild(divElement);
+};
+
 ExtrasRender.ComponentSync.RichTextArea.prototype.renderAdd = function(update, parentElement) {
+    this._baseCssText = ExtrasRender.ComponentSync.RichTextArea.DEFAULT_TOOLBAR_BUTTON_CSS;
+
     this._mainElement = document.createElement("div");
     
     // Create tool bar.
@@ -14,8 +27,16 @@ ExtrasRender.ComponentSync.RichTextArea.prototype.renderAdd = function(update, p
     this._mainElement.appendChild(this._toolbarContainerDivElement);
 
     // Create tool bar buttons.
-    this._createToolbarTextButton("bold");
-
+    var boldItem = new ExtrasRender.ComponentSync.RichTextArea.ToolbarItem("bold", "B", "font-weight: bold;");
+    this.addToolbarItem(boldItem);
+    var italicItem = new ExtrasRender.ComponentSync.RichTextArea.ToolbarItem("italic", "I", "font-style: italic;");
+    this.addToolbarItem(italicItem);
+    var underlineItem = new ExtrasRender.ComponentSync.RichTextArea.ToolbarItem("underline", "U", "text-decoration: underline;");
+    this.addToolbarItem(underlineItem);
+    var strikethroughItem = new ExtrasRender.ComponentSync.RichTextArea.ToolbarItem("strikethrough", "S", 
+            "text-decoration: line-through;");
+    this.addToolbarItem(strikethroughItem);
+    
     // Create IFRAME container DIV element.
     var iframeContainerElement = document.createElement("div");
     iframeContainerElement.style.border = "1px inset";
@@ -23,6 +44,8 @@ ExtrasRender.ComponentSync.RichTextArea.prototype.renderAdd = function(update, p
     
     // Create IFRAME element.
     this._iframeElement = document.createElement("iframe");
+    this._iframeElement.style.backgroundColor = "white";
+    this._iframeElement.style.color = "black";
     this._iframeElement.style.width = this.width ? this.width : "100%";
     this._iframeElement.style.height = this.height ? this.height: "200px";
     this._iframeElement.style.border = "0px none";
@@ -51,10 +74,8 @@ ExtrasRender.ComponentSync.RichTextArea.prototype.renderSizeUpdate = function() 
     }
 };
 
-ExtrasRender.ComponentSync.RichTextArea.prototype._createToolbarTextButton = function(label) {
-    var spanElement = document.createElement("span");
-    spanElement.appendChild(document.createTextNode(label));
-    this._toolbarContainerDivElement.appendChild(spanElement);
+ExtrasRender.ComponentSync.RichTextArea.prototype._addToolbarItem = function(toolbarItem) {
+    this._toolbarContainerDivElement.appendChild(toolbarItem.divElement);
 };
     
 ExtrasRender.ComponentSync.RichTextArea.prototype.renderDispose = function(update) {
@@ -68,6 +89,12 @@ ExtrasRender.ComponentSync.RichTextArea.prototype.renderUpdate = function(update
     containerElement.removeChild(mainElement);
     this.renderAdd(update, containerElement);
     return false;
+};
+
+ExtrasRender.ComponentSync.RichTextArea.ToolbarItem = function(id, content, cssText) {
+    this.id = id;
+    this.content = content;
+    this.cssText = cssText;
 };
 
 EchoRender.registerPeer("ExtrasApp.RichTextArea", ExtrasRender.ComponentSync.RichTextArea);
