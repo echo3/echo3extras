@@ -40,7 +40,7 @@ import nextapp.echo.extras.testapp.TestControlPane;
 public class RichTextAreaTest extends AbstractTest {
 
     public RichTextAreaTest() {
-        super("RichTextArea", Styles.ICON_16_BORDER_PANE);
+        super("RichTextArea", Styles.ICON_16_RICH_TEXT_AREA);
         final RichTextArea richTextArea = new RichTextArea();
         richTextArea.setStyleName("Shadow");
         add(richTextArea);

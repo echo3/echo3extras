@@ -61,16 +61,25 @@ public class Styles {
             = new ResourceImageReference(IMAGE_PATH + "CalendarSelectIcon16.gif"); 
     public static final ImageReference ICON_16_COLOR_SELECT
             = new ResourceImageReference(IMAGE_PATH + "ColorSelectIcon16.gif"); 
+    public static final ImageReference ICON_16_CONTEXT_MENU
+            = new ResourceImageReference(IMAGE_PATH + "ContextMenuIcon16.gif"); 
     public static final ImageReference ICON_16_DRAG_SOURCE
             = new ResourceImageReference(IMAGE_PATH + "DragSourceIcon16.gif"); 
-    public static final ImageReference ICON_16_GROUP
-    = new ResourceImageReference(IMAGE_PATH + "GroupIcon16.gif"); 
+    public static final ImageReference ICON_16_DROP_DOWN_MENU
+            = new ResourceImageReference(IMAGE_PATH + "DropDownMenuIcon16.gif"); 
+    public static final ImageReference ICON_16_GROUP 
+            = new ResourceImageReference(IMAGE_PATH + "GroupIcon16.gif"); 
     public static final ImageReference ICON_16_MENU_BAR_PANE 
             = new ResourceImageReference(IMAGE_PATH + "MenuBarPaneIcon16.gif"); 
+    public static final ImageReference ICON_16_RICH_TEXT_AREA 
+            = new ResourceImageReference(IMAGE_PATH + "RichTextAreaIcon16.gif"); 
     public static final ImageReference ICON_16_TAB_PANE 
             = new ResourceImageReference(IMAGE_PATH + "TabPaneIcon16.gif"); 
+    public static final ImageReference ICON_16_TREE
+            = new ResourceImageReference(IMAGE_PATH + "TreeIcon16.gif"); 
     public static final ImageReference ICON_16_TRANSITION_PANE 
-            = new ResourceImageReference(IMAGE_PATH + "TransitionPaneIcon16.gif"); 
+            = new ResourceImageReference(IMAGE_PATH + "TransitionPaneIcon16.gif");
+    
     public static final ImageReference DROPDOWN_TOGGLE_IMAGE
     		= new ResourceImageReference(IMAGE_PATH + "DropDownToggle.png");
 

@@ -72,7 +72,7 @@ public class DropDownMenuTest extends AbstractTest {
     private static final Extent[] EXPAND_ICON_WIDTH_VALUES = new Extent[]{null, new Extent(11), new Extent(16), new Extent(32)};
 
     public DropDownMenuTest() {
-        super("DropDownMenu", Styles.ICON_16_MENU_BAR_PANE);
+        super("DropDownMenu", Styles.ICON_16_DROP_DOWN_MENU);
         
         final DropDownMenu menu = new DropDownMenu(createMenuModel());
         menu.setStateModel(createMenuStateModel());

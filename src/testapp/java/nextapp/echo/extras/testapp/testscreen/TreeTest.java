@@ -129,7 +129,7 @@ public class TreeTest extends AbstractTest {
     final Tree tree;
     public TreeTest() {
         
-        super("Tree", Styles.ICON_16_TAB_PANE);
+        super("Tree", Styles.ICON_16_TREE);
         
         tree = new Tree(generateSimpleTreeTableModel());
         add(tree);

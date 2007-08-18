@@ -126,7 +126,7 @@ public TestPane() {
     testsMenu.addItem(new DefaultOptionModel("Launch_BorderPaneTest",
             "Border Pane", Styles.ICON_16_BORDER_PANE));
     testsMenu.addItem(new DefaultOptionModel("Launch_ContextMenuTest",
-            "Context Menu", Styles.ICON_16_MENU_BAR_PANE));
+            "Context Menu", Styles.ICON_16_CONTEXT_MENU));
     testsMenu.addItem(new DefaultOptionModel("Launch_CalendarSelectTest",
             "Calendar Select", Styles.ICON_16_CALENDAR_SELECT));
     testsMenu.addItem(new DefaultOptionModel("Launch_ColorSelectTest",
@@ -134,19 +134,19 @@ public TestPane() {
     testsMenu.addItem(new DefaultOptionModel("Launch_DragSourceTest",
             "Drag and Drop", Styles.ICON_16_DRAG_SOURCE));
     testsMenu.addItem(new DefaultOptionModel("Launch_DropDownMenuTest",
-            "Drop Down Menu", Styles.ICON_16_MENU_BAR_PANE));
+            "Drop Down Menu", Styles.ICON_16_DROP_DOWN_MENU));
     testsMenu.addItem(new DefaultOptionModel("Launch_GroupTest", "Group",
             Styles.ICON_16_GROUP));
     testsMenu.addItem(new DefaultOptionModel("Launch_MenuBarPaneTest",
             "Menu Bar Pane", Styles.ICON_16_MENU_BAR_PANE));
     testsMenu.addItem(new DefaultOptionModel("Launch_RichTextAreaTest",
-            "Rich Text Area", Styles.ICON_16_BORDER_PANE));
+            "Rich Text Area", Styles.ICON_16_RICH_TEXT_AREA));
     testsMenu.addItem(new DefaultOptionModel("Launch_TabPaneTest", "Tab Pane",
             Styles.ICON_16_TAB_PANE));
     testsMenu.addItem(new DefaultOptionModel("Launch_TransitionPaneTest",
             "Transition Pane", Styles.ICON_16_TRANSITION_PANE));
     testsMenu.addItem(new DefaultOptionModel("Launch_TreeTest", "Tree",
-            Styles.ICON_16_TRANSITION_PANE));
+            Styles.ICON_16_TREE));
     testsMenu.addItem(new SeparatorModel());
     testsMenu.addItem(new DefaultOptionModel("Reset", "Reset", null));
     testsMenu.addItem(new DefaultOptionModel("Exit", "Exit", null));

@@ -60,7 +60,7 @@ public class ContextMenuTest extends AbstractTest {
             Styles.FILL_IMAGE_SILVER_LINE};
 
     public ContextMenuTest() {
-        super("ContextMenu", Styles.ICON_16_MENU_BAR_PANE);
+        super("ContextMenu", Styles.ICON_16_CONTEXT_MENU);
         
         Column menuCol = new Column();
         menuCol.setInsets(new Insets(20));
