@@ -77,6 +77,9 @@ public class AccordionPanePeer extends AbstractComponentSynchronizePeer implemen
         return AccordionPane.class;
     }
 
+    /**
+     * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#getClientComponentType()
+     */
     public String getClientComponentType() {
         return "ExtrasApp.AccordionPane";
     }
