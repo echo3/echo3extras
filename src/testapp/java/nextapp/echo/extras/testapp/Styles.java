@@ -42,13 +42,13 @@ import nextapp.echo.app.serial.StyleSheetLoader;
 public class Styles {
     
     public static final ImageReference ICON_64_ERROR
-            = new ResourceImageReference("nextapp/echo/extras/testapp/interactive/resource/image/Icon64Error.gif");
+            = new ResourceImageReference("nextapp/echo/extras/testapp/resource/image/Icon64Error.gif");
     public static final ImageReference ICON_64_INFORMATION
-            = new ResourceImageReference("nextapp/echo/extras/testapp/interactive/resource/image/Icon64Information.gif");
+            = new ResourceImageReference("nextapp/echo/extras/testapp/resource/image/Icon64Information.gif");
     public static final ImageReference ICON_64_QUESTION
-            = new ResourceImageReference("nextapp/echo/extras/testapp/interactive/resource/image/Icon64Question.gif");
+            = new ResourceImageReference("nextapp/echo/extras/testapp/resource/image/Icon64Question.gif");
     public static final ImageReference ICON_64_WARNING
-            = new ResourceImageReference("nextapp/echo/extras/testapp/interactive/resource/image/Icon64Warning.gif");
+            = new ResourceImageReference("nextapp/echo/extras/testapp/resource/image/Icon64Warning.gif");
 
     public static final String IMAGE_PATH = "nextapp/echo/extras/testapp/resource/image/";
     public static final String STYLE_PATH = "nextapp/echo/extras/testapp/resource/style/";

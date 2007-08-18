@@ -1,10 +1,8 @@
 package nextapp.echo.extras.testapp;
 
 import java.util.EventListener;
-import java.util.ResourceBundle;
 
 import nextapp.echo.app.Alignment;
-import nextapp.echo.app.ApplicationInstance;
 import nextapp.echo.app.Button;
 import nextapp.echo.app.Extent;
 import nextapp.echo.app.ImageReference;
@@ -63,7 +61,6 @@ public class MessageDialog extends WindowPane {
 
     private int controlConfiguration;
     private Row controlsRow;
-    private ResourceBundle resourceBundle;
 
     private Label contentLabel;
 
@@ -74,10 +71,6 @@ public class MessageDialog extends WindowPane {
      */
     public MessageDialog() {
         super();
-
-        resourceBundle = ResourceBundle.getBundle(
-                "nextapp.echo.extras.testapp.interactive.resource.i18n.Messages",
-                ApplicationInstance.getActive().getLocale());
         setWidth(new Extent(400, Extent.PX));
         setHeight(new Extent(300, Extent.PX));
         setMinimumHeight(new Extent(300, Extent.PX));
@@ -223,19 +216,19 @@ public class MessageDialog extends WindowPane {
         Button button;
         switch (controlConfiguration) {
         case CONTROLS_OK:
-            button = new Button(resourceBundle.getString("Generic.Ok"), Styles.ICON_24_YES);
+            button = new Button("Ok", Styles.ICON_24_YES);
             button.setStyleName("ControlPane.Button");
             button.setActionCommand(COMMAND_OK);
             button.addActionListener(actionProcessor);
             controlsRow.add(button);
             break;
         case CONTROLS_YES_NO:
-            button = new Button(resourceBundle.getString("Generic.Yes"), Styles.ICON_24_YES);
+            button = new Button("Yes", Styles.ICON_24_YES);
             button.setStyleName("ControlPane.Button");
             button.setActionCommand(COMMAND_OK);
             button.addActionListener(actionProcessor);
             controlsRow.add(button);
-            button = new Button(resourceBundle.getString("Generic.No"), Styles.ICON_24_NO);
+            button = new Button("No", Styles.ICON_24_NO);
             button.setStyleName("ControlPane.Button");
             button.setActionCommand(COMMAND_CANCEL);
             button.addActionListener(actionProcessor);

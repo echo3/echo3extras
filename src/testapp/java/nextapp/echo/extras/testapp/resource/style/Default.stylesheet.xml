@@ -160,6 +160,14 @@
   <p n="rolloverEnabled" t="b" v="true"/>
   <p n="rolloverForeground" t="Color" v="#6f0f0f"/>
  </s>
+ <s n="ControlPane.Container.Top" t="nextapp.echo.app.SplitPane">
+  <p n="separatorPosition" v="32px"/>
+  <p n="orientation" v="nextapp.echo.app.SplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM"/>
+ </s>
+ <s n="ControlPane.Container.Bottom" t="nextapp.echo.app.SplitPane">
+  <p n="orientation" v="nextapp.echo.app.SplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP"/>
+  <p n="separatorPosition" v="32px"/>
+ </s>
  <s n="ControlPane" t="nextapp.echo.app.Row">
   <p n="insets" t="Insets" v="2px 10px"/>
   <p n="cellSpacing" t="Extent" v="3px"/>
