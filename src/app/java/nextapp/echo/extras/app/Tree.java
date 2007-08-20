@@ -743,7 +743,7 @@ public class Tree extends Component {
                 }
                 parentPath = parentPath.getParentPath();
             }
-            if (topExpanded != null) {
+            if (topExpanded != null && valid) {
                 renderer.update(topExpanded, true);
             }
         } else {
