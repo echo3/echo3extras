@@ -455,6 +455,43 @@ public class Tree extends Component {
         // existence of hasActionListeners() method. 
         firePropertyChange(ACTION_LISTENERS_CHANGED_PROPERTY, null, l);
     }
+    
+    /**
+     * Collapse the node identified by the given path.
+     * Any nodes below it will not be collapsed, so, if this node is expanded
+     * all nodes below this node that have the expanded state will be rendered
+     * expanded.
+     * 
+     * @param path the path to collapse
+     */
+    public void collapse(TreePath path) {
+        setExpandedState(path, false);
+    }
+    
+    /**
+     * Collapse all nodes in the tree.
+     */
+    public void collapseAll() {
+        Object root = model.getRoot();
+        if (root == null) {
+            return;
+        }
+        collapseAll(new TreePath(root));
+    }
+    
+    /**
+     * Collapse the node identified by the given path and all nodes below it.
+     * 
+     * @param path the path to collapse
+     */
+    protected void collapseAll(TreePath path) {
+        setExpandedState(path, false);
+        Object value = path.getLastPathComponent();
+        int childCount = model.getChildCount(value);
+        for (int i = 0; i < childCount; ++i) {
+            expandAll(path.pathByAddingChild(model.getChild(value, i)));
+        }
+    }
 
     /**
      * Creates a <code>TableColumnModel</code> based on the 
@@ -472,6 +509,41 @@ public class Tree extends Component {
             for (int index = 0; index < columnCount; ++index) {
                 columnModel.addColumn(new TreeColumn(index));
             }
+        }
+    }
+    
+    /**
+     * Expand the node identified by the given path.
+     * 
+     * @param path the path to expand
+     */
+    public void expand(TreePath path) {
+        setExpandedState(path, true);
+    }
+    
+    /**
+     * Expand all nodes in the tree.
+     */
+    public void expandAll() {
+        Object root = model.getRoot();
+        if (root == null) {
+            return;
+        }
+        expandAll(new TreePath(root));
+    }
+    
+    /**
+     * Expand the node identified by the given path, and all nodes
+     * below it.
+     * 
+     * @param path the path to expand
+     */
+    protected void expandAll(TreePath path) {
+        setExpandedState(path, true);
+        Object value = path.getLastPathComponent();
+        int childCount = model.getChildCount(value);
+        for (int i = 0; i < childCount; ++i) {
+            expandAll(path.pathByAddingChild(model.getChild(value, i)));
         }
     }
     
@@ -595,7 +667,6 @@ public class Tree extends Component {
      *      java.lang.Object)
      */
     public void processInput(String inputName, Object inputValue) {
-        System.out.println("Tree#processInput | inputName: " + inputName + ", inputValue: " + inputValue);
         super.processInput(inputName, inputValue);
         if (SELECTION_CHANGED_PROPERTY.equals(inputName)) {
             setSelectedIndices((int[]) inputValue);
@@ -725,6 +796,9 @@ public class Tree extends Component {
      * @param state the new expansion state
      */
     public void setExpandedState(TreePath treePath, boolean state) {
+        if (model.isLeaf(treePath.getLastPathComponent())) {
+            return;
+        }
         if (expandedPaths.contains(treePath) == state) {
             // do not fire any events when we are already in the desired state.
             return;

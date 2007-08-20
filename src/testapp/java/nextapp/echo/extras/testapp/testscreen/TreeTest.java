@@ -209,6 +209,18 @@ public class TreeTest extends AbstractTest {
             }
         });
         
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Expand all nodes", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tree.expandAll();
+            }
+        });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Collapse all nodes", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tree.collapseAll();
+            }
+        });
+        
         testControlsPane.addButton(TestControlPane.CATEGORY_INTEGRATION, "toggle visibility", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tree.setVisible(!tree.isVisible());
