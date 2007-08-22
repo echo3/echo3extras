@@ -17,6 +17,8 @@ import nextapp.echo.app.serial.SerialException;
 import nextapp.echo.app.serial.SerialPropertyPeer;
 import nextapp.echo.app.update.ClientUpdateManager;
 import nextapp.echo.app.update.ServerComponentUpdate;
+import nextapp.echo.app.update.ServerUpdateManager;
+import nextapp.echo.app.update.UpdateManager;
 import nextapp.echo.app.util.Context;
 import nextapp.echo.extras.app.Tree;
 import nextapp.echo.extras.app.event.TreeExpansionEvent;
@@ -441,6 +443,17 @@ extends AbstractComponentSynchronizePeer {
         return super.getOutputProperty(context, component, propertyName, propertyIndex);
     }
     
+    public Iterator getOutputPropertyNames(Context context, Component component) {
+        // FIXME HACKHACK
+        UserInstance userInstance = (UserInstance) context.get(UserInstance.class);
+        UpdateManager updateManager = userInstance.getUpdateManager();
+        ServerUpdateManager serverUpdateManager = updateManager.getServerUpdateManager();
+        if (serverUpdateManager.isFullRefreshRequired()) {
+            userInstance.removeRenderState(component);
+        }
+        return super.getOutputPropertyNames(context, component);
+    }
+    
     /**
      * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#getUpdatedOutputPropertyNames(
      *      nextapp.echo.app.util.Context,
@@ -454,7 +467,10 @@ extends AbstractComponentSynchronizePeer {
         Iterator normalPropertyIterator = super.getUpdatedOutputPropertyNames(context, component, update);
         HashSet extraProperties = new HashSet();
         
-        if (update.hasRemovedChildren()) {
+        UpdateManager updateManager = userInstance.getUpdateManager();
+        ServerUpdateManager serverUpdateManager = updateManager.getServerUpdateManager();
+        // FIXME HACKHACK
+        if (update.hasRemovedChildren() || update.hasRemovedDescendants() || serverUpdateManager.isFullRefreshRequired()) {
             userInstance.removeRenderState(component);
             extraProperties.add(PROPERTY_TREE_STRUCTURE);
             extraProperties.add(Tree.SELECTION_CHANGED_PROPERTY);
