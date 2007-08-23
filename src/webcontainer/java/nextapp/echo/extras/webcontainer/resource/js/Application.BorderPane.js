@@ -8,6 +8,7 @@
 ExtrasApp.BorderPane = function(renderId) {
     EchoApp.Component.call(this, renderId);
     this.componentType = "ExtrasApp.BorderPane";
+    this.pane = true;
 };
 
 ExtrasApp.BorderPane.prototype = EchoCore.derive(EchoApp.Component);

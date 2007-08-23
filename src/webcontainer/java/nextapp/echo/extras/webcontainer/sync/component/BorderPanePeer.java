@@ -61,6 +61,13 @@ public class BorderPanePeer extends AbstractComponentSynchronizePeer {
     }
 
     /**
+     * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#getClientComponentType()
+     */
+    public String getClientComponentType() {
+        return "ExtrasApp.BorderPane";
+    }
+
+    /**
      * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#init(nextapp.echo.app.util.Context)
      */
     public void init(Context context) {

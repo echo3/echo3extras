@@ -186,4 +186,4 @@ ExtrasRender.ComponentSync.BorderPane.prototype.renderDispose = function(update)
     this._borderBottomElement = null;
 };
 
-EchoRender.registerPeer("nextapp.echo.extras.app.BorderPane", ExtrasRender.ComponentSync.BorderPane);
+EchoRender.registerPeer("ExtrasApp.BorderPane", ExtrasRender.ComponentSync.BorderPane);
