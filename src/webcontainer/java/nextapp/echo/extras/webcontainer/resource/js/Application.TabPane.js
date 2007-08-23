@@ -8,6 +8,7 @@
 ExtrasApp.TabPane = function(renderId) {
     EchoApp.Component.call(this, renderId);
     this.componentType = "ExtrasApp.TabPane";
+    this.pane = true;
 };
 
 ExtrasApp.TabPane.prototype = EchoCore.derive(EchoApp.Component);
