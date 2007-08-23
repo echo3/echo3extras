@@ -698,8 +698,7 @@ ExtrasRender.ComponentSync.TabPane.Tab.prototype._getCloseImage = function(rollo
 };
 
 ExtrasRender.ComponentSync.TabPane.Tab.prototype._getContentInsets = function() {
-    if (this._childComponent.componentType.indexOf("Pane") != -1) {
-        // FIXME use instanceof
+    if (this._childComponent.pane) {
         return ExtrasRender.ComponentSync.TabPane._paneInsets;
     } else {
         return this._parent.component.getRenderProperty("defaultContentInsets", 

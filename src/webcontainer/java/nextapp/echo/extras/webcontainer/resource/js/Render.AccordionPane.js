@@ -336,8 +336,7 @@ ExtrasRender.ComponentSync.AccordionPane.Tab.prototype._getTitle = function() {
 };
 
 ExtrasRender.ComponentSync.AccordionPane.Tab.prototype._getContentInsets = function() {
-	if (this._childComponent.componentType.indexOf("Pane") != -1) {
-		// FIXME use instanceof
+    if (this._childComponent.pane) {
 		return ExtrasRender.ComponentSync.AccordionPane._paneInsets;
 	} else {
 		var insets = this._parent.component.getRenderProperty("defaultContentInsets");
