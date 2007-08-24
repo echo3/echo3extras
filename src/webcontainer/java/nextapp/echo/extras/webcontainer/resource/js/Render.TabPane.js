@@ -179,8 +179,6 @@ ExtrasRender.ComponentSync.TabPane.prototype._renderContentContainer = function(
         EchoRender.Property.Border.renderSide(this._tabActiveBorder, contentContainerDivElement, "borderTop")
     }
     
-//    EchoWebCore.VirtualPosition.register(contentContainerDivElement);
-    
     return contentContainerDivElement;
 };
 
@@ -236,11 +234,8 @@ ExtrasRender.ComponentSync.TabPane.prototype.renderSizeUpdate = function() {
     EchoWebCore.VirtualPosition.redraw(this._element);
     EchoWebCore.VirtualPosition.redraw(this._contentContainerDivElement);
     
-    if (this._activeTabId) {
-        var tab = this._getTabById(this._activeTabId);
-        if (tab) {
-	        tab._renderSizeUpdate();
-        }
+    for (var i = 0; i < this._tabs.size(); ++i) {
+        this._tabs.get(i)._renderSizeUpdate();
     }
 };
 
@@ -314,7 +309,6 @@ ExtrasRender.ComponentSync.TabPane.prototype._selectTab = function(tabId) {
     if (tab) {
 	    this._activeTabId = tabId;
 	    tab._highlight(true);
-	    tab._renderSizeUpdate();
     } else {
 	    this._activeTabId = null;
     }
@@ -521,8 +515,6 @@ ExtrasRender.ComponentSync.TabPane.Tab.prototype._renderContentContainer = funct
     EchoRender.Property.Insets.renderPixel(this._getContentInsets(), contentDivElement, "padding");
     contentDivElement.style.overflow = "auto";
     
-//    EchoWebCore.VirtualPosition.register(contentDivElement);
-    
     EchoRender.renderComponentAdd(update, this._childComponent, contentDivElement);
     
     return contentDivElement;
@@ -720,7 +712,6 @@ ExtrasRender.ComponentSync.TabPane.Tab.prototype._processClick = function(e) {
     } else {
         // tab clicked
         this._parent._selectTab(this._childComponent.renderId);
-        EchoRender.notifyResize(this._parent.component);
         this._parent.component.setProperty("activeTab", this._childComponent.renderId);
         this._parent.component.fireEvent(new EchoCore.Event(this._parent.component, 
                 "tabSelect", this._childComponent.renderId));
