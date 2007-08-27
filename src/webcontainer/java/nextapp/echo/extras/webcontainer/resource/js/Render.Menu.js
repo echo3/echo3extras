@@ -32,8 +32,6 @@ ExtrasRender.ComponentSync.Menu.prototype.renderAdd = function(update, parentEle
 	
     this._element = this._renderMain(update);
     
-	EchoWebCore.EventProcessor.addSelectionDenialListener(this._element);
-    
     parentElement.appendChild(this._element);
 };
 
@@ -470,6 +468,7 @@ ExtrasRender.ComponentSync.MenuBarPane.prototype._renderMain = function() {
     EchoWebCore.EventProcessor.add(menuBarDivElement, "click", new EchoCore.MethodRef(this, this._processClick), false);
     EchoWebCore.EventProcessor.add(menuBarDivElement, "mouseover", new EchoCore.MethodRef(this, this._processItemEnter), false);
     EchoWebCore.EventProcessor.add(menuBarDivElement, "mouseout", new EchoCore.MethodRef(this, this._processItemExit), false);
+	EchoWebCore.EventProcessor.addSelectionDenialListener(menuBarDivElement);
 
     return menuBarDivElement;
 };
@@ -517,6 +516,7 @@ ExtrasRender.ComponentSync.MenuBarPane.prototype._doAction = function(menuModel)
 ExtrasRender.ComponentSync.DropDownMenu = function() {
 	ExtrasRender.ComponentSync.Menu.call(this);
 	this._selectedItem = null;
+	this._contentDivElement = null;
 };
 
 ExtrasRender.ComponentSync.DropDownMenu.prototype = EchoCore.derive(ExtrasRender.ComponentSync.Menu);
@@ -558,23 +558,22 @@ ExtrasRender.ComponentSync.DropDownMenu.prototype._renderMain = function() {
     expandElement.appendChild(imgElement);
     relativeContainerDivElement.appendChild(expandElement);
     
-    var contentDivElement = document.createElement("div");
-    contentDivElement.id = this.component.renderId + "_contentwrapper";
-    contentDivElement.style.position = "absolute";
-    contentDivElement.style.top = "0px";
-    contentDivElement.style.left = "0px";
-	contentDivElement.style.right = expandIconWidth.toString();
+    this._contentDivElement = document.createElement("div");
+    this._contentDivElement.style.position = "absolute";
+    this._contentDivElement.style.top = "0px";
+    this._contentDivElement.style.left = "0px";
+	this._contentDivElement.style.right = expandIconWidth.toString();
 	var insets = this.component.getRenderProperty("insets");
 	if (insets) {
-	    EchoRender.Property.Insets.renderPixel(insets, contentDivElement, "padding");
+	    EchoRender.Property.Insets.renderPixel(insets, this._contentDivElement, "padding");
 	    if (height) {
 	    	var compensatedHeight = Math.max(0, height.value - insets.top.value - insets.bottom.value);
-		    contentDivElement.style.height = compensatedHeight + "px";
+		    this._contentDivElement.style.height = compensatedHeight + "px";
 	    }
 	} else {
-	    contentDivElement.style.height = "100%";
+	    this._contentDivElement.style.height = "100%";
 	}
-    EchoRender.Property.FillImage.renderComponentProperty(this.component, "backgroundImage", null, contentDivElement); 
+    EchoRender.Property.FillImage.renderComponentProperty(this.component, "backgroundImage", null, this._contentDivElement); 
     
     var contentSpanElement = document.createElement("div");
     contentSpanElement.id = this.component.renderId + "_content";
@@ -583,15 +582,13 @@ ExtrasRender.ComponentSync.DropDownMenu.prototype._renderMain = function() {
     contentSpanElement.style.overflow = "hidden";
     contentSpanElement.style.whiteSpace = "nowrap";
     EchoRender.Property.Font.renderDefault(this.component, contentSpanElement, null);
-    contentDivElement.appendChild(contentSpanElement);
+    this._contentDivElement.appendChild(contentSpanElement);
     
-    relativeContainerDivElement.appendChild(contentDivElement);
+    relativeContainerDivElement.appendChild(this._contentDivElement);
     dropDownDivElement.appendChild(relativeContainerDivElement);
 
     EchoWebCore.EventProcessor.add(dropDownDivElement, "click", new EchoCore.MethodRef(this, this._processClick), false);
-  
-//  FIXME.port to new virtual pos api.    
-//    EchoWebCore.VirtualPosition.register(contentDivElement);
+	EchoWebCore.EventProcessor.addSelectionDenialListener(dropDownDivElement);
 
     if (this._isSelectionEnabled()) {
     	var selection = this.component.getRenderProperty("selection");
@@ -630,6 +627,7 @@ ExtrasRender.ComponentSync.DropDownMenu.prototype._renderMenu = function(menuMod
 ExtrasRender.ComponentSync.DropDownMenu.prototype.renderDispose = function(update) {
 	ExtrasRender.ComponentSync.Menu.prototype.renderDispose.call(this, update);
 	this._selectedItem = null;
+	this._contentDivElement = null;
 };
 
 ExtrasRender.ComponentSync.DropDownMenu.prototype._isSelectionEnabled = function() {
@@ -697,6 +695,10 @@ ExtrasRender.ComponentSync.DropDownMenu.prototype._setSelection = function(menuM
         imgElement.src = menuModel.icon.url;
         contentElement.appendChild(imgElement);
     }
+};
+
+ExtrasRender.ComponentSync.DropDownMenu.prototype.renderSizeUpdate = function() {
+    EchoWebCore.VirtualPosition.redraw(this._contentDivElement);
 };
 
 ExtrasRender.ComponentSync.DropDownMenu.prototype._processClick = function(e) {
