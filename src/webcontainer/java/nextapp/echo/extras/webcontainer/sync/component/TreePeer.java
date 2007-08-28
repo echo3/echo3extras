@@ -43,12 +43,19 @@ import org.w3c.dom.Element;
 public class TreePeer 
 extends AbstractComponentSynchronizePeer {
 
+    /**
+     * Holds a selection update from the client
+     */
     private static class TreeSelectionUpdate {
         boolean clear = false;
         List addedSelections = new LinkedList();
         List removedSelections = new LinkedList();
     }
     
+    /**
+     * Translates a selection update directive from the client to 
+     * a {@link TreeSelectionUpdate} object.
+     */
     public static class TreeSelectionUpdatePeer 
     implements SerialPropertyPeer {
 
@@ -82,15 +89,39 @@ extends AbstractComponentSynchronizePeer {
         
     }
     
+    /**
+     * Holds the state of the client side tree.
+     */
     private static class TreeRenderState 
     implements RenderState {
+        /**
+         * Holds all paths that are sent down to the client. When a path has children it
+         * is only added to this set if all it's children are sent down too.
+         */
         private Set sentPaths = new HashSet();
+        /**
+         * Holds paths that are changed on the server since the last synchronization
+         */
         private Set changedPaths = new HashSet();
+        /**
+         * Holds all selection paths that have not been sent to the client
+         */
         private Set unsentSelections = new HashSet();
+        /**
+         * The path that changed the expansion state of as a result
+         * of a client update.
+         */
         private TreePath clientPath;
+        /**
+         * Indicates whether a full render is necessary
+         */
         private boolean fullRender = true;
         private final Tree tree;
         
+        /**
+         * Listens for changes in the expansion state. All changed paths are added
+         * to the <code>changedPaths</code> list.
+         */
         private TreeExpansionListener expansionListener = new TreeExpansionListener() {
             public void treeCollapsed(TreeExpansionEvent event) {
                 if (!event.getPath().equals(clientPath)) {
@@ -137,6 +168,12 @@ extends AbstractComponentSynchronizePeer {
             return sentPaths.contains(path);
         }
         
+        /**
+         * Returns all paths of which the expansion state has been changed since
+         * the last synchronization. The paths are sorted by row index.
+         * 
+         * @return all paths that are changed since last synchronization
+         */
         public Iterator changedPaths() {
             ArrayList list = new ArrayList(changedPaths);
             Collections.sort(list, new Comparator() {
@@ -195,6 +232,9 @@ extends AbstractComponentSynchronizePeer {
         }
     }
     
+    /**
+     * Uses {@link TreeStructureRenderer} to send down the current tree structure to the client.
+     */
     public static class TreeStructurePeer 
     implements SerialPropertyPeer {
     
@@ -227,6 +267,10 @@ extends AbstractComponentSynchronizePeer {
         }
     }
     
+    /**
+     * Sends down the tree structure to the client. If a render state exists and a full render
+     * is not required, an update will be sent.
+     */
     private static class TreeStructureRenderer {
         private Tree tree;
         private TreeModel model;
@@ -333,6 +377,17 @@ extends AbstractComponentSynchronizePeer {
         return tree.getColumnModel().getColumnCount();
     }
     
+    /**
+     * Translates the current selection model to a comma separated string. This string
+     * holds the render ids of the nodes. If a node is not yet sent to the client, the
+     * selection state will be kept on the client (using the unset selections list of 
+     * the render state object).
+     * 
+     * @param context
+     * @param selectionModel
+     * @param tree
+     * @return the selection string
+     */
     private static String getSelectionString(Context context, TreeSelectionModel selectionModel, Tree tree) {
         UserInstance userInstance = (UserInstance) context.get(UserInstance.class);
         TreeRenderState renderState = (TreeRenderState) userInstance.getRenderState(tree);
@@ -443,17 +498,6 @@ extends AbstractComponentSynchronizePeer {
         return super.getOutputProperty(context, component, propertyName, propertyIndex);
     }
     
-    public Iterator getOutputPropertyNames(Context context, Component component) {
-        // FIXME HACKHACK
-        UserInstance userInstance = (UserInstance) context.get(UserInstance.class);
-        UpdateManager updateManager = userInstance.getUpdateManager();
-        ServerUpdateManager serverUpdateManager = updateManager.getServerUpdateManager();
-        if (serverUpdateManager.isFullRefreshRequired()) {
-            userInstance.removeRenderState(component);
-        }
-        return super.getOutputPropertyNames(context, component);
-    }
-    
     /**
      * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#getUpdatedOutputPropertyNames(
      *      nextapp.echo.app.util.Context,
@@ -467,10 +511,7 @@ extends AbstractComponentSynchronizePeer {
         Iterator normalPropertyIterator = super.getUpdatedOutputPropertyNames(context, component, update);
         HashSet extraProperties = new HashSet();
         
-        UpdateManager updateManager = userInstance.getUpdateManager();
-        ServerUpdateManager serverUpdateManager = updateManager.getServerUpdateManager();
-        // FIXME HACKHACK
-        if (update.hasRemovedChildren() || update.hasRemovedDescendants() || serverUpdateManager.isFullRefreshRequired()) {
+        if (update.hasRemovedChildren() || update.hasRemovedDescendants()) {
             userInstance.removeRenderState(component);
             extraProperties.add(PROPERTY_TREE_STRUCTURE);
             extraProperties.add(Tree.SELECTION_CHANGED_PROPERTY);
@@ -486,9 +527,7 @@ extends AbstractComponentSynchronizePeer {
             }
             if (renderState == null || renderState.hasUnsentSelections()) {
                 extraProperties.add(Tree.SELECTION_CHANGED_PROPERTY);
-            } /*else {
-                renderState.clearChangedPaths();
-            }*/
+            }
         }
         return new MultiIterator(new Iterator[] { normalPropertyIterator, extraProperties.iterator() });
     }
@@ -516,6 +555,7 @@ extends AbstractComponentSynchronizePeer {
         } else if (SELECTION_PROPERTY.equals(propertyName)) {
             TreeSelectionUpdate update = (TreeSelectionUpdate) newValue;
             TreeSelectionModel selectionModel = tree.getSelectionModel();
+            // process deselections
             if (!update.removedSelections.isEmpty()) {
                 TreePath[] paths = new TreePath[update.removedSelections.size()];
                 int i = 0;
@@ -525,6 +565,7 @@ extends AbstractComponentSynchronizePeer {
                 }
                 selectionModel.removeSelectionPaths(paths);
             }
+            // process selections
             if (!update.addedSelections.isEmpty()) {
                 TreePath[] paths = new TreePath[update.addedSelections.size()];
                 int i = 0;
