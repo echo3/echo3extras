@@ -17,8 +17,6 @@ import nextapp.echo.app.serial.SerialException;
 import nextapp.echo.app.serial.SerialPropertyPeer;
 import nextapp.echo.app.update.ClientUpdateManager;
 import nextapp.echo.app.update.ServerComponentUpdate;
-import nextapp.echo.app.update.ServerUpdateManager;
-import nextapp.echo.app.update.UpdateManager;
 import nextapp.echo.app.util.Context;
 import nextapp.echo.extras.app.Tree;
 import nextapp.echo.extras.app.event.TreeExpansionEvent;
@@ -94,6 +92,7 @@ extends AbstractComponentSynchronizePeer {
      */
     private static class TreeRenderState 
     implements RenderState {
+        private static final long serialVersionUID = 1L;
         /**
          * Holds all paths that are sent down to the client. When a path has children it
          * is only added to this set if all it's children are sent down too.
