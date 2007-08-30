@@ -416,8 +416,10 @@ extends AbstractComponentSynchronizePeer {
     
     private static final String IMAGE_PREFIX = "/nextapp/echo/extras/webcontainer/resource/image/";
     private static final ImageReference DEFAULT_ICON_LINE_SOLID = new ResourceImageReference(IMAGE_PREFIX + "Dot.gif");
-    private static final ImageReference DEFAULT_ICON_VERTICAL_LINE_DOTTED = new ResourceImageReference(IMAGE_PREFIX + "TreeVerticalLineDotted.gif");
-    private static final ImageReference DEFAULT_ICON_HORIZONTAL_LINE_DOTTED = new ResourceImageReference(IMAGE_PREFIX + "TreeHorizontalLineDotted.gif");
+    private static final ImageReference DEFAULT_ICON_VERTICAL_LINE_DOTTED 
+            = new ResourceImageReference(IMAGE_PREFIX + "TreeVerticalLineDotted.gif");
+    private static final ImageReference DEFAULT_ICON_HORIZONTAL_LINE_DOTTED 
+            = new ResourceImageReference(IMAGE_PREFIX + "TreeHorizontalLineDotted.gif");
     private static final ImageReference DEFAULT_ICON_NODE_CLOSED = new ResourceImageReference(IMAGE_PREFIX + "TreeClosed.gif");
     private static final ImageReference DEFAULT_ICON_NODE_OPEN = new ResourceImageReference(IMAGE_PREFIX + "TreeOpen.gif");
     
@@ -532,7 +534,8 @@ extends AbstractComponentSynchronizePeer {
     }
     
     /**
-     * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#storeInputProperty(nextapp.echo.app.util.Context, nextapp.echo.app.Component, java.lang.String, int, java.lang.Object)
+     * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#storeInputProperty(nextapp.echo.app.util.Context, 
+     *      nextapp.echo.app.Component, java.lang.String, int, java.lang.Object)
      */
     public void storeInputProperty(Context context, Component component,
             String propertyName, int index, Object newValue) {

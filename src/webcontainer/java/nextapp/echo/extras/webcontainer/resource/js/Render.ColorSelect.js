@@ -3,33 +3,41 @@ ExtrasRender.ComponentSync.ColorSelect = function() { };
 ExtrasRender.ComponentSync.ColorSelect.prototype = EchoCore.derive(EchoRender.ComponentSync);
 
 ExtrasRender.ComponentSync.ColorSelect.prototype.renderAdd = function(update, parentElement) {
-    this.colorSelectDivElement = document.createElement("div");
-    this.colorSelectDivElement.id = this.elementId;
-    this.colorSelectDivElement.style.position = "relative";
-    this.colorSelectDivElement.style.left = "0px";
-    this.colorSelectDivElement.style.top = "0px";
-    this.colorSelectDivElement.style.width = (this.valueWidth + this.hueWidth + 29) + "px";
-    this.colorSelectDivElement.style.height = (this.saturationHeight + 36) +"px";
-    this.colorSelectDivElement.style.overflow = "hidden";
+    // Create container div element, relatively positioned.
+    this._containerDivElement = document.createElement("div");
+    this._containerDivElement.style.position = "relative";
+    this._containerDivElement.style.left = "0px";
+    this._containerDivElement.style.top = "0px";
+    this._containerDivElement.style.width = (this.valueWidth + this.hueWidth + 29) + "px";
+    this._containerDivElement.style.height = (this.saturationHeight + 36) +"px";
+    this._containerDivElement.style.overflow = "hidden";
     
-    this.svDivElement = document.createElement("div");
-    this.svDivElement.id = this.elementId + "_sv";
-    this.svDivElement.style.position = "absolute";
-    this.svDivElement.style.left = "7px";
-    this.svDivElement.style.top = "7px";
-    this.svDivElement.style.width = this.valueWidth + "px";
-    this.svDivElement.style.height = this.saturationHeight + "px";
-    this.svDivElement.style.backgroundColor = "#ff0000";
-    this.colorSelectDivElement.appendChild(this.svDivElement);
+    this._svDivElement = document.createElement("div");
+    this._svDivElement.id = this.elementId + "_sv";
+    this._svDivElement.style.position = "absolute";
+    this._svDivElement.style.left = "7px";
+    this._svDivElement.style.top = "7px";
+    this._svDivElement.style.width = this.valueWidth + "px";
+    this._svDivElement.style.height = this.saturationHeight + "px";
+    this._svDivElement.style.backgroundColor = "#ff0000";
+    this._containerDivElement.appendChild(this._svDivElement);
     
-    if (this.enableInternetExplorerPngWorkaround) {
-        this.svDivElement.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader("
-                + "src='" + this.svGradientImageSrc + "', sizingMethod='scale');";
-    } else {
-        var this.svGradientImgElement = document.createElement("img");
-        this.svGradientImgElement.src = this.svGradientImageSrc;
-        this.svGradientImgElement.style.width = this.valueWidth + "px";
-        this.svGradientImgElement.style.height = this.saturationHeight + "px";
-        this.svDivElement.appendChild(svGradientImgElement);
+    var _svGradientImageSrc = this.client
+    if (_svGradientImageSrc) {
+        if (this.enableInternetExplorerPngWorkaround) {
+            this._svDivElement.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader("
+                    + "src='" + _svGradientImageSrc + "', sizingMethod='scale');";
+        } else {
+            var svGradientImgElement = document.createElement("img");
+            svGradientImgElement.src = this._svGradientImageSrc;
+            svGradientImgElement.style.width = this.valueWidth + "px";
+            svGradientImgElement.style.height = this.saturationHeight + "px";
+            _svDivElement.appendChild(svGradientImgElement);
+        }
     }
+};
+
+ExtrasRender.ComponentSync.ColorSelect.prototype.renderDispose = function(update) { 
+    this.colorSelectDivElement = null;
+    this.svDivElement = null;
 };
