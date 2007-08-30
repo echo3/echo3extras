@@ -10,6 +10,8 @@ ExtrasRender.ComponentSync.ColorSelect.prototype.renderAdd = function(update, pa
     var hueWidth = EchoRender.Property.Extent.toPixels(
             this.component.getRenderProperty("hueWidth", ExtrasApp.ColorSelect.DEFAULT_HUE_WIDTH), true);
 
+    var svGradientImageSrc = this.client.getServiceUrl("EchoExtras.ColorSelect.SVGradient");
+    var hGradientImageSrc = this.client.getServiceUrl("EchoExtras.ColorSelect.HGradient");
     var arrowDownImageSrc = this.client.getServiceUrl("EchoExtras.ColorSelect.ArrowDown");
     var arrowUpImageSrc = this.client.getServiceUrl("EchoExtras.ColorSelect.ArrowUp");
     var arrowRightImageSrc = this.client.getServiceUrl("EchoExtras.ColorSelect.ArrowRight");
@@ -34,7 +36,6 @@ ExtrasRender.ComponentSync.ColorSelect.prototype.renderAdd = function(update, pa
     this._svDivElement.style.backgroundColor = "#ff0000";
     this._containerDivElement.appendChild(this._svDivElement);
     
-    var svGradientImageSrc = this.client.getServiceUrl("EchoExtras.ColorSelect.SVGradient");
     if (svGradientImageSrc) {
         if (EchoWebCore.Environment.PROPRIETARY_IE_PNG_ALPHA_FILTER_REQUIRED) {
             this._svDivElement.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader("
@@ -131,6 +132,65 @@ ExtrasRender.ComponentSync.ColorSelect.prototype.renderAdd = function(update, pa
         this._sLineDivElement.appendChild(sLineRightImgElement);
     }
     
+    // Create hue selector.
+    var hDivElement = document.createElement("div");
+    hDivElement.style.position = "absolute";
+    hDivElement.style.left = (valueWidth + 22) + "px";
+    hDivElement.style.top = "7px";
+    hDivElement.style.width = hueWidth + "px";
+    hDivElement.style.height = saturationHeight + "px";
+    this._containerDivElement.appendChild(hDivElement);
+
+    if (hGradientImageSrc) {
+        var hGradientImgElement = document.createElement("img");
+        hGradientImgElement.src = hGradientImageSrc;
+        hGradientImgElement.style.position = "absolute";
+        hGradientImgElement.style.left = "0px";
+        hGradientImgElement.style.top = "0px";
+        hGradientImgElement.style.width = hueWidth + "px";
+        hGradientImgElement.style.height = saturationHeight + "px";
+        hDivElement.appendChild(hGradientImgElement);
+    }
+    
+    var hLineDivElement = document.createElement("div");
+    hLineDivElement.style.position = "absolute";
+    hLineDivElement.style.left = (valueWidth + 15) + "px";
+    hLineDivElement.style.top = (saturationHeight + 2) + "px";
+    hLineDivElement.style.height = "11px";
+    hLineDivElement.style.width = (hueWidth + 14) + "px";
+    hLineDivElement.style.overflow = "hidden";
+    this._containerDivElement.appendChild(hLineDivElement);
+    
+    if (arrowRightImageSrc) {
+        var hLineLeftImgElement = document.createElement("img");
+        hLineLeftImgElement.src = arrowRightImageSrc;
+        hLineLeftImgElement.style.position = "absolute";
+        hLineLeftImgElement.style.left = "0px";
+        hLineLeftImgElement.style.top = "0px";
+        hLineDivElement.appendChild(hLineLeftImgElement);
+    }
+
+    if (arrowLeftImageSrc) {
+        var hLineRightImgElement = document.createElement("img");
+        hLineRightImgElement.src = arrowLeftImageSrc;
+        hLineRightImgElement.style.position = "absolute";
+        hLineRightImgElement.style.left = (hueWidth + 7) + "px";
+        hLineRightImgElement.style.top = "0px";
+        hLineDivElement.appendChild(hLineRightImgElement);
+    }
+    
+    var hLineBarDivElement = document.createElement("div");
+    hLineBarDivElement.style.position = "absolute";
+    hLineBarDivElement.style.left = "0px";
+    hLineBarDivElement.style.left = "7px";
+    hLineBarDivElement.style.top = "5px";
+    hLineBarDivElement.style.width = hueWidth + "px";
+    hLineBarDivElement.style.height = "1px";
+    hLineBarDivElement.style.fontSize = "1px";
+    hLineBarDivElement.style.borderTop = "1px #000000 solid";
+    hLineBarDivElement.style.lineHeight = "0";
+    hLineDivElement.appendChild(hLineBarDivElement);
+
     parentElement.appendChild(this._containerDivElement);
 };
 
