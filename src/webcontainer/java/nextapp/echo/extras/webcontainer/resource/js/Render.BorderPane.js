@@ -143,7 +143,7 @@ ExtrasRender.ComponentSync.BorderPane.prototype._renderContent = function(update
 	    if (insets) {
 	    	EchoRender.Property.Insets.renderPixel(insets, this._contentDivElement, "padding");
 	    }
-	    EchoRender.renderComponentAdd(update, child, this._contentDivElement);
+	    EchoRender.renderComponentAdd(this.client, update, child, this._contentDivElement);
     } else if (componentCount > 1) {
         throw new Error("Too many children: " + componentCount);
     }

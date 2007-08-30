@@ -185,7 +185,7 @@ ExtrasRender.ComponentSync.Group.prototype._renderContent = function(update) {
     var componentCount = this.component.getComponentCount();
     for (var i = 0; i < componentCount; i++) {
 	    var child = this.component.getComponent(i);
-	    EchoRender.renderComponentAdd(update, child, contentDivElement);
+	    EchoRender.renderComponentAdd(this.client, update, child, contentDivElement);
     }
     
     return contentDivElement;

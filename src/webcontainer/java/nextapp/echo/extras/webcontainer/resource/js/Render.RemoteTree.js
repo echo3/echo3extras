@@ -248,7 +248,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRecursive = function(
         expandoElement = elems.expandoElement;
         
         var component = this.component.application.getComponentByRenderId(node.getId());
-        EchoRender.renderComponentAdd(update, component, tdElement);
+        EchoRender.renderComponentAdd(this.client, update, component, tdElement);
         
         if (this.columnCount > 1) {
             for (var c = 0; c < this.columnCount - 1; ++c) {
@@ -257,7 +257,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRecursive = function(
                 EchoRender.Property.Insets.renderPixel(this._defaultInsets, columnElement, "padding");
                 
                 var columnComponent = this.component.application.getComponentByRenderId(node.getColumn(c));
-                EchoRender.renderComponentAdd(update, columnComponent, columnElement);
+                EchoRender.renderComponentAdd(this.client, update, columnComponent, columnElement);
                 
                 trElement.appendChild(columnElement);
             }

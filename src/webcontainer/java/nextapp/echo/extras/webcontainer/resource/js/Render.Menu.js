@@ -751,7 +751,7 @@ ExtrasRender.ComponentSync.ContextMenu.prototype._renderMain = function(update) 
     
     var componentCount = this.component.getComponentCount();
     if (componentCount > 0) {
-	    EchoRender.renderComponentAdd(update, this.component.getComponent(0), contextMenuDivElement);
+	    EchoRender.renderComponentAdd(this.client, update, this.component.getComponent(0), contextMenuDivElement);
     }
     
     return contextMenuDivElement;
@@ -770,7 +770,7 @@ ExtrasRender.ComponentSync.ContextMenu.prototype.renderUpdate = function(update)
 	    }
 	    var addedChildren = update.getAddedChildren();
 	    if (addedChildren) {
-		    EchoRender.renderComponentAdd(update, addedChildren[0], this._element);
+		    EchoRender.renderComponentAdd(this.client, update, addedChildren[0], this._element);
 	    }
 		var modelUpdate = update.getUpdatedProperty("model");
 		var stateModelUpdate = update.getUpdatedProperty("stateModel");

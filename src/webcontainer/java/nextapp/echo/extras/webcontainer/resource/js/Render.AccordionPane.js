@@ -34,7 +34,7 @@ ExtrasRender.ComponentSync.AccordionPane.prototype.renderAdd = function(update, 
         var child = this.component.getComponent(i);
 		var tab = new ExtrasRender.ComponentSync.AccordionPane.Tab(child, this);
 	    this._tabs.add(tab);
-	    tab._render(update);
+	    tab._render(this.client, update);
 	    this._paneDivElement.appendChild(tab._tabDivElement);
 	    this._paneDivElement.appendChild(tab._contentDivElement);
     }
@@ -239,7 +239,7 @@ ExtrasRender.ComponentSync.AccordionPane.Tab = function(childComponent, parent) 
 	this._contentDivElement = null;
 };
 
-ExtrasRender.ComponentSync.AccordionPane.Tab.prototype._render = function(update) {
+ExtrasRender.ComponentSync.AccordionPane.Tab.prototype._render = function(client, update) {
     this._tabDivElement = document.createElement("div");
     this._tabDivElement.id = this._parent.component.renderId + "_tab_" + this._childComponent.renderId;
     this._tabDivElement.style.cursor = "pointer";
@@ -260,7 +260,7 @@ ExtrasRender.ComponentSync.AccordionPane.Tab.prototype._render = function(update
     EchoRender.Property.Insets.renderPixel(this._getContentInsets(), this._contentDivElement, "padding");
     this._contentDivElement.style.overflow = "auto";
 
-	EchoRender.renderComponentAdd(update, this._childComponent, this._contentDivElement);
+	EchoRender.renderComponentAdd(client, update, this._childComponent, this._contentDivElement);
 	
     this._highlight(false);
     this._addEventListeners();
