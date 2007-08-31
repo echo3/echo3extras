@@ -7,40 +7,107 @@ ExtrasRender.ComponentSync.RichTextArea = function() {
 
 ExtrasRender.ComponentSync.RichTextArea.prototype = EchoCore.derive(EchoRender.ComponentSync);
 
-ExtrasRender.ComponentSync.RichTextArea.DEFAULT_TOOLBAR_BUTTON_CSS 
-        = "border:1px outset #abcdef; padding: 1px 5px; background-color: #abcdef; color: #000000;";
+ExtrasRender.ComponentSync.RichTextArea.prototype._createApp = function() {
+    this._app = new EchoApp.Application();
+    this._app.setStyleSheet(this.client.application.getStyleSheet());
+    
+    var mainColumn = new EchoApp.Column();
+    mainColumn.setProperty("cellSpacing", new EchoApp.Property.Extent("5px"));
+    this._app.rootComponent.add(mainColumn);
+    
+    var controlsRow = new EchoApp.Row();
+    controlsRow.setProperty("cellSpacing", new EchoApp.Property.Extent("10px"));
+    mainColumn.add(controlsRow);
+    
+    var fontStyleRow = new EchoApp.Row();
+    controlsRow.add(fontStyleRow);
+    
+    var boldButton = new EchoApp.Button();
+    boldButton.setProperty("text", "B");
+    boldButton.setStyleName(this.component.getRenderProperty("toolbarButtonStyleName"));
+    boldButton.addListener("action", new EchoCore.MethodRef(this, this._processBold));
+    fontStyleRow.add(boldButton);
+    
+    var italicButton = new EchoApp.Button();
+    italicButton.setProperty("text", "I");
+    italicButton.setStyleName(this.component.getRenderProperty("toolbarButtonStyleName"));
+    italicButton.addListener("action", new EchoCore.MethodRef(this, this._processItalic));
+    fontStyleRow.add(italicButton);
+    
+    var underlineButton = new EchoApp.Button();
+    underlineButton.setProperty("text", "U");
+    underlineButton.setStyleName(this.component.getRenderProperty("toolbarButtonStyleName"));
+    underlineButton.addListener("action", new EchoCore.MethodRef(this, this._processUnderline));
+    fontStyleRow.add(underlineButton);
+    
+    var strikethroughButton = new EchoApp.Button();
+    strikethroughButton.setProperty("text", "S");
+    strikethroughButton.setStyleName(this.component.getRenderProperty("toolbarButtonStyleName"));
+    strikethroughButton.addListener("action", new EchoCore.MethodRef(this, this._processStrikeThrough));
+    fontStyleRow.add(strikethroughButton);
+    
+    var richTextInput = new ExtrasRender.ComponentSync.RichTextArea.InputComponent();
+    mainColumn.add(richTextInput);
 
-ExtrasRender.ComponentSync.RichTextArea.prototype.addToolbarItem = function(toolbarItem) {
-    var divElement = document.createElement("div");
-    divElement.appendChild(document.createTextNode(toolbarItem.content));
-    divElement.style.cssText = "float: left;" + this._baseCssText + (toolbarItem.cssText ? toolbarItem.cssText : "");
-    this._toolbarContainerDivElement.appendChild(divElement);
+    this._freeClient = new EchoFreeClient(this._app, this._mainDivElement); 
+    this._freeClient.init();
+};
+
+ExtrasRender.ComponentSync.RichTextArea.prototype._processBold = function(e) {
+};
+
+ExtrasRender.ComponentSync.RichTextArea.prototype._processItalic = function(e) {
+};
+
+ExtrasRender.ComponentSync.RichTextArea.prototype._processUnderline = function(e) {
+};
+
+ExtrasRender.ComponentSync.RichTextArea.prototype._processStrikeThrough = function(e) {
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype.renderAdd = function(update, parentElement) {
-    this._baseCssText = ExtrasRender.ComponentSync.RichTextArea.DEFAULT_TOOLBAR_BUTTON_CSS;
+    this._mainDivElement = document.createElement("div");
+    parentElement.appendChild(this._mainDivElement);
+};
 
-    this._mainElement = document.createElement("div");
-    
-    // Create tool bar.
-    this._toolbarContainerDivElement = document.createElement("div");
-    this._mainElement.appendChild(this._toolbarContainerDivElement);
+ExtrasRender.ComponentSync.RichTextArea.prototype.renderDispose = function(update) {
+    if (this._freeClient) {
+        this._freeClient.dispose();
+        this._freeClient = null;
+    }
+    if (this._appInitialized) {
+        this._app.dispose();
+        this._appInitialized = false;
+        this._app = null;
+    }
+    this._mainDivElement = null;
+};
 
-    // Create tool bar buttons.
-    var boldItem = new ExtrasRender.ComponentSync.RichTextArea.ToolbarItem("bold", "B", "font-weight: bold;");
-    this.addToolbarItem(boldItem);
-    var italicItem = new ExtrasRender.ComponentSync.RichTextArea.ToolbarItem("italic", "I", "font-style: italic;");
-    this.addToolbarItem(italicItem);
-    var underlineItem = new ExtrasRender.ComponentSync.RichTextArea.ToolbarItem("underline", "U", "text-decoration: underline;");
-    this.addToolbarItem(underlineItem);
-    var strikethroughItem = new ExtrasRender.ComponentSync.RichTextArea.ToolbarItem("strikethrough", "S", 
-            "text-decoration: line-through;");
-    this.addToolbarItem(strikethroughItem);
-    
+ExtrasRender.ComponentSync.RichTextArea.prototype.renderSizeUpdate = function() {
+    if (!this._appInitialized) {
+        this._createApp();
+        this._appInitialized = true;
+    }
+};
+
+ExtrasRender.ComponentSync.RichTextArea.prototype.renderUpdate = function(update) {
+};
+
+ExtrasRender.ComponentSync.RichTextArea.InputComponent = function(renderId) {
+    EchoApp.Component.call(this, renderId);
+    this.componentType = "ExtrasApp.RichTextInput";
+};
+
+ExtrasRender.ComponentSync.RichTextArea.InputComponent.prototype = EchoCore.derive(EchoApp.Component);
+
+ExtrasRender.ComponentSync.RichTextArea.InputPeer = function() { };
+
+ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype = EchoCore.derive(EchoRender.ComponentSync);
+
+ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype.renderAdd = function(update, parentElement) {
     // Create IFRAME container DIV element.
-    var iframeContainerElement = document.createElement("div");
-    iframeContainerElement.style.border = "1px inset";
-    this._mainElement.appendChild(iframeContainerElement);
+    this._mainDivElement = document.createElement("div");
+    this._mainDivElement.style.border = "1px inset";
     
     // Create IFRAME element.
     this._iframeElement = document.createElement("iframe");
@@ -50,12 +117,17 @@ ExtrasRender.ComponentSync.RichTextArea.prototype.renderAdd = function(update, p
     this._iframeElement.style.height = this.height ? this.height: "200px";
     this._iframeElement.style.border = "0px none";
 
-    iframeContainerElement.appendChild(this._iframeElement);
+    this._mainDivElement.appendChild(this._iframeElement);
 
-    parentElement.appendChild(this._mainElement);
+    parentElement.appendChild(this._mainDivElement);
 };
 
-ExtrasRender.ComponentSync.RichTextArea.prototype._renderPostAdd = function() {
+ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype.renderDispose = function(update) {
+    this._mainElement = null;
+    this._iframeElement = null;
+};
+
+ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype._renderPostAdd = function() {
     var contentDocument = this._iframeElement.contentWindow.document;
     contentDocument.open();
     contentDocument.write("<html><body></body></html>");
@@ -68,33 +140,15 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._renderPostAdd = function() {
     this._renderPostAddComplete = true;
 };
 
-ExtrasRender.ComponentSync.RichTextArea.prototype.renderSizeUpdate = function() {
+ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype.renderSizeUpdate = function() {
     if (!this._renderPostAddComplete) {
         this._renderPostAdd();
     }
 };
 
-ExtrasRender.ComponentSync.RichTextArea.prototype._addToolbarItem = function(toolbarItem) {
-    this._toolbarContainerDivElement.appendChild(toolbarItem.divElement);
-};
-    
-ExtrasRender.ComponentSync.RichTextArea.prototype.renderDispose = function(update) {
-    this._mainElement = null;
+ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype.renderUpdate = function(update) {
 };
 
-ExtrasRender.ComponentSync.RichTextArea.prototype.renderUpdate = function(update) {
-    var mainElement = this._mainElement;
-    var containerElement = mainElement.parentNode;
-    EchoRender.renderComponentDispose(update, update.parent);
-    containerElement.removeChild(mainElement);
-    this.renderAdd(update, containerElement);
-    return false;
-};
-
-ExtrasRender.ComponentSync.RichTextArea.ToolbarItem = function(id, content, cssText) {
-    this.id = id;
-    this.content = content;
-    this.cssText = cssText;
-};
-
+EchoApp.ComponentFactory.registerType("ExtrasApp.RichTextInput", ExtrasRender.ComponentSync.RichTextArea.InputComponent);
 EchoRender.registerPeer("ExtrasApp.RichTextArea", ExtrasRender.ComponentSync.RichTextArea);
+EchoRender.registerPeer("ExtrasApp.RichTextInput", ExtrasRender.ComponentSync.RichTextArea.InputPeer);

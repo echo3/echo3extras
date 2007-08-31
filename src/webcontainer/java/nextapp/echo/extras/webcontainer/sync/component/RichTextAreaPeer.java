@@ -29,6 +29,10 @@
 
 package nextapp.echo.extras.webcontainer.sync.component;
 
+import nextapp.echo.app.Button;
+import nextapp.echo.app.Column;
+import nextapp.echo.app.Label;
+import nextapp.echo.app.Row;
 import nextapp.echo.app.util.Context;
 import nextapp.echo.extras.app.RichTextArea;
 import nextapp.echo.extras.webcontainer.service.CommonService;
@@ -51,6 +55,15 @@ public class RichTextAreaPeer extends AbstractComponentSynchronizePeer {
         WebContainerServlet.getServiceRegistry().add(RICH_TEXT_AREA_SERVICE);
     }
     
+    public RichTextAreaPeer() {
+        super();
+        
+        addRequiredComponentClass(Button.class);
+        addRequiredComponentClass(Column.class);
+        addRequiredComponentClass(Label.class);
+        addRequiredComponentClass(Row.class);
+    }
+    
     /**
      * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#getComponentClass()
      */
@@ -70,6 +83,7 @@ public class RichTextAreaPeer extends AbstractComponentSynchronizePeer {
      * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#init(nextapp.echo.app.util.Context)
      */
     public void init(Context context) {
+        super.init(context);
         ServerMessage serverMessage = (ServerMessage) context.get(ServerMessage.class);
         serverMessage.addLibrary(CommonService.INSTANCE.getId());
         serverMessage.addLibrary(RICH_TEXT_AREA_SERVICE.getId());

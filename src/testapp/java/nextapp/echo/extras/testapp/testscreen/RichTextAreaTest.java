@@ -43,6 +43,7 @@ public class RichTextAreaTest extends AbstractTest {
         super("RichTextArea", Styles.ICON_16_RICH_TEXT_AREA);
         final RichTextArea richTextArea = new RichTextArea();
         richTextArea.setStyleName("Shadow");
+        richTextArea.setToolbarButtonStyleName("RichTextAreaToolbarButton");
         add(richTextArea);
         setTestComponent(this, richTextArea);
         
