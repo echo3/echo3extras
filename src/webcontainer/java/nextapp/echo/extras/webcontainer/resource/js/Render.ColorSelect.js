@@ -53,6 +53,55 @@ ExtrasRender.ComponentSync.ColorSelect.prototype._hsvToRgb = function(h, s, v) {
     return new ExtrasRender.ComponentSync.ColorSelect.RGB(Math.round(r * 255), Math.round(g * 255), Math.round(b * 255));
 };
 
+ExtrasRender.ComponentSync.ColorSelect.prototype._processHMouseDown = function(e) {
+    EchoWebCore.EventProcessor.add(this._hListenerDivElement, "mousemove", new EchoCore.MethodRef(this, this._processHMouseMove), 
+            false);
+    EchoWebCore.EventProcessor.add(this._hListenerDivElement, "mouseup", new EchoCore.MethodRef(this, this._processHMouseUp), 
+            false);
+};
+
+ExtrasRender.ComponentSync.ColorSelect.prototype._processHMouseMove = function(e) {
+    this._processHUpdate(e);
+};
+
+ExtrasRender.ComponentSync.ColorSelect.prototype._processHMouseUp = function(e) {
+    EchoWebCore.EventProcessor.remove(this._hListenerDivElement, "mousemove", new EchoCore.MethodRef(this, this._processHMouseMove), 
+            false);
+    EchoWebCore.EventProcessor.remove(this._hListenerDivElement, "mouseup", new EchoCore.MethodRef(this, this._processHMouseUp), 
+            false);
+};
+
+ExtrasRender.ComponentSync.ColorSelect.prototype._processHUpdate = function(e) {
+    var bounds = new EchoWebCore.Render.Measure.Bounds(this._hListenerDivElement);
+    this._h = (this._saturationHeight - (e.clientY - bounds.top - 7)) * 360 / this._saturationHeight;
+    this._updateColor();
+};
+
+ExtrasRender.ComponentSync.ColorSelect.prototype._processSVMouseDown = function(e) {
+    EchoWebCore.EventProcessor.add(this._svListenerDivElement, "mousemove", new EchoCore.MethodRef(this, this._processSVMouseMove), 
+            false);
+    EchoWebCore.EventProcessor.add(this._svListenerDivElement, "mouseup", new EchoCore.MethodRef(this, this._processSVMouseUp), 
+            false);
+};
+
+ExtrasRender.ComponentSync.ColorSelect.prototype._processSVMouseMove = function(e) {
+    this._processSVUpdate(e);
+};
+
+ExtrasRender.ComponentSync.ColorSelect.prototype._processSVUpdate = function(e) {
+    var bounds = new EchoWebCore.Render.Measure.Bounds(this._svListenerDivElement);
+    this._v = (e.clientX - bounds.left - 7) / this._valueWidth;
+    this._s = 1 - ((e.clientY - bounds.top - 7) / this._saturationHeight);
+    this._updateColor();
+};
+
+ExtrasRender.ComponentSync.ColorSelect.prototype._processSVMouseUp = function(e) {
+    EchoWebCore.EventProcessor.remove(this._svListenerDivElement, "mousemove", new EchoCore.MethodRef(this, this._processSVMouseMove), 
+            false);
+    EchoWebCore.EventProcessor.remove(this._svListenerDivElement, "mouseup", new EchoCore.MethodRef(this, this._processSVMouseUp), 
+            false);
+};
+
 ExtrasRender.ComponentSync.ColorSelect.prototype.renderAdd = function(update, parentElement) {
     this._valueWidth = EchoRender.Property.Extent.toPixels(
             this.component.getRenderProperty("valueWidth", ExtrasApp.ColorSelect.DEFAULT_VALUE_WIDTH), true);
@@ -203,14 +252,14 @@ ExtrasRender.ComponentSync.ColorSelect.prototype.renderAdd = function(update, pa
         hDivElement.appendChild(hGradientImgElement);
     }
     
-    var hLineDivElement = document.createElement("div");
-    hLineDivElement.style.position = "absolute";
-    hLineDivElement.style.left = (this._valueWidth + 15) + "px";
-    hLineDivElement.style.top = (this._saturationHeight + 2) + "px";
-    hLineDivElement.style.height = "11px";
-    hLineDivElement.style.width = (this._hueWidth + 14) + "px";
-    hLineDivElement.style.overflow = "hidden";
-    this._containerDivElement.appendChild(hLineDivElement);
+    this._hLineDivElement = document.createElement("div");
+    this._hLineDivElement.style.position = "absolute";
+    this._hLineDivElement.style.left = (this._valueWidth + 15) + "px";
+    this._hLineDivElement.style.top = (this._saturationHeight + 2) + "px";
+    this._hLineDivElement.style.height = "11px";
+    this._hLineDivElement.style.width = (this._hueWidth + 14) + "px";
+    this._hLineDivElement.style.overflow = "hidden";
+    this._containerDivElement.appendChild(this._hLineDivElement);
     
     if (arrowRightImageSrc) {
         var hLineLeftImgElement = document.createElement("img");
@@ -218,7 +267,7 @@ ExtrasRender.ComponentSync.ColorSelect.prototype.renderAdd = function(update, pa
         hLineLeftImgElement.style.position = "absolute";
         hLineLeftImgElement.style.left = "0px";
         hLineLeftImgElement.style.top = "0px";
-        hLineDivElement.appendChild(hLineLeftImgElement);
+        this._hLineDivElement.appendChild(hLineLeftImgElement);
     }
 
     if (arrowLeftImageSrc) {
@@ -227,7 +276,7 @@ ExtrasRender.ComponentSync.ColorSelect.prototype.renderAdd = function(update, pa
         hLineRightImgElement.style.position = "absolute";
         hLineRightImgElement.style.left = (this._hueWidth + 7) + "px";
         hLineRightImgElement.style.top = "0px";
-        hLineDivElement.appendChild(hLineRightImgElement);
+        this._hLineDivElement.appendChild(hLineRightImgElement);
     }
     
     var hLineBarDivElement = document.createElement("div");
@@ -240,25 +289,25 @@ ExtrasRender.ComponentSync.ColorSelect.prototype.renderAdd = function(update, pa
     hLineBarDivElement.style.fontSize = "1px";
     hLineBarDivElement.style.borderTop = "1px #000000 solid";
     hLineBarDivElement.style.lineHeight = "0";
-    hLineDivElement.appendChild(hLineBarDivElement);
+    this._hLineDivElement.appendChild(hLineBarDivElement);
     
-    var colorDivElement = document.createElement("div");
-    colorDivElement.style.position = "absolute";
-    colorDivElement.style.left = "7px";
-    colorDivElement.style.top = (this._saturationHeight + 16) + "px";
-    colorDivElement.style.width = (this._valueWidth + this._hueWidth + 13) + "px";
-    colorDivElement.style.height = "18px";
-    colorDivElement.style.color = "#ffffff";
-    colorDivElement.style.backgroundColor = "#000000";
-    colorDivElement.style.borderColor = "#000000";
-    colorDivElement.style.borderStyle = "outset";
-    colorDivElement.style.borderWidth = "1px";
-    colorDivElement.style.fontFamily = "monospace";
-    colorDivElement.style.textAlign = "center";
+    this._colorDivElement = document.createElement("div");
+    this._colorDivElement.style.position = "absolute";
+    this._colorDivElement.style.left = "7px";
+    this._colorDivElement.style.top = (this._saturationHeight + 16) + "px";
+    this._colorDivElement.style.width = (this._valueWidth + this._hueWidth + 13) + "px";
+    this._colorDivElement.style.height = "18px";
+    this._colorDivElement.style.color = "#ffffff";
+    this._colorDivElement.style.backgroundColor = "#000000";
+    this._colorDivElement.style.borderColor = "#000000";
+    this._colorDivElement.style.borderStyle = "outset";
+    this._colorDivElement.style.borderWidth = "1px";
+    this._colorDivElement.style.fontFamily = "monospace";
+    this._colorDivElement.style.textAlign = "center";
     if (this.component.getRenderProperty("displayValue")) {
-        colorDivElement.appendChild(document.createTextNode("#000000"));
+        this._colorDivElement.appendChild(document.createTextNode("#000000"));
     }
-    this._containerDivElement.appendChild(colorDivElement);
+    this._containerDivElement.appendChild(this._colorDivElement);
     
     this._svListenerDivElement = document.createElement("div");
     this._svListenerDivElement.style.position = "absolute";
@@ -291,50 +340,6 @@ ExtrasRender.ComponentSync.ColorSelect.prototype.renderAdd = function(update, pa
             false);
 };
 
-ExtrasRender.ComponentSync.ColorSelect.prototype._processSVMouseDown = function(e) {
-    EchoWebCore.EventProcessor.add(this._svListenerDivElement, "mousemove", new EchoCore.MethodRef(this, this._processSVMouseMove), 
-            false);
-    EchoWebCore.EventProcessor.add(this._svListenerDivElement, "mouseup", new EchoCore.MethodRef(this, this._processSVMouseUp), 
-            false);
-    EchoCore.Debug.consoleWrite("svdown");
-};
-
-ExtrasRender.ComponentSync.ColorSelect.prototype._processSVMouseMove = function(e) {
-    EchoCore.Debug.consoleWrite("svmove");
-};
-
-ExtrasRender.ComponentSync.ColorSelect.prototype._processSVMouseUp = function(e) {
-    EchoWebCore.EventProcessor.remove(this._svListenerDivElement, "mousemove", new EchoCore.MethodRef(this, this._processSVMouseMove), 
-            false);
-    EchoWebCore.EventProcessor.remove(this._svListenerDivElement, "mouseup", new EchoCore.MethodRef(this, this._processSVMouseUp), 
-            false);
-};
-
-ExtrasRender.ComponentSync.ColorSelect.prototype._processHMouseDown = function(e) {
-    EchoWebCore.EventProcessor.add(this._hListenerDivElement, "mousemove", new EchoCore.MethodRef(this, this._processHMouseMove), 
-            false);
-    EchoWebCore.EventProcessor.add(this._hListenerDivElement, "mouseup", new EchoCore.MethodRef(this, this._processHMouseUp), 
-            false);
-};
-
-ExtrasRender.ComponentSync.ColorSelect.prototype._processHMouseMove = function(e) {
-    this._processHUpdate(e);
-};
-
-ExtrasRender.ComponentSync.ColorSelect.prototype._processHMouseUp = function(e) {
-    EchoWebCore.EventProcessor.remove(this._hListenerDivElement, "mousemove", new EchoCore.MethodRef(this, this._processHMouseMove), 
-            false);
-    EchoWebCore.EventProcessor.remove(this._hListenerDivElement, "mouseup", new EchoCore.MethodRef(this, this._processHMouseUp), 
-            false);
-};
-
-ExtrasRender.ComponentSync.ColorSelect.prototype._processHUpdate = function(e) {
-    var bounds = new EchoWebCore.Render.Measure.Bounds(this._hListenerDivElement);
-    this._h = (this._saturationHeight - (e.clientY - bounds.top - 7)) * 360 / this._saturationHeight;
-    this._updateColor();
-};
-
-
 ExtrasRender.ComponentSync.ColorSelect.prototype.renderDispose = function(update) { 
     this._containerDivElement = null;
     this._svDivElement = null;
@@ -362,7 +367,39 @@ ExtrasRender.ComponentSync.ColorSelect.prototype._updateColor = function() {
 //        baseColor = ExtrasColorSelect.hsvToRgb(this.h, 0.3, 0.7);
 //    }
     this._svDivElement.style.backgroundColor = baseColor.toHexTriplet();
-    EchoCore.Debug.consoleWrite(baseColor.toHexTriplet());
+
+    var renderColor = this._hsvToRgb(this._h, this._s, this._v);
+    var renderHexTriplet = renderColor.toHexTriplet();
+    this._colorDivElement.style.backgroundColor = renderHexTriplet;
+    this._colorDivElement.style.borderColor = renderHexTriplet;
+    this._colorDivElement.style.color = this._v < 0.67 ? "#ffffff" : "#000000";
+    if (this.component.getRenderProperty("displayValue")) {
+        this._colorDivElement.childNodes[0].nodeValue = renderHexTriplet;
+    }
+    
+    var sLineTop = parseInt((1 - this._s) * this._saturationHeight) + 2;
+    if (sLineTop < 2) {
+         sLineTop = 2;
+    } else if (sLineTop > this._saturationHeight + 2) {
+        sLineTop = this._saturationHeight + 2;
+    }
+    this._sLineDivElement.style.top = sLineTop + "px";
+    
+    var vLineLeft = parseInt(this._v * this._valueWidth) + 2;
+    if (vLineLeft < 2) {
+        vLineLeft = 2;
+    } else if (vLineLeft > this._valueWidth + 2) {
+        vLineLeft = this._valueWidth + 2;
+    }
+    this._vLineDivElement.style.left = vLineLeft + "px";
+    
+    var hLineTop = parseInt((360 - this._h) / 360 * this._saturationHeight) + 2;
+    if (hLineTop < 2) {
+        hLineTop = 2;
+    } else if (hLineTop > this._saturationHeight + 2) {
+        hLineTop = this._saturationHeight + 2;
+    }
+    this._hLineDivElement.style.top = hLineTop + "px";
 };
 
 ExtrasRender.ComponentSync.ColorSelect.RGB = function(r, g, b) {
