@@ -116,6 +116,7 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._processMenuAction = function(
 
 ExtrasRender.ComponentSync.RichTextArea.prototype._processSetColor = function(e) {
     var windowPane = new EchoApp.WindowPane();
+    windowPane.setProperty("title", "Color");
     windowPane.setProperty("width", new EchoApp.Property.Extent(500));
     windowPane.setProperty("height", new EchoApp.Property.Extent(300));
     windowPane.setStyleName(this.component.getRenderProperty("windowPaneStyleName"));
