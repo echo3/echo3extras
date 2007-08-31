@@ -29,6 +29,9 @@
 
 package nextapp.echo.extras.webcontainer.sync.component;
 
+import nextapp.echo.app.Color;
+import nextapp.echo.app.Component;
+import nextapp.echo.app.update.ClientUpdateManager;
 import nextapp.echo.app.util.Context;
 import nextapp.echo.extras.app.ColorSelect;
 import nextapp.echo.extras.webcontainer.service.CommonService;
@@ -77,6 +80,7 @@ public class ColorSelectPeer extends AbstractComponentSynchronizePeer {
 
     public ColorSelectPeer() {
         super();
+        addOutputProperty(ColorSelect.COLOR_CHANGED_PROPERTY);
     }
     
     /**
@@ -94,6 +98,28 @@ public class ColorSelectPeer extends AbstractComponentSynchronizePeer {
     }
 
     /**
+     * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#getInputPropertyClass(java.lang.String)
+     */
+    public Class getInputPropertyClass(String propertyName) {
+        if (ColorSelect.COLOR_CHANGED_PROPERTY.equals(propertyName)) {
+            return Color.class;
+        }
+        return null;
+    }
+
+    /**
+     * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#getOutputProperty(
+     *      nextapp.echo.app.util.Context, nextapp.echo.app.Component, java.lang.String, int)
+     */
+    public Object getOutputProperty(Context context, Component component, String propertyName, int propertyIndex) {
+        if (propertyName.equals(ColorSelect.COLOR_CHANGED_PROPERTY)) {
+            ColorSelect colorSelect = (ColorSelect) component;
+            return colorSelect.getColor();
+        } else {
+            return super.getOutputProperty(context, component, propertyName, propertyIndex);
+        }
+    }
+    /**
      * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#init(nextapp.echo.app.util.Context)
      */
     public void init(Context context) {
@@ -101,5 +127,15 @@ public class ColorSelectPeer extends AbstractComponentSynchronizePeer {
         ServerMessage serverMessage = (ServerMessage) context.get(ServerMessage.class);
         serverMessage.addLibrary(CommonService.INSTANCE.getId());
         serverMessage.addLibrary(COLOR_SELECT_SERVICE.getId());
+    }
+
+    /**
+     * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#storeInputProperty(Context, Component, String, int, Object)
+     */
+    public void storeInputProperty(Context context, Component component, String propertyName, int propertyIndex, Object newValue) {
+        if (propertyName.equals(ColorSelect.COLOR_CHANGED_PROPERTY)) {
+            ClientUpdateManager clientUpdateManager = (ClientUpdateManager) context.get(ClientUpdateManager.class);
+            clientUpdateManager.setComponentProperty(component, ColorSelect.COLOR_CHANGED_PROPERTY, newValue);
+        }
     }
 }

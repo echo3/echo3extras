@@ -338,6 +338,8 @@ ExtrasRender.ComponentSync.ColorSelect.prototype.renderAdd = function(update, pa
             false);
     EchoWebCore.EventProcessor.add(this._hListenerDivElement, "mousedown", new EchoCore.MethodRef(this, this._processHMouseDown), 
             false);
+    
+    this._setColor(this.component.getProperty("color"));
 };
 
 ExtrasRender.ComponentSync.ColorSelect.prototype.renderDispose = function(update) { 
@@ -357,6 +359,41 @@ ExtrasRender.ComponentSync.ColorSelect.prototype.renderUpdate = function(update)
     parentElement.removeChild(containerDivElement);
     this.renderAdd(update, parentElement);
     return false;
+};
+
+/**
+ * Sets the selected color.
+ *
+ * @param rgb the color to select as an <code>ExtrasColorSelect.RGB</code>
+ *            value.
+ */
+ExtrasRender.ComponentSync.ColorSelect.prototype._setColor = function(color) {
+    var r = color ? color.getRed() / 255 : 0;
+    var g = color ? color.getGreen() / 255 : 0;
+    var b = color ? color.getBlue() / 255 : 0;
+    
+    var min = Math.min(r, g, b);
+    var max = Math.max(r, g, b);
+    this._v = max;
+    
+    var delta = max - min;
+    if (max == 0 || delta == 0) {
+        this._s = 0;
+        this._h = 0;
+    } else {
+        this._s = delta / max;
+        if (r == max) {
+            this._h = 60 * ((g - b) / delta);
+        } else if (g == max) {
+            this._h = 60 * (2 + (b - r) / delta);
+        } else {
+            this._h = 60 * (4 + (r - g) / delta);
+        }
+        if (this._h < 0) {
+            this._h += 360;
+        }
+    }
+    this._updateColor();
 };
 
 ExtrasRender.ComponentSync.ColorSelect.prototype._updateColor = function() {
@@ -400,6 +437,8 @@ ExtrasRender.ComponentSync.ColorSelect.prototype._updateColor = function() {
         hLineTop = this._saturationHeight + 2;
     }
     this._hLineDivElement.style.top = hLineTop + "px";
+    
+    this.component.setProperty("color", new EchoApp.Property.Color(renderHexTriplet));
 };
 
 ExtrasRender.ComponentSync.ColorSelect.RGB = function(r, g, b) {
