@@ -11,13 +11,13 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._createApp = function() {
     this._app = new EchoApp.Application();
     this._app.setStyleSheet(this.client.application.getStyleSheet());
     
-    var contentPane = new EchoApp.ContentPane();
-    this._app.rootComponent.add(contentPane);
+    this._contentPane = new EchoApp.ContentPane();
+    this._app.rootComponent.add(this._contentPane);
     
     var splitPane = new EchoApp.SplitPane();
     splitPane.setProperty("orientation", EchoApp.SplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM);
     splitPane.setProperty("separatorPosition", new EchoApp.Property.Extent("26px"));
-    contentPane.add(splitPane);
+    this._contentPane.add(splitPane);
     
     var menuBarPane = new ExtrasApp.MenuBarPane();
     menuBarPane.setStyleName(this.component.getRenderProperty("menuStyleName"));
@@ -88,8 +88,7 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._createMainMenuModel = functio
     styleMenu.addItem(new ExtrasApp.OptionModel("/increasefontsize", "Increase Font Size", null));
     styleMenu.addItem(new ExtrasApp.OptionModel("/decreasefontsize", "Decrease Font Size", null));
     styleMenu.addItem(new ExtrasApp.SeparatorModel());
-    styleMenu.addItem(new ExtrasApp.OptionModel("foregroundColor", "Set Foreground Color...", null));
-    styleMenu.addItem(new ExtrasApp.OptionModel("backgroundColor", "Set Background Color...", null));
+    styleMenu.addItem(new ExtrasApp.OptionModel("color", "Set Color...", null));
     bar.addItem(styleMenu);
     
     return bar;
@@ -106,7 +105,43 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._processItalic = function(e) {
 ExtrasRender.ComponentSync.RichTextArea.prototype._processMenuAction = function(e) {
     if (e.modelId.charAt(0) == '/') {
         this._richTextInput.peer.doCommand(e.modelId.substring(1));
+    } else {
+        switch (e.modelId) {
+        case "color":
+            this._processSetColor();
+            break;
+        }
     }
+};
+
+ExtrasRender.ComponentSync.RichTextArea.prototype._processSetColor = function(e) {
+    var windowPane = new EchoApp.WindowPane();
+    windowPane.setProperty("width", new EchoApp.Property.Extent(500));
+    windowPane.setProperty("height", new EchoApp.Property.Extent(300));
+    windowPane.setStyleName(this.component.getRenderProperty("windowPaneStyleName"));
+    windowPane.addListener("close", new EchoCore.MethodRef(this, this._processSetColorClose));
+    
+    var layoutGrid = new EchoApp.Grid();
+    layoutGrid.setProperty("insets", new EchoApp.Property.Insets(5, 10));
+    
+    var foregroundLabel = new EchoApp.Label();
+    foregroundLabel.setProperty("text", "Foreground");
+    layoutGrid.add(foregroundLabel);
+    
+    var backgroundLabel = new EchoApp.Label();
+    backgroundLabel.setProperty("text", "Background");
+    layoutGrid.add(backgroundLabel);
+
+    layoutGrid.add(new ExtrasApp.ColorSelect());
+    layoutGrid.add(new ExtrasApp.ColorSelect());
+    
+    windowPane.add(layoutGrid);
+    
+    this._contentPane.add(windowPane);
+};
+
+ExtrasRender.ComponentSync.RichTextArea.prototype._processSetColorClose = function(e) {
+    this._contentPane.remove(e.source);
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype._processUnderline = function(e) {
@@ -129,6 +164,7 @@ ExtrasRender.ComponentSync.RichTextArea.prototype.renderDispose = function(updat
         this._freeClient = null;
     }
     if (this._appInitialized) {
+        this._contentPane = null;
         this._app.dispose();
         this._appInitialized = false;
         this._app = null;

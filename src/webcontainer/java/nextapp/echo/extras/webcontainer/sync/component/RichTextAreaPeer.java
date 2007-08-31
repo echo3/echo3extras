@@ -31,9 +31,13 @@ package nextapp.echo.extras.webcontainer.sync.component;
 
 import nextapp.echo.app.Button;
 import nextapp.echo.app.Column;
+import nextapp.echo.app.Grid;
 import nextapp.echo.app.Label;
 import nextapp.echo.app.Row;
+import nextapp.echo.app.WindowPane;
 import nextapp.echo.app.util.Context;
+import nextapp.echo.extras.app.ColorSelect;
+import nextapp.echo.extras.app.MenuBarPane;
 import nextapp.echo.extras.app.RichTextArea;
 import nextapp.echo.extras.webcontainer.service.CommonService;
 import nextapp.echo.webcontainer.AbstractComponentSynchronizePeer;
@@ -60,6 +64,10 @@ public class RichTextAreaPeer extends AbstractComponentSynchronizePeer {
         
         addRequiredComponentClass(Button.class);
         addRequiredComponentClass(Column.class);
+        addRequiredComponentClass(Grid.class);
+        addRequiredComponentClass(WindowPane.class);
+        addRequiredComponentClass(MenuBarPane.class);
+        addRequiredComponentClass(ColorSelect.class);
         addRequiredComponentClass(Label.class);
         addRequiredComponentClass(Row.class);
     }
