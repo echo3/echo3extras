@@ -23,7 +23,7 @@ ExtrasRender.ComponentSync.ColorSelect.prototype.renderAdd = function(update, pa
     this._containerDivElement.style.left = "0px";
     this._containerDivElement.style.top = "0px";
     this._containerDivElement.style.width = (valueWidth + hueWidth + 29) + "px";
-    this._containerDivElement.style.hxeight = (saturationHeight + 36) +"px";
+    this._containerDivElement.style.height = (saturationHeight + 36) +"px";
     this._containerDivElement.style.overflow = "hidden";
     
     // Create saturation / value selector.
