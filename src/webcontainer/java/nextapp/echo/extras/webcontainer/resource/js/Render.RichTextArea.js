@@ -22,6 +22,7 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._createApp = function() {
     var menuBarPane = new ExtrasApp.MenuBarPane();
     menuBarPane.setStyleName(this.component.getRenderProperty("menuStyleName"));
     menuBarPane.setProperty("model", this._createMainMenuModel());
+    menuBarPane.addListener("action", new EchoCore.MethodRef(this, this._processMenuAction));
     splitPane.add(menuBarPane);
     
     var mainColumn = new EchoApp.Column();
@@ -72,40 +73,48 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._createMainMenuModel = functio
     var bar = new ExtrasApp.MenuModel();
     
     var editMenu = new ExtrasApp.MenuModel(null, "Edit", null);
-    editMenu.addItem(new ExtrasApp.OptionModel("undo", "Undo", null));
-    editMenu.addItem(new ExtrasApp.OptionModel("redo", "Redo", null));
+    editMenu.addItem(new ExtrasApp.OptionModel("/undo", "Undo", null));
+    editMenu.addItem(new ExtrasApp.OptionModel("/redo", "Redo", null));
     editMenu.addItem(new ExtrasApp.SeparatorModel());
-    editMenu.addItem(new ExtrasApp.OptionModel("cut", "Cut", null));
-    editMenu.addItem(new ExtrasApp.OptionModel("copy", "Copy", null));
-    editMenu.addItem(new ExtrasApp.OptionModel("paste", "Paste", null));
+    editMenu.addItem(new ExtrasApp.OptionModel("/cut", "Cut", null));
+    editMenu.addItem(new ExtrasApp.OptionModel("/copy", "Copy", null));
+    editMenu.addItem(new ExtrasApp.OptionModel("/paste", "Paste", null));
+    editMenu.addItem(new ExtrasApp.OptionModel("/delete", "Delete", null));
+    editMenu.addItem(new ExtrasApp.SeparatorModel());
+    editMenu.addItem(new ExtrasApp.OptionModel("/selectall", "Select All", null));
     bar.addItem(editMenu);
     
     var styleMenu = new ExtrasApp.MenuModel(null, "Style", null);
-    styleMenu.addItem(new ExtrasApp.OptionModel("/decreasefontsize", "Decrease Font Size", null));
     styleMenu.addItem(new ExtrasApp.OptionModel("/increasefontsize", "Increase Font Size", null));
+    styleMenu.addItem(new ExtrasApp.OptionModel("/decreasefontsize", "Decrease Font Size", null));
     styleMenu.addItem(new ExtrasApp.SeparatorModel());
-    styleMenu.addItem(new ExtrasApp.OptionModel("backgroundColor", "Set Background Color", null));
-    styleMenu.addItem(new ExtrasApp.OptionModel("foregroundColor", "Set Foreground Color", null));
+    styleMenu.addItem(new ExtrasApp.OptionModel("foregroundColor", "Set Foreground Color...", null));
+    styleMenu.addItem(new ExtrasApp.OptionModel("backgroundColor", "Set Background Color...", null));
     bar.addItem(styleMenu);
-    
     
     return bar;
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype._processBold = function(e) {
-    this._richTextInput.peer.doBold();
+    this._richTextInput.peer.doCommand("bold");
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype._processItalic = function(e) {
-    this._richTextInput.peer.doItalic();
+    this._richTextInput.peer.doCommand("italic");
+};
+
+ExtrasRender.ComponentSync.RichTextArea.prototype._processMenuAction = function(e) {
+    if (e.modelId.charAt(0) == '/') {
+        this._richTextInput.peer.doCommand(e.modelId.substring(1));
+    }
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype._processUnderline = function(e) {
-    this._richTextInput.peer.doUnderline();
+    this._richTextInput.peer.doCommand("underline");
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype._processStrikeThrough = function(e) {
-    this._richTextInput.peer.doStrikeThrough();
+    this._richTextInput.peer.doCommand("strikethrough");
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype.renderAdd = function(update, parentElement) {
@@ -148,20 +157,8 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer = function() { };
 
 ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype = EchoCore.derive(EchoRender.ComponentSync);
 
-ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype.doBold = function() {
-    this._iframeElement.contentWindow.document.execCommand("bold", false, null);
-};
-
-ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype.doItalic = function() {
-    this._iframeElement.contentWindow.document.execCommand("italic", false, null);
-};
-
-ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype.doUnderline = function() {
-    this._iframeElement.contentWindow.document.execCommand("underline", false, null);
-};
-
-ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype.doStrikeThrough = function() {
-    this._iframeElement.contentWindow.document.execCommand("strikethrough", false, null);
+ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype.doCommand = function(command) {
+    this._iframeElement.contentWindow.document.execCommand(command, false, null);
 };
 
 ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype.renderAdd = function(update, parentElement) {

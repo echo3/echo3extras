@@ -507,7 +507,9 @@ ExtrasRender.ComponentSync.MenuBarPane.prototype._processClick = function(e) {
 
 ExtrasRender.ComponentSync.MenuBarPane.prototype._doAction = function(menuModel) {
     var path = menuModel.getItemPositionPath().join(".");
-    this.component.fireEvent(new EchoCore.Event(this.component, "action", path));
+    var event = new EchoCore.Event(this.component, "action", path);
+    event.modelId = menuModel.modelId; 
+    this.component.fireEvent(event);
 };
 
 /**
