@@ -1,13 +1,64 @@
-ExtrasRender.ComponentSync.ColorSelect = function() { };
+ExtrasRender.ComponentSync.ColorSelect = function() { 
+    this._h = 0;
+    this._s = 0;
+    this._v = 0;
+};
 
 ExtrasRender.ComponentSync.ColorSelect.prototype = EchoCore.derive(EchoRender.ComponentSync);
 
+ExtrasRender.ComponentSync.ColorSelect.prototype._hsvToRgb = function(h, s, v) {
+    var r, g, b;
+    if (s == 0) {
+        r = g = b = v;
+    } else {
+        h /= 60;
+        var i = Math.floor(h);
+        var f = h - i;
+        var p = v * (1 - s);
+        var q = v * (1 - s * f);
+        var t = v * (1 - s * (1 - f));
+        switch (i) {
+        case 0:
+            r = v;
+            g = t;
+            b = p;
+            break;
+        case 1:
+            r = q;
+            g = v;
+            b = p;
+            break;
+        case 2:
+            r = p;
+            g = v;
+            b = t;
+            break;
+        case 3:
+            r = p;
+            g = q;
+            b = v;
+            break;
+        case 4:
+            r = t;
+            g = p;
+            b = v;
+            break;
+        default:
+            r = v;
+            g = p;
+            b = q;
+            break;
+        }
+    }
+    return new ExtrasRender.ComponentSync.ColorSelect.RGB(Math.round(r * 255), Math.round(g * 255), Math.round(b * 255));
+};
+
 ExtrasRender.ComponentSync.ColorSelect.prototype.renderAdd = function(update, parentElement) {
-    var valueWidth = EchoRender.Property.Extent.toPixels(
+    this._valueWidth = EchoRender.Property.Extent.toPixels(
             this.component.getRenderProperty("valueWidth", ExtrasApp.ColorSelect.DEFAULT_VALUE_WIDTH), true);
-    var saturationHeight = EchoRender.Property.Extent.toPixels(
+    this._saturationHeight = EchoRender.Property.Extent.toPixels(
             this.component.getRenderProperty("saturationHeight", ExtrasApp.ColorSelect.DEFAULT_SATURATION_HEIGHT), false);
-    var hueWidth = EchoRender.Property.Extent.toPixels(
+    this._hueWidth = EchoRender.Property.Extent.toPixels(
             this.component.getRenderProperty("hueWidth", ExtrasApp.ColorSelect.DEFAULT_HUE_WIDTH), true);
 
     var svGradientImageSrc = this.client.getServiceUrl("EchoExtras.ColorSelect.SVGradient");
@@ -22,8 +73,8 @@ ExtrasRender.ComponentSync.ColorSelect.prototype.renderAdd = function(update, pa
     this._containerDivElement.style.position = "relative";
     this._containerDivElement.style.left = "0px";
     this._containerDivElement.style.top = "0px";
-    this._containerDivElement.style.width = (valueWidth + hueWidth + 29) + "px";
-    this._containerDivElement.style.height = (saturationHeight + 36) +"px";
+    this._containerDivElement.style.width = (this._valueWidth + this._hueWidth + 29) + "px";
+    this._containerDivElement.style.height = (this._saturationHeight + 36) +"px";
     this._containerDivElement.style.overflow = "hidden";
     
     // Create saturation / value selector.
@@ -31,8 +82,8 @@ ExtrasRender.ComponentSync.ColorSelect.prototype.renderAdd = function(update, pa
     this._svDivElement.style.position = "absolute";
     this._svDivElement.style.left = "7px";
     this._svDivElement.style.top = "7px";
-    this._svDivElement.style.width = valueWidth + "px";
-    this._svDivElement.style.height = saturationHeight + "px";
+    this._svDivElement.style.width = this._valueWidth + "px";
+    this._svDivElement.style.height = this._saturationHeight + "px";
     this._svDivElement.style.backgroundColor = "#ff0000";
     this._containerDivElement.appendChild(this._svDivElement);
     
@@ -43,8 +94,8 @@ ExtrasRender.ComponentSync.ColorSelect.prototype.renderAdd = function(update, pa
         } else {
             var svGradientImgElement = document.createElement("img");
             svGradientImgElement.src = svGradientImageSrc;
-            svGradientImgElement.style.width = valueWidth + "px";
-            svGradientImgElement.style.height = saturationHeight + "px";
+            svGradientImgElement.style.width = this._valueWidth + "px";
+            svGradientImgElement.style.height = this._saturationHeight + "px";
             this._svDivElement.appendChild(svGradientImgElement);
         }
     }
@@ -55,7 +106,7 @@ ExtrasRender.ComponentSync.ColorSelect.prototype.renderAdd = function(update, pa
     this._vLineDivElement.style.left = "2px";
     this._vLineDivElement.style.top = "0px";
     this._vLineDivElement.style.width = "11px";
-    this._vLineDivElement.style.height = (saturationHeight + 14) + "px";
+    this._vLineDivElement.style.height = (this._saturationHeight + 14) + "px";
     this._vLineDivElement.style.overflow = "hidden";
     this._containerDivElement.appendChild(this._vLineDivElement);
 
@@ -74,7 +125,7 @@ ExtrasRender.ComponentSync.ColorSelect.prototype.renderAdd = function(update, pa
     vLineBarDivElement.style.position = "absolute";
     vLineBarDivElement.style.top = "7px";
     vLineBarDivElement.style.left = "5px";
-    vLineBarDivElement.style.height = saturationHeight + "px";
+    vLineBarDivElement.style.height = this._saturationHeight + "px";
     vLineBarDivElement.style.width = "1px";
     vLineBarDivElement.style.backgroundColor = "#000000";
     this._vLineDivElement.appendChild(vLineBarDivElement);
@@ -85,7 +136,7 @@ ExtrasRender.ComponentSync.ColorSelect.prototype.renderAdd = function(update, pa
         vLineBottomImgElement.src = arrowUpImageSrc;
         vLineBottomImgElement.style.position = "absolute";
         vLineBottomImgElement.style.left = "0px";
-        vLineBottomImgElement.style.top = (saturationHeight + 7) + "px";
+        vLineBottomImgElement.style.top = (this._saturationHeight + 7) + "px";
         this._vLineDivElement.appendChild(vLineBottomImgElement);
     }
     
@@ -93,9 +144,9 @@ ExtrasRender.ComponentSync.ColorSelect.prototype.renderAdd = function(update, pa
     this._sLineDivElement = document.createElement("div");
     this._sLineDivElement.style.position = "absolute";
     this._sLineDivElement.style.left = "0px";
-    this._sLineDivElement.style.top = (saturationHeight + 2) + "px";
+    this._sLineDivElement.style.top = (this._saturationHeight + 2) + "px";
     this._sLineDivElement.style.height = "11px";
-    this._sLineDivElement.style.width = (valueWidth + 14) + "px";
+    this._sLineDivElement.style.width = (this._valueWidth + 14) + "px";
     this._sLineDivElement.style.overflow = "hidden";
     this._containerDivElement.appendChild(this._sLineDivElement);
     
@@ -115,7 +166,7 @@ ExtrasRender.ComponentSync.ColorSelect.prototype.renderAdd = function(update, pa
     sLineBarDivElement.style.left = "0px";
     sLineBarDivElement.style.left = "7px";
     sLineBarDivElement.style.top = "5px";
-    sLineBarDivElement.style.width = valueWidth + "px";
+    sLineBarDivElement.style.width = this._valueWidth + "px";
     sLineBarDivElement.style.height = "1px";
     sLineBarDivElement.style.fontSize = "1px";
     sLineBarDivElement.style.borderTop = "1px #000000 solid";
@@ -127,7 +178,7 @@ ExtrasRender.ComponentSync.ColorSelect.prototype.renderAdd = function(update, pa
         var sLineRightImgElement = document.createElement("img");
         sLineRightImgElement.src = arrowLeftImageSrc;
         sLineRightImgElement.style.position = "absolute";
-        sLineRightImgElement.style.left = valueWidth + 7 + "px";
+        sLineRightImgElement.style.left = this._valueWidth + 7 + "px";
         sLineRightImgElement.style.top = "0px";
         this._sLineDivElement.appendChild(sLineRightImgElement);
     }
@@ -135,10 +186,10 @@ ExtrasRender.ComponentSync.ColorSelect.prototype.renderAdd = function(update, pa
     // Create hue selector.
     var hDivElement = document.createElement("div");
     hDivElement.style.position = "absolute";
-    hDivElement.style.left = (valueWidth + 22) + "px";
+    hDivElement.style.left = (this._valueWidth + 22) + "px";
     hDivElement.style.top = "7px";
-    hDivElement.style.width = hueWidth + "px";
-    hDivElement.style.height = saturationHeight + "px";
+    hDivElement.style.width = this._hueWidth + "px";
+    hDivElement.style.height = this._saturationHeight + "px";
     this._containerDivElement.appendChild(hDivElement);
 
     if (hGradientImageSrc) {
@@ -147,17 +198,17 @@ ExtrasRender.ComponentSync.ColorSelect.prototype.renderAdd = function(update, pa
         hGradientImgElement.style.position = "absolute";
         hGradientImgElement.style.left = "0px";
         hGradientImgElement.style.top = "0px";
-        hGradientImgElement.style.width = hueWidth + "px";
-        hGradientImgElement.style.height = saturationHeight + "px";
+        hGradientImgElement.style.width = this._hueWidth + "px";
+        hGradientImgElement.style.height = this._saturationHeight + "px";
         hDivElement.appendChild(hGradientImgElement);
     }
     
     var hLineDivElement = document.createElement("div");
     hLineDivElement.style.position = "absolute";
-    hLineDivElement.style.left = (valueWidth + 15) + "px";
-    hLineDivElement.style.top = (saturationHeight + 2) + "px";
+    hLineDivElement.style.left = (this._valueWidth + 15) + "px";
+    hLineDivElement.style.top = (this._saturationHeight + 2) + "px";
     hLineDivElement.style.height = "11px";
-    hLineDivElement.style.width = (hueWidth + 14) + "px";
+    hLineDivElement.style.width = (this._hueWidth + 14) + "px";
     hLineDivElement.style.overflow = "hidden";
     this._containerDivElement.appendChild(hLineDivElement);
     
@@ -174,7 +225,7 @@ ExtrasRender.ComponentSync.ColorSelect.prototype.renderAdd = function(update, pa
         var hLineRightImgElement = document.createElement("img");
         hLineRightImgElement.src = arrowLeftImageSrc;
         hLineRightImgElement.style.position = "absolute";
-        hLineRightImgElement.style.left = (hueWidth + 7) + "px";
+        hLineRightImgElement.style.left = (this._hueWidth + 7) + "px";
         hLineRightImgElement.style.top = "0px";
         hLineDivElement.appendChild(hLineRightImgElement);
     }
@@ -184,19 +235,114 @@ ExtrasRender.ComponentSync.ColorSelect.prototype.renderAdd = function(update, pa
     hLineBarDivElement.style.left = "0px";
     hLineBarDivElement.style.left = "7px";
     hLineBarDivElement.style.top = "5px";
-    hLineBarDivElement.style.width = hueWidth + "px";
+    hLineBarDivElement.style.width = this._hueWidth + "px";
     hLineBarDivElement.style.height = "1px";
     hLineBarDivElement.style.fontSize = "1px";
     hLineBarDivElement.style.borderTop = "1px #000000 solid";
     hLineBarDivElement.style.lineHeight = "0";
     hLineDivElement.appendChild(hLineBarDivElement);
+    
+    var colorDivElement = document.createElement("div");
+    colorDivElement.style.position = "absolute";
+    colorDivElement.style.left = "7px";
+    colorDivElement.style.top = (this._saturationHeight + 16) + "px";
+    colorDivElement.style.width = (this._valueWidth + this._hueWidth + 13) + "px";
+    colorDivElement.style.height = "18px";
+    colorDivElement.style.color = "#ffffff";
+    colorDivElement.style.backgroundColor = "#000000";
+    colorDivElement.style.borderColor = "#000000";
+    colorDivElement.style.borderStyle = "outset";
+    colorDivElement.style.borderWidth = "1px";
+    colorDivElement.style.fontFamily = "monospace";
+    colorDivElement.style.textAlign = "center";
+    if (this.component.getRenderProperty("displayValue")) {
+        colorDivElement.appendChild(document.createTextNode("#000000"));
+    }
+    this._containerDivElement.appendChild(colorDivElement);
+    
+    this._svListenerDivElement = document.createElement("div");
+    this._svListenerDivElement.style.position = "absolute";
+    this._svListenerDivElement.style.zIndex = "1";
+    this._svListenerDivElement.style.left = "0px";
+    this._svListenerDivElement.style.top = "0px";
+    this._svListenerDivElement.style.width = (this._valueWidth + 14) + "px";
+    this._svListenerDivElement.style.height = (this._saturationHeight + 14) + "px";
+    this._svListenerDivElement.style.cursor = "crosshair";
+//    this._svListenerDivElement.style.backgroundImage = "url(" + this.transparentImageSrc + ")";
+    this._containerDivElement.appendChild(this._svListenerDivElement);
+    
+    this._hListenerDivElement = document.createElement("div");
+    this._hListenerDivElement.id = this.elementId + "_hlistener";
+    this._hListenerDivElement.style.position = "absolute";
+    this._hListenerDivElement.style.zIndex = "1";
+    this._hListenerDivElement.style.left = (this._valueWidth + 15) + "px";
+    this._hListenerDivElement.style.top = "0px";
+    this._hListenerDivElement.style.width = (this._hueWidth + 14) + "px";
+    this._hListenerDivElement.style.height = (this._saturationHeight + 16) + "px";
+    this._hListenerDivElement.style.cursor = "crosshair";
+//    this._hListenerDivElement.style.backgroundImage = "url(" + this.transparentImageSrc + ")";
+    this._containerDivElement.appendChild(this._hListenerDivElement);
 
     parentElement.appendChild(this._containerDivElement);
+    
+    EchoWebCore.EventProcessor.add(this._svListenerDivElement, "mousedown", new EchoCore.MethodRef(this, this._processSVMouseDown), 
+            false);
+    EchoWebCore.EventProcessor.add(this._hListenerDivElement, "mousedown", new EchoCore.MethodRef(this, this._processHMouseDown), 
+            false);
 };
+
+ExtrasRender.ComponentSync.ColorSelect.prototype._processSVMouseDown = function(e) {
+    EchoWebCore.EventProcessor.add(this._svListenerDivElement, "mousemove", new EchoCore.MethodRef(this, this._processSVMouseMove), 
+            false);
+    EchoWebCore.EventProcessor.add(this._svListenerDivElement, "mouseup", new EchoCore.MethodRef(this, this._processSVMouseUp), 
+            false);
+    EchoCore.Debug.consoleWrite("svdown");
+};
+
+ExtrasRender.ComponentSync.ColorSelect.prototype._processSVMouseMove = function(e) {
+    EchoCore.Debug.consoleWrite("svmove");
+};
+
+ExtrasRender.ComponentSync.ColorSelect.prototype._processSVMouseUp = function(e) {
+    EchoWebCore.EventProcessor.remove(this._svListenerDivElement, "mousemove", new EchoCore.MethodRef(this, this._processSVMouseMove), 
+            false);
+    EchoWebCore.EventProcessor.remove(this._svListenerDivElement, "mouseup", new EchoCore.MethodRef(this, this._processSVMouseUp), 
+            false);
+};
+
+ExtrasRender.ComponentSync.ColorSelect.prototype._processHMouseDown = function(e) {
+    EchoWebCore.EventProcessor.add(this._hListenerDivElement, "mousemove", new EchoCore.MethodRef(this, this._processHMouseMove), 
+            false);
+    EchoWebCore.EventProcessor.add(this._hListenerDivElement, "mouseup", new EchoCore.MethodRef(this, this._processHMouseUp), 
+            false);
+};
+
+ExtrasRender.ComponentSync.ColorSelect.prototype._processHMouseMove = function(e) {
+    this._processHUpdate(e);
+};
+
+ExtrasRender.ComponentSync.ColorSelect.prototype._processHMouseUp = function(e) {
+    EchoWebCore.EventProcessor.remove(this._hListenerDivElement, "mousemove", new EchoCore.MethodRef(this, this._processHMouseMove), 
+            false);
+    EchoWebCore.EventProcessor.remove(this._hListenerDivElement, "mouseup", new EchoCore.MethodRef(this, this._processHMouseUp), 
+            false);
+};
+
+ExtrasRender.ComponentSync.ColorSelect.prototype._processHUpdate = function(e) {
+    var bounds = new EchoWebCore.Render.Measure.Bounds(this._hListenerDivElement);
+    this._h = (this._saturationHeight - (e.clientY - bounds.top - 7)) * 360 / this._saturationHeight;
+    this._updateColor();
+};
+
 
 ExtrasRender.ComponentSync.ColorSelect.prototype.renderDispose = function(update) { 
     this._containerDivElement = null;
     this._svDivElement = null;
+    this._svListenerDivElement = null;
+    this._hListenerDivElement = null;
+    this._hLineDivElement = null;
+    this._sLineDivElement = null;
+    this._vLineDivElement = null;
 };
 
 ExtrasRender.ComponentSync.ColorSelect.prototype.renderUpdate = function(update) {
@@ -206,6 +352,50 @@ ExtrasRender.ComponentSync.ColorSelect.prototype.renderUpdate = function(update)
     parentElement.removeChild(containerDivElement);
     this.renderAdd(update, parentElement);
     return false;
+};
+
+ExtrasRender.ComponentSync.ColorSelect.prototype._updateColor = function() {
+    var baseColor;
+//    if (this.enabled) {
+        baseColor = this._hsvToRgb(this._h, 1, 1);
+//    } else {
+//        baseColor = ExtrasColorSelect.hsvToRgb(this.h, 0.3, 0.7);
+//    }
+    this._svDivElement.style.backgroundColor = baseColor.toHexTriplet();
+    EchoCore.Debug.consoleWrite(baseColor.toHexTriplet());
+};
+
+ExtrasRender.ComponentSync.ColorSelect.RGB = function(r, g, b) {
+    this.r = this._clean(r);
+    this.g = this._clean(g);
+    this.b = this._clean(b);
+};
+
+ExtrasRender.ComponentSync.ColorSelect.RGB.prototype._clean = function(value) {
+    value = value ? parseInt(value) : 0;
+    if (value < 0) {
+        return 0;
+    } else if (value > 255) {
+        return 255;
+    } else {
+        return value;
+    }
+};
+
+ExtrasRender.ComponentSync.ColorSelect.RGB.prototype.toHexTriplet = function() {
+    var rString = this.r.toString(16);
+    if (rString.length == 1) {
+        rString = "0" + rString;
+    }
+    var gString = this.g.toString(16);
+    if (gString.length == 1) {
+        gString = "0" + gString;
+    }
+    var bString = this.b.toString(16);
+    if (bString.length == 1) {
+        bString = "0" + bString;
+    }
+    return "#" + rString + gString + bString;
 };
 
 EchoRender.registerPeer("ExtrasApp.ColorSelect", ExtrasRender.ComponentSync.ColorSelect);

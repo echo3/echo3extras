@@ -76,10 +76,10 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._createMainMenuModel = functio
     editMenu.addItem(new ExtrasApp.OptionModel("/undo", "Undo", null));
     editMenu.addItem(new ExtrasApp.OptionModel("/redo", "Redo", null));
     editMenu.addItem(new ExtrasApp.SeparatorModel());
-    editMenu.addItem(new ExtrasApp.OptionModel("/cut", "Cut", null));
-    editMenu.addItem(new ExtrasApp.OptionModel("/copy", "Copy", null));
-    editMenu.addItem(new ExtrasApp.OptionModel("/paste", "Paste", null));
-    editMenu.addItem(new ExtrasApp.OptionModel("/delete", "Delete", null));
+    editMenu.addItem(new ExtrasApp.OptionModel("cut", "Cut", null));
+    editMenu.addItem(new ExtrasApp.OptionModel("copy", "Copy", null));
+    editMenu.addItem(new ExtrasApp.OptionModel("paste", "Paste", null));
+    editMenu.addItem(new ExtrasApp.OptionModel("delete", "Delete", null));
     editMenu.addItem(new ExtrasApp.SeparatorModel());
     editMenu.addItem(new ExtrasApp.OptionModel("/selectall", "Select All", null));
     bar.addItem(editMenu);
@@ -110,6 +110,15 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._processMenuAction = function(
         case "color":
             this._processSetColor();
             break;
+        case "cut":
+        case "copy":
+        case "paste":
+        case "delete":
+            try {
+                this._richTextInput.peer.doCommand(e.modelId);
+            } catch (ex) {
+                alert("This browser has clipboard access disabled.  Use keyboard shortcuts or change your security settings.");
+            }
         }
     }
 };
