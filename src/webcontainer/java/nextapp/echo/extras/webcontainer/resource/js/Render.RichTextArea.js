@@ -46,23 +46,27 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._createApp = function() {
     strikethroughButton.addListener("action", new EchoCore.MethodRef(this, this._processStrikeThrough));
     fontStyleRow.add(strikethroughButton);
     
-    var richTextInput = new ExtrasRender.ComponentSync.RichTextArea.InputComponent();
-    mainColumn.add(richTextInput);
+    this._richTextInput = new ExtrasRender.ComponentSync.RichTextArea.InputComponent();
+    mainColumn.add(this._richTextInput);
 
     this._freeClient = new EchoFreeClient(this._app, this._mainDivElement); 
     this._freeClient.init();
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype._processBold = function(e) {
+    this._richTextInput.peer.doBold();
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype._processItalic = function(e) {
+    this._richTextInput.peer.doItalic();
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype._processUnderline = function(e) {
+    this._richTextInput.peer.doUnderline();
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype._processStrikeThrough = function(e) {
+    this._richTextInput.peer.doStrikeThrough();
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype.renderAdd = function(update, parentElement) {
@@ -103,6 +107,22 @@ ExtrasRender.ComponentSync.RichTextArea.InputComponent.prototype = EchoCore.deri
 ExtrasRender.ComponentSync.RichTextArea.InputPeer = function() { };
 
 ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype = EchoCore.derive(EchoRender.ComponentSync);
+
+ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype.doBold = function() {
+    this._iframeElement.contentWindow.document.execCommand("bold", false, null);
+};
+
+ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype.doItalic = function() {
+    this._iframeElement.contentWindow.document.execCommand("italic", false, null);
+};
+
+ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype.doUnderline = function() {
+    this._iframeElement.contentWindow.document.execCommand("underline", false, null);
+};
+
+ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype.doStrikeThrough = function() {
+    this._iframeElement.contentWindow.document.execCommand("strikethrough", false, null);
+};
 
 ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype.renderAdd = function(update, parentElement) {
     // Create IFRAME container DIV element.
