@@ -39,6 +39,13 @@ import nextapp.echo.extras.app.ContextMenu;
 public class ContextMenuPeer extends AbstractMenuPeer {
     
     /**
+     * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#getClientComponentType()
+     */
+    public String getClientComponentType() {
+        return "ExtrasApp.ContextMenu";
+    }
+
+    /**
      * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#getComponentClass()
      */
     public Class getComponentClass() {

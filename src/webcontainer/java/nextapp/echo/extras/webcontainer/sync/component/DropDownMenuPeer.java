@@ -53,6 +53,13 @@ public class DropDownMenuPeer extends AbstractMenuPeer {
         addOutputProperty(PROPERTY_SELECTION);
         addOutputProperty(PROPERTY_SELECTION_ENABLED);
     }
+
+    /**
+     * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#getClientComponentType()
+     */
+    public String getClientComponentType() {
+        return "ExtrasApp.DropDownMenu";
+    }
     
     /**
      * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#getComponentClass()

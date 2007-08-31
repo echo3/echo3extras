@@ -55,7 +55,7 @@ ExtrasRender.ComponentSync.Menu.prototype.renderDispose = function(update) {
 };
 
 ExtrasRender.ComponentSync.Menu.prototype._activateItem = function(itemModel) {
-    if (!this._stateModel.isEnabled(itemModel.modelId)) {
+    if (this._stateModel && !this._stateModel.isEnabled(itemModel.modelId)) {
         return;
     }
     if (itemModel instanceof ExtrasApp.OptionModel) {
@@ -209,7 +209,7 @@ ExtrasRender.ComponentSync.Menu.prototype._renderMenu = function(menuModel, xPos
 	            EchoRender.Property.Insets.renderPixel(iconPadding, menuItemIconTdElement, "padding");
                 if (item instanceof ExtrasApp.ToggleOptionModel) {
                     var iconIdentifier;
-                    var selected = this._stateModel.isSelected(item.modelId);
+                    var selected = this._stateModel && this._stateModel.isSelected(item.modelId);
                     if (item instanceof ExtrasApp.RadioOptionModel) {
                         iconIdentifier = selected ? "radioOn" : "radioOff";
                     } else {
@@ -234,7 +234,7 @@ ExtrasRender.ComponentSync.Menu.prototype._renderMenu = function(menuModel, xPos
             if (lineWrap != null && !lineWrap) {
 	            menuItemContentTdElement.style.whiteSpace = "nowrap";
             }
-            if (!this._stateModel.isEnabled(item.modelId)) {
+            if (this._stateModel && !this._stateModel.isEnabled(item.modelId)) {
             	EchoRender.Property.Color.renderComponentProperty(this.component, "disabledForeground", ExtrasRender.ComponentSync.Menu._defaultDisabledForeground, menuItemContentTdElement, "color");
             }
             menuItemContentTdElement.title = item.text;
@@ -291,7 +291,7 @@ ExtrasRender.ComponentSync.Menu.prototype._disposeMenu = function(menuModel) {
 };
 
 ExtrasRender.ComponentSync.Menu.prototype._highlight = function(menuModel, state) {
-    if (!this._stateModel.isEnabled(menuModel.modelId)) {
+    if (this._stateModel && !this._stateModel.isEnabled(menuModel.modelId)) {
         return;
     }
     var menuElement = this._getMenuElement(menuModel);
@@ -847,7 +847,6 @@ ExtrasRender.ComponentSync.ContextMenu.prototype._doAction = function(menuModel)
     this.component.fireEvent(new EchoCore.Event(this.component, "action", path));
 };
 
-//FIXME. Inconsistent.
-EchoRender.registerPeer("nextapp.echo.extras.app.ContextMenu", ExtrasRender.ComponentSync.ContextMenu);
-EchoRender.registerPeer("nextapp.echo.extras.app.MenuBarPane", ExtrasRender.ComponentSync.MenuBarPane);
-EchoRender.registerPeer("nextapp.echo.extras.app.DropDownMenu", ExtrasRender.ComponentSync.DropDownMenu);
+EchoRender.registerPeer("ExtrasApp.ContextMenu", ExtrasRender.ComponentSync.ContextMenu);
+EchoRender.registerPeer("ExtrasApp.DropDownMenu", ExtrasRender.ComponentSync.DropDownMenu);
+EchoRender.registerPeer("ExtrasApp.MenuBarPane", ExtrasRender.ComponentSync.MenuBarPane);

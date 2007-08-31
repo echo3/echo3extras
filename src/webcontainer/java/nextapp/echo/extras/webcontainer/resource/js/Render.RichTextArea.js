@@ -11,9 +11,22 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._createApp = function() {
     this._app = new EchoApp.Application();
     this._app.setStyleSheet(this.client.application.getStyleSheet());
     
+    var contentPane = new EchoApp.ContentPane();
+    this._app.rootComponent.add(contentPane);
+    
+    var splitPane = new EchoApp.SplitPane();
+    splitPane.setProperty("orientation", EchoApp.SplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM);
+    splitPane.setProperty("separatorPosition", new EchoApp.Property.Extent("26px"));
+    contentPane.add(splitPane);
+    
+    var menuBarPane = new ExtrasApp.MenuBarPane();
+    menuBarPane.setStyleName(this.component.getRenderProperty("menuStyleName"));
+    menuBarPane.setProperty("model", this._createMainMenuModel());
+    splitPane.add(menuBarPane);
+    
     var mainColumn = new EchoApp.Column();
     mainColumn.setProperty("cellSpacing", new EchoApp.Property.Extent("5px"));
-    this._app.rootComponent.add(mainColumn);
+    splitPane.add(mainColumn);
     
     var controlsRow = new EchoApp.Row();
     controlsRow.setProperty("cellSpacing", new EchoApp.Property.Extent("10px"));
@@ -49,8 +62,34 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._createApp = function() {
     this._richTextInput = new ExtrasRender.ComponentSync.RichTextArea.InputComponent();
     mainColumn.add(this._richTextInput);
 
-    this._freeClient = new EchoFreeClient(this._app, this._mainDivElement); 
+    this._freeClient = new EchoFreeClient(this._app, this._mainDivElement);
+    this._freeClient.parent = this.client;
     this._freeClient.init();
+};
+
+ExtrasRender.ComponentSync.RichTextArea.prototype._createMainMenuModel = function() {
+    //FIXME I18N
+    var bar = new ExtrasApp.MenuModel();
+    
+    var editMenu = new ExtrasApp.MenuModel(null, "Edit", null);
+    editMenu.addItem(new ExtrasApp.OptionModel("undo", "Undo", null));
+    editMenu.addItem(new ExtrasApp.OptionModel("redo", "Redo", null));
+    editMenu.addItem(new ExtrasApp.SeparatorModel());
+    editMenu.addItem(new ExtrasApp.OptionModel("cut", "Cut", null));
+    editMenu.addItem(new ExtrasApp.OptionModel("copy", "Copy", null));
+    editMenu.addItem(new ExtrasApp.OptionModel("paste", "Paste", null));
+    bar.addItem(editMenu);
+    
+    var styleMenu = new ExtrasApp.MenuModel(null, "Style", null);
+    styleMenu.addItem(new ExtrasApp.OptionModel("/decreasefontsize", "Decrease Font Size", null));
+    styleMenu.addItem(new ExtrasApp.OptionModel("/increasefontsize", "Increase Font Size", null));
+    styleMenu.addItem(new ExtrasApp.SeparatorModel());
+    styleMenu.addItem(new ExtrasApp.OptionModel("backgroundColor", "Set Background Color", null));
+    styleMenu.addItem(new ExtrasApp.OptionModel("foregroundColor", "Set Foreground Color", null));
+    bar.addItem(styleMenu);
+    
+    
+    return bar;
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype._processBold = function(e) {
@@ -71,6 +110,7 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._processStrikeThrough = functi
 
 ExtrasRender.ComponentSync.RichTextArea.prototype.renderAdd = function(update, parentElement) {
     this._mainDivElement = document.createElement("div");
+    this._mainDivElement.style.height = "300px";
     parentElement.appendChild(this._mainDivElement);
 };
 
@@ -134,7 +174,7 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype.renderAdd = function
     this._iframeElement.style.backgroundColor = "white";
     this._iframeElement.style.color = "black";
     this._iframeElement.style.width = this.width ? this.width : "100%";
-    this._iframeElement.style.height = this.height ? this.height: "200px";
+    this._iframeElement.style.height = this.height ? this.height: "250px";
     this._iframeElement.style.border = "0px none";
 
     this._mainDivElement.appendChild(this._iframeElement);

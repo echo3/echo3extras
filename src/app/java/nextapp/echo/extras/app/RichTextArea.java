@@ -36,10 +36,19 @@ import nextapp.echo.app.Component;
  */
 public class RichTextArea extends Component {
 
+    public static final String STYLE_MENU_STYLE_NAME = "menuStyleName";
     public static final String STYLE_TOOLBAR_BUTTON_STYLE_NAME = "toolbarButtonStyleName";
+    
+    public String getMenuStyleName() {
+        return (String) getProperty(STYLE_MENU_STYLE_NAME);
+    }
     
     public String getToolbarButtonStyleName() {
         return (String) getProperty(STYLE_TOOLBAR_BUTTON_STYLE_NAME);
+    }
+    
+    public void setMenuStyleName(String newValue) {
+        setProperty(STYLE_MENU_STYLE_NAME, newValue);
     }
     
     public void setToolbarButtonStyleName(String newValue) {

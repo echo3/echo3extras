@@ -1,4 +1,52 @@
 /**
+ * Creates a new ContextMenu.
+ * 
+ * @constructor
+ * @class ContextMenu component.
+ * @base EchoApp.Component
+ */
+ExtrasApp.ContextMenu = function(renderId) {
+    EchoApp.Component.call(this, renderId);
+    this.componentType = "ExtrasApp.ContextMenu";
+};
+
+ExtrasApp.ContextMenu.prototype = EchoCore.derive(EchoApp.Component);
+
+EchoApp.ComponentFactory.registerType("ExtrasApp.ContextMenu", ExtrasApp.ContextMenu);
+
+/**
+ * Creates a new DropDownMenu.
+ * 
+ * @constructor
+ * @class DropDownMenu component.
+ * @base EchoApp.Component
+ */
+ExtrasApp.DropDownMenu = function(renderId) {
+    EchoApp.Component.call(this, renderId);
+    this.componentType = "ExtrasApp.DropDownMenu";
+};
+
+ExtrasApp.DropDownMenu.prototype = EchoCore.derive(EchoApp.Component);
+
+EchoApp.ComponentFactory.registerType("ExtrasApp.DropDownMenu", ExtrasApp.DropDownMenu);
+
+/**
+ * Creates a new MenuBarPane.
+ * 
+ * @constructor
+ * @class MenuBarPane component.
+ * @base EchoApp.Component
+ */
+ExtrasApp.MenuBarPane = function(renderId) {
+    EchoApp.Component.call(this, renderId);
+    this.componentType = "ExtrasApp.MenuBarPane";
+};
+
+ExtrasApp.MenuBarPane.prototype = EchoCore.derive(EchoApp.Component);
+
+EchoApp.ComponentFactory.registerType("ExtrasApp.MenuBarPane", ExtrasApp.MenuBarPane);
+
+/**
  * Representation of a menu that may contain submenus, options, and separators.
  *
  * @param modelId {String} the id of the menu model
