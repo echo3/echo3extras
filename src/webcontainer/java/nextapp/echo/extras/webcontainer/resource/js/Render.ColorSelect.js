@@ -58,6 +58,7 @@ ExtrasRender.ComponentSync.ColorSelect.prototype._processHMouseDown = function(e
             false);
     EchoWebCore.EventProcessor.add(this._hListenerDivElement, "mouseup", new EchoCore.MethodRef(this, this._processHMouseUp), 
             false);
+    this._processHUpdate(e);
 };
 
 ExtrasRender.ComponentSync.ColorSelect.prototype._processHMouseMove = function(e) {
@@ -83,6 +84,7 @@ ExtrasRender.ComponentSync.ColorSelect.prototype._processSVMouseDown = function(
             false);
     EchoWebCore.EventProcessor.add(this._svListenerDivElement, "mouseup", new EchoCore.MethodRef(this, this._processSVMouseUp), 
             false);
+    this._processSVUpdate(e);
 };
 
 ExtrasRender.ComponentSync.ColorSelect.prototype._processSVMouseMove = function(e) {
