@@ -124,34 +124,7 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._processMenuAction = function(
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype._processSetColor = function(e) {
-    var windowPane = new EchoApp.WindowPane();
-    windowPane.setProperty("title", "Color");
-    windowPane.setProperty("width", new EchoApp.Property.Extent(500));
-    windowPane.setProperty("height", new EchoApp.Property.Extent(300));
-    windowPane.setStyleName(this.component.getRenderProperty("windowPaneStyleName"));
-    windowPane.addListener("close", new EchoCore.MethodRef(this, this._processSetColorClose));
-    
-    var layoutGrid = new EchoApp.Grid();
-    layoutGrid.setProperty("insets", new EchoApp.Property.Insets(5, 10));
-    
-    var foregroundLabel = new EchoApp.Label();
-    foregroundLabel.setProperty("text", "Foreground");
-    layoutGrid.add(foregroundLabel);
-    
-    var backgroundLabel = new EchoApp.Label();
-    backgroundLabel.setProperty("text", "Background");
-    layoutGrid.add(backgroundLabel);
-
-    layoutGrid.add(new ExtrasApp.ColorSelect());
-    layoutGrid.add(new ExtrasApp.ColorSelect());
-    
-    windowPane.add(layoutGrid);
-    
-    this._contentPane.add(windowPane);
-};
-
-ExtrasRender.ComponentSync.RichTextArea.prototype._processSetColorClose = function(e) {
-    this._contentPane.remove(e.source);
+    this._contentPane.add(new ExtrasRender.ComponentSync.RichTextArea.ColorDialog(null, this.component));
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype._processUnderline = function(e) {
@@ -192,9 +165,46 @@ ExtrasRender.ComponentSync.RichTextArea.prototype.renderSizeUpdate = function() 
 ExtrasRender.ComponentSync.RichTextArea.prototype.renderUpdate = function(update) {
 };
 
+
+ExtrasRender.ComponentSync.RichTextArea.ColorDialog = function(renderId, richTextArea) {
+    EchoApp.WindowPane.call(this, renderId);
+
+    this.setProperty("title", "Color");
+    this.setProperty("width", new EchoApp.Property.Extent(500));
+    this.setProperty("height", new EchoApp.Property.Extent(300));
+    this.setStyleName(richTextArea.getRenderProperty("windowPaneStyleName"));
+    this.addListener("close", new EchoCore.MethodRef(this, this._processClose));
+    
+    var layoutGrid = new EchoApp.Grid();
+    layoutGrid.setProperty("insets", new EchoApp.Property.Insets(5, 10));
+    this.add(layoutGrid);
+    
+    var foregroundLabel = new EchoApp.Label();
+    foregroundLabel.setProperty("text", "Foreground");
+    layoutGrid.add(foregroundLabel);
+    
+    var backgroundLabel = new EchoApp.Label();
+    backgroundLabel.setProperty("text", "Background");
+    layoutGrid.add(backgroundLabel);
+
+    this._foregroundSelect = new ExtrasApp.ColorSelect();
+    this._foregroundSelect.setProperty("displayValue", true);
+    layoutGrid.add(this._foregroundSelect);
+
+    this._backgroundSelect = new ExtrasApp.ColorSelect();
+    this._backgroundSelect.setProperty("displayValue", true);
+    layoutGrid.add(this._backgroundSelect);
+};
+
 ExtrasRender.ComponentSync.RichTextArea.InputComponent = function(renderId) {
     EchoApp.Component.call(this, renderId);
     this.componentType = "ExtrasApp.RichTextInput";
+};
+
+ExtrasRender.ComponentSync.RichTextArea.ColorDialog.prototype = EchoCore.derive(EchoApp.WindowPane);
+
+ExtrasRender.ComponentSync.RichTextArea.ColorDialog.prototype._processClose = function(e) {
+    this.parent.remove(this);
 };
 
 ExtrasRender.ComponentSync.RichTextArea.InputComponent.prototype = EchoCore.derive(EchoApp.Component);
