@@ -69,12 +69,13 @@ ExtrasRender.ComponentSync.ColorSelect.prototype._processHMouseUp = function(e) 
             false);
     EchoWebCore.EventProcessor.remove(this._hListenerDivElement, "mouseup", new EchoCore.MethodRef(this, this._processHMouseUp), 
             false);
+    this._storeColor();
 };
 
 ExtrasRender.ComponentSync.ColorSelect.prototype._processHUpdate = function(e) {
     var bounds = new EchoWebCore.Render.Measure.Bounds(this._hListenerDivElement);
     this._h = (this._saturationHeight - (e.clientY - bounds.top - 7)) * 360 / this._saturationHeight;
-    this._updateColor();
+    this._updateDisplayedColor();
 };
 
 ExtrasRender.ComponentSync.ColorSelect.prototype._processSVMouseDown = function(e) {
@@ -88,18 +89,19 @@ ExtrasRender.ComponentSync.ColorSelect.prototype._processSVMouseMove = function(
     this._processSVUpdate(e);
 };
 
-ExtrasRender.ComponentSync.ColorSelect.prototype._processSVUpdate = function(e) {
-    var bounds = new EchoWebCore.Render.Measure.Bounds(this._svListenerDivElement);
-    this._v = (e.clientX - bounds.left - 7) / this._valueWidth;
-    this._s = 1 - ((e.clientY - bounds.top - 7) / this._saturationHeight);
-    this._updateColor();
-};
-
 ExtrasRender.ComponentSync.ColorSelect.prototype._processSVMouseUp = function(e) {
     EchoWebCore.EventProcessor.remove(this._svListenerDivElement, "mousemove", new EchoCore.MethodRef(this, this._processSVMouseMove), 
             false);
     EchoWebCore.EventProcessor.remove(this._svListenerDivElement, "mouseup", new EchoCore.MethodRef(this, this._processSVMouseUp), 
             false);
+    this._storeColor();
+};
+
+ExtrasRender.ComponentSync.ColorSelect.prototype._processSVUpdate = function(e) {
+    var bounds = new EchoWebCore.Render.Measure.Bounds(this._svListenerDivElement);
+    this._v = (e.clientX - bounds.left - 7) / this._valueWidth;
+    this._s = 1 - ((e.clientY - bounds.top - 7) / this._saturationHeight);
+    this._updateDisplayedColor();
 };
 
 ExtrasRender.ComponentSync.ColorSelect.prototype.renderAdd = function(update, parentElement) {
@@ -366,6 +368,7 @@ ExtrasRender.ComponentSync.ColorSelect.prototype.renderUpdate = function(update)
  *
  * @param rgb the color to select as an <code>ExtrasColorSelect.RGB</code>
  *            value.
+ * @private
  */
 ExtrasRender.ComponentSync.ColorSelect.prototype._setColor = function(color) {
     var r = color ? color.getRed() / 255 : 0;
@@ -393,10 +396,20 @@ ExtrasRender.ComponentSync.ColorSelect.prototype._setColor = function(color) {
             this._h += 360;
         }
     }
-    this._updateColor();
+    this._updateDisplayedColor();
 };
 
-ExtrasRender.ComponentSync.ColorSelect.prototype._updateColor = function() {
+/**
+ * Stores color value in _h, _s, and _v in the component object.
+ * @private
+ */
+ExtrasRender.ComponentSync.ColorSelect.prototype._storeColor = function() {
+    var renderColor = this._hsvToRgb(this._h, this._s, this._v);
+    var renderHexTriplet = renderColor.toHexTriplet();
+    this.component.setProperty("color", new EchoApp.Property.Color(renderHexTriplet));
+};
+
+ExtrasRender.ComponentSync.ColorSelect.prototype._updateDisplayedColor = function() {
     var baseColor;
 //    if (this.enabled) {
         baseColor = this._hsvToRgb(this._h, 1, 1);
@@ -437,8 +450,6 @@ ExtrasRender.ComponentSync.ColorSelect.prototype._updateColor = function() {
         hLineTop = this._saturationHeight + 2;
     }
     this._hLineDivElement.style.top = hLineTop + "px";
-    
-    this.component.setProperty("color", new EchoApp.Property.Color(renderHexTriplet));
 };
 
 ExtrasRender.ComponentSync.ColorSelect.RGB = function(r, g, b) {
