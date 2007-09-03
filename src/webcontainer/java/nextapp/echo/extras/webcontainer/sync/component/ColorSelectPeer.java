@@ -119,6 +119,7 @@ public class ColorSelectPeer extends AbstractComponentSynchronizePeer {
             return super.getOutputProperty(context, component, propertyName, propertyIndex);
         }
     }
+    
     /**
      * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#init(nextapp.echo.app.util.Context)
      */

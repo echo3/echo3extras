@@ -57,4 +57,34 @@ ExtrasRender.Color.adjustIntensity = function(color, factor) {
     return new EchoApp.Property.Color(out);
 };
 
+ExtrasRender.configureStyle = function(component, styleName, defaultStyle) {
+    if (styleName) {
+        component.setStyleName(styleName);
+    } else {
+        component.setStyle(defaultStyle);
+    }
+};
 
+ExtrasRender.DEFAULT_CONTROL_PANE_SPLIT_PANE_STYLE = new EchoApp.Style({
+    orientation: EchoApp.SplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP,
+    separatorColor: new EchoApp.Property.Color("#dfdfef"),
+    separatorHeight: new EchoApp.Property.Extent("1px"),
+    separatorPosition: new EchoApp.Property.Extent("30px")
+});
+
+ExtrasRender.DEFAULT_CONTROL_PANE_ROW_STYLE = new EchoApp.Style({
+    insets: new EchoApp.Property.Insets("2px 10px"),
+    cellSpacing: new EchoApp.Property.Extent("3px"),
+    layoutData: new EchoApp.LayoutData({
+        overflow: EchoApp.SplitPane.OVERFLOW_HIDDEN,
+        background: new EchoApp.Property.Color("#cfcfdf")
+    })
+});
+
+ExtrasRender.DEFAULT_CONTROL_PANE_BUTTON_STYLE = new EchoApp.Style({
+    insets: new EchoApp.Property.Insets("0px 8px"),
+    lineWrap: false,
+    foreground: new EchoApp.Property.Color("#000000"),
+    rolloverEnabled: true,
+    rolloverForeground: new EchoApp.Property.Color("#6f0f0f")
+});

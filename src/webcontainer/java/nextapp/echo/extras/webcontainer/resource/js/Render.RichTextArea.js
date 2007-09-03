@@ -175,21 +175,27 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog = function(renderId, richTex
     this.addListener("close", new EchoCore.MethodRef(this, this._processCancel));
     
     var splitPane = new EchoApp.SplitPane();
-    splitPane.setProperty("orientation", EchoApp.SplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP);
-    splitPane.setProperty("separatorPosition", new EchoApp.Property.Extent("26px"));
+    ExtrasRender.configureStyle(splitPane, richTextArea.getRenderProperty("controlPaneSplitPaneStyleName"), 
+            ExtrasRender.DEFAULT_CONTROL_PANE_SPLIT_PANE_STYLE);
     this.add(splitPane);
     
     var controlsRow = new EchoApp.Row();
+    ExtrasRender.configureStyle(controlsRow, richTextArea.getRenderProperty("controlPaneRowStyleName"), 
+            ExtrasRender.DEFAULT_CONTROL_PANE_ROW_STYLE);
     splitPane.add(controlsRow);
     
     var okButton = new EchoApp.Button();
     okButton.setProperty("text", "Ok");
     okButton.addListener("action", new EchoCore.MethodRef(this, this._processOk));
+    ExtrasRender.configureStyle(okButton, richTextArea.getRenderProperty("controlPaneButtonStyleName"), 
+            ExtrasRender.DEFAULT_CONTROL_PANE_BUTTON_STYLE);
     controlsRow.add(okButton);
     
     var cancelButton = new EchoApp.Button();
     cancelButton.setProperty("text", "Cancel");
     cancelButton.addListener("action", new EchoCore.MethodRef(this, this._processCancel));
+    ExtrasRender.configureStyle(cancelButton, richTextArea.getRenderProperty("controlPaneButtonStyleName"), 
+            ExtrasRender.DEFAULT_CONTROL_PANE_BUTTON_STYLE);
     controlsRow.add(cancelButton);
     
     var layoutGrid = new EchoApp.Grid();
