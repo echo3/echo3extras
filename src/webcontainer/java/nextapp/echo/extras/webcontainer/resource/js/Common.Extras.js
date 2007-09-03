@@ -56,3 +56,5 @@ ExtrasRender.Color.adjustIntensity = function(color, factor) {
     out += blue.toString(16);
     return new EchoApp.Property.Color(out);
 };
+
+

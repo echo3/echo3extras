@@ -165,7 +165,6 @@ ExtrasRender.ComponentSync.RichTextArea.prototype.renderSizeUpdate = function() 
 ExtrasRender.ComponentSync.RichTextArea.prototype.renderUpdate = function(update) {
 };
 
-
 ExtrasRender.ComponentSync.RichTextArea.ColorDialog = function(renderId, richTextArea) {
     EchoApp.WindowPane.call(this, renderId);
 
@@ -173,11 +172,29 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog = function(renderId, richTex
     this.setProperty("width", new EchoApp.Property.Extent(500));
     this.setProperty("height", new EchoApp.Property.Extent(300));
     this.setStyleName(richTextArea.getRenderProperty("windowPaneStyleName"));
-    this.addListener("close", new EchoCore.MethodRef(this, this._processClose));
+    this.addListener("close", new EchoCore.MethodRef(this, this._processCancel));
+    
+    var splitPane = new EchoApp.SplitPane();
+    splitPane.setProperty("orientation", EchoApp.SplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP);
+    splitPane.setProperty("separatorPosition", new EchoApp.Property.Extent("26px"));
+    this.add(splitPane);
+    
+    var controlsRow = new EchoApp.Row();
+    splitPane.add(controlsRow);
+    
+    var okButton = new EchoApp.Button();
+    okButton.setProperty("text", "Ok");
+    okButton.addListener("action", new EchoCore.MethodRef(this, this._processOk));
+    controlsRow.add(okButton);
+    
+    var cancelButton = new EchoApp.Button();
+    cancelButton.setProperty("text", "Cancel");
+    cancelButton.addListener("action", new EchoCore.MethodRef(this, this._processCancel));
+    controlsRow.add(cancelButton);
     
     var layoutGrid = new EchoApp.Grid();
     layoutGrid.setProperty("insets", new EchoApp.Property.Insets(5, 10));
-    this.add(layoutGrid);
+    splitPane.add(layoutGrid);
     
     var foregroundLabel = new EchoApp.Label();
     foregroundLabel.setProperty("text", "Foreground");
@@ -196,15 +213,19 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog = function(renderId, richTex
     layoutGrid.add(this._backgroundSelect);
 };
 
+ExtrasRender.ComponentSync.RichTextArea.ColorDialog.prototype = EchoCore.derive(EchoApp.WindowPane);
+
+ExtrasRender.ComponentSync.RichTextArea.ColorDialog.prototype._processCancel = function(e) {
+    this.parent.remove(this);
+};
+
+ExtrasRender.ComponentSync.RichTextArea.ColorDialog.prototype._processOk = function(e) {
+    this.parent.remove(this);
+};
+
 ExtrasRender.ComponentSync.RichTextArea.InputComponent = function(renderId) {
     EchoApp.Component.call(this, renderId);
     this.componentType = "ExtrasApp.RichTextInput";
-};
-
-ExtrasRender.ComponentSync.RichTextArea.ColorDialog.prototype = EchoCore.derive(EchoApp.WindowPane);
-
-ExtrasRender.ComponentSync.RichTextArea.ColorDialog.prototype._processClose = function(e) {
-    this.parent.remove(this);
 };
 
 ExtrasRender.ComponentSync.RichTextArea.InputComponent.prototype = EchoCore.derive(EchoApp.Component);
