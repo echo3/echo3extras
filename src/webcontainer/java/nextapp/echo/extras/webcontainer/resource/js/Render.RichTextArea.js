@@ -166,11 +166,12 @@ ExtrasRender.ComponentSync.RichTextArea.prototype.renderUpdate = function(update
 };
 
 ExtrasRender.ComponentSync.RichTextArea.ColorDialog = function(renderId, richTextArea) {
-    EchoApp.WindowPane.call(this, renderId);
+    EchoApp.WindowPane.call(this, renderId, {
+        title: "Color",
+        width: new EchoApp.Property.Extent(500),
+        height: new EchoApp.Property.Extent(300)
+    });
 
-    this.setProperty("title", "Color");
-    this.setProperty("width", new EchoApp.Property.Extent(500));
-    this.setProperty("height", new EchoApp.Property.Extent(300));
     this.setStyleName(richTextArea.getRenderProperty("windowPaneStyleName"));
     this.addListener("close", new EchoCore.MethodRef(this, this._processCancel));
     
@@ -184,15 +185,17 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog = function(renderId, richTex
             ExtrasRender.DEFAULT_CONTROL_PANE_ROW_STYLE);
     splitPane.add(controlsRow);
     
-    var okButton = new EchoApp.Button();
-    okButton.setProperty("text", "Ok");
+    var okButton = new EchoApp.Button(null, {
+        text: "Ok"
+    });
     okButton.addListener("action", new EchoCore.MethodRef(this, this._processOk));
     ExtrasRender.configureStyle(okButton, richTextArea.getRenderProperty("controlPaneButtonStyleName"), 
             ExtrasRender.DEFAULT_CONTROL_PANE_BUTTON_STYLE);
     controlsRow.add(okButton);
     
-    var cancelButton = new EchoApp.Button();
-    cancelButton.setProperty("text", "Cancel");
+    var cancelButton = new EchoApp.Button(null, {
+        text: "Cancel"
+    });
     cancelButton.addListener("action", new EchoCore.MethodRef(this, this._processCancel));
     ExtrasRender.configureStyle(cancelButton, richTextArea.getRenderProperty("controlPaneButtonStyleName"), 
             ExtrasRender.DEFAULT_CONTROL_PANE_BUTTON_STYLE);
@@ -202,12 +205,14 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog = function(renderId, richTex
     layoutGrid.setProperty("insets", new EchoApp.Property.Insets(5, 10));
     splitPane.add(layoutGrid);
     
-    var foregroundLabel = new EchoApp.Label();
-    foregroundLabel.setProperty("text", "Foreground");
+    var foregroundLabel = new EchoApp.Label(null, {
+        text: "Foreground"
+    });
     layoutGrid.add(foregroundLabel);
     
-    var backgroundLabel = new EchoApp.Label();
-    backgroundLabel.setProperty("text", "Background");
+    var backgroundLabel = new EchoApp.Label(null, {
+        text: "Background"
+    });
     layoutGrid.add(backgroundLabel);
 
     this._foregroundSelect = new ExtrasApp.ColorSelect();
