@@ -167,7 +167,7 @@ implements LazyRenderContainer {
     public Iterator getUpdatedOutputPropertyNames(Context context, Component component, ServerComponentUpdate update) {
         Iterator normalPropertyIterator = super.getUpdatedOutputPropertyNames(context, component, update);
         
-        if (update.hasUpdatedProperty(TabPane.ACTIVE_TAB_INDEX_CHANGED_PROPERTY)) {
+        if (update.hasUpdatedProperty(TabPane.ACTIVE_TAB_INDEX_CHANGED_PROPERTY) || update.hasAddedChildren() || update.hasRemovedChildren()) {
             return new MultiIterator(
                     new Iterator[]{ normalPropertyIterator, new ArrayIterator(new String[] {PROPERTY_ACTIVE_TAB}) });
         }
