@@ -280,8 +280,6 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype._renderPostAdd = fun
 
     contentDocument.designMode = "on";
 
-    contentDocument.execCommand("undo", false, null);
-
     this._renderPostAddComplete = true;
 };
 
