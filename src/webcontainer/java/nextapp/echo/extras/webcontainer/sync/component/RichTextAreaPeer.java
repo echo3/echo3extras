@@ -31,10 +31,13 @@ package nextapp.echo.extras.webcontainer.sync.component;
 
 import nextapp.echo.app.Button;
 import nextapp.echo.app.Column;
+import nextapp.echo.app.Component;
+import nextapp.echo.app.ContentPane;
 import nextapp.echo.app.Grid;
 import nextapp.echo.app.Label;
 import nextapp.echo.app.Row;
 import nextapp.echo.app.WindowPane;
+import nextapp.echo.app.update.ClientUpdateManager;
 import nextapp.echo.app.util.Context;
 import nextapp.echo.extras.app.ColorSelect;
 import nextapp.echo.extras.app.MenuBarPane;
@@ -66,10 +69,13 @@ public class RichTextAreaPeer extends AbstractComponentSynchronizePeer {
         addRequiredComponentClass(Column.class);
         addRequiredComponentClass(Grid.class);
         addRequiredComponentClass(WindowPane.class);
+        addRequiredComponentClass(ContentPane.class);
         addRequiredComponentClass(MenuBarPane.class);
         addRequiredComponentClass(ColorSelect.class);
         addRequiredComponentClass(Label.class);
         addRequiredComponentClass(Row.class);
+
+        addOutputProperty(RichTextArea.TEXT_CHANGED_PROPERTY);
     }
     
     /**
@@ -86,6 +92,28 @@ public class RichTextAreaPeer extends AbstractComponentSynchronizePeer {
         return "ExtrasApp.RichTextArea";
     }
     
+    /**
+     * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#getInputPropertyClass(java.lang.String)
+     */
+    public Class getInputPropertyClass(String propertyName) {
+        if (RichTextArea.TEXT_CHANGED_PROPERTY.equals(propertyName)) {
+            return String.class;
+        }
+        return null;
+    }
+    
+    /**
+     * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#getOutputProperty(
+     *      nextapp.echo.app.util.Context, nextapp.echo.app.Component, java.lang.String, int)
+     */
+    public Object getOutputProperty(Context context, Component component, String propertyName, int propertyIndex) {
+        if (propertyName.equals(RichTextArea.TEXT_CHANGED_PROPERTY)) {
+            RichTextArea rta = (RichTextArea) component;
+            return rta.getText();
+        } else {
+            return super.getOutputProperty(context, component, propertyName, propertyIndex);
+        }
+    }
     
     /**
      * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#init(nextapp.echo.app.util.Context)
@@ -97,4 +125,13 @@ public class RichTextAreaPeer extends AbstractComponentSynchronizePeer {
         serverMessage.addLibrary(RICH_TEXT_AREA_SERVICE.getId());
     }
 
+    /**
+     * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#storeInputProperty(Context, Component, String, int, Object)
+     */
+    public void storeInputProperty(Context context, Component component, String propertyName, int propertyIndex, Object newValue) {
+        if (propertyName.equals(RichTextArea.TEXT_CHANGED_PROPERTY)) {
+            ClientUpdateManager clientUpdateManager = (ClientUpdateManager) context.get(ClientUpdateManager.class);
+            clientUpdateManager.setComponentProperty(component, RichTextArea.TEXT_CHANGED_PROPERTY, newValue);
+        }
+    }
 }

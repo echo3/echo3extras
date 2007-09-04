@@ -29,6 +29,8 @@
 
 package nextapp.echo.extras.testapp.testscreen;
 
+import nextapp.echo.app.event.ActionEvent;
+import nextapp.echo.app.event.ActionListener;
 import nextapp.echo.extras.app.RichTextArea;
 import nextapp.echo.extras.testapp.AbstractTest;
 import nextapp.echo.extras.testapp.Styles;
@@ -51,7 +53,25 @@ public class RichTextAreaTest extends AbstractTest {
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "foreground");
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "background");
         addInsetsPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "insets");
-
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Text: null", new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                richTextArea.setText(null);
+            }
+        });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Text: This is plaintext.", new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                richTextArea.setText("This is plaintext.");
+            }
+        });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Text: This is <b>bold</b>.", new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                richTextArea.setText("This is <b>bold</b>.");
+            }
+        });
+        
         addStandardIntegrationTests();
     }
 }

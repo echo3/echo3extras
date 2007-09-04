@@ -60,7 +60,9 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._createApp = function() {
     strikethroughButton.addListener("action", new EchoCore.MethodRef(this, this._processStrikeThrough));
     fontStyleRow.add(strikethroughButton);
     
-    this._richTextInput = new ExtrasRender.ComponentSync.RichTextArea.InputComponent();
+    this._richTextInput = new ExtrasRender.ComponentSync.RichTextArea.InputComponent(null, {
+        text: this.component.getProperty("text")
+    });
     mainColumn.add(this._richTextInput);
 
     this._freeClient = new EchoFreeClient(this._app, this._mainDivElement);
@@ -234,8 +236,8 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog.prototype._processOk = funct
     this.parent.remove(this);
 };
 
-ExtrasRender.ComponentSync.RichTextArea.InputComponent = function(renderId) {
-    EchoApp.Component.call(this, renderId);
+ExtrasRender.ComponentSync.RichTextArea.InputComponent = function(renderId, properties) {
+    EchoApp.Component.call(this, renderId, properties);
     this.componentType = "ExtrasApp.RichTextInput";
 };
 
@@ -270,17 +272,29 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype.renderAdd = function
 ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype.renderDispose = function(update) {
     this._mainElement = null;
     this._iframeElement = null;
+    EchoCore.Debug.consoleWrite("DISPOSE");
 };
 
 ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype._renderPostAdd = function() {
+    var text = this.component.getProperty("text");
+    
     var contentDocument = this._iframeElement.contentWindow.document;
     contentDocument.open();
-    contentDocument.write("<html><body></body></html>");
+    contentDocument.write("<html><body>" + (text == null ? "" : text) + "</body></html>");
     contentDocument.close();
-
+// FIXME debug code.
+//    EchoWebCore.DOM.addEventListener(contentDocument, "keyup", ExtrasRender.ComponentSync.RichTextArea.InputPeer.testEvent, false);
+//    EchoWebCore.EventProcessor.add(contentDocument, "keyup", ExtrasRender.ComponentSync.RichTextArea.InputPeer.testEvent, false);
+    
     contentDocument.designMode = "on";
 
     this._renderPostAddComplete = true;
+
+    EchoCore.Debug.consoleWrite("ADD");
+};
+
+ExtrasRender.ComponentSync.RichTextArea.InputPeer.testEvent = function(e) {
+    EchoCore.Debug.consoleWrite("UPDATE");
 };
 
 ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype.renderSizeUpdate = function() {
@@ -290,6 +304,12 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype.renderSizeUpdate = f
 };
 
 ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype.renderUpdate = function(update) {
+};
+
+ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype._storeData = function(update) {
+    EchoCore.Debug.consoleWrite("UPDATE");
+    var html = this._iframeElement.contentWindow.document.body.innerHTML;
+    this.component.setProperty("html", html);
 };
 
 EchoApp.ComponentFactory.registerType("ExtrasApp.RichTextInput", ExtrasRender.ComponentSync.RichTextArea.InputComponent);
