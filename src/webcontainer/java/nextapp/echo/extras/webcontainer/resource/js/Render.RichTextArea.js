@@ -18,7 +18,7 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._createApp = function() {
     splitPane.setProperty("orientation", EchoApp.SplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM);
     splitPane.setProperty("separatorPosition", new EchoApp.Property.Extent("26px"));
     this._contentPane.add(splitPane);
-    
+
     var menuBarPane = new ExtrasApp.MenuBarPane();
     menuBarPane.setStyleName(this.component.getRenderProperty("menuStyleName"));
     menuBarPane.setProperty("model", this._createMainMenuModel());
@@ -148,23 +148,26 @@ ExtrasRender.ComponentSync.RichTextArea.prototype.renderDispose = function(updat
         this._freeClient.dispose();
         this._freeClient = null;
     }
-    if (this._appInitialized) {
+    if (this._app) {
         this._contentPane = null;
         this._app.dispose();
-        this._appInitialized = false;
         this._app = null;
     }
     this._mainDivElement = null;
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype.renderDisplay = function() {
-    if (!this._appInitialized) {
+    if (!this._app) {
         this._createApp();
-        this._appInitialized = true;
     }
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype.renderUpdate = function(update) {
+    var element = this._mainDivElement;
+    var containerElement = element.parentNode;
+    EchoRender.renderComponentDispose(update, update.parent);
+    containerElement.removeChild(element);
+    this.renderAdd(update, containerElement);
 };
 
 ExtrasRender.ComponentSync.RichTextArea.ColorDialog = function(renderId, richTextArea) {
@@ -270,25 +273,26 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype.renderAdd = function
 };
 
 ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype.renderDispose = function(update) {
-    this._mainElement = null;
+    this._mainDivElement = null;
     this._iframeElement = null;
+    this._contentDocumentRendered = false;
     EchoCore.Debug.consoleWrite("DISPOSE");
 };
 
-ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype._renderPostAdd = function() {
+ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype._renderContentDocument = function() {
     var text = this.component.getProperty("text");
     
     var contentDocument = this._iframeElement.contentWindow.document;
     contentDocument.open();
     contentDocument.write("<html><body>" + (text == null ? "" : text) + "</body></html>");
     contentDocument.close();
+    
+    this._contentDocumentRendered = true;
 // FIXME debug code.
 //    EchoWebCore.DOM.addEventListener(contentDocument, "keyup", ExtrasRender.ComponentSync.RichTextArea.InputPeer.testEvent, false);
 //    EchoWebCore.EventProcessor.add(contentDocument, "keyup", ExtrasRender.ComponentSync.RichTextArea.InputPeer.testEvent, false);
     
     contentDocument.designMode = "on";
-
-    this._renderPostAddComplete = true;
 
     EchoCore.Debug.consoleWrite("ADD");
 };
@@ -298,8 +302,8 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer.testEvent = function(e) {
 };
 
 ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype.renderDisplay = function() {
-    if (!this._renderPostAddComplete) {
-        this._renderPostAdd();
+    if (!this._contentDocumentRendered) {
+        this._renderContentDocument();
     }
 };
 
