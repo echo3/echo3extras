@@ -159,6 +159,13 @@
   <p n="foreground" t="Color" v="#000000"/>
   <p n="rolloverEnabled" t="b" v="true"/>
   <p n="rolloverForeground" t="Color" v="#6f0f0f"/>
+ </s> 
+ <s n="ControlPane.Button" t="nextapp.echo.app.Button">  <!--FIXME-->
+  <p n="lineWrap" t="b" v="false"/>
+  <p n="insets" t="Insets" v="0px 8px"/>
+  <p n="foreground" t="Color" v="#000000"/>
+  <p n="rolloverEnabled" t="b" v="true"/>
+  <p n="rolloverForeground" t="Color" v="#6f0f0f"/>
  </s>
  <s n="ControlPane.Container.Top" t="nextapp.echo.app.SplitPane">
   <p n="separatorPosition" v="32px"/>

@@ -47,6 +47,9 @@ public class RichTextAreaTest extends AbstractTest {
         richTextArea.setMenuStyleName("Default");
         richTextArea.setToolbarButtonStyleName("RichTextAreaToolbarButton");
         richTextArea.setWindowPaneStyleName("Default");
+        richTextArea.setControlPaneSplitPaneStyleName("ControlPane.Container.Bottom");
+        richTextArea.setControlPaneRowStyleName("ControlPane");
+        richTextArea.setControlPaneButtonStyleName("ControlPane.Button");
         add(richTextArea);
         setTestComponent(this, richTextArea);
         

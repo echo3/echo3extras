@@ -60,6 +60,9 @@ public class RichTextArea extends Component {
     public static final String TEXT_CHANGED_PROPERTY = "text";
 
     public static final String STYLE_MENU_STYLE_NAME = "menuStyleName";
+    public static final String STYLE_CONTROL_PANE_SPLIT_PANE_STYLE_NAME = "controlPaneSplitPaneStyleName";
+    public static final String STYLE_CONTROL_PANE_ROW_STYLE_NAME = "controlPaneRowStyleName";
+    public static final String STYLE_CONTROL_PANE_BUTTON_STYLE_NAME = "controlPaneButtonStyleName";
     public static final String STYLE_TOOLBAR_BUTTON_STYLE_NAME = "toolbarButtonStyleName";
     public static final String STYLE_WINDOW_PANE_STYLE_NAME = "windowPaneStyleName";
     
@@ -101,6 +104,18 @@ public class RichTextArea extends Component {
      */
     public String getText() {
         return document.getText();
+    }
+    
+    public String getControlPaneButtonStyleName() {
+        return (String) getProperty(STYLE_CONTROL_PANE_BUTTON_STYLE_NAME);
+    }
+    
+    public String getControlPaneRowStyleName() {
+        return (String) getProperty(STYLE_CONTROL_PANE_ROW_STYLE_NAME);
+    }
+    
+    public String getControlPaneSplitPaneStyleName() {
+        return (String) getProperty(STYLE_CONTROL_PANE_SPLIT_PANE_STYLE_NAME);
     }
     
     public String getMenuStyleName() {
@@ -150,6 +165,18 @@ public class RichTextArea extends Component {
      */
     public void setText(String newValue) {
         getDocument().setText(newValue);
+    }
+    
+    public void setControlPaneButtonStyleName(String newValue) {
+        setProperty(STYLE_CONTROL_PANE_BUTTON_STYLE_NAME, newValue);
+    }
+    
+    public void setControlPaneRowStyleName(String newValue) {
+        setProperty(STYLE_CONTROL_PANE_ROW_STYLE_NAME, newValue);
+    }
+    
+    public void setControlPaneSplitPaneStyleName(String newValue) {
+        setProperty(STYLE_CONTROL_PANE_SPLIT_PANE_STYLE_NAME, newValue);
     }
     
     public void setMenuStyleName(String newValue) {
