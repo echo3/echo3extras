@@ -112,7 +112,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype.renderAdd = function(update, par
     }
 };
 
-ExtrasRender.ComponentSync.RemoteTree.prototype.renderSizeUpdate = function() {
+ExtrasRender.ComponentSync.RemoteTree.prototype.renderDisplay = function() {
     if (!this._vpElements) {
         return;
     }

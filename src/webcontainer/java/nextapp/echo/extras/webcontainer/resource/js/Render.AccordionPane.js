@@ -44,9 +44,9 @@ ExtrasRender.ComponentSync.AccordionPane.prototype.renderAdd = function(update, 
     parentElement.appendChild(this._paneDivElement);
 };
 
-ExtrasRender.ComponentSync.AccordionPane.prototype.renderSizeUpdate = function() {
+ExtrasRender.ComponentSync.AccordionPane.prototype.renderDisplay = function() {
     for (var i = 0; i < this._tabs.items.length; ++i) {
-        this._tabs.items[i]._renderSizeUpdate();
+        this._tabs.items[i]._renderDisplay();
     }
 };
 
@@ -266,7 +266,7 @@ ExtrasRender.ComponentSync.AccordionPane.Tab.prototype._render = function(client
     this._addEventListeners();
 };
 
-ExtrasRender.ComponentSync.AccordionPane.Tab.prototype._renderSizeUpdate = function() {
+ExtrasRender.ComponentSync.AccordionPane.Tab.prototype._renderDisplay = function() {
     EchoWebCore.VirtualPosition.redraw(this._tabDivElement);
     EchoWebCore.VirtualPosition.redraw(this._contentDivElement);
 };

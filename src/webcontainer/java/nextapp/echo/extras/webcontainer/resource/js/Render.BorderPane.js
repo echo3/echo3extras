@@ -151,7 +151,7 @@ ExtrasRender.ComponentSync.BorderPane.prototype._renderContent = function(update
     this._element.appendChild(this._contentDivElement);
 };
 
-ExtrasRender.ComponentSync.BorderPane.prototype.renderSizeUpdate = function() {
+ExtrasRender.ComponentSync.BorderPane.prototype.renderDisplay = function() {
     EchoWebCore.VirtualPosition.redraw(this._contentDivElement);
     EchoWebCore.VirtualPosition.redraw(this._element);
     if (this._borderTopElement) {

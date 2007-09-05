@@ -485,7 +485,7 @@ ExtrasRender.ComponentSync.MenuBarPane.prototype._getMenuElement = function(item
     return menuElement;
 };
 
-ExtrasRender.ComponentSync.MenuBarPane.prototype.renderSizeUpdate = function() {
+ExtrasRender.ComponentSync.MenuBarPane.prototype.renderDisplay = function() {
     EchoWebCore.VirtualPosition.redraw(this._element);
 };
 
@@ -699,7 +699,7 @@ ExtrasRender.ComponentSync.DropDownMenu.prototype._setSelection = function(menuM
     }
 };
 
-ExtrasRender.ComponentSync.DropDownMenu.prototype.renderSizeUpdate = function() {
+ExtrasRender.ComponentSync.DropDownMenu.prototype.renderDisplay = function() {
     EchoWebCore.VirtualPosition.redraw(this._contentDivElement);
 };
 

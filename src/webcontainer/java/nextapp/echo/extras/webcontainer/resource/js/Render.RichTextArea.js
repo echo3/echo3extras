@@ -157,7 +157,7 @@ ExtrasRender.ComponentSync.RichTextArea.prototype.renderDispose = function(updat
     this._mainDivElement = null;
 };
 
-ExtrasRender.ComponentSync.RichTextArea.prototype.renderSizeUpdate = function() {
+ExtrasRender.ComponentSync.RichTextArea.prototype.renderDisplay = function() {
     if (!this._appInitialized) {
         this._createApp();
         this._appInitialized = true;
@@ -297,7 +297,7 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer.testEvent = function(e) {
     EchoCore.Debug.consoleWrite("UPDATE");
 };
 
-ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype.renderSizeUpdate = function() {
+ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype.renderDisplay = function() {
     if (!this._renderPostAddComplete) {
         this._renderPostAdd();
     }

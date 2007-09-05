@@ -230,12 +230,12 @@ ExtrasRender.ComponentSync.TabPane.prototype._renderHeaderContainer = function()
     return headerContainerDivElement;
 };
 
-ExtrasRender.ComponentSync.TabPane.prototype.renderSizeUpdate = function() {
+ExtrasRender.ComponentSync.TabPane.prototype.renderDisplay = function() {
     EchoWebCore.VirtualPosition.redraw(this._element);
     EchoWebCore.VirtualPosition.redraw(this._contentContainerDivElement);
     
     for (var i = 0; i < this._tabs.size(); ++i) {
-        this._tabs.get(i)._renderSizeUpdate();
+        this._tabs.get(i)._renderDisplay();
     }
 };
 
@@ -520,7 +520,7 @@ ExtrasRender.ComponentSync.TabPane.Tab.prototype._renderContentContainer = funct
     return contentDivElement;
 };
 
-ExtrasRender.ComponentSync.TabPane.Tab.prototype._renderSizeUpdate = function() {
+ExtrasRender.ComponentSync.TabPane.Tab.prototype._renderDisplay = function() {
     EchoWebCore.VirtualPosition.redraw(this._contentDivElement);
 };
 
