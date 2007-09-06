@@ -273,8 +273,7 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype.renderAdd = function
 };
 
 ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype.renderDispose = function(update) {
-    EchoWebCore.EventProcessor.removeAll(this._contentDocument);
-    this._contentDocument = null;
+    EchoWebCore.EventProcessor.removeAll(this._iframeElement.contentWindow.document);
     this._mainDivElement = null;
     this._iframeElement = null;
     this._contentDocumentRendered = false;
@@ -283,27 +282,29 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype.renderDispose = func
 ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype._renderContentDocument = function() {
     var text = this.component._richTextArea.getProperty("text");
     
-    this._contentDocument = this._iframeElement.contentWindow.document;
-    this._contentDocument.open();
-    this._contentDocument.write("<html><body>" + (text == null ? "" : text) + "</body></html>");
-    this._contentDocument.close();
-    
-    this._contentDocument.designMode = "on";
-
-    EchoWebCore.EventProcessor.add(this._contentDocument, "keyup", new EchoCore.MethodRef(this, this._storeData), false);
+    var contentDocument = this._iframeElement.contentWindow.document;
+    contentDocument.open();
+    contentDocument.write("<html><body>" + (text == null ? "" : text) + "</body></html>");
+    contentDocument.close();
+    contentDocument.designMode = "on";
+    EchoWebCore.EventProcessor.add(this._iframeElement.contentWindow.document, "keyup", 
+            new EchoCore.MethodRef(this, this._storeData), false);
+    this._contentDocumentRendered = true;
 };
 
 ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype.renderDisplay = function() {
-    if (!this._contentDocument) {
+    if (!this._contentDocumentRendered) {
         this._renderContentDocument();
     }
 };
 
 ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype.renderUpdate = function(update) {
+    // Not invoked.
 };
 
 ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype._storeData = function(update) {
-    var html = this._contentDocument.body.innerHTML;
+    var contentDocument = this._iframeElement.contentWindow.document;
+    var html = contentDocument.body.innerHTML;
     this.component._richTextArea.setProperty("text", html);
 };
 
