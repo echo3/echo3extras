@@ -36,11 +36,6 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._createApp = function() {
     var fontStyleRow = new EchoApp.Row();
     controlsRow.add(fontStyleRow);
     
-    var simpleButton = new ExtrasRender.ComponentSync.RichTextArea.SimpleButton();
-    simpleButton.setProperty("text", "X");
-    simpleButton.addListener("action", new EchoCore.MethodRef(this, this._processUnderline));
-    fontStyleRow.add(simpleButton);
-    
     var boldButton = new EchoApp.Button();
     boldButton.setProperty("text", "B");
     boldButton.setStyleName(this.component.getRenderProperty("toolbarButtonStyleName"));
@@ -250,13 +245,6 @@ ExtrasRender.ComponentSync.RichTextArea.InputComponent = function(renderId, prop
 
 ExtrasRender.ComponentSync.RichTextArea.InputComponent.prototype = EchoCore.derive(EchoApp.Component);
 
-ExtrasRender.ComponentSync.RichTextArea.SimpleButton = function(renderId, properties) {
-    EchoApp.Component.call(this, renderId, properties);
-    this.componentType = "ExtrasApp.SimpleButton";
-};
-
-ExtrasRender.ComponentSync.RichTextArea.SimpleButton.prototype = EchoCore.derive(EchoApp.Component);
-
 ExtrasRender.ComponentSync.RichTextArea.InputPeer = function() { };
 
 ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype = EchoCore.derive(EchoRender.ComponentSync);
@@ -348,35 +336,9 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype._storeRange = functi
     }
 };
 
-ExtrasRender.ComponentSync.RichTextArea.SimpleButtonPeer = function() { };
 
-ExtrasRender.ComponentSync.RichTextArea.SimpleButtonPeer.prototype = EchoCore.derive(EchoRender.ComponentSync);
-
-ExtrasRender.ComponentSync.RichTextArea.SimpleButtonPeer.prototype._processClick = function(update) {
-    var e = new EchoCore.Event(this.component, "action");
-    this.component.fireEvent(e);
-};
-
-ExtrasRender.ComponentSync.RichTextArea.SimpleButtonPeer.prototype.renderDispose = function(update) {
-    EchoWebCore.EventProcessor.removeAll(this._divElement);
-    this._divElement = null;
-};
-
-ExtrasRender.ComponentSync.RichTextArea.SimpleButtonPeer.prototype.renderAdd = function(update, parentElement) {
-    this._divElement = document.createElement("div");
-    this._divElement.style.cssText = "border:1px outset #abcdef; background: #abcdef; color: #000000; padding: 1px 3px;";
-    this._divElement.appendChild(document.createTextNode(this.component.getRenderProperty("text", "")));
-    EchoWebCore.EventProcessor.add(this._divElement, "click", new EchoCore.MethodRef(this, this._processClick), false);
-    parentElement.appendChild(this._divElement);
-};
-
-ExtrasRender.ComponentSync.RichTextArea.SimpleButtonPeer.prototype.renderUpdate = function(update) {
-    // Not invoked.
-};
 
 EchoApp.ComponentFactory.registerType("ExtrasApp.RichTextInput", ExtrasRender.ComponentSync.RichTextArea.InputComponent);
-EchoApp.ComponentFactory.registerType("ExtrasApp.SimpleButton", ExtrasRender.ComponentSync.RichTextArea.InputComponent);
 
 EchoRender.registerPeer("ExtrasApp.RichTextArea", ExtrasRender.ComponentSync.RichTextArea);
 EchoRender.registerPeer("ExtrasApp.RichTextInput", ExtrasRender.ComponentSync.RichTextArea.InputPeer);
-EchoRender.registerPeer("ExtrasApp.SimpleButton", ExtrasRender.ComponentSync.RichTextArea.SimpleButtonPeer);
