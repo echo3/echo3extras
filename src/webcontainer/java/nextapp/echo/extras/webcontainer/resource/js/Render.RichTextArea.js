@@ -88,11 +88,16 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._createMainMenuModel = functio
     var insertMenu = new ExtrasApp.MenuModel(null, "Insert", null);
     insertMenu.addItem(new ExtrasApp.OptionModel("/insertunorderedlist", "Bulleted List", null));
     insertMenu.addItem(new ExtrasApp.OptionModel("/insertorderedlist", "Numbered List", null));
+    insertMenu.addItem(new ExtrasApp.SeparatorModel());
     insertMenu.addItem(new ExtrasApp.OptionModel("/inserthorizontalrule", "Horizontal Rule", null));
+    insertMenu.addItem(new ExtrasApp.OptionModel("inserttable", "Image...", null));
+    insertMenu.addItem(new ExtrasApp.OptionModel("inserttable", "Hyperlink...", null));
+    insertMenu.addItem(new ExtrasApp.SeparatorModel());
+    insertMenu.addItem(new ExtrasApp.OptionModel("inserttable", "Table...", null));
     bar.addItem(insertMenu);
 
     var formatMenu = new ExtrasApp.MenuModel(null, "Format", null);
-    var formatTextMenu = new ExtrasApp.MenuModel(null, "Text", null);
+    var formatTextMenu = new ExtrasApp.MenuModel(null, "Text Style", null);
     formatTextMenu.addItem(new ExtrasApp.OptionModel("/removeformat", "Plain Text", null));
     formatTextMenu.addItem(new ExtrasApp.SeparatorModel());
     formatTextMenu.addItem(new ExtrasApp.OptionModel("/bold", "Bold", null));
@@ -103,6 +108,22 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._createMainMenuModel = functio
     formatTextMenu.addItem(new ExtrasApp.OptionModel("/superscript", "Superscript", null));
     formatTextMenu.addItem(new ExtrasApp.OptionModel("/subscript", "Subscript", null));
     formatMenu.addItem(formatTextMenu);
+    formatParagraphMenu = new ExtrasApp.MenuModel(null, "Paragraph  Style", null);
+    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<p>", "Paragraph", null));
+    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<pre>", "Preformatted", null));
+    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<h1>", "Heading 1", null));
+    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<h2>", "Heading 2", null));
+    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<h3>", "Heading 3", null));
+    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<h4>", "Heading 4", null));
+    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<h5>", "Heading 5", null));
+    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<h6>", "Heading 6", null));
+    formatMenu.addItem(formatParagraphMenu);
+    formatAlignmentMenu = new ExtrasApp.MenuModel(null, "Alignment", null);
+    formatAlignmentMenu.addItem(new ExtrasApp.OptionModel("/justifyleft", "Left", null));
+    formatAlignmentMenu.addItem(new ExtrasApp.OptionModel("/justifycenter", "Center", null));
+    formatAlignmentMenu.addItem(new ExtrasApp.OptionModel("/justifyright", "Right", null));
+    formatAlignmentMenu.addItem(new ExtrasApp.OptionModel("/justifyfull", "Justified", null));
+    formatMenu.addItem(formatAlignmentMenu);
     formatMenu.addItem(new ExtrasApp.SeparatorModel());
     formatMenu.addItem(new ExtrasApp.OptionModel("/indent", "Indent", null));
     formatMenu.addItem(new ExtrasApp.OptionModel("/outdent", "Outdent", null));
@@ -124,7 +145,13 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._processItalic = function(e) {
 
 ExtrasRender.ComponentSync.RichTextArea.prototype._processMenuAction = function(e) {
     if (e.modelId.charAt(0) == '/') {
-        this._richTextInput.peer.doCommand(e.modelId.substring(1));
+        var separatorIndex = e.modelId.indexOf("/", 1);
+        if (separatorIndex == -1) {
+            this._richTextInput.peer.doCommand(e.modelId.substring(1));
+        } else {
+            this._richTextInput.peer.doCommand(e.modelId.substring(1, separatorIndex),
+                    e.modelId.substring(separatorIndex + 1));
+        }
     } else {
         switch (e.modelId) {
         case "color":
@@ -268,9 +295,9 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer = function() { };
 
 ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype = EchoCore.derive(EchoRender.ComponentSync);
 
-ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype.doCommand = function(command) {
+ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype.doCommand = function(command, value) {
     this._loadRange();
-    this._iframeElement.contentWindow.document.execCommand(command, false, null);
+    this._iframeElement.contentWindow.document.execCommand(command, false, value);
     this._storeData();
 };
 
