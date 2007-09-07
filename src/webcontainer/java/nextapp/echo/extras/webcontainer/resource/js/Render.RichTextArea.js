@@ -85,12 +85,18 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._createMainMenuModel = functio
     editMenu.addItem(new ExtrasApp.OptionModel("/selectall", "Select All", null));
     bar.addItem(editMenu);
     
-    var styleMenu = new ExtrasApp.MenuModel(null, "Style", null);
-    styleMenu.addItem(new ExtrasApp.OptionModel("/increasefontsize", "Increase Font Size", null));
-    styleMenu.addItem(new ExtrasApp.OptionModel("/decreasefontsize", "Decrease Font Size", null));
-    styleMenu.addItem(new ExtrasApp.SeparatorModel());
-    styleMenu.addItem(new ExtrasApp.OptionModel("color", "Set Color...", null));
-    bar.addItem(styleMenu);
+    var formatMenu = new ExtrasApp.MenuModel(null, "Format", null);
+    formatMenu.addItem(new ExtrasApp.OptionModel("/increasefontsize", "Increase Font Size", null));
+    formatMenu.addItem(new ExtrasApp.OptionModel("/decreasefontsize", "Decrease Font Size", null));
+    formatMenu.addItem(new ExtrasApp.SeparatorModel());
+    formatMenu.addItem(new ExtrasApp.OptionModel("color", "Set Color...", null));
+    bar.addItem(formatMenu);
+    
+    var insertMenu = new ExtrasApp.MenuModel(null, "Insert", null);
+    insertMenu.addItem(new ExtrasApp.OptionModel("/insertunorderedlist", "Create Bulleted List", null));
+    insertMenu.addItem(new ExtrasApp.OptionModel("/insertorderedlist", "Create Numbered List", null));
+    bar.addItem(insertMenu);
+
     
     return bar;
 };
