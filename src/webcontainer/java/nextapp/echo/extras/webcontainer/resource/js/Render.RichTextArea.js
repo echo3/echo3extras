@@ -86,17 +86,26 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._createMainMenuModel = functio
     bar.addItem(editMenu);
     
     var insertMenu = new ExtrasApp.MenuModel(null, "Insert", null);
-    insertMenu.addItem(new ExtrasApp.OptionModel("/insertunorderedlist", "Create Bulleted List", null));
-    insertMenu.addItem(new ExtrasApp.OptionModel("/insertorderedlist", "Create Numbered List", null));
+    insertMenu.addItem(new ExtrasApp.OptionModel("/insertunorderedlist", "Bulleted List", null));
+    insertMenu.addItem(new ExtrasApp.OptionModel("/insertorderedlist", "Numbered List", null));
+    insertMenu.addItem(new ExtrasApp.OptionModel("/inserthorizontalrule", "Horizontal Rule", null));
     bar.addItem(insertMenu);
 
     var formatMenu = new ExtrasApp.MenuModel(null, "Format", null);
     var formatTextMenu = new ExtrasApp.MenuModel(null, "Text", null);
+    formatTextMenu.addItem(new ExtrasApp.OptionModel("/removeformat", "Plain Text", null));
+    formatTextMenu.addItem(new ExtrasApp.SeparatorModel());
     formatTextMenu.addItem(new ExtrasApp.OptionModel("/bold", "Bold", null));
     formatTextMenu.addItem(new ExtrasApp.OptionModel("/italic", "Italic", null));
     formatTextMenu.addItem(new ExtrasApp.OptionModel("/underline", "Underline", null));
     formatTextMenu.addItem(new ExtrasApp.OptionModel("/strikethrough", "Strikethrough", null));
+    formatTextMenu.addItem(new ExtrasApp.SeparatorModel());
+    formatTextMenu.addItem(new ExtrasApp.OptionModel("/superscript", "Superscript", null));
+    formatTextMenu.addItem(new ExtrasApp.OptionModel("/subscript", "Subscript", null));
     formatMenu.addItem(formatTextMenu);
+    formatMenu.addItem(new ExtrasApp.SeparatorModel());
+    formatMenu.addItem(new ExtrasApp.OptionModel("/indent", "Indent", null));
+    formatMenu.addItem(new ExtrasApp.OptionModel("/outdent", "Outdent", null));
     formatMenu.addItem(new ExtrasApp.SeparatorModel());
     formatMenu.addItem(new ExtrasApp.OptionModel("color", "Set Color...", null));
     
