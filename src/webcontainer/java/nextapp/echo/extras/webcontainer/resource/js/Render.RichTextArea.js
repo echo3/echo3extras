@@ -139,6 +139,13 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._processBold = function(e) {
     this._richTextInput.peer.doCommand("bold");
 };
 
+/**
+ * Event handler for color selection events from ColorDialog.
+ */
+ExtrasRender.ComponentSync.RichTextArea.prototype._processColorSelection = function(e) {
+    this._richTextInput.peer.doCommand("forecolor", e.data.value);
+};
+
 ExtrasRender.ComponentSync.RichTextArea.prototype._processItalic = function(e) {
     this._richTextInput.peer.doCommand("italic");
 };
@@ -171,7 +178,9 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._processMenuAction = function(
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype._processSetColor = function(e) {
-    this._contentPane.add(new ExtrasRender.ComponentSync.RichTextArea.ColorDialog(null, this.component));
+    var colorDialog = new ExtrasRender.ComponentSync.RichTextArea.ColorDialog(null, this.component);
+    colorDialog.addListener("colorSelection", new EchoCore.MethodRef(this, this._processColorSelection));
+    this._contentPane.add(colorDialog);
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype._processUnderline = function(e) {
@@ -281,7 +290,9 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog.prototype._processCancel = f
 };
 
 ExtrasRender.ComponentSync.RichTextArea.ColorDialog.prototype._processOk = function(e) {
+    var color = this._foregroundSelect.getProperty("color");
     this.parent.remove(this);
+    this.fireEvent(new EchoCore.Event(this, "colorSelection", color));
 };
 
 ExtrasRender.ComponentSync.RichTextArea.InputComponent = function(renderId, properties) {
