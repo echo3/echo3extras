@@ -2,12 +2,19 @@
  * Component rendering peer: RichTextArea
  */
 ExtrasRender.ComponentSync.RichTextArea = function() {
-    this.resourceBundle = ExtrasRender.ComponentSync.RichTextArea.DEFAULT_RESOURCE_BUNDLE; 
+    this._rb = ExtrasRender.ComponentSync.RichTextArea.DEFAULT_RESOURCE_BUNDLE; 
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype = EchoCore.derive(EchoRender.ComponentSync);
     
 ExtrasRender.ComponentSync.RichTextArea.DEFAULT_RESOURCE_BUNDLE = new EchoCore.ResourceBundle({
+    "ColorDialog.Title":                "Color",
+    "ColorDialog.PromptForeground":     "Foreground:",
+    "ColorDialog.PromptBackground":     "Background:",
+    "Error.ClipboardAccess":            "This browser has clipboard access disabled."
+    		                            + "Use keyboard shortcuts or change your security settings.",
+    "Generic.Ok":                       "Ok",
+    "Generic.Cancel":                   "Cancel",
     "Menu.Edit":                        "Edit",
     "Menu.Undo":                        "Undo",
     "Menu.Redo":                        "Redo",
@@ -116,65 +123,62 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._createApp = function() {
 ExtrasRender.ComponentSync.RichTextArea.prototype._createMainMenuModel = function() {
     var bar = new ExtrasApp.MenuModel();
     
-    var editMenu = new ExtrasApp.MenuModel(null, this.resourceBundle.get("Menu.Edit"), null);
-    editMenu.addItem(new ExtrasApp.OptionModel("/undo", this.resourceBundle.get("Menu.Undo"), null));
-    editMenu.addItem(new ExtrasApp.OptionModel("/redo", this.resourceBundle.get("Menu.Redo"), null));
+    var editMenu = new ExtrasApp.MenuModel(null, this._rb.get("Menu.Edit"), null);
+    editMenu.addItem(new ExtrasApp.OptionModel("/undo", this._rb.get("Menu.Undo"), null));
+    editMenu.addItem(new ExtrasApp.OptionModel("/redo", this._rb.get("Menu.Redo"), null));
     editMenu.addItem(new ExtrasApp.SeparatorModel());
-    editMenu.addItem(new ExtrasApp.OptionModel("cut", this.resourceBundle.get("Menu.Cut"), null));
-    editMenu.addItem(new ExtrasApp.OptionModel("copy", this.resourceBundle.get("Menu.Copy"), null));
-    editMenu.addItem(new ExtrasApp.OptionModel("paste", this.resourceBundle.get("Menu.Paste"), null));
-    editMenu.addItem(new ExtrasApp.OptionModel("delete", this.resourceBundle.get("Menu.Delete"), null));
+    editMenu.addItem(new ExtrasApp.OptionModel("cut", this._rb.get("Menu.Cut"), null));
+    editMenu.addItem(new ExtrasApp.OptionModel("copy", this._rb.get("Menu.Copy"), null));
+    editMenu.addItem(new ExtrasApp.OptionModel("paste", this._rb.get("Menu.Paste"), null));
+    editMenu.addItem(new ExtrasApp.OptionModel("delete", this._rb.get("Menu.Delete"), null));
     editMenu.addItem(new ExtrasApp.SeparatorModel());
-    editMenu.addItem(new ExtrasApp.OptionModel("/selectall", this.resourceBundle.get("Menu.SelectAll"), null));
+    editMenu.addItem(new ExtrasApp.OptionModel("/selectall", this._rb.get("Menu.SelectAll"), null));
     bar.addItem(editMenu);
     
-    var insertMenu = new ExtrasApp.MenuModel(null, this.resourceBundle.get("Menu.Insert"), null);
-    insertMenu.addItem(new ExtrasApp.OptionModel("/insertunorderedlist", this.resourceBundle.get("Menu.BulletedList"), null));
-    insertMenu.addItem(new ExtrasApp.OptionModel("/insertorderedlist", this.resourceBundle.get("Menu.NumberedList"), null));
+    var insertMenu = new ExtrasApp.MenuModel(null, this._rb.get("Menu.Insert"), null);
+    insertMenu.addItem(new ExtrasApp.OptionModel("/insertunorderedlist", this._rb.get("Menu.BulletedList"), null));
+    insertMenu.addItem(new ExtrasApp.OptionModel("/insertorderedlist", this._rb.get("Menu.NumberedList"), null));
     insertMenu.addItem(new ExtrasApp.SeparatorModel());
-    insertMenu.addItem(new ExtrasApp.OptionModel("/inserthorizontalrule", 
-            this.resourceBundle.get("Menu.InsertHorizontalRule"), null));
-    insertMenu.addItem(new ExtrasApp.OptionModel("insertimage", this.resourceBundle.get("Menu.InsertImage"), null));
-    insertMenu.addItem(new ExtrasApp.OptionModel("insertlink", this.resourceBundle.get("Menu.InsertHyperlink"), null));
+    insertMenu.addItem(new ExtrasApp.OptionModel("/inserthorizontalrule", this._rb.get("Menu.InsertHorizontalRule"), null));
+    insertMenu.addItem(new ExtrasApp.OptionModel("insertimage", this._rb.get("Menu.InsertImage"), null));
+    insertMenu.addItem(new ExtrasApp.OptionModel("insertlink", this._rb.get("Menu.InsertHyperlink"), null));
     insertMenu.addItem(new ExtrasApp.SeparatorModel());
-    insertMenu.addItem(new ExtrasApp.OptionModel("inserttable", this.resourceBundle.get("Menu.InsertTable"), null));
+    insertMenu.addItem(new ExtrasApp.OptionModel("inserttable", this._rb.get("Menu.InsertTable"), null));
     bar.addItem(insertMenu);
 
-    var formatMenu = new ExtrasApp.MenuModel(null,  this.resourceBundle.get("Menu.Format"), null);
-    var formatTextMenu = new ExtrasApp.MenuModel(null,  this.resourceBundle.get("Menu.TextStyle"), null);
-    formatTextMenu.addItem(new ExtrasApp.OptionModel("/removeformat",  this.resourceBundle.get("Menu.PlainText"), null));
+    var formatMenu = new ExtrasApp.MenuModel(null,  this._rb.get("Menu.Format"), null);
+    var formatTextMenu = new ExtrasApp.MenuModel(null,  this._rb.get("Menu.TextStyle"), null);
+    formatTextMenu.addItem(new ExtrasApp.OptionModel("/removeformat",  this._rb.get("Menu.PlainText"), null));
     formatTextMenu.addItem(new ExtrasApp.SeparatorModel());
-    formatTextMenu.addItem(new ExtrasApp.OptionModel("/bold",  this.resourceBundle.get("Menu.Bold"), null));
-    formatTextMenu.addItem(new ExtrasApp.OptionModel("/italic",  this.resourceBundle.get("Menu.Italic"), null));
-    formatTextMenu.addItem(new ExtrasApp.OptionModel("/underline",  this.resourceBundle.get("Menu.Underline"), null));
-    formatTextMenu.addItem(new ExtrasApp.OptionModel("/strikethrough",  this.resourceBundle.get("Menu.Strikethrough"), null));
+    formatTextMenu.addItem(new ExtrasApp.OptionModel("/bold",  this._rb.get("Menu.Bold"), null));
+    formatTextMenu.addItem(new ExtrasApp.OptionModel("/italic",  this._rb.get("Menu.Italic"), null));
+    formatTextMenu.addItem(new ExtrasApp.OptionModel("/underline",  this._rb.get("Menu.Underline"), null));
+    formatTextMenu.addItem(new ExtrasApp.OptionModel("/strikethrough",  this._rb.get("Menu.Strikethrough"), null));
     formatTextMenu.addItem(new ExtrasApp.SeparatorModel());
-    formatTextMenu.addItem(new ExtrasApp.OptionModel("/superscript",  this.resourceBundle.get("Menu.Superscript"), null));
-    formatTextMenu.addItem(new ExtrasApp.OptionModel("/subscript",  this.resourceBundle.get("Menu.Subscript"), null));
+    formatTextMenu.addItem(new ExtrasApp.OptionModel("/superscript",  this._rb.get("Menu.Superscript"), null));
+    formatTextMenu.addItem(new ExtrasApp.OptionModel("/subscript",  this._rb.get("Menu.Subscript"), null));
     formatMenu.addItem(formatTextMenu);
-    formatParagraphMenu = new ExtrasApp.MenuModel(null, this.resourceBundle.get("Menu.ParagraphStyle"), null);
-    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<p>",  
-            this.resourceBundle.get("Menu.ParagraphStyle"), null));
-    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<pre>",  
-            this.resourceBundle.get("Menu.Preformatted"), null));
-    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<h1>", this.resourceBundle.get("Menu.Heading1"), null));
-    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<h2>", this.resourceBundle.get("Menu.Heading2"), null));
-    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<h3>", this.resourceBundle.get("Menu.Heading3"), null));
-    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<h4>", this.resourceBundle.get("Menu.Heading4"), null));
-    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<h5>", this.resourceBundle.get("Menu.Heading5"), null));
-    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<h6>", this.resourceBundle.get("Menu.Heading6"), null));
+    formatParagraphMenu = new ExtrasApp.MenuModel(null, this._rb.get("Menu.ParagraphStyle"), null);
+    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<p>", this._rb.get("Menu.ParagraphStyle"), null));
+    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<pre>", this._rb.get("Menu.Preformatted"), null));
+    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<h1>", this._rb.get("Menu.Heading1"), null));
+    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<h2>", this._rb.get("Menu.Heading2"), null));
+    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<h3>", this._rb.get("Menu.Heading3"), null));
+    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<h4>", this._rb.get("Menu.Heading4"), null));
+    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<h5>", this._rb.get("Menu.Heading5"), null));
+    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<h6>", this._rb.get("Menu.Heading6"), null));
     formatMenu.addItem(formatParagraphMenu);
-    formatAlignmentMenu = new ExtrasApp.MenuModel(null,  this.resourceBundle.get("Menu.Alignment"), null);
-    formatAlignmentMenu.addItem(new ExtrasApp.OptionModel("/justifyleft",  this.resourceBundle.get("Menu.Left"), null));
-    formatAlignmentMenu.addItem(new ExtrasApp.OptionModel("/justifycenter",  this.resourceBundle.get("Menu.Center"), null));
-    formatAlignmentMenu.addItem(new ExtrasApp.OptionModel("/justifyright",  this.resourceBundle.get("Menu.Right"), null));
-    formatAlignmentMenu.addItem(new ExtrasApp.OptionModel("/justifyfull",  this.resourceBundle.get("Menu.Justified"), null));
+    formatAlignmentMenu = new ExtrasApp.MenuModel(null,  this._rb.get("Menu.Alignment"), null);
+    formatAlignmentMenu.addItem(new ExtrasApp.OptionModel("/justifyleft",  this._rb.get("Menu.Left"), null));
+    formatAlignmentMenu.addItem(new ExtrasApp.OptionModel("/justifycenter",  this._rb.get("Menu.Center"), null));
+    formatAlignmentMenu.addItem(new ExtrasApp.OptionModel("/justifyright",  this._rb.get("Menu.Right"), null));
+    formatAlignmentMenu.addItem(new ExtrasApp.OptionModel("/justifyfull",  this._rb.get("Menu.Justified"), null));
     formatMenu.addItem(formatAlignmentMenu);
     formatMenu.addItem(new ExtrasApp.SeparatorModel());
-    formatMenu.addItem(new ExtrasApp.OptionModel("/indent",  this.resourceBundle.get("Menu.Indent"), null));
-    formatMenu.addItem(new ExtrasApp.OptionModel("/outdent",  this.resourceBundle.get("Menu.Outdent"), null));
+    formatMenu.addItem(new ExtrasApp.OptionModel("/indent",  this._rb.get("Menu.Indent"), null));
+    formatMenu.addItem(new ExtrasApp.OptionModel("/outdent",  this._rb.get("Menu.Outdent"), null));
     formatMenu.addItem(new ExtrasApp.SeparatorModel());
-    formatMenu.addItem(new ExtrasApp.OptionModel("color",  this.resourceBundle.get("Menu.SetColor"), null));
+    formatMenu.addItem(new ExtrasApp.OptionModel("color",  this._rb.get("Menu.SetColor"), null));
     
     bar.addItem(formatMenu);
     
@@ -217,7 +221,7 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._processMenuAction = function(
             try {
                 this._richTextInput.peer.doCommand(e.modelId);
             } catch (ex) {
-                alert("This browser has clipboard access disabled.  Use keyboard shortcuts or change your security settings.");
+                alert(this._rb.get("Error.ClipboardAccessDisabled"));
             }
         }
     }
@@ -272,9 +276,9 @@ ExtrasRender.ComponentSync.RichTextArea.prototype.renderUpdate = function(update
 
 ExtrasRender.ComponentSync.RichTextArea.ColorDialog = function(renderId, richTextArea) {
     EchoApp.WindowPane.call(this, renderId, {
-        title: "Color",
+        title: richTextArea.peer._rb.get("ColorDialog.Title"),
         width: new EchoApp.Property.Extent(500),
-        height: new EchoApp.Property.Extent(300)
+        height: new EchoApp.Property.Extent(320)
     });
 
     this.setStyleName(richTextArea.getRenderProperty("windowPaneStyleName"));
@@ -291,7 +295,7 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog = function(renderId, richTex
     splitPane.add(controlsRow);
     
     var okButton = new EchoApp.Button(null, {
-        text: "Ok"
+        text: richTextArea.peer._rb.get("Generic.Ok")
     });
     okButton.addListener("action", new EchoCore.MethodRef(this, this._processOk));
     ExtrasRender.configureStyle(okButton, richTextArea.getRenderProperty("controlPaneButtonStyleName"), 
@@ -299,7 +303,7 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog = function(renderId, richTex
     controlsRow.add(okButton);
     
     var cancelButton = new EchoApp.Button(null, {
-        text: "Cancel"
+        text: richTextArea.peer._rb.get("Generic.Cancel")
     });
     cancelButton.addListener("action", new EchoCore.MethodRef(this, this._processCancel));
     ExtrasRender.configureStyle(cancelButton, richTextArea.getRenderProperty("controlPaneButtonStyleName"), 
@@ -311,12 +315,12 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog = function(renderId, richTex
     splitPane.add(layoutGrid);
     
     var foregroundLabel = new EchoApp.Label(null, {
-        text: "Foreground"
+        text: richTextArea.peer._rb.get("ColorDialog.PromptForeground")
     });
     layoutGrid.add(foregroundLabel);
     
     var backgroundLabel = new EchoApp.Label(null, {
-        text: "Background"
+        text: richTextArea.peer._rb.get("ColorDialog.PromptBackground")
     });
     layoutGrid.add(backgroundLabel);
 
