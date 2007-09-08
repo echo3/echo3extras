@@ -228,7 +228,7 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._processMenuAction = function(
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype._processSetColor = function(e) {
-    var colorDialog = new ExtrasRender.ComponentSync.RichTextArea.ColorDialog(null, this.component);
+    var colorDialog = new ExtrasRender.ComponentSync.RichTextArea.ColorDialog(this.component);
     colorDialog.addListener("colorSelection", new EchoCore.MethodRef(this, this._processColorSelection));
     this._contentPane.add(colorDialog);
 };
@@ -274,8 +274,8 @@ ExtrasRender.ComponentSync.RichTextArea.prototype.renderUpdate = function(update
     this.renderAdd(update, containerElement);
 };
 
-ExtrasRender.ComponentSync.RichTextArea.ColorDialog = function(renderId, richTextArea) {
-    EchoApp.WindowPane.call(this, renderId, {
+ExtrasRender.ComponentSync.RichTextArea.ColorDialog = function(richTextArea) {
+    EchoApp.WindowPane.call(this, {
         title: richTextArea.peer._rb.get("ColorDialog.Title"),
         width: new EchoApp.Property.Extent(500),
         height: new EchoApp.Property.Extent(320)
@@ -294,7 +294,7 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog = function(renderId, richTex
             ExtrasRender.DEFAULT_CONTROL_PANE_ROW_STYLE);
     splitPane.add(controlsRow);
     
-    var okButton = new EchoApp.Button(null, {
+    var okButton = new EchoApp.Button({
         text: richTextArea.peer._rb.get("Generic.Ok")
     });
     okButton.addListener("action", new EchoCore.MethodRef(this, this._processOk));
@@ -302,7 +302,7 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog = function(renderId, richTex
             ExtrasRender.DEFAULT_CONTROL_PANE_BUTTON_STYLE);
     controlsRow.add(okButton);
     
-    var cancelButton = new EchoApp.Button(null, {
+    var cancelButton = new EchoApp.Button({
         text: richTextArea.peer._rb.get("Generic.Cancel")
     });
     cancelButton.addListener("action", new EchoCore.MethodRef(this, this._processCancel));
@@ -314,12 +314,12 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog = function(renderId, richTex
     layoutGrid.setProperty("insets", new EchoApp.Property.Insets(5, 10));
     splitPane.add(layoutGrid);
     
-    var foregroundLabel = new EchoApp.Label(null, {
+    var foregroundLabel = new EchoApp.Label({
         text: richTextArea.peer._rb.get("ColorDialog.PromptForeground")
     });
     layoutGrid.add(foregroundLabel);
     
-    var backgroundLabel = new EchoApp.Label(null, {
+    var backgroundLabel = new EchoApp.Label({
         text: richTextArea.peer._rb.get("ColorDialog.PromptBackground")
     });
     layoutGrid.add(backgroundLabel);
@@ -345,8 +345,8 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog.prototype._processOk = funct
     this.fireEvent(new EchoCore.Event(this, "colorSelection", color));
 };
 
-ExtrasRender.ComponentSync.RichTextArea.InputComponent = function(renderId, properties) {
-    EchoApp.Component.call(this, renderId, properties);
+ExtrasRender.ComponentSync.RichTextArea.InputComponent = function(properties) {
+    EchoApp.Component.call(this, properties);
     this.componentType = "ExtrasApp.RichTextInput";
 };
 

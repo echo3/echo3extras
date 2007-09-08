@@ -5,8 +5,8 @@
  * @class ContextMenu component.
  * @base EchoApp.Component
  */
-ExtrasApp.ContextMenu = function(renderId) {
-    EchoApp.Component.call(this, renderId);
+ExtrasApp.ContextMenu = function(properties) {
+    EchoApp.Component.call(this, properties);
     this.componentType = "ExtrasApp.ContextMenu";
 };
 
@@ -21,8 +21,8 @@ EchoApp.ComponentFactory.registerType("ExtrasApp.ContextMenu", ExtrasApp.Context
  * @class DropDownMenu component.
  * @base EchoApp.Component
  */
-ExtrasApp.DropDownMenu = function(renderId) {
-    EchoApp.Component.call(this, renderId);
+ExtrasApp.DropDownMenu = function(properties) {
+    EchoApp.Component.call(this, properties);
     this.componentType = "ExtrasApp.DropDownMenu";
 };
 
@@ -37,8 +37,8 @@ EchoApp.ComponentFactory.registerType("ExtrasApp.DropDownMenu", ExtrasApp.DropDo
  * @class MenuBarPane component.
  * @base EchoApp.Component
  */
-ExtrasApp.MenuBarPane = function(renderId) {
-    EchoApp.Component.call(this, renderId);
+ExtrasApp.MenuBarPane = function(properties) {
+    EchoApp.Component.call(this, properties);
     this.componentType = "ExtrasApp.MenuBarPane";
 };
 

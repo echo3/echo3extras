@@ -5,8 +5,8 @@
  * @class TransitionPane component.
  * @base EchoApp.Component
  */
-ExtrasApp.TransitionPane = function(renderId) {
-    EchoApp.Component.call(this, renderId);
+ExtrasApp.TransitionPane = function(properties) {
+    EchoApp.Component.call(this, properties);
     this.componentType = "ExtrasApp.TransitionPane";
 };
 

@@ -5,8 +5,8 @@
  * @class RichTextArea component.
  * @base EchoApp.Component
  */
-ExtrasApp.RichTextArea = function(renderId) {
-    EchoApp.Component.call(this, renderId);
+ExtrasApp.RichTextArea = function(properties) {
+    EchoApp.Component.call(this, properties);
     this.componentType = "ExtrasApp.RichTextArea";
 };
 

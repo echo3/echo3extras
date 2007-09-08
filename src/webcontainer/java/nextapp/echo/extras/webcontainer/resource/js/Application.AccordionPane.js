@@ -5,8 +5,8 @@
  * @class AccordionPane component.
  * @base EchoApp.Component
  */
-ExtrasApp.AccordionPane = function(renderId) {
-    EchoApp.Component.call(this, renderId);
+ExtrasApp.AccordionPane = function(properties) {
+    EchoApp.Component.call(this, properties);
     this.componentType = "ExtrasApp.AccordionPane";
 };
 

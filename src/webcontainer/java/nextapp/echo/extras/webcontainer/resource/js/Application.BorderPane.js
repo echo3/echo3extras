@@ -5,8 +5,8 @@
  * @class TabPane component.
  * @base EchoApp.Component
  */
-ExtrasApp.BorderPane = function(renderId) {
-    EchoApp.Component.call(this, renderId);
+ExtrasApp.BorderPane = function(properties) {
+    EchoApp.Component.call(this, properties);
     this.componentType = "ExtrasApp.BorderPane";
     this.pane = true;
 };
