@@ -507,7 +507,7 @@ ExtrasRender.ComponentSync.MenuBarPane.prototype._processClick = function(e) {
 
 ExtrasRender.ComponentSync.MenuBarPane.prototype._doAction = function(menuModel) {
     var path = menuModel.getItemPositionPath().join(".");
-    var event = new EchoCore.Event(this.component, "action", path);
+    var event = new EchoCore.Event("action", this.component, path);
     event.modelId = menuModel.modelId; 
     this.component.fireEvent(event);
 };
@@ -730,7 +730,7 @@ ExtrasRender.ComponentSync.DropDownMenu.prototype._doAction = function(menuModel
     }
     var path = menuModel.getItemPositionPath().join(".");
     this.component.setProperty("selection", path);
-    this.component.fireEvent(new EchoCore.Event(this.component, "action", path));
+    this.component.fireEvent(new EchoCore.Event("action", this.component, path));
 };
 
 /**
@@ -846,7 +846,7 @@ ExtrasRender.ComponentSync.ContextMenu.prototype._processContextClick = function
 
 ExtrasRender.ComponentSync.ContextMenu.prototype._doAction = function(menuModel) {
     var path = menuModel.getItemPositionPath().join(".");
-    this.component.fireEvent(new EchoCore.Event(this.component, "action", path));
+    this.component.fireEvent(new EchoCore.Event("action", this.component, path));
 };
 
 EchoRender.registerPeer("ExtrasApp.ContextMenu", ExtrasRender.ComponentSync.ContextMenu);

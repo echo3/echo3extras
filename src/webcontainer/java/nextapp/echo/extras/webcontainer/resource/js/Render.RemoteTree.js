@@ -1029,7 +1029,8 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._processClick = function(e) {
     }
     
     if (doAction) {
-        this.component.fireEvent(new EchoCore.Event(this.component, "action"));
+        //FIXME Fire from component.
+        this.component.fireEvent(new EchoCore.Event("action", this.component));
     }
     return true;
 };

@@ -342,7 +342,7 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog.prototype._processCancel = f
 ExtrasRender.ComponentSync.RichTextArea.ColorDialog.prototype._processOk = function(e) {
     var color = this._foregroundSelect.getProperty("color");
     this.parent.remove(this);
-    this.fireEvent(new EchoCore.Event(this, "colorSelection", color));
+    this.fireEvent(new EchoCore.Event("colorSelection", this, color));
 };
 
 ExtrasRender.ComponentSync.RichTextArea.InputComponent = function(properties) {

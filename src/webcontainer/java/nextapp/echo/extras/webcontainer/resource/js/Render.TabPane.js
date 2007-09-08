@@ -707,14 +707,14 @@ ExtrasRender.ComponentSync.TabPane.Tab.prototype._processClick = function(e) {
         if (!this._isTabCloseEnabled()) {
             return;
         }
-        this._parent.component.fireEvent(new EchoCore.Event(this._parent.component, 
-                "tabClose", this._childComponent.renderId));
+        this._parent.component.fireEvent(new EchoCore.Event("tabClose", this._parent.component, 
+                this._childComponent.renderId));
     } else {
         // tab clicked
         this._parent._selectTab(this._childComponent.renderId);
         this._parent.component.setProperty("activeTab", this._childComponent.renderId);
-        this._parent.component.fireEvent(new EchoCore.Event(this._parent.component, 
-                "tabSelect", this._childComponent.renderId));
+        this._parent.component.fireEvent(new EchoCore.Event("tabSelect", this._parent.component, 
+                this._childComponent.renderId));
     }
 };
 
