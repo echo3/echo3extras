@@ -2,10 +2,54 @@
  * Component rendering peer: RichTextArea
  */
 ExtrasRender.ComponentSync.RichTextArea = function() {
-    
+    this.resourceBundle = ExtrasRender.ComponentSync.RichTextArea.DEFAULT_RESOURCE_BUNDLE; 
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype = EchoCore.derive(EchoRender.ComponentSync);
+    
+ExtrasRender.ComponentSync.RichTextArea.DEFAULT_RESOURCE_BUNDLE = new EchoCore.ResourceBundle({
+    "Menu.Edit":                        "Edit",
+    "Menu.Undo":                        "Undo",
+    "Menu.Redo":                        "Redo",
+    "Menu.Cut":                         "Cut",
+    "Menu.Copy":                        "Copy",
+    "Menu.Paste":                       "Paste",
+    "Menu.Delete":                      "Delete",
+    "Menu.SelectAll":                   "Select All",
+    "Menu.Insert":                      "Insert",
+    "Menu.InsertImage":                 "Image...",
+    "Menu.InsertHyperlink":             "Hyperlink...",
+    "Menu.InsertHorizontalRule":        "Horziontal Rule",
+    "Menu.InsertTable":                 "Table...",
+    "Menu.BulletedList":                "Bulleted List",
+    "Menu.NumberedList":                "Numbered List",
+    "Menu.Format":                      "Format",
+    "Menu.Bold":                        "Bold",
+    "Menu.Italic":                      "Italic",
+    "Menu.Underline":                   "Underline",
+    "Menu.Strikethrough":               "Strikethrough",
+    "Menu.Superscript":                 "Superscript",
+    "Menu.Subscript":                   "Subscript",
+    "Menu.PlainText":                   "Plain Text",
+    "Menu.TextStyle":                   "Text Style",
+    "Menu.ParagraphStyle":              "Paragraph Style",
+    "Menu.Alignment":                   "Alignment",
+    "Menu.Left":                        "Left",
+    "Menu.Right":                       "Right",
+    "Menu.Center":                      "Center",
+    "Menu.Justified":                   "Justified",
+    "Menu.Indent":                      "Indent",
+    "Menu.Outdent":                     "Outdent",
+    "Menu.SetColor":                    "Set Color...",
+    "Menu.Heading1":                    "Heading 1",
+    "Menu.Heading2":                    "Heading 2",
+    "Menu.Heading3":                    "Heading 3",
+    "Menu.Heading4":                    "Heading 4",
+    "Menu.Heading5":                    "Heading 5",
+    "Menu.Heading6":                    "Heading 6",
+    "Menu.Normal":                      "Normal",
+    "Menu.Preformatted":                "Preformatted"
+});
 
 ExtrasRender.ComponentSync.RichTextArea.prototype._createApp = function() {
     this._app = new EchoApp.Application();
@@ -70,65 +114,67 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._createApp = function() {
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype._createMainMenuModel = function() {
-    //FIXME I18N
     var bar = new ExtrasApp.MenuModel();
     
-    var editMenu = new ExtrasApp.MenuModel(null, "Edit", null);
-    editMenu.addItem(new ExtrasApp.OptionModel("/undo", "Undo", null));
-    editMenu.addItem(new ExtrasApp.OptionModel("/redo", "Redo", null));
+    var editMenu = new ExtrasApp.MenuModel(null, this.resourceBundle.get("Menu.Edit"), null);
+    editMenu.addItem(new ExtrasApp.OptionModel("/undo", this.resourceBundle.get("Menu.Undo"), null));
+    editMenu.addItem(new ExtrasApp.OptionModel("/redo", this.resourceBundle.get("Menu.Redo"), null));
     editMenu.addItem(new ExtrasApp.SeparatorModel());
-    editMenu.addItem(new ExtrasApp.OptionModel("cut", "Cut", null));
-    editMenu.addItem(new ExtrasApp.OptionModel("copy", "Copy", null));
-    editMenu.addItem(new ExtrasApp.OptionModel("paste", "Paste", null));
-    editMenu.addItem(new ExtrasApp.OptionModel("delete", "Delete", null));
+    editMenu.addItem(new ExtrasApp.OptionModel("cut", this.resourceBundle.get("Menu.Cut"), null));
+    editMenu.addItem(new ExtrasApp.OptionModel("copy", this.resourceBundle.get("Menu.Copy"), null));
+    editMenu.addItem(new ExtrasApp.OptionModel("paste", this.resourceBundle.get("Menu.Paste"), null));
+    editMenu.addItem(new ExtrasApp.OptionModel("delete", this.resourceBundle.get("Menu.Delete"), null));
     editMenu.addItem(new ExtrasApp.SeparatorModel());
-    editMenu.addItem(new ExtrasApp.OptionModel("/selectall", "Select All", null));
+    editMenu.addItem(new ExtrasApp.OptionModel("/selectall", this.resourceBundle.get("Menu.SelectAll"), null));
     bar.addItem(editMenu);
     
-    var insertMenu = new ExtrasApp.MenuModel(null, "Insert", null);
-    insertMenu.addItem(new ExtrasApp.OptionModel("/insertunorderedlist", "Bulleted List", null));
-    insertMenu.addItem(new ExtrasApp.OptionModel("/insertorderedlist", "Numbered List", null));
+    var insertMenu = new ExtrasApp.MenuModel(null, this.resourceBundle.get("Menu.Insert"), null);
+    insertMenu.addItem(new ExtrasApp.OptionModel("/insertunorderedlist", this.resourceBundle.get("Menu.BulletedList"), null));
+    insertMenu.addItem(new ExtrasApp.OptionModel("/insertorderedlist", this.resourceBundle.get("Menu.NumberedList"), null));
     insertMenu.addItem(new ExtrasApp.SeparatorModel());
-    insertMenu.addItem(new ExtrasApp.OptionModel("/inserthorizontalrule", "Horizontal Rule", null));
-    insertMenu.addItem(new ExtrasApp.OptionModel("inserttable", "Image...", null));
-    insertMenu.addItem(new ExtrasApp.OptionModel("inserttable", "Hyperlink...", null));
+    insertMenu.addItem(new ExtrasApp.OptionModel("/inserthorizontalrule", 
+            this.resourceBundle.get("Menu.InsertHorizontalRule"), null));
+    insertMenu.addItem(new ExtrasApp.OptionModel("insertimage", this.resourceBundle.get("Menu.InsertImage"), null));
+    insertMenu.addItem(new ExtrasApp.OptionModel("insertlink", this.resourceBundle.get("Menu.InsertHyperlink"), null));
     insertMenu.addItem(new ExtrasApp.SeparatorModel());
-    insertMenu.addItem(new ExtrasApp.OptionModel("inserttable", "Table...", null));
+    insertMenu.addItem(new ExtrasApp.OptionModel("inserttable", this.resourceBundle.get("Menu.InsertTable"), null));
     bar.addItem(insertMenu);
 
-    var formatMenu = new ExtrasApp.MenuModel(null, "Format", null);
-    var formatTextMenu = new ExtrasApp.MenuModel(null, "Text Style", null);
-    formatTextMenu.addItem(new ExtrasApp.OptionModel("/removeformat", "Plain Text", null));
+    var formatMenu = new ExtrasApp.MenuModel(null,  this.resourceBundle.get("Menu.Format"), null);
+    var formatTextMenu = new ExtrasApp.MenuModel(null,  this.resourceBundle.get("Menu.TextStyle"), null);
+    formatTextMenu.addItem(new ExtrasApp.OptionModel("/removeformat",  this.resourceBundle.get("Menu.PlainText"), null));
     formatTextMenu.addItem(new ExtrasApp.SeparatorModel());
-    formatTextMenu.addItem(new ExtrasApp.OptionModel("/bold", "Bold", null));
-    formatTextMenu.addItem(new ExtrasApp.OptionModel("/italic", "Italic", null));
-    formatTextMenu.addItem(new ExtrasApp.OptionModel("/underline", "Underline", null));
-    formatTextMenu.addItem(new ExtrasApp.OptionModel("/strikethrough", "Strikethrough", null));
+    formatTextMenu.addItem(new ExtrasApp.OptionModel("/bold",  this.resourceBundle.get("Menu.Bold"), null));
+    formatTextMenu.addItem(new ExtrasApp.OptionModel("/italic",  this.resourceBundle.get("Menu.Italic"), null));
+    formatTextMenu.addItem(new ExtrasApp.OptionModel("/underline",  this.resourceBundle.get("Menu.Underline"), null));
+    formatTextMenu.addItem(new ExtrasApp.OptionModel("/strikethrough",  this.resourceBundle.get("Menu.Strikethrough"), null));
     formatTextMenu.addItem(new ExtrasApp.SeparatorModel());
-    formatTextMenu.addItem(new ExtrasApp.OptionModel("/superscript", "Superscript", null));
-    formatTextMenu.addItem(new ExtrasApp.OptionModel("/subscript", "Subscript", null));
+    formatTextMenu.addItem(new ExtrasApp.OptionModel("/superscript",  this.resourceBundle.get("Menu.Superscript"), null));
+    formatTextMenu.addItem(new ExtrasApp.OptionModel("/subscript",  this.resourceBundle.get("Menu.Subscript"), null));
     formatMenu.addItem(formatTextMenu);
-    formatParagraphMenu = new ExtrasApp.MenuModel(null, "Paragraph  Style", null);
-    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<p>", "Paragraph", null));
-    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<pre>", "Preformatted", null));
-    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<h1>", "Heading 1", null));
-    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<h2>", "Heading 2", null));
-    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<h3>", "Heading 3", null));
-    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<h4>", "Heading 4", null));
-    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<h5>", "Heading 5", null));
-    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<h6>", "Heading 6", null));
+    formatParagraphMenu = new ExtrasApp.MenuModel(null, this.resourceBundle.get("Menu.ParagraphStyle"), null);
+    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<p>",  
+            this.resourceBundle.get("Menu.ParagraphStyle"), null));
+    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<pre>",  
+            this.resourceBundle.get("Menu.Preformatted"), null));
+    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<h1>", this.resourceBundle.get("Menu.Heading1"), null));
+    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<h2>", this.resourceBundle.get("Menu.Heading2"), null));
+    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<h3>", this.resourceBundle.get("Menu.Heading3"), null));
+    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<h4>", this.resourceBundle.get("Menu.Heading4"), null));
+    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<h5>", this.resourceBundle.get("Menu.Heading5"), null));
+    formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<h6>", this.resourceBundle.get("Menu.Heading6"), null));
     formatMenu.addItem(formatParagraphMenu);
-    formatAlignmentMenu = new ExtrasApp.MenuModel(null, "Alignment", null);
-    formatAlignmentMenu.addItem(new ExtrasApp.OptionModel("/justifyleft", "Left", null));
-    formatAlignmentMenu.addItem(new ExtrasApp.OptionModel("/justifycenter", "Center", null));
-    formatAlignmentMenu.addItem(new ExtrasApp.OptionModel("/justifyright", "Right", null));
-    formatAlignmentMenu.addItem(new ExtrasApp.OptionModel("/justifyfull", "Justified", null));
+    formatAlignmentMenu = new ExtrasApp.MenuModel(null,  this.resourceBundle.get("Menu.Alignment"), null);
+    formatAlignmentMenu.addItem(new ExtrasApp.OptionModel("/justifyleft",  this.resourceBundle.get("Menu.Left"), null));
+    formatAlignmentMenu.addItem(new ExtrasApp.OptionModel("/justifycenter",  this.resourceBundle.get("Menu.Center"), null));
+    formatAlignmentMenu.addItem(new ExtrasApp.OptionModel("/justifyright",  this.resourceBundle.get("Menu.Right"), null));
+    formatAlignmentMenu.addItem(new ExtrasApp.OptionModel("/justifyfull",  this.resourceBundle.get("Menu.Justified"), null));
     formatMenu.addItem(formatAlignmentMenu);
     formatMenu.addItem(new ExtrasApp.SeparatorModel());
-    formatMenu.addItem(new ExtrasApp.OptionModel("/indent", "Indent", null));
-    formatMenu.addItem(new ExtrasApp.OptionModel("/outdent", "Outdent", null));
+    formatMenu.addItem(new ExtrasApp.OptionModel("/indent",  this.resourceBundle.get("Menu.Indent"), null));
+    formatMenu.addItem(new ExtrasApp.OptionModel("/outdent",  this.resourceBundle.get("Menu.Outdent"), null));
     formatMenu.addItem(new ExtrasApp.SeparatorModel());
-    formatMenu.addItem(new ExtrasApp.OptionModel("color", "Set Color...", null));
+    formatMenu.addItem(new ExtrasApp.OptionModel("color",  this.resourceBundle.get("Menu.SetColor"), null));
     
     bar.addItem(formatMenu);
     
