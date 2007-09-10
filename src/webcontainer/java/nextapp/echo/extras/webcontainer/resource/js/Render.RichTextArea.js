@@ -8,7 +8,8 @@ ExtrasRender.ComponentSync.RichTextArea = function() {
 ExtrasRender.ComponentSync.RichTextArea.prototype = EchoCore.derive(EchoRender.ComponentSync);
     
 ExtrasRender.ComponentSync.RichTextArea.DEFAULT_RESOURCE_BUNDLE = new EchoCore.ResourceBundle({
-    "ColorDialog.Title":                "Color",
+    "ColorDialog.Title.Foreground":     "Text Color",
+    "ColorDialog.Title.Background":     "Highlight Color",
     "ColorDialog.PromptForeground":     "Foreground:",
     "ColorDialog.PromptBackground":     "Background:",
     "Error.ClipboardAccess":            "This browser has clipboard access disabled."
@@ -47,7 +48,8 @@ ExtrasRender.ComponentSync.RichTextArea.DEFAULT_RESOURCE_BUNDLE = new EchoCore.R
     "Menu.Justified":                   "Justified",
     "Menu.Indent":                      "Indent",
     "Menu.Outdent":                     "Outdent",
-    "Menu.SetColor":                    "Set Color...",
+    "Menu.SetForeground":               "Set Text Color...",
+    "Menu.SetBackground":               "Set Highlight Color...",
     "Menu.Heading1":                    "Heading 1",
     "Menu.Heading2":                    "Heading 2",
     "Menu.Heading3":                    "Heading 3",
@@ -178,7 +180,8 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._createMainMenuModel = functio
     formatMenu.addItem(new ExtrasApp.OptionModel("/indent",  this._rb.get("Menu.Indent"), null));
     formatMenu.addItem(new ExtrasApp.OptionModel("/outdent",  this._rb.get("Menu.Outdent"), null));
     formatMenu.addItem(new ExtrasApp.SeparatorModel());
-    formatMenu.addItem(new ExtrasApp.OptionModel("color",  this._rb.get("Menu.SetColor"), null));
+    formatMenu.addItem(new ExtrasApp.OptionModel("foreground",  this._rb.get("Menu.SetForeground"), null));
+    formatMenu.addItem(new ExtrasApp.OptionModel("background",  this._rb.get("Menu.SetBackground"), null));
     
     bar.addItem(formatMenu);
     
@@ -192,8 +195,15 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._processBold = function(e) {
 /**
  * Event handler for color selection events from ColorDialog.
  */
-ExtrasRender.ComponentSync.RichTextArea.prototype._processColorSelection = function(e) {
+ExtrasRender.ComponentSync.RichTextArea.prototype._processForegroundSelection = function(e) {
     this._richTextInput.peer.doCommand("forecolor", e.data.value);
+};
+
+/**
+ * Event handler for color selection events from ColorDialog.
+ */
+ExtrasRender.ComponentSync.RichTextArea.prototype._processBackgroundSelection = function(e) {
+    this._richTextInput.peer.doCommand("hilitecolor", e.data.value);
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype._processItalic = function(e) {
@@ -211,8 +221,11 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._processMenuAction = function(
         }
     } else {
         switch (e.modelId) {
-        case "color":
-            this._processSetColor();
+        case "foreground":
+            this._processSetForeground();
+            break;
+        case "background":
+            this._processSetBackground();
             break;
         case "cut":
         case "copy":
@@ -227,9 +240,15 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._processMenuAction = function(
     }
 };
 
-ExtrasRender.ComponentSync.RichTextArea.prototype._processSetColor = function(e) {
-    var colorDialog = new ExtrasRender.ComponentSync.RichTextArea.ColorDialog(this.component);
-    colorDialog.addListener("colorSelection", new EchoCore.MethodRef(this, this._processColorSelection));
+ExtrasRender.ComponentSync.RichTextArea.prototype._processSetBackground = function(e) {
+    var colorDialog = new ExtrasRender.ComponentSync.RichTextArea.ColorDialog(this.component, true);
+    colorDialog.addListener("colorSelection", new EchoCore.MethodRef(this, this._processBackgroundSelection));
+    this._contentPane.add(colorDialog);
+};
+
+ExtrasRender.ComponentSync.RichTextArea.prototype._processSetForeground = function(e) {
+    var colorDialog = new ExtrasRender.ComponentSync.RichTextArea.ColorDialog(this.component, false);
+    colorDialog.addListener("colorSelection", new EchoCore.MethodRef(this, this._processForegroundSelection));
     this._contentPane.add(colorDialog);
 };
 
@@ -274,10 +293,10 @@ ExtrasRender.ComponentSync.RichTextArea.prototype.renderUpdate = function(update
     this.renderAdd(update, containerElement);
 };
 
-ExtrasRender.ComponentSync.RichTextArea.ColorDialog = function(richTextArea) {
+ExtrasRender.ComponentSync.RichTextArea.ColorDialog = function(richTextArea, setBackground) {
     EchoApp.WindowPane.call(this, {
-        title: richTextArea.peer._rb.get("ColorDialog.Title"),
-        width: new EchoApp.Property.Extent(500),
+        title: richTextArea.peer._rb.get(setBackground ? "ColorDialog.Title.Background" : "ColorDialog.Title.Foreground"),
+        width: new EchoApp.Property.Extent(280),
         height: new EchoApp.Property.Extent(320)
     });
 
@@ -310,27 +329,19 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog = function(richTextArea) {
             ExtrasRender.DEFAULT_CONTROL_PANE_BUTTON_STYLE);
     controlsRow.add(cancelButton);
     
-    var layoutGrid = new EchoApp.Grid();
-    layoutGrid.setProperty("insets", new EchoApp.Property.Insets(5, 10));
-    splitPane.add(layoutGrid);
-    
-    var foregroundLabel = new EchoApp.Label({
-        text: richTextArea.peer._rb.get("ColorDialog.PromptForeground")
+    var layoutColumn = new EchoApp.Column({
+        insets: new EchoApp.Property.Insets(10)
     });
-    layoutGrid.add(foregroundLabel);
+    splitPane.add(layoutColumn);
     
-    var backgroundLabel = new EchoApp.Label({
-        text: richTextArea.peer._rb.get("ColorDialog.PromptBackground")
+    var propmtLabel = new EchoApp.Label({
+        text: richTextArea.peer._rb.get(setBackground ? "ColorDialog.PromptBackground" : "ColorDialog.PromptForeground")
     });
-    layoutGrid.add(backgroundLabel);
+    layoutColumn.add(propmtLabel);
 
     this._foregroundSelect = new ExtrasApp.ColorSelect();
     this._foregroundSelect.setProperty("displayValue", true);
-    layoutGrid.add(this._foregroundSelect);
-
-    this._backgroundSelect = new ExtrasApp.ColorSelect();
-    this._backgroundSelect.setProperty("displayValue", true);
-    layoutGrid.add(this._backgroundSelect);
+    layoutColumn.add(this._foregroundSelect);
 };
 
 ExtrasRender.ComponentSync.RichTextArea.ColorDialog.prototype = EchoCore.derive(EchoApp.WindowPane);
