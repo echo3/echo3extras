@@ -57,7 +57,10 @@ ExtrasRender.ComponentSync.RichTextArea.DEFAULT_RESOURCE_BUNDLE = new EchoCore.R
     "Menu.Heading5":                    "Heading 5",
     "Menu.Heading6":                    "Heading 6",
     "Menu.Normal":                      "Normal",
-    "Menu.Preformatted":                "Preformatted"
+    "Menu.Preformatted":                "Preformatted",
+    "TableDialog.Title":                "Insert Table",
+    "TableDialog.PromptRows":           "Rows:",
+    "TableDialog.PromptColumns":        "Columns:"
 });
 
 ExtrasRender.ComponentSync.RichTextArea.prototype._createApp = function() {
@@ -192,20 +195,6 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._processBold = function(e) {
     this._richTextInput.peer.doCommand("bold");
 };
 
-/**
- * Event handler for color selection events from ColorDialog.
- */
-ExtrasRender.ComponentSync.RichTextArea.prototype._processForegroundSelection = function(e) {
-    this._richTextInput.peer.doCommand("forecolor", e.data.value);
-};
-
-/**
- * Event handler for color selection events from ColorDialog.
- */
-ExtrasRender.ComponentSync.RichTextArea.prototype._processBackgroundSelection = function(e) {
-    this._richTextInput.peer.doCommand("hilitecolor", e.data.value);
-};
-
 ExtrasRender.ComponentSync.RichTextArea.prototype._processItalic = function(e) {
     this._richTextInput.peer.doCommand("italic");
 };
@@ -222,10 +211,13 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._processMenuAction = function(
     } else {
         switch (e.modelId) {
         case "foreground":
-            this._processSetForeground();
+            this._processSetForegroundDialog();
             break;
         case "background":
-            this._processSetBackground();
+            this._processSetBackgroundDialog();
+            break;
+        case "inserttable":
+            this._processInsertTableDialog();
             break;
         case "cut":
         case "copy":
@@ -240,16 +232,62 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._processMenuAction = function(
     }
 };
 
+/**
+ * Event handler for color selection events from background ColorDialog.
+ */
 ExtrasRender.ComponentSync.RichTextArea.prototype._processSetBackground = function(e) {
+    this._richTextInput.peer.doCommand("hilitecolor", e.data.value);
+};
+
+/**
+ * Event handler for user request (from menu/toolbar) to set background color.
+ */
+ExtrasRender.ComponentSync.RichTextArea.prototype._processSetBackgroundDialog = function(e) {
     var colorDialog = new ExtrasRender.ComponentSync.RichTextArea.ColorDialog(this.component, true);
-    colorDialog.addListener("colorSelection", new EchoCore.MethodRef(this, this._processBackgroundSelection));
+    colorDialog.addListener("colorSelect", new EchoCore.MethodRef(this, this._processSetBackground));
     this._contentPane.add(colorDialog);
 };
 
+/**
+ * Event handler for color selection events from foreground ColorDialog.
+ */
 ExtrasRender.ComponentSync.RichTextArea.prototype._processSetForeground = function(e) {
+    this._richTextInput.peer.doCommand("forecolor", e.data.value);
+};
+
+/**
+ * Event handler for user request (from menu/toolbar) to set foreground color.
+ */
+ExtrasRender.ComponentSync.RichTextArea.prototype._processSetForegroundDialog = function(e) {
     var colorDialog = new ExtrasRender.ComponentSync.RichTextArea.ColorDialog(this.component, false);
-    colorDialog.addListener("colorSelection", new EchoCore.MethodRef(this, this._processForegroundSelection));
+    colorDialog.addListener("colorSelect", new EchoCore.MethodRef(this, this._processSetForeground));
     this._contentPane.add(colorDialog);
+};
+
+/**
+ * Event handler for table insert events from foreground TableDialog.
+ */
+ExtrasRender.ComponentSync.RichTextArea.prototype._processInsertTable = function(e) {
+    var rowHtml = "";
+    for (var i = 0; i < e.data.columns; ++i) {
+        rowHtml += "<td></td>";
+    }
+    rowHtml = "<tr>" + rowHtml + "</tr>";
+    var tableHtml = "<table width=\"100%\" border=\"1\" cellspacing=\"0\" cellpadding=\"1\">";
+    for (var i = 0; i < e.data.rows; ++i) {
+        tableHtml += rowHtml;
+    }
+    tableHtml += "</table>";
+    this._richTextInput.peer.doCommand("inserthtml", tableHtml);
+};
+
+/**
+ * Event handler for user request (from menu/toolbar) to insert a table.
+ */
+ExtrasRender.ComponentSync.RichTextArea.prototype._processInsertTableDialog = function(e) {
+    var tableDialog = new ExtrasRender.ComponentSync.RichTextArea.TableDialog(this.component);
+    tableDialog.addListener("tableInsert", new EchoCore.MethodRef(this, this._processInsertTable));
+    this._contentPane.add(tableDialog);
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype._processUnderline = function(e) {
@@ -295,12 +333,11 @@ ExtrasRender.ComponentSync.RichTextArea.prototype.renderUpdate = function(update
 
 ExtrasRender.ComponentSync.RichTextArea.ColorDialog = function(richTextArea, setBackground) {
     EchoApp.WindowPane.call(this, {
-        title: richTextArea.peer._rb.get(setBackground ? "ColorDialog.Title.Background" : "ColorDialog.Title.Foreground"),
-        width: new EchoApp.Property.Extent(280),
-        height: new EchoApp.Property.Extent(320)
+        styleName: richTextArea.getRenderProperty("windowPaneStyleName"),
+        title:     richTextArea.peer._rb.get(setBackground ? "ColorDialog.Title.Background" : "ColorDialog.Title.Foreground"),
+        width:     new EchoApp.Property.Extent(280),
+        height:    new EchoApp.Property.Extent(320)
     });
-
-    this.setStyleName(richTextArea.getRenderProperty("windowPaneStyleName"));
     this.addListener("close", new EchoCore.MethodRef(this, this._processCancel));
     
     var splitPane = new EchoApp.SplitPane();
@@ -316,6 +353,7 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog = function(richTextArea, set
     var okButton = new EchoApp.Button({
         text: richTextArea.peer._rb.get("Generic.Ok")
     });
+
     okButton.addListener("action", new EchoCore.MethodRef(this, this._processOk));
     ExtrasRender.configureStyle(okButton, richTextArea.getRenderProperty("controlPaneButtonStyleName"), 
             ExtrasRender.DEFAULT_CONTROL_PANE_BUTTON_STYLE);
@@ -334,10 +372,10 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog = function(richTextArea, set
     });
     splitPane.add(layoutColumn);
     
-    var propmtLabel = new EchoApp.Label({
+    var promptLabel = new EchoApp.Label({
         text: richTextArea.peer._rb.get(setBackground ? "ColorDialog.PromptBackground" : "ColorDialog.PromptForeground")
     });
-    layoutColumn.add(propmtLabel);
+    layoutColumn.add(promptLabel);
 
     this._foregroundSelect = new ExtrasApp.ColorSelect();
     this._foregroundSelect.setProperty("displayValue", true);
@@ -353,7 +391,7 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog.prototype._processCancel = f
 ExtrasRender.ComponentSync.RichTextArea.ColorDialog.prototype._processOk = function(e) {
     var color = this._foregroundSelect.getProperty("color");
     this.parent.remove(this);
-    this.fireEvent(new EchoCore.Event("colorSelection", this, color));
+    this.fireEvent(new EchoCore.Event("colorSelect", this, color));
 };
 
 ExtrasRender.ComponentSync.RichTextArea.InputComponent = function(properties) {
@@ -450,11 +488,103 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype._storeData = functio
 ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype._storeRange = function() {
     if (EchoWebCore.Environment.BROWSER_INTERNET_EXPLORER) {
         this._selectionRange = this._iframeElement.contentWindow.document.selection.createRange();
-        EchoCore.Debug.consoleWrite("RANGE=" + this._selectionRange.text);
     }
 };
 
+ExtrasRender.ComponentSync.RichTextArea.TableDialog = function(richTextArea, setBackground) {
+    EchoApp.WindowPane.call(this, {
+        styleName: richTextArea.getRenderProperty("windowPaneStyleName"),
+        title:     richTextArea.peer._rb.get("TableDialog.Title"),
+        width:     new EchoApp.Property.Extent(280),
+        height:    new EchoApp.Property.Extent(320)
+    });
+    this.addListener("close", new EchoCore.MethodRef(this, this._processCancel));
+    
+    var splitPane = new EchoApp.SplitPane();
+    ExtrasRender.configureStyle(splitPane, richTextArea.getRenderProperty("controlPaneSplitPaneStyleName"), 
+            ExtrasRender.DEFAULT_CONTROL_PANE_SPLIT_PANE_STYLE);
+    this.add(splitPane);
+    
+    var controlsRow = new EchoApp.Row();
+    ExtrasRender.configureStyle(controlsRow, richTextArea.getRenderProperty("controlPaneRowStyleName"), 
+            ExtrasRender.DEFAULT_CONTROL_PANE_ROW_STYLE);
+    splitPane.add(controlsRow);
+    
+    var okButton = new EchoApp.Button({
+        text: richTextArea.peer._rb.get("Generic.Ok")
+    });
 
+    okButton.addListener("action", new EchoCore.MethodRef(this, this._processOk));
+    ExtrasRender.configureStyle(okButton, richTextArea.getRenderProperty("controlPaneButtonStyleName"), 
+            ExtrasRender.DEFAULT_CONTROL_PANE_BUTTON_STYLE);
+    controlsRow.add(okButton);
+    
+    var cancelButton = new EchoApp.Button({
+        text: richTextArea.peer._rb.get("Generic.Cancel")
+    });
+    cancelButton.addListener("action", new EchoCore.MethodRef(this, this._processCancel));
+    ExtrasRender.configureStyle(cancelButton, richTextArea.getRenderProperty("controlPaneButtonStyleName"), 
+            ExtrasRender.DEFAULT_CONTROL_PANE_BUTTON_STYLE);
+    controlsRow.add(cancelButton);
+    
+    var layoutGrid = new EchoApp.Grid({
+        insets: new EchoApp.Property.Insets(10)
+    });
+    splitPane.add(layoutGrid);
+    
+    var promptLabel;
+    
+    promptLabel = new EchoApp.Label({
+        text: richTextArea.peer._rb.get("TableDialog.PromptRows"),
+        layoutData: new EchoApp.LayoutData({
+            alignment: new EchoApp.Property.Alignment(EchoApp.Property.Alignment.TRAILING)
+        })
+    });
+    layoutGrid.add(promptLabel);
+    
+    this._rowsField = new EchoApp.TextField({
+        text: "2",
+        width: new EchoApp.Property.Extent("100px")   
+    });
+    layoutGrid.add(this._rowsField);
+    
+    promptLabel = new EchoApp.Label({
+        text: richTextArea.peer._rb.get("TableDialog.PromptColumns"),
+        layoutData: new EchoApp.LayoutData({
+            alignment: new EchoApp.Property.Alignment(EchoApp.Property.Alignment.TRAILING)
+        })
+    });
+    layoutGrid.add(promptLabel);
+    
+    this._columnsField = new EchoApp.TextField({
+        text: "3",
+        width: new EchoApp.Property.Extent("100px")
+    });
+    layoutGrid.add(this._columnsField);
+};
+
+ExtrasRender.ComponentSync.RichTextArea.TableDialog.prototype = EchoCore.derive(EchoApp.WindowPane);
+
+ExtrasRender.ComponentSync.RichTextArea.TableDialog.prototype._processCancel = function(e) {
+    this.parent.remove(this);
+};
+
+ExtrasRender.ComponentSync.RichTextArea.TableDialog.prototype._processOk = function(e) {
+    var data = {
+        rows: parseInt(this._rowsField.getProperty("text")),
+        columns: parseInt(this._columnsField.getProperty("text"))
+    };
+    if (isNaN(data.rows) || data.rows < 0 || data.rows > 50) {
+        alert("FAIL ROWS");
+        return;
+    }
+    if (isNaN(data.columns) || data.columns < 0 || data.columns > 50) {
+        alert("FAIL columns");
+        return;
+    }
+    this.parent.remove(this);
+    this.fireEvent(new EchoCore.Event("tableInsert", this, data));
+};
 
 EchoApp.ComponentFactory.registerType("ExtrasApp.RichTextInput", ExtrasRender.ComponentSync.RichTextArea.InputComponent);
 
