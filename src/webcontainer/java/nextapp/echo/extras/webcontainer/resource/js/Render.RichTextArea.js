@@ -60,7 +60,10 @@ ExtrasRender.ComponentSync.RichTextArea.DEFAULT_RESOURCE_BUNDLE = new EchoCore.R
     "Menu.Preformatted":                "Preformatted",
     "TableDialog.Title":                "Insert Table",
     "TableDialog.PromptRows":           "Rows:",
-    "TableDialog.PromptColumns":        "Columns:"
+    "TableDialog.PromptColumns":        "Columns:",
+    "TableDialog.ErrorDialogTitle":     "Cannot Insert Table",
+    "TableDialog.ErrorDialog.Columns":  "The entered columns value is not valid.  Please specify a number between 1 and 50.",
+    "TableDialog.ErrorDialog.Rows":     "The entered rows value is not valid.  Please specify a number between 1 and 50."
 });
 
 ExtrasRender.ComponentSync.RichTextArea.prototype._createApp = function() {
@@ -491,7 +494,51 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype._storeRange = functi
     }
 };
 
+ExtrasRender.ComponentSync.RichTextArea.MessageDialog = function(richTextArea, title, message) {
+    EchoApp.WindowPane.call(this, {
+        styleName: richTextArea.getRenderProperty("windowPaneStyleName"),
+        title:     title,
+        width:     new EchoApp.Property.Extent(280),
+        height:    new EchoApp.Property.Extent(320)
+    });
+    this.addListener("close", new EchoCore.MethodRef(this, this._processClose));
+    
+    var splitPane = new EchoApp.SplitPane();
+    ExtrasRender.configureStyle(splitPane, richTextArea.getRenderProperty("controlPaneSplitPaneStyleName"), 
+            ExtrasRender.DEFAULT_CONTROL_PANE_SPLIT_PANE_STYLE);
+    this.add(splitPane);
+    
+    var controlsRow = new EchoApp.Row();
+    ExtrasRender.configureStyle(controlsRow, richTextArea.getRenderProperty("controlPaneRowStyleName"), 
+            ExtrasRender.DEFAULT_CONTROL_PANE_ROW_STYLE);
+    splitPane.add(controlsRow);
+    
+    var okButton = new EchoApp.Button({
+        text: richTextArea.peer._rb.get("Generic.Ok")
+    });
+
+    okButton.addListener("action", new EchoCore.MethodRef(this, this._processClose));
+    ExtrasRender.configureStyle(okButton, richTextArea.getRenderProperty("controlPaneButtonStyleName"), 
+            ExtrasRender.DEFAULT_CONTROL_PANE_BUTTON_STYLE);
+    controlsRow.add(okButton);
+    
+    splitPane.add(new EchoApp.Label({
+        text: message,
+        layoutData: new EchoApp.LayoutData({
+            insets: new EchoApp.Property.Insets(30)
+        })
+    }));
+};
+
+ExtrasRender.ComponentSync.RichTextArea.MessageDialog.prototype = EchoCore.derive(EchoApp.WindowPane);
+
+ExtrasRender.ComponentSync.RichTextArea.MessageDialog.prototype._processClose = function(e) {
+    this.parent.remove(this);
+};
+
 ExtrasRender.ComponentSync.RichTextArea.TableDialog = function(richTextArea, setBackground) {
+    this._richTextArea = richTextArea;
+    
     EchoApp.WindowPane.call(this, {
         styleName: richTextArea.getRenderProperty("windowPaneStyleName"),
         title:     richTextArea.peer._rb.get("TableDialog.Title"),
@@ -575,11 +622,15 @@ ExtrasRender.ComponentSync.RichTextArea.TableDialog.prototype._processOk = funct
         columns: parseInt(this._columnsField.getProperty("text"))
     };
     if (isNaN(data.rows) || data.rows < 0 || data.rows > 50) {
-        alert("FAIL ROWS");
+        this.parent.add(new ExtrasRender.ComponentSync.RichTextArea.MessageDialog(this._richTextArea, 
+                this._richTextArea.peer._rb.get("TableDialog.ErrorDialogTitle"), 
+                this._richTextArea.peer._rb.get("TableDialog.ErrorDialog.Rows")));
         return;
     }
     if (isNaN(data.columns) || data.columns < 0 || data.columns > 50) {
-        alert("FAIL columns");
+        this.parent.add(new ExtrasRender.ComponentSync.RichTextArea.MessageDialog(this._richTextArea, 
+                this._richTextArea.peer._rb.get("TableDialog.ErrorDialogTitle"), 
+                this._richTextArea.peer._rb.get("TableDialog.ErrorDialog.Columns")));
         return;
     }
     this.parent.remove(this);
