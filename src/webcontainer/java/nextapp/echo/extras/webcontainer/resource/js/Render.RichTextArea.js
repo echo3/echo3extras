@@ -16,6 +16,10 @@ ExtrasRender.ComponentSync.RichTextArea.DEFAULT_RESOURCE_BUNDLE = new EchoCore.R
     		                            + "Use keyboard shortcuts or change your security settings.",
     "Generic.Ok":                       "Ok",
     "Generic.Cancel":                   "Cancel",
+    "HyperlinkDialog.Title":            "Insert Hyperlink",
+    "HyperlinkDialog.PromptURL":        "URL:",
+    "HyperlinkDialog.PromptDescription":
+                                        "Description Text:",
     "Menu.Edit":                        "Edit",
     "Menu.Undo":                        "Undo",
     "Menu.Redo":                        "Redo",
@@ -149,7 +153,7 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._createMainMenuModel = functio
     insertMenu.addItem(new ExtrasApp.SeparatorModel());
     insertMenu.addItem(new ExtrasApp.OptionModel("/inserthorizontalrule", this._rb.get("Menu.InsertHorizontalRule"), null));
     insertMenu.addItem(new ExtrasApp.OptionModel("insertimage", this._rb.get("Menu.InsertImage"), null));
-    insertMenu.addItem(new ExtrasApp.OptionModel("insertlink", this._rb.get("Menu.InsertHyperlink"), null));
+    insertMenu.addItem(new ExtrasApp.OptionModel("inserthyperlink", this._rb.get("Menu.InsertHyperlink"), null));
     insertMenu.addItem(new ExtrasApp.SeparatorModel());
     insertMenu.addItem(new ExtrasApp.OptionModel("inserttable", this._rb.get("Menu.InsertTable"), null));
     bar.addItem(insertMenu);
@@ -222,6 +226,9 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._processMenuAction = function(
         case "inserttable":
             this._processInsertTableDialog();
             break;
+        case "inserthyperlink":
+            this._processInsertHyperlinkDialog();
+            break;
         case "cut":
         case "copy":
         case "paste":
@@ -276,12 +283,12 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._processInsertTable = function
         rowHtml += "<td></td>";
     }
     rowHtml = "<tr>" + rowHtml + "</tr>";
-    var tableHtml = "<table width=\"100%\" border=\"1\" cellspacing=\"0\" cellpadding=\"1\">";
+    var tableHtml = "<table width=\"100%\" border=\"1\" cellspacing=\"0\" cellpadding=\"1\"><tbody>";
     for (var i = 0; i < e.data.rows; ++i) {
         tableHtml += rowHtml;
     }
-    tableHtml += "</table>";
-    this._richTextInput.peer.doCommand("inserthtml", tableHtml);
+    tableHtml += "</tbody></table>";
+    this._richTextInput.peer._insertHtml(tableHtml);
 };
 
 /**
@@ -291,6 +298,15 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._processInsertTableDialog = fu
     var tableDialog = new ExtrasRender.ComponentSync.RichTextArea.TableDialog(this.component);
     tableDialog.addListener("tableInsert", new EchoCore.MethodRef(this, this._processInsertTable));
     this._contentPane.add(tableDialog);
+};
+
+ExtrasRender.ComponentSync.RichTextArea.prototype._processInsertHyperlink = function(e) {
+}
+
+ExtrasRender.ComponentSync.RichTextArea.prototype._processInsertHyperlinkDialog = function(e) {
+    var hyperlinkDialog = new ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog(this.component);
+    hyperlinkDialog.addListener("hyperlnkInsert", new EchoCore.MethodRef(this, this._processInsertHyperlink));
+    this._contentPane.add(hyperlinkDialog);
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype._processUnderline = function(e) {
@@ -375,14 +391,13 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog = function(richTextArea, set
     });
     splitPane.add(layoutColumn);
     
-    var promptLabel = new EchoApp.Label({
+    layoutColumn.add(new EchoApp.Label({
         text: richTextArea.peer._rb.get(setBackground ? "ColorDialog.PromptBackground" : "ColorDialog.PromptForeground")
-    });
-    layoutColumn.add(promptLabel);
+    }));
 
-    this._foregroundSelect = new ExtrasApp.ColorSelect();
-    this._foregroundSelect.setProperty("displayValue", true);
-    layoutColumn.add(this._foregroundSelect);
+    this._colorSelect = new ExtrasApp.ColorSelect();
+    this._colorSelect.setProperty("displayValue", true);
+    layoutColumn.add(this._colorSelect);
 };
 
 ExtrasRender.ComponentSync.RichTextArea.ColorDialog.prototype = EchoCore.derive(EchoApp.WindowPane);
@@ -392,9 +407,81 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog.prototype._processCancel = f
 };
 
 ExtrasRender.ComponentSync.RichTextArea.ColorDialog.prototype._processOk = function(e) {
-    var color = this._foregroundSelect.getProperty("color");
+    var color = this._colorSelect.getProperty("color");
     this.parent.remove(this);
     this.fireEvent(new EchoCore.Event("colorSelect", this, color));
+};
+
+ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog = function(richTextArea) {
+    EchoApp.WindowPane.call(this, {
+        styleName: richTextArea.getRenderProperty("windowPaneStyleName"),
+        title:     richTextArea.peer._rb.get("HyperlinkDialog.Title"),
+        width:     new EchoApp.Property.Extent(280),
+        height:    new EchoApp.Property.Extent(320)
+    });
+    this.addListener("close", new EchoCore.MethodRef(this, this._processCancel));
+    
+    var splitPane = new EchoApp.SplitPane();
+    ExtrasRender.configureStyle(splitPane, richTextArea.getRenderProperty("controlPaneSplitPaneStyleName"), 
+            ExtrasRender.DEFAULT_CONTROL_PANE_SPLIT_PANE_STYLE);
+    this.add(splitPane);
+    
+    var controlsRow = new EchoApp.Row();
+    ExtrasRender.configureStyle(controlsRow, richTextArea.getRenderProperty("controlPaneRowStyleName"), 
+            ExtrasRender.DEFAULT_CONTROL_PANE_ROW_STYLE);
+    splitPane.add(controlsRow);
+    
+    var okButton = new EchoApp.Button({
+        text: richTextArea.peer._rb.get("Generic.Ok")
+    });
+
+    okButton.addListener("action", new EchoCore.MethodRef(this, this._processOk));
+    ExtrasRender.configureStyle(okButton, richTextArea.getRenderProperty("controlPaneButtonStyleName"), 
+            ExtrasRender.DEFAULT_CONTROL_PANE_BUTTON_STYLE);
+    controlsRow.add(okButton);
+    
+    var cancelButton = new EchoApp.Button({
+        text: richTextArea.peer._rb.get("Generic.Cancel")
+    });
+    cancelButton.addListener("action", new EchoCore.MethodRef(this, this._processCancel));
+    ExtrasRender.configureStyle(cancelButton, richTextArea.getRenderProperty("controlPaneButtonStyleName"), 
+            ExtrasRender.DEFAULT_CONTROL_PANE_BUTTON_STYLE);
+    controlsRow.add(cancelButton);
+    
+    var layoutColumn = new EchoApp.Column({
+        insets: new EchoApp.Property.Insets(10)
+    });
+    splitPane.add(layoutColumn);
+    
+    layoutColumn.add(new EchoApp.Label({
+        text: richTextArea.peer._rb.get("HyperlinkDialog.PromptURL")
+    }));
+    
+    this._urlField = new EchoApp.TextField({
+        width: new EchoApp.Property.Extent("100%")
+    });
+    layoutColumn.add(this._urlField);
+    
+    layoutColumn.add(new EchoApp.Label({
+        text: richTextArea.peer._rb.get("HyperlinkDialog.PromptDescription")
+    }));
+    
+    this._descriptionField = new EchoApp.TextField({
+        width: new EchoApp.Property.Extent("100%")
+    });
+    layoutColumn.add(this._descriptionField);
+};
+
+ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog.prototype = EchoCore.derive(EchoApp.WindowPane);
+
+ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog.prototype._processCancel = function(e) {
+    this.parent.remove(this);
+};
+
+ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog.prototype._processOk = function(e) {
+    var url = this._urlField.getProperty("text");
+    this.parent.remove(this);
+    this.fireEvent(new EchoCore.Event("insertHyperlink", this, url));
 };
 
 ExtrasRender.ComponentSync.RichTextArea.InputComponent = function(properties) {
@@ -412,6 +499,18 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype.doCommand = function
     this._loadRange();
     this._iframeElement.contentWindow.document.execCommand(command, false, value);
     this._storeData();
+};
+
+ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype._insertHtml = function(html) {
+    if (EchoWebCore.Environment.BROWSER_INTERNET_EXPLORER) {
+        if (!this._selectionRange) {
+            this._selectionRange = this._iframeElement.contentWindow.document.body.createTextRange();
+        }
+        this._selectionRange.select();
+        this._selectionRange.pasteHTML(html);
+    } else {
+        this.doCommand("inserthtml", html);
+    }
 };
 
 ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype._loadRange = function() {
@@ -579,15 +678,12 @@ ExtrasRender.ComponentSync.RichTextArea.TableDialog = function(richTextArea, set
     });
     splitPane.add(layoutGrid);
     
-    var promptLabel;
-    
-    promptLabel = new EchoApp.Label({
+    layoutGrid.add(new EchoApp.Label({
         text: richTextArea.peer._rb.get("TableDialog.PromptRows"),
         layoutData: new EchoApp.LayoutData({
             alignment: new EchoApp.Property.Alignment(EchoApp.Property.Alignment.TRAILING)
         })
-    });
-    layoutGrid.add(promptLabel);
+    }));
     
     this._rowsField = new EchoApp.TextField({
         text: "2",
@@ -595,13 +691,12 @@ ExtrasRender.ComponentSync.RichTextArea.TableDialog = function(richTextArea, set
     });
     layoutGrid.add(this._rowsField);
     
-    promptLabel = new EchoApp.Label({
+    layoutGrid.add( new EchoApp.Label({
         text: richTextArea.peer._rb.get("TableDialog.PromptColumns"),
         layoutData: new EchoApp.LayoutData({
             alignment: new EchoApp.Property.Alignment(EchoApp.Property.Alignment.TRAILING)
         })
-    });
-    layoutGrid.add(promptLabel);
+    }));
     
     this._columnsField = new EchoApp.TextField({
         text: "3",
@@ -621,13 +716,13 @@ ExtrasRender.ComponentSync.RichTextArea.TableDialog.prototype._processOk = funct
         rows: parseInt(this._rowsField.getProperty("text")),
         columns: parseInt(this._columnsField.getProperty("text"))
     };
-    if (isNaN(data.rows) || data.rows < 0 || data.rows > 50) {
+    if (isNaN(data.rows) || data.rows < 1 || data.rows > 50) {
         this.parent.add(new ExtrasRender.ComponentSync.RichTextArea.MessageDialog(this._richTextArea, 
                 this._richTextArea.peer._rb.get("TableDialog.ErrorDialogTitle"), 
                 this._richTextArea.peer._rb.get("TableDialog.ErrorDialog.Rows")));
         return;
     }
-    if (isNaN(data.columns) || data.columns < 0 || data.columns > 50) {
+    if (isNaN(data.columns) || data.columns < 1 || data.columns > 50) {
         this.parent.add(new ExtrasRender.ComponentSync.RichTextArea.MessageDialog(this._richTextArea, 
                 this._richTextArea.peer._rb.get("TableDialog.ErrorDialogTitle"), 
                 this._richTextArea.peer._rb.get("TableDialog.ErrorDialog.Columns")));
