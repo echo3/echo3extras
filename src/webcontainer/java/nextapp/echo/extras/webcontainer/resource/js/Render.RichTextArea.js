@@ -20,6 +20,9 @@ ExtrasRender.ComponentSync.RichTextArea.DEFAULT_RESOURCE_BUNDLE = new EchoCore.R
     "HyperlinkDialog.PromptURL":        "URL:",
     "HyperlinkDialog.PromptDescription":
                                         "Description Text:",
+    "HyperlinkDialog.ErrorDialogTitle": "Cannot Insert Hyperlink",
+    "HyperlinkDialog.ErrorDialog.URL":  
+                                        "The URL entered is not valid.",
     "Menu.Edit":                        "Edit",
     "Menu.Undo":                        "Undo",
     "Menu.Redo":                        "Redo",
@@ -301,11 +304,13 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._processInsertTableDialog = fu
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype._processInsertHyperlink = function(e) {
-}
+    this._richTextInput.peer._insertHtml("<a href=\"" + e.data.url + "\">"
+            + (e.data.description ? e.data.description : e.data.url) + "</a>");
+};
 
 ExtrasRender.ComponentSync.RichTextArea.prototype._processInsertHyperlinkDialog = function(e) {
     var hyperlinkDialog = new ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog(this.component);
-    hyperlinkDialog.addListener("hyperlnkInsert", new EchoCore.MethodRef(this, this._processInsertHyperlink));
+    hyperlinkDialog.addListener("insertHyperlink", new EchoCore.MethodRef(this, this._processInsertHyperlink));
     this._contentPane.add(hyperlinkDialog);
 };
 
@@ -413,6 +418,8 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog.prototype._processOk = funct
 };
 
 ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog = function(richTextArea) {
+    this._richTextArea = richTextArea;
+    
     EchoApp.WindowPane.call(this, {
         styleName: richTextArea.getRenderProperty("windowPaneStyleName"),
         title:     richTextArea.peer._rb.get("HyperlinkDialog.Title"),
@@ -479,9 +486,18 @@ ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog.prototype._processCancel
 };
 
 ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog.prototype._processOk = function(e) {
-    var url = this._urlField.getProperty("text");
+    var data = {
+        url: this._urlField.getProperty("text"),
+        description: this._descriptionField.getProperty("text")
+    };
+    if (!data.url) {
+        this.parent.add(new ExtrasRender.ComponentSync.RichTextArea.MessageDialog(this._richTextArea, 
+                this._richTextArea.peer._rb.get("HyperlinkDialog.ErrorDialogTitle"), 
+                this._richTextArea.peer._rb.get("HyperlinkDialog.ErrorDialog.URL")));
+        return;
+    }
     this.parent.remove(this);
-    this.fireEvent(new EchoCore.Event("insertHyperlink", this, url));
+    this.fireEvent(new EchoCore.Event("insertHyperlink", this, data));
 };
 
 ExtrasRender.ComponentSync.RichTextArea.InputComponent = function(properties) {
