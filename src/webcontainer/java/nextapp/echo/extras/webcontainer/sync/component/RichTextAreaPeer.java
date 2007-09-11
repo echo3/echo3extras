@@ -48,6 +48,7 @@ import nextapp.echo.app.util.Context;
 import nextapp.echo.extras.app.ColorSelect;
 import nextapp.echo.extras.app.MenuBarPane;
 import nextapp.echo.extras.app.RichTextArea;
+import nextapp.echo.extras.app.TabPane;
 import nextapp.echo.extras.webcontainer.service.CommonService;
 import nextapp.echo.webcontainer.AbstractComponentSynchronizePeer;
 import nextapp.echo.webcontainer.ServerMessage;
@@ -81,6 +82,7 @@ public class RichTextAreaPeer extends AbstractComponentSynchronizePeer {
         addRequiredComponentClass(MenuBarPane.class);
         addRequiredComponentClass(Row.class);
         addRequiredComponentClass(SplitPane.class);
+        addRequiredComponentClass(TabPane.class);
         addRequiredComponentClass(TextField.class);
         addRequiredComponentClass(WindowPane.class);
 

@@ -34,7 +34,7 @@ ExtrasRender.ComponentSync.RichTextArea.DEFAULT_RESOURCE_BUNDLE = new EchoCore.R
     "Menu.Insert":                      "Insert",
     "Menu.InsertImage":                 "Image...",
     "Menu.InsertHyperlink":             "Hyperlink...",
-    "Menu.InsertHorizontalRule":        "Horziontal Rule",
+    "Menu.InsertHorizontalRule":        "Horizontal Rule",
     "Menu.InsertTable":                 "Table...",
     "Menu.BulletedList":                "Bulleted List",
     "Menu.NumberedList":                "Numbered List",
