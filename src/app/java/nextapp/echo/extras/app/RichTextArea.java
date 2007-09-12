@@ -40,6 +40,48 @@ import nextapp.echo.app.text.StringDocument;
  */
 public class RichTextArea extends Component {
 
+    public static final String ICON_BOLD = "bold";
+    public static final String ICON_ITALIC = "italic";
+    public static final String ICON_UNDERLINE = "underline";
+    public static final String ICON_STRIKETHROUGH = "strikethrough";
+    
+    public static final String ICON_CUT = "cut";
+    public static final String ICON_COPY = "copy";
+    public static final String ICON_PASTE = "paste";
+    public static final String ICON_SELECT_ALL = "selectAll";
+    public static final String ICON_DELETE = "delete";
+    public static final String ICON_UNDO = "undo";
+    public static final String ICON_REDO = "redo";
+    public static final String ICON_BULLETED_LIST = "bulletedList";
+    public static final String ICON_NUMBERED_LIST = "numberedList";
+    
+    public static final String ICON_TABLE = "table";
+    public static final String ICON_HYPERLINK = "hyperlink";
+    public static final String ICON_HORIZONTAL_RULE = "hr";
+    public static final String ICON_IMAGE = "image";
+    public static final String ICON_FORMAT_TEXT_STYLE = "textStyle";
+    public static final String ICON_FORMAT_PARAGRAPH_STYLE = "paragraphStyle";
+    public static final String ICON_ALIGNMENT = "alignment";
+    public static final String ICON_ALIGNMENT_LEFT = "alignmentLeft";
+    public static final String ICON_ALIGNMENT_RIGHT = "alignmentRight";
+    public static final String ICON_ALIGNMENT_CENTER = "alignmentCenter";
+    public static final String ICON_ALIGNMENT_JUSTIFY = "alignmentJustify";
+    public static final String ICON_PLAIN_TEXT = "plainText";
+    public static final String ICON_SUPERSCRIPT = "superscript";
+    public static final String ICON_SUBSCRIPT = "subscript";
+    public static final String ICON_PARAGRAPH_STYLE_NORMAL = "styleNormal";
+    public static final String ICON_PARAGRAPH_STYLE_PREFORMATTED = "stylePreformatted";
+    public static final String ICON_PARAGRAPH_STYLE_HEADING_1 = "styleH1";
+    public static final String ICON_PARAGRAPH_STYLE_HEADING_2 = "styleH2";
+    public static final String ICON_PARAGRAPH_STYLE_HEADING_3 = "styleH3";
+    public static final String ICON_PARAGRAPH_STYLE_HEADING_4 = "styleH4";
+    public static final String ICON_PARAGRAPH_STYLE_HEADING_5 = "styleH5";
+    public static final String ICON_PARAGRAPH_STYLE_HEADING_6 = "styleH6";
+    public static final String ICON_INDENT = "indent";
+    public static final String ICON_OUTDENT = "outdent";
+    public static final String ICON_FOREGROUND = "foreground";
+    public static final String ICON_BACKGROUND = "background";
+    
     /**
      * Local listener to monitor changes to document.
      */
@@ -59,12 +101,13 @@ public class RichTextArea extends Component {
     public static final String DOCUMENT_CHANGED_PROPERTY = "document";
     public static final String TEXT_CHANGED_PROPERTY = "text";
 
-    public static final String STYLE_MENU_STYLE_NAME = "menuStyleName";
-    public static final String STYLE_CONTROL_PANE_SPLIT_PANE_STYLE_NAME = "controlPaneSplitPaneStyleName";
-    public static final String STYLE_CONTROL_PANE_ROW_STYLE_NAME = "controlPaneRowStyleName";
-    public static final String STYLE_CONTROL_PANE_BUTTON_STYLE_NAME = "controlPaneButtonStyleName";
-    public static final String STYLE_TOOLBAR_BUTTON_STYLE_NAME = "toolbarButtonStyleName";
-    public static final String STYLE_WINDOW_PANE_STYLE_NAME = "windowPaneStyleName";
+    public static final String PROPERTY_MENU_STYLE_NAME = "menuStyleName";
+    public static final String PROPERTY_CONTROL_PANE_SPLIT_PANE_STYLE_NAME = "controlPaneSplitPaneStyleName";
+    public static final String PROPERTY_CONTROL_PANE_ROW_STYLE_NAME = "controlPaneRowStyleName";
+    public static final String PROPERTY_CONTROL_PANE_BUTTON_STYLE_NAME = "controlPaneButtonStyleName";
+    public static final String PROPERTY_TOOLBAR_BUTTON_STYLE_NAME = "toolbarButtonStyleName";
+    public static final String PROPERTY_WINDOW_PANE_STYLE_NAME = "windowPaneStyleName";
+    public static final String PROPERTY_ICONS = "icons";
     
     private Document document;
     
@@ -107,27 +150,31 @@ public class RichTextArea extends Component {
     }
     
     public String getControlPaneButtonStyleName() {
-        return (String) getProperty(STYLE_CONTROL_PANE_BUTTON_STYLE_NAME);
+        return (String) getProperty(PROPERTY_CONTROL_PANE_BUTTON_STYLE_NAME);
     }
     
     public String getControlPaneRowStyleName() {
-        return (String) getProperty(STYLE_CONTROL_PANE_ROW_STYLE_NAME);
+        return (String) getProperty(PROPERTY_CONTROL_PANE_ROW_STYLE_NAME);
     }
     
     public String getControlPaneSplitPaneStyleName() {
-        return (String) getProperty(STYLE_CONTROL_PANE_SPLIT_PANE_STYLE_NAME);
+        return (String) getProperty(PROPERTY_CONTROL_PANE_SPLIT_PANE_STYLE_NAME);
+    }
+    
+    public IconSet getIcons() {
+        return (IconSet) getProperty(PROPERTY_ICONS);
     }
     
     public String getMenuStyleName() {
-        return (String) getProperty(STYLE_MENU_STYLE_NAME);
+        return (String) getProperty(PROPERTY_MENU_STYLE_NAME);
     }
     
     public String getToolbarButtonStyleName() {
-        return (String) getProperty(STYLE_TOOLBAR_BUTTON_STYLE_NAME);
+        return (String) getProperty(PROPERTY_TOOLBAR_BUTTON_STYLE_NAME);
     }
     
     public String getWindowPaneStyleName() {
-        return (String) getProperty(STYLE_WINDOW_PANE_STYLE_NAME);
+        return (String) getProperty(PROPERTY_WINDOW_PANE_STYLE_NAME);
     }
     
     /**
@@ -158,6 +205,10 @@ public class RichTextArea extends Component {
         document = newValue;
     }
 
+    public void setIcons(IconSet newValue) {
+        setProperty(PROPERTY_ICONS, newValue);
+    }
+    
     /**
      * Sets the text of document model of this rich text area.
      * 
@@ -168,26 +219,26 @@ public class RichTextArea extends Component {
     }
     
     public void setControlPaneButtonStyleName(String newValue) {
-        setProperty(STYLE_CONTROL_PANE_BUTTON_STYLE_NAME, newValue);
+        setProperty(PROPERTY_CONTROL_PANE_BUTTON_STYLE_NAME, newValue);
     }
     
     public void setControlPaneRowStyleName(String newValue) {
-        setProperty(STYLE_CONTROL_PANE_ROW_STYLE_NAME, newValue);
+        setProperty(PROPERTY_CONTROL_PANE_ROW_STYLE_NAME, newValue);
     }
     
     public void setControlPaneSplitPaneStyleName(String newValue) {
-        setProperty(STYLE_CONTROL_PANE_SPLIT_PANE_STYLE_NAME, newValue);
+        setProperty(PROPERTY_CONTROL_PANE_SPLIT_PANE_STYLE_NAME, newValue);
     }
     
     public void setMenuStyleName(String newValue) {
-        setProperty(STYLE_MENU_STYLE_NAME, newValue);
+        setProperty(PROPERTY_MENU_STYLE_NAME, newValue);
     }
     
     public void setToolbarButtonStyleName(String newValue) {
-        setProperty(STYLE_TOOLBAR_BUTTON_STYLE_NAME, newValue);
+        setProperty(PROPERTY_TOOLBAR_BUTTON_STYLE_NAME, newValue);
     }
 
     public void setWindowPaneStyleName(String newValue) {
-        setProperty(STYLE_WINDOW_PANE_STYLE_NAME, newValue);
+        setProperty(PROPERTY_WINDOW_PANE_STYLE_NAME, newValue);
     }
 }

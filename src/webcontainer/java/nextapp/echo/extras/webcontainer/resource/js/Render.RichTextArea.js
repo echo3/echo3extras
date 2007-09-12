@@ -137,41 +137,46 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._createApp = function() {
 
 ExtrasRender.ComponentSync.RichTextArea.prototype._createMainMenuModel = function() {
     var bar = new ExtrasApp.MenuModel();
+    var icons = this.component.getProperty("icons");
+    if (!icons) {
+        icons = new Object();
+    }
     
     var editMenu = new ExtrasApp.MenuModel(null, this._rb.get("Menu.Edit"), null);
-    editMenu.addItem(new ExtrasApp.OptionModel("/undo", this._rb.get("Menu.Undo"), null));
-    editMenu.addItem(new ExtrasApp.OptionModel("/redo", this._rb.get("Menu.Redo"), null));
+    editMenu.addItem(new ExtrasApp.OptionModel("/undo", this._rb.get("Menu.Undo"), icons.undo));
+    editMenu.addItem(new ExtrasApp.OptionModel("/redo", this._rb.get("Menu.Redo"), icons.redo));
     editMenu.addItem(new ExtrasApp.SeparatorModel());
-    editMenu.addItem(new ExtrasApp.OptionModel("cut", this._rb.get("Menu.Cut"), null));
-    editMenu.addItem(new ExtrasApp.OptionModel("copy", this._rb.get("Menu.Copy"), null));
-    editMenu.addItem(new ExtrasApp.OptionModel("paste", this._rb.get("Menu.Paste"), null));
-    editMenu.addItem(new ExtrasApp.OptionModel("delete", this._rb.get("Menu.Delete"), null));
+    editMenu.addItem(new ExtrasApp.OptionModel("cut", this._rb.get("Menu.Cut"), icons.cut));
+    editMenu.addItem(new ExtrasApp.OptionModel("copy", this._rb.get("Menu.Copy"), icons.copy));
+    editMenu.addItem(new ExtrasApp.OptionModel("paste", this._rb.get("Menu.Paste"), icons.paste));
+    editMenu.addItem(new ExtrasApp.OptionModel("delete", this._rb.get("Menu.Delete"), icons["delete"]));
     editMenu.addItem(new ExtrasApp.SeparatorModel());
-    editMenu.addItem(new ExtrasApp.OptionModel("/selectall", this._rb.get("Menu.SelectAll"), null));
+    editMenu.addItem(new ExtrasApp.OptionModel("/selectall", this._rb.get("Menu.SelectAll"), icons.selectAll));
     bar.addItem(editMenu);
     
     var insertMenu = new ExtrasApp.MenuModel(null, this._rb.get("Menu.Insert"), null);
-    insertMenu.addItem(new ExtrasApp.OptionModel("/insertunorderedlist", this._rb.get("Menu.BulletedList"), null));
-    insertMenu.addItem(new ExtrasApp.OptionModel("/insertorderedlist", this._rb.get("Menu.NumberedList"), null));
+    insertMenu.addItem(new ExtrasApp.OptionModel("/insertunorderedlist", this._rb.get("Menu.BulletedList"), icons.bulletedList));
+    insertMenu.addItem(new ExtrasApp.OptionModel("/insertorderedlist", this._rb.get("Menu.NumberedList"), icons.numberedList));
     insertMenu.addItem(new ExtrasApp.SeparatorModel());
-    insertMenu.addItem(new ExtrasApp.OptionModel("/inserthorizontalrule", this._rb.get("Menu.InsertHorizontalRule"), null));
-    insertMenu.addItem(new ExtrasApp.OptionModel("insertimage", this._rb.get("Menu.InsertImage"), null));
-    insertMenu.addItem(new ExtrasApp.OptionModel("inserthyperlink", this._rb.get("Menu.InsertHyperlink"), null));
+    insertMenu.addItem(new ExtrasApp.OptionModel("/inserthorizontalrule", this._rb.get("Menu.InsertHorizontalRule"), 
+            icons.horizontalRule));
+    insertMenu.addItem(new ExtrasApp.OptionModel("insertimage", this._rb.get("Menu.InsertImage"), icons.image));
+    insertMenu.addItem(new ExtrasApp.OptionModel("inserthyperlink", this._rb.get("Menu.InsertHyperlink"), icons.hyperlink));
     insertMenu.addItem(new ExtrasApp.SeparatorModel());
-    insertMenu.addItem(new ExtrasApp.OptionModel("inserttable", this._rb.get("Menu.InsertTable"), null));
+    insertMenu.addItem(new ExtrasApp.OptionModel("inserttable", this._rb.get("Menu.InsertTable"), icons.table));
     bar.addItem(insertMenu);
 
     var formatMenu = new ExtrasApp.MenuModel(null,  this._rb.get("Menu.Format"), null);
     var formatTextMenu = new ExtrasApp.MenuModel(null,  this._rb.get("Menu.TextStyle"), null);
     formatTextMenu.addItem(new ExtrasApp.OptionModel("/removeformat",  this._rb.get("Menu.PlainText"), null));
     formatTextMenu.addItem(new ExtrasApp.SeparatorModel());
-    formatTextMenu.addItem(new ExtrasApp.OptionModel("/bold",  this._rb.get("Menu.Bold"), null));
-    formatTextMenu.addItem(new ExtrasApp.OptionModel("/italic",  this._rb.get("Menu.Italic"), null));
-    formatTextMenu.addItem(new ExtrasApp.OptionModel("/underline",  this._rb.get("Menu.Underline"), null));
-    formatTextMenu.addItem(new ExtrasApp.OptionModel("/strikethrough",  this._rb.get("Menu.Strikethrough"), null));
+    formatTextMenu.addItem(new ExtrasApp.OptionModel("/bold",  this._rb.get("Menu.Bold"), icons.bold));
+    formatTextMenu.addItem(new ExtrasApp.OptionModel("/italic",  this._rb.get("Menu.Italic"), icons.italic));
+    formatTextMenu.addItem(new ExtrasApp.OptionModel("/underline",  this._rb.get("Menu.Underline"), icons.underline));
+    formatTextMenu.addItem(new ExtrasApp.OptionModel("/strikethrough",  this._rb.get("Menu.Strikethrough"), icons.strikethrough));
     formatTextMenu.addItem(new ExtrasApp.SeparatorModel());
-    formatTextMenu.addItem(new ExtrasApp.OptionModel("/superscript",  this._rb.get("Menu.Superscript"), null));
-    formatTextMenu.addItem(new ExtrasApp.OptionModel("/subscript",  this._rb.get("Menu.Subscript"), null));
+    formatTextMenu.addItem(new ExtrasApp.OptionModel("/superscript",  this._rb.get("Menu.Superscript"), icons.superscript));
+    formatTextMenu.addItem(new ExtrasApp.OptionModel("/subscript",  this._rb.get("Menu.Subscript"), icons.subscript));
     formatMenu.addItem(formatTextMenu);
     formatParagraphMenu = new ExtrasApp.MenuModel(null, this._rb.get("Menu.ParagraphStyle"), null);
     formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<p>", this._rb.get("Menu.ParagraphStyle"), null));
@@ -184,17 +189,17 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._createMainMenuModel = functio
     formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<h6>", this._rb.get("Menu.Heading6"), null));
     formatMenu.addItem(formatParagraphMenu);
     formatAlignmentMenu = new ExtrasApp.MenuModel(null,  this._rb.get("Menu.Alignment"), null);
-    formatAlignmentMenu.addItem(new ExtrasApp.OptionModel("/justifyleft",  this._rb.get("Menu.Left"), null));
-    formatAlignmentMenu.addItem(new ExtrasApp.OptionModel("/justifycenter",  this._rb.get("Menu.Center"), null));
-    formatAlignmentMenu.addItem(new ExtrasApp.OptionModel("/justifyright",  this._rb.get("Menu.Right"), null));
-    formatAlignmentMenu.addItem(new ExtrasApp.OptionModel("/justifyfull",  this._rb.get("Menu.Justified"), null));
+    formatAlignmentMenu.addItem(new ExtrasApp.OptionModel("/justifyleft",  this._rb.get("Menu.Left"), icons.alignmentLeft));
+    formatAlignmentMenu.addItem(new ExtrasApp.OptionModel("/justifycenter",  this._rb.get("Menu.Center"), icons.alignmentCenter));
+    formatAlignmentMenu.addItem(new ExtrasApp.OptionModel("/justifyright",  this._rb.get("Menu.Right"), icons.alignmentRight));
+    formatAlignmentMenu.addItem(new ExtrasApp.OptionModel("/justifyfull",  this._rb.get("Menu.Justified"), icons.alignmentJustify));
     formatMenu.addItem(formatAlignmentMenu);
     formatMenu.addItem(new ExtrasApp.SeparatorModel());
-    formatMenu.addItem(new ExtrasApp.OptionModel("/indent",  this._rb.get("Menu.Indent"), null));
-    formatMenu.addItem(new ExtrasApp.OptionModel("/outdent",  this._rb.get("Menu.Outdent"), null));
+    formatMenu.addItem(new ExtrasApp.OptionModel("/indent",  this._rb.get("Menu.Indent"), icons.indent));
+    formatMenu.addItem(new ExtrasApp.OptionModel("/outdent",  this._rb.get("Menu.Outdent"), icons.outdent));
     formatMenu.addItem(new ExtrasApp.SeparatorModel());
-    formatMenu.addItem(new ExtrasApp.OptionModel("foreground",  this._rb.get("Menu.SetForeground"), null));
-    formatMenu.addItem(new ExtrasApp.OptionModel("background",  this._rb.get("Menu.SetBackground"), null));
+    formatMenu.addItem(new ExtrasApp.OptionModel("foreground",  this._rb.get("Menu.SetForeground"), icons.foreground));
+    formatMenu.addItem(new ExtrasApp.OptionModel("background",  this._rb.get("Menu.SetBackground"), icons.background));
     
     bar.addItem(formatMenu);
     
