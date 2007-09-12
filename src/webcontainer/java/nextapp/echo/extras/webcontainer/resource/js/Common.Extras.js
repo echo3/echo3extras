@@ -18,6 +18,8 @@ ExtrasSerial.PropertyTranslator = function() { };
 
 ExtrasRender = function() { };
 
+ExtrasRender = function() { };
+
 ExtrasRender.ComponentSync = function() { };
 
 ExtrasRender.Color = function() { };

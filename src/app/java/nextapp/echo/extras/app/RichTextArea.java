@@ -57,7 +57,7 @@ public class RichTextArea extends Component {
     
     public static final String ICON_TABLE = "table";
     public static final String ICON_HYPERLINK = "hyperlink";
-    public static final String ICON_HORIZONTAL_RULE = "hr";
+    public static final String ICON_HORIZONTAL_RULE = "horizontalRule";
     public static final String ICON_IMAGE = "image";
     public static final String ICON_FORMAT_TEXT_STYLE = "textStyle";
     public static final String ICON_FORMAT_PARAGRAPH_STYLE = "paragraphStyle";

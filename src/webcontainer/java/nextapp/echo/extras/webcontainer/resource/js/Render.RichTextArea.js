@@ -6,7 +6,7 @@ ExtrasRender.ComponentSync.RichTextArea = function() {
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype = EchoCore.derive(EchoRender.ComponentSync);
-    
+
 ExtrasRender.ComponentSync.RichTextArea.DEFAULT_RESOURCE_BUNDLE = new EchoCore.ResourceBundle({
     "ColorDialog.Title.Foreground":     "Text Color",
     "ColorDialog.Title.Background":     "Highlight Color",
@@ -137,7 +137,7 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._createApp = function() {
 
 ExtrasRender.ComponentSync.RichTextArea.prototype._createMainMenuModel = function() {
     var bar = new ExtrasApp.MenuModel();
-    var icons = this.component.getProperty("icons");
+    var icons = this.getIcons();
     if (!icons) {
         icons = new Object();
     }
@@ -204,6 +204,10 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._createMainMenuModel = functio
     bar.addItem(formatMenu);
     
     return bar;
+};
+
+ExtrasRender.ComponentSync.RichTextArea.prototype.getIcons = function() {
+    return this.component.getProperty("icons");
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype._processBold = function(e) {
