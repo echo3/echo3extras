@@ -424,7 +424,7 @@ ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog = function(richTextArea)
         styleName: richTextArea.getRenderProperty("windowPaneStyleName"),
         title:     richTextArea.peer._rb.get("HyperlinkDialog.Title"),
         width:     new EchoApp.Property.Extent(280),
-        height:    new EchoApp.Property.Extent(320)
+        height:    new EchoApp.Property.Extent(200)
     });
     this.addListener("close", new EchoCore.MethodRef(this, this._processCancel));
     
@@ -614,7 +614,7 @@ ExtrasRender.ComponentSync.RichTextArea.MessageDialog = function(richTextArea, t
         styleName: richTextArea.getRenderProperty("windowPaneStyleName"),
         title:     title,
         width:     new EchoApp.Property.Extent(280),
-        height:    new EchoApp.Property.Extent(320)
+        height:    new EchoApp.Property.Extent(200)
     });
     this.addListener("close", new EchoCore.MethodRef(this, this._processClose));
     
@@ -658,7 +658,7 @@ ExtrasRender.ComponentSync.RichTextArea.TableDialog = function(richTextArea, set
         styleName: richTextArea.getRenderProperty("windowPaneStyleName"),
         title:     richTextArea.peer._rb.get("TableDialog.Title"),
         width:     new EchoApp.Property.Extent(280),
-        height:    new EchoApp.Property.Extent(320)
+        height:    new EchoApp.Property.Extent(200)
     });
     this.addListener("close", new EchoCore.MethodRef(this, this._processCancel));
     
