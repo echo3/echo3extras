@@ -74,4 +74,22 @@ implements OptionModel {
     public String getText() {
         return text;
     }
+
+    /**
+     * Sets the icon of this menu option.
+     * 
+     * @param newValue the new icon
+     */
+    public void setIcon(ImageReference newValue) {
+        icon = newValue;
+    }
+
+    /**
+     * Sets the text of this menu option.
+     * 
+     * @param newValue the new text
+     */
+    public void setText(String newValue) {
+        text = newValue;
+    }
 }
