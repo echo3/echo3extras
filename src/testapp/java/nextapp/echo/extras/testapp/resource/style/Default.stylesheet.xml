@@ -221,7 +221,7 @@
   <p n="pressedBackground" t="Color" v="#afafbf"/>
   <p n="pressedForeground" t="Color" v="#000000"/>
   <p n="pressedBorder" t="Border" v="1px inset #afafbf"/>
-  <p n="insets" t="Insets" v="1px 5px"/>
+  <p n="insets" t="Insets" v="1px 3px"/>
  </s>
  <s n="TestControlColumn" t="nextapp.echo.app.Column">
   <p n="cellSpacing" t="Extent" v="1px"/>

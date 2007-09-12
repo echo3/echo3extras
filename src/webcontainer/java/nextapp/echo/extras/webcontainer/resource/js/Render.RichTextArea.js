@@ -106,19 +106,37 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._createApp = function() {
     splitPane.add(menuBarPane);
     
     var mainColumn = new EchoApp.Column();
-    mainColumn.setProperty("cellSpacing", new EchoApp.Property.Extent("5px"));
     splitPane.add(mainColumn);
     
     var controlsRow = new EchoApp.Row();
     controlsRow.setProperty("cellSpacing", new EchoApp.Property.Extent("10px"));
+    controlsRow.setProperty("insets", new EchoApp.Property.Insets("2px"));
     mainColumn.add(controlsRow);
+    
+    //FIXME i18n
     
     var fontStyleRow = new EchoApp.Row();
     controlsRow.add(fontStyleRow);
-    
     fontStyleRow.add(this._createToolbarButton("B", this._icons.bold, this._processBold));
     fontStyleRow.add(this._createToolbarButton("I", this._icons.italic, this._processItalic));
     fontStyleRow.add(this._createToolbarButton("U", this._icons.underline, this._processUnderline));
+
+    var fontElevationRow = new EchoApp.Row();
+    controlsRow.add(fontElevationRow);
+    fontElevationRow.add(this._createToolbarButton("Superscipt", this._icons.superscript, this._processSuperScript));
+    fontElevationRow.add(this._createToolbarButton("Subscript", this._icons.subscript, this._processSubScript));
+
+    var alignmentRow = new EchoApp.Row();
+    controlsRow.add(alignmentRow);
+    alignmentRow.add(this._createToolbarButton("Left", this._icons.alignmentLeft, this._processAlignLeft));
+    alignmentRow.add(this._createToolbarButton("Center", this._icons.alignmentCenter, this._processAlignCenter));
+    alignmentRow.add(this._createToolbarButton("Right", this._icons.alignmentRight, this._processAlignRight));
+    alignmentRow.add(this._createToolbarButton("Justify", this._icons.alignmentJustify, this._processAlignJustify));
+
+    var colorRow = new EchoApp.Row();
+    controlsRow.add(colorRow);
+    colorRow.add(this._createToolbarButton("Color", this._icons.foreground, this._processSetForegroundDialog));
+    colorRow.add(this._createToolbarButton("Highlight", this._icons.background, this._processSetBackgroundDialog));
     
     this._richTextInput = new ExtrasRender.ComponentSync.RichTextArea.InputComponent();
     this._richTextInput._richTextArea = this.component;
