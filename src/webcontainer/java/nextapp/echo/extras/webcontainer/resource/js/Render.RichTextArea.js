@@ -23,6 +23,11 @@ ExtrasRender.ComponentSync.RichTextArea.DEFAULT_RESOURCE_BUNDLE = new EchoCore.R
     "HyperlinkDialog.ErrorDialogTitle": "Cannot Insert Hyperlink",
     "HyperlinkDialog.ErrorDialog.URL":  
                                         "The URL entered is not valid.",
+    "ImageDialog.Title":                "Insert Image",
+    "ImageDialog.PromptURL":            "URL:",
+    "ImageDialog.ErrorDialogTitle":     "Cannot Insert Image",
+    "ImageDialog.ErrorDialog.URL":  
+                                        "The URL entered is not valid.",
     "Menu.Edit":                        "Edit",
     "Menu.Undo":                        "Undo",
     "Menu.Redo":                        "Redo",
@@ -263,6 +268,9 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._processMenuAction = function(
         case "inserthyperlink":
             this._processInsertHyperlinkDialog();
             break;
+        case "insertimage":
+            this._processInsertImageDialog();
+            break;
         case "cut":
         case "copy":
         case "paste":
@@ -343,6 +351,16 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._processInsertHyperlinkDialog 
     var hyperlinkDialog = new ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog(this.component);
     hyperlinkDialog.addListener("insertHyperlink", new EchoCore.MethodRef(this, this._processInsertHyperlink));
     this._contentPane.add(hyperlinkDialog);
+};
+
+ExtrasRender.ComponentSync.RichTextArea.prototype._processInsertImage = function(e) {
+    this._richTextInput.peer._insertHtml("<img src=\"" + e.data.url + "\">");
+};
+
+ExtrasRender.ComponentSync.RichTextArea.prototype._processInsertImageDialog = function(e) {
+    var imageDialog = new ExtrasRender.ComponentSync.RichTextArea.ImageDialog(this.component);
+    imageDialog.addListener("insertImage", new EchoCore.MethodRef(this, this._processInsertImage));
+    this._contentPane.add(imageDialog);
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype.renderAdd = function(update, parentElement) {
@@ -538,6 +556,85 @@ ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog.prototype._processOk = f
     this.parent.remove(this);
     this.fireEvent(new EchoCore.Event("insertHyperlink", this, data));
 };
+
+ExtrasRender.ComponentSync.RichTextArea.ImageDialog = function(richTextArea) {
+    this._richTextArea = richTextArea;
+    
+    EchoApp.WindowPane.call(this, {
+        styleName:            richTextArea.getRenderProperty("windowPaneStyleName"),
+        title:                richTextArea.peer._rb.get("ImageDialog.Title"),
+        icon:                 richTextArea.peer._icons.image,
+        iconInsets:           new EchoApp.Property.Insets(6, 10),
+        width:                new EchoApp.Property.Extent(280),
+        height:               new EchoApp.Property.Extent(200),
+        resizable:            false
+    });
+    this.addListener("close", new EchoCore.MethodRef(this, this._processCancel));
+    
+    var splitPane = new EchoApp.SplitPane();
+    ExtrasRender.configureStyle(splitPane, richTextArea.getRenderProperty("controlPaneSplitPaneStyleName"), 
+            ExtrasRender.DEFAULT_CONTROL_PANE_SPLIT_PANE_STYLE);
+    this.add(splitPane);
+    
+    var controlsRow = new EchoApp.Row();
+    ExtrasRender.configureStyle(controlsRow, richTextArea.getRenderProperty("controlPaneRowStyleName"), 
+            ExtrasRender.DEFAULT_CONTROL_PANE_ROW_STYLE);
+    splitPane.add(controlsRow);
+    
+    var okButton = new EchoApp.Button({
+        text: richTextArea.peer._rb.get("Generic.Ok"),
+        icon: richTextArea.peer._icons.ok
+    });
+
+    okButton.addListener("action", new EchoCore.MethodRef(this, this._processOk));
+    ExtrasRender.configureStyle(okButton, richTextArea.getRenderProperty("controlPaneButtonStyleName"), 
+            ExtrasRender.DEFAULT_CONTROL_PANE_BUTTON_STYLE);
+    controlsRow.add(okButton);
+    
+    var cancelButton = new EchoApp.Button({
+        text: richTextArea.peer._rb.get("Generic.Cancel"),
+        icon: richTextArea.peer._icons.cancel
+    });
+    cancelButton.addListener("action", new EchoCore.MethodRef(this, this._processCancel));
+    ExtrasRender.configureStyle(cancelButton, richTextArea.getRenderProperty("controlPaneButtonStyleName"), 
+            ExtrasRender.DEFAULT_CONTROL_PANE_BUTTON_STYLE);
+    controlsRow.add(cancelButton);
+    
+    var layoutColumn = new EchoApp.Column({
+        insets: new EchoApp.Property.Insets(10)
+    });
+    splitPane.add(layoutColumn);
+    
+    layoutColumn.add(new EchoApp.Label({
+        text: richTextArea.peer._rb.get("ImageDialog.PromptURL")
+    }));
+    
+    this._urlField = new EchoApp.TextField({
+        width: new EchoApp.Property.Extent("100%")
+    });
+    layoutColumn.add(this._urlField);
+};
+
+ExtrasRender.ComponentSync.RichTextArea.ImageDialog.prototype = EchoCore.derive(EchoApp.WindowPane);
+
+ExtrasRender.ComponentSync.RichTextArea.ImageDialog.prototype._processCancel = function(e) {
+    this.parent.remove(this);
+};
+
+ExtrasRender.ComponentSync.RichTextArea.ImageDialog.prototype._processOk = function(e) {
+    var data = {
+        url: this._urlField.getProperty("text")
+    };
+    if (!data.url) {
+        this.parent.add(new ExtrasRender.ComponentSync.RichTextArea.MessageDialog(this._richTextArea, 
+                this._richTextArea.peer._rb.get("ImageDialog.ErrorDialogTitle"), 
+                this._richTextArea.peer._rb.get("ImageDialog.ErrorDialog.URL")));
+        return;
+    }
+    this.parent.remove(this);
+    this.fireEvent(new EchoCore.Event("insertImage", this, data));
+};
+
 
 ExtrasRender.ComponentSync.RichTextArea.InputComponent = function(properties) {
     EchoApp.Component.call(this, properties);
