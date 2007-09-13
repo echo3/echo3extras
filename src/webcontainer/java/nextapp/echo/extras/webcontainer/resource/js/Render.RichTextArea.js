@@ -73,7 +73,7 @@ ExtrasRender.ComponentSync.RichTextArea.DEFAULT_RESOURCE_BUNDLE = new EchoCore.R
     "TableDialog.ErrorDialog.Rows":     "The entered rows value is not valid.  Please specify a number between 1 and 50."
 });
 
-ExtrasRender.ComponentSync.RichTextArea.prototype._createToolbarButton = function(text, icon, eventMethod) {
+ExtrasRender.ComponentSync.RichTextArea.prototype._createToolbarButton = function(text, icon, eventMethod, actionCommand) {
     var button = new EchoApp.Button();
     button.setStyleName(this.component.getRenderProperty("toolbarButtonStyleName"));
     if (icon) {
@@ -81,6 +81,7 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._createToolbarButton = functio
     } else {
         button.setProperty("text", text);
     }
+    button.setProperty("actionCommand", actionCommand);
     if (eventMethod) {
         button.addListener("action", new EchoCore.MethodRef(this, eventMethod));
     }
@@ -117,21 +118,21 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._createApp = function() {
     
     var fontStyleRow = new EchoApp.Row();
     controlsRow.add(fontStyleRow);
-    fontStyleRow.add(this._createToolbarButton("B", this._icons.bold, this._processBold));
-    fontStyleRow.add(this._createToolbarButton("I", this._icons.italic, this._processItalic));
-    fontStyleRow.add(this._createToolbarButton("U", this._icons.underline, this._processUnderline));
+    fontStyleRow.add(this._createToolbarButton("B", this._icons.bold, this._processCommand, "bold"));
+    fontStyleRow.add(this._createToolbarButton("I", this._icons.italic, this._processCommand, "italic"));
+    fontStyleRow.add(this._createToolbarButton("U", this._icons.underline, this._processCommand, "underline"));
 
     var fontElevationRow = new EchoApp.Row();
     controlsRow.add(fontElevationRow);
-    fontElevationRow.add(this._createToolbarButton("Superscipt", this._icons.superscript, this._processSuperScript));
-    fontElevationRow.add(this._createToolbarButton("Subscript", this._icons.subscript, this._processSubScript));
+    fontElevationRow.add(this._createToolbarButton("Superscipt", this._icons.superscript, this._processCommand, "superscript"));
+    fontElevationRow.add(this._createToolbarButton("Subscript", this._icons.subscript, this._processCommand, "subscript"));
 
     var alignmentRow = new EchoApp.Row();
     controlsRow.add(alignmentRow);
-    alignmentRow.add(this._createToolbarButton("Left", this._icons.alignmentLeft, this._processAlignLeft));
-    alignmentRow.add(this._createToolbarButton("Center", this._icons.alignmentCenter, this._processAlignCenter));
-    alignmentRow.add(this._createToolbarButton("Right", this._icons.alignmentRight, this._processAlignRight));
-    alignmentRow.add(this._createToolbarButton("Justify", this._icons.alignmentJustify, this._processAlignJustify));
+    alignmentRow.add(this._createToolbarButton("Left", this._icons.alignmentLeft, this._processCommand, "justifyleft"));
+    alignmentRow.add(this._createToolbarButton("Center", this._icons.alignmentCenter, this._processCommand, "justifycenter"));
+    alignmentRow.add(this._createToolbarButton("Right", this._icons.alignmentRight, this._processCommand, "justifyright"));
+    alignmentRow.add(this._createToolbarButton("Justify", this._icons.alignmentJustify, this._processCommand, "justifyfull"));
 
     var colorRow = new EchoApp.Row();
     controlsRow.add(colorRow);
@@ -222,6 +223,10 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._createMainMenuModel = functio
 
 ExtrasRender.ComponentSync.RichTextArea.prototype.getIcons = function() {
     return this.component.getProperty("icons");
+};
+
+ExtrasRender.ComponentSync.RichTextArea.prototype._processCommand = function(e) {
+    this._richTextInput.peer.doCommand(e.data);
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype._processBold = function(e) {
