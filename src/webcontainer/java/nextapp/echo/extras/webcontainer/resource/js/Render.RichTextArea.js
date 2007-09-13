@@ -391,7 +391,8 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog = function(richTextArea, set
         icon:                 setBackground ? richTextArea.peer._icons.background : richTextArea.peer._icons.foreground,
         iconInsets:           new EchoApp.Property.Insets(6, 10),
         width:                new EchoApp.Property.Extent(280),
-        height:               new EchoApp.Property.Extent(320)
+        height:               new EchoApp.Property.Extent(320),
+        resizable:            false
     });
     this.addListener("close", new EchoCore.MethodRef(this, this._processCancel));
     
@@ -459,7 +460,8 @@ ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog = function(richTextArea)
         icon:                 richTextArea.peer._icons.hyperlink,
         iconInsets:           new EchoApp.Property.Insets(6, 10),
         width:                new EchoApp.Property.Extent(280),
-        height:               new EchoApp.Property.Extent(200)
+        height:               new EchoApp.Property.Extent(200),
+        resizable:            false
     });
     this.addListener("close", new EchoCore.MethodRef(this, this._processCancel));
     
@@ -648,10 +650,11 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype._storeRange = functi
 
 ExtrasRender.ComponentSync.RichTextArea.MessageDialog = function(richTextArea, title, message) {
     EchoApp.WindowPane.call(this, {
-        styleName: richTextArea.getRenderProperty("windowPaneStyleName"),
-        title:     title,
-        width:     new EchoApp.Property.Extent(280),
-        height:    new EchoApp.Property.Extent(200)
+        styleName:            richTextArea.getRenderProperty("windowPaneStyleName"),
+        title:                title,
+        width:                new EchoApp.Property.Extent(280),
+        height:               new EchoApp.Property.Extent(200),
+        resizable:            false
     });
     this.addListener("close", new EchoCore.MethodRef(this, this._processClose));
     
@@ -698,7 +701,8 @@ ExtrasRender.ComponentSync.RichTextArea.TableDialog = function(richTextArea, set
         icon:                 richTextArea.peer._icons.table,
         iconInsets:           new EchoApp.Property.Insets(6, 10),
         width:                new EchoApp.Property.Extent(280),
-        height:               new EchoApp.Property.Extent(200)
+        height:               new EchoApp.Property.Extent(200),
+        resizable:            false
     });
     this.addListener("close", new EchoCore.MethodRef(this, this._processCancel));
     
