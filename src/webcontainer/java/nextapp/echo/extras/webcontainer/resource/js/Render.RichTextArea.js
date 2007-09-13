@@ -138,6 +138,18 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._createApp = function() {
     controlsRow.add(colorRow);
     colorRow.add(this._createToolbarButton("Color", this._icons.foreground, this._processSetForegroundDialog));
     colorRow.add(this._createToolbarButton("Highlight", this._icons.background, this._processSetBackgroundDialog));
+
+    var insertObjectRow = new EchoApp.Row();
+    controlsRow.add(insertObjectRow);
+    insertObjectRow.add(this._createToolbarButton("Bulleted List", this._icons.bulletedList, this._processCommand,
+            "insertunorderedlist"));
+    insertObjectRow.add(this._createToolbarButton("Numbered List", this._icons.numberedList, this._processCommand,
+            "insertorderedlist"));
+    insertObjectRow.add(this._createToolbarButton("Horizontal Rule", this._icons.horizontalRule, this._processCommand,
+            "inserthorizontalrule"));
+    insertObjectRow.add(this._createToolbarButton("Image", this._icons.image, this._processInsertImageDialog));
+    insertObjectRow.add(this._createToolbarButton("Hyperlink", this._icons.hyperlink, this._processInsertHyperlinkDialog));
+    insertObjectRow.add(this._createToolbarButton("Table", this._icons.table, this._processInsertTableDialog));
     
     this._richTextInput = new ExtrasRender.ComponentSync.RichTextArea.InputComponent();
     this._richTextInput._richTextArea = this.component;
@@ -228,15 +240,6 @@ ExtrasRender.ComponentSync.RichTextArea.prototype.getIcons = function() {
 ExtrasRender.ComponentSync.RichTextArea.prototype._processCommand = function(e) {
     this._richTextInput.peer.doCommand(e.data);
 };
-
-ExtrasRender.ComponentSync.RichTextArea.prototype._processBold = function(e) {
-    this._richTextInput.peer.doCommand("bold");
-};
-
-ExtrasRender.ComponentSync.RichTextArea.prototype._processItalic = function(e) {
-    this._richTextInput.peer.doCommand("italic");
-};
-
 ExtrasRender.ComponentSync.RichTextArea.prototype._processMenuAction = function(e) {
     if (e.modelId.charAt(0) == '/') {
         var separatorIndex = e.modelId.indexOf("/", 1);
@@ -342,14 +345,6 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._processInsertHyperlinkDialog 
     this._contentPane.add(hyperlinkDialog);
 };
 
-ExtrasRender.ComponentSync.RichTextArea.prototype._processUnderline = function(e) {
-    this._richTextInput.peer.doCommand("underline");
-};
-
-ExtrasRender.ComponentSync.RichTextArea.prototype._processStrikeThrough = function(e) {
-    this._richTextInput.peer.doCommand("strikethrough");
-};
-
 ExtrasRender.ComponentSync.RichTextArea.prototype.renderAdd = function(update, parentElement) {
     this._icons = this.getIcons();
     if (!this._icons) {
@@ -390,10 +385,13 @@ ExtrasRender.ComponentSync.RichTextArea.prototype.renderUpdate = function(update
 
 ExtrasRender.ComponentSync.RichTextArea.ColorDialog = function(richTextArea, setBackground) {
     EchoApp.WindowPane.call(this, {
-        styleName: richTextArea.getRenderProperty("windowPaneStyleName"),
-        title:     richTextArea.peer._rb.get(setBackground ? "ColorDialog.Title.Background" : "ColorDialog.Title.Foreground"),
-        width:     new EchoApp.Property.Extent(280),
-        height:    new EchoApp.Property.Extent(320)
+        styleName:            richTextArea.getRenderProperty("windowPaneStyleName"),
+        title:                richTextArea.peer._rb.get(setBackground 
+                                      ? "ColorDialog.Title.Background" : "ColorDialog.Title.Foreground"),
+        icon:                 setBackground ? richTextArea.peer._icons.background : richTextArea.peer._icons.foreground,
+        iconInsets:           new EchoApp.Property.Insets(6, 10),
+        width:                new EchoApp.Property.Extent(280),
+        height:               new EchoApp.Property.Extent(320)
     });
     this.addListener("close", new EchoCore.MethodRef(this, this._processCancel));
     
@@ -454,10 +452,12 @@ ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog = function(richTextArea)
     this._richTextArea = richTextArea;
     
     EchoApp.WindowPane.call(this, {
-        styleName: richTextArea.getRenderProperty("windowPaneStyleName"),
-        title:     richTextArea.peer._rb.get("HyperlinkDialog.Title"),
-        width:     new EchoApp.Property.Extent(280),
-        height:    new EchoApp.Property.Extent(200)
+        styleName:            richTextArea.getRenderProperty("windowPaneStyleName"),
+        title:                richTextArea.peer._rb.get("HyperlinkDialog.Title"),
+        icon:                 richTextArea.peer._icons.hyperlink,
+        iconInsets:           new EchoApp.Property.Insets(6, 10),
+        width:                new EchoApp.Property.Extent(280),
+        height:               new EchoApp.Property.Extent(200)
     });
     this.addListener("close", new EchoCore.MethodRef(this, this._processCancel));
     
@@ -688,10 +688,12 @@ ExtrasRender.ComponentSync.RichTextArea.TableDialog = function(richTextArea, set
     this._richTextArea = richTextArea;
     
     EchoApp.WindowPane.call(this, {
-        styleName: richTextArea.getRenderProperty("windowPaneStyleName"),
-        title:     richTextArea.peer._rb.get("TableDialog.Title"),
-        width:     new EchoApp.Property.Extent(280),
-        height:    new EchoApp.Property.Extent(200)
+        styleName:            richTextArea.getRenderProperty("windowPaneStyleName"),
+        title:                richTextArea.peer._rb.get("TableDialog.Title"),
+        icon:                 richTextArea.peer._icons.table,
+        iconInsets:           new EchoApp.Property.Insets(6, 10),
+        width:                new EchoApp.Property.Extent(280),
+        height:               new EchoApp.Property.Extent(200)
     });
     this.addListener("close", new EchoCore.MethodRef(this, this._processCancel));
     
