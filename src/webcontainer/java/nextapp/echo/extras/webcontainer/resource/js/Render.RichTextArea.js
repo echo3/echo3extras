@@ -5,7 +5,7 @@ ExtrasRender.ComponentSync.RichTextArea = function() {
     this._rb = ExtrasRender.ComponentSync.RichTextArea.DEFAULT_RESOURCE_BUNDLE; 
 };
 
-ExtrasRender.ComponentSync.RichTextArea.prototype = EchoCore.derive(EchoRender.ComponentSync);
+ExtrasRender.ComponentSync.RichTextArea.prototype = EchoCore.derive(EchoArc.ComponentSync);
 
 ExtrasRender.ComponentSync.RichTextArea.DEFAULT_RESOURCE_BUNDLE = new EchoCore.ResourceBundle({
     "ColorDialog.Title.Foreground":     "Text Color",
@@ -78,32 +78,13 @@ ExtrasRender.ComponentSync.RichTextArea.DEFAULT_RESOURCE_BUNDLE = new EchoCore.R
     "TableDialog.ErrorDialog.Rows":     "The entered rows value is not valid.  Please specify a number between 1 and 50."
 });
 
-ExtrasRender.ComponentSync.RichTextArea.prototype._createToolbarButton = function(text, icon, eventMethod, actionCommand) {
-    var button = new EchoApp.Button();
-    button.setStyleName(this.component.getRenderProperty("toolbarButtonStyleName"));
-    if (icon) {
-        button.setProperty("icon", icon);
-    } else {
-        button.setProperty("text", text);
-    }
-    button.setProperty("actionCommand", actionCommand);
-    if (eventMethod) {
-        button.addListener("action", new EchoCore.MethodRef(this, eventMethod));
-    }
-    return button;
-};
-
-ExtrasRender.ComponentSync.RichTextArea.prototype._createApp = function() {
-    this._app = new EchoApp.Application();
-    this._app.setStyleSheet(this.client.application.getStyleSheet());
-    
-    this._contentPane = new EchoApp.ContentPane();
-    this._app.rootComponent.add(this._contentPane);
+ExtrasRender.ComponentSync.RichTextArea.prototype.createBaseComponent = function() {
+    var contentPane = new EchoApp.ContentPane();
     
     var splitPane = new EchoApp.SplitPane();
     splitPane.setProperty("orientation", EchoApp.SplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM);
     splitPane.setProperty("separatorPosition", new EchoApp.Property.Extent("26px"));
-    this._contentPane.add(splitPane);
+    contentPane.add(splitPane);
 
     var menuBarPane = new ExtrasApp.MenuBarPane();
     menuBarPane.setStyleName(this.component.getRenderProperty("menuStyleName"));
@@ -159,10 +140,8 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._createApp = function() {
     this._richTextInput = new ExtrasRender.ComponentSync.RichTextArea.InputComponent();
     this._richTextInput._richTextArea = this.component;
     mainColumn.add(this._richTextInput);
-
-    this._freeClient = new EchoFreeClient(this._app, this._mainDivElement);
-    this._freeClient.parent = this.client;
-    this._freeClient.init();
+    
+    return contentPane;
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype._createMainMenuModel = function() {
@@ -238,6 +217,25 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._createMainMenuModel = functio
     return bar;
 };
 
+ExtrasRender.ComponentSync.RichTextArea.prototype._createToolbarButton = function(text, icon, eventMethod, actionCommand) {
+    var button = new EchoApp.Button();
+    button.setStyleName(this.component.getRenderProperty("toolbarButtonStyleName"));
+    if (icon) {
+        button.setProperty("icon", icon);
+    } else {
+        button.setProperty("text", text);
+    }
+    button.setProperty("actionCommand", actionCommand);
+    if (eventMethod) {
+        button.addListener("action", new EchoCore.MethodRef(this, eventMethod));
+    }
+    return button;
+};
+
+ExtrasRender.ComponentSync.RichTextArea.prototype.getDomainElement = function() { 
+    return this._mainDivElement;
+};
+
 ExtrasRender.ComponentSync.RichTextArea.prototype.getIcons = function() {
     return this.component.getProperty("icons");
 };
@@ -245,6 +243,7 @@ ExtrasRender.ComponentSync.RichTextArea.prototype.getIcons = function() {
 ExtrasRender.ComponentSync.RichTextArea.prototype._processCommand = function(e) {
     this._richTextInput.peer.doCommand(e.data);
 };
+
 ExtrasRender.ComponentSync.RichTextArea.prototype._processMenuAction = function(e) {
     if (e.modelId.charAt(0) == '/') {
         var separatorIndex = e.modelId.indexOf("/", 1);
@@ -297,7 +296,7 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._processSetBackground = functi
 ExtrasRender.ComponentSync.RichTextArea.prototype._processSetBackgroundDialog = function(e) {
     var colorDialog = new ExtrasRender.ComponentSync.RichTextArea.ColorDialog(this.component, true);
     colorDialog.addListener("colorSelect", new EchoCore.MethodRef(this, this._processSetBackground));
-    this._contentPane.add(colorDialog);
+    this.baseComponent.add(colorDialog);
 };
 
 /**
@@ -313,7 +312,7 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._processSetForeground = functi
 ExtrasRender.ComponentSync.RichTextArea.prototype._processSetForegroundDialog = function(e) {
     var colorDialog = new ExtrasRender.ComponentSync.RichTextArea.ColorDialog(this.component, false);
     colorDialog.addListener("colorSelect", new EchoCore.MethodRef(this, this._processSetForeground));
-    this._contentPane.add(colorDialog);
+    this.baseComponent.add(colorDialog);
 };
 
 /**
@@ -339,7 +338,7 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._processInsertTable = function
 ExtrasRender.ComponentSync.RichTextArea.prototype._processInsertTableDialog = function(e) {
     var tableDialog = new ExtrasRender.ComponentSync.RichTextArea.TableDialog(this.component);
     tableDialog.addListener("tableInsert", new EchoCore.MethodRef(this, this._processInsertTable));
-    this._contentPane.add(tableDialog);
+    this.baseComponent.add(tableDialog);
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype._processInsertHyperlink = function(e) {
@@ -350,7 +349,7 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._processInsertHyperlink = func
 ExtrasRender.ComponentSync.RichTextArea.prototype._processInsertHyperlinkDialog = function(e) {
     var hyperlinkDialog = new ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog(this.component);
     hyperlinkDialog.addListener("insertHyperlink", new EchoCore.MethodRef(this, this._processInsertHyperlink));
-    this._contentPane.add(hyperlinkDialog);
+    this.baseComponent.add(hyperlinkDialog);
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype._processInsertImage = function(e) {
@@ -360,7 +359,7 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._processInsertImage = function
 ExtrasRender.ComponentSync.RichTextArea.prototype._processInsertImageDialog = function(e) {
     var imageDialog = new ExtrasRender.ComponentSync.RichTextArea.ImageDialog(this.component);
     imageDialog.addListener("insertImage", new EchoCore.MethodRef(this, this._processInsertImage));
-    this._contentPane.add(imageDialog);
+    this.baseComponent.add(imageDialog);
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype.renderAdd = function(update, parentElement) {
@@ -375,22 +374,12 @@ ExtrasRender.ComponentSync.RichTextArea.prototype.renderAdd = function(update, p
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype.renderDispose = function(update) {
-    if (this._freeClient) {
-        this._freeClient.dispose();
-        this._freeClient = null;
-    }
-    if (this._app) {
-        this._contentPane = null;
-        this._app.dispose();
-        this._app = null;
-    }
+    EchoArc.ComponentSync.prototype.renderDispose.call(this, update);
     this._mainDivElement = null;
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype.renderDisplay = function() {
-    if (!this._app) {
-        this._createApp();
-    }
+    EchoArc.ComponentSync.prototype.renderDisplay.call(this);
 };
 
 ExtrasRender.ComponentSync.RichTextArea.prototype.renderUpdate = function(update) {
