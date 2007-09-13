@@ -59,6 +59,9 @@ ExtrasRender.ComponentSync.RemoteRichTextArea.prototype._installIcons = function
         this._defaultIcons[iconNames[i]] = new EchoApp.Property.ImageReference(imageServiceUrl 
                 + "&iid=EchoExtras.RemoteRichTextArea." + iconNames[i]);
     }
+    
+    this._defaultIcons.ok = new EchoApp.Property.ImageReference(imageServiceUrl + "&iid=EchoExtras.CommonImages.ok");
+    this._defaultIcons.cancel = new EchoApp.Property.ImageReference(imageServiceUrl + "&iid=EchoExtras.CommonImages.cancel");
 };
 
 EchoApp.ComponentFactory.registerType("ExtrasApp.RemoteRichTextArea", ExtrasRender.RemoteRichTextArea);

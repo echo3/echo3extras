@@ -406,7 +406,8 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog = function(richTextArea, set
     splitPane.add(controlsRow);
     
     var okButton = new EchoApp.Button({
-        text: richTextArea.peer._rb.get("Generic.Ok")
+        text: richTextArea.peer._rb.get("Generic.Ok"),
+        icon: richTextArea.peer._icons.ok
     });
 
     okButton.addListener("action", new EchoCore.MethodRef(this, this._processOk));
@@ -415,7 +416,8 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog = function(richTextArea, set
     controlsRow.add(okButton);
     
     var cancelButton = new EchoApp.Button({
-        text: richTextArea.peer._rb.get("Generic.Cancel")
+        text: richTextArea.peer._rb.get("Generic.Cancel"),
+        icon: richTextArea.peer._icons.cancel
     });
     cancelButton.addListener("action", new EchoCore.MethodRef(this, this._processCancel));
     ExtrasRender.configureStyle(cancelButton, richTextArea.getRenderProperty("controlPaneButtonStyleName"), 
@@ -472,7 +474,8 @@ ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog = function(richTextArea)
     splitPane.add(controlsRow);
     
     var okButton = new EchoApp.Button({
-        text: richTextArea.peer._rb.get("Generic.Ok")
+        text: richTextArea.peer._rb.get("Generic.Ok"),
+        icon: richTextArea.peer._icons.ok
     });
 
     okButton.addListener("action", new EchoCore.MethodRef(this, this._processOk));
@@ -481,7 +484,8 @@ ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog = function(richTextArea)
     controlsRow.add(okButton);
     
     var cancelButton = new EchoApp.Button({
-        text: richTextArea.peer._rb.get("Generic.Cancel")
+        text: richTextArea.peer._rb.get("Generic.Cancel"),
+        icon: richTextArea.peer._icons.cancel
     });
     cancelButton.addListener("action", new EchoCore.MethodRef(this, this._processCancel));
     ExtrasRender.configureStyle(cancelButton, richTextArea.getRenderProperty("controlPaneButtonStyleName"), 
@@ -662,7 +666,8 @@ ExtrasRender.ComponentSync.RichTextArea.MessageDialog = function(richTextArea, t
     splitPane.add(controlsRow);
     
     var okButton = new EchoApp.Button({
-        text: richTextArea.peer._rb.get("Generic.Ok")
+        text: richTextArea.peer._rb.get("Generic.Ok"),
+        icon: richTextArea.peer._icons.ok
     });
 
     okButton.addListener("action", new EchoCore.MethodRef(this, this._processClose));
@@ -708,7 +713,8 @@ ExtrasRender.ComponentSync.RichTextArea.TableDialog = function(richTextArea, set
     splitPane.add(controlsRow);
     
     var okButton = new EchoApp.Button({
-        text: richTextArea.peer._rb.get("Generic.Ok")
+        text: richTextArea.peer._rb.get("Generic.Ok"),
+        icon: richTextArea.peer._icons.ok
     });
 
     okButton.addListener("action", new EchoCore.MethodRef(this, this._processOk));
@@ -717,7 +723,8 @@ ExtrasRender.ComponentSync.RichTextArea.TableDialog = function(richTextArea, set
     controlsRow.add(okButton);
     
     var cancelButton = new EchoApp.Button({
-        text: richTextArea.peer._rb.get("Generic.Cancel")
+        text: richTextArea.peer._rb.get("Generic.Cancel"),
+        icon: richTextArea.peer._icons.cancel
     });
     cancelButton.addListener("action", new EchoCore.MethodRef(this, this._processCancel));
     ExtrasRender.configureStyle(cancelButton, richTextArea.getRenderProperty("controlPaneButtonStyleName"), 

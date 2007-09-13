@@ -49,6 +49,7 @@ import nextapp.echo.app.util.Context;
 import nextapp.echo.extras.app.ColorSelect;
 import nextapp.echo.extras.app.MenuBarPane;
 import nextapp.echo.extras.app.RichTextArea;
+import nextapp.echo.extras.webcontainer.CommonImages;
 import nextapp.echo.extras.webcontainer.service.CommonService;
 import nextapp.echo.webcontainer.AbstractComponentSynchronizePeer;
 import nextapp.echo.webcontainer.ServerMessage;
@@ -77,6 +78,7 @@ public class RichTextAreaPeer extends AbstractComponentSynchronizePeer {
     
     static {
         WebContainerServlet.getServiceRegistry().add(RICH_TEXT_AREA_SERVICE);
+        CommonImages.install();
         addDefaultIcon(RichTextArea.ICON_FOREGROUND, "Foreground.gif");  
         addDefaultIcon(RichTextArea.ICON_BACKGROUND, "Background.gif");  
         addDefaultIcon(RichTextArea.ICON_BOLD, "Bold.gif");  
