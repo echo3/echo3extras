@@ -104,6 +104,7 @@ ExtrasRender.ComponentSync.RichTextArea.prototype.createBaseComponent = function
     splitPane.add(mainColumn);
     
     var controlsRow = new EchoApp.Row();
+    controlsRow.setStyleName(this.component.getRenderProperty("toolbarRowStyleName"));
     controlsRow.setProperty("cellSpacing", new EchoApp.Property.Extent("10px"));
     controlsRow.setProperty("insets", new EchoApp.Property.Insets("2px"));
     mainColumn.add(controlsRow);
@@ -230,6 +231,7 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._createToolbarButton = functio
     button.setStyleName(this.component.getRenderProperty("toolbarButtonStyleName"));
     if (icon) {
         button.setProperty("icon", icon);
+        button.setProperty("toolTipText", text);
     } else {
         button.setProperty("text", text);
     }
