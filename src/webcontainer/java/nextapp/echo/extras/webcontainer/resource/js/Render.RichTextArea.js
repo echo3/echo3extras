@@ -113,38 +113,52 @@ ExtrasRender.ComponentSync.RichTextArea.prototype.createBaseComponent = function
     
     var fontStyleRow = new EchoApp.Row();
     controlsRow.add(fontStyleRow);
-    fontStyleRow.add(this._createToolbarButton("B", this._icons.bold, this._processCommand, "bold"));
-    fontStyleRow.add(this._createToolbarButton("I", this._icons.italic, this._processCommand, "italic"));
-    fontStyleRow.add(this._createToolbarButton("U", this._icons.underline, this._processCommand, "underline"));
+    fontStyleRow.add(this._createToolbarButton("B", this._icons.bold, 
+            this._rb.get("Menu.Bold"), this._processCommand, "bold"));
+    fontStyleRow.add(this._createToolbarButton("I", this._icons.italic, 
+            this._rb.get("Menu.Italic"), this._processCommand, "italic"));
+    fontStyleRow.add(this._createToolbarButton("U", this._icons.underline, 
+            this._rb.get("Menu.Underline"), this._processCommand, "underline"));
 
     var fontElevationRow = new EchoApp.Row();
     controlsRow.add(fontElevationRow);
-    fontElevationRow.add(this._createToolbarButton("Superscipt", this._icons.superscript, this._processCommand, "superscript"));
-    fontElevationRow.add(this._createToolbarButton("Subscript", this._icons.subscript, this._processCommand, "subscript"));
+    fontElevationRow.add(this._createToolbarButton("^", this._icons.superscript, 
+            this._rb.get("Menu.Superscript"), this._processCommand, "superscript"));
+    fontElevationRow.add(this._createToolbarButton("v", this._icons.subscript,
+            this._rb.get("Menu.Subscript"), this._processCommand, "subscript"));
 
     var alignmentRow = new EchoApp.Row();
     controlsRow.add(alignmentRow);
-    alignmentRow.add(this._createToolbarButton("Left", this._icons.alignmentLeft, this._processCommand, "justifyleft"));
-    alignmentRow.add(this._createToolbarButton("Center", this._icons.alignmentCenter, this._processCommand, "justifycenter"));
-    alignmentRow.add(this._createToolbarButton("Right", this._icons.alignmentRight, this._processCommand, "justifyright"));
-    alignmentRow.add(this._createToolbarButton("Justify", this._icons.alignmentJustify, this._processCommand, "justifyfull"));
+    alignmentRow.add(this._createToolbarButton("<-", this._icons.alignmentLeft, 
+            this._rb.get("Menu.Left"), this._processCommand, "justifyleft"));
+    alignmentRow.add(this._createToolbarButton("-|-", this._icons.alignmentCenter, 
+            this._rb.get("Menu.Center"), this._processCommand, "justifycenter"));
+    alignmentRow.add(this._createToolbarButton("->", this._icons.alignmentRight, 
+            this._rb.get("Menu.Right"), this._processCommand, "justifyright"));
+    alignmentRow.add(this._createToolbarButton("||", this._icons.alignmentJustify, 
+            this._rb.get("Menu.Justified"), this._processCommand, "justifyfull"));
 
     var colorRow = new EchoApp.Row();
     controlsRow.add(colorRow);
-    colorRow.add(this._createToolbarButton("Color", this._icons.foreground, this._processSetForegroundDialog));
-    colorRow.add(this._createToolbarButton("Highlight", this._icons.background, this._processSetBackgroundDialog));
+    colorRow.add(this._createToolbarButton("FG", this._icons.foreground, 
+            this._rb.get("Menu.SetForeground"), this._processSetForegroundDialog));
+    colorRow.add(this._createToolbarButton("BG", this._icons.background, 
+            this._rb.get("Menu.SetBackground"), this._processSetBackgroundDialog));
 
     var insertObjectRow = new EchoApp.Row();
     controlsRow.add(insertObjectRow);
-    insertObjectRow.add(this._createToolbarButton("Bulleted List", this._icons.bulletedList, this._processCommand,
-            "insertunorderedlist"));
-    insertObjectRow.add(this._createToolbarButton("Numbered List", this._icons.numberedList, this._processCommand,
-            "insertorderedlist"));
-    insertObjectRow.add(this._createToolbarButton("Horizontal Rule", this._icons.horizontalRule, this._processCommand,
-            "inserthorizontalrule"));
-    insertObjectRow.add(this._createToolbarButton("Image", this._icons.image, this._processInsertImageDialog));
-    insertObjectRow.add(this._createToolbarButton("Hyperlink", this._icons.hyperlink, this._processInsertHyperlinkDialog));
-    insertObjectRow.add(this._createToolbarButton("Table", this._icons.table, this._processInsertTableDialog));
+    insertObjectRow.add(this._createToolbarButton("Bulleted List", this._icons.bulletedList, 
+            this._rb.get("Menu.BulletedList"), this._processCommand, "insertunorderedlist"));
+    insertObjectRow.add(this._createToolbarButton("Numbered List", this._icons.numberedList, 
+            this._rb.get("Menu.NumberedList"), this._processCommand, "insertorderedlist"));
+    insertObjectRow.add(this._createToolbarButton("Horizontal Rule", this._icons.horizontalRule, 
+            this._rb.get("Menu.InsertHorizontalRule"), this._processCommand, "inserthorizontalrule"));
+    insertObjectRow.add(this._createToolbarButton("Image", this._icons.image, 
+            this._rb.get("Menu.InsertImage"), this._processInsertImageDialog));
+    insertObjectRow.add(this._createToolbarButton("Hyperlink", this._icons.hyperlink, 
+            this._rb.get("Menu.InsertHyperlink"), this._processInsertHyperlinkDialog));
+    insertObjectRow.add(this._createToolbarButton("Table", this._icons.table, 
+            this._rb.get("Menu.InsertTable"), this._processInsertTableDialog));
     
     this._richTextInput = new ExtrasRender.ComponentSync.RichTextArea.InputComponent();
     this._richTextInput._richTextArea = this.component;
@@ -226,16 +240,15 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._createMainMenuModel = functio
     return bar;
 };
 
-ExtrasRender.ComponentSync.RichTextArea.prototype._createToolbarButton = function(text, icon, eventMethod, actionCommand) {
-    var button = new EchoApp.Button();
-    button.setStyleName(this.component.getRenderProperty("toolbarButtonStyleName"));
-    if (icon) {
-        button.setProperty("icon", icon);
-        button.setProperty("toolTipText", text);
-    } else {
-        button.setProperty("text", text);
-    }
-    button.setProperty("actionCommand", actionCommand);
+ExtrasRender.ComponentSync.RichTextArea.prototype._createToolbarButton = function(text, icon, toolTipText, 
+        eventMethod, actionCommand) {
+    var button = new EchoApp.Button({
+        actionCommand: actionCommand,
+        styleName: this.component.getRenderProperty("toolbarButtonStyleName"),
+        text: icon ? null : text,
+        icon: icon,
+        toolTipText: toolTipText
+    });
     if (eventMethod) {
         button.addListener("action", new EchoCore.MethodRef(this, eventMethod));
     }
