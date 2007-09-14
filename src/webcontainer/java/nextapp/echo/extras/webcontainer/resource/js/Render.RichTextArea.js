@@ -12,10 +12,11 @@ ExtrasRender.ComponentSync.RichTextArea.DEFAULT_RESOURCE_BUNDLE = new EchoCore.R
     "ColorDialog.Title.Background":     "Highlight Color",
     "ColorDialog.PromptForeground":     "Foreground:",
     "ColorDialog.PromptBackground":     "Background:",
-    "Error.ClipboardAccess":            "This browser has clipboard access disabled."
+    "Error.ClipboardAccessDisabled":    "This browser has clipboard access disabled. "
     		                            + "Use keyboard shortcuts or change your security settings.",
-    "Generic.Ok":                       "Ok",
     "Generic.Cancel":                   "Cancel",
+    "Generic.Error":                    "Error",
+    "Generic.Ok":                       "Ok",
     "HyperlinkDialog.Title":            "Insert Hyperlink",
     "HyperlinkDialog.PromptURL":        "URL:",
     "HyperlinkDialog.PromptDescription":
@@ -300,7 +301,8 @@ ExtrasRender.ComponentSync.RichTextArea.prototype._processMenuAction = function(
             try {
                 this._richTextInput.peer.doCommand(e.modelId);
             } catch (ex) {
-                alert(this._rb.get("Error.ClipboardAccessDisabled"));
+                this.baseComponent.add(new ExtrasRender.ComponentSync.RichTextArea.MessageDialog(this.component,
+                        this._rb.get("Generic.Error"), this._rb.get("Error.ClipboardAccessDisabled"))); 
             }
         }
     }
@@ -762,8 +764,8 @@ ExtrasRender.ComponentSync.RichTextArea.MessageDialog = function(richTextArea, t
     EchoApp.WindowPane.call(this, {
         styleName:            richTextArea.getRenderProperty("windowPaneStyleName"),
         title:                title,
-        width:                new EchoApp.Property.Extent(280),
-        height:               new EchoApp.Property.Extent(200),
+        width:                new EchoApp.Property.Extent(480),
+        height:               new EchoApp.Property.Extent(250),
         resizable:            false
     });
     this.addListener("close", new EchoCore.MethodRef(this, this._processClose));
