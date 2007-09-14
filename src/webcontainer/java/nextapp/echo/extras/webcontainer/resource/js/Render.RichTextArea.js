@@ -86,13 +86,21 @@ ExtrasRender.ComponentSync.RichTextArea.prototype.createBaseComponent = function
     splitPane.setProperty("separatorPosition", new EchoApp.Property.Extent("26px"));
     contentPane.add(splitPane);
 
-    var menuBarPane = new ExtrasApp.MenuBarPane();
+    var menuBarPane = new ExtrasApp.MenuBarPane({
+        layoutData: new EchoApp.LayoutData({
+            overflow: EchoApp.SplitPane.OVERFLOW_HIDDEN
+        })
+    });
     menuBarPane.setStyleName(this.component.getRenderProperty("menuStyleName"));
     menuBarPane.setProperty("model", this._createMainMenuModel());
     menuBarPane.addListener("action", new EchoCore.MethodRef(this, this._processMenuAction));
     splitPane.add(menuBarPane);
     
-    var mainColumn = new EchoApp.Column();
+    var mainColumn = new EchoApp.Column({
+        layoutData: new EchoApp.LayoutData({
+            overflow: EchoApp.SplitPane.OVERFLOW_HIDDEN
+        })
+    });
     splitPane.add(mainColumn);
     
     var controlsRow = new EchoApp.Row();
@@ -436,7 +444,7 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog = function(richTextArea, set
         insets: new EchoApp.Property.Insets(10)
     });
     splitPane.add(layoutColumn);
-    
+
     layoutColumn.add(new EchoApp.Label({
         text: richTextArea.peer._rb.get(setBackground ? "ColorDialog.PromptBackground" : "ColorDialog.PromptForeground")
     }));
@@ -681,8 +689,9 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer.prototype.renderAdd = function
     this._iframeElement.style.backgroundColor = "white";
     this._iframeElement.style.color = "black";
     this._iframeElement.style.width = this.width ? this.width : "100%";
-    this._iframeElement.style.height = this.height ? this.height: "250px";
+    this._iframeElement.style.height = this.height ? this.height: "200px";
     this._iframeElement.style.border = "0px none";
+    this._iframeElement.frameBorder = "0";
 
     this._mainDivElement.appendChild(this._iframeElement);
 
