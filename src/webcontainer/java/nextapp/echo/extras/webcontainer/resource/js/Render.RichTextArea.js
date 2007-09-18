@@ -112,6 +112,13 @@ ExtrasRender.ComponentSync.RichTextArea.prototype.createBaseComponent = function
     
     //FIXME i18n
     
+    var historyStyleRow = new EchoApp.Row();
+    controlsRow.add(historyStyleRow);
+    historyStyleRow.add(this._createToolbarButton("<<<", this._icons.undo, 
+            this._rb.get("Menu.Undo"), this._processCommand, "undo"));
+    historyStyleRow.add(this._createToolbarButton(">>>", this._icons.redo, 
+            this._rb.get("Menu.Redo"), this._processCommand, "redo"));
+
     var fontStyleRow = new EchoApp.Row();
     controlsRow.add(fontStyleRow);
     fontStyleRow.add(this._createToolbarButton("B", this._icons.bold, 
