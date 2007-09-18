@@ -48,6 +48,8 @@ import nextapp.echo.app.event.ActionListener;
  */
 public class WelcomePane extends ContentPane {
     
+    private Button continueButton;
+
     /**
      * Default constructor.
      */
@@ -83,14 +85,14 @@ public class WelcomePane extends ContentPane {
         controlRow.setStyleName("ControlPane");
         splitPane.add(controlRow);
         
-        Button button = new Button("Continue", Styles.ICON_24_YES);
-        button.setStyleName("ControlPane.Button");
-        button.addActionListener(new ActionListener() {
+        continueButton = new Button("Continue", Styles.ICON_24_YES);
+        continueButton.setStyleName("ControlPane.Button");
+        continueButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 InteractiveApp.getApp().displayTestPane();
             }
         });
-        controlRow.add(button);
+        controlRow.add(continueButton);
         
         Column infoColumn = new Column();
         infoColumn.setInsets(new Insets(20, 5));
@@ -106,5 +108,13 @@ public class WelcomePane extends ContentPane {
 
         label = new Label("Please visit the Echo3 Home Page @ http://www.nextapp.com/products/echo3 for more information.");
         infoColumn.add(label);
+    }
+
+    /**
+     * @see nextapp.echo.app.Component#init()
+     */
+    public void init() {
+        super.init();
+        getApplicationInstance().setFocusedComponent(continueButton);
     }
 }
