@@ -515,7 +515,7 @@ ExtrasRender.ComponentSync.TabPane.Tab.prototype._renderContentContainer = funct
     EchoRender.Property.Insets.renderPixel(this._getContentInsets(), contentDivElement, "padding");
     contentDivElement.style.overflow = "auto";
     
-    EchoRender.renderComponentAdd(this.client, update, this._childComponent, contentDivElement);
+    EchoRender.renderComponentAdd(this._parent.client, update, this._childComponent, contentDivElement);
     
     return contentDivElement;
 };
