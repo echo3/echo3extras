@@ -69,6 +69,7 @@ public class DropDownMenu extends AbstractMenuComponent {
     public static final String PROPERTY_SELECTION_BACKGROUND = "selectionBackground";
     public static final String PROPERTY_SELECTION_BACKGROUND_IMAGE = "selectionBackgroundImage";
     public static final String PROPERTY_SELECTION_FOREGROUND = "selectionForeground";
+    public static final String PROPERTY_SELECTION_TEXT = "selectionText";
     public static final String PROPERTY_WIDTH = "width";
     public static final String PROPERTY_INSETS = "insets";
     
@@ -148,6 +149,15 @@ public class DropDownMenu extends AbstractMenuComponent {
         return selectionModel;
     }
     
+    /**
+     * Gets the selection text that will be displayed when no item is selected.
+     * 
+     * @return the selection text.
+     */
+    public String getSelectionText() {
+        return (String) getProperty(PROPERTY_SELECTION_TEXT);
+    }
+
     /**
      * Returns the background image that will be displayed in the 
      * <code>DropDownMenu</code>.  This background image will also be 
@@ -601,6 +611,15 @@ public class DropDownMenu extends AbstractMenuComponent {
             newValue.addChangeListener(changeListener);
         }
         firePropertyChange(SELECTION_MODEL_CHANGED_PROPERTY, oldValue, newValue);
+    }
+    
+    /**
+     * Sets the selection text that will be displayed when no item is selected.
+     * 
+     * @param newValue the new selection text
+     */
+    public void setSelectionText(String newValue) {
+        setProperty(PROPERTY_SELECTION_TEXT, newValue);
     }
     
     /**

@@ -598,7 +598,13 @@ ExtrasRender.ComponentSync.DropDownMenu.prototype._renderMain = function() {
 	    	this._setSelection(this._menuModel.getItemModelFromPositions(selection.split(".")), contentSpanElement);
     	}
     }
-    
+    if (!this._selectedItem) {
+    	var selectionText = this.component.getRenderProperty("selectionText");
+    	if (selectionText) {
+	    	contentSpanElement.appendChild(document.createTextNode(selectionText));
+    	}
+    }
+
     return dropDownDivElement;
 };
 
