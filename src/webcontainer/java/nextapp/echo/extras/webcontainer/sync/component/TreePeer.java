@@ -414,21 +414,51 @@ extends AbstractComponentSynchronizePeer {
         return selection.toString();
     }
     
-    private static final String IMAGE_PREFIX = "/nextapp/echo/extras/webcontainer/resource/image/";
-    private static final ImageReference DEFAULT_ICON_LINE_SOLID = new ResourceImageReference(IMAGE_PREFIX + "Dot.gif");
-    private static final ImageReference DEFAULT_ICON_VERTICAL_LINE_DOTTED 
-            = new ResourceImageReference(IMAGE_PREFIX + "TreeVerticalLineDotted.gif");
-    private static final ImageReference DEFAULT_ICON_HORIZONTAL_LINE_DOTTED 
-            = new ResourceImageReference(IMAGE_PREFIX + "TreeHorizontalLineDotted.gif");
-    private static final ImageReference DEFAULT_ICON_NODE_CLOSED = new ResourceImageReference(IMAGE_PREFIX + "TreeClosed.gif");
-    private static final ImageReference DEFAULT_ICON_NODE_OPEN = new ResourceImageReference(IMAGE_PREFIX + "TreeOpen.gif");
+    private static final String IMAGE_PREFIX = "/nextapp/echo/extras/webcontainer/resource/image/tree/";
     
-    private static final String IMAGE_ID_LINE_VERTICAL_SOLID = "EchoExtras.Tree.lineVerticalSolid";
-    private static final String IMAGE_ID_LINE_HORIZONTAL_SOLID = "EchoExtras.Tree.lineHorizontalSolid";
-    private static final String IMAGE_ID_LINE_VERTICAL_DOTTED = "EchoExtras.Tree.lineVerticalDotted";
-    private static final String IMAGE_ID_LINE_HORIZONTAL_DOTTED = "EchoExtras.Tree.lineHorizontalDotted";
+    // icons without lines
+    private static final ImageReference DEFAULT_ICON_NODE_CLOSED = new ResourceImageReference(IMAGE_PREFIX + "Closed.gif");
+    private static final ImageReference DEFAULT_ICON_NODE_OPEN = new ResourceImageReference(IMAGE_PREFIX + "Open.gif");
+
+    // icons with solid lines
+    private static final ImageReference DEFAULT_ICON_JOIN_SOLID = new ResourceImageReference(IMAGE_PREFIX + "JoinSolid.gif");
+    private static final ImageReference DEFAULT_ICON_JOIN_BOTTOM_SOLID = new ResourceImageReference(IMAGE_PREFIX + "JoinBottomSolid.gif");
+    private static final ImageReference DEFAULT_ICON_VERTICAL_LINE_SOLID = new ResourceImageReference(IMAGE_PREFIX + "VerticalSolid.gif");
+    private static final ImageReference DEFAULT_ICON_NODE_CLOSED_SOLID = new ResourceImageReference(IMAGE_PREFIX + "ClosedSolid.gif");
+    private static final ImageReference DEFAULT_ICON_NODE_CLOSED_BOTTOM_SOLID = new ResourceImageReference(IMAGE_PREFIX + "ClosedBottomSolid.gif");
+    private static final ImageReference DEFAULT_ICON_NODE_OPEN_SOLID = new ResourceImageReference(IMAGE_PREFIX + "OpenSolid.gif");
+    private static final ImageReference DEFAULT_ICON_NODE_OPEN_BOTTOM_SOLID = new ResourceImageReference(IMAGE_PREFIX + "OpenBottomSolid.gif");
+
+    // icons with dotted lines
+    private static final ImageReference DEFAULT_ICON_JOIN_DOTTED = new ResourceImageReference(IMAGE_PREFIX + "JoinDotted.gif");
+    private static final ImageReference DEFAULT_ICON_JOIN_BOTTOM_DOTTED = new ResourceImageReference(IMAGE_PREFIX + "JoinBottomDotted.gif");
+    private static final ImageReference DEFAULT_ICON_VERTICAL_LINE_DOTTED = new ResourceImageReference(IMAGE_PREFIX + "VerticalDotted.gif");
+    private static final ImageReference DEFAULT_ICON_NODE_CLOSED_DOTTED = new ResourceImageReference(IMAGE_PREFIX + "ClosedDotted.gif");
+    private static final ImageReference DEFAULT_ICON_NODE_CLOSED_BOTTOM_DOTTED = new ResourceImageReference(IMAGE_PREFIX + "ClosedBottomDotted.gif");
+    private static final ImageReference DEFAULT_ICON_NODE_OPEN_DOTTED = new ResourceImageReference(IMAGE_PREFIX + "OpenDotted.gif");
+    private static final ImageReference DEFAULT_ICON_NODE_OPEN_BOTTOM_DOTTED = new ResourceImageReference(IMAGE_PREFIX + "OpenBottomDotted.gif");
+    
+    // image ids for images without lines
     private static final String IMAGE_ID_NODE_CLOSED = "EchoExtras.Tree.nodeClosed";
     private static final String IMAGE_ID_NODE_OPEN = "EchoExtras.Tree.nodeOpen";
+    
+    // image ids for solid images
+    private static final String IMAGE_ID_LINE_JOIN_SOLID = "EchoExtras.Tree.lineJoinSolid";
+    private static final String IMAGE_ID_LINE_JOIN_BOTTOM_SOLID = "EchoExtras.Tree.lineJoinBottomSolid";
+    private static final String IMAGE_ID_LINE_VERTICAL_SOLID = "EchoExtras.Tree.lineVerticalSolid";
+    private static final String IMAGE_ID_NODE_CLOSED_BOTTOM_SOLID = "EchoExtras.Tree.nodeClosedBottomSolid";
+    private static final String IMAGE_ID_NODE_CLOSED_SOLID = "EchoExtras.Tree.nodeClosedSolid";
+    private static final String IMAGE_ID_NODE_OPEN_SOLID = "EchoExtras.Tree.nodeOpenSolid";
+    private static final String IMAGE_ID_NODE_OPEN_BOTTOM_SOLID = "EchoExtras.Tree.nodeOpenBottomSolid";
+
+    // image ids for dotted images
+    private static final String IMAGE_ID_LINE_JOIN_DOTTED = "EchoExtras.Tree.lineJoinDotted";
+    private static final String IMAGE_ID_LINE_JOIN_BOTTOM_DOTTED = "EchoExtras.Tree.lineJoinBottomDotted";
+    private static final String IMAGE_ID_LINE_VERTICAL_DOTTED = "EchoExtras.Tree.lineVerticalDotted";
+    private static final String IMAGE_ID_NODE_CLOSED_DOTTED = "EchoExtras.Tree.nodeClosedDotted";
+    private static final String IMAGE_ID_NODE_CLOSED_BOTTOM_DOTTED = "EchoExtras.Tree.nodeClosedBottomDotted";
+    private static final String IMAGE_ID_NODE_OPEN_DOTTED = "EchoExtras.Tree.nodeOpenDotted";
+    private static final String IMAGE_ID_NODE_OPEN_BOTTOM_DOTTED = "EchoExtras.Tree.nodeOpenBottomDotted";
 
     private static final String PROPERTY_TREE_STRUCTURE = "treeStructure";
     private static final String PROPERTY_COLUMN_COUNT = "columnCount";
@@ -447,12 +477,24 @@ extends AbstractComponentSynchronizePeer {
     
     static {
         ImageService.install();
-        ImageService.addGlobalImage(IMAGE_ID_LINE_HORIZONTAL_SOLID, DEFAULT_ICON_LINE_SOLID);
-        ImageService.addGlobalImage(IMAGE_ID_LINE_VERTICAL_SOLID, DEFAULT_ICON_LINE_SOLID);
-        ImageService.addGlobalImage(IMAGE_ID_LINE_HORIZONTAL_DOTTED, DEFAULT_ICON_HORIZONTAL_LINE_DOTTED);
-        ImageService.addGlobalImage(IMAGE_ID_LINE_VERTICAL_DOTTED, DEFAULT_ICON_VERTICAL_LINE_DOTTED);
         ImageService.addGlobalImage(IMAGE_ID_NODE_CLOSED, DEFAULT_ICON_NODE_CLOSED);
         ImageService.addGlobalImage(IMAGE_ID_NODE_OPEN, DEFAULT_ICON_NODE_OPEN);
+
+        ImageService.addGlobalImage(IMAGE_ID_LINE_JOIN_SOLID, DEFAULT_ICON_JOIN_SOLID);
+        ImageService.addGlobalImage(IMAGE_ID_LINE_JOIN_BOTTOM_SOLID, DEFAULT_ICON_JOIN_BOTTOM_SOLID);
+        ImageService.addGlobalImage(IMAGE_ID_LINE_VERTICAL_SOLID, DEFAULT_ICON_VERTICAL_LINE_SOLID);
+        ImageService.addGlobalImage(IMAGE_ID_NODE_CLOSED_SOLID, DEFAULT_ICON_NODE_CLOSED_SOLID);
+        ImageService.addGlobalImage(IMAGE_ID_NODE_CLOSED_BOTTOM_SOLID, DEFAULT_ICON_NODE_CLOSED_BOTTOM_SOLID);
+        ImageService.addGlobalImage(IMAGE_ID_NODE_OPEN_SOLID, DEFAULT_ICON_NODE_OPEN_SOLID);
+        ImageService.addGlobalImage(IMAGE_ID_NODE_OPEN_BOTTOM_SOLID, DEFAULT_ICON_NODE_OPEN_BOTTOM_SOLID);
+        
+        ImageService.addGlobalImage(IMAGE_ID_LINE_JOIN_DOTTED, DEFAULT_ICON_JOIN_DOTTED);
+        ImageService.addGlobalImage(IMAGE_ID_LINE_JOIN_BOTTOM_DOTTED, DEFAULT_ICON_JOIN_BOTTOM_DOTTED);
+        ImageService.addGlobalImage(IMAGE_ID_LINE_VERTICAL_DOTTED, DEFAULT_ICON_VERTICAL_LINE_DOTTED);
+        ImageService.addGlobalImage(IMAGE_ID_NODE_CLOSED_DOTTED, DEFAULT_ICON_NODE_CLOSED_DOTTED);
+        ImageService.addGlobalImage(IMAGE_ID_NODE_CLOSED_BOTTOM_DOTTED, DEFAULT_ICON_NODE_CLOSED_BOTTOM_DOTTED);
+        ImageService.addGlobalImage(IMAGE_ID_NODE_OPEN_DOTTED, DEFAULT_ICON_NODE_OPEN_DOTTED);
+        ImageService.addGlobalImage(IMAGE_ID_NODE_OPEN_BOTTOM_DOTTED, DEFAULT_ICON_NODE_OPEN_BOTTOM_DOTTED);
         
         WebContainerServlet.getServiceRegistry().add(TREE_SERVICE);
     }

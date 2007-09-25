@@ -258,7 +258,9 @@ public class Tree extends Component {
     public static final String PROPERTY_INSETS = "insets";
     public static final String PROPERTY_LINE_STYLE = "lineStyle";
     public static final String PROPERTY_NODE_CLOSED_ICON = "nodeClosedIcon";
+    public static final String PROPERTY_NODE_CLOSED_BOTTOM_ICON = "nodeClosedBottomIcon";
     public static final String PROPERTY_NODE_OPEN_ICON = "nodeOpenIcon";
+    public static final String PROPERTY_NODE_OPEN_BOTTOM_ICON = "nodeOpenBottomIcon";
     public static final String PROPERTY_ROLLOVER_BACKGROUND = "rolloverBackground";
     public static final String PROPERTY_ROLLOVER_BACKGROUND_IMAGE = "rolloverBackgroundImage";
     public static final String PROPERTY_ROLLOVER_ENABLED = "rolloverEnabled";
@@ -1138,12 +1140,30 @@ public class Tree extends Component {
     }
     
     /**
+     * Retrieves the icon that is rendered for closed bottom nodes. The default icon is a + sign.
+     * 
+     * @return the icon
+     */
+    public ImageReference getNodeClosedBottomIcon() {
+        return (ImageReference) getProperty(PROPERTY_NODE_CLOSED_BOTTOM_ICON);
+    }
+    
+    /**
      * Retrieves the icon that is rendered for opened nodes. The default icon is a - sign.
      * 
      * @return the icon
      */
     public ImageReference getNodeOpenIcon() {
         return (ImageReference) getProperty(PROPERTY_NODE_OPEN_ICON);
+    }
+    
+    /**
+     * Retrieves the icon that is rendered for opened bottom nodes. The default icon is a - sign.
+     * 
+     * @return the icon
+     */
+    public ImageReference getNodeOpenBottomIcon() {
+        return (ImageReference) getProperty(PROPERTY_NODE_OPEN_BOTTOM_ICON);
     }
 
     /**
@@ -1226,12 +1246,30 @@ public class Tree extends Component {
     }
     
     /**
+     * Sets the icon that is rendered for closed bottom nodes. The default icon is a + sign.
+     * 
+     * @param newValue the icon
+     */
+    public void setNodeClosedBottomIcon(ImageReference newValue) {
+        setProperty(PROPERTY_NODE_CLOSED_BOTTOM_ICON, newValue);
+    }
+    
+    /**
      * Sets the icon that is rendered for opened nodes. The default icon is a - sign.
      * 
      * @param newValue the icon
      */
     public void setNodeOpenIcon(ImageReference newValue) {
         setProperty(PROPERTY_NODE_OPEN_ICON, newValue);
+    }
+    
+    /**
+     * Sets the icon that is rendered for opened bottom nodes. The default icon is a - sign.
+     * 
+     * @param newValue the icon
+     */
+    public void setNodeOpenBottomIcon(ImageReference newValue) {
+        setProperty(PROPERTY_NODE_OPEN_BOTTOM_ICON, newValue);
     }
 
     /**

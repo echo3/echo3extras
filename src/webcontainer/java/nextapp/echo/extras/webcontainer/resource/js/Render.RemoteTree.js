@@ -54,10 +54,10 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._getImageUri = function(identifi
 };
 
 ExtrasRender.ComponentSync.RemoteTree.prototype.renderAdd = function(update, parentElement) {
-    var lineStyle = this.component.getRenderProperty("lineStyle", 2);
-    this._showLines = lineStyle != ExtrasRender.ComponentSync.RemoteTree.LINE_STYLE_NONE;
+    this._lineStyle = this.component.getRenderProperty("lineStyle", 2);
+    this._showLines = this._lineStyle != ExtrasRender.ComponentSync.RemoteTree.LINE_STYLE_NONE;
     if (this._showLines) {
-        var lineImageIdSuffix = lineStyle == ExtrasRender.ComponentSync.RemoteTree.LINE_STYLE_SOLID ? "Solid" : "Dotted";
+        var lineImageIdSuffix = this._lineStyle == ExtrasRender.ComponentSync.RemoteTree.LINE_STYLE_SOLID ? "Solid" : "Dotted";
         this.verticalLineImage = this._getImageUri("lineVertical" + lineImageIdSuffix);
         this.horizontalLineImage = this._getImageUri("lineHorizontal" + lineImageIdSuffix);
     }
@@ -75,13 +75,6 @@ ExtrasRender.ComponentSync.RemoteTree.prototype.renderAdd = function(update, par
         this._defaultInsets = new EchoApp.Property.Insets(0);
     }
     this._defaultCellPadding = EchoRender.Property.Insets.toCssValue(this._defaultInsets);
-    
-    /**
-     * Array holding elements of which the size should be computed.
-     * We do not use the VPS here since that is both unsufficient and overkill
-     * for this computation. 
-     */
-    this._vpElements = new Array();
     
     var tableElement = document.createElement("table");
     this._element = tableElement;
@@ -110,21 +103,6 @@ ExtrasRender.ComponentSync.RemoteTree.prototype.renderAdd = function(update, par
     if (selection && this._selectionEnabled) {
         this._setSelectedFromProperty(selection);
     }
-};
-
-ExtrasRender.ComponentSync.RemoteTree.prototype.renderDisplay = function() {
-    if (!this._vpElements) {
-        return;
-    }
-    for (var i in this._vpElements) {
-        var parentHeight = this._vpElements[i].parentNode.offsetHeight;
-        var height = parentHeight;
-        if (this._vpElements[i].style.bottom == "50%" || this._vpElements[i].style.top == "50%") {
-            height /= 2;
-        }
-        this._vpElements[i].style.height = height + "px";
-    }
-    this._vpElements = new Array();
 };
 
 /**
@@ -272,11 +250,11 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRecursive = function(
     if (expandoElement) {
         this._renderExpandoElement(node, expandoElement);
     }
-    
     if (!visible) {
         trElement.style.display = "none";
     }
     
+    // render child nodes
     var expanded = node.isExpanded();    
     var childCount = node.getChildNodeCount();
     for (var i = 0; i < childCount; ++i) {
@@ -284,92 +262,63 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRecursive = function(
         if (expanded || !rendered) {
             this._renderNodeRecursive(update, childNode, iterator, depth + 1, insertBefore, expanded);
         } else {
+            // child node should not be visible
             this._hideNode(childNode, iterator);
         }
     }
 };
 
-ExtrasRender.ComponentSync.RemoteTree.prototype._renderExpandoElement = function(node, expandoElement) {
-    var oldWrapper = expandoElement.firstChild;
-    EchoCore.Arrays.remove(this._vpElements, oldWrapper);
-    EchoWebCore.DOM.removeAllChildren(expandoElement);
-        
-    var expandoText = "\u00a0";
-    expandoElement.style.height = "100%"; // IE hacking
-    var wrapperElement = document.createElement("div");
-    // compute the height for the wrapper element, otherwise it will scale down to the 
-    // size of the image.
-    this._vpElements.push(wrapperElement);
-    if (node.getParentId()) { // don't show tree lines for the root
-        wrapperElement.style.position = "relative";
-        wrapperElement.style.height = "100%";
-        wrapperElement.style.width = "100%";
-        this._applyInsets(this._defaultInsets, [0, 2], wrapperElement);
-        
-        if (this._showLines) {
-            var horizontalLineElement = document.createElement("div");
-            var showVerticalLine = this._rootVisible || !this._treeStructure.getRootNode().indexOf(node) == 0 || this._treeStructure.hasNodeNextSibling(node);
-            var verticalLineElement;
-            if (showVerticalLine) {
-                verticalLineElement = document.createElement("div");
-                verticalLineElement.style.position = "absolute";
-                if (!this._rootVisible && this._treeStructure.getRootNode().indexOf(node) == 0) {
-                    verticalLineElement.style.top = "50%";
-                    verticalLineElement.style.bottom = "0";
-                } else {
-                    verticalLineElement.style.top = "0";
-                    if (this._treeStructure.hasNodeNextSibling(node)) {
-                        verticalLineElement.style.bottom = "0";
-                    } else {
-                        verticalLineElement.style.bottom = "50%";
-                    }
-                }
-                verticalLineElement.style.width = "100%";
-                var verticalLineFillImage = new EchoApp.Property.FillImage(this.verticalLineImage, EchoApp.Property.FillImage.REPEAT_VERTICAL, "50%", 0);
-                EchoRender.Property.FillImage.render(verticalLineFillImage, verticalLineElement);
-                verticalLineElement.appendChild(document.createTextNode(expandoText));
-                wrapperElement.appendChild(verticalLineElement);
-            }
-            if (EchoWebCore.Environment.BROWSER_INTERNET_EXPLORER && EchoWebCore.Environment.BROWSER_MAJOR_VERSION <= 6) {
-                if (showVerticalLine) {
-                    this._vpElements.push(verticalLineElement);
-                    verticalLineElement.style.fontSize = "1px";
-                }
-                this._vpElements.push(horizontalLineElement);
-                horizontalLineElement.style.fontSize = "1px";
-            }
-                    
-            horizontalLineElement.style.position = "absolute";
-            horizontalLineElement.style.top = "0";
-            horizontalLineElement.style.bottom = "0";
-            horizontalLineElement.style.left = "50%";
-            horizontalLineElement.style.width = "50%";
-            var horizontalLineFillImage = new EchoApp.Property.FillImage(this.horizontalLineImage, EchoApp.Property.FillImage.REPEAT_HORIZONTAL, "50%", "50%");
-            EchoRender.Property.FillImage.render(horizontalLineFillImage, horizontalLineElement);
-            horizontalLineElement.appendChild(document.createTextNode(expandoText));
-            wrapperElement.appendChild(horizontalLineElement);
-        }
+ExtrasRender.ComponentSync.RemoteTree.prototype._getImage = function(property, defaultImageName) {
+    var image = this.component.getRenderProperty(property);
+    if (!image) {
+        image = new EchoApp.Property.ImageReference(this._getImageUri(defaultImageName ? defaultImageName : property));
     }
-    if (!node.isLeaf()) {
-        var expandoIcon;
-        if (node.isExpanded()) {
-            expandoIcon = this.component.getRenderProperty("nodeOpenIcon");
-            if (!expandoIcon) {
-                expandoIcon = new EchoApp.Property.ImageReference(this._getImageUri("nodeOpen"));
-            }
-        } else {
-            expandoIcon = this.component.getRenderProperty("nodeClosedIcon");
-            if (!expandoIcon) {
-                expandoIcon = new EchoApp.Property.ImageReference(this._getImageUri("nodeClosed"));
-            }
-        }
-        var iconElement = document.createElement("img");
-        iconElement.src = expandoIcon.url;
-        wrapperElement.appendChild(iconElement);
+    return image;
+};
+
+ExtrasRender.ComponentSync.RemoteTree.prototype._getIconLineStyleSuffix = function() {
+    switch (this._lineStyle) {
+        case ExtrasRender.ComponentSync.RemoteTree.LINE_STYLE_NONE:
+            return "";
+        case ExtrasRender.ComponentSync.RemoteTree.LINE_STYLE_SOLID:
+            return "Solid";
+        case ExtrasRender.ComponentSync.RemoteTree.LINE_STYLE_DOTTED:
+            return "Dotted";
+    }
+};
+
+ExtrasRender.ComponentSync.RemoteTree.prototype._getToggleIcon = function(node) {
+    var imageSuffix = this._getIconLineStyleSuffix();
+    var bottom = "";
+    if (this._showLines && !this._treeStructure.hasNodeNextSibling(node)) {
+        bottom = "Bottom";
+    }
+    if (node.isExpanded()) {
+        return this._getImage("nodeOpen" + bottom + "Icon", "nodeOpen" + bottom + imageSuffix);
     } else {
-        wrapperElement.appendChild(document.createTextNode(expandoText));
+        return this._getImage("nodeClosed" + bottom + "Icon", "nodeClosed" + bottom + imageSuffix);
     }
-    expandoElement.appendChild(wrapperElement);
+};
+
+ExtrasRender.ComponentSync.RemoteTree.prototype._getJoinIcon = function(node) {
+    var imageSuffix = this._getIconLineStyleSuffix();
+    var bottom = "";
+    if (!this._treeStructure.hasNodeNextSibling(node)) {
+        bottom = "Bottom";
+    }
+    return this._getImage("lineJoin" + bottom + "Icon", "lineJoin" + bottom + imageSuffix);
+};
+
+ExtrasRender.ComponentSync.RemoteTree.prototype._renderExpandoElement = function(node, expandoElement) {
+    if (node.isLeaf()) {
+        var joinIcon = this._getJoinIcon(node);
+        var joinFillImage = new EchoApp.Property.FillImage(joinIcon, EchoApp.Property.FillImage.NO_REPEAT);
+        EchoRender.Property.FillImage.render(joinFillImage, expandoElement);
+    } else {
+        var toggleIcon = this._getToggleIcon(node);
+        var toggleFillImage = new EchoApp.Property.FillImage(toggleIcon, EchoApp.Property.FillImage.NO_REPEAT);
+        EchoRender.Property.FillImage.render(toggleFillImage, expandoElement);
+    }
 };
 
 ExtrasRender.ComponentSync.RemoteTree.prototype._hideNode = function(node, iterator) {
@@ -513,9 +462,6 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._applyInsets = function(insets, 
  */
 ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRowStructure = function(insertBefore, node, depth) {
     var trElement = document.createElement("tr");
-    if (EchoWebCore.Environment.BROWSER_INTERNET_EXPLORER) {
-        trElement.style.heigth = "100%";
-    }
     trElement.id = this.component.renderId + "_tr_" + node.getId();
     
     var border = this._createMultiSidedBorder(this.component.getRenderProperty("border"));
@@ -529,7 +475,6 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRowStructure = functi
         var rowHeaderElement = document.createElement("td");
         rowHeaderElement.style.padding = "0";
         rowHeaderElement.style.width = "19px";
-        rowHeaderElement.style.height = "100%";
         
         // apply top and bottom border style
         this._applyBorder(border, [0, 2], rowHeaderElement);
@@ -537,16 +482,8 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRowStructure = functi
         if (parentNode) {
             if (this._showLines && this._treeStructure.hasNodeNextSibling(parentNode)) {
                 var verticalLineFillImage = new EchoApp.Property.FillImage(this.verticalLineImage, EchoApp.Property.FillImage.REPEAT_VERTICAL, "50%", 0);
-                var verticalLineElement = document.createElement("div");
-                verticalLineElement.style.position = "relative";
-                verticalLineElement.style.height = "100%";
-                verticalLineElement.style.width = "100%";
-                this._applyInsets(this._defaultInsets, [0, 2], verticalLineElement);
-                
-                verticalLineElement.appendChild(document.createTextNode("\u00a0"));
-                
-                EchoRender.Property.FillImage.render(verticalLineFillImage, verticalLineElement);
-                rowHeaderElement.appendChild(verticalLineElement);
+                this._applyInsets(this._defaultInsets, [0, 2], rowHeaderElement);
+                EchoRender.Property.FillImage.render(verticalLineFillImage, rowHeaderElement);
             }
             parentNode = this._treeStructure.getNode(parentNode.getParentId());
         }
@@ -562,7 +499,6 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRowStructure = functi
         this._applyBorder(border, [0, 2], expandoElement);
         expandoElement.style.padding = "0";
         expandoElement.style.width = "19px";
-        expandoElement.style.height = "100%";
         expandoElement.style.textAlign = "center";
         trElement.appendChild(expandoElement);
     }
@@ -1068,7 +1004,6 @@ ExtrasRender.ComponentSync.RemoteTree.prototype.renderDispose = function(update)
         this._removeRowListeners(trElement);
         trElement = trElement.nextSibling;
     }
-    this._vpElements = null;
     this._prevMaxDepth = null;
     this._treeStructure = null;
     this._tbodyElement = null;
