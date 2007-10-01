@@ -33,6 +33,7 @@ import nextapp.echo.app.Border;
 import nextapp.echo.app.Color;
 import nextapp.echo.app.Component;
 import nextapp.echo.app.FillImage;
+import nextapp.echo.app.ImageReference;
 import nextapp.echo.app.Pane;
 import nextapp.echo.app.PaneContainer;
 import nextapp.echo.extras.app.menu.AbstractMenuComponent;
@@ -56,6 +57,7 @@ implements Pane {
     public static final String PROPERTY_MENU_BACKGROUND = "menuBackground";
     public static final String PROPERTY_MENU_BACKGROUND_IMAGE = "menuBackgroundImage";
     public static final String PROPERTY_MENU_BORDER = "menuBorder";
+    public static final String PROPERTY_MENU_EXPAND_ICON = "menuExpandIcon";
     public static final String PROPERTY_MENU_FOREGROUND = "menuForeground";
     public static final String PROPERTY_SELECTION_BACKGROUND = "selectionBackground";
     public static final String PROPERTY_SELECTION_BACKGROUND_IMAGE = "selectionBackgroundImage";
@@ -177,6 +179,15 @@ implements Pane {
      */
     public Border getMenuBorder() {
         return (Border) getProperty(PROPERTY_MENU_BORDER);
+    }
+    
+    /**
+     * Returns the icon used to expand pull-down menus.
+     * 
+     * @return the menu expand icon
+     */
+    public ImageReference getMenuExpandIcon() {
+        return (ImageReference) getProperty(PROPERTY_MENU_EXPAND_ICON);
     }
     
     /**
@@ -318,6 +329,15 @@ implements Pane {
         setProperty(PROPERTY_MENU_BORDER, newValue);
     }
     
+    /**
+     * Sets the icon used to expand pull-down menus.
+     * 
+     * @param newValue the new menu expand icon
+     */
+    public void setMenuExpandIcon(ImageReference newValue) {
+        setProperty(PROPERTY_MENU_EXPAND_ICON, newValue);
+    }
+
     /**
      * Sets the foreground color that will be displayed in pull-down
      * menus.  Use this property only if a color different from

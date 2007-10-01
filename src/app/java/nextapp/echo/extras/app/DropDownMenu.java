@@ -63,6 +63,7 @@ public class DropDownMenu extends AbstractMenuComponent {
     public static final String PROPERTY_MENU_BACKGROUND = "menuBackground";
     public static final String PROPERTY_MENU_BACKGROUND_IMAGE = "menuBackgroundImage";
     public static final String PROPERTY_MENU_BORDER = "menuBorder";
+    public static final String PROPERTY_MENU_EXPAND_ICON = "menuExpandIcon";
     public static final String PROPERTY_MENU_FOREGROUND = "menuForeground";
     public static final String PROPERTY_MENU_FONT = "menuFont";
     public static final String PROPERTY_MENU_WIDTH = "menuWidth";
@@ -309,6 +310,15 @@ public class DropDownMenu extends AbstractMenuComponent {
     }
     
     /**
+     * Returns the icon used to expand pull-down menus.
+     * 
+     * @return the menu expand icon
+     */
+    public ImageReference getMenuExpandIcon() {
+        return (ImageReference) getProperty(PROPERTY_MENU_EXPAND_ICON);
+    }
+    
+    /**
      * Returns the foreground color that will be displayed in pull-down
      * menus.  Use this property only if a color different from
      * the one used for the menu bar is desired for pull-down menus
@@ -543,6 +553,15 @@ public class DropDownMenu extends AbstractMenuComponent {
      */
     public void setMenuBorder(Border newValue) {
         setProperty(PROPERTY_MENU_BORDER, newValue);
+    }
+    
+    /**
+     * Sets the icon used to expand pull-down menus.
+     * 
+     * @param newValue the new menu expand icon
+     */
+    public void setMenuExpandIcon(ImageReference newValue) {
+        setProperty(PROPERTY_MENU_EXPAND_ICON, newValue);
     }
     
     /**

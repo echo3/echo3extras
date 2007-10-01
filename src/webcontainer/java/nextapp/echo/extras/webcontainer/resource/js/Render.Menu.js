@@ -246,7 +246,8 @@ ExtrasRender.ComponentSync.Menu.prototype._renderMenu = function(menuModel, xPos
                 var menuItemArrowTdElement = document.createElement("td");
                 menuItemArrowTdElement.style.textAlign = "right";
                 var imgElement = document.createElement("img");
-                imgElement.setAttribute("src", ExtrasRender.ComponentSync.Menu._getImageUri("submenuRight"));
+                var expandImage = this.component.getRenderProperty("menuExpandIcon", ExtrasRender.ComponentSync.Menu._getImageUri("submenuRight"))
+                imgElement.setAttribute("src", expandImage.url ? expandImage.url : expandImage);
                 imgElement.setAttribute("alt", "");
                 menuItemArrowTdElement.appendChild(imgElement);
                 menuItemTrElement.appendChild(menuItemArrowTdElement);

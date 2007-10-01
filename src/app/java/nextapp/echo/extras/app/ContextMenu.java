@@ -33,6 +33,7 @@ import nextapp.echo.app.Border;
 import nextapp.echo.app.Color;
 import nextapp.echo.app.Component;
 import nextapp.echo.app.FillImage;
+import nextapp.echo.app.ImageReference;
 import nextapp.echo.extras.app.menu.AbstractMenuComponent;
 import nextapp.echo.extras.app.menu.MenuModel;
 import nextapp.echo.extras.app.menu.MenuStateModel;
@@ -51,6 +52,7 @@ public class ContextMenu extends AbstractMenuComponent {
     public static final String PROPERTY_DISABLED_BACKGROUND = "disabledBackground";
     public static final String PROPERTY_DISABLED_BACKGROUND_IMAGE = "disabledBackgroundImage";
     public static final String PROPERTY_DISABLED_FOREGROUND = "disabledForeground";
+    public static final String PROPERTY_MENU_EXPAND_ICON = "menuExpandIcon";
     public static final String PROPERTY_SELECTION_BACKGROUND = "selectionBackground";
     public static final String PROPERTY_SELECTION_BACKGROUND_IMAGE = "selectionBackgroundImage";
     public static final String PROPERTY_SELECTION_FOREGROUND = "selectionForeground";
@@ -151,6 +153,15 @@ public class ContextMenu extends AbstractMenuComponent {
     }
     
     /**
+     * Returns the icon used to expand pull-down menus.
+     * 
+     * @return the menu expand icon
+     */
+    public ImageReference getMenuExpandIcon() {
+        return (ImageReference) getProperty(PROPERTY_MENU_EXPAND_ICON);
+    }
+    
+    /**
      * Returns the background color used to highlight the currently 
      * selected menu item.
      * 
@@ -235,6 +246,15 @@ public class ContextMenu extends AbstractMenuComponent {
      */
     public void setDisabledForeground(Color newValue) {
         setProperty(PROPERTY_DISABLED_FOREGROUND, newValue);
+    }
+    
+    /**
+     * Sets the icon used to expand pull-down menus.
+     * 
+     * @param newValue the new menu expand icon
+     */
+    public void setMenuExpandIcon(ImageReference newValue) {
+        setProperty(PROPERTY_MENU_EXPAND_ICON, newValue);
     }
     
     /**
