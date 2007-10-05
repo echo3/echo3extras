@@ -260,7 +260,7 @@ ExtrasRender.ComponentSync.AccordionPane.Tab.prototype._render = function(client
     EchoRender.Property.Insets.renderPixel(this._getContentInsets(), this._contentDivElement, "padding");
     this._contentDivElement.style.overflow = "auto";
 
-	EchoRender.renderComponentAdd(client, update, this._childComponent, this._contentDivElement);
+	EchoRender.renderComponentAdd(update, this._childComponent, this._contentDivElement);
 	
     this._highlight(false);
     this._addEventListeners();

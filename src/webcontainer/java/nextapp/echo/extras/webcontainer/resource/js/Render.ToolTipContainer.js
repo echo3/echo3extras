@@ -55,7 +55,7 @@ ExtrasRender.ComponentSync.ToolTipContainer.prototype._createToolTip = function(
     var tooltipDivElement = document.createElement("div");
     tooltipDivElement.style.visibility = "hidden";
     tooltipDivElement.style.position = "absolute";
-	EchoRender.renderComponentAdd(this.client, update, this.component.getComponent(1), tooltipDivElement);
+	EchoRender.renderComponentAdd(update, this.component.getComponent(1), tooltipDivElement);
     return tooltipDivElement;
 };
 
@@ -64,7 +64,7 @@ ExtrasRender.ComponentSync.ToolTipContainer.prototype._createApplyTo = function(
 	
     var applyDivElement = document.createElement("div");
     applyDivElement.id = applyToComponent.renderId;
-	EchoRender.renderComponentAdd(this.client, update, applyToComponent, applyDivElement);
+	EchoRender.renderComponentAdd(update, applyToComponent, applyDivElement);
     
     if (this.component.getComponentCount() > 1) {
 	    var mouseEnterLeaveSupport = EchoWebCore.Environment.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED;
