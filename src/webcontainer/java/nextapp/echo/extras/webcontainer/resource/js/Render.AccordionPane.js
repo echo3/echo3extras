@@ -454,9 +454,9 @@ ExtrasRender.ComponentSync.AccordionPane.Rotation = function(parent, oldTab, new
 /**
  * Contains mappings from AccordionPane render ids to Rotation objects.
  * 
- * @type {EchoCore.Collections.Map}
+ * @type {Object}
  */
-ExtrasRender.ComponentSync.AccordionPane.Rotation._idToRotation = new EchoCore.Collections.Map();
+ExtrasRender.ComponentSync.AccordionPane.Rotation._idToRotation = new Object();
 
 /**
  * Renders the next step of the rotation animation.
@@ -541,7 +541,7 @@ ExtrasRender.ComponentSync.AccordionPane.Rotation.prototype._animationStep = fun
     
         // Continue Rotation.
         var renderId = this._parent.component.renderId;
-        ExtrasRender.ComponentSync.AccordionPane.Rotation._idToRotation.put(renderId, this);
+        ExtrasRender.ComponentSync.AccordionPane.Rotation._idToRotation[renderId] = this;
         window.setTimeout("ExtrasRender.ComponentSync.AccordionPane.Rotation._animationStep(\"" + renderId + "\")", 
                 this._parent._animationSleepInterval);
     } else {
@@ -576,7 +576,7 @@ ExtrasRender.ComponentSync.AccordionPane.Rotation.prototype._overflowRestore = f
  * @param renderId the render id of the Rotation's AccordionPane to step
  */
 ExtrasRender.ComponentSync.AccordionPane.Rotation._animationStep = function(renderId) {
-    var rotation = ExtrasRender.ComponentSync.AccordionPane.Rotation._idToRotation.get(renderId);
+    var rotation = ExtrasRender.ComponentSync.AccordionPane.Rotation._idToRotation[renderId];
     if (rotation) {
 	    rotation._animationStep();
     }
@@ -589,7 +589,7 @@ ExtrasRender.ComponentSync.AccordionPane.Rotation.prototype._cancel = function()
 
 ExtrasRender.ComponentSync.AccordionPane.Rotation.prototype._dispose = function() {
 	var renderId = this._parent.component.renderId;
-	ExtrasRender.ComponentSync.AccordionPane.Rotation._idToRotation.remove(renderId);
+	delete ExtrasRender.ComponentSync.AccordionPane.Rotation._idToRotation[renderId];
 	this._parent._rotation = null;
 	this._parent = null;
 	this._oldTab = null;

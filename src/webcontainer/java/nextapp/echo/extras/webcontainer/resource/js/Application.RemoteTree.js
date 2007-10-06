@@ -40,7 +40,7 @@ ExtrasApp.RemoteTree = function() { };
  *          in a map based on their id. 
  */
 ExtrasApp.RemoteTree.TreeStructure = function(rootNode) { 
-    this._idNodeMap = new EchoCore.Collections.Map();
+    this._idNodeMap = new Object();
     this._rootNode = rootNode;
     this._headerNode = null;
     this.addNode(rootNode);
@@ -55,7 +55,7 @@ ExtrasApp.RemoteTree.TreeStructure = function(rootNode) {
  * @type ExtrasApp.RemoteTree.TreeNode
  */
 ExtrasApp.RemoteTree.TreeStructure.prototype.getNode = function(id) {
-    return this._idNodeMap.get(id);
+    return this._idNodeMap[id];
 };
 
 /**
@@ -65,7 +65,7 @@ ExtrasApp.RemoteTree.TreeStructure.prototype.getNode = function(id) {
  * @param {ExtrasApp.RemoteTree.TreeNode} node the node to add
  */
 ExtrasApp.RemoteTree.TreeStructure.prototype.addNode = function(node) {
-    this._idNodeMap.put(node.getId(), node);
+    this._idNodeMap[node.getId()] = node;
     if (node.getParentId()) {
         var parentNode = this.getNode(node.getParentId());
         if (parentNode) {
@@ -103,7 +103,7 @@ ExtrasApp.RemoteTree.TreeStructure.prototype.removeNode = function(node) {
         var parentNode = this.getNode(node.getParentId());
         this.getNode(node.getParentId()).removeChildNode(node);
     }
-    this._idNodeMap.remove(node.getId());
+    delete this._idNodeMap[node.getId()];
 };
 
 /**
@@ -391,7 +391,7 @@ ExtrasApp.RemoteTree.TreeNode.prototype.addChildNode = function(node) {
  * @param {ExtrasApp.RemoteTree.TreeNode} node the node to remove as a child node
  */
 ExtrasApp.RemoteTree.TreeNode.prototype.removeChildNode = function(node) {
-    this._childNodes.remove(this._childNodes.indexOf(node));
+    this._childNodes.splice(this._childNodes.indexOf(node), 1);
 };
 
 /**
@@ -403,7 +403,7 @@ ExtrasApp.RemoteTree.TreeNode.prototype.removeChildNode = function(node) {
  * @type ExtrasApp.RemoteTree.TreeNode
  */
 ExtrasApp.RemoteTree.TreeNode.prototype.getChildNode = function(index) {
-    return this._childNodes.get(index);
+    return this._childNodes[index];
 };
 
 /**
@@ -413,7 +413,7 @@ ExtrasApp.RemoteTree.TreeNode.prototype.getChildNode = function(index) {
  * @type Integer 
  */
 ExtrasApp.RemoteTree.TreeNode.prototype.getChildNodeCount = function() {
-    return this._childNodes.size();
+    return this._childNodes.length;
 };
 
 /**
@@ -483,7 +483,7 @@ ExtrasApp.RemoteTree.TreeNode.prototype.isLeaf = function() {
  * @type Integer
  */
 ExtrasApp.RemoteTree.TreeNode.prototype.indexOf = function(node) {
-    return this._childNodes.indexOf(node);
+    return EchoCore.Arrays.indexOf(this._childNodes, node);
 };
 
 /**
