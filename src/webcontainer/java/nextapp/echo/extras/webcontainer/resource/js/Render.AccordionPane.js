@@ -6,7 +6,7 @@
 ExtrasRender.ComponentSync.AccordionPane = function() {
 	this._paneDivElement = null;
 	this._activeTabId = null;
-	this._tabs = new EchoCore.Collections.List();
+	this._tabs = new Array();
 	this._rotation = null;
     this._animationEnabled = true;
     this._animationTime = 350;
@@ -33,7 +33,7 @@ ExtrasRender.ComponentSync.AccordionPane.prototype.renderAdd = function(update, 
     for (var i = 0; i < componentCount; ++i) {
         var child = this.component.getComponent(i);
 		var tab = new ExtrasRender.ComponentSync.AccordionPane.Tab(child, this);
-	    this._tabs.add(tab);
+	    this._tabs.push(tab);
 	    tab._render(this.client, update);
 	    this._paneDivElement.appendChild(tab._tabDivElement);
 	    this._paneDivElement.appendChild(tab._contentDivElement);
@@ -45,8 +45,8 @@ ExtrasRender.ComponentSync.AccordionPane.prototype.renderAdd = function(update, 
 };
 
 ExtrasRender.ComponentSync.AccordionPane.prototype.renderDisplay = function() {
-    for (var i = 0; i < this._tabs.items.length; ++i) {
-        this._tabs.items[i]._renderDisplay();
+    for (var i = 0; i < this._tabs.length; ++i) {
+        this._tabs[i]._renderDisplay();
     }
 };
 
@@ -65,10 +65,10 @@ ExtrasRender.ComponentSync.AccordionPane.prototype.renderDispose = function(upda
 		this._rotation._dispose();
 	}
 	this._activeTabId = null;
-	for (var i = 0; i < this._tabs.size(); i++) {
-		this._tabs.get(i)._dispose();
+	for (var i = 0; i < this._tabs.length; i++) {
+		this._tabs[i]._dispose();
 	}
-	this._tabs = new EchoCore.Collections.List();
+	this._tabs = new Array();
 	this._paneDivElement.id = "";
 	this._paneDivElement = null;
 };
@@ -111,8 +111,8 @@ ExtrasRender.ComponentSync.AccordionPane.prototype._selectTab = function(tabId) 
  * @param tab the tab to remove
  */
 ExtrasRender.ComponentSync.AccordionPane.prototype._removeTab = function(tab) {
-    var tabIndex = this._tabs.indexOf(tab);
-    this._tabs.remove(tabIndex);
+    var tabIndex = EchoCore.Arrays.indexOf(this._tabs, tab);
+    this._tabs.splice(tabIndex, 1);
 
     tab._tabDivElement.parentNode.removeChild(tab._tabDivElement);
     tab._contentDivElement.parentNode.removeChild(tab._contentDivElement);
@@ -129,8 +129,8 @@ ExtrasRender.ComponentSync.AccordionPane.prototype._redrawTabs = function() {
     }
     
     if (this._activeTabId == null || this._getTabById(this._activeTabId) == null) {
-		if (this._tabs.size() > 0) {
-			this._activeTabId = this._tabs.get(0)._childComponent.renderId;
+		if (this._tabs.length > 0) {
+			this._activeTabId = this._tabs[0]._childComponent.renderId;
     	} else {
             this._activeTabId = null;
     	}
@@ -138,14 +138,14 @@ ExtrasRender.ComponentSync.AccordionPane.prototype._redrawTabs = function() {
 	
     var selectionPassed = false;
     var tabHeight = this._calculateTabHeight();
-    for (var i = 0; i < this._tabs.size(); ++i) {
-        var tab = this._tabs.get(i);
+    for (var i = 0; i < this._tabs.length; ++i) {
+        var tab = this._tabs[i];
         var tabDivElement = tab._tabDivElement;
         var contentDivElement = tab._contentDivElement;
         
         if (selectionPassed) {
             tabDivElement.style.top = "";
-            tabDivElement.style.bottom = (tabHeight * (this._tabs.size() - i - 1)) + "px";
+            tabDivElement.style.bottom = (tabHeight * (this._tabs.length - i - 1)) + "px";
         } else {
             tabDivElement.style.bottom = "";
             tabDivElement.style.top = (tabHeight * i) + "px";
@@ -157,7 +157,7 @@ ExtrasRender.ComponentSync.AccordionPane.prototype._redrawTabs = function() {
             selectionPassed = true;
             contentDivElement.style.display = "block";
             contentDivElement.style.top = (tabHeight * (i + 1)) + "px";
-            var bottomPx = tabHeight * (this._tabs.size() - i - 1);
+            var bottomPx = tabHeight * (this._tabs.length - i - 1);
             contentDivElement.style.bottom = bottomPx + "px";
         } else {
             contentDivElement.style.display = "none";
@@ -196,8 +196,8 @@ ExtrasRender.ComponentSync.AccordionPane.prototype._rotateTabs = function(oldTab
  * @return the tab, or null if no tab is present with the specified id
  */
 ExtrasRender.ComponentSync.AccordionPane.prototype._getTabById = function(tabId) {
-    for (var i = 0; i < this._tabs.size(); ++i) {
-        var tab = this._tabs.get(i);
+    for (var i = 0; i < this._tabs.length; ++i) {
+        var tab = this._tabs[i];
         if (tab._childComponent.renderId == tabId) {
             return tab;
         }
@@ -396,19 +396,19 @@ ExtrasRender.ComponentSync.AccordionPane.Rotation = function(parent, oldTab, new
     
     this._animationStepIndex = 0;
     
-    this._oldTabIndex = this._parent._tabs.indexOf(this._oldTab);
-    this._newTabIndex = this._parent._tabs.indexOf(this._newTab);
+    this._oldTabIndex = EchoCore.Arrays.indexOf(this._parent._tabs, this._oldTab);
+    this._newTabIndex = EchoCore.Arrays.indexOf(this._parent._tabs, this._newTab);
     this._directionDown = this._newTabIndex < this._oldTabIndex;
     
     if (this._directionDown) {
         // Tabs are sliding down (a tab on the top has been selected).
         for (var i = this._oldTabIndex; i > this._newTabIndex; --i) {
-            this._rotatingTabs.push(this._parent._tabs.get(i));
+            this._rotatingTabs.push(this._parent._tabs[i]);
         }
     } else {
         // Tabs are sliding up (a tab on the bottom has been selected).
         for (var i = this._oldTabIndex + 1; i <= this._newTabIndex; ++i) {
-            this._rotatingTabs.push(this._parent._tabs.get(i));
+            this._rotatingTabs.push(this._parent._tabs[i]);
         }
     }
     
@@ -419,7 +419,7 @@ ExtrasRender.ComponentSync.AccordionPane.Rotation = function(parent, oldTab, new
         this._numberOfTabsAbove = this._newTabIndex + 1;
         
         // Number of tabs below that will not be moving.
-        this._numberOfTabsBelow = this._parent._tabs.size() - 1 - this._newTabIndex;
+        this._numberOfTabsBelow = this._parent._tabs.length - 1 - this._newTabIndex;
         
         // Initial top position of topmost moving tab.
         this._startTopPosition = this._tabHeight * this._numberOfTabsAbove;
@@ -435,7 +435,7 @@ ExtrasRender.ComponentSync.AccordionPane.Rotation = function(parent, oldTab, new
         this._numberOfTabsAbove = this._newTabIndex;
     
         // Numbers of tabs below that will not be moving.
-        this._numberOfTabsBelow = this._parent._tabs.size() - 1 - this._newTabIndex;
+        this._numberOfTabsBelow = this._parent._tabs.length - 1 - this._newTabIndex;
 
         // Initial bottom position of bottommost moving tab.
         this._startBottomPosition = this._tabHeight * this._numberOfTabsBelow;

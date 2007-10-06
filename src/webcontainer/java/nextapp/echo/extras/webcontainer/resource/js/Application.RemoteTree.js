@@ -331,7 +331,7 @@ ExtrasApp.RemoteTree.TreeStructure.prototype.getNodeString = function(node, inde
 ExtrasApp.RemoteTree.TreeNode = function(id, parentId) { 
     this._id = id;
     this._parentId = parentId;
-    this._childNodes = new EchoCore.Collections.List();
+    this._childNodes = new Array();
     this._columns = new Array();
     this._expanded = false;
     this._leaf = false;
@@ -364,7 +364,7 @@ ExtrasApp.RemoteTree.TreeNode.prototype.getParentId = function() {
  * @type Boolean
  */
 ExtrasApp.RemoteTree.TreeNode.prototype.containsChildNode = function(node) {
-    return this._childNodes.indexOf(node) != -1;
+    return EchoCore.Arrays.indexOf(this._childNodes, node) != -1;
 };
 
 /**
@@ -374,14 +374,14 @@ ExtrasApp.RemoteTree.TreeNode.prototype.containsChildNode = function(node) {
  * @param {ExtrasApp.RemoteTree.TreeNode} node the node to add
  */
 ExtrasApp.RemoteTree.TreeNode.prototype.addChildNode = function(node) {
-    var index = this._childNodes.indexOf(node);
+    var index = EchoCore.Arrays.indexOf(this._childNodes, node);
     if (index == -1) {
-        this._childNodes.add(node);
+        this._childNodes.push(node);
     } else {
-        this._childNodes.set(index, node);
+        this._childNodes[index] = node;
     }
     if (!this.containsChildNode(node)) {
-        this._childNodes.add(node);
+        this._childNodes.push(node);
     }
 };
 
