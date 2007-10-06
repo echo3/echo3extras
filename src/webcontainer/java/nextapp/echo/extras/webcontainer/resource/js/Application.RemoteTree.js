@@ -593,7 +593,7 @@ ExtrasApp.RemoteTree.SelectionUpdate.prototype.getRemovedSelections = function()
  * @constructor
  */
 ExtrasApp.TreeSelectionModel = function(selectionMode) { 
-    this._selectionState = new EchoCore.Collections.Set();
+    this._selectionState = new Array();
     this._selectionMode = selectionMode;
 };
 
@@ -639,7 +639,9 @@ ExtrasApp.TreeSelectionModel.prototype.getSelectionMode = function() {
  * @param node the node to add to the selection
  */
 ExtrasApp.TreeSelectionModel.prototype.addSelectedNode = function(node) {
-    this._selectionState.add(node);
+    if (EchoCore.Arrays.indexOf(this._selectionState, node) == -1) {
+        this._selectionState.push(node);
+    }
 };
 
 /**
@@ -648,7 +650,7 @@ ExtrasApp.TreeSelectionModel.prototype.addSelectedNode = function(node) {
  * @param node the node to remove from the selection
  */
 ExtrasApp.TreeSelectionModel.prototype.removeSelectedNode = function(node) {
-    this._selectionState.remove(node);
+    EchoCore.Arrays.remove(this._selectionState, node);
 };
 
 /**
@@ -678,7 +680,7 @@ ExtrasApp.TreeSelectionModel.prototype.setSelectionState = function(node, newVal
  * @type Array
  */
 ExtrasApp.TreeSelectionModel.prototype.getSelectedNodes = function() {
-    return this._selectionState.items;
+    return this._selectionState;
 };
 
 /**
@@ -690,7 +692,7 @@ ExtrasApp.TreeSelectionModel.prototype.getSelectedNodes = function() {
  * @type Boolean 
  */
 ExtrasApp.TreeSelectionModel.prototype.isNodeSelected = function(node) {
-    return this._selectionState.contains(node);
+    return EchoCore.Arrays.indexOf(this._selectionState, node) != -1;
 };
 
 /**
@@ -700,7 +702,7 @@ ExtrasApp.TreeSelectionModel.prototype.isNodeSelected = function(node) {
  * @type Boolean
  */
 ExtrasApp.TreeSelectionModel.prototype.isSelectionEmpty = function() {
-    return this._selectionState.size() == 0;
+    return this._selectionState.length == 0;
 };
 
 /**
@@ -713,12 +715,11 @@ ExtrasApp.TreeSelectionModel.prototype.isSelectionEmpty = function() {
  * @type Boolean
  */
 ExtrasApp.TreeSelectionModel.prototype.equalsSelectionIdArray = function(selection) {
-    var size = this._selectionState.size();
-    if (size != selection.length) {
+    if (this._selectionState.length != selection.length) {
         return false;
     }
-    for (var i = 0; i < size; ++i) {
-        if (EchoCore.Arrays.indexOf(selection, this._selectionState.items[i].getId()) == -1) {
+    for (var i = 0; i < this._selectionState.length; ++i) {
+        if (EchoCore.Arrays.indexOf(selection, this._selectionState[i].getId()) == -1) {
             return false;
         }
     }
