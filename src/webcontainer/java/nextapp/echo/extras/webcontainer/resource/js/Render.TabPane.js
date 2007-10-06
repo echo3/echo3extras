@@ -6,7 +6,7 @@
 ExtrasRender.ComponentSync.TabPane = function() {
     // state
     this._activeTabId = null;
-    this._tabs = new EchoCore.Collections.List();
+    this._tabs = new Array();
     // elements
     this._element = null;
     this._headerContainerTrElement = null;
@@ -40,13 +40,13 @@ ExtrasRender.ComponentSync.TabPane.prototype = EchoCore.derive(EchoRender.Compon
  * Adds a tab.
  */
 ExtrasRender.ComponentSync.TabPane.prototype._addTab = function(update, tab, index) {
-    if (index == null || index == this._tabs.size()) {
-        this._tabs.add(tab);
+    if (index == null || index == this._tabs.length) {
+        this._tabs.push(tab);
         tab._render(update);
         this._headerContainerTrElement.appendChild(tab._headerTdElement);
         this._contentContainerDivElement.appendChild(tab._contentDivElement);
     } else {
-        this._tabs.add(tab, index);
+        this._tabs.splice(index, 0, tab);
         tab._render(update);
         this._headerContainerTrElement.insertBefore(tab._headerTdElement, 
                 this._headerContainerTrElement.childNodes[index]);
@@ -61,14 +61,14 @@ ExtrasRender.ComponentSync.TabPane.prototype._addTab = function(update, tab, ind
  * @param tab the tab to remove
  */
 ExtrasRender.ComponentSync.TabPane.prototype._removeTab = function(tab) {
-    var tabIndex = this._tabs.indexOf(tab);
+    var tabIndex = EchoCore.Arrays.indexOf(this._tabs, tab);
     if (tabIndex == -1) {
         return;
     }
     if (tab._childComponent.renderId == this._activeTabId) {
         this._activeTabId = null;
     }
-    this._tabs.remove(tabIndex);
+    this._tabs.splice(tabIndex, 1);
 
     tab._headerTdElement.parentNode.removeChild(tab._headerTdElement);
     tab._contentDivElement.parentNode.removeChild(tab._contentDivElement);
@@ -185,10 +185,10 @@ ExtrasRender.ComponentSync.TabPane.prototype._renderContentContainer = function(
 
 ExtrasRender.ComponentSync.TabPane.prototype.renderDispose = function(update) {
     this._activeTabId = null;
-    for (var i = 0; i < this._tabs.size(); i++) {
-        this._tabs.get(i)._dispose();
+    for (var i = 0; i < this._tabs.length; i++) {
+        this._tabs[i]._dispose();
     }
-    this._tabs = new EchoCore.Collections.List();
+    this._tabs = new Array();
     this._element = null;
     this._headerContainerTrElement = null;
     this._contentContainerDivElement = null;
@@ -234,8 +234,8 @@ ExtrasRender.ComponentSync.TabPane.prototype.renderDisplay = function() {
     EchoWebCore.VirtualPosition.redraw(this._element);
     EchoWebCore.VirtualPosition.redraw(this._contentContainerDivElement);
     
-    for (var i = 0; i < this._tabs.size(); ++i) {
-        this._tabs.get(i)._renderDisplay();
+    for (var i = 0; i < this._tabs.length; ++i) {
+        this._tabs[i]._renderDisplay();
     }
 };
 
@@ -322,8 +322,8 @@ ExtrasRender.ComponentSync.TabPane.prototype._selectTab = function(tabId) {
  * @return the tab, or null if no tab is present with the specified id
  */
 ExtrasRender.ComponentSync.TabPane.prototype._getTabById = function(tabId) {
-    for (var i = 0; i < this._tabs.size(); ++i) {
-        var tab = this._tabs.get(i);
+    for (var i = 0; i < this._tabs.length; ++i) {
+        var tab = this._tabs[i];
         if (tab._childComponent.renderId == tabId) {
             return tab;
         }
