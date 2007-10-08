@@ -13,13 +13,13 @@ ExtrasRender.ComponentSync.AccordionPane = function() {
     this._animationSleepInterval = 1;
 };
 
-ExtrasRender.ComponentSync.AccordionPane._paneInsets = new EchoApp.Property.Insets(0);
+ExtrasRender.ComponentSync.AccordionPane._paneInsets = new EchoApp.Insets(0);
 
-ExtrasRender.ComponentSync.AccordionPane._defaultTabBackground = new EchoApp.Property.Color("#cfcfcf");
-ExtrasRender.ComponentSync.AccordionPane._defaultTabBorder = new EchoApp.Property.Border("1px outset #cfcfcf");
-ExtrasRender.ComponentSync.AccordionPane._defaultTabForeground = new EchoApp.Property.Color("#000000");
-ExtrasRender.ComponentSync.AccordionPane._defaultTabHeight = new EchoApp.Property.Extent(20);
-ExtrasRender.ComponentSync.AccordionPane._defaultTabInsets = new EchoApp.Property.Insets(2, 5);
+ExtrasRender.ComponentSync.AccordionPane._defaultTabBackground = new EchoApp.Color("#cfcfcf");
+ExtrasRender.ComponentSync.AccordionPane._defaultTabBorder = new EchoApp.Border("1px outset #cfcfcf");
+ExtrasRender.ComponentSync.AccordionPane._defaultTabForeground = new EchoApp.Color("#000000");
+ExtrasRender.ComponentSync.AccordionPane._defaultTabHeight = new EchoApp.Extent(20);
+ExtrasRender.ComponentSync.AccordionPane._defaultTabInsets = new EchoApp.Insets(2, 5);
 ExtrasRender.ComponentSync.AccordionPane._defaultTabContentInsets = ExtrasRender.ComponentSync.AccordionPane._paneInsets;
 
 ExtrasRender.ComponentSync.AccordionPane.prototype = EchoCore.derive(EchoRender.ComponentSync);
@@ -304,7 +304,7 @@ ExtrasRender.ComponentSync.AccordionPane.Tab.prototype._highlight = function(sta
         var border = this._parent.component.getRenderProperty("tabRolloverBorder");
         if (!border) {
         	var defaultBorder = this._parent._getTabBorder();
-        	border = new EchoApp.Property.Border(defaultBorder.size, defaultBorder.style, ExtrasRender.Color.adjustIntensity(defaultBorder.color));
+        	border = new EchoApp.Border(defaultBorder.size, defaultBorder.style, ExtrasRender.Color.adjustIntensity(defaultBorder.color));
         }
 	    EchoRender.Property.Border.renderSide(border, tabDivElement, "borderTop");
 	    EchoRender.Property.Border.renderSide(border, tabDivElement, "borderBottom");

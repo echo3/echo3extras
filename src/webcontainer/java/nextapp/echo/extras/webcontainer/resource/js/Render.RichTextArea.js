@@ -84,7 +84,7 @@ ExtrasRender.ComponentSync.RichTextArea.prototype.createBaseComponent = function
     
     var splitPane = new EchoApp.SplitPane();
     splitPane.setProperty("orientation", EchoApp.SplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM);
-    splitPane.setProperty("separatorPosition", new EchoApp.Property.Extent("26px"));
+    splitPane.setProperty("separatorPosition", new EchoApp.Extent("26px"));
     contentPane.add(splitPane);
 
     var menuBarPane = new ExtrasApp.MenuBarPane({
@@ -106,8 +106,8 @@ ExtrasRender.ComponentSync.RichTextArea.prototype.createBaseComponent = function
     
     var controlsRow = new EchoApp.Row();
     controlsRow.setStyleName(this.component.getRenderProperty("toolbarRowStyleName"));
-    controlsRow.setProperty("cellSpacing", new EchoApp.Property.Extent("10px"));
-    controlsRow.setProperty("insets", new EchoApp.Property.Insets("2px"));
+    controlsRow.setProperty("cellSpacing", new EchoApp.Extent("10px"));
+    controlsRow.setProperty("insets", new EchoApp.Insets("2px"));
     mainColumn.add(controlsRow);
     
     //FIXME i18n
@@ -428,9 +428,9 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog = function(richTextArea, set
         title:                richTextArea.peer._rb.get(setBackground 
                                       ? "ColorDialog.Title.Background" : "ColorDialog.Title.Foreground"),
         icon:                 setBackground ? richTextArea.peer._icons.background : richTextArea.peer._icons.foreground,
-        iconInsets:           new EchoApp.Property.Insets(6, 10),
-        width:                new EchoApp.Property.Extent(280),
-        height:               new EchoApp.Property.Extent(320),
+        iconInsets:           new EchoApp.Insets(6, 10),
+        width:                new EchoApp.Extent(280),
+        height:               new EchoApp.Extent(320),
         resizable:            false
     });
     this.addListener("close", new EchoCore.MethodRef(this, this._processCancel));
@@ -465,7 +465,7 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog = function(richTextArea, set
     controlsRow.add(cancelButton);
     
     var layoutColumn = new EchoApp.Column({
-        insets: new EchoApp.Property.Insets(10)
+        insets: new EchoApp.Insets(10)
     });
     splitPane.add(layoutColumn);
 
@@ -497,9 +497,9 @@ ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog = function(richTextArea)
         styleName:            richTextArea.getRenderProperty("windowPaneStyleName"),
         title:                richTextArea.peer._rb.get("HyperlinkDialog.Title"),
         icon:                 richTextArea.peer._icons.hyperlink,
-        iconInsets:           new EchoApp.Property.Insets(6, 10),
-        width:                new EchoApp.Property.Extent(280),
-        height:               new EchoApp.Property.Extent(200),
+        iconInsets:           new EchoApp.Insets(6, 10),
+        width:                new EchoApp.Extent(280),
+        height:               new EchoApp.Extent(200),
         resizable:            false
     });
     this.addListener("close", new EchoCore.MethodRef(this, this._processCancel));
@@ -534,7 +534,7 @@ ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog = function(richTextArea)
     controlsRow.add(cancelButton);
     
     var layoutColumn = new EchoApp.Column({
-        insets: new EchoApp.Property.Insets(10)
+        insets: new EchoApp.Insets(10)
     });
     splitPane.add(layoutColumn);
     
@@ -543,7 +543,7 @@ ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog = function(richTextArea)
     }));
     
     this._urlField = new EchoApp.TextField({
-        width: new EchoApp.Property.Extent("100%")
+        width: new EchoApp.Extent("100%")
     });
     layoutColumn.add(this._urlField);
     
@@ -552,7 +552,7 @@ ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog = function(richTextArea)
     }));
     
     this._descriptionField = new EchoApp.TextField({
-        width: new EchoApp.Property.Extent("100%")
+        width: new EchoApp.Extent("100%")
     });
     layoutColumn.add(this._descriptionField);
 };
@@ -585,9 +585,9 @@ ExtrasRender.ComponentSync.RichTextArea.ImageDialog = function(richTextArea) {
         styleName:            richTextArea.getRenderProperty("windowPaneStyleName"),
         title:                richTextArea.peer._rb.get("ImageDialog.Title"),
         icon:                 richTextArea.peer._icons.image,
-        iconInsets:           new EchoApp.Property.Insets(6, 10),
-        width:                new EchoApp.Property.Extent(280),
-        height:               new EchoApp.Property.Extent(200),
+        iconInsets:           new EchoApp.Insets(6, 10),
+        width:                new EchoApp.Extent(280),
+        height:               new EchoApp.Extent(200),
         resizable:            false
     });
     this.addListener("close", new EchoCore.MethodRef(this, this._processCancel));
@@ -622,7 +622,7 @@ ExtrasRender.ComponentSync.RichTextArea.ImageDialog = function(richTextArea) {
     controlsRow.add(cancelButton);
     
     var layoutColumn = new EchoApp.Column({
-        insets: new EchoApp.Property.Insets(10)
+        insets: new EchoApp.Insets(10)
     });
     splitPane.add(layoutColumn);
     
@@ -631,7 +631,7 @@ ExtrasRender.ComponentSync.RichTextArea.ImageDialog = function(richTextArea) {
     }));
     
     this._urlField = new EchoApp.TextField({
-        width: new EchoApp.Property.Extent("100%")
+        width: new EchoApp.Extent("100%")
     });
     layoutColumn.add(this._urlField);
 };
@@ -771,8 +771,8 @@ ExtrasRender.ComponentSync.RichTextArea.MessageDialog = function(richTextArea, t
     EchoApp.WindowPane.call(this, {
         styleName:            richTextArea.getRenderProperty("windowPaneStyleName"),
         title:                title,
-        width:                new EchoApp.Property.Extent(480),
-        height:               new EchoApp.Property.Extent(250),
+        width:                new EchoApp.Extent(480),
+        height:               new EchoApp.Extent(250),
         resizable:            false
     });
     this.addListener("close", new EchoCore.MethodRef(this, this._processClose));
@@ -800,7 +800,7 @@ ExtrasRender.ComponentSync.RichTextArea.MessageDialog = function(richTextArea, t
     splitPane.add(new EchoApp.Label({
         text: message,
         layoutData: new EchoApp.LayoutData({
-            insets: new EchoApp.Property.Insets(30)
+            insets: new EchoApp.Insets(30)
         })
     }));
 };
@@ -818,9 +818,9 @@ ExtrasRender.ComponentSync.RichTextArea.TableDialog = function(richTextArea, set
         styleName:            richTextArea.getRenderProperty("windowPaneStyleName"),
         title:                richTextArea.peer._rb.get("TableDialog.Title"),
         icon:                 richTextArea.peer._icons.table,
-        iconInsets:           new EchoApp.Property.Insets(6, 10),
-        width:                new EchoApp.Property.Extent(280),
-        height:               new EchoApp.Property.Extent(200),
+        iconInsets:           new EchoApp.Insets(6, 10),
+        width:                new EchoApp.Extent(280),
+        height:               new EchoApp.Extent(200),
         resizable:            false
     });
     this.addListener("close", new EchoCore.MethodRef(this, this._processCancel));
@@ -855,33 +855,33 @@ ExtrasRender.ComponentSync.RichTextArea.TableDialog = function(richTextArea, set
     controlsRow.add(cancelButton);
     
     var layoutGrid = new EchoApp.Grid({
-        insets: new EchoApp.Property.Insets(10)
+        insets: new EchoApp.Insets(10)
     });
     splitPane.add(layoutGrid);
     
     layoutGrid.add(new EchoApp.Label({
         text: richTextArea.peer._rb.get("TableDialog.PromptRows"),
         layoutData: new EchoApp.LayoutData({
-            alignment: new EchoApp.Property.Alignment(EchoApp.Property.Alignment.TRAILING)
+            alignment: new EchoApp.Alignment(EchoApp.Alignment.TRAILING)
         })
     }));
     
     this._rowsField = new EchoApp.TextField({
         text: "2",
-        width: new EchoApp.Property.Extent("100px")   
+        width: new EchoApp.Extent("100px")   
     });
     layoutGrid.add(this._rowsField);
     
     layoutGrid.add( new EchoApp.Label({
         text: richTextArea.peer._rb.get("TableDialog.PromptColumns"),
         layoutData: new EchoApp.LayoutData({
-            alignment: new EchoApp.Property.Alignment(EchoApp.Property.Alignment.TRAILING)
+            alignment: new EchoApp.Alignment(EchoApp.Alignment.TRAILING)
         })
     }));
     
     this._columnsField = new EchoApp.TextField({
         text: "3",
-        width: new EchoApp.Property.Extent("100px")
+        width: new EchoApp.Extent("100px")
     });
     layoutGrid.add(this._columnsField);
 };

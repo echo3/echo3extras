@@ -72,7 +72,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype.renderAdd = function(update, par
     
     this._defaultInsets = this.component.getRenderProperty("insets");
     if (!this._defaultInsets) {
-        this._defaultInsets = new EchoApp.Property.Insets(0);
+        this._defaultInsets = new EchoApp.Insets(0);
     }
     this._defaultCellPadding = EchoRender.Property.Insets.toCssValue(this._defaultInsets);
     
@@ -271,7 +271,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRecursive = function(
 ExtrasRender.ComponentSync.RemoteTree.prototype._getImage = function(property, defaultImageName) {
     var image = this.component.getRenderProperty(property);
     if (!image) {
-        image = new EchoApp.Property.ImageReference(this._getImageUri(defaultImageName ? defaultImageName : property));
+        image = new EchoApp.ImageReference(this._getImageUri(defaultImageName ? defaultImageName : property));
     }
     return image;
 };
@@ -312,11 +312,11 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._getJoinIcon = function(node) {
 ExtrasRender.ComponentSync.RemoteTree.prototype._renderExpandoElement = function(node, expandoElement) {
     if (node.isLeaf()) {
         var joinIcon = this._getJoinIcon(node);
-        var joinFillImage = new EchoApp.Property.FillImage(joinIcon, EchoApp.Property.FillImage.NO_REPEAT);
+        var joinFillImage = new EchoApp.FillImage(joinIcon, EchoApp.FillImage.NO_REPEAT);
         EchoRender.Property.FillImage.render(joinFillImage, expandoElement);
     } else {
         var toggleIcon = this._getToggleIcon(node);
-        var toggleFillImage = new EchoApp.Property.FillImage(toggleIcon, EchoApp.Property.FillImage.NO_REPEAT);
+        var toggleFillImage = new EchoApp.FillImage(toggleIcon, EchoApp.FillImage.NO_REPEAT);
         EchoRender.Property.FillImage.render(toggleFillImage, expandoElement);
     }
 };
@@ -341,10 +341,10 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._hideNode = function(node, itera
  * <p>
  * If border is null, this method returns silently.
  * 
- * @param {EchoApp.Property.Border} border the border
+ * @param {EchoApp.Border} border the border
  * 
  * @return the resulting multisided border
- * @type EchoApp.Property.Border
+ * @type EchoApp.Border
  */
 ExtrasRender.ComponentSync.RemoteTree.prototype._createMultiSidedBorder = function(border) {
     if (!border) {
@@ -354,11 +354,11 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._createMultiSidedBorder = functi
     if (border.multisided) {
         return border;
     } else {
-        var side = new EchoApp.Property.Border.Side();
+        var side = new EchoApp.Border.Side();
         side.size = border.size;
         side.style = border.style;
         side.color = border.color;
-        return new EchoApp.Property.Border(new Array(side));
+        return new EchoApp.Border(new Array(side));
     }
 };
 ExtrasRender.ComponentSync.RemoteTree._BORDER_SIDE_STYLE_NAMES = new Array("borderTop", "borderRight", "borderBottom", "borderLeft");
@@ -368,7 +368,7 @@ ExtrasRender.ComponentSync.RemoteTree._BORDER_SIDE_STYLE_NAMES = new Array("bord
  * <p>
  * If border is null, this method returns silently.
  * 
- * @param {EchoApp.Property.Border} border the border to render
+ * @param {EchoApp.Border} border the border to render
  * @param {Array} sides the indices of the border sides to render, possible values are:
  *          <ul>
  *              <li>0 (top)</li>
@@ -400,7 +400,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._applyBorder = function(border, 
 /**
  * Renders insets to element, only the sides provided in the sides argument will be applied.
  * 
- * @param {EchoApp.Property.Insets} insets the insets to render, may not be null
+ * @param {EchoApp.Insets} insets the insets to render, may not be null
  * @param {Array} sides the indices of the insets sides to render, possible values are:
  *          <ul>
  *              <li>0 (top)</li>
@@ -431,12 +431,12 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._applyInsets = function(insets, 
     };
     for (var i = 0; i < 4; ++i) {
         if (!insets || EchoCore.Arrays.indexOf(sides, i) == -1) {
-            setInset(i, new EchoApp.Property.Extent(0, "px"));
+            setInset(i, new EchoApp.Extent(0, "px"));
         } else {
             setInset(i, null);
         }
     }
-    var newInsets = new EchoApp.Property.Insets(newValues);
+    var newInsets = new EchoApp.Insets(newValues);
     EchoRender.Property.Insets.renderPixel(newInsets, element, "padding");
 };
 
@@ -481,7 +481,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRowStructure = functi
 
         if (parentNode) {
             if (this._showLines && this._treeStructure.hasNodeNextSibling(parentNode)) {
-                var verticalLineFillImage = new EchoApp.Property.FillImage(this.verticalLineImage, EchoApp.Property.FillImage.REPEAT_VERTICAL, "50%", 0);
+                var verticalLineFillImage = new EchoApp.FillImage(this.verticalLineImage, EchoApp.FillImage.REPEAT_VERTICAL, "50%", 0);
                 this._applyInsets(this._defaultInsets, [0, 2], rowHeaderElement);
                 EchoRender.Property.FillImage.render(verticalLineFillImage, rowHeaderElement);
             }

@@ -11,16 +11,16 @@ ExtrasRender.ComponentSync.Menu = function() {
      * Array containing models of open menus.
      */
     this._openMenuPath = new Array();
-    this._menuInsets = new EchoApp.Property.Insets(2, 2, 2, 2);
-    this._menuItemInsets = new EchoApp.Property.Insets(1, 12, 1, 12);
-    this._menuItemIconTextMargin = new EchoApp.Property.Extent(5);
+    this._menuInsets = new EchoApp.Insets(2, 2, 2, 2);
+    this._menuItemInsets = new EchoApp.Insets(1, 12, 1, 12);
+    this._menuItemIconTextMargin = new EchoApp.Extent(5);
 };
 
-ExtrasRender.ComponentSync.Menu._defaultForeground = new EchoApp.Property.Color("#000000");
-ExtrasRender.ComponentSync.Menu._defaultBackground = new EchoApp.Property.Color("#cfcfcf");
-ExtrasRender.ComponentSync.Menu._defaultDisabledForeground = new EchoApp.Property.Color("#7f7f7f");
-ExtrasRender.ComponentSync.Menu._defaultSelectionForeground = new EchoApp.Property.Color("#ffffff");
-ExtrasRender.ComponentSync.Menu._defaultSelectionBackground = new EchoApp.Property.Color("#3f3f3f");
+ExtrasRender.ComponentSync.Menu._defaultForeground = new EchoApp.Color("#000000");
+ExtrasRender.ComponentSync.Menu._defaultBackground = new EchoApp.Color("#cfcfcf");
+ExtrasRender.ComponentSync.Menu._defaultDisabledForeground = new EchoApp.Color("#7f7f7f");
+ExtrasRender.ComponentSync.Menu._defaultSelectionForeground = new EchoApp.Color("#ffffff");
+ExtrasRender.ComponentSync.Menu._defaultSelectionBackground = new EchoApp.Color("#3f3f3f");
 
 ExtrasRender.ComponentSync.Menu.MAX_Z_INDEX = 65535;
 
@@ -190,8 +190,8 @@ ExtrasRender.ComponentSync.Menu.prototype._renderMenu = function(menuModel, xPos
     }
     var textPadding, iconPadding;
     if (hasIcons) {
-        iconPadding = new EchoApp.Property.Insets(0, 0, 0, this._menuItemInsets.left);
-        textPadding = new EchoApp.Property.Insets(this._menuItemInsets.top, this._menuItemInsets.right, this._menuItemInsets.bottom, this._menuItemIconTextMargin);
+        iconPadding = new EchoApp.Insets(0, 0, 0, this._menuItemInsets.left);
+        textPadding = new EchoApp.Insets(this._menuItemInsets.top, this._menuItemInsets.right, this._menuItemInsets.bottom, this._menuItemIconTextMargin);
     } else {
         textPadding = this._menuItemInsets;
     }
@@ -396,7 +396,7 @@ ExtrasRender.ComponentSync.Menu.prototype._getElementModelId = function(element)
 ExtrasRender.ComponentSync.Menu.prototype._getBorder = function() {
     var border = this.component.getRenderProperty("border");
 	if (!border) {
-		border = new EchoApp.Property.Border("1px outset #cfcfcf");
+		border = new EchoApp.Border("1px outset #cfcfcf");
 	}
 	return border;
 };
@@ -414,7 +414,7 @@ ExtrasRender.ComponentSync.Menu.prototype._getMenuBorder = function() {
  */
 ExtrasRender.ComponentSync.MenuBarPane = function() {
 	ExtrasRender.ComponentSync.Menu.call(this);
-	this._itemInsets = new EchoApp.Property.Insets("0px 12px");
+	this._itemInsets = new EchoApp.Insets("0px 12px");
 };
 
 ExtrasRender.ComponentSync.MenuBarPane.prototype = EchoCore.derive(ExtrasRender.ComponentSync.Menu);
@@ -549,7 +549,7 @@ ExtrasRender.ComponentSync.DropDownMenu.prototype._renderMain = function() {
     relativeContainerDivElement.appendChild(document.createTextNode("\u00a0"));
     
     var expandIcon = this.component.getRenderProperty("expandIcon", ExtrasRender.ComponentSync.Menu._getImageUri("submenuDown"));
-    var expandIconWidth = this.component.getRenderProperty("expandIconWidth", new EchoApp.Property.Extent("10px"));
+    var expandIconWidth = this.component.getRenderProperty("expandIconWidth", new EchoApp.Extent("10px"));
     
     var expandElement = document.createElement("span");
     expandElement.style.position = "absolute";

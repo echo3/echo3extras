@@ -408,7 +408,7 @@ ExtrasRender.ComponentSync.ColorSelect.prototype._setColor = function(color) {
 ExtrasRender.ComponentSync.ColorSelect.prototype._storeColor = function() {
     var renderColor = this._hsvToRgb(this._h, this._s, this._v);
     var renderHexTriplet = renderColor.toHexTriplet();
-    this.component.setProperty("color", new EchoApp.Property.Color(renderHexTriplet));
+    this.component.setProperty("color", new EchoApp.Color(renderHexTriplet));
 };
 
 ExtrasRender.ComponentSync.ColorSelect.prototype._updateDisplayedColor = function() {

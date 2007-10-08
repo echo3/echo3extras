@@ -15,24 +15,24 @@ ExtrasRender.ComponentSync.TabPane = function() {
 
 ExtrasRender.ComponentSync.TabPane._supportedPartialProperties = new Array("activeTab");
 
-ExtrasRender.ComponentSync.TabPane._paneInsets = new EchoApp.Property.Insets(0);
+ExtrasRender.ComponentSync.TabPane._paneInsets = new EchoApp.Insets(0);
 
 ExtrasRender.ComponentSync.TabPane._defaultBorderType = ExtrasApp.TabPane.BORDER_TYPE_ADJACENT_TO_TABS;
-ExtrasRender.ComponentSync.TabPane._defaultForeground = new EchoApp.Property.Color("#000000");
-ExtrasRender.ComponentSync.TabPane._defaultInsets = new EchoApp.Property.Insets(2);
-ExtrasRender.ComponentSync.TabPane._defaultTabActiveBorder = new EchoApp.Property.Border("1px solid #00004f");
-ExtrasRender.ComponentSync.TabPane._defaultTabActiveHeightIncrease = new EchoApp.Property.Extent(2);
-ExtrasRender.ComponentSync.TabPane._defaultTabAlignment = new EchoApp.Property.Alignment(EchoApp.Property.Alignment.DEFAULT, 
-        EchoApp.Property.Alignment.TOP);
-ExtrasRender.ComponentSync.TabPane._defaultTabCloseIconTextMargin = new EchoApp.Property.Extent(5);
+ExtrasRender.ComponentSync.TabPane._defaultForeground = new EchoApp.Color("#000000");
+ExtrasRender.ComponentSync.TabPane._defaultInsets = new EchoApp.Insets(2);
+ExtrasRender.ComponentSync.TabPane._defaultTabActiveBorder = new EchoApp.Border("1px solid #00004f");
+ExtrasRender.ComponentSync.TabPane._defaultTabActiveHeightIncrease = new EchoApp.Extent(2);
+ExtrasRender.ComponentSync.TabPane._defaultTabAlignment = new EchoApp.Alignment(EchoApp.Alignment.DEFAULT, 
+        EchoApp.Alignment.TOP);
+ExtrasRender.ComponentSync.TabPane._defaultTabCloseIconTextMargin = new EchoApp.Extent(5);
 ExtrasRender.ComponentSync.TabPane._defaultTabContentInsets = ExtrasRender.ComponentSync.TabPane._paneInsets;
-ExtrasRender.ComponentSync.TabPane._defaultTabHeight = new EchoApp.Property.Extent(32);
-ExtrasRender.ComponentSync.TabPane._defaultTabIconTextMargin = new EchoApp.Property.Extent(5);
-ExtrasRender.ComponentSync.TabPane._defaultTabInactiveBorder = new EchoApp.Property.Border("1px solid #7f7f7f");
-ExtrasRender.ComponentSync.TabPane._defaultTabInset = new EchoApp.Property.Extent(10);
-ExtrasRender.ComponentSync.TabPane._defaultTabInsets = new EchoApp.Property.Insets(3, 8);
+ExtrasRender.ComponentSync.TabPane._defaultTabHeight = new EchoApp.Extent(32);
+ExtrasRender.ComponentSync.TabPane._defaultTabIconTextMargin = new EchoApp.Extent(5);
+ExtrasRender.ComponentSync.TabPane._defaultTabInactiveBorder = new EchoApp.Border("1px solid #7f7f7f");
+ExtrasRender.ComponentSync.TabPane._defaultTabInset = new EchoApp.Extent(10);
+ExtrasRender.ComponentSync.TabPane._defaultTabInsets = new EchoApp.Insets(3, 8);
 ExtrasRender.ComponentSync.TabPane._defaultTabPosition = ExtrasApp.TabPane.TAB_POSITION_TOP;
-ExtrasRender.ComponentSync.TabPane._defaultTabSpacing = new EchoApp.Property.Extent(0);
+ExtrasRender.ComponentSync.TabPane._defaultTabSpacing = new EchoApp.Extent(0);
 
 ExtrasRender.ComponentSync.TabPane.prototype = EchoCore.derive(EchoRender.ComponentSync);
 
@@ -137,11 +137,11 @@ ExtrasRender.ComponentSync.TabPane.prototype._renderBorderInsets = function(tabP
     if (this._borderType == ExtrasApp.TabPane.BORDER_TYPE_SURROUND) {
         borderInsets = this._insets;
     } else if (this._borderType == ExtrasApp.TabPane.BORDER_TYPE_PARALLEL_TO_TABS) {
-        borderInsets = new EchoApp.Property.Insets(this._insets.top, 0, this._insets.bottom, 0);
+        borderInsets = new EchoApp.Insets(this._insets.top, 0, this._insets.bottom, 0);
     } else if (this._tabPosition == ExtrasApp.TabPane.TAB_POSITION_BOTTOM) {
-        borderInsets = new EchoApp.Property.Insets(0, 0, this._insets.bottom, 0);
+        borderInsets = new EchoApp.Insets(0, 0, this._insets.bottom, 0);
     } else {
-        borderInsets = new EchoApp.Property.Insets(this._insets.top, 0, 0, 0);
+        borderInsets = new EchoApp.Insets(this._insets.top, 0, 0, 0);
     }
     tabPaneDivElement.style.top = borderInsets.top.toString();
     tabPaneDivElement.style.right = borderInsets.right.toString();
@@ -644,9 +644,9 @@ ExtrasRender.ComponentSync.TabPane.Tab.prototype._getLeftImage = function(state)
     if (!image) {
         return;
     }
-    var horOffset = new EchoApp.Property.Extent(0);
-    var verOffset = new EchoApp.Property.Extent(0);
-    return new EchoApp.Property.FillImage(image, EchoApp.Property.FillImage.NO_REPEAT, horOffset, verOffset);
+    var horOffset = new EchoApp.Extent(0);
+    var verOffset = new EchoApp.Extent(0);
+    return new EchoApp.FillImage(image, EchoApp.FillImage.NO_REPEAT, horOffset, verOffset);
 };
 
 ExtrasRender.ComponentSync.TabPane.Tab.prototype._hasRightImage = function() {
@@ -659,9 +659,9 @@ ExtrasRender.ComponentSync.TabPane.Tab.prototype._getRightImage = function(state
     if (!image) {
         return;
     }
-    var horOffset = new EchoApp.Property.Extent("100%");
-    var verOffset = new EchoApp.Property.Extent(0);
-    return new EchoApp.Property.FillImage(image, EchoApp.Property.FillImage.NO_REPEAT, horOffset, verOffset);
+    var horOffset = new EchoApp.Extent("100%");
+    var verOffset = new EchoApp.Extent(0);
+    return new EchoApp.FillImage(image, EchoApp.FillImage.NO_REPEAT, horOffset, verOffset);
 };
 
 ExtrasRender.ComponentSync.TabPane.Tab.prototype._hasCloseImage = function() {

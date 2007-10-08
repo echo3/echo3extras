@@ -27,10 +27,10 @@ ExtrasRender.Color = function() { };
 /**
  * Adjusts the intensity of the given color.
  * 
- * @param {EchoApp.Property.Color} color
+ * @param {EchoApp.Color} color
  * @param {Number} factor
  * @return 
- * @type EchoApp.Property.Color the adjusted color 
+ * @type EchoApp.Color the adjusted color 
  */
 ExtrasRender.Color.adjustIntensity = function(color, factor) {
 	var colorString = color.value;
@@ -56,7 +56,7 @@ ExtrasRender.Color.adjustIntensity = function(color, factor) {
         out += "0";
     }
     out += blue.toString(16);
-    return new EchoApp.Property.Color(out);
+    return new EchoApp.Color(out);
 };
 
 ExtrasRender.configureStyle = function(component, styleName, defaultStyle) {
@@ -69,24 +69,24 @@ ExtrasRender.configureStyle = function(component, styleName, defaultStyle) {
 
 ExtrasRender.DEFAULT_CONTROL_PANE_SPLIT_PANE_STYLE = new EchoApp.Style({
     orientation: EchoApp.SplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP,
-    separatorColor: new EchoApp.Property.Color("#dfdfef"),
-    separatorHeight: new EchoApp.Property.Extent("1px"),
-    separatorPosition: new EchoApp.Property.Extent("30px")
+    separatorColor: new EchoApp.Color("#dfdfef"),
+    separatorHeight: new EchoApp.Extent("1px"),
+    separatorPosition: new EchoApp.Extent("30px")
 });
 
 ExtrasRender.DEFAULT_CONTROL_PANE_ROW_STYLE = new EchoApp.Style({
-    insets: new EchoApp.Property.Insets("2px 10px"),
-    cellSpacing: new EchoApp.Property.Extent("3px"),
+    insets: new EchoApp.Insets("2px 10px"),
+    cellSpacing: new EchoApp.Extent("3px"),
     layoutData: new EchoApp.LayoutData({
         overflow: EchoApp.SplitPane.OVERFLOW_HIDDEN,
-        background: new EchoApp.Property.Color("#cfcfdf")
+        background: new EchoApp.Color("#cfcfdf")
     })
 });
 
 ExtrasRender.DEFAULT_CONTROL_PANE_BUTTON_STYLE = new EchoApp.Style({
-    insets: new EchoApp.Property.Insets("0px 8px"),
+    insets: new EchoApp.Insets("0px 8px"),
     lineWrap: false,
-    foreground: new EchoApp.Property.Color("#000000"),
+    foreground: new EchoApp.Color("#000000"),
     rolloverEnabled: true,
-    rolloverForeground: new EchoApp.Property.Color("#6f0f0f")
+    rolloverForeground: new EchoApp.Color("#6f0f0f")
 });

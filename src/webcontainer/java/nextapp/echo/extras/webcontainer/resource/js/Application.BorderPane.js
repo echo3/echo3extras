@@ -13,7 +13,7 @@ ExtrasApp.BorderPane = function(properties) {
 
 ExtrasApp.BorderPane.prototype = EchoCore.derive(EchoApp.Component);
 
-ExtrasApp.BorderPane.DEFAULT_BORDER = new EchoApp.Property.FillImageBorder("#00007f", 
-        new EchoApp.Property.Insets("20px"), new EchoApp.Property.Insets("3px"));
+ExtrasApp.BorderPane.DEFAULT_BORDER = new EchoApp.FillImageBorder("#00007f", 
+        new EchoApp.Insets("20px"), new EchoApp.Insets("3px"));
 
 EchoApp.ComponentFactory.registerType("ExtrasApp.BorderPane", ExtrasApp.BorderPane);
