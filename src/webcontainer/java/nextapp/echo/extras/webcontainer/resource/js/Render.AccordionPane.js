@@ -80,8 +80,8 @@ ExtrasRender.ComponentSync.AccordionPane.prototype._render = function() {
     paneDivElement.style.overflow = "hidden";
     paneDivElement.style.width = "100%";
     paneDivElement.style.height = "100%";
-    EchoRender.Property.Color.renderFB(this.component, paneDivElement);
-    EchoRender.Property.Font.renderDefault(this.component, paneDivElement);
+    EchoAppRender.Color.renderFB(this.component, paneDivElement);
+    EchoAppRender.Font.renderDefault(this.component, paneDivElement);
     return paneDivElement;
 };
 
@@ -244,7 +244,7 @@ ExtrasRender.ComponentSync.AccordionPane.Tab.prototype._render = function(client
     this._tabDivElement.id = this._parent.component.renderId + "_tab_" + this._childComponent.renderId;
     this._tabDivElement.style.cursor = "pointer";
     this._tabDivElement.style.height = ExtrasRender.ComponentSync.AccordionPane._defaultTabHeight;
-    EchoRender.Property.Insets.renderPixel(this._parent._getTabInsets(), this._tabDivElement, "padding");
+    EchoAppRender.Insets.renderPixel(this._parent._getTabInsets(), this._tabDivElement, "padding");
     this._tabDivElement.style.position = "absolute";
     this._tabDivElement.style.left = "0px";
     this._tabDivElement.style.right = "0px";
@@ -257,7 +257,7 @@ ExtrasRender.ComponentSync.AccordionPane.Tab.prototype._render = function(client
     this._contentDivElement.style.position = "absolute";
     this._contentDivElement.style.left = "0px";
     this._contentDivElement.style.right = "0px";
-    EchoRender.Property.Insets.renderPixel(this._getContentInsets(), this._contentDivElement, "padding");
+    EchoAppRender.Insets.renderPixel(this._getContentInsets(), this._contentDivElement, "padding");
     this._contentDivElement.style.overflow = "auto";
 
 	EchoRender.renderComponentAdd(update, this._childComponent, this._contentDivElement);
@@ -289,35 +289,35 @@ ExtrasRender.ComponentSync.AccordionPane.Tab.prototype._highlight = function(sta
         if (!background) {
         	background = ExtrasRender.Color.adjustIntensity(this._parent._getTabBackground());
         }
-        EchoRender.Property.Color.render(background, tabDivElement, "backgroundColor");
+        EchoAppRender.Color.render(background, tabDivElement, "backgroundColor");
         var backgroundImage = this._parent.component.getRenderProperty("tabRolloverBackgroundImage");
         if (backgroundImage) {
 	        tabDivElement.style.backgroundImage = "";
 	        tabDivElement.style.backgroundPosition = "";
 	        tabDivElement.style.backgroundRepeat = "";
-	        EchoRender.Property.FillImage.render(backgroundImage, tabDivElement, null);
+	        EchoAppRender.FillImage.render(backgroundImage, tabDivElement, null);
         }
         var foreground = this._parent.component.getRenderProperty("tabRolloverForeground");
         if (foreground) {
-        	EchoRender.Property.Color.render(foreground, tabDivElement, "color");
+        	EchoAppRender.Color.render(foreground, tabDivElement, "color");
         }
         var border = this._parent.component.getRenderProperty("tabRolloverBorder");
         if (!border) {
         	var defaultBorder = this._parent._getTabBorder();
         	border = new EchoApp.Border(defaultBorder.size, defaultBorder.style, ExtrasRender.Color.adjustIntensity(defaultBorder.color));
         }
-	    EchoRender.Property.Border.renderSide(border, tabDivElement, "borderTop");
-	    EchoRender.Property.Border.renderSide(border, tabDivElement, "borderBottom");
+	    EchoAppRender.Border.renderSide(border, tabDivElement, "borderTop");
+	    EchoAppRender.Border.renderSide(border, tabDivElement, "borderBottom");
     } else {
 	    var border = this._parent._getTabBorder();
-	    EchoRender.Property.Border.renderSide(border, tabDivElement, "borderTop");
-	    EchoRender.Property.Border.renderSide(border, tabDivElement, "borderBottom");
-	    EchoRender.Property.Color.render(this._parent._getTabBackground(), tabDivElement, "backgroundColor");
-	    EchoRender.Property.Color.renderComponentProperty(this._parent.component, "tabForeground", ExtrasRender.ComponentSync.AccordionPane._defaultTabForeground, tabDivElement, "color");
+	    EchoAppRender.Border.renderSide(border, tabDivElement, "borderTop");
+	    EchoAppRender.Border.renderSide(border, tabDivElement, "borderBottom");
+	    EchoAppRender.Color.render(this._parent._getTabBackground(), tabDivElement, "backgroundColor");
+	    EchoAppRender.Color.renderComponentProperty(this._parent.component, "tabForeground", ExtrasRender.ComponentSync.AccordionPane._defaultTabForeground, tabDivElement, "color");
         tabDivElement.style.backgroundImage = "";
         tabDivElement.style.backgroundPosition = "";
         tabDivElement.style.backgroundRepeat = "";
-	    EchoRender.Property.FillImage.renderComponentProperty(this._parent.component, "tabBackgroundImage", null, tabDivElement);
+	    EchoAppRender.FillImage.renderComponentProperty(this._parent.component, "tabBackgroundImage", null, tabDivElement);
     }
 };
 

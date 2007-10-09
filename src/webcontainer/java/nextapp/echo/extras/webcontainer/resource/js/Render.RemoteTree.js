@@ -74,13 +74,13 @@ ExtrasRender.ComponentSync.RemoteTree.prototype.renderAdd = function(update, par
     if (!this._defaultInsets) {
         this._defaultInsets = new EchoApp.Insets(0);
     }
-    this._defaultCellPadding = EchoRender.Property.Insets.toCssValue(this._defaultInsets);
+    this._defaultCellPadding = EchoAppRender.Insets.toCssValue(this._defaultInsets);
     
     var tableElement = document.createElement("table");
     this._element = tableElement;
     this._element.id = this.component.renderId;
     tableElement.style.borderCollapse = "collapse";
-    EchoRender.Property.Border.renderComponentProperty(this.component, "border", null, tableElement);
+    EchoAppRender.Border.renderComponentProperty(this.component, "border", null, tableElement);
     
     var tbodyElement = document.createElement("tbody");
     tableElement.appendChild(tbodyElement);
@@ -231,8 +231,8 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRecursive = function(
         if (this.columnCount > 1) {
             for (var c = 0; c < this.columnCount - 1; ++c) {
                 var columnElement = document.createElement("td");
-                EchoRender.Property.Border.renderComponentProperty(this.component, "border", null, columnElement);
-                EchoRender.Property.Insets.renderPixel(this._defaultInsets, columnElement, "padding");
+                EchoAppRender.Border.renderComponentProperty(this.component, "border", null, columnElement);
+                EchoAppRender.Insets.renderPixel(this._defaultInsets, columnElement, "padding");
                 
                 var columnComponent = this.component.application.getComponentByRenderId(node.getColumn(c));
                 EchoRender.renderComponentAdd(update, columnComponent, columnElement);
@@ -313,11 +313,11 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderExpandoElement = function
     if (node.isLeaf()) {
         var joinIcon = this._getJoinIcon(node);
         var joinFillImage = new EchoApp.FillImage(joinIcon, EchoApp.FillImage.NO_REPEAT);
-        EchoRender.Property.FillImage.render(joinFillImage, expandoElement);
+        EchoAppRender.FillImage.render(joinFillImage, expandoElement);
     } else {
         var toggleIcon = this._getToggleIcon(node);
         var toggleFillImage = new EchoApp.FillImage(toggleIcon, EchoApp.FillImage.NO_REPEAT);
-        EchoRender.Property.FillImage.render(toggleFillImage, expandoElement);
+        EchoAppRender.FillImage.render(toggleFillImage, expandoElement);
     }
 };
 
@@ -393,7 +393,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._applyBorder = function(border, 
         } else if (index == 3 && border.sides.length <= 3) {
             index = 1;
         }
-        EchoRender.Property.Border.renderSide(border.sides[index], element, ExtrasRender.ComponentSync.RemoteTree._BORDER_SIDE_STYLE_NAMES[sides[i]]);
+        EchoAppRender.Border.renderSide(border.sides[index], element, ExtrasRender.ComponentSync.RemoteTree._BORDER_SIDE_STYLE_NAMES[sides[i]]);
     }
 };
 
@@ -437,7 +437,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._applyInsets = function(insets, 
         }
     }
     var newInsets = new EchoApp.Insets(newValues);
-    EchoRender.Property.Insets.renderPixel(newInsets, element, "padding");
+    EchoAppRender.Insets.renderPixel(newInsets, element, "padding");
 };
 
 /**
@@ -483,7 +483,7 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._renderNodeRowStructure = functi
             if (this._showLines && this._treeStructure.hasNodeNextSibling(parentNode)) {
                 var verticalLineFillImage = new EchoApp.FillImage(this.verticalLineImage, EchoApp.FillImage.REPEAT_VERTICAL, "50%", 0);
                 this._applyInsets(this._defaultInsets, [0, 2], rowHeaderElement);
-                EchoRender.Property.FillImage.render(verticalLineFillImage, rowHeaderElement);
+                EchoAppRender.FillImage.render(verticalLineFillImage, rowHeaderElement);
             }
             parentNode = this._treeStructure.getNode(parentNode.getParentId());
         }
@@ -651,22 +651,22 @@ ExtrasRender.ComponentSync.RemoteTree.prototype._setDefaultRowStyle = function(r
  *          "rolloverForeground"
  */
 ExtrasRender.ComponentSync.RemoteTree.prototype._setRowStyle = function(rowElement, state, prefix) {
-    var foreground = EchoRender.Property.getEffectProperty(this.component, "foreground", prefix + "Foreground", state);
-    var background = EchoRender.Property.getEffectProperty(this.component, "background", prefix + "Background", state);
-    var backgroundImage = EchoRender.Property.getEffectProperty(this.component, "backgroundImage", prefix + "BackgroundImage", state);
-    var font = EchoRender.Property.getEffectProperty(this.component, "font", prefix + "Font", state);
+    var foreground = EchoAppRender.getEffectProperty(this.component, "foreground", prefix + "Foreground", state);
+    var background = EchoAppRender.getEffectProperty(this.component, "background", prefix + "Background", state);
+    var backgroundImage = EchoAppRender.getEffectProperty(this.component, "backgroundImage", prefix + "BackgroundImage", state);
+    var font = EchoAppRender.getEffectProperty(this.component, "font", prefix + "Font", state);
     
     var cellElement = rowElement.firstChild;
     var visitedNodeCell = false;
     while (cellElement) {
         visitedNodeCell |= cellElement.__ExtrasTreeCellType == "node";
         if (visitedNodeCell) {
-            EchoRender.Property.Color.renderClear(foreground, cellElement, "color");
-            EchoRender.Property.Color.renderClear(background, cellElement, "backgroundColor");
-            EchoRender.Property.FillImage.renderClear(backgroundImage, cellElement, "backgroundColor");
+            EchoAppRender.Color.renderClear(foreground, cellElement, "color");
+            EchoAppRender.Color.renderClear(background, cellElement, "backgroundColor");
+            EchoAppRender.FillImage.renderClear(backgroundImage, cellElement, "backgroundColor");
         }
-        EchoRender.Property.Font.renderClear(null, cellElement);
-        EchoRender.Property.Font.renderClear(font, cellElement);
+        EchoAppRender.Font.renderClear(null, cellElement);
+        EchoAppRender.Font.renderClear(font, cellElement);
         
         // prevent text decoration for spacing cells, otherwise the nbsp will show up
         if (!visitedNodeCell) {

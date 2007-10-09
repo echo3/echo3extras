@@ -27,9 +27,9 @@ ExtrasRender.ComponentSync.BorderPane.prototype.renderAdd = function(update, par
 
 ExtrasRender.ComponentSync.BorderPane.prototype._renderBorder = function() {
     var border = this.component.getRenderProperty("border", ExtrasApp.BorderPane.DEFAULT_BORDER);
-    var borderInsets = EchoRender.Property.Insets.toPixels(border.borderInsets);
+    var borderInsets = EchoAppRender.Insets.toPixels(border.borderInsets);
     var flags = this.component.getRenderProperty("ieAlphaRenderBorder") 
-            ? EchoRender.Property.FillImage.FLAG_ENABLE_IE_PNG_ALPHA_FILTER : 0;
+            ? EchoAppRender.FillImage.FLAG_ENABLE_IE_PNG_ALPHA_FILTER : 0;
     var cornerElement;
     
     // Render top row
@@ -110,10 +110,10 @@ ExtrasRender.ComponentSync.BorderPane.prototype._renderBorderPart = function(bor
     }
     
     if (border.color) {
-    	EchoRender.Property.Color.render(border.color, borderDivElement, "backgroundColor");
+    	EchoAppRender.Color.render(border.color, borderDivElement, "backgroundColor");
     }
     if (border.fillImages[pos]) {
-        EchoRender.Property.FillImage.render(border.fillImages[pos], borderDivElement, flags);
+        EchoAppRender.FillImage.render(border.fillImages[pos], borderDivElement, flags);
     }
     
     return borderDivElement;
@@ -125,11 +125,11 @@ ExtrasRender.ComponentSync.BorderPane.prototype._renderContent = function(update
     this._contentDivElement.style.zIndex = 2;
     this._contentDivElement.style.overflow = "auto";
     
-    EchoRender.Property.Color.renderFB(this.component, this._contentDivElement);
-    EchoRender.Property.Font.renderDefault(this.component, this._contentDivElement);
+    EchoAppRender.Color.renderFB(this.component, this._contentDivElement);
+    EchoAppRender.Font.renderDefault(this.component, this._contentDivElement);
 
     var border = this.component.getRenderProperty("border", ExtrasApp.BorderPane.DEFAULT_BORDER);
-    var contentInsets = EchoRender.Property.Insets.toPixels(border.contentInsets);
+    var contentInsets = EchoAppRender.Insets.toPixels(border.contentInsets);
 
     this._contentDivElement.style.top = contentInsets.top + "px";
     this._contentDivElement.style.left = contentInsets.left + "px";
@@ -141,7 +141,7 @@ ExtrasRender.ComponentSync.BorderPane.prototype._renderContent = function(update
 	    var child = this.component.getComponent(0);
 	    var insets = child.pane ? null : this.component.getRenderProperty("insets");
 	    if (insets) {
-	    	EchoRender.Property.Insets.renderPixel(insets, this._contentDivElement, "padding");
+	    	EchoAppRender.Insets.renderPixel(insets, this._contentDivElement, "padding");
 	    }
 	    EchoRender.renderComponentAdd(update, child, this._contentDivElement);
     } else if (componentCount > 1) {

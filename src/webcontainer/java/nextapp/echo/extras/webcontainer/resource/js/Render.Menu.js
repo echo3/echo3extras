@@ -126,8 +126,8 @@ ExtrasRender.ComponentSync.Menu.prototype._renderSubMenu = function(menuModel) {
 ExtrasRender.ComponentSync.Menu.prototype._renderMenu = function(menuModel, xPosition, yPosition) {
     var menuDivElement = document.createElement("div");
     menuDivElement.id = this.component.renderId + "_menu_" + menuModel.id;
-    EchoRender.Property.Insets.renderPixel(this._menuInsets, menuDivElement, "padding");
-	EchoRender.Property.Border.render(this._getMenuBorder(), menuDivElement);
+    EchoAppRender.Insets.renderPixel(this._menuInsets, menuDivElement, "padding");
+	EchoAppRender.Border.render(this._getMenuBorder(), menuDivElement);
     var background;
     var menuBackground = this.component.getRenderProperty("menuBackground");
     if (menuBackground) {
@@ -135,7 +135,7 @@ ExtrasRender.ComponentSync.Menu.prototype._renderMenu = function(menuModel, xPos
     } else {
     	background = this.component.getRenderProperty("background", ExtrasRender.ComponentSync.Menu._defaultBackground);
     }
-    EchoRender.Property.Color.render(background, menuDivElement, "backgroundColor");
+    EchoAppRender.Color.render(background, menuDivElement, "backgroundColor");
     var foreground;
     var menuForeground = this.component.getRenderProperty("menuForeground");
     if (menuForeground) {
@@ -143,7 +143,7 @@ ExtrasRender.ComponentSync.Menu.prototype._renderMenu = function(menuModel, xPos
     } else {
     	foreground = this.component.getRenderProperty("foreground", ExtrasRender.ComponentSync.Menu._defaultForeground);
     }
-    EchoRender.Property.Color.render(foreground, menuDivElement, "color");
+    EchoAppRender.Color.render(foreground, menuDivElement, "color");
     menuDivElement.style.zIndex = ExtrasRender.ComponentSync.Menu.MAX_Z_INDEX;
     // Apply menu background image if it is set, or apply default background 
     // image if it is set and the menu background is NOT set.
@@ -155,7 +155,7 @@ ExtrasRender.ComponentSync.Menu.prototype._renderMenu = function(menuModel, xPos
     	backgroundImage = this.component.getRenderProperty("backgroundImage");
     }
     if (backgroundImage) {
-	    EchoRender.Property.FillImage.render(backgroundImage, menuDivElement, null); 
+	    EchoAppRender.FillImage.render(backgroundImage, menuDivElement, null); 
     }
 	// Apply menu font if it is set, or apply default font 
 	// if it is set and the menu font is NOT set.
@@ -164,7 +164,7 @@ ExtrasRender.ComponentSync.Menu.prototype._renderMenu = function(menuModel, xPos
     	font = this.component.getRenderProperty("font");
     }
     if (font) {
-	    EchoRender.Property.Font.render(font, menuDivElement);
+	    EchoAppRender.Font.render(font, menuDivElement);
     }
     menuDivElement.style.position = "absolute";
     menuDivElement.style.top = yPosition + "px";
@@ -206,7 +206,7 @@ ExtrasRender.ComponentSync.Menu.prototype._renderMenu = function(menuModel, xPos
 
             if (hasIcons) {
                 var menuItemIconTdElement = document.createElement("td");
-	            EchoRender.Property.Insets.renderPixel(iconPadding, menuItemIconTdElement, "padding");
+	            EchoAppRender.Insets.renderPixel(iconPadding, menuItemIconTdElement, "padding");
                 if (item instanceof ExtrasApp.ToggleOptionModel) {
                     var iconIdentifier;
                     var selected = this._stateModel && this._stateModel.isSelected(item.modelId);
@@ -229,13 +229,13 @@ ExtrasRender.ComponentSync.Menu.prototype._renderMenu = function(menuModel, xPos
             }
             
             var menuItemContentTdElement = document.createElement("td");
-            EchoRender.Property.Insets.renderPixel(textPadding, menuItemContentTdElement, "padding");
+            EchoAppRender.Insets.renderPixel(textPadding, menuItemContentTdElement, "padding");
             var lineWrap = this.component.getRenderProperty("lineWrap");
             if (lineWrap != null && !lineWrap) {
 	            menuItemContentTdElement.style.whiteSpace = "nowrap";
             }
             if (this._stateModel && !this._stateModel.isEnabled(item.modelId)) {
-            	EchoRender.Property.Color.renderComponentProperty(this.component, "disabledForeground", ExtrasRender.ComponentSync.Menu._defaultDisabledForeground, menuItemContentTdElement, "color");
+            	EchoAppRender.Color.renderComponentProperty(this.component, "disabledForeground", ExtrasRender.ComponentSync.Menu._defaultDisabledForeground, menuItemContentTdElement, "color");
             }
             menuItemContentTdElement.title = item.text;
             menuItemContentTdElement.appendChild(document.createTextNode(item.text));
@@ -297,9 +297,9 @@ ExtrasRender.ComponentSync.Menu.prototype._highlight = function(menuModel, state
     }
     var menuElement = this._getMenuElement(menuModel);
     if (state) {
-        EchoRender.Property.FillImage.renderComponentProperty(this.component, "selectionBackgroundImage", null, menuElement);
-        EchoRender.Property.Color.renderComponentProperty(this.component, "selectionBackground", ExtrasRender.ComponentSync.Menu._defaultSelectionBackground, menuElement, "backgroundColor");
-        EchoRender.Property.Color.renderComponentProperty(this.component, "selectionForeground", ExtrasRender.ComponentSync.Menu._defaultSelectionForeground, menuElement, "color");
+        EchoAppRender.FillImage.renderComponentProperty(this.component, "selectionBackgroundImage", null, menuElement);
+        EchoAppRender.Color.renderComponentProperty(this.component, "selectionBackground", ExtrasRender.ComponentSync.Menu._defaultSelectionBackground, menuElement, "backgroundColor");
+        EchoAppRender.Color.renderComponentProperty(this.component, "selectionForeground", ExtrasRender.ComponentSync.Menu._defaultSelectionForeground, menuElement, "color");
     } else {
         menuElement.style.backgroundImage = "";
         menuElement.style.backgroundColor = "";
@@ -428,12 +428,12 @@ ExtrasRender.ComponentSync.MenuBarPane.prototype._renderMain = function() {
     menuBarDivElement.style.top = "0px";
     menuBarDivElement.style.bottom = "0px";
     
-    EchoRender.Property.Color.renderFB(this.component, menuBarDivElement);
+    EchoAppRender.Color.renderFB(this.component, menuBarDivElement);
     var border = this._getBorder();
-    EchoRender.Property.Border.renderSide(border, menuBarDivElement, "borderTop");
-    EchoRender.Property.Border.renderSide(border, menuBarDivElement, "borderBottom");
-    EchoRender.Property.FillImage.renderComponentProperty(this.component, "backgroundImage", null, menuBarDivElement); 
-    EchoRender.Property.Font.renderDefault(this.component, menuBarDivElement, null);
+    EchoAppRender.Border.renderSide(border, menuBarDivElement, "borderTop");
+    EchoAppRender.Border.renderSide(border, menuBarDivElement, "borderBottom");
+    EchoAppRender.FillImage.renderComponentProperty(this.component, "backgroundImage", null, menuBarDivElement); 
+    EchoAppRender.Font.renderDefault(this.component, menuBarDivElement, null);
     
     var menuBarTableElement = document.createElement("table");
     menuBarTableElement.style.height = "100%";
@@ -458,7 +458,7 @@ ExtrasRender.ComponentSync.MenuBarPane.prototype._renderMain = function() {
                 menuBarItemTdElement.style.cursor = "pointer";
                 menuBarTrElement.appendChild(menuBarItemTdElement);
                 var menuBarItemDivElement = document.createElement("div");
-                EchoRender.Property.Insets.renderPixel(this._itemInsets, menuBarItemDivElement, "padding");
+                EchoAppRender.Insets.renderPixel(this._itemInsets, menuBarItemDivElement, "padding");
                 menuBarItemTdElement.appendChild(menuBarItemDivElement);
                 var textNode = document.createTextNode(item.text);
                 menuBarItemDivElement.appendChild(textNode);
@@ -540,12 +540,12 @@ ExtrasRender.ComponentSync.DropDownMenu.prototype._renderMain = function() {
     if (height) {
         dropDownDivElement.style.height = height.toString();
     }
-    EchoRender.Property.Color.renderFB(this.component, dropDownDivElement);
+    EchoAppRender.Color.renderFB(this.component, dropDownDivElement);
     
     var relativeContainerDivElement = document.createElement("div");
     relativeContainerDivElement.style.position = "relative";
     relativeContainerDivElement.style.height = "100%";
-    //EchoRender.Property.Insets.renderComponentProperty(this.component, "insets", null, relativeContainerDivElement, "padding");
+    //EchoAppRender.Insets.renderComponentProperty(this.component, "insets", null, relativeContainerDivElement, "padding");
     relativeContainerDivElement.appendChild(document.createTextNode("\u00a0"));
     
     var expandIcon = this.component.getRenderProperty("expandIcon", ExtrasRender.ComponentSync.Menu._getImageUri("submenuDown"));
@@ -568,7 +568,7 @@ ExtrasRender.ComponentSync.DropDownMenu.prototype._renderMain = function() {
 	this._contentDivElement.style.right = expandIconWidth.toString();
 	var insets = this.component.getRenderProperty("insets");
 	if (insets) {
-	    EchoRender.Property.Insets.renderPixel(insets, this._contentDivElement, "padding");
+	    EchoAppRender.Insets.renderPixel(insets, this._contentDivElement, "padding");
 	    if (height) {
 	    	var compensatedHeight = Math.max(0, height.value - insets.top.value - insets.bottom.value);
 		    this._contentDivElement.style.height = compensatedHeight + "px";
@@ -576,7 +576,7 @@ ExtrasRender.ComponentSync.DropDownMenu.prototype._renderMain = function() {
 	} else {
 	    this._contentDivElement.style.height = "100%";
 	}
-    EchoRender.Property.FillImage.renderComponentProperty(this.component, "backgroundImage", null, this._contentDivElement); 
+    EchoAppRender.FillImage.renderComponentProperty(this.component, "backgroundImage", null, this._contentDivElement); 
     
     var contentSpanElement = document.createElement("div");
     contentSpanElement.id = this.component.renderId + "_content";
@@ -584,7 +584,7 @@ ExtrasRender.ComponentSync.DropDownMenu.prototype._renderMain = function() {
     contentSpanElement.style.width = "100%";
     contentSpanElement.style.overflow = "hidden";
     contentSpanElement.style.whiteSpace = "nowrap";
-    EchoRender.Property.Font.renderDefault(this.component, contentSpanElement, null);
+    EchoAppRender.Font.renderDefault(this.component, contentSpanElement, null);
     this._contentDivElement.appendChild(contentSpanElement);
     
     relativeContainerDivElement.appendChild(this._contentDivElement);

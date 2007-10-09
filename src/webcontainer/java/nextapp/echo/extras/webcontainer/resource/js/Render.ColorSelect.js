@@ -107,11 +107,11 @@ ExtrasRender.ComponentSync.ColorSelect.prototype._processSVUpdate = function(e) 
 };
 
 ExtrasRender.ComponentSync.ColorSelect.prototype.renderAdd = function(update, parentElement) {
-    this._valueWidth = EchoRender.Property.Extent.toPixels(
+    this._valueWidth = EchoAppRender.Extent.toPixels(
             this.component.getRenderProperty("valueWidth", ExtrasApp.ColorSelect.DEFAULT_VALUE_WIDTH), true);
-    this._saturationHeight = EchoRender.Property.Extent.toPixels(
+    this._saturationHeight = EchoAppRender.Extent.toPixels(
             this.component.getRenderProperty("saturationHeight", ExtrasApp.ColorSelect.DEFAULT_SATURATION_HEIGHT), false);
-    this._hueWidth = EchoRender.Property.Extent.toPixels(
+    this._hueWidth = EchoAppRender.Extent.toPixels(
             this.component.getRenderProperty("hueWidth", ExtrasApp.ColorSelect.DEFAULT_HUE_WIDTH), true);
 
     var svGradientImageSrc = this.client.getServiceUrl("EchoExtras.ColorSelect.SVGradient");

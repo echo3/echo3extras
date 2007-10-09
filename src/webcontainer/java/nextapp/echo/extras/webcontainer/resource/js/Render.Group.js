@@ -33,7 +33,7 @@ ExtrasRender.ComponentSync.Group.prototype.renderAdd = function(update, parentEl
 	
     this._groupDivElement = document.createElement("div");
     this._groupDivElement.id = this.component.renderId;
-    EchoRender.Property.Color.renderComponentProperty(this.component, "foreground", null, this._groupDivElement, "color")
+    EchoAppRender.Color.renderComponentProperty(this.component, "foreground", null, this._groupDivElement, "color")
 
     var contentElement = this._renderContent();
     var borderParts = this._renderBorder(contentElement);
@@ -64,18 +64,18 @@ ExtrasRender.ComponentSync.Group.prototype._renderBorder = function(contentElem)
 	var borderParts = new Array();
 	
 	var borderInsets = this.component.getRenderProperty("borderInsets", ExtrasRender.ComponentSync.Group.DEFAULT_BORDER_INSETS);
-    var borderPixelInsets = EchoRender.Property.Insets.toPixels(borderInsets);
+    var borderPixelInsets = EchoAppRender.Insets.toPixels(borderInsets);
     var flags = this.component.getRenderProperty("ieAlphaRenderBorder") 
-            ? EchoRender.Property.FillImage.FLAG_ENABLE_IE_PNG_ALPHA_FILTER : 0;
+            ? EchoAppRender.FillImage.FLAG_ENABLE_IE_PNG_ALPHA_FILTER : 0;
     
     var topRightElem = document.createElement("div");
     topRightElem.style.width = "100%";
-    EchoRender.Property.FillImage.render(this._getBorderImage(2, "100%", "100%"), topRightElem, flags);
+    EchoAppRender.FillImage.render(this._getBorderImage(2, "100%", "100%"), topRightElem, flags);
     
     var topLeftElem = document.createElement("div");
     topLeftElem.style.paddingRight = borderPixelInsets.right + "px";
     topLeftElem.style.paddingLeft = borderPixelInsets.left + "px";
-    EchoRender.Property.FillImage.render(this._getBorderImage(0, "0px", "100%"), topLeftElem, flags);
+    EchoAppRender.FillImage.render(this._getBorderImage(0, "0px", "100%"), topLeftElem, flags);
 	topRightElem.appendChild(topLeftElem);
 	
 	var title = this.component.getRenderProperty("title");
@@ -102,17 +102,17 @@ ExtrasRender.ComponentSync.Group.prototype._renderBorder = function(contentElem)
 		    }
 		    topPosElemImg.style.height = "1px";
 		    topPosElem.appendChild(topPosElemImg);
-		    EchoRender.Property.FillImage.render(this._getRepeatingBorderImage(1, EchoApp.FillImage.REPEAT_HORIZONTAL, "0px", "100%"), topPosElem, flags);
+		    EchoAppRender.FillImage.render(this._getRepeatingBorderImage(1, EchoApp.FillImage.REPEAT_HORIZONTAL, "0px", "100%"), topPosElem, flags);
 			topRowElem.appendChild(topPosElem);
 	    }
 	    
 	    var titleElem = document.createElement("td");
 	    titleElem.style.whiteSpace = "nowrap";
-		EchoRender.Property.Font.renderComponentProperty(this.component, "titleFont", null, titleElem);
-		EchoRender.Property.Insets.renderComponentProperty(this.component, "titleInsets", ExtrasRender.ComponentSync.Group.DEFAULT_TITLE_INSETS, titleElem, "padding");
+		EchoAppRender.Font.renderComponentProperty(this.component, "titleFont", null, titleElem);
+		EchoAppRender.Insets.renderComponentProperty(this.component, "titleInsets", ExtrasRender.ComponentSync.Group.DEFAULT_TITLE_INSETS, titleElem, "padding");
 		var titleImage = this.component.getRenderProperty("titleBackgroundImage");
 		if (titleImage) {
-    		EchoRender.Property.FillImage.render(new EchoApp.FillImage(titleImage, EchoApp.FillImage.REPEAT_HORIZONTAL, "0px", "100%"), titleElem, flags);
+    		EchoAppRender.FillImage.render(new EchoApp.FillImage(titleImage, EchoApp.FillImage.REPEAT_HORIZONTAL, "0px", "100%"), titleElem, flags);
 		}
 		titleElem.appendChild(document.createTextNode(title));
 		topRowElem.appendChild(titleElem);
@@ -124,7 +124,7 @@ ExtrasRender.ComponentSync.Group.prototype._renderBorder = function(contentElem)
 		    topFillElem.style.width = "100%";
 		}
 	    topFillElem.style.height = borderPixelInsets.top + "px";
-	    EchoRender.Property.FillImage.render(this._getRepeatingBorderImage(1, EchoApp.FillImage.REPEAT_HORIZONTAL, "0px", "100%"), topFillElem, flags);
+	    EchoAppRender.FillImage.render(this._getRepeatingBorderImage(1, EchoApp.FillImage.REPEAT_HORIZONTAL, "0px", "100%"), topFillElem, flags);
 		topRowElem.appendChild(topFillElem);
 		
 	    topLeftElem.appendChild(topTableElem);
@@ -133,7 +133,7 @@ ExtrasRender.ComponentSync.Group.prototype._renderBorder = function(contentElem)
     	topElem.style.width = "100%";
     	topElem.style.height = borderPixelInsets.top + "px";
     	topElem.style.fontSize = "1px";
-    	EchoRender.Property.FillImage.render(this._getRepeatingBorderImage(1, EchoApp.FillImage.REPEAT_HORIZONTAL, "0px", "100%"), topElem, flags);
+    	EchoAppRender.FillImage.render(this._getRepeatingBorderImage(1, EchoApp.FillImage.REPEAT_HORIZONTAL, "0px", "100%"), topElem, flags);
     	topLeftElem.appendChild(topElem);
 	}
     
@@ -141,12 +141,12 @@ ExtrasRender.ComponentSync.Group.prototype._renderBorder = function(contentElem)
 	
 	var rightElem = document.createElement("div");
     rightElem.style.width = "100%";
-    EchoRender.Property.FillImage.render(this._getRepeatingBorderImage(4, EchoApp.FillImage.REPEAT_VERTICAL, "100%", "0px"), rightElem, flags);
+    EchoAppRender.FillImage.render(this._getRepeatingBorderImage(4, EchoApp.FillImage.REPEAT_VERTICAL, "100%", "0px"), rightElem, flags);
     
     var leftElem = document.createElement("div");
     leftElem.style.paddingRight = borderPixelInsets.right + "px";
     leftElem.style.paddingLeft = borderPixelInsets.left + "px";
-    EchoRender.Property.FillImage.render(this._getRepeatingBorderImage(3, EchoApp.FillImage.REPEAT_VERTICAL, "0px", "0px"), leftElem, flags);
+    EchoAppRender.FillImage.render(this._getRepeatingBorderImage(3, EchoApp.FillImage.REPEAT_VERTICAL, "0px", "0px"), leftElem, flags);
 	leftElem.appendChild(contentElem);
 	rightElem.appendChild(leftElem);
 	borderParts.push(rightElem);
@@ -155,19 +155,19 @@ ExtrasRender.ComponentSync.Group.prototype._renderBorder = function(contentElem)
     bottomRightElem.style.width = "100%";
     bottomRightElem.style.height = borderPixelInsets.bottom + "px";
     bottomRightElem.style.fontSize = "1px";
-    EchoRender.Property.FillImage.render(this._getBorderImage(7, "100%", "100%"), bottomRightElem, flags);
+    EchoAppRender.FillImage.render(this._getBorderImage(7, "100%", "100%"), bottomRightElem, flags);
     
     var bottomLeftElem = document.createElement("div");
     bottomLeftElem.style.paddingRight = borderPixelInsets.right + "px";
     bottomLeftElem.style.paddingLeft = borderPixelInsets.left + "px";
-    EchoRender.Property.FillImage.render(this._getBorderImage(5, "0px", "100%"), bottomLeftElem, flags);
+    EchoAppRender.FillImage.render(this._getBorderImage(5, "0px", "100%"), bottomLeftElem, flags);
 	bottomRightElem.appendChild(bottomLeftElem);
     
 	var bottomElem = document.createElement("div");
     bottomElem.style.width = "100%";
     bottomElem.style.height = borderPixelInsets.bottom + "px";
     bottomElem.style.fontSize = "1px";
-    EchoRender.Property.FillImage.render(this._getRepeatingBorderImage(6, EchoApp.FillImage.REPEAT_HORIZONTAL, "0px", "100%"), bottomElem, flags);
+    EchoAppRender.FillImage.render(this._getRepeatingBorderImage(6, EchoApp.FillImage.REPEAT_HORIZONTAL, "0px", "100%"), bottomElem, flags);
 	bottomLeftElem.appendChild(bottomElem);
 	borderParts.push(bottomRightElem);
 	
@@ -177,10 +177,10 @@ ExtrasRender.ComponentSync.Group.prototype._renderBorder = function(contentElem)
 ExtrasRender.ComponentSync.Group.prototype._renderContent = function(update) {
     var contentDivElement = document.createElement("div");
     
-    EchoRender.Property.FillImage.renderComponentProperty(this.component, "backgroundImage", null, contentDivElement);
-    EchoRender.Property.Color.renderComponentProperty(this.component, "background", null, contentDivElement, "backgroundColor")
-    EchoRender.Property.Font.renderDefault(this.component, contentDivElement);
-    EchoRender.Property.Insets.renderComponentProperty(this.component, "insets", null, contentDivElement, "padding");
+    EchoAppRender.FillImage.renderComponentProperty(this.component, "backgroundImage", null, contentDivElement);
+    EchoAppRender.Color.renderComponentProperty(this.component, "background", null, contentDivElement, "backgroundColor")
+    EchoAppRender.Font.renderDefault(this.component, contentDivElement);
+    EchoAppRender.Insets.renderComponentProperty(this.component, "insets", null, contentDivElement, "padding");
     
     var componentCount = this.component.getComponentCount();
     for (var i = 0; i < componentCount; i++) {
