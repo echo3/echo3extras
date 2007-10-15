@@ -106,8 +106,8 @@ ExtrasRender.ComponentSync.Menu.prototype._renderTopMenu = function(menuModel) {
     var menuElement = this._getMenuElement(menuModel);
     var containerElement = document.getElementById(this.component.renderId);
     
-    var menuBounds = new EchoWebCore.Render.Measure.Bounds(menuElement);
-    var containerBounds = new EchoWebCore.Render.Measure.Bounds(containerElement);
+    var menuBounds = new EchoWebCore.Measure.Bounds(menuElement);
+    var containerBounds = new EchoWebCore.Measure.Bounds(containerElement);
     
     this._renderMenu(menuModel, menuBounds.left, containerBounds.top + containerBounds.height);
 	// FIXME handle overflow
@@ -117,8 +117,8 @@ ExtrasRender.ComponentSync.Menu.prototype._renderSubMenu = function(menuModel) {
     var menuElement = this._getMenuElement(menuModel);
     var containerElement = menuElement.parentNode.parentNode.parentNode;
     
-    var menuBounds = new EchoWebCore.Render.Measure.Bounds(menuElement);
-    var containerBounds = new EchoWebCore.Render.Measure.Bounds(containerElement);
+    var menuBounds = new EchoWebCore.Measure.Bounds(menuElement);
+    var containerBounds = new EchoWebCore.Measure.Bounds(containerElement);
     
     this._renderMenu(menuModel, containerBounds.left + containerBounds.width, menuBounds.top);
 };
@@ -621,7 +621,7 @@ ExtrasRender.ComponentSync.DropDownMenu.prototype._renderMenu = function(menuMod
     var menuHeight = this.component.getRenderProperty("menuHeight");
     if (menuHeight) {
 	    if (EchoWebCore.Environment.NOT_SUPPORTED_CSS_MAX_HEIGHT) {
-		    var measure = new EchoWebCore.Render.Measure(menuDivElement);
+		    var measure = new EchoWebCore.Measure(menuDivElement);
 		    if (measure.height > menuHeight.value) {
 			    menuDivElement.style.height = menuHeight.value + "px";
 		    }

@@ -74,7 +74,7 @@ ExtrasRender.ComponentSync.ColorSelect.prototype._processHMouseUp = function(e) 
 };
 
 ExtrasRender.ComponentSync.ColorSelect.prototype._processHUpdate = function(e) {
-    var bounds = new EchoWebCore.Render.Measure.Bounds(this._hListenerDivElement);
+    var bounds = new EchoWebCore.Measure.Bounds(this._hListenerDivElement);
     this._h = (this._saturationHeight - (e.clientY - bounds.top - 7)) * 360 / this._saturationHeight;
     this._updateDisplayedColor();
 };
@@ -100,7 +100,7 @@ ExtrasRender.ComponentSync.ColorSelect.prototype._processSVMouseUp = function(e)
 };
 
 ExtrasRender.ComponentSync.ColorSelect.prototype._processSVUpdate = function(e) {
-    var bounds = new EchoWebCore.Render.Measure.Bounds(this._svListenerDivElement);
+    var bounds = new EchoWebCore.Measure.Bounds(this._svListenerDivElement);
     this._v = (e.clientX - bounds.left - 7) / this._valueWidth;
     this._s = 1 - ((e.clientY - bounds.top - 7) / this._saturationHeight);
     this._updateDisplayedColor();
