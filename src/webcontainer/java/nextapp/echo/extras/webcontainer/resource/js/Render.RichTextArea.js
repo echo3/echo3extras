@@ -80,97 +80,118 @@ ExtrasRender.ComponentSync.RichTextArea.DEFAULT_RESOURCE_BUNDLE = new EchoCore.R
 });
 
 ExtrasRender.ComponentSync.RichTextArea.prototype.createBaseComponent = function() {
-    var contentPane = new EchoApp.ContentPane();
+    var controlsRow;
     
-    var splitPane = new EchoApp.SplitPane();
-    splitPane.setProperty("orientation", EchoApp.SplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM);
-    splitPane.setProperty("separatorPosition", new EchoApp.Extent("26px"));
-    contentPane.add(splitPane);
-
-    var menuBarPane = new ExtrasApp.MenuBarPane({
-        layoutData: new EchoApp.LayoutData({
-            overflow: EchoApp.SplitPane.OVERFLOW_HIDDEN
-        })
+    var contentPane = new EchoApp.ContentPane({
+        children: [
+            // Menu SplitPane
+            new EchoApp.SplitPane({
+                orientation: EchoApp.SplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM,
+                separatorPosition: new EchoApp.Extent(26),
+                children: [
+                    // Menu Bar
+                    new ExtrasApp.MenuBarPane({
+                        styleName: this.component.getRenderProperty("menuStyleName"),
+                        layoutData: new EchoApp.LayoutData({
+                            overflow: EchoApp.SplitPane.OVERFLOW_HIDDEN
+                        }),
+                        model: this._createMainMenuModel(),
+                        events: {
+                            action: new EchoCore.MethodRef(this, this._processMenuAction)
+                        }
+                    }),
+                    // Main Layout Container
+                    new EchoApp.Column({
+                        layoutData: new EchoApp.LayoutData({
+                            overflow: EchoApp.SplitPane.OVERFLOW_HIDDEN
+                        }),
+                        children: [
+                            // Controls Row (control groups added later)
+                            controlsRow = new EchoApp.Row({
+                                styleName: this.component.getRenderProperty("toolbarRowStyleName"),
+                                cellSpacing: new EchoApp.Extent(10),
+                                insets: new EchoApp.Insets(2)
+                            }),
+                            // Text Input Field
+                            this._richTextInput = new ExtrasRender.ComponentSync.RichTextArea.InputComponent()
+                        ]
+                    })
+                ]
+            })
+        ]
     });
-    menuBarPane.setStyleName(this.component.getRenderProperty("menuStyleName"));
-    menuBarPane.setProperty("model", this._createMainMenuModel());
-    menuBarPane.addListener("action", new EchoCore.MethodRef(this, this._processMenuAction));
-    splitPane.add(menuBarPane);
     
-    var mainColumn = new EchoApp.Column({
-        layoutData: new EchoApp.LayoutData({
-            overflow: EchoApp.SplitPane.OVERFLOW_HIDDEN
-        })
-    });
-    splitPane.add(mainColumn);
+    // Undo/Redo Tools
+    controlsRow.add(new EchoApp.Row({
+        children: [
+            this._createToolbarButton("<<<", this._icons.undo, this._rb.get("Menu.Undo"), this._processCommand, "undo"),
+            this._createToolbarButton(">>>", this._icons.redo, this._rb.get("Menu.Redo"), this._processCommand, "redo")
+        ]
+    }));
     
-    var controlsRow = new EchoApp.Row();
-    controlsRow.setStyleName(this.component.getRenderProperty("toolbarRowStyleName"));
-    controlsRow.setProperty("cellSpacing", new EchoApp.Extent("10px"));
-    controlsRow.setProperty("insets", new EchoApp.Insets("2px"));
-    mainColumn.add(controlsRow);
+    // Font Bold/Italic/Underline Tools
+    controlsRow.add(new EchoApp.Row({
+        children: [
+            this._createToolbarButton("B", this._icons.bold, this._rb.get("Menu.Bold"), this._processCommand, "bold"),
+            this._createToolbarButton("I", this._icons.italic, this._rb.get("Menu.Italic"), this._processCommand, "italic"),
+            this._createToolbarButton("U", this._icons.underline, this._rb.get("Menu.Underline"), 
+                    this._processCommand, "underline")
+        ]
+    }));
     
-    //FIXME i18n
+    //Super/Subscript Tools
+    controlsRow.add(new EchoApp.Row({
+        children: [
+            this._createToolbarButton("^", this._icons.superscript, this._rb.get("Menu.Superscript"), 
+                    this._processCommand, "superscript"),
+            this._createToolbarButton("v", this._icons.subscript,this._rb.get("Menu.Subscript"), 
+                    this._processCommand, "subscript")
+        ]
+    }));
     
-    var historyStyleRow = new EchoApp.Row();
-    controlsRow.add(historyStyleRow);
-    historyStyleRow.add(this._createToolbarButton("<<<", this._icons.undo, 
-            this._rb.get("Menu.Undo"), this._processCommand, "undo"));
-    historyStyleRow.add(this._createToolbarButton(">>>", this._icons.redo, 
-            this._rb.get("Menu.Redo"), this._processCommand, "redo"));
-
-    var fontStyleRow = new EchoApp.Row();
-    controlsRow.add(fontStyleRow);
-    fontStyleRow.add(this._createToolbarButton("B", this._icons.bold, 
-            this._rb.get("Menu.Bold"), this._processCommand, "bold"));
-    fontStyleRow.add(this._createToolbarButton("I", this._icons.italic, 
-            this._rb.get("Menu.Italic"), this._processCommand, "italic"));
-    fontStyleRow.add(this._createToolbarButton("U", this._icons.underline, 
-            this._rb.get("Menu.Underline"), this._processCommand, "underline"));
-
-    var fontElevationRow = new EchoApp.Row();
-    controlsRow.add(fontElevationRow);
-    fontElevationRow.add(this._createToolbarButton("^", this._icons.superscript, 
-            this._rb.get("Menu.Superscript"), this._processCommand, "superscript"));
-    fontElevationRow.add(this._createToolbarButton("v", this._icons.subscript,
-            this._rb.get("Menu.Subscript"), this._processCommand, "subscript"));
-
-    var alignmentRow = new EchoApp.Row();
-    controlsRow.add(alignmentRow);
-    alignmentRow.add(this._createToolbarButton("<-", this._icons.alignmentLeft, 
-            this._rb.get("Menu.Left"), this._processCommand, "justifyleft"));
-    alignmentRow.add(this._createToolbarButton("-|-", this._icons.alignmentCenter, 
-            this._rb.get("Menu.Center"), this._processCommand, "justifycenter"));
-    alignmentRow.add(this._createToolbarButton("->", this._icons.alignmentRight, 
-            this._rb.get("Menu.Right"), this._processCommand, "justifyright"));
-    alignmentRow.add(this._createToolbarButton("||", this._icons.alignmentJustify, 
-            this._rb.get("Menu.Justified"), this._processCommand, "justifyfull"));
-
-    var colorRow = new EchoApp.Row();
-    controlsRow.add(colorRow);
-    colorRow.add(this._createToolbarButton("FG", this._icons.foreground, 
-            this._rb.get("Menu.SetForeground"), this._processSetForegroundDialog));
-    colorRow.add(this._createToolbarButton("BG", this._icons.background, 
-            this._rb.get("Menu.SetBackground"), this._processSetBackgroundDialog));
-
-    var insertObjectRow = new EchoApp.Row();
-    controlsRow.add(insertObjectRow);
-    insertObjectRow.add(this._createToolbarButton("Bulleted List", this._icons.bulletedList, 
-            this._rb.get("Menu.BulletedList"), this._processCommand, "insertunorderedlist"));
-    insertObjectRow.add(this._createToolbarButton("Numbered List", this._icons.numberedList, 
-            this._rb.get("Menu.NumberedList"), this._processCommand, "insertorderedlist"));
-    insertObjectRow.add(this._createToolbarButton("Horizontal Rule", this._icons.horizontalRule, 
-            this._rb.get("Menu.InsertHorizontalRule"), this._processCommand, "inserthorizontalrule"));
-    insertObjectRow.add(this._createToolbarButton("Image", this._icons.image, 
-            this._rb.get("Menu.InsertImage"), this._processInsertImageDialog));
-    insertObjectRow.add(this._createToolbarButton("Hyperlink", this._icons.hyperlink, 
-            this._rb.get("Menu.InsertHyperlink"), this._processInsertHyperlinkDialog));
-    insertObjectRow.add(this._createToolbarButton("Table", this._icons.table, 
-            this._rb.get("Menu.InsertTable"), this._processInsertTableDialog));
+    // Alignment Tools
+    controlsRow.add(new EchoApp.Row({
+        children: [
+            this._createToolbarButton("<-", this._icons.alignmentLeft, this._rb.get("Menu.Left"), 
+                    this._processCommand, "justifyleft"),
+            this._createToolbarButton("-|-", this._icons.alignmentCenter, this._rb.get("Menu.Center"), 
+                    this._processCommand, "justifycenter"),
+            this._createToolbarButton("->", this._icons.alignmentRight, this._rb.get("Menu.Right"), 
+                    this._processCommand, "justifyright"),
+            this._createToolbarButton("||", this._icons.alignmentJustify, this._rb.get("Menu.Justified"), 
+                    this._processCommand, "justifyfull")
+        ]
+    }));
     
-    this._richTextInput = new ExtrasRender.ComponentSync.RichTextArea.InputComponent();
+    // Color Tools
+    controlsRow.add(new EchoApp.Row({
+        children: [
+            this._createToolbarButton("FG", this._icons.foreground, this._rb.get("Menu.SetForeground"), 
+                    this._processSetForegroundDialog),
+            this._createToolbarButton("BG", this._icons.background, this._rb.get("Menu.SetBackground"), 
+                    this._processSetBackgroundDialog)
+        ]
+    }));
+    
+    // Insert Tools
+    controlsRow.add(new EchoApp.Row({
+        children: [
+            this._createToolbarButton("Bulleted List", this._icons.bulletedList, this._rb.get("Menu.BulletedList"), 
+                    this._processCommand, "insertunorderedlist"),
+            this._createToolbarButton("Numbered List", this._icons.numberedList, this._rb.get("Menu.NumberedList"), 
+                    this._processCommand, "insertorderedlist"),
+            this._createToolbarButton("Horizontal Rule", this._icons.horizontalRule, this._rb.get("Menu.InsertHorizontalRule"), 
+                    this._processCommand, "inserthorizontalrule"),
+            this._createToolbarButton("Image", this._icons.image, this._rb.get("Menu.InsertImage"), 
+                    this._processInsertImageDialog),
+            this._createToolbarButton("Hyperlink", this._icons.hyperlink, this._rb.get("Menu.InsertHyperlink"), 
+                    this._processInsertHyperlinkDialog),
+            this._createToolbarButton("Table", this._icons.table, this._rb.get("Menu.InsertTable"), 
+                    this._processInsertTableDialog)
+        ]
+    }));
+
     this._richTextInput._richTextArea = this.component;
-    mainColumn.add(this._richTextInput);
     
     return contentPane;
 };
