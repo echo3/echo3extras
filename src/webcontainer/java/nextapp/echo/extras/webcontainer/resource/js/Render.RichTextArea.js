@@ -444,59 +444,67 @@ ExtrasRender.ComponentSync.RichTextArea.prototype.renderUpdate = function(update
 };
 
 ExtrasRender.ComponentSync.RichTextArea.ColorDialog = function(richTextArea, setBackground) {
+    var controlPaneSplitPaneStyleName = richTextArea.getRenderProperty("controlPaneSplitPaneStyleName");
+    var controlPaneRowStyleName = richTextArea.getRenderProperty("controlPaneRowStyleName");
+    var controlPaneButtonStyleName = richTextArea.getRenderProperty("controlPaneButtonStyleName"); 
+    
     EchoApp.WindowPane.call(this, {
-        styleName:            richTextArea.getRenderProperty("windowPaneStyleName"),
-        title:                richTextArea.peer._rb.get(setBackground 
-                                      ? "ColorDialog.Title.Background" : "ColorDialog.Title.Foreground"),
-        icon:                 setBackground ? richTextArea.peer._icons.background : richTextArea.peer._icons.foreground,
-        iconInsets:           new EchoApp.Insets(6, 10),
-        width:                new EchoApp.Extent(280),
-        height:               new EchoApp.Extent(320),
-        resizable:            false
+        styleName: richTextArea.getRenderProperty("windowPaneStyleName"),
+        title: richTextArea.peer._rb.get(setBackground 
+                ? "ColorDialog.Title.Background" : "ColorDialog.Title.Foreground"),
+        icon: setBackground ? richTextArea.peer._icons.background : richTextArea.peer._icons.foreground,
+        iconInsets: new EchoApp.Insets(6, 10),
+        width: new EchoApp.Extent(280),
+        height: new EchoApp.Extent(320),
+        resizable: false,
+        events: {
+            close: new EchoCore.MethodRef(this, this._processCancel)
+        },
+        children: [
+            new EchoApp.SplitPane({
+                styleName: controlPaneSplitPaneStyleName,
+                style: controlPaneSplitPaneStyleName ? null : ExtrasRender.DEFAULT_CONTROL_PANE_SPLIT_PANE_STYLE,
+                children: [
+                    new EchoApp.Row({
+                        styleName: controlPaneRowStyleName,
+                        style: controlPaneRowStyleName ? null : ExtrasRender.DEFAULT_CONTROL_PANE_ROW_STYLE,
+                        children: [
+                            new EchoApp.Button({
+                                styleName: controlPaneButtonStyleName,
+                                style: controlPaneButtonStyleName ? null : DEFAULT_CONTROL_PANE_BUTTON_STYLE,
+                                text: richTextArea.peer._rb.get("Generic.Ok"),
+                                icon: richTextArea.peer._icons.ok,
+                                events: {
+                                    action: new EchoCore.MethodRef(this, this._processOk)
+                                }
+                            }),
+                            new EchoApp.Button({
+                                styleName: controlPaneButtonStyleName,
+                                style: controlPaneButtonStyleName ? null : DEFAULT_CONTROL_PANE_BUTTON_STYLE,
+                                text: richTextArea.peer._rb.get("Generic.Cancel"),
+                                icon: richTextArea.peer._icons.cancel,
+                                events: {
+                                    action: new EchoCore.MethodRef(this, this._processCancel)
+                                }
+                            })
+                        ]
+                    }),
+                    new EchoApp.Column({
+                        insets: new EchoApp.Insets(10),
+                        children: [
+                            new EchoApp.Label({
+                                text: richTextArea.peer._rb.get(
+                                        setBackground ? "ColorDialog.PromptBackground" : "ColorDialog.PromptForeground")
+                            }),
+                            this._colorSelect = new ExtrasApp.ColorSelect({
+                                displayValue: true
+                            })
+                        ]
+                    })
+                ]
+            })
+        ]
     });
-    this.addListener("close", new EchoCore.MethodRef(this, this._processCancel));
-    
-    var splitPane = new EchoApp.SplitPane();
-    ExtrasRender.configureStyle(splitPane, richTextArea.getRenderProperty("controlPaneSplitPaneStyleName"), 
-            ExtrasRender.DEFAULT_CONTROL_PANE_SPLIT_PANE_STYLE);
-    this.add(splitPane);
-    
-    var controlsRow = new EchoApp.Row();
-    ExtrasRender.configureStyle(controlsRow, richTextArea.getRenderProperty("controlPaneRowStyleName"), 
-            ExtrasRender.DEFAULT_CONTROL_PANE_ROW_STYLE);
-    splitPane.add(controlsRow);
-    
-    var okButton = new EchoApp.Button({
-        text: richTextArea.peer._rb.get("Generic.Ok"),
-        icon: richTextArea.peer._icons.ok
-    });
-
-    okButton.addListener("action", new EchoCore.MethodRef(this, this._processOk));
-    ExtrasRender.configureStyle(okButton, richTextArea.getRenderProperty("controlPaneButtonStyleName"), 
-            ExtrasRender.DEFAULT_CONTROL_PANE_BUTTON_STYLE);
-    controlsRow.add(okButton);
-    
-    var cancelButton = new EchoApp.Button({
-        text: richTextArea.peer._rb.get("Generic.Cancel"),
-        icon: richTextArea.peer._icons.cancel
-    });
-    cancelButton.addListener("action", new EchoCore.MethodRef(this, this._processCancel));
-    ExtrasRender.configureStyle(cancelButton, richTextArea.getRenderProperty("controlPaneButtonStyleName"), 
-            ExtrasRender.DEFAULT_CONTROL_PANE_BUTTON_STYLE);
-    controlsRow.add(cancelButton);
-    
-    var layoutColumn = new EchoApp.Column({
-        insets: new EchoApp.Insets(10)
-    });
-    splitPane.add(layoutColumn);
-
-    layoutColumn.add(new EchoApp.Label({
-        text: richTextArea.peer._rb.get(setBackground ? "ColorDialog.PromptBackground" : "ColorDialog.PromptForeground")
-    }));
-
-    this._colorSelect = new ExtrasApp.ColorSelect();
-    this._colorSelect.setProperty("displayValue", true);
-    layoutColumn.add(this._colorSelect);
 };
 
 ExtrasRender.ComponentSync.RichTextArea.ColorDialog.prototype = EchoCore.derive(EchoApp.WindowPane);
