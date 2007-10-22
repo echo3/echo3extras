@@ -1,19 +1,23 @@
 /**
- * Creates a new BorderPane.
- * 
- * @constructor
- * @class TabPane component.
- * @base EchoApp.Component
+ * @class BorderPane component.
  */
-ExtrasApp.BorderPane = function(properties) {
-    EchoApp.Component.call(this, properties);
-    this.componentType = "ExtrasApp.BorderPane";
-    this.pane = true;
-};
-
-ExtrasApp.BorderPane.prototype = EchoCore.derive(EchoApp.Component);
-
-ExtrasApp.BorderPane.DEFAULT_BORDER = new EchoApp.FillImageBorder("#00007f", 
-        new EchoApp.Insets("20px"), new EchoApp.Insets("3px"));
-
-EchoApp.ComponentFactory.registerType("ExtrasApp.BorderPane", ExtrasApp.BorderPane);
+ExtrasApp.BorderPane = EchoCore.extend(EchoApp.Component, {
+    
+    DEFAULT_BORDER: new EchoApp.FillImageBorder("#00007f", 
+            new EchoApp.Insets("20px"), new EchoApp.Insets("3px")),
+    
+    globalInitialize: function() {
+        EchoApp.ComponentFactory.registerType("ExtrasApp.BorderPane", this);
+    },
+    
+    /**
+     * Creates a new BorderPane.
+     * 
+     * @constructor
+     * @base EchoApp.Component
+     */
+    initialize: function(properties) {
+        EchoApp.Component.prototype.initialize.call(this, properties);
+        this.componentType = "ExtrasApp.BorderPane";
+    }
+});

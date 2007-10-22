@@ -1,15 +1,21 @@
 /**
- * Creates a new AccordionPane.
- * 
- * @constructor
  * @class AccordionPane component.
- * @base EchoApp.Component
  */
-ExtrasApp.AccordionPane = function(properties) {
-    EchoApp.Component.call(this, properties);
-    this.componentType = "ExtrasApp.AccordionPane";
-};
+ExtrasApp.AccordionPane = EchoCore.extend(EchoApp.Component, {
+    
+    globalInitialize: function() {
+        EchoApp.ComponentFactory.registerType("ExtrasApp.AccordionPane", this);
+    },
+    
+    /**
+     * Creates a new AccordionPane.
+     * 
+     * @constructor
+     * @base EchoApp.Component
+     */
+    initialize: function(properties) {
+        EchoApp.Component.prototype.initialize.call(this, properties);
+        this.componentType = "ExtrasApp.AccordionPane";
+    }
+});
 
-ExtrasApp.AccordionPane.prototype = EchoCore.derive(EchoApp.Component);
-
-EchoApp.ComponentFactory.registerType("ExtrasApp.AccordionPane", ExtrasApp.AccordionPane);
