@@ -3,6 +3,8 @@
  */
 ExtrasApp.RichTextArea = EchoCore.extend(EchoApp.Component, {
 
+    componentType: "ExtrasApp.RichTextArea",
+
     globalInitialize: function() {
         EchoApp.ComponentFactory.registerType("ExtrasApp.RichTextArea", this);
     },
@@ -14,8 +16,7 @@ ExtrasApp.RichTextArea = EchoCore.extend(EchoApp.Component, {
      * @base EchoApp.Component
      */
     initialize: function(properties) {
-        EchoApp.Component.call(this, properties);
-        this.componentType = "ExtrasApp.RichTextArea";
+        EchoApp.Component.prototype.initialize.call(this, properties);
     }
 });
 
