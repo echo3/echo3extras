@@ -1,50 +1,71 @@
 /**
- * Creates a new ContextMenu.
- * 
- * @constructor
- * @class ContextMenu component.
- * @base EchoApp.Component
+ * @class 
+ * ContextMenu component.
  */
-ExtrasApp.ContextMenu = function(properties) {
-    EchoApp.Component.call(this, properties);
-    this.componentType = "ExtrasApp.ContextMenu";
-};
+ExtrasApp.ContextMenu = EchoCore.derive(EchoApp.Component, {
 
-ExtrasApp.ContextMenu.prototype = EchoCore.derive(EchoApp.Component);
-
-EchoApp.ComponentFactory.registerType("ExtrasApp.ContextMenu", ExtrasApp.ContextMenu);
+    componentType: "ExtrasApp.ContextMenu",
+    
+    globalInitialize: function() {
+        EchoApp.ComponentFactory.registerType("ExtrasApp.ContextMenu", this);
+    },
+    
+    /**
+     * Creates a new ContextMenu.
+     * 
+     * @constructor
+     * @base EchoApp.Component
+     */
+    initialize: function(properties) {
+        EchoApp.Component.prototype.initialize.call(this, properties);
+    }
+});
 
 /**
- * Creates a new DropDownMenu.
- * 
- * @constructor
- * @class DropDownMenu component.
- * @base EchoApp.Component
+ * @class
+ * DropDownMenu component.
  */
-ExtrasApp.DropDownMenu = function(properties) {
-    EchoApp.Component.call(this, properties);
-    this.componentType = "ExtrasApp.DropDownMenu";
-};
+ExtrasApp.DropDownMenu = EchoCore.derive(EchoApp.Component, {
 
-ExtrasApp.DropDownMenu.prototype = EchoCore.derive(EchoApp.Component);
+    componentType: "ExtrasApp.DropDownMenu",
 
-EchoApp.ComponentFactory.registerType("ExtrasApp.DropDownMenu", ExtrasApp.DropDownMenu);
+    globalInitialize: function() {
+        EchoApp.ComponentFactory.registerType("ExtrasApp.DropDownMenu", this);
+    },
+
+    /**
+     * Creates a new DropDownMenu.
+     * 
+     * @constructor
+     * @base EchoApp.Component
+     */
+    initialize: function(properties) {
+        EchoApp.Component.prototype.initialize.call(this, properties);
+    }
+});
 
 /**
- * Creates a new MenuBarPane.
- * 
- * @constructor
- * @class MenuBarPane component.
- * @base EchoApp.Component
+ * @class 
+ * MenuBarPane component.
  */
-ExtrasApp.MenuBarPane = function(properties) {
-    EchoApp.Component.call(this, properties);
-    this.componentType = "ExtrasApp.MenuBarPane";
-};
+ExtrasApp.MenuBarPane = EchoCore.extend(EchoApp.Component, {
 
-ExtrasApp.MenuBarPane.prototype = EchoCore.derive(EchoApp.Component);
+    componentType: "ExtrasApp.MenuBarPane",
 
-EchoApp.ComponentFactory.registerType("ExtrasApp.MenuBarPane", ExtrasApp.MenuBarPane);
+    globalInitialize: function() {
+        EchoApp.ComponentFactory.registerType("ExtrasApp.MenuBarPane", this);
+    },
+
+    /**
+     * Creates a new MenuBarPane.
+     * 
+     * @constructor
+     * @base EchoApp.Component
+     */
+    initialize: function(properties) {
+        EchoApp.Component.prototype.initialize.call(this, properties);
+    }
+});
 
 /**
  * Representation of a menu that may contain submenus, options, and separators.
@@ -55,154 +76,170 @@ EchoApp.ComponentFactory.registerType("ExtrasApp.MenuBarPane", ExtrasApp.MenuBar
  * @param icon {String} the icon of the menu model which will appear in its parent menu
  *        when this menu is used as a submenu
  */
-ExtrasApp.MenuModel = function(modelId, text, icon) {
-    this.modelId = modelId;
-    this.id = ExtrasApp.uniqueId++;
-    this.parent = null;
-    this.text = text;
-    this.icon = icon;
-    this.items = new Array();
-};
-
-/**
- * Adds an item to the MenuModel.
- *
- * @param item the item (must be a MenuModel, OptionModel, or SeparatorModel.
- */
-ExtrasApp.MenuModel.prototype.addItem = function(item) {
-    this.items.push(item);
-    item.parent = this;
-};
-
-ExtrasApp.MenuModel.prototype.getItem = function(id) {
-    var i;
-    for (i = 0; i < this.items.length; ++i) {
-        if (this.items[i].id == id) {
-            return this.items[i];
-        }
-    }
-    for (i = 0; i < this.items.length; ++i) {
-        if (this.items[i] instanceof ExtrasApp.MenuModel) {
-            var itemModel = this.items[i].getItem(id);
-            if (itemModel) {
-                return itemModel;
+ExtrasApp.MenuModel = EchoCore.extend({
+    
+    initialize: function(modelId, text, icon) {
+        this.modelId = modelId;
+        this.id = ExtrasApp.uniqueId++;
+        this.parent = null;
+        this.text = text;
+        this.icon = icon;
+        this.items = new Array();
+    },
+    
+    /**
+     * Adds an item to the MenuModel.
+     *
+     * @param item the item (must be a MenuModel, OptionModel, or SeparatorModel.
+     */
+    addItem: function(item) {
+        this.items.push(item);
+        item.parent = this;
+    },
+    
+    getItem: function(id) {
+        var i;
+        for (i = 0; i < this.items.length; ++i) {
+            if (this.items[i].id == id) {
+                return this.items[i];
             }
         }
-    }
-    return null;
-};
-
-ExtrasApp.MenuModel.prototype.indexOfItem = function(item) {
-    for (var i = 0; i < this.items.length; ++i) {
-        if (this.items[i] == item) {
-            return i;
+        for (i = 0; i < this.items.length; ++i) {
+            if (this.items[i] instanceof ExtrasApp.MenuModel) {
+                var itemModel = this.items[i].getItem(id);
+                if (itemModel) {
+                    return itemModel;
+                }
+            }
         }
+        return null;
+    },
+    
+    indexOfItem: function(item) {
+        for (var i = 0; i < this.items.length; ++i) {
+            if (this.items[i] == item) {
+                return i;
+            }
+        }
+        return -1;
+    },
+    
+    getItemModelFromPositions: function(itemPositions) {
+        var menuModel = this;
+        for (var i = 0; i < itemPositions.length; ++i) {
+            menuModel = menuModel.items[parseInt(itemPositions[i])];
+        }
+        return menuModel;
+    },
+    
+    /**
+     * toString() implementation.
+     */
+    $toString: function() {
+        return "MenuModel \"" + this.text + "\" Items:" + this.items.length;
     }
-    return -1;
-};
+});
 
-ExtrasApp.MenuModel.prototype.getItemModelFromPositions = function(itemPositions) {
-    var menuModel = this;
-    for (var i = 0; i < itemPositions.length; ++i) {
-        menuModel = menuModel.items[parseInt(itemPositions[i])];
+ExtrasApp.OptionModel = EchoCore.extend({
+    
+    initialize: function(modelId, text, icon) {
+        this.modelId = modelId;
+        this.id = ExtrasApp.uniqueId++;
+        this.parent = null;
+        this.text = text;
+        this.icon = icon;
+    },
+    
+    /**
+     * Returns an array containing the path of this model to its most distant ancestor, consisting of 
+     * positions.
+     * 
+     * @return the array of positions.
+     * @type {Array}
+     */
+    getItemPositionPath: function() {
+        var path = new Array();
+        var itemModel = this;
+        while (itemModel.parent != null) {
+            path.unshift(itemModel.parent.indexOfItem(itemModel));
+            itemModel = itemModel.parent;
+        }
+        return path;
+    },
+    
+    /**
+     * toString() implementation.
+     */
+    $toString: function() {
+        return "OptionModel \"" + this.text + "\"";
     }
-    return menuModel;
-};
+});
 
-/**
- * toString() implementation.
- */
-ExtrasApp.MenuModel.prototype.toString = function() {
-    return "MenuModel \"" + this.text + "\" Items:" + this.items.length;
-};
+ExtrasApp.ToggleOptionModel = EchoCore.extend(ExtrasApp.OptionModel, {
 
-ExtrasApp.OptionModel = function(modelId, text, icon) {
-    this.modelId = modelId;
-    this.id = ExtrasApp.uniqueId++;
-    this.parent = null;
-    this.text = text;
-    this.icon = icon;
-};
-
-/**
- * Returns an array containing the path of this model to its most distant ancestor, consisting of 
- * positions.
- * 
- * @return the array of positions.
- * @type {Array}
- */
-ExtrasApp.OptionModel.prototype.getItemPositionPath = function() {
-    var path = new Array();
-    var itemModel = this;
-    while (itemModel.parent != null) {
-        path.unshift(itemModel.parent.indexOfItem(itemModel));
-        itemModel = itemModel.parent;
+    initialize: function(modelId, text, selected) {
+        ExtrasApp.OptionModel.prototype.initialize.call(this, modelId, text, null)
+        this.selected = selected;
     }
-    return path;
-};
+});
 
-/**
- * toString() implementation.
- */
-ExtrasApp.OptionModel.prototype.toString = function() {
-    return "OptionModel \"" + this.text + "\"";
-};
+ExtrasApp.RadioOptionModel = EchoCore.extend(ExtrasApp.ToggleOptionModel, {
 
-ExtrasApp.ToggleOptionModel = function(modelId, text, selected) {
-    ExtrasApp.OptionModel.call(this, modelId, text, null)
-    this.selected = selected;
-};
-
-ExtrasApp.ToggleOptionModel.prototype = EchoCore.derive(ExtrasApp.OptionModel);
-
-ExtrasApp.RadioOptionModel = function(modelId, text, selected) {
-    ExtrasApp.ToggleOptionModel.call(this, modelId, text, selected)
-};
+    initialize: function(modelId, text, selected) {
+        ExtrasApp.ToggleOptionModel.prototype.initialize.call(this, modelId, text, selected)
+    }
+});
 
 ExtrasApp.RadioOptionModel.prototype = EchoCore.derive(ExtrasApp.ToggleOptionModel);
 
 /**
  * A representation of a menu separator.
  */
-ExtrasApp.SeparatorModel = function() {
-    this.parent = null;
-};
+ExtrasApp.SeparatorModel = EchoCore.extend({
 
-ExtrasApp.MenuStateModel = function() {
-    this._disabledItems = new Array();
-    this._selectedItems = new Array();
-};
+    initialize: function() {
+        this.parent = null;
+    }
+});
 
-ExtrasApp.MenuStateModel.prototype.isEnabled = function(modelId) {
-	if (modelId) {
-		for (var i = 0; i < this._disabledItems.length; i++) {
-			if (this._disabledItems[i] == modelId) {
-				return false;
-			}
-		}
-	}
-	return true;
-};
+ExtrasApp.MenuStateModel = EchoCore.extend({
 
-ExtrasApp.MenuStateModel.prototype.isSelected = function(modelId) {
-	if (modelId) {
-		for (var i = 0; i < this._selectedItems.length; i++) {
-			if (this._selectedItems[i] == modelId) {
-				return true;
-			}
-		}
-	}
-	return false;
-};
-
-ExtrasApp.MenuStateModel.prototype.setEnabled = function(modelId, enabled) {
-	if (!enabled) {
-		this._disabledItems.push(modelId);
-	}
-};
-
-ExtrasApp.MenuStateModel.prototype.setSelected = function(modelId, selected) {
-	if (selected) {
-		this._selectedItems.push(modelId);
-	}
-};
+    initialize: function() {
+        this._disabledItems = [];
+        this._selectedItems = [];
+    },
+    
+    isEnabled: function(modelId) {
+    	if (modelId) {
+    		for (var i = 0; i < this._disabledItems.length; i++) {
+    			if (this._disabledItems[i] == modelId) {
+    				return false;
+    			}
+    		}
+    	}
+    	return true;
+    },
+    
+    isSelected: function(modelId) {
+    	if (modelId) {
+    		for (var i = 0; i < this._selectedItems.length; i++) {
+    			if (this._selectedItems[i] == modelId) {
+    				return true;
+    			}
+    		}
+    	}
+    	return false;
+    },
+    
+    setEnabled: function(modelId, enabled) {
+    	if (!enabled) {
+    		this._disabledItems.push(modelId);
+    	}
+    },
+    
+    setSelected: function(modelId, selected) {
+    	if (selected) {
+    		this._selectedItems.push(modelId);
+    	}
+    }
+});
