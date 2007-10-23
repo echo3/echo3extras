@@ -1,15 +1,21 @@
 /**
- * Creates a new RichTextArea.
- * 
- * @constructor
  * @class RichTextArea component.
- * @base EchoApp.Component
  */
-ExtrasApp.RichTextArea = function(properties) {
-    EchoApp.Component.call(this, properties);
-    this.componentType = "ExtrasApp.RichTextArea";
-};
+ExtrasApp.RichTextArea = EchoCore.extend(EchoApp.Component, {
 
-ExtrasApp.RichTextArea.prototype = EchoCore.derive(EchoApp.Component);
+    globalInitialize: function() {
+        EchoApp.ComponentFactory.registerType("ExtrasApp.RichTextArea", this);
+    },
 
-EchoApp.ComponentFactory.registerType("ExtrasApp.RichTextArea", ExtrasApp.RichTextArea);
+    /**
+     * Creates a new RichTextArea.
+     * 
+     * @constructor
+     * @base EchoApp.Component
+     */
+    initialize: function(properties) {
+        EchoApp.Component.call(this, properties);
+        this.componentType = "ExtrasApp.RichTextArea";
+    }
+});
+

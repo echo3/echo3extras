@@ -613,7 +613,7 @@ ExtrasRender.ComponentSync.TabPane.Tab.prototype._highlight = function(state) {
     if (state) {
     	// FIXME hack to notify the tab content component that it's size may have changed, this is
     	// required because any previous notifications could have taken place when this tab was hidden.
-    	EchoRender._doResize(this._childComponent, true);
+    	EchoRender.renderComponentDisplay(this._childComponent);
     }
 };
 
