@@ -833,41 +833,50 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer = EchoCore.extend(EchoRender.C
 ExtrasRender.ComponentSync.RichTextArea.MessageDialog = EchoCore.extend(EchoApp.WindowPane, {
     
     initialize: function(richTextArea, title, message) {
+
+        var controlPaneSplitPaneStyleName = richTextArea.getRenderProperty("controlPaneSplitPaneStyleName");
+        var controlPaneRowStyleName = richTextArea.getRenderProperty("controlPaneRowStyleName");
+        var controlPaneButtonStyleName = richTextArea.getRenderProperty("controlPaneButtonStyleName"); 
+
         EchoApp.WindowPane.prototype.initialize.call(this, {
-            styleName:            richTextArea.getRenderProperty("windowPaneStyleName"),
-            title:                title,
-            width:                new EchoApp.Extent(480),
-            height:               new EchoApp.Extent(250),
-            resizable:            false
+            styleName: richTextArea.getRenderProperty("windowPaneStyleName"),
+            title: title,
+            width: new EchoApp.Extent(480),
+            height: new EchoApp.Extent(250),
+            resizable: false,
+            events: {
+                close: new EchoCore.MethodRef(this, this._processClose)
+            },
+            children: [
+                new EchoApp.SplitPane({
+                    styleName: controlPaneSplitPaneStyleName,
+                    style: controlPaneSplitPaneStyleName ? null : ExtrasRender.DEFAULT_CONTROL_PANE_SPLIT_PANE_STYLE,
+                    children: [
+                        new EchoApp.Row({
+                            styleName: controlPaneRowStyleName,
+                            style: controlPaneRowStyleName ? null : ExtrasRender.DEFAULT_CONTROL_PANE_ROW_STYLE,
+                            children: [
+                                new EchoApp.Button({
+                                    styleName: controlPaneButtonStyleName,
+                                    style: controlPaneButtonStyleName ? null : DEFAULT_CONTROL_PANE_BUTTON_STYLE,
+                                    text: richTextArea.peer._rb.get("Generic.Ok"),
+                                    icon: richTextArea.peer._icons.ok,
+                                    events: {
+                                        action: new EchoCore.MethodRef(this, this._processClose)
+                                    }
+                                })
+                            ]
+                        }),
+                        new EchoApp.Label({
+                            text: message,
+                            layoutData: new EchoApp.LayoutData({
+                                insets: new EchoApp.Insets(30)
+                            })
+                        })
+                    ]
+                })
+            ]
         });
-        this.addListener("close", new EchoCore.MethodRef(this, this._processClose));
-        
-        var splitPane = new EchoApp.SplitPane();
-        ExtrasRender.configureStyle(splitPane, richTextArea.getRenderProperty("controlPaneSplitPaneStyleName"), 
-                ExtrasRender.DEFAULT_CONTROL_PANE_SPLIT_PANE_STYLE);
-        this.add(splitPane);
-        
-        var controlsRow = new EchoApp.Row();
-        ExtrasRender.configureStyle(controlsRow, richTextArea.getRenderProperty("controlPaneRowStyleName"), 
-                ExtrasRender.DEFAULT_CONTROL_PANE_ROW_STYLE);
-        splitPane.add(controlsRow);
-        
-        var okButton = new EchoApp.Button({
-            text: richTextArea.peer._rb.get("Generic.Ok"),
-            icon: richTextArea.peer._icons.ok
-        });
-    
-        okButton.addListener("action", new EchoCore.MethodRef(this, this._processClose));
-        ExtrasRender.configureStyle(okButton, richTextArea.getRenderProperty("controlPaneButtonStyleName"), 
-                ExtrasRender.DEFAULT_CONTROL_PANE_BUTTON_STYLE);
-        controlsRow.add(okButton);
-        
-        splitPane.add(new EchoApp.Label({
-            text: message,
-            layoutData: new EchoApp.LayoutData({
-                insets: new EchoApp.Insets(30)
-            })
-        }));
     },
     
     _processClose: function(e) {
