@@ -397,7 +397,7 @@ ExtrasRender.ComponentSync.AccordionPane.Rotation = EchoCore.extend({
          * 
          * @type {Object}
          */
-        idToRotation: {},
+        _idToRotation: {},
 
         /**
          * Static method invoked by window.setTimeout which invokes appropriate Rotation instance method.
