@@ -78,13 +78,18 @@ ExtrasApp.MenuBarPane = EchoCore.extend(EchoApp.Component, {
  */
 ExtrasApp.MenuModel = EchoCore.extend({
     
-    initialize: function(modelId, text, icon) {
+    initialize: function(modelId, text, icon, items) {
         this.modelId = modelId;
         this.id = ExtrasApp.uniqueId++;
         this.parent = null;
         this.text = text;
         this.icon = icon;
-        this.items = new Array();
+        if (items) {
+            for (var i = 0; i < items.length; ++i) {
+                items[i].parent = this;
+            }
+        }
+        this.items = items ? items : [];
     },
     
     /**

@@ -104,7 +104,7 @@ ExtrasRender.ComponentSync.RichTextArea = EchoCore.extend(EchoArc.ComponentSync,
                             layoutData: new EchoApp.LayoutData({
                                 overflow: EchoApp.SplitPane.OVERFLOW_HIDDEN
                             }),
-                            model: this._createMainMenuModel(),
+                            model: this._createMainMenuBarModel(),
                             events: {
                                 action: new EchoCore.MethodRef(this, this._processMenuAction)
                             }
@@ -205,80 +205,66 @@ ExtrasRender.ComponentSync.RichTextArea = EchoCore.extend(EchoArc.ComponentSync,
         return contentPane;
     },
     
-    _createMainMenuModel: function() {
-        var bar = new ExtrasApp.MenuModel();
-        var editMenu = new ExtrasApp.MenuModel(null, this._rb.get("Menu.Edit"), null);
-        editMenu.addItem(new ExtrasApp.OptionModel("/undo", this._rb.get("Menu.Undo"), this._icons.undo));
-        editMenu.addItem(new ExtrasApp.OptionModel("/redo", this._rb.get("Menu.Redo"), this._icons.redo));
-        editMenu.addItem(new ExtrasApp.SeparatorModel());
-        editMenu.addItem(new ExtrasApp.OptionModel("cut", this._rb.get("Menu.Cut"), this._icons.cut));
-        editMenu.addItem(new ExtrasApp.OptionModel("copy", this._rb.get("Menu.Copy"), this._icons.copy));
-        editMenu.addItem(new ExtrasApp.OptionModel("paste", this._rb.get("Menu.Paste"), this._icons.paste));
-        editMenu.addItem(new ExtrasApp.OptionModel("delete", this._rb.get("Menu.Delete"), this._icons["delete"]));
-        editMenu.addItem(new ExtrasApp.SeparatorModel());
-        editMenu.addItem(new ExtrasApp.OptionModel("/selectall", this._rb.get("Menu.SelectAll"), this._icons.selectAll));
-        bar.addItem(editMenu);
-        
-        var insertMenu = new ExtrasApp.MenuModel(null, this._rb.get("Menu.Insert"), null);
-        insertMenu.addItem(new ExtrasApp.OptionModel("/insertunorderedlist", this._rb.get("Menu.BulletedList"), 
-                this._icons.bulletedList));
-        insertMenu.addItem(new ExtrasApp.OptionModel("/insertorderedlist", this._rb.get("Menu.NumberedList"), 
-                this._icons.numberedList));
-        insertMenu.addItem(new ExtrasApp.SeparatorModel());
-        insertMenu.addItem(new ExtrasApp.OptionModel("/inserthorizontalrule", this._rb.get("Menu.InsertHorizontalRule"), 
-                this._icons.horizontalRule));
-        insertMenu.addItem(new ExtrasApp.OptionModel("insertimage", this._rb.get("Menu.InsertImage"), this._icons.image));
-        insertMenu.addItem(new ExtrasApp.OptionModel("inserthyperlink", this._rb.get("Menu.InsertHyperlink"), 
-                this._icons.hyperlink));
-        insertMenu.addItem(new ExtrasApp.SeparatorModel());
-        insertMenu.addItem(new ExtrasApp.OptionModel("inserttable", this._rb.get("Menu.InsertTable"), this._icons.table));
-        bar.addItem(insertMenu);
-    
-        var formatMenu = new ExtrasApp.MenuModel(null,  this._rb.get("Menu.Format"), null);
-        var formatTextMenu = new ExtrasApp.MenuModel(null,  this._rb.get("Menu.TextStyle"), null);
-        formatTextMenu.addItem(new ExtrasApp.OptionModel("/removeformat",  this._rb.get("Menu.PlainText"), null));
-        formatTextMenu.addItem(new ExtrasApp.SeparatorModel());
-        formatTextMenu.addItem(new ExtrasApp.OptionModel("/bold",  this._rb.get("Menu.Bold"), this._icons.bold));
-        formatTextMenu.addItem(new ExtrasApp.OptionModel("/italic",  this._rb.get("Menu.Italic"), this._icons.italic));
-        formatTextMenu.addItem(new ExtrasApp.OptionModel("/underline",  this._rb.get("Menu.Underline"), this._icons.underline));
-        formatTextMenu.addItem(new ExtrasApp.OptionModel("/strikethrough",  this._rb.get("Menu.Strikethrough"), 
-                this._icons.strikethrough));
-        formatTextMenu.addItem(new ExtrasApp.SeparatorModel());
-        formatTextMenu.addItem(new ExtrasApp.OptionModel("/superscript", 
-                this._rb.get("Menu.Superscript"), this._icons.superscript));
-        formatTextMenu.addItem(new ExtrasApp.OptionModel("/subscript", 
-                this._rb.get("Menu.Subscript"), this._icons.subscript));
-        formatMenu.addItem(formatTextMenu);
-        formatParagraphMenu = new ExtrasApp.MenuModel(null, this._rb.get("Menu.ParagraphStyle"), null);
-        formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<p>", this._rb.get("Menu.ParagraphStyle"), null));
-        formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<pre>", this._rb.get("Menu.Preformatted"), null));
-        formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<h1>", this._rb.get("Menu.Heading1"), null));
-        formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<h2>", this._rb.get("Menu.Heading2"), null));
-        formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<h3>", this._rb.get("Menu.Heading3"), null));
-        formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<h4>", this._rb.get("Menu.Heading4"), null));
-        formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<h5>", this._rb.get("Menu.Heading5"), null));
-        formatParagraphMenu.addItem(new ExtrasApp.OptionModel("/formatblock/<h6>", this._rb.get("Menu.Heading6"), null));
-        formatMenu.addItem(formatParagraphMenu);
-        formatAlignmentMenu = new ExtrasApp.MenuModel(null,  this._rb.get("Menu.Alignment"), null);
-        formatAlignmentMenu.addItem(new ExtrasApp.OptionModel("/justifyleft",  this._rb.get("Menu.Left"), 
-                this._icons.alignmentLeft));
-        formatAlignmentMenu.addItem(new ExtrasApp.OptionModel("/justifycenter",  this._rb.get("Menu.Center"), 
-                this._icons.alignmentCenter));
-        formatAlignmentMenu.addItem(new ExtrasApp.OptionModel("/justifyright",  this._rb.get("Menu.Right"), 
-                this._icons.alignmentRight));
-        formatAlignmentMenu.addItem(new ExtrasApp.OptionModel("/justifyfull",  this._rb.get("Menu.Justified"), 
-                this._icons.alignmentJustify));
-        formatMenu.addItem(formatAlignmentMenu);
-        formatMenu.addItem(new ExtrasApp.SeparatorModel());
-        formatMenu.addItem(new ExtrasApp.OptionModel("/indent",  this._rb.get("Menu.Indent"), this._icons.indent));
-        formatMenu.addItem(new ExtrasApp.OptionModel("/outdent",  this._rb.get("Menu.Outdent"), this._icons.outdent));
-        formatMenu.addItem(new ExtrasApp.SeparatorModel());
-        formatMenu.addItem(new ExtrasApp.OptionModel("foreground",  this._rb.get("Menu.SetForeground"), this._icons.foreground));
-        formatMenu.addItem(new ExtrasApp.OptionModel("background",  this._rb.get("Menu.SetBackground"), this._icons.background));
-        
-        bar.addItem(formatMenu);
-        
-        return bar;
+    _createMainMenuBarModel: function() {
+        return new ExtrasApp.MenuModel(null, null, null, [
+            new ExtrasApp.MenuModel(null, this._rb.get("Menu.Edit"), null, [
+                new ExtrasApp.OptionModel("/undo", this._rb.get("Menu.Undo"), this._icons.undo),
+                new ExtrasApp.OptionModel("/redo", this._rb.get("Menu.Redo"), this._icons.redo),
+                new ExtrasApp.SeparatorModel(),
+                new ExtrasApp.OptionModel("cut", this._rb.get("Menu.Cut"), this._icons.cut),
+                new ExtrasApp.OptionModel("copy", this._rb.get("Menu.Copy"), this._icons.copy),
+                new ExtrasApp.OptionModel("paste", this._rb.get("Menu.Paste"), this._icons.paste),
+                new ExtrasApp.OptionModel("delete", this._rb.get("Menu.Delete"), this._icons["delete"]),
+                new ExtrasApp.SeparatorModel(),
+                new ExtrasApp.OptionModel("/selectall", this._rb.get("Menu.SelectAll"), this._icons.selectAll)
+            ]),
+            new ExtrasApp.MenuModel(null, this._rb.get("Menu.Insert"), null, [
+                new ExtrasApp.OptionModel("/insertunorderedlist", this._rb.get("Menu.BulletedList"), this._icons.bulletedList),
+                new ExtrasApp.OptionModel("/insertorderedlist", this._rb.get("Menu.NumberedList"), this._icons.numberedList),
+                new ExtrasApp.SeparatorModel(),
+                new ExtrasApp.OptionModel("/inserthorizontalrule", this._rb.get("Menu.InsertHorizontalRule"),
+                        this._icons.horizontalRule),
+                new ExtrasApp.OptionModel("insertimage", this._rb.get("Menu.InsertImage"), this._icons.image),
+                new ExtrasApp.OptionModel("inserthyperlink", this._rb.get("Menu.InsertHyperlink"), this._icons.hyperlink),
+                new ExtrasApp.SeparatorModel(),
+                new ExtrasApp.OptionModel("inserttable", this._rb.get("Menu.InsertTable"), this._icons.table)
+            ]),
+            new ExtrasApp.MenuModel(null, this._rb.get("Menu.Format"), null, [
+                new ExtrasApp.MenuModel(null, this._rb.get("Menu.TextStyle"), null, [
+                    new ExtrasApp.OptionModel("/removeformat",  this._rb.get("Menu.PlainText"), null),
+                    new ExtrasApp.SeparatorModel(),
+                    new ExtrasApp.OptionModel("/bold",  this._rb.get("Menu.Bold"), this._icons.bold),
+                    new ExtrasApp.OptionModel("/italic",  this._rb.get("Menu.Italic"), this._icons.italic),
+                    new ExtrasApp.OptionModel("/underline",  this._rb.get("Menu.Underline"), this._icons.underline),
+                    new ExtrasApp.OptionModel("/strikethrough",  this._rb.get("Menu.Strikethrough"), this._icons.strikethrough),
+                    new ExtrasApp.SeparatorModel(),
+                    new ExtrasApp.OptionModel("/superscript", this._rb.get("Menu.Superscript"), this._icons.superscript),
+                    new ExtrasApp.OptionModel("/subscript", this._rb.get("Menu.Subscript"), this._icons.subscript)
+                ]),
+                new ExtrasApp.MenuModel(null, this._rb.get("Menu.Format"), null, [
+                    new ExtrasApp.OptionModel("/formatblock/<p>", this._rb.get("Menu.ParagraphStyle"), null),
+                    new ExtrasApp.OptionModel("/formatblock/<pre>", this._rb.get("Menu.Preformatted"), null),
+                    new ExtrasApp.OptionModel("/formatblock/<h1>", this._rb.get("Menu.Heading1"), null),
+                    new ExtrasApp.OptionModel("/formatblock/<h2>", this._rb.get("Menu.Heading2"), null),
+                    new ExtrasApp.OptionModel("/formatblock/<h3>", this._rb.get("Menu.Heading3"), null),
+                    new ExtrasApp.OptionModel("/formatblock/<h4>", this._rb.get("Menu.Heading4"), null),
+                    new ExtrasApp.OptionModel("/formatblock/<h5>", this._rb.get("Menu.Heading5"), null),
+                    new ExtrasApp.OptionModel("/formatblock/<h6>", this._rb.get("Menu.Heading6"), null)
+                ]),
+                new ExtrasApp.MenuModel(null, this._rb.get("Menu.Alignment"), null, [
+                    new ExtrasApp.OptionModel("/justifyleft",  this._rb.get("Menu.Left"), this._icons.alignmentLeft),
+                    new ExtrasApp.OptionModel("/justifycenter",  this._rb.get("Menu.Center"), this._icons.alignmentCenter),
+                    new ExtrasApp.OptionModel("/justifyright",  this._rb.get("Menu.Right"), this._icons.alignmentRight),
+                    new ExtrasApp.OptionModel("/justifyfull",  this._rb.get("Menu.Justified"), this._icons.alignmentJustify)
+                ]),
+                new ExtrasApp.SeparatorModel(),
+                new ExtrasApp.OptionModel("/indent",  this._rb.get("Menu.Indent"), this._icons.indent),
+                new ExtrasApp.OptionModel("/outdent",  this._rb.get("Menu.Outdent"), this._icons.outdent),
+                new ExtrasApp.SeparatorModel(),
+                new ExtrasApp.OptionModel("foreground",  this._rb.get("Menu.SetForeground"), this._icons.foreground),
+                new ExtrasApp.OptionModel("background",  this._rb.get("Menu.SetBackground"), this._icons.background)
+            ])
+        ]);
     },
     
     _createToolbarButton: function(text, icon, toolTipText, 
