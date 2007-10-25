@@ -2,7 +2,7 @@
  * @class 
  * ContextMenu component.
  */
-ExtrasApp.ContextMenu = EchoCore.derive(EchoApp.Component, {
+ExtrasApp.ContextMenu = EchoCore.extend(EchoApp.Component, {
 
     componentType: "ExtrasApp.ContextMenu",
     
@@ -25,7 +25,7 @@ ExtrasApp.ContextMenu = EchoCore.derive(EchoApp.Component, {
  * @class
  * DropDownMenu component.
  */
-ExtrasApp.DropDownMenu = EchoCore.derive(EchoApp.Component, {
+ExtrasApp.DropDownMenu = EchoCore.extend(EchoApp.Component, {
 
     componentType: "ExtrasApp.DropDownMenu",
 
@@ -194,8 +194,6 @@ ExtrasApp.RadioOptionModel = EchoCore.extend(ExtrasApp.ToggleOptionModel, {
         ExtrasApp.ToggleOptionModel.prototype.initialize.call(this, modelId, text, selected)
     }
 });
-
-ExtrasApp.RadioOptionModel.prototype = EchoCore.derive(ExtrasApp.ToggleOptionModel);
 
 /**
  * A representation of a menu separator.

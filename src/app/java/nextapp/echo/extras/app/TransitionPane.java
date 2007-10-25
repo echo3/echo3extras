@@ -119,7 +119,7 @@ implements Pane, PaneContainer {
     public static final int DEFAULT_DURATION = 350;
     
     /**
-     * Returns the transition duration, in milleseconds.
+     * Returns the transition duration, in milliseconds.
      * 
      * @return the transition duration
      */
@@ -160,7 +160,7 @@ implements Pane, PaneContainer {
     }
 
     /**
-     * Sets the transition duration, in milleseconds.
+     * Sets the transition duration, in milliseconds.
      * 
      * @param newValue the new transition duration
      */

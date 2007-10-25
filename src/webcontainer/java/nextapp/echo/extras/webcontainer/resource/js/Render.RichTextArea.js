@@ -267,8 +267,7 @@ ExtrasRender.ComponentSync.RichTextArea = EchoCore.extend(EchoArc.ComponentSync,
         ]);
     },
     
-    _createToolbarButton: function(text, icon, toolTipText, 
-            eventMethod, actionCommand) {
+    _createToolbarButton: function(text, icon, toolTipText, eventMethod, actionCommand) {
         var button = new EchoApp.Button({
             actionCommand: actionCommand,
             styleName: this.component.getRenderProperty("toolbarButtonStyleName"),
@@ -442,86 +441,14 @@ ExtrasRender.ComponentSync.RichTextArea = EchoCore.extend(EchoArc.ComponentSync,
     }
 });
 
-ExtrasRender.ComponentSync.RichTextArea.ColorDialog = EchoCore.extend(EchoApp.WindowPane, {
+ExtrasRender.ComponentSync.RichTextArea.AbstractDialog = EchoCore.extend(EchoApp.WindowPane, {
 
-    initialize: function(richTextArea, setBackground) {
-        var controlPaneSplitPaneStyleName = richTextArea.getRenderProperty("controlPaneSplitPaneStyleName");
-        var controlPaneRowStyleName = richTextArea.getRenderProperty("controlPaneRowStyleName");
-        var controlPaneButtonStyleName = richTextArea.getRenderProperty("controlPaneButtonStyleName"); 
-        
-        EchoApp.WindowPane.prototype.initialize.call(this, {
-            styleName: richTextArea.getRenderProperty("windowPaneStyleName"),
-            title: richTextArea.peer._rb.get(setBackground 
-                    ? "ColorDialog.Title.Background" : "ColorDialog.Title.Foreground"),
-            icon: setBackground ? richTextArea.peer._icons.background : richTextArea.peer._icons.foreground,
-            iconInsets: new EchoApp.Insets(6, 10),
-            width: new EchoApp.Extent(280),
-            height: new EchoApp.Extent(320),
-            resizable: false,
-            events: {
-                close: new EchoCore.MethodRef(this, this._processCancel)
-            },
-            children: [
-                new EchoApp.SplitPane({
-                    styleName: controlPaneSplitPaneStyleName,
-                    style: controlPaneSplitPaneStyleName ? null : ExtrasRender.DEFAULT_CONTROL_PANE_SPLIT_PANE_STYLE,
-                    children: [
-                        new EchoApp.Row({
-                            styleName: controlPaneRowStyleName,
-                            style: controlPaneRowStyleName ? null : ExtrasRender.DEFAULT_CONTROL_PANE_ROW_STYLE,
-                            children: [
-                                new EchoApp.Button({
-                                    styleName: controlPaneButtonStyleName,
-                                    style: controlPaneButtonStyleName ? null : DEFAULT_CONTROL_PANE_BUTTON_STYLE,
-                                    text: richTextArea.peer._rb.get("Generic.Ok"),
-                                    icon: richTextArea.peer._icons.ok,
-                                    events: {
-                                        action: new EchoCore.MethodRef(this, this._processOk)
-                                    }
-                                }),
-                                new EchoApp.Button({
-                                    styleName: controlPaneButtonStyleName,
-                                    style: controlPaneButtonStyleName ? null : DEFAULT_CONTROL_PANE_BUTTON_STYLE,
-                                    text: richTextArea.peer._rb.get("Generic.Cancel"),
-                                    icon: richTextArea.peer._icons.cancel,
-                                    events: {
-                                        action: new EchoCore.MethodRef(this, this._processCancel)
-                                    }
-                                })
-                            ]
-                        }),
-                        new EchoApp.Column({
-                            insets: new EchoApp.Insets(10),
-                            children: [
-                                new EchoApp.Label({
-                                    text: richTextArea.peer._rb.get(
-                                            setBackground ? "ColorDialog.PromptBackground" : "ColorDialog.PromptForeground")
-                                }),
-                                this._colorSelect = new ExtrasApp.ColorSelect({
-                                    displayValue: true
-                                })
-                            ]
-                        })
-                    ]
-                })
-            ]
-        });
+    global: {
+        TYPE_OK: 0,
+        TYPE_OK_CANCEL: 1,
     },
-    
-    _processCancel: function(e) {
-        this.parent.remove(this);
-    },
-    
-    _processOk: function(e) {
-        var color = this._colorSelect.getProperty("color");
-        this.parent.remove(this);
-        this.fireEvent(new EchoCore.Event("colorSelect", this, color));
-    }
-});
 
-ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog = EchoCore.extend(EchoApp.WindowPane, {
-
-    initialize: function(richTextArea) {
+    initialize: function(richTextArea, type, properties, content) {
         this._richTextArea = richTextArea;
     
         var controlPaneSplitPaneStyleName = richTextArea.getRenderProperty("controlPaneSplitPaneStyleName");
@@ -530,8 +457,6 @@ ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog = EchoCore.extend(EchoAp
         
         EchoApp.WindowPane.prototype.initialize.call(this, {
             styleName: richTextArea.getRenderProperty("windowPaneStyleName"),
-            title: richTextArea.peer._rb.get("HyperlinkDialog.Title"),
-            icon: richTextArea.peer._icons.hyperlink,
             iconInsets: new EchoApp.Insets(6, 10),
             width: new EchoApp.Extent(280),
             height: new EchoApp.Extent(200),
@@ -544,55 +469,114 @@ ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog = EchoCore.extend(EchoAp
                     styleName: controlPaneSplitPaneStyleName,
                     style: controlPaneSplitPaneStyleName ? null : ExtrasRender.DEFAULT_CONTROL_PANE_SPLIT_PANE_STYLE,
                     children: [
-                        new EchoApp.Row({
+                        this.controlsRow = new EchoApp.Row({
                             styleName: controlPaneRowStyleName,
-                            style: controlPaneRowStyleName ? null : ExtrasRender.DEFAULT_CONTROL_PANE_ROW_STYLE,
-                            children: [
-                                new EchoApp.Button({
-                                    styleName: controlPaneButtonStyleName,
-                                    style: controlPaneButtonStyleName ? null : DEFAULT_CONTROL_PANE_BUTTON_STYLE,
-                                    text: richTextArea.peer._rb.get("Generic.Ok"),
-                                    icon: richTextArea.peer._icons.ok,
-                                    events: {
-                                        action: new EchoCore.MethodRef(this, this._processOk)
-                                    }
-                                }),
-                                new EchoApp.Button({
-                                    styleName: controlPaneButtonStyleName,
-                                    style: controlPaneButtonStyleName ? null : DEFAULT_CONTROL_PANE_BUTTON_STYLE,
-                                    text: richTextArea.peer._rb.get("Generic.Cancel"),
-                                    icon: richTextArea.peer._icons.cancel,
-                                    events: {
-                                        action: new EchoCore.MethodRef(this, this._processCancel)
-                                    }
-                                })
-                            ]
+                            style: controlPaneRowStyleName ? null : ExtrasRender.DEFAULT_CONTROL_PANE_ROW_STYLE
                         }),
-                        new EchoApp.Column({
-                            insets: new EchoApp.Insets(10),
-                            children: [
-                                new EchoApp.Label({
-                                    text: richTextArea.peer._rb.get("HyperlinkDialog.PromptURL")
-                                }),
-                                this._urlField = new EchoApp.TextField({
-                                    width: new EchoApp.Extent("100%")
-                                }),
-                                new EchoApp.Label({
-                                    text: richTextArea.peer._rb.get("HyperlinkDialog.PromptDescription")
-                                }),
-                                this._descriptionField = new EchoApp.TextField({
-                                    width: new EchoApp.Extent("100%")
-                                })
-                            ]
-                        })
+                        content,
                     ]
                 })
             ]
         });
+        
+        this.controlsRow.add(new EchoApp.Button({
+            styleName: controlPaneButtonStyleName,
+            style: controlPaneButtonStyleName ? null : DEFAULT_CONTROL_PANE_BUTTON_STYLE,
+            text: richTextArea.peer._rb.get("Generic.Ok"),
+            icon: richTextArea.peer._icons.ok,
+            events: {
+                action: new EchoCore.MethodRef(this, this._processOk)
+            }
+        }));
+        
+        if (type == ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL) {
+            this.controlsRow.add(new EchoApp.Button({
+                styleName: controlPaneButtonStyleName,
+                style: controlPaneButtonStyleName ? null : DEFAULT_CONTROL_PANE_BUTTON_STYLE,
+                text: richTextArea.peer._rb.get("Generic.Cancel"),
+                icon: richTextArea.peer._icons.cancel,
+                events: {
+                    action: new EchoCore.MethodRef(this, this._processCancel)
+                }
+            }));
+        }
+        
+        for (var x in properties) {
+            this.setProperty(x, properties[x]);
+        }
     },
     
     _processCancel: function(e) {
         this.parent.remove(this);
+    },
+    
+    _processOk: function(e) {
+        this.parent.remove(this);
+    }
+});
+
+ExtrasRender.ComponentSync.RichTextArea.ColorDialog = EchoCore.extend(
+        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog, {
+
+    initialize: function(richTextArea, setBackground) {
+        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.prototype.initialize.call(this, richTextArea,
+                ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL, 
+                {
+                    title: richTextArea.peer._rb.get(setBackground ? 
+                            "ColorDialog.Title.Background" : "ColorDialog.Title.Foreground"),
+                    icon: setBackground ? richTextArea.peer._icons.background : richTextArea.peer._icons.foreground,
+                    width: new EchoApp.Extent(280),
+                    height: new EchoApp.Extent(320)
+                },
+                new EchoApp.Column({
+                    insets: new EchoApp.Insets(10),
+                    children: [
+                        new EchoApp.Label({
+                            text: richTextArea.peer._rb.get(
+                                    setBackground ? "ColorDialog.PromptBackground" : "ColorDialog.PromptForeground")
+                        }),
+                        this._colorSelect = new ExtrasApp.ColorSelect({
+                            displayValue: true
+                        })
+                    ]
+                }));
+    },
+    
+    _processOk: function(e) {
+        var color = this._colorSelect.getProperty("color");
+        this.parent.remove(this);
+        this.fireEvent(new EchoCore.Event("colorSelect", this, color));
+    }
+});
+
+ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog = EchoCore.extend(
+        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog, {
+
+    initialize: function(richTextArea) {
+        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.prototype.initialize.call(this, richTextArea,
+                ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL,
+                {
+                    title: richTextArea.peer._rb.get("HyperlinkDialog.Title"), 
+                    icon: richTextArea.peer._icons.hyperlink
+                },
+                new EchoApp.Column({
+                    insets: new EchoApp.Insets(10),
+                    children: [
+                        new EchoApp.Label({
+                            text: richTextArea.peer._rb.get("HyperlinkDialog.PromptURL")
+                        }),
+                        this._urlField = new EchoApp.TextField({
+                            width: new EchoApp.Extent("100%")
+                        }),
+                        new EchoApp.Label({
+                            text: richTextArea.peer._rb.get("HyperlinkDialog.PromptDescription")
+                        }),
+                        this._descriptionField = new EchoApp.TextField({
+                            width: new EchoApp.Extent("100%")
+                        })
+                    ]
+                }));
+
     },
     
     _processOk: function(e) {
@@ -611,74 +595,27 @@ ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog = EchoCore.extend(EchoAp
     }
 });
 
-ExtrasRender.ComponentSync.RichTextArea.ImageDialog = EchoCore.extend(EchoApp.WindowPane, {
+ExtrasRender.ComponentSync.RichTextArea.ImageDialog = EchoCore.extend(
+        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog, {
 
     initialize: function(richTextArea) {
-        this._richTextArea = richTextArea;
-    
-        var controlPaneSplitPaneStyleName = richTextArea.getRenderProperty("controlPaneSplitPaneStyleName");
-        var controlPaneRowStyleName = richTextArea.getRenderProperty("controlPaneRowStyleName");
-        var controlPaneButtonStyleName = richTextArea.getRenderProperty("controlPaneButtonStyleName"); 
-        
-        EchoApp.WindowPane.prototype.initialize.call(this, {
-            styleName: richTextArea.getRenderProperty("windowPaneStyleName"),
-            title: richTextArea.peer._rb.get("ImageDialog.Title"),
-            icon: richTextArea.peer._icons.image,
-            iconInsets: new EchoApp.Insets(6, 10),
-            width: new EchoApp.Extent(280),
-            height: new EchoApp.Extent(200),
-            resizable: false,
-            events: {
-                close: new EchoCore.MethodRef(this, this._processCancel)
-            },
-            children: [
-                new EchoApp.SplitPane({
-                    styleName: controlPaneSplitPaneStyleName,
-                    style: controlPaneSplitPaneStyleName ? null : ExtrasRender.DEFAULT_CONTROL_PANE_SPLIT_PANE_STYLE,
+        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.prototype.initialize.call(this, richTextArea,
+                ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL,
+                {
+                    title: richTextArea.peer._rb.get("ImageDialog.Title"), 
+                    image: richTextArea.peer._icons.image
+                },
+                new EchoApp.Column({
+                    insets: new EchoApp.Insets(10),
                     children: [
-                        new EchoApp.Row({
-                            styleName: controlPaneRowStyleName,
-                            style: controlPaneRowStyleName ? null : ExtrasRender.DEFAULT_CONTROL_PANE_ROW_STYLE,
-                            children: [
-                                new EchoApp.Button({
-                                    styleName: controlPaneButtonStyleName,
-                                    style: controlPaneButtonStyleName ? null : DEFAULT_CONTROL_PANE_BUTTON_STYLE,
-                                    text: richTextArea.peer._rb.get("Generic.Ok"),
-                                    icon: richTextArea.peer._icons.ok,
-                                    events: {
-                                        action: new EchoCore.MethodRef(this, this._processOk)
-                                    }
-                                }),
-                                new EchoApp.Button({
-                                    styleName: controlPaneButtonStyleName,
-                                    style: controlPaneButtonStyleName ? null : DEFAULT_CONTROL_PANE_BUTTON_STYLE,
-                                    text: richTextArea.peer._rb.get("Generic.Cancel"),
-                                    icon: richTextArea.peer._icons.cancel,
-                                    events: {
-                                        action: new EchoCore.MethodRef(this, this._processCancel)
-                                    }
-                                })
-                            ]
+                        new EchoApp.Label({
+                            text: richTextArea.peer._rb.get("ImageDialog.PromptURL")
                         }),
-                        new EchoApp.Column({
-                            insets: new EchoApp.Insets(10),
-                            children: [
-                                new EchoApp.Label({
-                                    text: richTextArea.peer._rb.get("ImageDialog.PromptURL")
-                                }),
-                                this._urlField = new EchoApp.TextField({
-                                    width: new EchoApp.Extent("100%")
-                                })
-                            ]
+                        this._urlField = new EchoApp.TextField({
+                            width: new EchoApp.Extent("100%")
                         })
                     ]
-                })
-            ]
-        });
-    },
-
-    _processCancel: function(e) {
-        this.parent.remove(this);
+                }));
     },
     
     _processOk: function(e) {
@@ -816,142 +753,59 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer = EchoCore.extend(EchoRender.C
     }
 });
 
-ExtrasRender.ComponentSync.RichTextArea.MessageDialog = EchoCore.extend(EchoApp.WindowPane, {
+ExtrasRender.ComponentSync.RichTextArea.MessageDialog = EchoCore.extend(
+        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog, {
     
     initialize: function(richTextArea, title, message) {
-
-        var controlPaneSplitPaneStyleName = richTextArea.getRenderProperty("controlPaneSplitPaneStyleName");
-        var controlPaneRowStyleName = richTextArea.getRenderProperty("controlPaneRowStyleName");
-        var controlPaneButtonStyleName = richTextArea.getRenderProperty("controlPaneButtonStyleName"); 
-
-        EchoApp.WindowPane.prototype.initialize.call(this, {
-            styleName: richTextArea.getRenderProperty("windowPaneStyleName"),
-            title: title,
-            width: new EchoApp.Extent(480),
-            height: new EchoApp.Extent(250),
-            resizable: false,
-            events: {
-                close: new EchoCore.MethodRef(this, this._processClose)
-            },
-            children: [
-                new EchoApp.SplitPane({
-                    styleName: controlPaneSplitPaneStyleName,
-                    style: controlPaneSplitPaneStyleName ? null : ExtrasRender.DEFAULT_CONTROL_PANE_SPLIT_PANE_STYLE,
-                    children: [
-                        new EchoApp.Row({
-                            styleName: controlPaneRowStyleName,
-                            style: controlPaneRowStyleName ? null : ExtrasRender.DEFAULT_CONTROL_PANE_ROW_STYLE,
-                            children: [
-                                new EchoApp.Button({
-                                    styleName: controlPaneButtonStyleName,
-                                    style: controlPaneButtonStyleName ? null : DEFAULT_CONTROL_PANE_BUTTON_STYLE,
-                                    text: richTextArea.peer._rb.get("Generic.Ok"),
-                                    icon: richTextArea.peer._icons.ok,
-                                    events: {
-                                        action: new EchoCore.MethodRef(this, this._processClose)
-                                    }
-                                })
-                            ]
-                        }),
-                        new EchoApp.Label({
-                            text: message,
-                            layoutData: new EchoApp.LayoutData({
-                                insets: new EchoApp.Insets(30)
-                            })
-                        })
-                    ]
-                })
-            ]
-        });
-    },
-    
-    _processClose: function(e) {
-        this.parent.remove(this);
+        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.prototype.initialize.call(this, richTextArea,
+                ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.TYPE_OK,
+                {
+                    title: title,
+                },
+                new EchoApp.Label({
+                    text: message,
+                    layoutData: new EchoApp.LayoutData({
+                        insets: new EchoApp.Insets(30)
+                    })
+                }));
     }
 });
 
-ExtrasRender.ComponentSync.RichTextArea.TableDialog = EchoCore.extend(EchoApp.WindowPane, {
+ExtrasRender.ComponentSync.RichTextArea.TableDialog = EchoCore.extend(
+        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog, {
 
     initialize: function(richTextArea) {
-        this._richTextArea = richTextArea;
-    
-        var controlPaneSplitPaneStyleName = richTextArea.getRenderProperty("controlPaneSplitPaneStyleName");
-        var controlPaneRowStyleName = richTextArea.getRenderProperty("controlPaneRowStyleName");
-        var controlPaneButtonStyleName = richTextArea.getRenderProperty("controlPaneButtonStyleName"); 
-        
-        EchoApp.WindowPane.prototype.initialize.call(this, {
-            styleName: richTextArea.getRenderProperty("windowPaneStyleName"),
-            title: richTextArea.peer._rb.get("TableDialog.Title"),
-            icon: richTextArea.peer._icons.table,
-            iconInsets: new EchoApp.Insets(6, 10),
-            width: new EchoApp.Extent(280),
-            height: new EchoApp.Extent(200),
-            resizable: false,
-            events: {
-                close: new EchoCore.MethodRef(this, this._processCancel)
-            },
-            children: [
-                new EchoApp.SplitPane({
-                    styleName: controlPaneSplitPaneStyleName,
-                    style: controlPaneSplitPaneStyleName ? null : ExtrasRender.DEFAULT_CONTROL_PANE_SPLIT_PANE_STYLE,
+        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.prototype.initialize.call(this, richTextArea,
+                ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL,
+                {
+                    title: richTextArea.peer._rb.get("TableDialog.Title"), 
+                    icon: richTextArea.peer._icons.table
+                },
+                new EchoApp.Grid({
+                    insets: new EchoApp.Insets(10),
                     children: [
-                        new EchoApp.Row({
-                            styleName: controlPaneRowStyleName,
-                            style: controlPaneRowStyleName ? null : ExtrasRender.DEFAULT_CONTROL_PANE_ROW_STYLE,
-                            children: [
-                                new EchoApp.Button({
-                                    styleName: controlPaneButtonStyleName,
-                                    style: controlPaneButtonStyleName ? null : DEFAULT_CONTROL_PANE_BUTTON_STYLE,
-                                    text: richTextArea.peer._rb.get("Generic.Ok"),
-                                    icon: richTextArea.peer._icons.ok,
-                                    events: {
-                                        action: new EchoCore.MethodRef(this, this._processOk)
-                                    }
-                                }),
-                                new EchoApp.Button({
-                                    styleName: controlPaneButtonStyleName,
-                                    style: controlPaneButtonStyleName ? null : DEFAULT_CONTROL_PANE_BUTTON_STYLE,
-                                    text: richTextArea.peer._rb.get("Generic.Cancel"),
-                                    icon: richTextArea.peer._icons.cancel,
-                                    events: {
-                                        action: new EchoCore.MethodRef(this, this._processCancel)
-                                    }
-                                })
-                            ]
+                        new EchoApp.Label({
+                            text: richTextArea.peer._rb.get("TableDialog.PromptRows"),
+                            layoutData: new EchoApp.LayoutData({
+                                alignment: new EchoApp.Alignment(EchoApp.Alignment.TRAILING)
+                            })
                         }),
-                        new EchoApp.Grid({
-                            insets: new EchoApp.Insets(10),
-                            children: [
-                                new EchoApp.Label({
-                                    text: richTextArea.peer._rb.get("TableDialog.PromptRows"),
-                                    layoutData: new EchoApp.LayoutData({
-                                        alignment: new EchoApp.Alignment(EchoApp.Alignment.TRAILING)
-                                    })
-                                }),
-                                this._rowsField = new EchoApp.TextField({
-                                    text: "2",
-                                    width: new EchoApp.Extent("100px")   
-                                }),
-                                new EchoApp.Label({
-                                    text: richTextArea.peer._rb.get("TableDialog.PromptColumns"),
-                                    layoutData: new EchoApp.LayoutData({
-                                        alignment: new EchoApp.Alignment(EchoApp.Alignment.TRAILING)
-                                    })
-                                }),
-                                this._columnsField = new EchoApp.TextField({
-                                    text: "3",
-                                    width: new EchoApp.Extent("100px")
-                                })
-                            ]
+                        this._rowsField = new EchoApp.TextField({
+                            text: "2",
+                            width: new EchoApp.Extent("100px")   
+                        }),
+                        new EchoApp.Label({
+                            text: richTextArea.peer._rb.get("TableDialog.PromptColumns"),
+                            layoutData: new EchoApp.LayoutData({
+                                alignment: new EchoApp.Alignment(EchoApp.Alignment.TRAILING)
+                            })
+                        }),
+                        this._columnsField = new EchoApp.TextField({
+                            text: "3",
+                            width: new EchoApp.Extent("100px")
                         })
                     ]
-                })
-            ]
-        });
-    },
-    
-    _processCancel: function(e) {
-        this.parent.remove(this);
+                }));
     },
     
     _processOk: function(e) {
