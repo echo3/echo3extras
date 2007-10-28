@@ -44,7 +44,7 @@ ExtrasRender.ComponentSync.ToolTipContainer = Core.extend(EchoRender.ComponentSy
     	this._divElement = null;
     	
     	if (this._applyDivElement) {
-    	    EchoWebCore.EventProcessor.removeAll(this._applyDivElement);
+    	    WebCore.EventProcessor.removeAll(this._applyDivElement);
     		this._applyDivElement.id = "";
     		this._applyDivElement = null;
     	}
@@ -71,12 +71,12 @@ ExtrasRender.ComponentSync.ToolTipContainer = Core.extend(EchoRender.ComponentSy
     	EchoRender.renderComponentAdd(update, applyToComponent, applyDivElement);
         
         if (this.component.getComponentCount() > 1) {
-    	    var mouseEnterLeaveSupport = EchoWebCore.Environment.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED;
+    	    var mouseEnterLeaveSupport = WebCore.Environment.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED;
     	    var enterEvent = mouseEnterLeaveSupport ? "mouseenter" : "mouseover";
     	    var exitEvent = mouseEnterLeaveSupport ? "mouseleave" : "mouseout";
-    	    EchoWebCore.EventProcessor.add(applyDivElement, enterEvent, new Core.MethodRef(this, this._processRolloverEnter), false);
-    		EchoWebCore.EventProcessor.add(applyDivElement, exitEvent, new Core.MethodRef(this, this._processRolloverExit), false);
-    		EchoWebCore.EventProcessor.add(applyDivElement, "mousemove", new Core.MethodRef(this, this._processMove), false);
+    	    WebCore.EventProcessor.add(applyDivElement, enterEvent, new Core.MethodRef(this, this._processRolloverEnter), false);
+    		WebCore.EventProcessor.add(applyDivElement, exitEvent, new Core.MethodRef(this, this._processRolloverExit), false);
+    		WebCore.EventProcessor.add(applyDivElement, "mousemove", new Core.MethodRef(this, this._processMove), false);
         }
         
         return applyDivElement;

@@ -155,19 +155,19 @@ ExtrasRender.ComponentSync.BorderPane = Core.extend(EchoRender.ComponentSync, {
     },
     
     renderDisplay: function() {
-        EchoWebCore.VirtualPosition.redraw(this._contentDivElement);
-        EchoWebCore.VirtualPosition.redraw(this._element);
+        WebCore.VirtualPosition.redraw(this._contentDivElement);
+        WebCore.VirtualPosition.redraw(this._element);
         if (this._borderTopElement) {
-            EchoWebCore.VirtualPosition.redraw(this._borderTopElement);
+            WebCore.VirtualPosition.redraw(this._borderTopElement);
         }
         if (this._borderLeftElement) {
-            EchoWebCore.VirtualPosition.redraw(this._borderLeftElement);
+            WebCore.VirtualPosition.redraw(this._borderLeftElement);
         }
         if (this._borderRightElement) {
-            EchoWebCore.VirtualPosition.redraw(this._borderRightElement);
+            WebCore.VirtualPosition.redraw(this._borderRightElement);
         }
         if (this._borderBottomElement) {
-            EchoWebCore.VirtualPosition.redraw(this._borderBottomElement);
+            WebCore.VirtualPosition.redraw(this._borderBottomElement);
         }
     },
     

@@ -849,24 +849,24 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         var clickRef = new Core.MethodRef(this, this._processClick);
         
         if (elements.expandoElement) {
-            EchoWebCore.EventProcessor.add(elements.expandoElement, "click", clickRef, false);
+            WebCore.EventProcessor.add(elements.expandoElement, "click", clickRef, false);
         }
-        EchoWebCore.EventProcessor.add(elements.tdElement, "click", clickRef, false);
+        WebCore.EventProcessor.add(elements.tdElement, "click", clickRef, false);
         
         if (this._selectionEnabled || this._rolloverEnabled) {
-            var mouseEnterLeaveSupport = EchoWebCore.Environment.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED;
+            var mouseEnterLeaveSupport = WebCore.Environment.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED;
             var enterEvent = mouseEnterLeaveSupport ? "mouseenter" : "mouseover";
             var exitEvent = mouseEnterLeaveSupport ? "mouseleave" : "mouseout";
             var rolloverEnterRef = new Core.MethodRef(this, this._processRolloverEnter);
             var rolloverExitRef = new Core.MethodRef(this, this._processRolloverExit);
             
             if (this._rolloverEnabled) {
-                EchoWebCore.EventProcessor.add(elements.trElement, enterEvent, rolloverEnterRef, false);
-                EchoWebCore.EventProcessor.add(elements.trElement, exitEvent, rolloverExitRef, false);
+                WebCore.EventProcessor.add(elements.trElement, enterEvent, rolloverEnterRef, false);
+                WebCore.EventProcessor.add(elements.trElement, exitEvent, rolloverExitRef, false);
             }
             if (this._selectionEnabled) {
-                EchoWebCore.EventProcessor.add(elements.trElement, "click", clickRef, false);
-                EchoWebCore.EventProcessor.addSelectionDenialListener(elements.trElement);
+                WebCore.EventProcessor.add(elements.trElement, "click", clickRef, false);
+                WebCore.EventProcessor.addSelectionDenialListener(elements.trElement);
             }
         }
     },
@@ -898,7 +898,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         var trElement = e.registeredTarget;
         var rowIndex = this._getRowIndex(trElement);
         
-        EchoWebCore.DOM.preventEventDefault(e);
+        WebCore.DOM.preventEventDefault(e);
         
         var update = new ExtrasApp.RemoteTree.SelectionUpdate();
     
@@ -991,11 +991,11 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
     },
     
     _removeRowListeners: function(rowElement) {
-        EchoWebCore.EventProcessor.removeAll(rowElement);
+        WebCore.EventProcessor.removeAll(rowElement);
         var tdElement = rowElement.firstChild;
         while (tdElement) {
             if (tdElement.id) {
-                EchoWebCore.EventProcessor.removeAll(tdElement);
+                WebCore.EventProcessor.removeAll(tdElement);
             }
             tdElement = tdElement.nextSibling;
         }

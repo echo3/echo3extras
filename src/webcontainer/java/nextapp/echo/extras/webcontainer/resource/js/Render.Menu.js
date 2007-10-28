@@ -59,7 +59,7 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
     
     renderDispose: function(update) {
         this._closeMenu();
-    	EchoWebCore.EventProcessor.removeAll(this._element);
+    	WebCore.EventProcessor.removeAll(this._element);
     	this._element.id = "";
     	this._element = null;
     	this._menuModel = null;
@@ -119,8 +119,8 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
         var menuElement = this._getMenuElement(menuModel);
         var containerElement = document.getElementById(this.component.renderId);
         
-        var menuBounds = new EchoWebCore.Measure.Bounds(menuElement);
-        var containerBounds = new EchoWebCore.Measure.Bounds(containerElement);
+        var menuBounds = new WebCore.Measure.Bounds(menuElement);
+        var containerBounds = new WebCore.Measure.Bounds(containerElement);
         
         this._renderMenu(menuModel, menuBounds.left, containerBounds.top + containerBounds.height);
     	// FIXME handle overflow
@@ -130,8 +130,8 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
         var menuElement = this._getMenuElement(menuModel);
         var containerElement = menuElement.parentNode.parentNode.parentNode;
         
-        var menuBounds = new EchoWebCore.Measure.Bounds(menuElement);
-        var containerBounds = new EchoWebCore.Measure.Bounds(containerElement);
+        var menuBounds = new WebCore.Measure.Bounds(menuElement);
+        var containerBounds = new WebCore.Measure.Bounds(containerElement);
         
         this._renderMenu(menuModel, containerBounds.left + containerBounds.width, menuBounds.top);
     },
@@ -289,10 +289,10 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
         bodyElement = document.getElementsByTagName("body")[0];    
         bodyElement.appendChild(menuDivElement);
     
-        EchoWebCore.EventProcessor.add(menuDivElement, "click", new Core.MethodRef(this, this._processClick), false);
-        EchoWebCore.EventProcessor.add(menuDivElement, "mouseover", new Core.MethodRef(this, this._processItemEnter), false);
-        EchoWebCore.EventProcessor.add(menuDivElement, "mouseout", new Core.MethodRef(this, this._processItemExit), false);
-    	EchoWebCore.EventProcessor.addSelectionDenialListener(menuDivElement);
+        WebCore.EventProcessor.add(menuDivElement, "click", new Core.MethodRef(this, this._processClick), false);
+        WebCore.EventProcessor.add(menuDivElement, "mouseover", new Core.MethodRef(this, this._processItemEnter), false);
+        WebCore.EventProcessor.add(menuDivElement, "mouseout", new Core.MethodRef(this, this._processItemExit), false);
+    	WebCore.EventProcessor.addSelectionDenialListener(menuDivElement);
         
         return menuDivElement;
     },
@@ -300,7 +300,7 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
     _disposeMenu: function(menuModel) {
         var menuElement = document.getElementById(this.component.renderId + "_menu_" + menuModel.id);
     
-        EchoWebCore.EventProcessor.removeAll(menuElement);
+        WebCore.EventProcessor.removeAll(menuElement);
         menuElement.parentNode.removeChild(menuElement);
     },
     
@@ -341,8 +341,8 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
         this.maskDeployed = true;
         
         var bodyElement = document.getElementsByTagName("body")[0];    
-        EchoWebCore.EventProcessor.add(bodyElement, "click", new Core.MethodRef(this, this._processMaskClick), true);
-        EchoWebCore.EventProcessor.add(bodyElement, "contextmenu", new Core.MethodRef(this, this._processMaskClick), true);
+        WebCore.EventProcessor.add(bodyElement, "click", new Core.MethodRef(this, this._processMaskClick), true);
+        WebCore.EventProcessor.add(bodyElement, "contextmenu", new Core.MethodRef(this, this._processMaskClick), true);
     },
     
     _removeMask: function() {
@@ -352,8 +352,8 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
         this.maskDeployed = false;
     
         var bodyElement = document.getElementsByTagName("body")[0];
-        EchoWebCore.EventProcessor.remove(bodyElement, "click", new Core.MethodRef(this, this._processMaskClick), true);
-        EchoWebCore.EventProcessor.remove(bodyElement, "contextmenu", new Core.MethodRef(this, this._processMaskClick), true);
+        WebCore.EventProcessor.remove(bodyElement, "click", new Core.MethodRef(this, this._processMaskClick), true);
+        WebCore.EventProcessor.remove(bodyElement, "contextmenu", new Core.MethodRef(this, this._processMaskClick), true);
     },
     
     _processMaskClick: function(e) {
@@ -472,10 +472,10 @@ ExtrasRender.ComponentSync.MenuBarPane = Core.extend(ExtrasRender.ComponentSync.
             }
         }
         
-        EchoWebCore.EventProcessor.add(menuBarDivElement, "click", new Core.MethodRef(this, this._processClick), false);
-        EchoWebCore.EventProcessor.add(menuBarDivElement, "mouseover", new Core.MethodRef(this, this._processItemEnter), false);
-        EchoWebCore.EventProcessor.add(menuBarDivElement, "mouseout", new Core.MethodRef(this, this._processItemExit), false);
-    	EchoWebCore.EventProcessor.addSelectionDenialListener(menuBarDivElement);
+        WebCore.EventProcessor.add(menuBarDivElement, "click", new Core.MethodRef(this, this._processClick), false);
+        WebCore.EventProcessor.add(menuBarDivElement, "mouseover", new Core.MethodRef(this, this._processItemEnter), false);
+        WebCore.EventProcessor.add(menuBarDivElement, "mouseout", new Core.MethodRef(this, this._processItemExit), false);
+    	WebCore.EventProcessor.addSelectionDenialListener(menuBarDivElement);
     
         return menuBarDivElement;
     },
@@ -493,7 +493,7 @@ ExtrasRender.ComponentSync.MenuBarPane = Core.extend(ExtrasRender.ComponentSync.
     },
     
     renderDisplay: function() {
-        EchoWebCore.VirtualPosition.redraw(this._element);
+        WebCore.VirtualPosition.redraw(this._element);
     },
     
     _processClick: function(e) {
@@ -501,7 +501,7 @@ ExtrasRender.ComponentSync.MenuBarPane = Core.extend(ExtrasRender.ComponentSync.
             return;
         }
         
-        EchoWebCore.DOM.preventEventDefault(e);
+        WebCore.DOM.preventEventDefault(e);
     
         var modelId = this._getElementModelId(e.target);
         if (modelId) {
@@ -601,8 +601,8 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
         relativeContainerDivElement.appendChild(this._contentDivElement);
         dropDownDivElement.appendChild(relativeContainerDivElement);
     
-        EchoWebCore.EventProcessor.add(dropDownDivElement, "click", new Core.MethodRef(this, this._processClick), false);
-    	EchoWebCore.EventProcessor.addSelectionDenialListener(dropDownDivElement);
+        WebCore.EventProcessor.add(dropDownDivElement, "click", new Core.MethodRef(this, this._processClick), false);
+    	WebCore.EventProcessor.addSelectionDenialListener(dropDownDivElement);
     
         if (this._isSelectionEnabled()) {
         	var selection = this.component.getRenderProperty("selection");
@@ -631,8 +631,8 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
     	}
         var menuHeight = this.component.getRenderProperty("menuHeight");
         if (menuHeight) {
-    	    if (EchoWebCore.Environment.NOT_SUPPORTED_CSS_MAX_HEIGHT) {
-    		    var measure = new EchoWebCore.Measure(menuDivElement);
+    	    if (WebCore.Environment.NOT_SUPPORTED_CSS_MAX_HEIGHT) {
+    		    var measure = new WebCore.Measure(menuDivElement);
     		    if (measure.height > menuHeight.value) {
     			    menuDivElement.style.height = menuHeight.value + "px";
     		    }
@@ -718,7 +718,7 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
     },
     
     renderDisplay: function() {
-        EchoWebCore.VirtualPosition.redraw(this._contentDivElement);
+        WebCore.VirtualPosition.redraw(this._contentDivElement);
     },
     
     _processClick: function(e) {
@@ -726,7 +726,7 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
             return;
         }
         
-        EchoWebCore.DOM.preventEventDefault(e);
+        WebCore.DOM.preventEventDefault(e);
     
         var modelId = this._getElementModelId(e.target);
         var model;
@@ -773,8 +773,8 @@ ExtrasRender.ComponentSync.ContextMenu = Core.extend(ExtrasRender.ComponentSync.
         var contextMenuDivElement = document.createElement("div");
         contextMenuDivElement.id = this.component.renderId;
         
-        EchoWebCore.EventProcessor.add(contextMenuDivElement, "click", new Core.MethodRef(this, this._processClick), false);
-        EchoWebCore.EventProcessor.add(contextMenuDivElement, "contextmenu", new Core.MethodRef(this, this._processContextClick), false);
+        WebCore.EventProcessor.add(contextMenuDivElement, "click", new Core.MethodRef(this, this._processClick), false);
+        WebCore.EventProcessor.add(contextMenuDivElement, "contextmenu", new Core.MethodRef(this, this._processContextClick), false);
         
         var componentCount = this.component.getComponentCount();
         if (componentCount > 0) {
@@ -793,7 +793,7 @@ ExtrasRender.ComponentSync.ContextMenu = Core.extend(ExtrasRender.ComponentSync.
     	    // partial update
     	    var removedChildren = update.getRemovedChildren();
     	    if (removedChildren) {
-    	        EchoWebCore.DOM.removeNode(this._element.firstChild);
+    	        WebCore.DOM.removeNode(this._element.firstChild);
     	    }
     	    var addedChildren = update.getAddedChildren();
     	    if (addedChildren) {
@@ -847,7 +847,7 @@ ExtrasRender.ComponentSync.ContextMenu = Core.extend(ExtrasRender.ComponentSync.
         
         var modelId = this._getElementModelId(e.target);
         if (modelId) {
-    	    EchoWebCore.DOM.preventEventDefault(e);
+    	    WebCore.DOM.preventEventDefault(e);
     	    this._renderMask();
     	    this._activateItem(this._menuModel.getItem(modelId));
         } else {
@@ -860,7 +860,7 @@ ExtrasRender.ComponentSync.ContextMenu = Core.extend(ExtrasRender.ComponentSync.
             return;
         }
     
-        EchoWebCore.DOM.preventEventDefault(e);
+        WebCore.DOM.preventEventDefault(e);
         
     	this._mousePosX = e.pageX || (e.clientX + (document.documentElement.scrollLeft || document.body.scrollLeft));
     	this._mousePosY = e.pageY || (e.clientY + (document.documentElement.scrollTop || document.body.scrollTop));

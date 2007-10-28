@@ -649,7 +649,7 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer = Core.extend(EchoRender.Compo
     },
     
     _insertHtml: function(html) {
-        if (EchoWebCore.Environment.BROWSER_INTERNET_EXPLORER) {
+        if (WebCore.Environment.BROWSER_INTERNET_EXPLORER) {
             if (!this._selectionRange) {
                 this._selectionRange = this._iframeElement.contentWindow.document.body.createTextRange();
             }
@@ -661,7 +661,7 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer = Core.extend(EchoRender.Compo
     },
     
     _loadRange: function() {
-        if (EchoWebCore.Environment.BROWSER_INTERNET_EXPLORER) {
+        if (WebCore.Environment.BROWSER_INTERNET_EXPLORER) {
             if (this._selectionRange) {
                 this._selectionRange.select();
             }
@@ -697,7 +697,7 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer = Core.extend(EchoRender.Compo
     },
     
     renderDispose: function(update) {
-        EchoWebCore.EventProcessor.removeAll(this._iframeElement.contentWindow.document);
+        WebCore.EventProcessor.removeAll(this._iframeElement.contentWindow.document);
         this._mainDivElement = null;
         this._iframeElement = null;
         this._contentDocumentRendered = false;
@@ -712,9 +712,9 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer = Core.extend(EchoRender.Compo
         contentDocument.write("<html><body>" + (text == null ? "" : text) + "</body></html>");
         contentDocument.close();
         contentDocument.designMode = "on";
-        EchoWebCore.EventProcessor.add(this._iframeElement.contentWindow.document, "keyup", 
+        WebCore.EventProcessor.add(this._iframeElement.contentWindow.document, "keyup", 
                 new Core.MethodRef(this, this._processKeyUp), false);
-        EchoWebCore.EventProcessor.add(this._iframeElement.contentWindow.document, "mouseup", 
+        WebCore.EventProcessor.add(this._iframeElement.contentWindow.document, "mouseup", 
                 new Core.MethodRef(this, this._processMouseUp), false);
         this._contentDocumentRendered = true;
     },
@@ -736,7 +736,7 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer = Core.extend(EchoRender.Compo
     },
     
     _storeRange: function() {
-        if (EchoWebCore.Environment.BROWSER_INTERNET_EXPLORER) {
+        if (WebCore.Environment.BROWSER_INTERNET_EXPLORER) {
             this._selectionRange = this._iframeElement.contentWindow.document.selection.createRange();
         }
     }

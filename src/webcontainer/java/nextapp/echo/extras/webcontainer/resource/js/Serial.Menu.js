@@ -1,7 +1,7 @@
 ExtrasSerial.PropertyTranslator.ItemModel = {
 
     _parseIcon: function(client, propertyElement) {
-    	var icon = EchoWebCore.DOM.getChildElementByTagName(propertyElement, "icon");
+    	var icon = WebCore.DOM.getChildElementByTagName(propertyElement, "icon");
     	if (icon) {
     		return EchoSerial.PropertyTranslator.ImageReference.toProperty(client, icon);
     	}
@@ -30,7 +30,7 @@ ExtrasSerial.PropertyTranslator.MenuModel = {
         var icon = ExtrasSerial.PropertyTranslator.ItemModel._parseIcon(client, propertyElement);
         var model = new ExtrasApp.MenuModel(id, text, icon);
         
-        var children = EchoWebCore.DOM.getChildElementsByTagName(propertyElement, "item");
+        var children = WebCore.DOM.getChildElementsByTagName(propertyElement, "item");
         for (var i = 0; i < children.length; i++) {
         	var childElement = children[i];
         	var subModel = ExtrasSerial.PropertyTranslator.ItemModel.toProperty(client, childElement);
@@ -81,7 +81,7 @@ ExtrasSerial.PropertyTranslator.MenuStateModel = {
 
     toProperty: function(client, propertyElement) {
         var stateModel = new ExtrasApp.MenuStateModel();
-        var children = EchoWebCore.DOM.getChildElementsByTagName(propertyElement, "i");
+        var children = WebCore.DOM.getChildElementsByTagName(propertyElement, "i");
         for (var i = 0; i < children.length; i++) {
             var childElement = children[i];
             var enabledValue = childElement.getAttribute("enabled");

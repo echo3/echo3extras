@@ -58,9 +58,9 @@ ExtrasRender.ComponentSync.ColorSelect = Core.extend(EchoRender.ComponentSync, {
     },
     
     _processHMouseDown: function(e) {
-        EchoWebCore.EventProcessor.add(this._hListenerDivElement, "mousemove", new Core.MethodRef(this, this._processHMouseMove), 
+        WebCore.EventProcessor.add(this._hListenerDivElement, "mousemove", new Core.MethodRef(this, this._processHMouseMove), 
                 false);
-        EchoWebCore.EventProcessor.add(this._hListenerDivElement, "mouseup", new Core.MethodRef(this, this._processHMouseUp), 
+        WebCore.EventProcessor.add(this._hListenerDivElement, "mouseup", new Core.MethodRef(this, this._processHMouseUp), 
                 false);
         this._processHUpdate(e);
     },
@@ -70,23 +70,23 @@ ExtrasRender.ComponentSync.ColorSelect = Core.extend(EchoRender.ComponentSync, {
     },
     
     _processHMouseUp: function(e) {
-        EchoWebCore.EventProcessor.remove(this._hListenerDivElement, "mousemove", new Core.MethodRef(this, this._processHMouseMove), 
+        WebCore.EventProcessor.remove(this._hListenerDivElement, "mousemove", new Core.MethodRef(this, this._processHMouseMove), 
                 false);
-        EchoWebCore.EventProcessor.remove(this._hListenerDivElement, "mouseup", new Core.MethodRef(this, this._processHMouseUp), 
+        WebCore.EventProcessor.remove(this._hListenerDivElement, "mouseup", new Core.MethodRef(this, this._processHMouseUp), 
                 false);
         this._storeColor();
     },
     
     _processHUpdate: function(e) {
-        var bounds = new EchoWebCore.Measure.Bounds(this._hListenerDivElement);
+        var bounds = new WebCore.Measure.Bounds(this._hListenerDivElement);
         this._h = (this._saturationHeight - (e.clientY - bounds.top - 7)) * 360 / this._saturationHeight;
         this._updateDisplayedColor();
     },
     
     _processSVMouseDown: function(e) {
-        EchoWebCore.EventProcessor.add(this._svListenerDivElement, "mousemove", new Core.MethodRef(this, this._processSVMouseMove), 
+        WebCore.EventProcessor.add(this._svListenerDivElement, "mousemove", new Core.MethodRef(this, this._processSVMouseMove), 
                 false);
-        EchoWebCore.EventProcessor.add(this._svListenerDivElement, "mouseup", new Core.MethodRef(this, this._processSVMouseUp), 
+        WebCore.EventProcessor.add(this._svListenerDivElement, "mouseup", new Core.MethodRef(this, this._processSVMouseUp), 
                 false);
         this._processSVUpdate(e);
     },
@@ -96,15 +96,15 @@ ExtrasRender.ComponentSync.ColorSelect = Core.extend(EchoRender.ComponentSync, {
     },
     
     _processSVMouseUp: function(e) {
-        EchoWebCore.EventProcessor.remove(this._svListenerDivElement, "mousemove", new Core.MethodRef(this, this._processSVMouseMove), 
+        WebCore.EventProcessor.remove(this._svListenerDivElement, "mousemove", new Core.MethodRef(this, this._processSVMouseMove), 
                 false);
-        EchoWebCore.EventProcessor.remove(this._svListenerDivElement, "mouseup", new Core.MethodRef(this, this._processSVMouseUp), 
+        WebCore.EventProcessor.remove(this._svListenerDivElement, "mouseup", new Core.MethodRef(this, this._processSVMouseUp), 
                 false);
         this._storeColor();
     },
     
     _processSVUpdate: function(e) {
-        var bounds = new EchoWebCore.Measure.Bounds(this._svListenerDivElement);
+        var bounds = new WebCore.Measure.Bounds(this._svListenerDivElement);
         this._v = (e.clientX - bounds.left - 7) / this._valueWidth;
         this._s = 1 - ((e.clientY - bounds.top - 7) / this._saturationHeight);
         this._updateDisplayedColor();
@@ -145,7 +145,7 @@ ExtrasRender.ComponentSync.ColorSelect = Core.extend(EchoRender.ComponentSync, {
         this._containerDivElement.appendChild(this._svDivElement);
         
         if (svGradientImageSrc) {
-            if (EchoWebCore.Environment.PROPRIETARY_IE_PNG_ALPHA_FILTER_REQUIRED) {
+            if (WebCore.Environment.PROPRIETARY_IE_PNG_ALPHA_FILTER_REQUIRED) {
                 this._svDivElement.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader("
                         + "src='" + svGradientImageSrc + "', sizingMethod='scale');";
             } else {
@@ -342,9 +342,9 @@ ExtrasRender.ComponentSync.ColorSelect = Core.extend(EchoRender.ComponentSync, {
     
         parentElement.appendChild(this._containerDivElement);
         
-        EchoWebCore.EventProcessor.add(this._svListenerDivElement, "mousedown", new Core.MethodRef(this, this._processSVMouseDown), 
+        WebCore.EventProcessor.add(this._svListenerDivElement, "mousedown", new Core.MethodRef(this, this._processSVMouseDown), 
                 false);
-        EchoWebCore.EventProcessor.add(this._hListenerDivElement, "mousedown", new Core.MethodRef(this, this._processHMouseDown), 
+        WebCore.EventProcessor.add(this._hListenerDivElement, "mousedown", new Core.MethodRef(this, this._processHMouseDown), 
                 false);
         
         this._setColor(this.component.getProperty("color"));

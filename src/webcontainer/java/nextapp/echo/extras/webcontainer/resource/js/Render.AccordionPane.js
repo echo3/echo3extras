@@ -275,12 +275,12 @@ ExtrasRender.ComponentSync.AccordionPane.Tab = Core.extend({
     },
     
     _renderDisplay: function() {
-        EchoWebCore.VirtualPosition.redraw(this._tabDivElement);
-        EchoWebCore.VirtualPosition.redraw(this._contentDivElement);
+        WebCore.VirtualPosition.redraw(this._tabDivElement);
+        WebCore.VirtualPosition.redraw(this._contentDivElement);
     },
     
     _dispose: function() {
-    	EchoWebCore.EventProcessor.removeAll(this._tabDivElement);
+    	WebCore.EventProcessor.removeAll(this._tabDivElement);
     	
     	this._parent = null;
     	this._childComponent = null;
@@ -330,12 +330,12 @@ ExtrasRender.ComponentSync.AccordionPane.Tab = Core.extend({
     },
     
     _addEventListeners: function() {
-        EchoWebCore.EventProcessor.add(this._tabDivElement, "click", new Core.MethodRef(this, this._processClick), false);
+        WebCore.EventProcessor.add(this._tabDivElement, "click", new Core.MethodRef(this, this._processClick), false);
         if (this._parent.component.getRenderProperty("tabRolloverEnabled", true)) {
-    	    EchoWebCore.EventProcessor.add(this._tabDivElement, "mouseover", new Core.MethodRef(this, this._processEnter), false);
-    	    EchoWebCore.EventProcessor.add(this._tabDivElement, "mouseout", new Core.MethodRef(this, this._processExit), false);
+    	    WebCore.EventProcessor.add(this._tabDivElement, "mouseover", new Core.MethodRef(this, this._processEnter), false);
+    	    WebCore.EventProcessor.add(this._tabDivElement, "mouseout", new Core.MethodRef(this, this._processExit), false);
         }
-    	EchoWebCore.EventProcessor.addSelectionDenialListener(this._tabDivElement);
+    	WebCore.EventProcessor.addSelectionDenialListener(this._tabDivElement);
     },
     
     _getTitle: function() {

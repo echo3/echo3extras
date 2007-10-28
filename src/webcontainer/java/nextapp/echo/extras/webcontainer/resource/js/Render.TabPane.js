@@ -233,8 +233,8 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
     },
     
     renderDisplay: function() {
-        EchoWebCore.VirtualPosition.redraw(this._element);
-        EchoWebCore.VirtualPosition.redraw(this._contentContainerDivElement);
+        WebCore.VirtualPosition.redraw(this._element);
+        WebCore.VirtualPosition.redraw(this._contentContainerDivElement);
         
         for (var i = 0; i < this._tabs.length; ++i) {
             this._tabs[i]._renderDisplay();
@@ -492,7 +492,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         } else {
             imgElement.src = EchoRender.Util.TRANSPARENT_IMAGE;
         }
-        if (EchoWebCore.Environment.BROWSER_INTERNET_EXPLORER) {
+        if (WebCore.Environment.BROWSER_INTERNET_EXPLORER) {
             // remove auto-calculated width & height, to prevent problems with different image sizes
             imgElement.removeAttribute("width");
             imgElement.removeAttribute("height");
@@ -507,7 +507,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         contentDivElement.style.position = "absolute";
         contentDivElement.style.top = "0px";
         // hide content
-        if (EchoWebCore.Environment.BROWSER_MOZILLA && !EchoWebCore.Environment.BROWSER_FIREFOX) {
+        if (WebCore.Environment.BROWSER_MOZILLA && !WebCore.Environment.BROWSER_FIREFOX) {
             contentDivElement.style.right = "100%";
             contentDivElement.style.bottom = "100%";
         } else {
@@ -525,11 +525,11 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
     },
     
     _renderDisplay: function() {
-        EchoWebCore.VirtualPosition.redraw(this._contentDivElement);
+        WebCore.VirtualPosition.redraw(this._contentDivElement);
     },
     
     _dispose: function() {
-        EchoWebCore.EventProcessor.removeAll(this._headerTdElement);
+        WebCore.EventProcessor.removeAll(this._headerTdElement);
         
         this._parent = null;
         this._childComponent = null;
@@ -608,7 +608,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         }
         
         // show/hide content
-        if (EchoWebCore.Environment.BROWSER_MOZILLA && !EchoWebCore.Environment.BROWSER_FIREFOX) {
+        if (WebCore.Environment.BROWSER_MOZILLA && !WebCore.Environment.BROWSER_FIREFOX) {
             contentDivElement.style.right = state ? "0px" : "100%";
             contentDivElement.style.bottom = state ? "0px" : "100%";
         } else {
@@ -622,13 +622,13 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
     },
     
     _addEventListeners: function() {
-        EchoWebCore.EventProcessor.add(this._headerTdElement, "click", new Core.MethodRef(this, this._processClick), false);
-        EchoWebCore.EventProcessor.addSelectionDenialListener(this._headerTdElement);
+        WebCore.EventProcessor.add(this._headerTdElement, "click", new Core.MethodRef(this, this._processClick), false);
+        WebCore.EventProcessor.addSelectionDenialListener(this._headerTdElement);
         
         if (this._closeImageTdElement) {
-            EchoWebCore.EventProcessor.add(this._headerTdElement, "mouseover", 
+            WebCore.EventProcessor.add(this._headerTdElement, "mouseover", 
                     new Core.MethodRef(this, this._processEnter), false);
-            EchoWebCore.EventProcessor.add(this._headerTdElement, "mouseout", 
+            WebCore.EventProcessor.add(this._headerTdElement, "mouseout", 
                     new Core.MethodRef(this, this._processExit), false);
         }
     },
@@ -711,7 +711,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         if (!this._parent.component.isActive()) {
             return;
         }
-        if (this._closeImageTdElement && EchoWebCore.DOM.isAncestorOf(this._closeImageTdElement, e.target)) {
+        if (this._closeImageTdElement && WebCore.DOM.isAncestorOf(this._closeImageTdElement, e.target)) {
             // close icon clicked
             if (!this._isTabCloseEnabled()) {
                 return;
@@ -732,7 +732,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
             return;
         }
         
-        var rollover = EchoWebCore.DOM.isAncestorOf(this._closeImageTdElement, e.target);
+        var rollover = WebCore.DOM.isAncestorOf(this._closeImageTdElement, e.target);
         var closeImage = this._getCloseImage(rollover);
         
         if (closeImage) {
@@ -749,8 +749,8 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
             return;
         }
     
-        var relTarget = EchoWebCore.DOM.getEventRelatedTarget(e);
-        if (relTarget && EchoWebCore.DOM.isAncestorOf(this._headerTdElement, relTarget)) {
+        var relTarget = WebCore.DOM.getEventRelatedTarget(e);
+        if (relTarget && WebCore.DOM.isAncestorOf(this._headerTdElement, relTarget)) {
             // within tab box
             return;
         }
