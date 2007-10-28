@@ -43,7 +43,7 @@ ExtrasApp.RemoteTree.TreeStructure = EchoCore.extend({
      * @param {ExtrasApp.RemoteTree.TreeNode} rootNode the root node
      * @constructor
      */
-    initialize: function(rootNode) { 
+    $construct: function(rootNode) { 
         this._idNodeMap = {};
         this._rootNode = rootNode;
         this._headerNode = null;
@@ -336,7 +336,7 @@ ExtrasApp.RemoteTree.TreeNode = EchoCore.extend({
      * 
      * @constructor
      */
-    initialize: function(id, parentId) { 
+    $construct: function(id, parentId) { 
         this._id = id;
         this._parentId = parentId;
         this._childNodes = [];
@@ -530,7 +530,7 @@ ExtrasApp.RemoteTree.SelectionUpdate = EchoCore.extend({
 
     className: "ExtrasApp.RemoteTree.SelectionUpdate",
 
-    initialize: function() {
+    $construct: function() {
     
         this._addedSelections = [];
         this._removedSelections = [];
@@ -607,7 +607,7 @@ ExtrasApp.RemoteTree.SelectionUpdate = EchoCore.extend({
  */
 ExtrasApp.TreeSelectionModel = EchoCore.extend({
     
-    global: {
+    $static: {
         /**
          * Value for selection mode setting indicating single selection.
          * 
@@ -625,7 +625,7 @@ ExtrasApp.TreeSelectionModel = EchoCore.extend({
         MULTIPLE_SELECTION: 2
     },
     
-    initialize: function(selectionMode) { 
+    $construct: function(selectionMode) { 
         this._selectionState = [];
         this._selectionMode = selectionMode;
     },

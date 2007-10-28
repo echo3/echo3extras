@@ -5,7 +5,7 @@
  */
 ExtrasRender.ComponentSync.AccordionPane = EchoCore.extend(EchoRender.ComponentSync, {
 
-    global: {
+    $static: {
         _paneInsets: new EchoApp.Insets(0),
         _defaultTabBackground: new EchoApp.Color("#cfcfcf"),
         _defaultTabBorder: new EchoApp.Border("1px outset #cfcfcf"),
@@ -15,11 +15,11 @@ ExtrasRender.ComponentSync.AccordionPane = EchoCore.extend(EchoRender.ComponentS
         _defaultTabContentInsets: this._paneInsets
     },
     
-    globalInitialize: function() {
+    $staticConstruct: function() {
         EchoRender.registerPeer("ExtrasApp.AccordionPane", this);
     },
        
-    initialize: function() {
+    $construct: function() {
     	this._paneDivElement = null;
     	this._activeTabId = null;
     	this._tabs = [];
@@ -239,7 +239,7 @@ ExtrasRender.ComponentSync.AccordionPane = EchoCore.extend(EchoRender.ComponentS
 
 ExtrasRender.ComponentSync.AccordionPane.Tab = EchoCore.extend({
     
-    initialize: function(childComponent, parent) {
+    $construct: function(childComponent, parent) {
     	this._childComponent = childComponent;
     	this._parent = parent;
     	this._rendered = false;
@@ -390,7 +390,7 @@ ExtrasRender.ComponentSync.AccordionPane.Tab = EchoCore.extend({
  */
 ExtrasRender.ComponentSync.AccordionPane.Rotation = EchoCore.extend({
 
-    global: {
+    $static: {
     
         /**
          * Contains mappings from AccordionPane render ids to Rotation objects.
@@ -412,7 +412,7 @@ ExtrasRender.ComponentSync.AccordionPane.Rotation = EchoCore.extend({
         }
     },
     
-    initialize: function(parent, oldTab, newTab) {
+    $construct: function(parent, oldTab, newTab) {
     	this._parent = parent;
         this._oldTab = oldTab;
         this._newTab = newTab;

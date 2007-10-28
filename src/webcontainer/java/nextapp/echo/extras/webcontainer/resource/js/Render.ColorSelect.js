@@ -1,10 +1,10 @@
 ExtrasRender.ComponentSync.ColorSelect = EchoCore.extend(EchoRender.ComponentSync, {
 
-    globalInitialize: function() {
+    $staticConstruct: function() {
         EchoRender.registerPeer("ExtrasApp.ColorSelect", this);
     },
 
-    initialize: function() { 
+    $construct: function() { 
         this._h = 0;
         this._s = 0;
         this._v = 0;
@@ -461,7 +461,7 @@ ExtrasRender.ComponentSync.ColorSelect = EchoCore.extend(EchoRender.ComponentSyn
 
 ExtrasRender.ComponentSync.ColorSelect.RGB = EchoCore.extend({
 
-    initialize: function(r, g, b) {
+    $construct: function(r, g, b) {
         this.r = this._clean(r);
         this.g = this._clean(g);
         this.b = this._clean(b);

@@ -4,11 +4,11 @@
  */
 ExtrasApp.BorderPane = EchoCore.extend(EchoApp.Component, {
     
-    global: {
+    $static: {
         DEFAULT_BORDER: new EchoApp.FillImageBorder("#00007f", new EchoApp.Insets("20px"), new EchoApp.Insets("3px"))
     },
     
-    globalInitialize: function() {
+    $staticConstruct: function() {
         EchoApp.ComponentFactory.registerType("ExtrasApp.BorderPane", this);
     },
     

@@ -7,7 +7,7 @@
  */
 ExtrasApp.TabPane = EchoCore.extend(EchoApp.Component, {
 
-    global: {
+    $static: {
     
         /**
          * Constant for the <code>borderType</code> property indicating that no 
@@ -63,7 +63,7 @@ ExtrasApp.TabPane = EchoCore.extend(EchoApp.Component, {
         TAB_POSITION_BOTTOM: 1
     },
 
-    globalInitialize: function() {
+    $staticConstruct: function() {
         EchoApp.ComponentFactory.registerType("ExtrasApp.TabPane", this);
     },
 

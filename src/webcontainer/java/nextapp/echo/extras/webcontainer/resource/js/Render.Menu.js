@@ -5,7 +5,7 @@
  */
 ExtrasRender.ComponentSync.Menu = EchoCore.extend(EchoRender.ComponentSync, {
     
-    global: {
+    $static: {
         _defaultForeground: new EchoApp.Color("#000000"),
         _defaultBackground: new EchoApp.Color("#cfcfcf"),
         _defaultDisabledForeground: new EchoApp.Color("#7f7f7f"),
@@ -26,7 +26,7 @@ ExtrasRender.ComponentSync.Menu = EchoCore.extend(EchoRender.ComponentSync, {
         }
     },    
         
-    initialize: function() {
+    $construct: function() {
     	this._element = null;
     	this._menuModel = null;
     	this._stateModel = null;
@@ -416,12 +416,12 @@ ExtrasRender.ComponentSync.Menu = EchoCore.extend(EchoRender.ComponentSync, {
  */
 ExtrasRender.ComponentSync.MenuBarPane = EchoCore.extend(ExtrasRender.ComponentSync.Menu, {
 
-    globalInitialize: function() {
+    $staticConstruct: function() {
        EchoRender.registerPeer("ExtrasApp.MenuBarPane", this);
     },
 
-    initialize: function() {
-    	ExtrasRender.ComponentSync.Menu.prototype.initialize.call(this);
+    $construct: function() {
+    	ExtrasRender.ComponentSync.Menu.prototype.$construct.call(this);
     	this._itemInsets = new EchoApp.Insets("0px 12px");
     },
     
@@ -525,12 +525,12 @@ ExtrasRender.ComponentSync.MenuBarPane = EchoCore.extend(ExtrasRender.ComponentS
  */
 ExtrasRender.ComponentSync.DropDownMenu = EchoCore.extend(ExtrasRender.ComponentSync.Menu, {
 
-    globalInitialize: function() {
+    $staticConstruct: function() {
         EchoRender.registerPeer("ExtrasApp.DropDownMenu", this);
     },
 
-    initialize: function() {
-        ExtrasRender.ComponentSync.Menu.prototype.initialize.call(this);
+    $construct: function() {
+        ExtrasRender.ComponentSync.Menu.prototype.$construct.call(this);
     	this._selectedItem = null;
     	this._contentDivElement = null;
     },
@@ -757,16 +757,16 @@ ExtrasRender.ComponentSync.DropDownMenu = EchoCore.extend(ExtrasRender.Component
  */
 ExtrasRender.ComponentSync.ContextMenu = EchoCore.extend(ExtrasRender.ComponentSync.Menu, {
 
-    global: {
+    $static: {
         _supportedPartialProperties: ["model", "stateModel"]
     },
     
-    globalInitialize: function() {
+    $staticConstruct: function() {
         EchoRender.registerPeer("ExtrasApp.ContextMenu", this);
     },
 
-    initialize: function() {
-        ExtrasRender.ComponentSync.Menu.prototype.initialize.call(this);
+    $construct: function() {
+        ExtrasRender.ComponentSync.Menu.prototype.$construct.call(this);
     },
     
     _renderMain: function(update) {

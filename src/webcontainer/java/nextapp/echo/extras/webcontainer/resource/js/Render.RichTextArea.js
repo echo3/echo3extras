@@ -3,7 +3,7 @@
  */
 ExtrasRender.ComponentSync.RichTextArea = EchoCore.extend(EchoArc.ComponentSync, {
 
-    globalInitialize: function() {
+    $staticConstruct: function() {
         EchoRender.registerPeer("ExtrasApp.RichTextArea", this);
     },
 
@@ -435,19 +435,19 @@ ExtrasRender.ComponentSync.RichTextArea = EchoCore.extend(EchoArc.ComponentSync,
 
 ExtrasRender.ComponentSync.RichTextArea.AbstractDialog = EchoCore.extend(EchoApp.WindowPane, {
 
-    global: {
+    $static: {
         TYPE_OK: 0,
         TYPE_OK_CANCEL: 1
     },
 
-    initialize: function(richTextArea, type, properties, content) {
+    $construct: function(richTextArea, type, properties, content) {
         this._richTextArea = richTextArea;
     
         var controlPaneSplitPaneStyleName = richTextArea.getRenderProperty("controlPaneSplitPaneStyleName");
         var controlPaneRowStyleName = richTextArea.getRenderProperty("controlPaneRowStyleName");
         var controlPaneButtonStyleName = richTextArea.getRenderProperty("controlPaneButtonStyleName"); 
         
-        EchoApp.WindowPane.prototype.initialize.call(this, {
+        EchoApp.WindowPane.prototype.$construct.call(this, {
             styleName: richTextArea.getRenderProperty("windowPaneStyleName"),
             iconInsets: new EchoApp.Insets(6, 10),
             width: new EchoApp.Extent(280),
@@ -510,8 +510,8 @@ ExtrasRender.ComponentSync.RichTextArea.AbstractDialog = EchoCore.extend(EchoApp
 ExtrasRender.ComponentSync.RichTextArea.ColorDialog = EchoCore.extend(
         ExtrasRender.ComponentSync.RichTextArea.AbstractDialog, {
 
-    initialize: function(richTextArea, setBackground) {
-        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.prototype.initialize.call(this, richTextArea,
+    $construct: function(richTextArea, setBackground) {
+        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.prototype.$construct.call(this, richTextArea,
                 ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL, 
                 {
                     title: richTextArea.peer._rb.get(setBackground ? 
@@ -544,8 +544,8 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog = EchoCore.extend(
 ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog = EchoCore.extend(
         ExtrasRender.ComponentSync.RichTextArea.AbstractDialog, {
 
-    initialize: function(richTextArea) {
-        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.prototype.initialize.call(this, richTextArea,
+    $construct: function(richTextArea) {
+        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.prototype.$construct.call(this, richTextArea,
                 ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL,
                 {
                     title: richTextArea.peer._rb.get("HyperlinkDialog.Title"), 
@@ -590,8 +590,8 @@ ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog = EchoCore.extend(
 ExtrasRender.ComponentSync.RichTextArea.ImageDialog = EchoCore.extend(
         ExtrasRender.ComponentSync.RichTextArea.AbstractDialog, {
 
-    initialize: function(richTextArea) {
-        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.prototype.initialize.call(this, richTextArea,
+    $construct: function(richTextArea) {
+        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.prototype.$construct.call(this, richTextArea,
                 ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL,
                 {
                     title: richTextArea.peer._rb.get("ImageDialog.Title"), 
@@ -627,7 +627,7 @@ ExtrasRender.ComponentSync.RichTextArea.ImageDialog = EchoCore.extend(
 
 ExtrasRender.ComponentSync.RichTextArea.InputComponent = EchoCore.extend(EchoApp.Component, {
 
-    globalInitialize: function() {
+    $staticConstruct: function() {
         EchoApp.ComponentFactory.registerType("ExtrasApp.RichTextInput", this);
     },
     
@@ -636,11 +636,11 @@ ExtrasRender.ComponentSync.RichTextArea.InputComponent = EchoCore.extend(EchoApp
 
 ExtrasRender.ComponentSync.RichTextArea.InputPeer = EchoCore.extend(EchoRender.ComponentSync, {
 
-    globalInitialize: function() {
+    $staticConstruct: function() {
         EchoRender.registerPeer("ExtrasApp.RichTextInput", this);
     },
 
-    initialize: function() { },
+    $construct: function() { },
     
     doCommand: function(command, value) {
         this._loadRange();
@@ -745,8 +745,8 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer = EchoCore.extend(EchoRender.C
 ExtrasRender.ComponentSync.RichTextArea.MessageDialog = EchoCore.extend(
         ExtrasRender.ComponentSync.RichTextArea.AbstractDialog, {
     
-    initialize: function(richTextArea, title, message) {
-        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.prototype.initialize.call(this, richTextArea,
+    $construct: function(richTextArea, title, message) {
+        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.prototype.$construct.call(this, richTextArea,
                 ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.TYPE_OK,
                 {
                     title: title
@@ -763,8 +763,8 @@ ExtrasRender.ComponentSync.RichTextArea.MessageDialog = EchoCore.extend(
 ExtrasRender.ComponentSync.RichTextArea.TableDialog = EchoCore.extend(
         ExtrasRender.ComponentSync.RichTextArea.AbstractDialog, {
 
-    initialize: function(richTextArea) {
-        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.prototype.initialize.call(this, richTextArea,
+    $construct: function(richTextArea) {
+        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.prototype.$construct.call(this, richTextArea,
                 ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL,
                 {
                     title: richTextArea.peer._rb.get("TableDialog.Title"), 

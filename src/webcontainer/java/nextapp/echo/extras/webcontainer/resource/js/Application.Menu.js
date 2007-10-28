@@ -5,7 +5,7 @@
  */
 ExtrasApp.ContextMenu = EchoCore.extend(EchoApp.Component, {
 
-    globalInitialize: function() {
+    $staticConstruct: function() {
         EchoApp.ComponentFactory.registerType("ExtrasApp.ContextMenu", this);
     },
 
@@ -19,7 +19,7 @@ ExtrasApp.ContextMenu = EchoCore.extend(EchoApp.Component, {
  */
 ExtrasApp.DropDownMenu = EchoCore.extend(EchoApp.Component, {
 
-    globalInitialize: function() {
+    $staticConstruct: function() {
         EchoApp.ComponentFactory.registerType("ExtrasApp.DropDownMenu", this);
     },
 
@@ -33,7 +33,7 @@ ExtrasApp.DropDownMenu = EchoCore.extend(EchoApp.Component, {
  */
 ExtrasApp.MenuBarPane = EchoCore.extend(EchoApp.Component, {
 
-    globalInitialize: function() {
+    $staticConstruct: function() {
         EchoApp.ComponentFactory.registerType("ExtrasApp.MenuBarPane", this);
     },
 
@@ -51,7 +51,7 @@ ExtrasApp.MenuBarPane = EchoCore.extend(EchoApp.Component, {
  */
 ExtrasApp.MenuModel = EchoCore.extend({
     
-    initialize: function(modelId, text, icon, items) {
+    $construct: function(modelId, text, icon, items) {
         this.modelId = modelId;
         this.id = ExtrasApp.uniqueId++;
         this.parent = null;
@@ -120,7 +120,7 @@ ExtrasApp.MenuModel = EchoCore.extend({
 
 ExtrasApp.OptionModel = EchoCore.extend({
     
-    initialize: function(modelId, text, icon) {
+    $construct: function(modelId, text, icon) {
         this.modelId = modelId;
         this.id = ExtrasApp.uniqueId++;
         this.parent = null;
@@ -155,16 +155,16 @@ ExtrasApp.OptionModel = EchoCore.extend({
 
 ExtrasApp.ToggleOptionModel = EchoCore.extend(ExtrasApp.OptionModel, {
 
-    initialize: function(modelId, text, selected) {
-        ExtrasApp.OptionModel.prototype.initialize.call(this, modelId, text, null)
+    $construct: function(modelId, text, selected) {
+        ExtrasApp.OptionModel.prototype.$construct.call(this, modelId, text, null)
         this.selected = selected;
     }
 });
 
 ExtrasApp.RadioOptionModel = EchoCore.extend(ExtrasApp.ToggleOptionModel, {
 
-    initialize: function(modelId, text, selected) {
-        ExtrasApp.ToggleOptionModel.prototype.initialize.call(this, modelId, text, selected)
+    $construct: function(modelId, text, selected) {
+        ExtrasApp.ToggleOptionModel.prototype.$construct.call(this, modelId, text, selected)
     }
 });
 
@@ -173,14 +173,14 @@ ExtrasApp.RadioOptionModel = EchoCore.extend(ExtrasApp.ToggleOptionModel, {
  */
 ExtrasApp.SeparatorModel = EchoCore.extend({
 
-    initialize: function() {
+    $construct: function() {
         this.parent = null;
     }
 });
 
 ExtrasApp.MenuStateModel = EchoCore.extend({
 
-    initialize: function() {
+    $construct: function() {
         this._disabledItems = [];
         this._selectedItems = [];
     },

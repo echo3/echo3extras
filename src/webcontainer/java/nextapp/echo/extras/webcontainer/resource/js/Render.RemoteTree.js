@@ -32,7 +32,7 @@
  */
 ExtrasRender.ComponentSync.RemoteTree = EchoCore.extend(EchoRender.ComponentSync, {
 
-    global: {
+    $static: {
         _BORDER_SIDE_STYLE_NAMES: ["borderTop", "borderRight", "borderBottom", "borderLeft"],
         
         LINE_STYLE_NONE: 0,
@@ -42,7 +42,7 @@ ExtrasRender.ComponentSync.RemoteTree = EchoCore.extend(EchoRender.ComponentSync
         _supportedPartialProperties: ["treeStructure", "selection"]
     },
     
-    globalInitialize: function() {
+    $staticConstruct: function() {
         EchoRender.registerPeer("nextapp.echo.extras.app.RemoteTree", this);
     },
 

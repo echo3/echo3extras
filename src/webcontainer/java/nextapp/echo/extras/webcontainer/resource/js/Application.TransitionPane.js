@@ -7,7 +7,7 @@
  */
 ExtrasApp.TransitionPane = EchoCore.extend(EchoApp.Component, {
 
-    global: {
+    $static: {
     
         /**
          * Transition setting indicating new content should immediately 

@@ -4,7 +4,7 @@
  */
 ExtrasApp.AccordionPane = EchoCore.extend(EchoApp.Component, {
     
-    globalInitialize: function() {
+    $staticConstruct: function() {
         EchoApp.ComponentFactory.registerType("ExtrasApp.AccordionPane", this);
     },
     

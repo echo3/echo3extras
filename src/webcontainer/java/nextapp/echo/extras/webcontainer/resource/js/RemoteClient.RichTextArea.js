@@ -3,7 +3,7 @@
  */
 ExtrasApp.RemoteRichTextArea = EchoCore.extend(ExtrasApp.RichTextArea, {
 
-    globalInitialize: function() {
+    $staticConstruct: function() {
         EchoApp.ComponentFactory.registerType("ExtrasApp.RemoteRichTextArea", this);
     },
     
@@ -12,7 +12,7 @@ ExtrasApp.RemoteRichTextArea = EchoCore.extend(ExtrasApp.RichTextArea, {
 
 ExtrasRender.ComponentSync.RemoteRichTextArea = EchoCore.extend(ExtrasRender.ComponentSync.RichTextArea, {
 
-    globalInitialize: function() {
+    $staticConstruct: function() {
         EchoRender.registerPeer("ExtrasApp.RemoteRichTextArea", this);
     },
 

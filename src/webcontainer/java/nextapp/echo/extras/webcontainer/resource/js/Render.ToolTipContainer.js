@@ -3,11 +3,11 @@
  */
 ExtrasRender.ComponentSync.ToolTipContainer = EchoCore.extend(EchoRender.ComponentSync, {
     
-    globalInitialize: function() {
+    $staticConstruct: function() {
         EchoRender.registerPeer("nextapp.echo.extras.app.ToolTipContainer", this);
     },
     
-    initialize: function() {
+    $construct: function() {
     	this._divElement = null;
     	this._applyDivElement = null;
     	this._tooltipDivElement = null;

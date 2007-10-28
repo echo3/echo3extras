@@ -3,7 +3,7 @@
  */
 ExtrasRender.ComponentSync.Group = EchoCore.extend(EchoRender.ComponentSync, {
 
-    global: {
+    $static: {
     
         DEFAULT_TITLE_INSETS: new EchoApp.Insets(0, 2),
         
@@ -22,11 +22,11 @@ ExtrasRender.ComponentSync.Group = EchoCore.extend(EchoRender.ComponentSync, {
         }
     },
 
-    globalInitialize: function() {
+    $staticConstruct: function() {
         EchoRender.registerPeer("nextapp.echo.extras.app.Group", this);
     },
 
-    initialize: function() {
+    $construct: function() {
     	this._groupDivElement = null;
     	this._borderImages = null;
     },

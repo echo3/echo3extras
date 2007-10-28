@@ -5,7 +5,7 @@
  */
 ExtrasRender.ComponentSync.TabPane = EchoCore.extend(EchoRender.ComponentSync, {
 
-    global: {
+    $static: {
         _supportedPartialProperties: ["activeTab"],
         _paneInsets: new EchoApp.Insets(0),
         _defaultBorderType: ExtrasApp.TabPane.BORDER_TYPE_ADJACENT_TO_TABS,
@@ -25,11 +25,11 @@ ExtrasRender.ComponentSync.TabPane = EchoCore.extend(EchoRender.ComponentSync, {
         _defaultTabSpacing: new EchoApp.Extent(0)
     },
     
-    globalInitialize: function() {
+    $staticConstruct: function() {
         EchoRender.registerPeer("ExtrasApp.TabPane", this);
     },
     
-    initialize: function() {
+    $construct: function() {
         // state
         this._activeTabId = null;
         this._tabs = [];
@@ -349,7 +349,7 @@ ExtrasRender.ComponentSync.TabPane = EchoCore.extend(EchoRender.ComponentSync, {
 
 ExtrasRender.ComponentSync.TabPane.Tab = EchoCore.extend({
 
-    initialize: function(childComponent, parent) {
+    $construct: function(childComponent, parent) {
         // state
         this._childComponent = childComponent;
         this._parent = parent;
