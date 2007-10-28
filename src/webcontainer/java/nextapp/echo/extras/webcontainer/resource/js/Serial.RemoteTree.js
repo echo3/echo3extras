@@ -35,7 +35,7 @@ ExtrasSerial.PropertyTranslator.RemoteTree.TreeStructure = {
     toProperty: function(client, propertyElement) {
         var children = EchoWebCore.DOM.getChildElementsByTagName(propertyElement, "e");
         
-        var structures = new Array();
+        var structures = [];
         
         var treeStructure;
         var headerNode;

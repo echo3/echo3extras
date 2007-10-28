@@ -33,7 +33,7 @@ ExtrasRender.ComponentSync.Menu = EchoCore.extend(EchoRender.ComponentSync, {
         /**
          * Array containing models of open menus.
          */
-        this._openMenuPath = new Array();
+        this._openMenuPath = [];
         this._menuInsets = new EchoApp.Insets(2, 2, 2, 2);
         this._menuItemInsets = new EchoApp.Insets(1, 12, 1, 12);
         this._menuItemIconTextMargin = new EchoApp.Extent(5);
@@ -64,7 +64,7 @@ ExtrasRender.ComponentSync.Menu = EchoCore.extend(EchoRender.ComponentSync, {
     	this._element = null;
     	this._menuModel = null;
     	this._stateModel = null;
-        this._openMenuPath = new Array();
+        this._openMenuPath = [];
     },
     
     _activateItem: function(itemModel) {

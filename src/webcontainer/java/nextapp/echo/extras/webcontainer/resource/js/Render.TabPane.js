@@ -6,7 +6,7 @@
 ExtrasRender.ComponentSync.TabPane = EchoCore.extend(EchoRender.ComponentSync, {
 
     global: {
-        _supportedPartialProperties: new Array("activeTab"),
+        _supportedPartialProperties: ["activeTab"],
         _paneInsets: new EchoApp.Insets(0),
         _defaultBorderType: ExtrasApp.TabPane.BORDER_TYPE_ADJACENT_TO_TABS,
         _defaultForeground: new EchoApp.Color("#000000"),
@@ -32,7 +32,7 @@ ExtrasRender.ComponentSync.TabPane = EchoCore.extend(EchoRender.ComponentSync, {
     initialize: function() {
         // state
         this._activeTabId = null;
-        this._tabs = new Array();
+        this._tabs = [];
         // elements
         this._element = null;
         this._headerContainerTrElement = null;
@@ -190,7 +190,7 @@ ExtrasRender.ComponentSync.TabPane = EchoCore.extend(EchoRender.ComponentSync, {
         for (var i = 0; i < this._tabs.length; i++) {
             this._tabs[i]._dispose();
         }
-        this._tabs = new Array();
+        this._tabs = [];
         this._element = null;
         this._headerContainerTrElement = null;
         this._contentContainerDivElement = null;

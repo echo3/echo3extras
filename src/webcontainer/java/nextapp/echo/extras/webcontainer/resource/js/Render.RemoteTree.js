@@ -363,7 +363,7 @@ ExtrasRender.ComponentSync.RemoteTree = EchoCore.extend(EchoRender.ComponentSync
             side.size = border.size;
             side.style = border.style;
             side.color = border.color;
-            return new EchoApp.Border(new Array(side));
+            return new EchoApp.Border([side]);
         }
     },
     
@@ -417,7 +417,7 @@ ExtrasRender.ComponentSync.RemoteTree = EchoCore.extend(EchoRender.ComponentSync
      * @param element the element to render insets to
      */
     _applyInsets: function(insets, sides, element) {
-        var newValues = new Array();
+        var newValues = [];
         var setInset = function(side, value) {
             switch (side) {
                 case 0:

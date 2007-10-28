@@ -163,7 +163,7 @@ ExtrasApp.OptionModel = EchoCore.extend({
      * @type {Array}
      */
     getItemPositionPath: function() {
-        var path = new Array();
+        var path = [];
         var itemModel = this;
         while (itemModel.parent != null) {
             path.unshift(itemModel.parent.indexOfItem(itemModel));

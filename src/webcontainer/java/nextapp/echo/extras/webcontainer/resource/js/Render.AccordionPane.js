@@ -22,7 +22,7 @@ ExtrasRender.ComponentSync.AccordionPane = EchoCore.extend(EchoRender.ComponentS
     initialize: function() {
     	this._paneDivElement = null;
     	this._activeTabId = null;
-    	this._tabs = new Array();
+    	this._tabs = [];
     	this._rotation = null;
         this._animationEnabled = true;
         this._animationTime = 350;
@@ -73,7 +73,7 @@ ExtrasRender.ComponentSync.AccordionPane = EchoCore.extend(EchoRender.ComponentS
     	for (var i = 0; i < this._tabs.length; i++) {
     		this._tabs[i]._dispose();
     	}
-    	this._tabs = new Array();
+    	this._tabs = [];
     	this._paneDivElement.id = "";
     	this._paneDivElement = null;
     },
@@ -425,7 +425,7 @@ ExtrasRender.ComponentSync.AccordionPane.Rotation = EchoCore.extend({
         
         this._tabHeight = this._parent._calculateTabHeight();
         
-        this._rotatingTabs = new Array();
+        this._rotatingTabs = [];
         
         this._animationStepIndex = 0;
         

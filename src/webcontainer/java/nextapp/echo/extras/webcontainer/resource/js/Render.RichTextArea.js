@@ -415,7 +415,7 @@ ExtrasRender.ComponentSync.RichTextArea = EchoCore.extend(EchoArc.ComponentSync,
     renderAdd: function(update, parentElement) {
         this._icons = this.getIcons();
         if (!this._icons) {
-            this._icons = new Object();
+            this._icons = {};
         }
         
         this._mainDivElement = document.createElement("div");

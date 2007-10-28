@@ -68,7 +68,7 @@ ExtrasRender.ComponentSync.Group = EchoCore.extend(EchoRender.ComponentSync, {
     },
     
     _renderBorder: function(contentElem) {
-    	var borderParts = new Array();
+    	var borderParts = [];
     	
     	var borderInsets = this.component.getRenderProperty("borderInsets", 
     	        ExtrasRender.ComponentSync.Group.DEFAULT_BORDER_INSETS);

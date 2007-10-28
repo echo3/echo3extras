@@ -38,7 +38,7 @@ ExtrasRender.ComponentSync.RemoteRichTextArea = EchoCore.extend(ExtrasRender.Com
     
     _installIcons: function() {
         var imageServiceUrl = this.client.getServiceUrl("Echo.Image");
-        var iconNames = new Array(
+        var iconNames = [
             "undo",
             "redo",
             "cut",
@@ -63,8 +63,8 @@ ExtrasRender.ComponentSync.RemoteRichTextArea = EchoCore.extend(ExtrasRender.Com
             "alignmentCenter",
             "alignmentRight",
             "alignmentJustify"
-        );
-        this._defaultIcons = new Object();
+        ];
+        this._defaultIcons = {};
         for (var i = 0; i < iconNames.length; ++i) {
             this._defaultIcons[iconNames[i]] = new EchoApp.ImageReference(imageServiceUrl 
                     + "&iid=EchoExtras.RemoteRichTextArea." + iconNames[i]);

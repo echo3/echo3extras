@@ -44,7 +44,7 @@ ExtrasApp.RemoteTree.TreeStructure = EchoCore.extend({
      * @constructor
      */
     initialize: function(rootNode) { 
-        this._idNodeMap = new Object();
+        this._idNodeMap = {};
         this._rootNode = rootNode;
         this._headerNode = null;
         this.addNode(rootNode);
@@ -339,8 +339,8 @@ ExtrasApp.RemoteTree.TreeNode = EchoCore.extend({
     initialize: function(id, parentId) { 
         this._id = id;
         this._parentId = parentId;
-        this._childNodes = new Array();
-        this._columns = new Array();
+        this._childNodes = [];
+        this._columns = [];
         this._expanded = false;
         this._leaf = false;
     },
