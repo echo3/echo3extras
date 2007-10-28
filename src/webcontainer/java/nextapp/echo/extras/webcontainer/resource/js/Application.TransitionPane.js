@@ -75,9 +75,5 @@ ExtrasApp.TransitionPane = EchoCore.extend(EchoApp.Component, {
         TYPE_FADE: 9
     },
     
-    componentType: "ExtrasApp.TransitionPane",
-
-    initialize: function(properties) {
-        EchoApp.Component.prototype.initialize.call(this, properties);
-    }
+    componentType: "ExtrasApp.TransitionPane"
 });

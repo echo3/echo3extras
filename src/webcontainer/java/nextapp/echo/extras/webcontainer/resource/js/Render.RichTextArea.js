@@ -3,90 +3,82 @@
  */
 ExtrasRender.ComponentSync.RichTextArea = EchoCore.extend(EchoArc.ComponentSync, {
 
-    global: {
-
-        DEFAULT_RESOURCE_BUNDLE: new EchoCore.ResourceBundle({
-            "ColorDialog.Title.Foreground":     "Text Color",
-            "ColorDialog.Title.Background":     "Highlight Color",
-            "ColorDialog.PromptForeground":     "Foreground:",
-            "ColorDialog.PromptBackground":     "Background:",
-            "Error.ClipboardAccessDisabled":    "This browser has clipboard access disabled. "
-                                                + "Use keyboard shortcuts or change your security settings.",
-            "Generic.Cancel":                   "Cancel",
-            "Generic.Error":                    "Error",
-            "Generic.Ok":                       "Ok",
-            "HyperlinkDialog.Title":            "Insert Hyperlink",
-            "HyperlinkDialog.PromptURL":        "URL:",
-            "HyperlinkDialog.PromptDescription":
-                                                "Description Text:",
-            "HyperlinkDialog.ErrorDialogTitle": "Cannot Insert Hyperlink",
-            "HyperlinkDialog.ErrorDialog.URL":  
-                                                "The URL entered is not valid.",
-            "ImageDialog.Title":                "Insert Image",
-            "ImageDialog.PromptURL":            "URL:",
-            "ImageDialog.ErrorDialogTitle":     "Cannot Insert Image",
-            "ImageDialog.ErrorDialog.URL":  
-                                                "The URL entered is not valid.",
-            "Menu.Edit":                        "Edit",
-            "Menu.Undo":                        "Undo",
-            "Menu.Redo":                        "Redo",
-            "Menu.Cut":                         "Cut",
-            "Menu.Copy":                        "Copy",
-            "Menu.Paste":                       "Paste",
-            "Menu.Delete":                      "Delete",
-            "Menu.SelectAll":                   "Select All",
-            "Menu.Insert":                      "Insert",
-            "Menu.InsertImage":                 "Image...",
-            "Menu.InsertHyperlink":             "Hyperlink...",
-            "Menu.InsertHorizontalRule":        "Horizontal Rule",
-            "Menu.InsertTable":                 "Table...",
-            "Menu.BulletedList":                "Bulleted List",
-            "Menu.NumberedList":                "Numbered List",
-            "Menu.Format":                      "Format",
-            "Menu.Bold":                        "Bold",
-            "Menu.Italic":                      "Italic",
-            "Menu.Underline":                   "Underline",
-            "Menu.Strikethrough":               "Strikethrough",
-            "Menu.Superscript":                 "Superscript",
-            "Menu.Subscript":                   "Subscript",
-            "Menu.PlainText":                   "Plain Text",
-            "Menu.TextStyle":                   "Text Style",
-            "Menu.ParagraphStyle":              "Paragraph Style",
-            "Menu.Alignment":                   "Alignment",
-            "Menu.Left":                        "Left",
-            "Menu.Right":                       "Right",
-            "Menu.Center":                      "Center",
-            "Menu.Justified":                   "Justified",
-            "Menu.Indent":                      "Indent",
-            "Menu.Outdent":                     "Outdent",
-            "Menu.SetForeground":               "Set Text Color...",
-            "Menu.SetBackground":               "Set Highlight Color...",
-            "Menu.Heading1":                    "Heading 1",
-            "Menu.Heading2":                    "Heading 2",
-            "Menu.Heading3":                    "Heading 3",
-            "Menu.Heading4":                    "Heading 4",
-            "Menu.Heading5":                    "Heading 5",
-            "Menu.Heading6":                    "Heading 6",
-            "Menu.Normal":                      "Normal",
-            "Menu.Preformatted":                "Preformatted",
-            "TableDialog.Title":                "Insert Table",
-            "TableDialog.PromptRows":           "Rows:",
-            "TableDialog.PromptColumns":        "Columns:",
-            "TableDialog.ErrorDialogTitle":     "Cannot Insert Table",
-            "TableDialog.ErrorDialog.Columns":  "The entered columns value is not valid.  "
-                                                + "Please specify a number between 1 and 50.",
-            "TableDialog.ErrorDialog.Rows":     "The entered rows value is not valid.  Please specify a number between 1 and 50."
-        })
-    },
-    
     globalInitialize: function() {
         EchoRender.registerPeer("ExtrasApp.RichTextArea", this);
     },
 
-    initialize: function() {
-        EchoArc.ComponentSync.prototype.initialize.call(this);
-        this._rb = ExtrasRender.ComponentSync.RichTextArea.DEFAULT_RESOURCE_BUNDLE; 
-    },
+    _rb: new EchoCore.ResourceBundle({
+        "ColorDialog.Title.Foreground":     "Text Color",
+        "ColorDialog.Title.Background":     "Highlight Color",
+        "ColorDialog.PromptForeground":     "Foreground:",
+        "ColorDialog.PromptBackground":     "Background:",
+        "Error.ClipboardAccessDisabled":    "This browser has clipboard access disabled. "
+                                            + "Use keyboard shortcuts or change your security settings.",
+        "Generic.Cancel":                   "Cancel",
+        "Generic.Error":                    "Error",
+        "Generic.Ok":                       "Ok",
+        "HyperlinkDialog.Title":            "Insert Hyperlink",
+        "HyperlinkDialog.PromptURL":        "URL:",
+        "HyperlinkDialog.PromptDescription":
+                                            "Description Text:",
+        "HyperlinkDialog.ErrorDialogTitle": "Cannot Insert Hyperlink",
+        "HyperlinkDialog.ErrorDialog.URL":  
+                                            "The URL entered is not valid.",
+        "ImageDialog.Title":                "Insert Image",
+        "ImageDialog.PromptURL":            "URL:",
+        "ImageDialog.ErrorDialogTitle":     "Cannot Insert Image",
+        "ImageDialog.ErrorDialog.URL":  
+                                            "The URL entered is not valid.",
+        "Menu.Edit":                        "Edit",
+        "Menu.Undo":                        "Undo",
+        "Menu.Redo":                        "Redo",
+        "Menu.Cut":                         "Cut",
+        "Menu.Copy":                        "Copy",
+        "Menu.Paste":                       "Paste",
+        "Menu.Delete":                      "Delete",
+        "Menu.SelectAll":                   "Select All",
+        "Menu.Insert":                      "Insert",
+        "Menu.InsertImage":                 "Image...",
+        "Menu.InsertHyperlink":             "Hyperlink...",
+        "Menu.InsertHorizontalRule":        "Horizontal Rule",
+        "Menu.InsertTable":                 "Table...",
+        "Menu.BulletedList":                "Bulleted List",
+        "Menu.NumberedList":                "Numbered List",
+        "Menu.Format":                      "Format",
+        "Menu.Bold":                        "Bold",
+        "Menu.Italic":                      "Italic",
+        "Menu.Underline":                   "Underline",
+        "Menu.Strikethrough":               "Strikethrough",
+        "Menu.Superscript":                 "Superscript",
+        "Menu.Subscript":                   "Subscript",
+        "Menu.PlainText":                   "Plain Text",
+        "Menu.TextStyle":                   "Text Style",
+        "Menu.ParagraphStyle":              "Paragraph Style",
+        "Menu.Alignment":                   "Alignment",
+        "Menu.Left":                        "Left",
+        "Menu.Right":                       "Right",
+        "Menu.Center":                      "Center",
+        "Menu.Justified":                   "Justified",
+        "Menu.Indent":                      "Indent",
+        "Menu.Outdent":                     "Outdent",
+        "Menu.SetForeground":               "Set Text Color...",
+        "Menu.SetBackground":               "Set Highlight Color...",
+        "Menu.Heading1":                    "Heading 1",
+        "Menu.Heading2":                    "Heading 2",
+        "Menu.Heading3":                    "Heading 3",
+        "Menu.Heading4":                    "Heading 4",
+        "Menu.Heading5":                    "Heading 5",
+        "Menu.Heading6":                    "Heading 6",
+        "Menu.Normal":                      "Normal",
+        "Menu.Preformatted":                "Preformatted",
+        "TableDialog.Title":                "Insert Table",
+        "TableDialog.PromptRows":           "Rows:",
+        "TableDialog.PromptColumns":        "Columns:",
+        "TableDialog.ErrorDialogTitle":     "Cannot Insert Table",
+        "TableDialog.ErrorDialog.Columns":  "The entered columns value is not valid.  "
+                                            + "Please specify a number between 1 and 50.",
+        "TableDialog.ErrorDialog.Rows":     "The entered rows value is not valid.  Please specify a number between 1 and 50."
+    }),
 
     createBaseComponent: function() {
         var controlsRow;
@@ -445,7 +437,7 @@ ExtrasRender.ComponentSync.RichTextArea.AbstractDialog = EchoCore.extend(EchoApp
 
     global: {
         TYPE_OK: 0,
-        TYPE_OK_CANCEL: 1,
+        TYPE_OK_CANCEL: 1
     },
 
     initialize: function(richTextArea, type, properties, content) {
@@ -473,7 +465,7 @@ ExtrasRender.ComponentSync.RichTextArea.AbstractDialog = EchoCore.extend(EchoApp
                             styleName: controlPaneRowStyleName,
                             style: controlPaneRowStyleName ? null : ExtrasRender.DEFAULT_CONTROL_PANE_ROW_STYLE
                         }),
-                        content,
+                        content
                     ]
                 })
             ]
@@ -638,11 +630,8 @@ ExtrasRender.ComponentSync.RichTextArea.InputComponent = EchoCore.extend(EchoApp
     globalInitialize: function() {
         EchoApp.ComponentFactory.registerType("ExtrasApp.RichTextInput", this);
     },
-
-    initialize: function(properties) {
-        EchoApp.Component.prototype.initialize.call(this, properties);
-        this.componentType = "ExtrasApp.RichTextInput";
-    }
+    
+    componentType: "ExtrasApp.RichTextInput"
 });
 
 ExtrasRender.ComponentSync.RichTextArea.InputPeer = EchoCore.extend(EchoRender.ComponentSync, {
@@ -760,7 +749,7 @@ ExtrasRender.ComponentSync.RichTextArea.MessageDialog = EchoCore.extend(
         ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.prototype.initialize.call(this, richTextArea,
                 ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.TYPE_OK,
                 {
-                    title: title,
+                    title: title
                 },
                 new EchoApp.Label({
                     text: message,

@@ -1,70 +1,43 @@
 /**
  * @class 
  * ContextMenu component.
+ * @base EchoApp.Component
  */
 ExtrasApp.ContextMenu = EchoCore.extend(EchoApp.Component, {
 
-    componentType: "ExtrasApp.ContextMenu",
-    
     globalInitialize: function() {
         EchoApp.ComponentFactory.registerType("ExtrasApp.ContextMenu", this);
     },
-    
-    /**
-     * Creates a new ContextMenu.
-     * 
-     * @constructor
-     * @base EchoApp.Component
-     */
-    initialize: function(properties) {
-        EchoApp.Component.prototype.initialize.call(this, properties);
-    }
+
+    componentType: "ExtrasApp.ContextMenu"
 });
 
 /**
  * @class
  * DropDownMenu component.
+ * @base EchoApp.Component
  */
 ExtrasApp.DropDownMenu = EchoCore.extend(EchoApp.Component, {
-
-    componentType: "ExtrasApp.DropDownMenu",
 
     globalInitialize: function() {
         EchoApp.ComponentFactory.registerType("ExtrasApp.DropDownMenu", this);
     },
 
-    /**
-     * Creates a new DropDownMenu.
-     * 
-     * @constructor
-     * @base EchoApp.Component
-     */
-    initialize: function(properties) {
-        EchoApp.Component.prototype.initialize.call(this, properties);
-    }
+    componentType: "ExtrasApp.DropDownMenu"
 });
 
 /**
  * @class 
  * MenuBarPane component.
+ * @base EchoApp.Component
  */
 ExtrasApp.MenuBarPane = EchoCore.extend(EchoApp.Component, {
-
-    componentType: "ExtrasApp.MenuBarPane",
 
     globalInitialize: function() {
         EchoApp.ComponentFactory.registerType("ExtrasApp.MenuBarPane", this);
     },
 
-    /**
-     * Creates a new MenuBarPane.
-     * 
-     * @constructor
-     * @base EchoApp.Component
-     */
-    initialize: function(properties) {
-        EchoApp.Component.prototype.initialize.call(this, properties);
-    }
+    componentType: "ExtrasApp.MenuBarPane"
 });
 
 /**

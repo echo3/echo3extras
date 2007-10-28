@@ -3,25 +3,17 @@
  */
 ExtrasApp.RemoteRichTextArea = EchoCore.extend(ExtrasApp.RichTextArea, {
 
-    componentType: "ExtrasApp.RemoteRichTextArea",
-
     globalInitialize: function() {
         EchoApp.ComponentFactory.registerType("ExtrasApp.RemoteRichTextArea", this);
     },
-
-    initialize: function(properties) {
-        ExtrasApp.RichTextArea.prototype.initialize.call(this, properties);
-    }
+    
+    componentType: "ExtrasApp.RemoteRichTextArea"
 });
 
 ExtrasRender.ComponentSync.RemoteRichTextArea = EchoCore.extend(ExtrasRender.ComponentSync.RichTextArea, {
 
     globalInitialize: function() {
         EchoRender.registerPeer("ExtrasApp.RemoteRichTextArea", this);
-    },
-
-    initialize: function() { 
-        ExtrasRender.ComponentSync.RichTextArea.prototype.initialize.call(this);
     },
 
     getIcons: function() {

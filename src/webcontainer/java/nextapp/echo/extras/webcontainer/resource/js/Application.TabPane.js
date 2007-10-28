@@ -60,7 +60,7 @@ ExtrasApp.TabPane = EchoCore.extend(EchoApp.Component, {
          * 
          * @type {Number}
          */
-        TAB_POSITION_BOTTOM: 1,
+        TAB_POSITION_BOTTOM: 1
     },
 
     globalInitialize: function() {
@@ -68,10 +68,6 @@ ExtrasApp.TabPane = EchoCore.extend(EchoApp.Component, {
     },
 
     componentType: "ExtrasApp.TabPane",
-    pane: true,
-    
-    initialize: function(properties) {
-        EchoApp.Component.prototype.initialize.call(this, properties);
-    }
+    pane: true
 });
 

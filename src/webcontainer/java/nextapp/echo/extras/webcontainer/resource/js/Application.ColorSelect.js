@@ -1,5 +1,6 @@
 /**
  * @class ColorSelect component.
+ * @base EchoApp.Component
  */
 ExtrasApp.ColorSelect = EchoCore.extend(EchoApp.Component, {
     
@@ -13,14 +14,5 @@ ExtrasApp.ColorSelect = EchoCore.extend(EchoApp.Component, {
         EchoApp.ComponentFactory.registerType("ExtrasApp.ColorSelect", this);
     },
     
-    /**
-     * Creates a new ColorSelect.
-     * 
-     * @constructor
-     * @base EchoApp.Component
-     */
-    initialize: function(properties) {
-        EchoApp.Component.prototype.initialize.call(this, properties);
-        this.componentType = "ExtrasApp.ColorSelect";
-    }
+    componentType: "ExtrasApp.ColorSelect"
 });
