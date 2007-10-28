@@ -3,7 +3,7 @@
  */
 ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
 
-    $staticConstruct: function() {
+    $load: function() {
         EchoRender.registerPeer("ExtrasApp.RichTextArea", this);
     },
 
@@ -627,7 +627,7 @@ ExtrasRender.ComponentSync.RichTextArea.ImageDialog = Core.extend(
 
 ExtrasRender.ComponentSync.RichTextArea.InputComponent = Core.extend(EchoApp.Component, {
 
-    $staticConstruct: function() {
+    $load: function() {
         EchoApp.ComponentFactory.registerType("ExtrasApp.RichTextInput", this);
     },
     
@@ -636,7 +636,7 @@ ExtrasRender.ComponentSync.RichTextArea.InputComponent = Core.extend(EchoApp.Com
 
 ExtrasRender.ComponentSync.RichTextArea.InputPeer = Core.extend(EchoRender.ComponentSync, {
 
-    $staticConstruct: function() {
+    $load: function() {
         EchoRender.registerPeer("ExtrasApp.RichTextInput", this);
     },
 

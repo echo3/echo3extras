@@ -25,7 +25,7 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
         _defaultTabSpacing: new EchoApp.Extent(0)
     },
     
-    $staticConstruct: function() {
+    $load: function() {
         EchoRender.registerPeer("ExtrasApp.TabPane", this);
     },
     

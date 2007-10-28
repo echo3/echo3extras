@@ -5,7 +5,7 @@
  */
 ExtrasApp.ContextMenu = Core.extend(EchoApp.Component, {
 
-    $staticConstruct: function() {
+    $load: function() {
         EchoApp.ComponentFactory.registerType("ExtrasApp.ContextMenu", this);
     },
 
@@ -19,7 +19,7 @@ ExtrasApp.ContextMenu = Core.extend(EchoApp.Component, {
  */
 ExtrasApp.DropDownMenu = Core.extend(EchoApp.Component, {
 
-    $staticConstruct: function() {
+    $load: function() {
         EchoApp.ComponentFactory.registerType("ExtrasApp.DropDownMenu", this);
     },
 
@@ -33,7 +33,7 @@ ExtrasApp.DropDownMenu = Core.extend(EchoApp.Component, {
  */
 ExtrasApp.MenuBarPane = Core.extend(EchoApp.Component, {
 
-    $staticConstruct: function() {
+    $load: function() {
         EchoApp.ComponentFactory.registerType("ExtrasApp.MenuBarPane", this);
     },
 

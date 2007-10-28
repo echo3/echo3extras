@@ -15,7 +15,7 @@ ExtrasRender.ComponentSync.AccordionPane = Core.extend(EchoRender.ComponentSync,
         _defaultTabContentInsets: this._paneInsets
     },
     
-    $staticConstruct: function() {
+    $load: function() {
         EchoRender.registerPeer("ExtrasApp.AccordionPane", this);
     },
        

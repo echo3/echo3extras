@@ -63,7 +63,7 @@ ExtrasApp.TabPane = Core.extend(EchoApp.Component, {
         TAB_POSITION_BOTTOM: 1
     },
 
-    $staticConstruct: function() {
+    $load: function() {
         EchoApp.ComponentFactory.registerType("ExtrasApp.TabPane", this);
     },
 

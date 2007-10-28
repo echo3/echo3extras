@@ -42,7 +42,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         _supportedPartialProperties: ["treeStructure", "selection"]
     },
     
-    $staticConstruct: function() {
+    $load: function() {
         EchoRender.registerPeer("nextapp.echo.extras.app.RemoteTree", this);
     },
 

@@ -4,7 +4,7 @@
  */
 ExtrasApp.RichTextArea = Core.extend(EchoApp.Component, {
 
-    $staticConstruct: function() {
+    $load: function() {
         EchoApp.ComponentFactory.registerType("ExtrasApp.RichTextArea", this);
     },
 

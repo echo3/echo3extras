@@ -416,7 +416,7 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
  */
 ExtrasRender.ComponentSync.MenuBarPane = Core.extend(ExtrasRender.ComponentSync.Menu, {
 
-    $staticConstruct: function() {
+    $load: function() {
        EchoRender.registerPeer("ExtrasApp.MenuBarPane", this);
     },
 
@@ -525,7 +525,7 @@ ExtrasRender.ComponentSync.MenuBarPane = Core.extend(ExtrasRender.ComponentSync.
  */
 ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync.Menu, {
 
-    $staticConstruct: function() {
+    $load: function() {
         EchoRender.registerPeer("ExtrasApp.DropDownMenu", this);
     },
 
@@ -761,7 +761,7 @@ ExtrasRender.ComponentSync.ContextMenu = Core.extend(ExtrasRender.ComponentSync.
         _supportedPartialProperties: ["model", "stateModel"]
     },
     
-    $staticConstruct: function() {
+    $load: function() {
         EchoRender.registerPeer("ExtrasApp.ContextMenu", this);
     },
 

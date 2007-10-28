@@ -1,6 +1,6 @@
 ExtrasRender.ComponentSync.ColorSelect = Core.extend(EchoRender.ComponentSync, {
 
-    $staticConstruct: function() {
+    $load: function() {
         EchoRender.registerPeer("ExtrasApp.ColorSelect", this);
     },
 

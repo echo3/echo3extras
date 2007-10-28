@@ -22,7 +22,7 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
         }
     },
 
-    $staticConstruct: function() {
+    $load: function() {
         EchoRender.registerPeer("nextapp.echo.extras.app.Group", this);
     },
 

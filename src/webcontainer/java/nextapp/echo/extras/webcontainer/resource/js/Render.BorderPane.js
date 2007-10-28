@@ -3,7 +3,7 @@
  */
 ExtrasRender.ComponentSync.BorderPane = Core.extend(EchoRender.ComponentSync, {
 
-    $staticConstruct: function() {
+    $load: function() {
         EchoRender.registerPeer("ExtrasApp.BorderPane", this);
     },
 

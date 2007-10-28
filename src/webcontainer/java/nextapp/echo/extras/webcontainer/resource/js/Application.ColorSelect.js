@@ -10,7 +10,7 @@ ExtrasApp.ColorSelect = Core.extend(EchoApp.Component, {
         DEFAULT_HUE_WIDTH: new EchoApp.Extent(20)
     },
     
-    $staticConstruct: function() {
+    $load: function() {
         EchoApp.ComponentFactory.registerType("ExtrasApp.ColorSelect", this);
     },
     
