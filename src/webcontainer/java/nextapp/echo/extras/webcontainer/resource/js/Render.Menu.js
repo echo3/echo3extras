@@ -109,20 +109,20 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
     
         var menuElement = this._getMenuElement(menuModel);
         if (this._isTopMenuElement(menuElement)) { 
-            this._renderTopMenu(menuModel);
+            this.renderTopMenu(menuModel);
         } else {
             this._renderSubMenu(menuModel);
         }
     },
     
-    _renderTopMenu: function(menuModel) {
+    renderTopMenu: function(menuModel) {
         var menuElement = this._getMenuElement(menuModel);
         var containerElement = document.getElementById(this.component.renderId);
         
         var menuBounds = new WebCore.Measure.Bounds(menuElement);
         var containerBounds = new WebCore.Measure.Bounds(containerElement);
         
-        this._renderMenu(menuModel, menuBounds.left, containerBounds.top + containerBounds.height);
+        this.renderMenu(menuModel, menuBounds.left, containerBounds.top + containerBounds.height);
     	// FIXME handle overflow
     },
     
@@ -133,10 +133,10 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
         var menuBounds = new WebCore.Measure.Bounds(menuElement);
         var containerBounds = new WebCore.Measure.Bounds(containerElement);
         
-        this._renderMenu(menuModel, containerBounds.left + containerBounds.width, menuBounds.top);
+        this.renderMenu(menuModel, containerBounds.left + containerBounds.width, menuBounds.top);
     },
     
-    _renderMenu: function(menuModel, xPosition, yPosition) {
+    renderMenu: function(menuModel, xPosition, yPosition) {
         var menuDivElement = document.createElement("div");
         menuDivElement.id = this.component.renderId + "_menu_" + menuModel.id;
         EchoAppRender.Insets.renderPixel(this._menuInsets, menuDivElement, "padding");
@@ -620,8 +620,8 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
         return dropDownDivElement;
     },
     
-    _renderMenu: function(menuModel, xPosition, yPosition) {
-    	var menuDivElement = ExtrasRender.ComponentSync.Menu.prototype._renderMenu.call(this, menuModel, xPosition, yPosition);
+    renderMenu: function(menuModel, xPosition, yPosition) {
+    	var menuDivElement = ExtrasRender.ComponentSync.Menu.prototype.renderMenu.call(this, menuModel, xPosition, yPosition);
         
         var menuWidth = this.component.getRenderProperty("menuWidth");
         if (menuWidth) {
@@ -784,8 +784,8 @@ ExtrasRender.ComponentSync.ContextMenu = Core.extend(ExtrasRender.ComponentSync.
         return contextMenuDivElement;
     },
     
-    _renderTopMenu: function(menuModel) {
-        this._renderMenu(menuModel, this._mousePosX, this._mousePosY);
+    renderTopMenu: function(menuModel) {
+        this.renderMenu(menuModel, this._mousePosX, this._mousePosY);
     },
     
     renderUpdate: function(update) {

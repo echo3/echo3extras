@@ -454,7 +454,7 @@ ExtrasRender.ComponentSync.RichTextArea.AbstractDialog = Core.extend(EchoApp.Win
             height: new EchoApp.Extent(200),
             resizable: false,
             events: {
-                close: new Core.MethodRef(this, this._processCancel)
+                close: new Core.MethodRef(this, this.processCancel)
             },
             children: [
                 new EchoApp.SplitPane({
@@ -477,7 +477,7 @@ ExtrasRender.ComponentSync.RichTextArea.AbstractDialog = Core.extend(EchoApp.Win
             text: richTextArea.peer._rb.get("Generic.Ok"),
             icon: richTextArea.peer._icons.ok,
             events: {
-                action: new Core.MethodRef(this, this._processOk)
+                action: new Core.MethodRef(this, this.processOk)
             }
         }));
         
@@ -488,7 +488,7 @@ ExtrasRender.ComponentSync.RichTextArea.AbstractDialog = Core.extend(EchoApp.Win
                 text: richTextArea.peer._rb.get("Generic.Cancel"),
                 icon: richTextArea.peer._icons.cancel,
                 events: {
-                    action: new Core.MethodRef(this, this._processCancel)
+                    action: new Core.MethodRef(this, this.processCancel)
                 }
             }));
         }
@@ -498,11 +498,11 @@ ExtrasRender.ComponentSync.RichTextArea.AbstractDialog = Core.extend(EchoApp.Win
         }
     },
     
-    _processCancel: function(e) {
+    processCancel: function(e) {
         this.parent.remove(this);
     },
     
-    _processOk: function(e) {
+    processOk: function(e) {
         this.parent.remove(this);
     }
 });
@@ -534,7 +534,7 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog = Core.extend(
                 }));
     },
     
-    _processOk: function(e) {
+    processOk: function(e) {
         var color = this._colorSelect.getProperty("color");
         this.parent.remove(this);
         this.fireEvent(new Core.Event("colorSelect", this, color));
@@ -571,7 +571,7 @@ ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog = Core.extend(
 
     },
     
-    _processOk: function(e) {
+    processOk: function(e) {
         var data = {
             url: this._urlField.getProperty("text"),
             description: this._descriptionField.getProperty("text")
@@ -610,7 +610,7 @@ ExtrasRender.ComponentSync.RichTextArea.ImageDialog = Core.extend(
                 }));
     },
     
-    _processOk: function(e) {
+    processOk: function(e) {
         var data = {
             url: this._urlField.getProperty("text")
         };
@@ -797,7 +797,7 @@ ExtrasRender.ComponentSync.RichTextArea.TableDialog = Core.extend(
                 }));
     },
     
-    _processOk: function(e) {
+    processOk: function(e) {
         var data = {
             rows: parseInt(this._rowsField.getProperty("text")),
             columns: parseInt(this._columnsField.getProperty("text"))
