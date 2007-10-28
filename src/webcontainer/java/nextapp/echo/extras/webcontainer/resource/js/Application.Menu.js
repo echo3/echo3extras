@@ -3,7 +3,7 @@
  * ContextMenu component.
  * @base EchoApp.Component
  */
-ExtrasApp.ContextMenu = EchoCore.extend(EchoApp.Component, {
+ExtrasApp.ContextMenu = Core.extend(EchoApp.Component, {
 
     $staticConstruct: function() {
         EchoApp.ComponentFactory.registerType("ExtrasApp.ContextMenu", this);
@@ -17,7 +17,7 @@ ExtrasApp.ContextMenu = EchoCore.extend(EchoApp.Component, {
  * DropDownMenu component.
  * @base EchoApp.Component
  */
-ExtrasApp.DropDownMenu = EchoCore.extend(EchoApp.Component, {
+ExtrasApp.DropDownMenu = Core.extend(EchoApp.Component, {
 
     $staticConstruct: function() {
         EchoApp.ComponentFactory.registerType("ExtrasApp.DropDownMenu", this);
@@ -31,7 +31,7 @@ ExtrasApp.DropDownMenu = EchoCore.extend(EchoApp.Component, {
  * MenuBarPane component.
  * @base EchoApp.Component
  */
-ExtrasApp.MenuBarPane = EchoCore.extend(EchoApp.Component, {
+ExtrasApp.MenuBarPane = Core.extend(EchoApp.Component, {
 
     $staticConstruct: function() {
         EchoApp.ComponentFactory.registerType("ExtrasApp.MenuBarPane", this);
@@ -49,7 +49,7 @@ ExtrasApp.MenuBarPane = EchoCore.extend(EchoApp.Component, {
  * @param icon {String} the icon of the menu model which will appear in its parent menu
  *        when this menu is used as a submenu
  */
-ExtrasApp.MenuModel = EchoCore.extend({
+ExtrasApp.MenuModel = Core.extend({
     
     $construct: function(modelId, text, icon, items) {
         this.modelId = modelId;
@@ -118,7 +118,7 @@ ExtrasApp.MenuModel = EchoCore.extend({
     }
 });
 
-ExtrasApp.OptionModel = EchoCore.extend({
+ExtrasApp.OptionModel = Core.extend({
     
     $construct: function(modelId, text, icon) {
         this.modelId = modelId;
@@ -153,7 +153,7 @@ ExtrasApp.OptionModel = EchoCore.extend({
     }
 });
 
-ExtrasApp.ToggleOptionModel = EchoCore.extend(ExtrasApp.OptionModel, {
+ExtrasApp.ToggleOptionModel = Core.extend(ExtrasApp.OptionModel, {
 
     $construct: function(modelId, text, selected) {
         ExtrasApp.OptionModel.prototype.$construct.call(this, modelId, text, null)
@@ -161,7 +161,7 @@ ExtrasApp.ToggleOptionModel = EchoCore.extend(ExtrasApp.OptionModel, {
     }
 });
 
-ExtrasApp.RadioOptionModel = EchoCore.extend(ExtrasApp.ToggleOptionModel, {
+ExtrasApp.RadioOptionModel = Core.extend(ExtrasApp.ToggleOptionModel, {
 
     $construct: function(modelId, text, selected) {
         ExtrasApp.ToggleOptionModel.prototype.$construct.call(this, modelId, text, selected)
@@ -171,14 +171,14 @@ ExtrasApp.RadioOptionModel = EchoCore.extend(ExtrasApp.ToggleOptionModel, {
 /**
  * A representation of a menu separator.
  */
-ExtrasApp.SeparatorModel = EchoCore.extend({
+ExtrasApp.SeparatorModel = Core.extend({
 
     $construct: function() {
         this.parent = null;
     }
 });
 
-ExtrasApp.MenuStateModel = EchoCore.extend({
+ExtrasApp.MenuStateModel = Core.extend({
 
     $construct: function() {
         this._disabledItems = [];

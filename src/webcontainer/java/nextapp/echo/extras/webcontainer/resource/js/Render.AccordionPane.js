@@ -3,7 +3,7 @@
 /**
  * Component rendering peer: AccordionPane
  */
-ExtrasRender.ComponentSync.AccordionPane = EchoCore.extend(EchoRender.ComponentSync, {
+ExtrasRender.ComponentSync.AccordionPane = Core.extend(EchoRender.ComponentSync, {
 
     $static: {
         _paneInsets: new EchoApp.Insets(0),
@@ -116,7 +116,7 @@ ExtrasRender.ComponentSync.AccordionPane = EchoCore.extend(EchoRender.ComponentS
      * @param tab the tab to remove
      */
     _removeTab: function(tab) {
-        var tabIndex = EchoCore.Arrays.indexOf(this._tabs, tab);
+        var tabIndex = Core.Arrays.indexOf(this._tabs, tab);
         this._tabs.splice(tabIndex, 1);
     
         tab._tabDivElement.parentNode.removeChild(tab._tabDivElement);
@@ -237,7 +237,7 @@ ExtrasRender.ComponentSync.AccordionPane = EchoCore.extend(EchoRender.ComponentS
     }
 });
 
-ExtrasRender.ComponentSync.AccordionPane.Tab = EchoCore.extend({
+ExtrasRender.ComponentSync.AccordionPane.Tab = Core.extend({
     
     $construct: function(childComponent, parent) {
     	this._childComponent = childComponent;
@@ -330,10 +330,10 @@ ExtrasRender.ComponentSync.AccordionPane.Tab = EchoCore.extend({
     },
     
     _addEventListeners: function() {
-        EchoWebCore.EventProcessor.add(this._tabDivElement, "click", new EchoCore.MethodRef(this, this._processClick), false);
+        EchoWebCore.EventProcessor.add(this._tabDivElement, "click", new Core.MethodRef(this, this._processClick), false);
         if (this._parent.component.getRenderProperty("tabRolloverEnabled", true)) {
-    	    EchoWebCore.EventProcessor.add(this._tabDivElement, "mouseover", new EchoCore.MethodRef(this, this._processEnter), false);
-    	    EchoWebCore.EventProcessor.add(this._tabDivElement, "mouseout", new EchoCore.MethodRef(this, this._processExit), false);
+    	    EchoWebCore.EventProcessor.add(this._tabDivElement, "mouseover", new Core.MethodRef(this, this._processEnter), false);
+    	    EchoWebCore.EventProcessor.add(this._tabDivElement, "mouseout", new Core.MethodRef(this, this._processExit), false);
         }
     	EchoWebCore.EventProcessor.addSelectionDenialListener(this._tabDivElement);
     },
@@ -388,7 +388,7 @@ ExtrasRender.ComponentSync.AccordionPane.Tab = EchoCore.extend({
  * @param oldTab the old (current) tab
  * @param newTab the new tab to display
  */
-ExtrasRender.ComponentSync.AccordionPane.Rotation = EchoCore.extend({
+ExtrasRender.ComponentSync.AccordionPane.Rotation = Core.extend({
 
     $static: {
     
@@ -429,8 +429,8 @@ ExtrasRender.ComponentSync.AccordionPane.Rotation = EchoCore.extend({
         
         this._animationStepIndex = 0;
         
-        this._oldTabIndex = EchoCore.Arrays.indexOf(this._parent._tabs, this._oldTab);
-        this._newTabIndex = EchoCore.Arrays.indexOf(this._parent._tabs, this._newTab);
+        this._oldTabIndex = Core.Arrays.indexOf(this._parent._tabs, this._oldTab);
+        this._newTabIndex = Core.Arrays.indexOf(this._parent._tabs, this._newTab);
         this._directionDown = this._newTabIndex < this._oldTabIndex;
         
         if (this._directionDown) {

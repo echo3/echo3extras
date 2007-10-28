@@ -3,7 +3,7 @@
 /**
  * Component rendering peer: TabPane
  */
-ExtrasRender.ComponentSync.TabPane = EchoCore.extend(EchoRender.ComponentSync, {
+ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
 
     $static: {
         _supportedPartialProperties: ["activeTab"],
@@ -64,7 +64,7 @@ ExtrasRender.ComponentSync.TabPane = EchoCore.extend(EchoRender.ComponentSync, {
      * @param tab the tab to remove
      */
     _removeTab: function(tab) {
-        var tabIndex = EchoCore.Arrays.indexOf(this._tabs, tab);
+        var tabIndex = Core.Arrays.indexOf(this._tabs, tab);
         if (tabIndex == -1) {
             return;
         }
@@ -248,7 +248,7 @@ ExtrasRender.ComponentSync.TabPane = EchoCore.extend(EchoRender.ComponentSync, {
             fullRender = true;
         }
         if (!fullRender) {
-            if (!EchoCore.Arrays.containsAll(ExtrasRender.ComponentSync.TabPane._supportedPartialProperties, 
+            if (!Core.Arrays.containsAll(ExtrasRender.ComponentSync.TabPane._supportedPartialProperties, 
                     update.getUpdatedPropertyNames(), true)) {
                 // Update contains property changes that cannot be partially re-rendered.
                 fullRender = true;
@@ -347,7 +347,7 @@ ExtrasRender.ComponentSync.TabPane = EchoCore.extend(EchoRender.ComponentSync, {
     }
 });
 
-ExtrasRender.ComponentSync.TabPane.Tab = EchoCore.extend({
+ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
 
     $construct: function(childComponent, parent) {
         // state
@@ -622,14 +622,14 @@ ExtrasRender.ComponentSync.TabPane.Tab = EchoCore.extend({
     },
     
     _addEventListeners: function() {
-        EchoWebCore.EventProcessor.add(this._headerTdElement, "click", new EchoCore.MethodRef(this, this._processClick), false);
+        EchoWebCore.EventProcessor.add(this._headerTdElement, "click", new Core.MethodRef(this, this._processClick), false);
         EchoWebCore.EventProcessor.addSelectionDenialListener(this._headerTdElement);
         
         if (this._closeImageTdElement) {
             EchoWebCore.EventProcessor.add(this._headerTdElement, "mouseover", 
-                    new EchoCore.MethodRef(this, this._processEnter), false);
+                    new Core.MethodRef(this, this._processEnter), false);
             EchoWebCore.EventProcessor.add(this._headerTdElement, "mouseout", 
-                    new EchoCore.MethodRef(this, this._processExit), false);
+                    new Core.MethodRef(this, this._processExit), false);
         }
     },
     
@@ -716,13 +716,13 @@ ExtrasRender.ComponentSync.TabPane.Tab = EchoCore.extend({
             if (!this._isTabCloseEnabled()) {
                 return;
             }
-            this._parent.component.fireEvent(new EchoCore.Event("tabClose", this._parent.component, 
+            this._parent.component.fireEvent(new Core.Event("tabClose", this._parent.component, 
                     this._childComponent.renderId));
         } else {
             // tab clicked
             this._parent._selectTab(this._childComponent.renderId);
             this._parent.component.setProperty("activeTab", this._childComponent.renderId);
-            this._parent.component.fireEvent(new EchoCore.Event("tabSelect", this._parent.component, 
+            this._parent.component.fireEvent(new Core.Event("tabSelect", this._parent.component, 
                     this._childComponent.renderId));
         }
     },

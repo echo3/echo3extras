@@ -5,7 +5,7 @@
  * @class TabPane component.
  * @base EchoApp.Component
  */
-ExtrasApp.TabPane = EchoCore.extend(EchoApp.Component, {
+ExtrasApp.TabPane = Core.extend(EchoApp.Component, {
 
     $static: {
     

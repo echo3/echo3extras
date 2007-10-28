@@ -1,7 +1,7 @@
 /**
  * Component rendering peer: RichTextArea
  */
-ExtrasApp.RemoteRichTextArea = EchoCore.extend(ExtrasApp.RichTextArea, {
+ExtrasApp.RemoteRichTextArea = Core.extend(ExtrasApp.RichTextArea, {
 
     $staticConstruct: function() {
         EchoApp.ComponentFactory.registerType("ExtrasApp.RemoteRichTextArea", this);
@@ -10,7 +10,7 @@ ExtrasApp.RemoteRichTextArea = EchoCore.extend(ExtrasApp.RichTextArea, {
     componentType: "ExtrasApp.RemoteRichTextArea"
 });
 
-ExtrasRender.ComponentSync.RemoteRichTextArea = EchoCore.extend(ExtrasRender.ComponentSync.RichTextArea, {
+ExtrasRender.ComponentSync.RemoteRichTextArea = Core.extend(ExtrasRender.ComponentSync.RichTextArea, {
 
     $staticConstruct: function() {
         EchoRender.registerPeer("ExtrasApp.RemoteRichTextArea", this);

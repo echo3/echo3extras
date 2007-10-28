@@ -1,7 +1,7 @@
 /**
  * Component rendering peer: ToolTipContainer
  */
-ExtrasRender.ComponentSync.ToolTipContainer = EchoCore.extend(EchoRender.ComponentSync, {
+ExtrasRender.ComponentSync.ToolTipContainer = Core.extend(EchoRender.ComponentSync, {
     
     $staticConstruct: function() {
         EchoRender.registerPeer("nextapp.echo.extras.app.ToolTipContainer", this);
@@ -74,9 +74,9 @@ ExtrasRender.ComponentSync.ToolTipContainer = EchoCore.extend(EchoRender.Compone
     	    var mouseEnterLeaveSupport = EchoWebCore.Environment.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED;
     	    var enterEvent = mouseEnterLeaveSupport ? "mouseenter" : "mouseover";
     	    var exitEvent = mouseEnterLeaveSupport ? "mouseleave" : "mouseout";
-    	    EchoWebCore.EventProcessor.add(applyDivElement, enterEvent, new EchoCore.MethodRef(this, this._processRolloverEnter), false);
-    		EchoWebCore.EventProcessor.add(applyDivElement, exitEvent, new EchoCore.MethodRef(this, this._processRolloverExit), false);
-    		EchoWebCore.EventProcessor.add(applyDivElement, "mousemove", new EchoCore.MethodRef(this, this._processMove), false);
+    	    EchoWebCore.EventProcessor.add(applyDivElement, enterEvent, new Core.MethodRef(this, this._processRolloverEnter), false);
+    		EchoWebCore.EventProcessor.add(applyDivElement, exitEvent, new Core.MethodRef(this, this._processRolloverExit), false);
+    		EchoWebCore.EventProcessor.add(applyDivElement, "mousemove", new Core.MethodRef(this, this._processMove), false);
         }
         
         return applyDivElement;

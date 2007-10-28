@@ -27,7 +27,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-ExtrasApp.RemoteTree = EchoCore.extend(EchoApp.Component, {
+ExtrasApp.RemoteTree = Core.extend(EchoApp.Component, {
 });
 
 /**
@@ -35,7 +35,7 @@ ExtrasApp.RemoteTree = EchoCore.extend(EchoApp.Component, {
  *          (ExtrasApp.RemoteTree.TreeNode) that have an id. This class stores all nodes
  *          in a map based on their id. 
  */
-ExtrasApp.RemoteTree.TreeStructure = EchoCore.extend({
+ExtrasApp.RemoteTree.TreeStructure = Core.extend({
     
     /**
      * Creates a new TreeStructure object.
@@ -327,7 +327,7 @@ ExtrasApp.RemoteTree.TreeStructure = EchoCore.extend({
 /**
  * @class Represents a tree node
  */
-ExtrasApp.RemoteTree.TreeNode = EchoCore.extend({
+ExtrasApp.RemoteTree.TreeNode = Core.extend({
     /**
      * Constructs a new tree node object
      * 
@@ -372,7 +372,7 @@ ExtrasApp.RemoteTree.TreeNode = EchoCore.extend({
      * @type Boolean
      */
     containsChildNode: function(node) {
-        return EchoCore.Arrays.indexOf(this._childNodes, node) != -1;
+        return Core.Arrays.indexOf(this._childNodes, node) != -1;
     },
     
     /**
@@ -382,7 +382,7 @@ ExtrasApp.RemoteTree.TreeNode = EchoCore.extend({
      * @param {ExtrasApp.RemoteTree.TreeNode} node the node to add
      */
     addChildNode: function(node) {
-        var index = EchoCore.Arrays.indexOf(this._childNodes, node);
+        var index = Core.Arrays.indexOf(this._childNodes, node);
         if (index == -1) {
             this._childNodes.push(node);
         } else {
@@ -491,7 +491,7 @@ ExtrasApp.RemoteTree.TreeNode = EchoCore.extend({
      * @type Integer
      */
     indexOf: function(node) {
-        return EchoCore.Arrays.indexOf(this._childNodes, node);
+        return Core.Arrays.indexOf(this._childNodes, node);
     },
     
     /**
@@ -526,7 +526,7 @@ ExtrasApp.RemoteTree.TreeNode = EchoCore.extend({
  * @constructor
  * @class Class to keep track of selection updates.
  */
-ExtrasApp.RemoteTree.SelectionUpdate = EchoCore.extend({
+ExtrasApp.RemoteTree.SelectionUpdate = Core.extend({
 
     className: "ExtrasApp.RemoteTree.SelectionUpdate",
 
@@ -605,7 +605,7 @@ ExtrasApp.RemoteTree.SelectionUpdate = EchoCore.extend({
  * @param {Number} selectionMode the selectionMode
  * @constructor
  */
-ExtrasApp.TreeSelectionModel = EchoCore.extend({
+ExtrasApp.TreeSelectionModel = Core.extend({
     
     $static: {
         /**
@@ -656,7 +656,7 @@ ExtrasApp.TreeSelectionModel = EchoCore.extend({
      * @param node the node to add to the selection
      */
     addSelectedNode: function(node) {
-        if (EchoCore.Arrays.indexOf(this._selectionState, node) == -1) {
+        if (Core.Arrays.indexOf(this._selectionState, node) == -1) {
             this._selectionState.push(node);
         }
     },
@@ -667,7 +667,7 @@ ExtrasApp.TreeSelectionModel = EchoCore.extend({
      * @param node the node to remove from the selection
      */
     removeSelectedNode: function(node) {
-        EchoCore.Arrays.remove(this._selectionState, node);
+        Core.Arrays.remove(this._selectionState, node);
     },
     
     /**
@@ -709,7 +709,7 @@ ExtrasApp.TreeSelectionModel = EchoCore.extend({
      * @type Boolean 
      */
     isNodeSelected: function(node) {
-        return EchoCore.Arrays.indexOf(this._selectionState, node) != -1;
+        return Core.Arrays.indexOf(this._selectionState, node) != -1;
     },
     
     /**
@@ -736,7 +736,7 @@ ExtrasApp.TreeSelectionModel = EchoCore.extend({
             return false;
         }
         for (var i = 0; i < this._selectionState.length; ++i) {
-            if (EchoCore.Arrays.indexOf(selection, this._selectionState[i].getId()) == -1) {
+            if (Core.Arrays.indexOf(selection, this._selectionState[i].getId()) == -1) {
                 return false;
             }
         }

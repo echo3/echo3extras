@@ -1,7 +1,7 @@
 /**
  * Component rendering peer: Group
  */
-ExtrasRender.ComponentSync.Group = EchoCore.extend(EchoRender.ComponentSync, {
+ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
 
     $static: {
     

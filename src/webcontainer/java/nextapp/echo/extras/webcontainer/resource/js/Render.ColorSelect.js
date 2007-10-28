@@ -1,4 +1,4 @@
-ExtrasRender.ComponentSync.ColorSelect = EchoCore.extend(EchoRender.ComponentSync, {
+ExtrasRender.ComponentSync.ColorSelect = Core.extend(EchoRender.ComponentSync, {
 
     $staticConstruct: function() {
         EchoRender.registerPeer("ExtrasApp.ColorSelect", this);
@@ -58,9 +58,9 @@ ExtrasRender.ComponentSync.ColorSelect = EchoCore.extend(EchoRender.ComponentSyn
     },
     
     _processHMouseDown: function(e) {
-        EchoWebCore.EventProcessor.add(this._hListenerDivElement, "mousemove", new EchoCore.MethodRef(this, this._processHMouseMove), 
+        EchoWebCore.EventProcessor.add(this._hListenerDivElement, "mousemove", new Core.MethodRef(this, this._processHMouseMove), 
                 false);
-        EchoWebCore.EventProcessor.add(this._hListenerDivElement, "mouseup", new EchoCore.MethodRef(this, this._processHMouseUp), 
+        EchoWebCore.EventProcessor.add(this._hListenerDivElement, "mouseup", new Core.MethodRef(this, this._processHMouseUp), 
                 false);
         this._processHUpdate(e);
     },
@@ -70,9 +70,9 @@ ExtrasRender.ComponentSync.ColorSelect = EchoCore.extend(EchoRender.ComponentSyn
     },
     
     _processHMouseUp: function(e) {
-        EchoWebCore.EventProcessor.remove(this._hListenerDivElement, "mousemove", new EchoCore.MethodRef(this, this._processHMouseMove), 
+        EchoWebCore.EventProcessor.remove(this._hListenerDivElement, "mousemove", new Core.MethodRef(this, this._processHMouseMove), 
                 false);
-        EchoWebCore.EventProcessor.remove(this._hListenerDivElement, "mouseup", new EchoCore.MethodRef(this, this._processHMouseUp), 
+        EchoWebCore.EventProcessor.remove(this._hListenerDivElement, "mouseup", new Core.MethodRef(this, this._processHMouseUp), 
                 false);
         this._storeColor();
     },
@@ -84,9 +84,9 @@ ExtrasRender.ComponentSync.ColorSelect = EchoCore.extend(EchoRender.ComponentSyn
     },
     
     _processSVMouseDown: function(e) {
-        EchoWebCore.EventProcessor.add(this._svListenerDivElement, "mousemove", new EchoCore.MethodRef(this, this._processSVMouseMove), 
+        EchoWebCore.EventProcessor.add(this._svListenerDivElement, "mousemove", new Core.MethodRef(this, this._processSVMouseMove), 
                 false);
-        EchoWebCore.EventProcessor.add(this._svListenerDivElement, "mouseup", new EchoCore.MethodRef(this, this._processSVMouseUp), 
+        EchoWebCore.EventProcessor.add(this._svListenerDivElement, "mouseup", new Core.MethodRef(this, this._processSVMouseUp), 
                 false);
         this._processSVUpdate(e);
     },
@@ -96,9 +96,9 @@ ExtrasRender.ComponentSync.ColorSelect = EchoCore.extend(EchoRender.ComponentSyn
     },
     
     _processSVMouseUp: function(e) {
-        EchoWebCore.EventProcessor.remove(this._svListenerDivElement, "mousemove", new EchoCore.MethodRef(this, this._processSVMouseMove), 
+        EchoWebCore.EventProcessor.remove(this._svListenerDivElement, "mousemove", new Core.MethodRef(this, this._processSVMouseMove), 
                 false);
-        EchoWebCore.EventProcessor.remove(this._svListenerDivElement, "mouseup", new EchoCore.MethodRef(this, this._processSVMouseUp), 
+        EchoWebCore.EventProcessor.remove(this._svListenerDivElement, "mouseup", new Core.MethodRef(this, this._processSVMouseUp), 
                 false);
         this._storeColor();
     },
@@ -342,9 +342,9 @@ ExtrasRender.ComponentSync.ColorSelect = EchoCore.extend(EchoRender.ComponentSyn
     
         parentElement.appendChild(this._containerDivElement);
         
-        EchoWebCore.EventProcessor.add(this._svListenerDivElement, "mousedown", new EchoCore.MethodRef(this, this._processSVMouseDown), 
+        EchoWebCore.EventProcessor.add(this._svListenerDivElement, "mousedown", new Core.MethodRef(this, this._processSVMouseDown), 
                 false);
-        EchoWebCore.EventProcessor.add(this._hListenerDivElement, "mousedown", new EchoCore.MethodRef(this, this._processHMouseDown), 
+        EchoWebCore.EventProcessor.add(this._hListenerDivElement, "mousedown", new Core.MethodRef(this, this._processHMouseDown), 
                 false);
         
         this._setColor(this.component.getProperty("color"));
@@ -459,7 +459,7 @@ ExtrasRender.ComponentSync.ColorSelect = EchoCore.extend(EchoRender.ComponentSyn
     }
 });
 
-ExtrasRender.ComponentSync.ColorSelect.RGB = EchoCore.extend({
+ExtrasRender.ComponentSync.ColorSelect.RGB = Core.extend({
 
     $construct: function(r, g, b) {
         this.r = this._clean(r);

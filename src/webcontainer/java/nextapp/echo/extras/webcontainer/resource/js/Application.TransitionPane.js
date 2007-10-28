@@ -5,7 +5,7 @@
  * @class TransitionPane component.
  * @base EchoApp.Component
  */
-ExtrasApp.TransitionPane = EchoCore.extend(EchoApp.Component, {
+ExtrasApp.TransitionPane = Core.extend(EchoApp.Component, {
 
     $static: {
     

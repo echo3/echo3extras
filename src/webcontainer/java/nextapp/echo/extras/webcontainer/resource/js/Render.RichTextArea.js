@@ -1,13 +1,13 @@
 /**
  * Component rendering peer: RichTextArea
  */
-ExtrasRender.ComponentSync.RichTextArea = EchoCore.extend(EchoArc.ComponentSync, {
+ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
 
     $staticConstruct: function() {
         EchoRender.registerPeer("ExtrasApp.RichTextArea", this);
     },
 
-    _rb: new EchoCore.ResourceBundle({
+    _rb: new Core.ResourceBundle({
         "ColorDialog.Title.Foreground":     "Text Color",
         "ColorDialog.Title.Background":     "Highlight Color",
         "ColorDialog.PromptForeground":     "Foreground:",
@@ -98,7 +98,7 @@ ExtrasRender.ComponentSync.RichTextArea = EchoCore.extend(EchoArc.ComponentSync,
                             }),
                             model: this._createMainMenuBarModel(),
                             events: {
-                                action: new EchoCore.MethodRef(this, this._processMenuAction)
+                                action: new Core.MethodRef(this, this._processMenuAction)
                             }
                         }),
                         // Main Layout Container
@@ -268,7 +268,7 @@ ExtrasRender.ComponentSync.RichTextArea = EchoCore.extend(EchoArc.ComponentSync,
             toolTipText: toolTipText
         });
         if (eventMethod) {
-            button.addListener("action", new EchoCore.MethodRef(this, eventMethod));
+            button.addListener("action", new Core.MethodRef(this, eventMethod));
         }
         return button;
     },
@@ -337,7 +337,7 @@ ExtrasRender.ComponentSync.RichTextArea = EchoCore.extend(EchoArc.ComponentSync,
      */
     _processSetBackgroundDialog: function(e) {
         var colorDialog = new ExtrasRender.ComponentSync.RichTextArea.ColorDialog(this.component, true);
-        colorDialog.addListener("colorSelect", new EchoCore.MethodRef(this, this._processSetBackground));
+        colorDialog.addListener("colorSelect", new Core.MethodRef(this, this._processSetBackground));
         this.baseComponent.add(colorDialog);
     },
     
@@ -353,7 +353,7 @@ ExtrasRender.ComponentSync.RichTextArea = EchoCore.extend(EchoArc.ComponentSync,
      */
     _processSetForegroundDialog: function(e) {
         var colorDialog = new ExtrasRender.ComponentSync.RichTextArea.ColorDialog(this.component, false);
-        colorDialog.addListener("colorSelect", new EchoCore.MethodRef(this, this._processSetForeground));
+        colorDialog.addListener("colorSelect", new Core.MethodRef(this, this._processSetForeground));
         this.baseComponent.add(colorDialog);
     },
     
@@ -379,7 +379,7 @@ ExtrasRender.ComponentSync.RichTextArea = EchoCore.extend(EchoArc.ComponentSync,
      */
     _processInsertTableDialog: function(e) {
         var tableDialog = new ExtrasRender.ComponentSync.RichTextArea.TableDialog(this.component);
-        tableDialog.addListener("tableInsert", new EchoCore.MethodRef(this, this._processInsertTable));
+        tableDialog.addListener("tableInsert", new Core.MethodRef(this, this._processInsertTable));
         this.baseComponent.add(tableDialog);
     },
     
@@ -390,7 +390,7 @@ ExtrasRender.ComponentSync.RichTextArea = EchoCore.extend(EchoArc.ComponentSync,
     
     _processInsertHyperlinkDialog: function(e) {
         var hyperlinkDialog = new ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog(this.component);
-        hyperlinkDialog.addListener("insertHyperlink", new EchoCore.MethodRef(this, this._processInsertHyperlink));
+        hyperlinkDialog.addListener("insertHyperlink", new Core.MethodRef(this, this._processInsertHyperlink));
         this.baseComponent.add(hyperlinkDialog);
     },
     
@@ -400,7 +400,7 @@ ExtrasRender.ComponentSync.RichTextArea = EchoCore.extend(EchoArc.ComponentSync,
     
     _processInsertImageDialog: function(e) {
         var imageDialog = new ExtrasRender.ComponentSync.RichTextArea.ImageDialog(this.component);
-        imageDialog.addListener("insertImage", new EchoCore.MethodRef(this, this._processInsertImage));
+        imageDialog.addListener("insertImage", new Core.MethodRef(this, this._processInsertImage));
         this.baseComponent.add(imageDialog);
     },
     
@@ -433,7 +433,7 @@ ExtrasRender.ComponentSync.RichTextArea = EchoCore.extend(EchoArc.ComponentSync,
     }
 });
 
-ExtrasRender.ComponentSync.RichTextArea.AbstractDialog = EchoCore.extend(EchoApp.WindowPane, {
+ExtrasRender.ComponentSync.RichTextArea.AbstractDialog = Core.extend(EchoApp.WindowPane, {
 
     $static: {
         TYPE_OK: 0,
@@ -454,7 +454,7 @@ ExtrasRender.ComponentSync.RichTextArea.AbstractDialog = EchoCore.extend(EchoApp
             height: new EchoApp.Extent(200),
             resizable: false,
             events: {
-                close: new EchoCore.MethodRef(this, this._processCancel)
+                close: new Core.MethodRef(this, this._processCancel)
             },
             children: [
                 new EchoApp.SplitPane({
@@ -477,7 +477,7 @@ ExtrasRender.ComponentSync.RichTextArea.AbstractDialog = EchoCore.extend(EchoApp
             text: richTextArea.peer._rb.get("Generic.Ok"),
             icon: richTextArea.peer._icons.ok,
             events: {
-                action: new EchoCore.MethodRef(this, this._processOk)
+                action: new Core.MethodRef(this, this._processOk)
             }
         }));
         
@@ -488,7 +488,7 @@ ExtrasRender.ComponentSync.RichTextArea.AbstractDialog = EchoCore.extend(EchoApp
                 text: richTextArea.peer._rb.get("Generic.Cancel"),
                 icon: richTextArea.peer._icons.cancel,
                 events: {
-                    action: new EchoCore.MethodRef(this, this._processCancel)
+                    action: new Core.MethodRef(this, this._processCancel)
                 }
             }));
         }
@@ -507,7 +507,7 @@ ExtrasRender.ComponentSync.RichTextArea.AbstractDialog = EchoCore.extend(EchoApp
     }
 });
 
-ExtrasRender.ComponentSync.RichTextArea.ColorDialog = EchoCore.extend(
+ExtrasRender.ComponentSync.RichTextArea.ColorDialog = Core.extend(
         ExtrasRender.ComponentSync.RichTextArea.AbstractDialog, {
 
     $construct: function(richTextArea, setBackground) {
@@ -537,11 +537,11 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog = EchoCore.extend(
     _processOk: function(e) {
         var color = this._colorSelect.getProperty("color");
         this.parent.remove(this);
-        this.fireEvent(new EchoCore.Event("colorSelect", this, color));
+        this.fireEvent(new Core.Event("colorSelect", this, color));
     }
 });
 
-ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog = EchoCore.extend(
+ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog = Core.extend(
         ExtrasRender.ComponentSync.RichTextArea.AbstractDialog, {
 
     $construct: function(richTextArea) {
@@ -583,11 +583,11 @@ ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog = EchoCore.extend(
             return;
         }
         this.parent.remove(this);
-        this.fireEvent(new EchoCore.Event("insertHyperlink", this, data));
+        this.fireEvent(new Core.Event("insertHyperlink", this, data));
     }
 });
 
-ExtrasRender.ComponentSync.RichTextArea.ImageDialog = EchoCore.extend(
+ExtrasRender.ComponentSync.RichTextArea.ImageDialog = Core.extend(
         ExtrasRender.ComponentSync.RichTextArea.AbstractDialog, {
 
     $construct: function(richTextArea) {
@@ -621,11 +621,11 @@ ExtrasRender.ComponentSync.RichTextArea.ImageDialog = EchoCore.extend(
             return;
         }
         this.parent.remove(this);
-        this.fireEvent(new EchoCore.Event("insertImage", this, data));
+        this.fireEvent(new Core.Event("insertImage", this, data));
     }
 });
 
-ExtrasRender.ComponentSync.RichTextArea.InputComponent = EchoCore.extend(EchoApp.Component, {
+ExtrasRender.ComponentSync.RichTextArea.InputComponent = Core.extend(EchoApp.Component, {
 
     $staticConstruct: function() {
         EchoApp.ComponentFactory.registerType("ExtrasApp.RichTextInput", this);
@@ -634,7 +634,7 @@ ExtrasRender.ComponentSync.RichTextArea.InputComponent = EchoCore.extend(EchoApp
     componentType: "ExtrasApp.RichTextInput"
 });
 
-ExtrasRender.ComponentSync.RichTextArea.InputPeer = EchoCore.extend(EchoRender.ComponentSync, {
+ExtrasRender.ComponentSync.RichTextArea.InputPeer = Core.extend(EchoRender.ComponentSync, {
 
     $staticConstruct: function() {
         EchoRender.registerPeer("ExtrasApp.RichTextInput", this);
@@ -713,9 +713,9 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer = EchoCore.extend(EchoRender.C
         contentDocument.close();
         contentDocument.designMode = "on";
         EchoWebCore.EventProcessor.add(this._iframeElement.contentWindow.document, "keyup", 
-                new EchoCore.MethodRef(this, this._processKeyUp), false);
+                new Core.MethodRef(this, this._processKeyUp), false);
         EchoWebCore.EventProcessor.add(this._iframeElement.contentWindow.document, "mouseup", 
-                new EchoCore.MethodRef(this, this._processMouseUp), false);
+                new Core.MethodRef(this, this._processMouseUp), false);
         this._contentDocumentRendered = true;
     },
     
@@ -742,7 +742,7 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer = EchoCore.extend(EchoRender.C
     }
 });
 
-ExtrasRender.ComponentSync.RichTextArea.MessageDialog = EchoCore.extend(
+ExtrasRender.ComponentSync.RichTextArea.MessageDialog = Core.extend(
         ExtrasRender.ComponentSync.RichTextArea.AbstractDialog, {
     
     $construct: function(richTextArea, title, message) {
@@ -760,7 +760,7 @@ ExtrasRender.ComponentSync.RichTextArea.MessageDialog = EchoCore.extend(
     }
 });
 
-ExtrasRender.ComponentSync.RichTextArea.TableDialog = EchoCore.extend(
+ExtrasRender.ComponentSync.RichTextArea.TableDialog = Core.extend(
         ExtrasRender.ComponentSync.RichTextArea.AbstractDialog, {
 
     $construct: function(richTextArea) {
@@ -815,6 +815,6 @@ ExtrasRender.ComponentSync.RichTextArea.TableDialog = EchoCore.extend(
             return;
         }
         this.parent.remove(this);
-        this.fireEvent(new EchoCore.Event("tableInsert", this, data));
+        this.fireEvent(new Core.Event("tableInsert", this, data));
     }
 });

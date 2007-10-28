@@ -2,7 +2,7 @@
  * @class BorderPane component.
  * @base EchoApp.Component
  */
-ExtrasApp.BorderPane = EchoCore.extend(EchoApp.Component, {
+ExtrasApp.BorderPane = Core.extend(EchoApp.Component, {
     
     $static: {
         DEFAULT_BORDER: new EchoApp.FillImageBorder("#00007f", new EchoApp.Insets("20px"), new EchoApp.Insets("3px"))

@@ -30,7 +30,7 @@
 /**
  * Component rendering peer: Tree (Remote)
  */
-ExtrasRender.ComponentSync.RemoteTree = EchoCore.extend(EchoRender.ComponentSync, {
+ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
 
     $static: {
         _BORDER_SIDE_STYLE_NAMES: ["borderTop", "borderRight", "borderBottom", "borderLeft"],
@@ -435,7 +435,7 @@ ExtrasRender.ComponentSync.RemoteTree = EchoCore.extend(EchoRender.ComponentSync
             }
         };
         for (var i = 0; i < 4; ++i) {
-            if (!insets || EchoCore.Arrays.indexOf(sides, i) == -1) {
+            if (!insets || Core.Arrays.indexOf(sides, i) == -1) {
                 setInset(i, new EchoApp.Extent(0, "px"));
             } else {
                 setInset(i, null);
@@ -846,7 +846,7 @@ ExtrasRender.ComponentSync.RemoteTree = EchoCore.extend(EchoRender.ComponentSync
     },
     
     _addEventListeners: function(elements) {
-        var clickRef = new EchoCore.MethodRef(this, this._processClick);
+        var clickRef = new Core.MethodRef(this, this._processClick);
         
         if (elements.expandoElement) {
             EchoWebCore.EventProcessor.add(elements.expandoElement, "click", clickRef, false);
@@ -857,8 +857,8 @@ ExtrasRender.ComponentSync.RemoteTree = EchoCore.extend(EchoRender.ComponentSync
             var mouseEnterLeaveSupport = EchoWebCore.Environment.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED;
             var enterEvent = mouseEnterLeaveSupport ? "mouseenter" : "mouseover";
             var exitEvent = mouseEnterLeaveSupport ? "mouseleave" : "mouseout";
-            var rolloverEnterRef = new EchoCore.MethodRef(this, this._processRolloverEnter);
-            var rolloverExitRef = new EchoCore.MethodRef(this, this._processRolloverExit);
+            var rolloverEnterRef = new Core.MethodRef(this, this._processRolloverEnter);
+            var rolloverExitRef = new Core.MethodRef(this, this._processRolloverExit);
             
             if (this._rolloverEnabled) {
                 EchoWebCore.EventProcessor.add(elements.trElement, enterEvent, rolloverEnterRef, false);
@@ -971,7 +971,7 @@ ExtrasRender.ComponentSync.RemoteTree = EchoCore.extend(EchoRender.ComponentSync
         
         if (doAction) {
             //FIXME Fire from component.
-            this.component.fireEvent(new EchoCore.Event("action", this.component));
+            this.component.fireEvent(new Core.Event("action", this.component));
         }
         return true;
     },
@@ -1018,8 +1018,8 @@ ExtrasRender.ComponentSync.RemoteTree = EchoCore.extend(EchoRender.ComponentSync
     renderUpdate: function(update) {
         var propertyNames = update.getUpdatedPropertyNames();
         // remove properties that are only changed on the client
-        EchoCore.Arrays.remove(propertyNames, "expansion");
-        EchoCore.Arrays.remove(propertyNames, "selectionUpdate");
+        Core.Arrays.remove(propertyNames, "expansion");
+        Core.Arrays.remove(propertyNames, "selectionUpdate");
         if (propertyNames.length == 0 && !update.getRemovedChildren()) {
             return false;
         }
@@ -1037,7 +1037,7 @@ ExtrasRender.ComponentSync.RemoteTree = EchoCore.extend(EchoRender.ComponentSync
                 this._renderTreeStructureUpdate(treeStructureUpdate.newValue, update);
             }
             
-            if (EchoCore.Arrays.containsAll(ExtrasRender.ComponentSync.RemoteTree._supportedPartialProperties, propertyNames, true)) {
+            if (Core.Arrays.containsAll(ExtrasRender.ComponentSync.RemoteTree._supportedPartialProperties, propertyNames, true)) {
                 var selection = update.getUpdatedProperty("selection");
                 if (selection && this._selectionEnabled) {
                     this._setSelectedFromProperty(selection.newValue, true);
