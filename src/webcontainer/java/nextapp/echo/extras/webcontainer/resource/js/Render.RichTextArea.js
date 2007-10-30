@@ -447,7 +447,7 @@ ExtrasRender.ComponentSync.RichTextArea.AbstractDialog = Core.extend(EchoApp.Win
         var controlPaneRowStyleName = richTextArea.getRenderProperty("controlPaneRowStyleName");
         var controlPaneButtonStyleName = richTextArea.getRenderProperty("controlPaneButtonStyleName"); 
         
-        EchoApp.WindowPane.prototype.$construct.call(this, {
+        EchoApp.WindowPane.call(this, {
             styleName: richTextArea.getRenderProperty("windowPaneStyleName"),
             iconInsets: new EchoApp.Insets(6, 10),
             width: new EchoApp.Extent(280),
@@ -511,7 +511,7 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog = Core.extend(
         ExtrasRender.ComponentSync.RichTextArea.AbstractDialog, {
 
     $construct: function(richTextArea, setBackground) {
-        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.prototype.$construct.call(this, richTextArea,
+        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.call(this, richTextArea,
                 ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL, 
                 {
                     title: richTextArea.peer._rb.get(setBackground ? 
@@ -545,7 +545,7 @@ ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog = Core.extend(
         ExtrasRender.ComponentSync.RichTextArea.AbstractDialog, {
 
     $construct: function(richTextArea) {
-        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.prototype.$construct.call(this, richTextArea,
+        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.call(this, richTextArea,
                 ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL,
                 {
                     title: richTextArea.peer._rb.get("HyperlinkDialog.Title"), 
@@ -591,7 +591,7 @@ ExtrasRender.ComponentSync.RichTextArea.ImageDialog = Core.extend(
         ExtrasRender.ComponentSync.RichTextArea.AbstractDialog, {
 
     $construct: function(richTextArea) {
-        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.prototype.$construct.call(this, richTextArea,
+        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.call(this, richTextArea,
                 ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL,
                 {
                     title: richTextArea.peer._rb.get("ImageDialog.Title"), 
@@ -746,7 +746,7 @@ ExtrasRender.ComponentSync.RichTextArea.MessageDialog = Core.extend(
         ExtrasRender.ComponentSync.RichTextArea.AbstractDialog, {
     
     $construct: function(richTextArea, title, message) {
-        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.prototype.$construct.call(this, richTextArea,
+        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.call(this, richTextArea,
                 ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.TYPE_OK,
                 {
                     title: title
@@ -764,7 +764,7 @@ ExtrasRender.ComponentSync.RichTextArea.TableDialog = Core.extend(
         ExtrasRender.ComponentSync.RichTextArea.AbstractDialog, {
 
     $construct: function(richTextArea) {
-        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.prototype.$construct.call(this, richTextArea,
+        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.call(this, richTextArea,
                 ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL,
                 {
                     title: richTextArea.peer._rb.get("TableDialog.Title"), 

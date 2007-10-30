@@ -419,11 +419,8 @@ ExtrasRender.ComponentSync.MenuBarPane = Core.extend(ExtrasRender.ComponentSync.
     $load: function() {
        EchoRender.registerPeer("ExtrasApp.MenuBarPane", this);
     },
-
-    $construct: function() {
-    	ExtrasRender.ComponentSync.Menu.prototype.$construct.call(this);
-    	this._itemInsets = new EchoApp.Insets("0px 12px");
-    },
+    
+    _itemInsets: new EchoApp.Insets("0px 12px"),
     
     _renderMain: function() {
         var menuBarDivElement = document.createElement("div");
@@ -528,12 +525,10 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
     $load: function() {
         EchoRender.registerPeer("ExtrasApp.DropDownMenu", this);
     },
-
-    $construct: function() {
-        ExtrasRender.ComponentSync.Menu.prototype.$construct.call(this);
-    	this._selectedItem = null;
-    	this._contentDivElement = null;
-    },
+    
+    _selectedItem: null,
+    
+    _contentDivElement: null,
     
     _renderMain: function() {
         var dropDownDivElement = document.createElement("div");
@@ -763,10 +758,6 @@ ExtrasRender.ComponentSync.ContextMenu = Core.extend(ExtrasRender.ComponentSync.
     
     $load: function() {
         EchoRender.registerPeer("ExtrasApp.ContextMenu", this);
-    },
-
-    $construct: function() {
-        ExtrasRender.ComponentSync.Menu.prototype.$construct.call(this);
     },
     
     _renderMain: function(update) {

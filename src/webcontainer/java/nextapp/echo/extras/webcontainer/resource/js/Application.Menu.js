@@ -156,7 +156,7 @@ ExtrasApp.OptionModel = Core.extend({
 ExtrasApp.ToggleOptionModel = Core.extend(ExtrasApp.OptionModel, {
 
     $construct: function(modelId, text, selected) {
-        ExtrasApp.OptionModel.prototype.$construct.call(this, modelId, text, null)
+        ExtrasApp.OptionModel.call(this, modelId, text, null);
         this.selected = selected;
     }
 });
@@ -164,7 +164,7 @@ ExtrasApp.ToggleOptionModel = Core.extend(ExtrasApp.OptionModel, {
 ExtrasApp.RadioOptionModel = Core.extend(ExtrasApp.ToggleOptionModel, {
 
     $construct: function(modelId, text, selected) {
-        ExtrasApp.ToggleOptionModel.prototype.$construct.call(this, modelId, text, selected)
+        ExtrasApp.ToggleOptionModel.call(this, modelId, text, selected);
     }
 });
 
