@@ -113,7 +113,7 @@ ExtrasApp.MenuModel = Core.extend({
     /**
      * toString() implementation.
      */
-    $toString: function() {
+    toString: function() {
         return "MenuModel \"" + this.text + "\" Items:" + this.items.length;
     }
 });
@@ -148,7 +148,7 @@ ExtrasApp.OptionModel = Core.extend({
     /**
      * toString() implementation.
      */
-    $toString: function() {
+    toString: function() {
         return "OptionModel \"" + this.text + "\"";
     }
 });

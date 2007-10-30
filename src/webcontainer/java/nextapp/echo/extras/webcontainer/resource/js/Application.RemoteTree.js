@@ -306,7 +306,7 @@ ExtrasApp.RemoteTree.TreeStructure = Core.extend({
     /**
      * Gets a string representation of this tree structure
      */
-    $toString: function() {
+    toString: function() {
         var str = "treeStructure [\n";
         str += this.getNodeString(this.getRootNode(), "  ");
         str += "\n]";
@@ -515,7 +515,7 @@ ExtrasApp.RemoteTree.TreeNode = Core.extend({
      * @return the string representation
      * @type String
      */
-    $toString: function() {
+    toString: function() {
         return "[node id: " + this._id + "]";
     }
 });
