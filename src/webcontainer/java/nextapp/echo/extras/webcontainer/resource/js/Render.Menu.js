@@ -39,6 +39,200 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
         this._menuItemIconTextMargin = new EchoApp.Extent(5);
     },
     
+    $virtual: {
+    
+        renderDispose: function(update) {
+            this._closeMenu();
+            WebCore.EventProcessor.removeAll(this._element);
+            this._element.id = "";
+            this._element = null;
+            this._menuModel = null;
+            this._stateModel = null;
+            this._openMenuPath = [];
+        },
+        
+        renderMenu: function(menuModel, xPosition, yPosition) {
+            var menuDivElement = document.createElement("div");
+            menuDivElement.id = this.component.renderId + "_menu_" + menuModel.id;
+            EchoAppRender.Insets.renderPixel(this._menuInsets, menuDivElement, "padding");
+            EchoAppRender.Border.render(this._getMenuBorder(), menuDivElement);
+            var background;
+            var menuBackground = this.component.getRenderProperty("menuBackground");
+            if (menuBackground) {
+                background = menuBackground;
+            } else {
+                background = this.component.getRenderProperty("background", ExtrasRender.ComponentSync.Menu._defaultBackground);
+            }
+            EchoAppRender.Color.render(background, menuDivElement, "backgroundColor");
+            var foreground;
+            var menuForeground = this.component.getRenderProperty("menuForeground");
+            if (menuForeground) {
+                foreground = menuForeground;
+            } else {
+                foreground = this.component.getRenderProperty("foreground", ExtrasRender.ComponentSync.Menu._defaultForeground);
+            }
+            EchoAppRender.Color.render(foreground, menuDivElement, "color");
+            menuDivElement.style.zIndex = ExtrasRender.ComponentSync.Menu.MAX_Z_INDEX;
+            // Apply menu background image if it is set, or apply default background 
+            // image if it is set and the menu background is NOT set.
+            var backgroundImage;
+            var menuBackgroundImage = this.component.getRenderProperty("menuBackgroundImage");
+            if (menuBackgroundImage) {
+                backgroundImage = menuBackgroundImage;
+            } else if (menuBackground == null) {
+                backgroundImage = this.component.getRenderProperty("backgroundImage");
+            }
+            if (backgroundImage) {
+                EchoAppRender.FillImage.render(backgroundImage, menuDivElement, null); 
+            }
+            // Apply menu font if it is set, or apply default font 
+            // if it is set and the menu font is NOT set.
+            var font = this.component.getRenderProperty("menuFont");
+            if (!font) {
+                font = this.component.getRenderProperty("font");
+            }
+            if (font) {
+                EchoAppRender.Font.render(font, menuDivElement);
+            }
+            menuDivElement.style.position = "absolute";
+            menuDivElement.style.top = yPosition + "px";
+            menuDivElement.style.left = xPosition + "px";
+            
+            var menuTableElement = document.createElement("table");
+            menuTableElement.style.borderCollapse = "collapse";
+            menuDivElement.appendChild(menuTableElement);
+            
+            var menuTbodyElement = document.createElement("tbody");
+            menuTableElement.appendChild(menuTbodyElement);
+        
+            var items = menuModel.items;
+            
+            // Determine if any icons are present.
+            var hasIcons = false;
+            for (var i = 0; i < items.length; ++i) {
+                var item = items[i];
+                if (item.icon || item instanceof ExtrasApp.ToggleOptionModel) {
+                    hasIcons = true;
+                    break;
+                }
+            }
+            var textPadding, iconPadding;
+            if (hasIcons) {
+                iconPadding = new EchoApp.Insets(0, 0, 0, this._menuItemInsets.left);
+                textPadding = new EchoApp.Insets(this._menuItemInsets.top, this._menuItemInsets.right, this._menuItemInsets.bottom, this._menuItemIconTextMargin);
+            } else {
+                textPadding = this._menuItemInsets;
+            }
+            
+            for (var i = 0; i < items.length; ++i) {
+                var item = items[i];
+                if (item instanceof ExtrasApp.OptionModel || item instanceof ExtrasApp.MenuModel) {
+                    var menuItemTrElement = document.createElement("tr");
+                    menuItemTrElement.id = this.component.renderId + "_tr_item_" + item.id;
+                    menuItemTrElement.style.cursor = "pointer";
+                    menuTbodyElement.appendChild(menuItemTrElement);
+        
+                    if (hasIcons) {
+                        var menuItemIconTdElement = document.createElement("td");
+                        EchoAppRender.Insets.renderPixel(iconPadding, menuItemIconTdElement, "padding");
+                        if (item instanceof ExtrasApp.ToggleOptionModel) {
+                            var iconIdentifier;
+                            var selected = this._stateModel && this._stateModel.isSelected(item.modelId);
+                            if (item instanceof ExtrasApp.RadioOptionModel) {
+                                iconIdentifier = selected ? "radioOn" : "radioOff";
+                            } else {
+                                iconIdentifier = selected ? "toggleOn" : "toggleOff";
+                            }
+                            var imgElement = document.createElement("img");
+                            imgElement.setAttribute("src", ExtrasRender.ComponentSync.Menu._getImageUri(iconIdentifier));
+                            imgElement.setAttribute("alt", "");
+                            menuItemIconTdElement.appendChild(imgElement);
+                        } else if (item.icon) {
+                            var imgElement = document.createElement("img");
+                            imgElement.setAttribute("src", item.icon.url);
+                            imgElement.setAttribute("alt", "");
+                            menuItemIconTdElement.appendChild(imgElement);
+                        }
+                        menuItemTrElement.appendChild(menuItemIconTdElement);
+                    }
+                    
+                    var menuItemContentTdElement = document.createElement("td");
+                    EchoAppRender.Insets.renderPixel(textPadding, menuItemContentTdElement, "padding");
+                    var lineWrap = this.component.getRenderProperty("lineWrap");
+                    if (lineWrap != null && !lineWrap) {
+                        menuItemContentTdElement.style.whiteSpace = "nowrap";
+                    }
+                    if (this._stateModel && !this._stateModel.isEnabled(item.modelId)) {
+                        EchoAppRender.Color.renderComponentProperty(this.component, "disabledForeground", ExtrasRender.ComponentSync.Menu._defaultDisabledForeground, menuItemContentTdElement, "color");
+                    }
+                    menuItemContentTdElement.title = item.text;
+                    menuItemContentTdElement.appendChild(document.createTextNode(item.text));
+                    menuItemTrElement.appendChild(menuItemContentTdElement);
+                    
+                    if (item instanceof ExtrasApp.MenuModel) {
+                        // Submenus have adjacent column containing 'expand' icons.
+                        var menuItemArrowTdElement = document.createElement("td");
+                        menuItemArrowTdElement.style.textAlign = "right";
+                        var imgElement = document.createElement("img");
+                        var expandImage = this.component.getRenderProperty("menuExpandIcon", ExtrasRender.ComponentSync.Menu._getImageUri("submenuRight"))
+                        imgElement.setAttribute("src", expandImage.url ? expandImage.url : expandImage);
+                        imgElement.setAttribute("alt", "");
+                        menuItemArrowTdElement.appendChild(imgElement);
+                        menuItemTrElement.appendChild(menuItemArrowTdElement);
+                    } else {
+                        // Menu items fill both columns.
+                        menuItemContentTdElement.colSpan = 2;
+                    }
+                } else if (item instanceof ExtrasApp.SeparatorModel) {
+                    var menuItemTrElement = document.createElement("tr");
+                    menuTbodyElement.appendChild(menuItemTrElement);
+                    var menuItemContentTdElement = document.createElement("td");
+                    menuItemContentTdElement.colSpan = hasIcons ? 3 : 2;
+                    menuItemContentTdElement.style.padding = "3px 0px";
+                    var hrDivElement = document.createElement("div");
+                    hrDivElement.style.borderTopWidth = "1px";
+                    hrDivElement.style.borderTopStyle = "solid";
+                    hrDivElement.style.borderTopColor = "#a7a7a7";
+                    hrDivElement.style.height = "0px";
+                    hrDivElement.style.fontSize = "1px";
+                    hrDivElement.style.lineHeight = "0px";
+                    menuItemContentTdElement.appendChild(hrDivElement);
+                    menuItemTrElement.appendChild(menuItemContentTdElement);
+                }
+            }
+            
+            bodyElement = document.getElementsByTagName("body")[0];    
+            bodyElement.appendChild(menuDivElement);
+        
+            WebCore.EventProcessor.add(menuDivElement, "click", new Core.MethodRef(this, this._processClick), false);
+            WebCore.EventProcessor.add(menuDivElement, "mouseover", new Core.MethodRef(this, this._processItemEnter), false);
+            WebCore.EventProcessor.add(menuDivElement, "mouseout", new Core.MethodRef(this, this._processItemExit), false);
+            WebCore.EventProcessor.addSelectionDenialListener(menuDivElement);
+            
+            return menuDivElement;
+        },
+
+        renderTopMenu: function(menuModel) {
+            var menuElement = this._getMenuElement(menuModel);
+            var containerElement = document.getElementById(this.component.renderId);
+            
+            var menuBounds = new WebCore.Measure.Bounds(menuElement);
+            var containerBounds = new WebCore.Measure.Bounds(containerElement);
+            
+            this.renderMenu(menuModel, menuBounds.left, containerBounds.top + containerBounds.height);
+            // FIXME handle overflow
+        },
+
+        renderUpdate: function(update) {
+            var element = this._element;
+            var containerElement = element.parentNode;
+            EchoRender.renderComponentDispose(update, update.parent);
+            containerElement.removeChild(element);
+            this.renderAdd(update, containerElement);
+            return false;
+        }
+    },
+    
     renderAdd: function(update, parentElement) {
     	this._menuModel = this.component.getProperty("model");
     	this._stateModel = this.component.getProperty("stateModel");
@@ -46,25 +240,6 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
         this._element = this._renderMain(update);
         
         parentElement.appendChild(this._element);
-    },
-    
-    renderUpdate: function(update) {
-        var element = this._element;
-        var containerElement = element.parentNode;
-        EchoRender.renderComponentDispose(update, update.parent);
-        containerElement.removeChild(element);
-        this.renderAdd(update, containerElement);
-        return false;
-    },
-    
-    renderDispose: function(update) {
-        this._closeMenu();
-    	WebCore.EventProcessor.removeAll(this._element);
-    	this._element.id = "";
-    	this._element = null;
-    	this._menuModel = null;
-    	this._stateModel = null;
-        this._openMenuPath = [];
     },
     
     _activateItem: function(itemModel) {
@@ -115,17 +290,6 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
         }
     },
     
-    renderTopMenu: function(menuModel) {
-        var menuElement = this._getMenuElement(menuModel);
-        var containerElement = document.getElementById(this.component.renderId);
-        
-        var menuBounds = new WebCore.Measure.Bounds(menuElement);
-        var containerBounds = new WebCore.Measure.Bounds(containerElement);
-        
-        this.renderMenu(menuModel, menuBounds.left, containerBounds.top + containerBounds.height);
-    	// FIXME handle overflow
-    },
-    
     _renderSubMenu: function(menuModel) {
         var menuElement = this._getMenuElement(menuModel);
         var containerElement = menuElement.parentNode.parentNode.parentNode;
@@ -134,167 +298,6 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
         var containerBounds = new WebCore.Measure.Bounds(containerElement);
         
         this.renderMenu(menuModel, containerBounds.left + containerBounds.width, menuBounds.top);
-    },
-    
-    renderMenu: function(menuModel, xPosition, yPosition) {
-        var menuDivElement = document.createElement("div");
-        menuDivElement.id = this.component.renderId + "_menu_" + menuModel.id;
-        EchoAppRender.Insets.renderPixel(this._menuInsets, menuDivElement, "padding");
-    	EchoAppRender.Border.render(this._getMenuBorder(), menuDivElement);
-        var background;
-        var menuBackground = this.component.getRenderProperty("menuBackground");
-        if (menuBackground) {
-        	background = menuBackground;
-        } else {
-        	background = this.component.getRenderProperty("background", ExtrasRender.ComponentSync.Menu._defaultBackground);
-        }
-        EchoAppRender.Color.render(background, menuDivElement, "backgroundColor");
-        var foreground;
-        var menuForeground = this.component.getRenderProperty("menuForeground");
-        if (menuForeground) {
-        	foreground = menuForeground;
-        } else {
-        	foreground = this.component.getRenderProperty("foreground", ExtrasRender.ComponentSync.Menu._defaultForeground);
-        }
-        EchoAppRender.Color.render(foreground, menuDivElement, "color");
-        menuDivElement.style.zIndex = ExtrasRender.ComponentSync.Menu.MAX_Z_INDEX;
-        // Apply menu background image if it is set, or apply default background 
-        // image if it is set and the menu background is NOT set.
-        var backgroundImage;
-        var menuBackgroundImage = this.component.getRenderProperty("menuBackgroundImage");
-        if (menuBackgroundImage) {
-        	backgroundImage = menuBackgroundImage;
-        } else if (menuBackground == null) {
-        	backgroundImage = this.component.getRenderProperty("backgroundImage");
-        }
-        if (backgroundImage) {
-    	    EchoAppRender.FillImage.render(backgroundImage, menuDivElement, null); 
-        }
-    	// Apply menu font if it is set, or apply default font 
-    	// if it is set and the menu font is NOT set.
-        var font = this.component.getRenderProperty("menuFont");
-        if (!font) {
-        	font = this.component.getRenderProperty("font");
-        }
-        if (font) {
-    	    EchoAppRender.Font.render(font, menuDivElement);
-        }
-        menuDivElement.style.position = "absolute";
-        menuDivElement.style.top = yPosition + "px";
-        menuDivElement.style.left = xPosition + "px";
-        
-        var menuTableElement = document.createElement("table");
-        menuTableElement.style.borderCollapse = "collapse";
-        menuDivElement.appendChild(menuTableElement);
-        
-        var menuTbodyElement = document.createElement("tbody");
-        menuTableElement.appendChild(menuTbodyElement);
-    
-        var items = menuModel.items;
-        
-        // Determine if any icons are present.
-        var hasIcons = false;
-        for (var i = 0; i < items.length; ++i) {
-            var item = items[i];
-            if (item.icon || item instanceof ExtrasApp.ToggleOptionModel) {
-                hasIcons = true;
-                break;
-            }
-        }
-        var textPadding, iconPadding;
-        if (hasIcons) {
-            iconPadding = new EchoApp.Insets(0, 0, 0, this._menuItemInsets.left);
-            textPadding = new EchoApp.Insets(this._menuItemInsets.top, this._menuItemInsets.right, this._menuItemInsets.bottom, this._menuItemIconTextMargin);
-        } else {
-            textPadding = this._menuItemInsets;
-        }
-        
-        for (var i = 0; i < items.length; ++i) {
-            var item = items[i];
-            if (item instanceof ExtrasApp.OptionModel || item instanceof ExtrasApp.MenuModel) {
-                var menuItemTrElement = document.createElement("tr");
-                menuItemTrElement.id = this.component.renderId + "_tr_item_" + item.id;
-                menuItemTrElement.style.cursor = "pointer";
-                menuTbodyElement.appendChild(menuItemTrElement);
-    
-                if (hasIcons) {
-                    var menuItemIconTdElement = document.createElement("td");
-    	            EchoAppRender.Insets.renderPixel(iconPadding, menuItemIconTdElement, "padding");
-                    if (item instanceof ExtrasApp.ToggleOptionModel) {
-                        var iconIdentifier;
-                        var selected = this._stateModel && this._stateModel.isSelected(item.modelId);
-                        if (item instanceof ExtrasApp.RadioOptionModel) {
-                            iconIdentifier = selected ? "radioOn" : "radioOff";
-                        } else {
-                            iconIdentifier = selected ? "toggleOn" : "toggleOff";
-                        }
-                        var imgElement = document.createElement("img");
-                        imgElement.setAttribute("src", ExtrasRender.ComponentSync.Menu._getImageUri(iconIdentifier));
-                        imgElement.setAttribute("alt", "");
-                        menuItemIconTdElement.appendChild(imgElement);
-                    } else if (item.icon) {
-                        var imgElement = document.createElement("img");
-                        imgElement.setAttribute("src", item.icon.url);
-                        imgElement.setAttribute("alt", "");
-                        menuItemIconTdElement.appendChild(imgElement);
-                    }
-                    menuItemTrElement.appendChild(menuItemIconTdElement);
-                }
-                
-                var menuItemContentTdElement = document.createElement("td");
-                EchoAppRender.Insets.renderPixel(textPadding, menuItemContentTdElement, "padding");
-                var lineWrap = this.component.getRenderProperty("lineWrap");
-                if (lineWrap != null && !lineWrap) {
-    	            menuItemContentTdElement.style.whiteSpace = "nowrap";
-                }
-                if (this._stateModel && !this._stateModel.isEnabled(item.modelId)) {
-                	EchoAppRender.Color.renderComponentProperty(this.component, "disabledForeground", ExtrasRender.ComponentSync.Menu._defaultDisabledForeground, menuItemContentTdElement, "color");
-                }
-                menuItemContentTdElement.title = item.text;
-                menuItemContentTdElement.appendChild(document.createTextNode(item.text));
-                menuItemTrElement.appendChild(menuItemContentTdElement);
-                
-                if (item instanceof ExtrasApp.MenuModel) {
-                    // Submenus have adjacent column containing 'expand' icons.
-                    var menuItemArrowTdElement = document.createElement("td");
-                    menuItemArrowTdElement.style.textAlign = "right";
-                    var imgElement = document.createElement("img");
-                    var expandImage = this.component.getRenderProperty("menuExpandIcon", ExtrasRender.ComponentSync.Menu._getImageUri("submenuRight"))
-                    imgElement.setAttribute("src", expandImage.url ? expandImage.url : expandImage);
-                    imgElement.setAttribute("alt", "");
-                    menuItemArrowTdElement.appendChild(imgElement);
-                    menuItemTrElement.appendChild(menuItemArrowTdElement);
-                } else {
-                    // Menu items fill both columns.
-                    menuItemContentTdElement.colSpan = 2;
-                }
-            } else if (item instanceof ExtrasApp.SeparatorModel) {
-                var menuItemTrElement = document.createElement("tr");
-                menuTbodyElement.appendChild(menuItemTrElement);
-                var menuItemContentTdElement = document.createElement("td");
-                menuItemContentTdElement.colSpan = hasIcons ? 3 : 2;
-                menuItemContentTdElement.style.padding = "3px 0px";
-                var hrDivElement = document.createElement("div");
-                hrDivElement.style.borderTopWidth = "1px";
-                hrDivElement.style.borderTopStyle = "solid";
-                hrDivElement.style.borderTopColor = "#a7a7a7";
-                hrDivElement.style.height = "0px";
-                hrDivElement.style.fontSize = "1px";
-                hrDivElement.style.lineHeight = "0px";
-                menuItemContentTdElement.appendChild(hrDivElement);
-                menuItemTrElement.appendChild(menuItemContentTdElement);
-            }
-        }
-        
-        bodyElement = document.getElementsByTagName("body")[0];    
-        bodyElement.appendChild(menuDivElement);
-    
-        WebCore.EventProcessor.add(menuDivElement, "click", new Core.MethodRef(this, this._processClick), false);
-        WebCore.EventProcessor.add(menuDivElement, "mouseover", new Core.MethodRef(this, this._processItemEnter), false);
-        WebCore.EventProcessor.add(menuDivElement, "mouseout", new Core.MethodRef(this, this._processItemExit), false);
-    	WebCore.EventProcessor.addSelectionDenialListener(menuDivElement);
-        
-        return menuDivElement;
     },
     
     _disposeMenu: function(menuModel) {

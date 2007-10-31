@@ -7,6 +7,12 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
         EchoRender.registerPeer("ExtrasApp.RichTextArea", this);
     },
 
+    $virtual: {
+        getIcons: function() {
+            return this.component.getProperty("icons");
+        }
+    },
+    
     _rb: new Core.ResourceBundle({
         "ColorDialog.Title.Foreground":     "Text Color",
         "ColorDialog.Title.Background":     "Highlight Color",
@@ -277,10 +283,6 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
         return this._mainDivElement;
     },
     
-    getIcons: function() {
-        return this.component.getProperty("icons");
-    },
-    
     _processCommand: function(e) {
         this._richTextInput.peer.doCommand(e.data);
     },
@@ -498,12 +500,15 @@ ExtrasRender.ComponentSync.RichTextArea.AbstractDialog = Core.extend(EchoApp.Win
         }
     },
     
-    processCancel: function(e) {
-        this.parent.remove(this);
-    },
-    
-    processOk: function(e) {
-        this.parent.remove(this);
+    $virtual: {
+        
+        processCancel: function(e) {
+            this.parent.remove(this);
+        },
+        
+        processOk: function(e) {
+            this.parent.remove(this);
+        }
     }
 });
 
