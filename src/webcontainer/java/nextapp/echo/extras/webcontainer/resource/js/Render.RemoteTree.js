@@ -750,11 +750,21 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
     
     /**
      * Gets the node that is rendered to the given element.
+     * If the given element is not a tr, this method will walk upwards through the 
+     * hierarchy until a tr element is found, it will then use that element
+     * to find the node rendered to that tr.
      */
     _getNodeFromElement: function(element) {
         var id = element.id;
         var nodeId;
-        if (id.indexOf("_tr_") != -1) {
+        if (id.indexOf("_tr_") == -1) {
+            var e = element;
+            while ((e = e.parentNode)) {
+                if (e.nodeName.toLowerCase() == "tr") {
+                    return this._getNodeFromElement(e);
+                }
+            }
+        } else {
             nodeId = id.substring(id.indexOf("_tr_") + 4);
         }
         return this._treeStructure.getNode(nodeId);
@@ -846,12 +856,17 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
     },
     
     _addEventListeners: function(elements) {
-        var clickRef = new Core.MethodRef(this, this._processClick);
+        var expansionRef = new Core.MethodRef(this, this._expansionHandler);
+        var selectionRef = new Core.MethodRef(this, this._selectionHandler);
         
-        if (elements.expandoElement) {
-            WebCore.EventProcessor.add(elements.expandoElement, "click", clickRef, false);
+        if (this._selectionEnabled) {
+            WebCore.EventProcessor.add(elements.trElement, "click", selectionRef, false);
+            WebCore.EventProcessor.addSelectionDenialListener(elements.trElement);
         }
-        WebCore.EventProcessor.add(elements.tdElement, "click", clickRef, false);
+        if (elements.expandoElement) {
+            WebCore.EventProcessor.add(elements.expandoElement, "click", expansionRef, false);
+        }
+        WebCore.EventProcessor.add(elements.tdElement, "click", expansionRef, false);
         
         if (this._selectionEnabled || this._rolloverEnabled) {
             var mouseEnterLeaveSupport = WebCore.Environment.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED;
@@ -863,10 +878,6 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             if (this._rolloverEnabled) {
                 WebCore.EventProcessor.add(elements.trElement, enterEvent, rolloverEnterRef, false);
                 WebCore.EventProcessor.add(elements.trElement, exitEvent, rolloverExitRef, false);
-            }
-            if (this._selectionEnabled) {
-                WebCore.EventProcessor.add(elements.trElement, "click", clickRef, false);
-                WebCore.EventProcessor.addSelectionDenialListener(elements.trElement);
             }
         }
     },
@@ -889,14 +900,14 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             // no other peers will be called, so update may be null
             this._renderNode(null, node);
         }
-        var rowIndex = this._getRowIndex(e.registeredTarget.parentNode);
+        var rowIndex = this._getRowIndexForNode(node);
         this.component.setProperty("expansion", rowIndex);
         return true;
     },
     
     _doSelection: function(node, e) {
-        var trElement = e.registeredTarget;
-        var rowIndex = this._getRowIndex(trElement);
+        var trElement = this._getRowElementForNode(node);
+        var rowIndex = this._getRowIndexForNode(node);
         
         WebCore.DOM.preventEventDefault(e);
         
@@ -913,7 +924,6 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             }
             var startNode;
             var endNode;
-            var row = trElement;
             var lastSelectedIndex = this._getRowIndexForNode(this.lastSelectedNode);
             if (lastSelectedIndex < rowIndex) {
                 startNode = this.lastSelectedNode;
@@ -947,33 +957,31 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             }
         }
         
-        this.component.setProperty("selectionUpdate", update);
         return true;
     },
     
-    _processClick: function(e) {
+    _expansionHandler: function(e) {
         if (!this.component.isActive()) {
             return;
         }
-        var doAction = true;
-        var isRow = e.registeredTarget.nodeName.toLowerCase() == "tr";
-        
-        if (isRow && this._selectionEnabled) { // click event on row element means selection
-            var node = this._getNodeFromElement(e.registeredTarget);
+        var node = this._getNodeFromElement(e.registeredTarget);
+        this._doExpansion(node, e);
+        var type = e.registeredTarget.__ExtrasTreeCellType;
+        if (this._selectionEnabled && type && type != "expando") {
             this._doSelection(node, e);
-        } else if (!isRow) {
-            var node = this._getNodeFromElement(e.registeredTarget.parentNode);
-            this._doExpansion(node, e);
-            // the selection listener is on the row element, so do not fire on expansion because the selection
-            // listener will handle that. Unless selection is disabled. 
-            doAction = !this._selectionEnabled;
         }
-        
-        if (doAction) {
-            //FIXME Fire from component.
-            this.component.fireEvent(new Core.Event("action", this.component));
+        this.component.doAction();
+        return false;
+    },
+    
+    _selectionHandler: function(e) {
+        if (!this.component.isActive()) {
+            return;
         }
-        return true;
+        var node = this._getNodeFromElement(e.registeredTarget);
+        this._doSelection(node, e);
+        this.component.doAction();
+        return false;
     },
     
     _processRolloverEnter: function(e) {
@@ -990,24 +998,21 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         this._setRolloverState(e.registeredTarget, false);
     },
     
-    _removeRowListeners: function(rowElement) {
-        WebCore.EventProcessor.removeAll(rowElement);
-        var tdElement = rowElement.firstChild;
-        while (tdElement) {
-            if (tdElement.id) {
-                WebCore.EventProcessor.removeAll(tdElement);
-            }
-            tdElement = tdElement.nextSibling;
-        }
-    },
-    
     renderDispose: function(update) {
         //FIXME this might blow up performance, maybe cache all elements that have a click listener, 
         // but that will probably blow memory usage...
-        var trElement = this._tbodyElement.firstChild;
-        while (trElement) {
-            this._removeRowListeners(trElement);
-            trElement = trElement.nextSibling;
+        var it = this._elementIterator();
+        var row;
+        while ((row = it.nextRow())) {
+            WebCore.EventProcessor.removeAll(row);
+            var e = it.currentNodeElement();
+            if (e) {
+                WebCore.EventProcessor.removeAll(e);
+            }
+            e = it.currentExpandoElement();
+            if (e) {
+                WebCore.EventProcessor.removeAll(e);
+            }
         }
         this._prevMaxDepth = null;
         this._treeStructure = null;

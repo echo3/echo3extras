@@ -28,6 +28,17 @@
  */
 
 ExtrasApp.RemoteTree = Core.extend(EchoApp.Component, {
+    
+    $load: function() {
+        EchoApp.ComponentFactory.registerType("nextapp.echo.extras.app.RemoteTree", this);
+    },
+
+    componentType: "nextapp.echo.extras.app.RemoteTree",
+    
+    doAction: function() {
+        var e = new Core.Event("action", this);
+        this.fireEvent(e);
+    }
 });
 
 /**
