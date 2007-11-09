@@ -43,7 +43,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
     },
     
     $load: function() {
-        EchoRender.registerPeer("nextapp.echo.extras.app.RemoteTree", this);
+        EchoRender.registerPeer("ExtrasApp.RemoteTree", this);
     },
 
     /**

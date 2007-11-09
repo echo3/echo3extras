@@ -69,8 +69,9 @@ public class GroupPeer extends AbstractComponentSynchronizePeer {
     private static final ImageReference DEFAULT_BORDER_BOTTOM = new ResourceImageReference(IMAGE_PREFIX + "GroupBorderBottom.png");
     private static final ImageReference DEFAULT_BORDER_BOTTOM_RIGHT = new ResourceImageReference(IMAGE_PREFIX + "GroupBorderBottomRight.png");
     
-    private static final Service GROUP_SERVICE = JavaScriptService.forResource("EchoExtras.Group",
-            "/nextapp/echo/extras/webcontainer/resource/js/Render.Group.js");
+    private static final Service GROUP_SERVICE = JavaScriptService.forResources("EchoExtras.Group", 
+            new String[]{"/nextapp/echo/extras/webcontainer/resource/js/Application.Group.js",
+            "/nextapp/echo/extras/webcontainer/resource/js/Render.Group.js"});
     
     static {
         ImageService.install();
@@ -84,6 +85,13 @@ public class GroupPeer extends AbstractComponentSynchronizePeer {
         ImageService.addGlobalImage(IMAGE_ID_BORDER_BOTTOM_RIGHT, DEFAULT_BORDER_BOTTOM_RIGHT);
         
         WebContainerServlet.getServiceRegistry().add(GROUP_SERVICE);
+    }
+    
+    /**
+     * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#getClientComponentType()
+     */
+    public String getClientComponentType() {
+        return "ExtrasApp.Group";
     }
     
     /**

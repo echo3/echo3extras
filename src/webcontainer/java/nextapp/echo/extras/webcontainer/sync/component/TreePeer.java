@@ -421,22 +421,36 @@ extends AbstractComponentSynchronizePeer {
     private static final ImageReference DEFAULT_ICON_NODE_OPEN = new ResourceImageReference(IMAGE_PREFIX + "Open.gif");
 
     // icons with solid lines
-    private static final ImageReference DEFAULT_ICON_JOIN_SOLID = new ResourceImageReference(IMAGE_PREFIX + "JoinSolid.gif");
-    private static final ImageReference DEFAULT_ICON_JOIN_BOTTOM_SOLID = new ResourceImageReference(IMAGE_PREFIX + "JoinBottomSolid.gif");
-    private static final ImageReference DEFAULT_ICON_VERTICAL_LINE_SOLID = new ResourceImageReference(IMAGE_PREFIX + "VerticalSolid.gif");
-    private static final ImageReference DEFAULT_ICON_NODE_CLOSED_SOLID = new ResourceImageReference(IMAGE_PREFIX + "ClosedSolid.gif");
-    private static final ImageReference DEFAULT_ICON_NODE_CLOSED_BOTTOM_SOLID = new ResourceImageReference(IMAGE_PREFIX + "ClosedBottomSolid.gif");
-    private static final ImageReference DEFAULT_ICON_NODE_OPEN_SOLID = new ResourceImageReference(IMAGE_PREFIX + "OpenSolid.gif");
-    private static final ImageReference DEFAULT_ICON_NODE_OPEN_BOTTOM_SOLID = new ResourceImageReference(IMAGE_PREFIX + "OpenBottomSolid.gif");
+    private static final ImageReference DEFAULT_ICON_JOIN_SOLID 
+            = new ResourceImageReference(IMAGE_PREFIX + "JoinSolid.gif");
+    private static final ImageReference DEFAULT_ICON_JOIN_BOTTOM_SOLID 
+            = new ResourceImageReference(IMAGE_PREFIX + "JoinBottomSolid.gif");
+    private static final ImageReference DEFAULT_ICON_VERTICAL_LINE_SOLID 
+            = new ResourceImageReference(IMAGE_PREFIX + "VerticalSolid.gif");
+    private static final ImageReference DEFAULT_ICON_NODE_CLOSED_SOLID 
+            = new ResourceImageReference(IMAGE_PREFIX + "ClosedSolid.gif");
+    private static final ImageReference DEFAULT_ICON_NODE_CLOSED_BOTTOM_SOLID 
+            = new ResourceImageReference(IMAGE_PREFIX + "ClosedBottomSolid.gif");
+    private static final ImageReference DEFAULT_ICON_NODE_OPEN_SOLID 
+            = new ResourceImageReference(IMAGE_PREFIX + "OpenSolid.gif");
+    private static final ImageReference DEFAULT_ICON_NODE_OPEN_BOTTOM_SOLID 
+            = new ResourceImageReference(IMAGE_PREFIX + "OpenBottomSolid.gif");
 
     // icons with dotted lines
-    private static final ImageReference DEFAULT_ICON_JOIN_DOTTED = new ResourceImageReference(IMAGE_PREFIX + "JoinDotted.gif");
-    private static final ImageReference DEFAULT_ICON_JOIN_BOTTOM_DOTTED = new ResourceImageReference(IMAGE_PREFIX + "JoinBottomDotted.gif");
-    private static final ImageReference DEFAULT_ICON_VERTICAL_LINE_DOTTED = new ResourceImageReference(IMAGE_PREFIX + "VerticalDotted.gif");
-    private static final ImageReference DEFAULT_ICON_NODE_CLOSED_DOTTED = new ResourceImageReference(IMAGE_PREFIX + "ClosedDotted.gif");
-    private static final ImageReference DEFAULT_ICON_NODE_CLOSED_BOTTOM_DOTTED = new ResourceImageReference(IMAGE_PREFIX + "ClosedBottomDotted.gif");
-    private static final ImageReference DEFAULT_ICON_NODE_OPEN_DOTTED = new ResourceImageReference(IMAGE_PREFIX + "OpenDotted.gif");
-    private static final ImageReference DEFAULT_ICON_NODE_OPEN_BOTTOM_DOTTED = new ResourceImageReference(IMAGE_PREFIX + "OpenBottomDotted.gif");
+    private static final ImageReference DEFAULT_ICON_JOIN_DOTTED 
+            = new ResourceImageReference(IMAGE_PREFIX + "JoinDotted.gif");
+    private static final ImageReference DEFAULT_ICON_JOIN_BOTTOM_DOTTED 
+            = new ResourceImageReference(IMAGE_PREFIX + "JoinBottomDotted.gif");
+    private static final ImageReference DEFAULT_ICON_VERTICAL_LINE_DOTTED 
+            = new ResourceImageReference(IMAGE_PREFIX + "VerticalDotted.gif");
+    private static final ImageReference DEFAULT_ICON_NODE_CLOSED_DOTTED 
+            = new ResourceImageReference(IMAGE_PREFIX + "ClosedDotted.gif");
+    private static final ImageReference DEFAULT_ICON_NODE_CLOSED_BOTTOM_DOTTED 
+            = new ResourceImageReference(IMAGE_PREFIX + "ClosedBottomDotted.gif");
+    private static final ImageReference DEFAULT_ICON_NODE_OPEN_DOTTED 
+            = new ResourceImageReference(IMAGE_PREFIX + "OpenDotted.gif");
+    private static final ImageReference DEFAULT_ICON_NODE_OPEN_BOTTOM_DOTTED 
+            = new ResourceImageReference(IMAGE_PREFIX + "OpenBottomDotted.gif");
     
     // image ids for images without lines
     private static final String IMAGE_ID_NODE_CLOSED = "EchoExtras.Tree.nodeClosed";
@@ -520,7 +534,7 @@ extends AbstractComponentSynchronizePeer {
      * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#getClientComponentType()
      */
     public String getClientComponentType() {
-        return "nextapp.echo.extras.app.RemoteTree";
+        return "ExtrasApp.RemoteTree";
     }
     
     /**

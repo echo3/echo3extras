@@ -27,13 +27,17 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
+/**
+ * @class RemoteTree component.
+ * @base EchoApp.Component
+ */
 ExtrasApp.RemoteTree = Core.extend(EchoApp.Component, {
     
     $load: function() {
-        EchoApp.ComponentFactory.registerType("nextapp.echo.extras.app.RemoteTree", this);
+        EchoApp.ComponentFactory.registerType("ExtrasApp.RemoteTree", this);
     },
 
-    componentType: "nextapp.echo.extras.app.RemoteTree",
+    componentType: "ExtrasApp.RemoteTree",
     
     doAction: function() {
         var e = new Core.Event("action", this);
