@@ -114,7 +114,7 @@ implements LazyRenderContainer {
         return TabPane.class;
     }
 
-    public String getClientComponentType() {
+    public String getClientComponentType(boolean shortType) {
         return "ExtrasApp.TabPane";
     }
     

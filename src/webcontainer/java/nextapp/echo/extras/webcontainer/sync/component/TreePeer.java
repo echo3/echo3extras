@@ -531,9 +531,9 @@ extends AbstractComponentSynchronizePeer {
     }
     
     /**
-     * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#getClientComponentType()
+     * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#getClientComponentType(boolean)
      */
-    public String getClientComponentType() {
+    public String getClientComponentType(boolean shortType) {
         return "ExtrasApp.RemoteTree";
     }
     
