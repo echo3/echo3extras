@@ -72,7 +72,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         this._rolloverEnabled = this.component.getRenderProperty("rolloverEnabled");
         this._selectionEnabled = this.component.getRenderProperty("selectionEnabled");
         if (this._selectionEnabled) {
-            this.selectionModel = new ExtrasApp.TreeSelectionMoel(parseInt(this.component.getProperty("selectionMode")));
+            this.selectionModel = new ExtrasApp.TreeSelectionModel(parseInt(this.component.getProperty("selectionMode")));
         }
         
         this._defaultInsets = this.component.getRenderProperty("insets");
