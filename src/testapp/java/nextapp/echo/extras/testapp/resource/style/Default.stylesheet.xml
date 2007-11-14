@@ -299,4 +299,9 @@
    </fib>
   </p>
  </s>
+ <s n="TooltipPanel" t="nextapp.echo.app.Panel">
+  <p n="background" t="Color" v="#FFFFE1"/>
+  <p n="insets" t="Insets" v="2px"/>
+  <p n="border" t="Border" v="1px solid #000000"/>
+ </s>
 </ss>

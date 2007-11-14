@@ -45,8 +45,9 @@ import nextapp.echo.webcontainer.service.JavaScriptService;
  */
 public class ToolTipContainerPeer extends AbstractComponentSynchronizePeer {
 
-    private static final Service TOOLTIP_CONTAINER_SERVICE = JavaScriptService.forResource("EchoExtras.ToolTipContainer",
-            "/nextapp/echo/extras/webcontainer/resource/js/Render.ToolTipContainer.js");
+    private static final Service TOOLTIP_CONTAINER_SERVICE = JavaScriptService.forResources("EchoExtras.ToolTipContainer",
+            new String[] {  "/nextapp/echo/extras/webcontainer/resource/js/Application.ToolTipContainer.js",  
+                            "/nextapp/echo/extras/webcontainer/resource/js/Render.ToolTipContainer.js"});
     
     static {
         WebContainerServlet.getServiceRegistry().add(TOOLTIP_CONTAINER_SERVICE);
@@ -56,7 +57,7 @@ public class ToolTipContainerPeer extends AbstractComponentSynchronizePeer {
      * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#getClientComponentType(boolean)
      */
     public String getClientComponentType(boolean shortType) {
-        return "ToolTipContainer";
+        return "ExtrasApp.ToolTipContainer";
     }
     
     /**
@@ -65,7 +66,7 @@ public class ToolTipContainerPeer extends AbstractComponentSynchronizePeer {
     public Class getComponentClass() {
         return ToolTipContainer.class;
     }
-
+    
     /**
      * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#init(nextapp.echo.app.util.Context)
      */

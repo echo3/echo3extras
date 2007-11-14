@@ -4,7 +4,7 @@
 ExtrasRender.ComponentSync.ToolTipContainer = Core.extend(EchoRender.ComponentSync, {
     
     $load: function() {
-        EchoRender.registerPeer("nextapp.echo.extras.app.ToolTipContainer", this);
+        EchoRender.registerPeer("ExtrasApp.ToolTipContainer", this);
     },
     
     $construct: function() {

@@ -143,6 +143,8 @@ public TestPane() {
             "Rich Text Area", Styles.ICON_16_RICH_TEXT_AREA));
     testsMenu.addItem(new DefaultOptionModel("Launch_TabPaneTest", "Tab Pane",
             Styles.ICON_16_TAB_PANE));
+    testsMenu.addItem(new DefaultOptionModel("Launch_ToolTipContainerTest", "Tooltip Container",
+            Styles.ICON_16_TOOL_TIP_CONTAINER));
     testsMenu.addItem(new DefaultOptionModel("Launch_TransitionPaneTest",
             "Transition Pane", Styles.ICON_16_TRANSITION_PANE));
     testsMenu.addItem(new DefaultOptionModel("Launch_TreeTest", "Tree",
