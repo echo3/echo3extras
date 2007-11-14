@@ -72,7 +72,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         this._rolloverEnabled = this.component.getRenderProperty("rolloverEnabled");
         this._selectionEnabled = this.component.getRenderProperty("selectionEnabled");
         if (this._selectionEnabled) {
-            this.selectionModel = new ExtrasApp.TreeSelectionModel(parseInt(this.component.getProperty("selectionMode")));
+            this.selectionModel = new ExtrasApp.TreeSelectionMoel(parseInt(this.component.getProperty("selectionMode")));
         }
         
         this._defaultInsets = this.component.getRenderProperty("insets");
@@ -466,8 +466,10 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
      * @type Object
      */
     _renderNodeRowStructure: function(insertBefore, node, depth) {
+        var isHeader = node == this._treeStructure.getHeaderNode();
         var trElement = document.createElement("tr");
         trElement.id = this.component.renderId + "_tr_" + node.getId();
+        trElement.style.cursor = isHeader || !this._selectionEnabled ? "default" : "pointer";
         
         var border = this._createMultiSidedBorder(this.component.getRenderProperty("border"));
         var insets = this._defaultInsets;
@@ -495,7 +497,6 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             trElement.insertBefore(rowHeaderElement, trElement.firstChild);
         }
         
-        var isHeader = node == this._treeStructure.getHeaderNode();
         var expandoElement;
         if (!isHeader && !(!this._showsRootHandle && node == this._treeStructure.getRootNode())) {
             expandoElement = document.createElement("td");
