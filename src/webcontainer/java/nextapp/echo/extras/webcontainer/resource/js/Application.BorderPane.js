@@ -12,5 +12,6 @@ ExtrasApp.BorderPane = Core.extend(EchoApp.Component, {
         EchoApp.ComponentFactory.registerType("ExtrasApp.BorderPane", this);
     },
     
-    componentType: "ExtrasApp.BorderPane"
+    componentType: "ExtrasApp.BorderPane",
+    pane: true
 });

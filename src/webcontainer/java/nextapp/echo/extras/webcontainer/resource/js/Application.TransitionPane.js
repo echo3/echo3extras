@@ -75,5 +75,6 @@ ExtrasApp.TransitionPane = Core.extend(EchoApp.Component, {
         TYPE_FADE: 9
     },
     
-    componentType: "ExtrasApp.TransitionPane"
+    componentType: "ExtrasApp.TransitionPane",
+    pane: true
 });

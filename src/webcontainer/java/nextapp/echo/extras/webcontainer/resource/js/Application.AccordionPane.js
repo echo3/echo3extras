@@ -8,6 +8,7 @@ ExtrasApp.AccordionPane = Core.extend(EchoApp.Component, {
         EchoApp.ComponentFactory.registerType("ExtrasApp.AccordionPane", this);
     },
     
-    componentType: "ExtrasApp.AccordionPane"
+    componentType: "ExtrasApp.AccordionPane",
+    pane: true
 });
 
