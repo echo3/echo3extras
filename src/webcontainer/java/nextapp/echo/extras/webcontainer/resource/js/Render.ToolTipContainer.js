@@ -68,6 +68,7 @@ ExtrasRender.ComponentSync.ToolTipContainer = Core.extend(EchoRender.ComponentSy
     	
         var applyDivElement = document.createElement("div");
         applyDivElement.id = applyToComponent.renderId;
+		applyDivElement.style.cursor = "default";
     	EchoRender.renderComponentAdd(update, applyToComponent, applyDivElement);
         
         if (this.component.getComponentCount() > 1) {
