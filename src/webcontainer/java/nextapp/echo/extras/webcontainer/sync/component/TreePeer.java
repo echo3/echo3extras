@@ -476,6 +476,7 @@ extends AbstractComponentSynchronizePeer {
 
     private static final String PROPERTY_TREE_STRUCTURE = "treeStructure";
     private static final String PROPERTY_COLUMN_COUNT = "columnCount";
+    private static final String PROPERTY_COLUMN_WIDTH = "columnWidth";
     private static final String PROPERTY_SELECTION_MODE = "selectionMode";
     
     private static final String EXPANSION_PROPERTY = "expansion"; 
@@ -517,6 +518,7 @@ extends AbstractComponentSynchronizePeer {
         super();
         addOutputProperty(PROPERTY_TREE_STRUCTURE);
         addOutputProperty(PROPERTY_COLUMN_COUNT);
+        addOutputProperty(PROPERTY_COLUMN_WIDTH, true);
         addOutputProperty(PROPERTY_SELECTION_MODE);
         addOutputProperty(Tree.SELECTION_CHANGED_PROPERTY);
         
@@ -542,17 +544,48 @@ extends AbstractComponentSynchronizePeer {
      *      nextapp.echo.app.util.Context, nextapp.echo.app.Component, java.lang.String, int)
      */
     public Object getOutputProperty(Context context, Component component, String propertyName, int propertyIndex) {
+        System.out.println("get output property: " + propertyName);
         Tree tree = (Tree) component;
         if (PROPERTY_TREE_STRUCTURE.equals(propertyName)) {
             return new TreeStructure(tree);
         } else if (PROPERTY_COLUMN_COUNT.equals(propertyName)) {
             return new Integer(getColumnCount(tree));
+        } else if (PROPERTY_COLUMN_WIDTH.equals(propertyName)) {
+            return tree.getColumnModel().getColumn(propertyIndex).getWidth();
         } else if (PROPERTY_SELECTION_MODE.equals(propertyName)) {
             return new Integer(tree.getSelectionModel().getSelectionMode());
         } else if (Tree.SELECTION_CHANGED_PROPERTY.equals(propertyName)) {
             return getSelectionString(context, tree.getSelectionModel(), tree);
         }
         return super.getOutputProperty(context, component, propertyName, propertyIndex);
+    }
+    
+    /**
+     * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#getOutputPropertyIndices(nextapp.echo.app.util.Context,
+     *      nextapp.echo.app.Component, java.lang.String)
+     */
+    public Iterator getOutputPropertyIndices(Context context, Component component, String propertyName) {
+        if (PROPERTY_COLUMN_WIDTH.equals(propertyName)) {
+            final Iterator columnIterator = ((Tree) component).getColumnModel().getColumns();
+            return new Iterator() {
+                private int i = 0;
+            
+                public boolean hasNext() {
+                    return columnIterator.hasNext();
+                }
+            
+                public Object next() {
+                    columnIterator.next();
+                    return new Integer(i++);
+                }
+            
+                public void remove() {
+                    throw new UnsupportedOperationException();
+                }
+            };
+        } else {
+            return super.getOutputPropertyIndices(context, component, propertyName);
+        }
     }
     
     /**

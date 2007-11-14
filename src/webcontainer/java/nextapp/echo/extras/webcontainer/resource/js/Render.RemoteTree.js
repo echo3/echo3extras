@@ -81,11 +81,21 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         }
         this._defaultCellPadding = EchoAppRender.Insets.toCssValue(this._defaultInsets);
         
+        var width = this.component.getRenderProperty("width");
+        if (width && WebCore.Environment.QUIRK_IE_TABLE_PERCENT_WIDTH_SCROLLBAR_ERROR && width.units == "%") {
+            this._renderPercentWidthByMeasure = width.value;
+            width = null;
+        }
+        
         var tableElement = document.createElement("table");
         this._element = tableElement;
         this._element.id = this.component.renderId;
         tableElement.style.borderCollapse = "collapse";
         EchoAppRender.Border.renderComponentProperty(this.component, "border", null, tableElement);
+        
+        if (width) {
+            this._element.style.width = width;
+        }
         
         var tbodyElement = document.createElement("tbody");
         tableElement.appendChild(tbodyElement);
@@ -95,6 +105,8 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             this._treeStructure = this.component.getProperty("treeStructure")[0];
         }
         this.columnCount = this.component.getProperty("columnCount");
+        
+        this._renderColumnWidths();
         
         if (this._headerVisible) {
             this._renderNode(update, this._treeStructure.getHeaderNode());
@@ -107,6 +119,47 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         var selection = this.component.getRenderProperty("selection");
         if (selection && this._selectionEnabled) {
             this._setSelectedFromProperty(selection);
+        }
+    },
+    
+    _renderColumnWidths: function() {
+        if (!this.component.getRenderProperty("columnWidth")) {
+            return;
+        }
+        // If any column widths are set, render colgroup.
+        var columnPixelAdjustment;
+        if (WebCore.Environment.QUIRK_TABLE_CELL_WIDTH_EXCLUDES_PADDING) {
+            var pixelInsets = EchoAppRender.Insets.toPixels(this._defaultInsets);
+            columnPixelAdjustment = pixelInsets.left + pixelInsets.right;
+        }
+        
+        this._colGroupElement = document.createElement("colgroup");
+        var renderRelative = !WebCore.Environment.NOT_SUPPORTED_RELATIVE_COLUMN_WIDTHS;
+        for (var i = 0; i < this.columnCount; ++i) {
+            var colElement = document.createElement("col");
+            var width = this.component.getRenderIndexedProperty("columnWidth", i); 
+            if (width != null) {
+                if (width.units == "%") {
+                    colElement.width = width.value + (renderRelative ? "*" : "%");
+                } else {
+                    var columnPixels = WebCore.Measure.extentToPixels(width.value, width.units, true);
+                    if (columnPixelAdjustment) {
+                        colElement.width = columnPixels - columnPixelAdjustment;
+                    } else {
+                        colElement.width = columnPixels;
+                    }
+                }
+            }
+            this._colGroupElement.appendChild(colElement);
+        }
+        this._element.appendChild(this._colGroupElement);
+    },
+    
+    renderDisplay: function() {
+        if (this._renderPercentWidthByMeasure) {
+            this._element.style.width = "";
+            var percentWidth = (this._element.parentNode.offsetWidth * this._renderPercentWidthByMeasure) / 100;
+            this._element.style.width = percentWidth + "px";
         }
     },
     
@@ -591,6 +644,10 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         }
         
         this._updateSpansRecursive(startNode, maxDepth, iterator);
+        if (this._colGroupElement) {
+            this._colGroupElement.firstChild.span = maxDepth;
+        }
+        
         this._prevMaxDepth = maxDepth;
     },
     

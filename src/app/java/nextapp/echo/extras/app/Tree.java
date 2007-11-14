@@ -42,6 +42,7 @@ import java.util.Set;
 import nextapp.echo.app.Border;
 import nextapp.echo.app.Color;
 import nextapp.echo.app.Component;
+import nextapp.echo.app.Extent;
 import nextapp.echo.app.FillImage;
 import nextapp.echo.app.Font;
 import nextapp.echo.app.ImageReference;
@@ -273,6 +274,7 @@ public class Tree extends Component {
     public static final String PROPERTY_SELECTION_FONT = "selectionFont";
     public static final String PROPERTY_SELECTION_FOREGROUND = "selectionForeground";
     public static final String PROPERTY_SHOWS_ROOT_HANDLE = "showsRootHandle";
+    public static final String PROPERTY_WIDTH = "width";
     
     public static final String EXPAND_ACTION = "expand";
     public static final String INPUT_ACTION = "action";
@@ -281,6 +283,7 @@ public class Tree extends Component {
     public static final String AUTO_CREATE_COLUMNS_FROM_MODEL_CHANGED_PROPERTY = "autoCreateColumnsFromModel";
     public static final String CELL_RENDERER_CHANGED_PROPERTY = "cellRenderer";
     public static final String COLUMN_MODEL_CHANGED_PROPERTY = "columnModel";
+    public static final String COLUMN_WIDTH_CHANGED_PROPERTY = "columnWidth";
     public static final String DEFAULT_HEADER_RENDERER_CHANGED_PROPERTY = "defaultHeaderRenderer";
     public static final String DEFAULT_RENDERER_CHANGED_PROPERTY = "defaultRenderer";
     public static final String EXPANSION_STATE_CHANGED_PROPERTY = "expansionState";
@@ -371,6 +374,13 @@ public class Tree extends Component {
          */
         public void columnRemoved(TreeColumnModelEvent e) {
             invalidate();
+        }
+        
+        /**
+         * @see nextapp.echo.extras.app.event.TreeColumnModelListener#columnResized(nextapp.echo.extras.app.event.TreeColumnModelEvent)
+         */
+        public void columnResized(TreeColumnModelEvent e) {
+            firePropertyChange(COLUMN_WIDTH_CHANGED_PROPERTY, null, null);
         }
         
     };
@@ -1074,6 +1084,17 @@ public class Tree extends Component {
     public TreeSelectionModel getSelectionModel() {
         return selectionModel;
     }
+    
+    /**
+     * Returns the overall width of the tree.
+     * This property supports <code>Extent</code>s with
+     * fixed or percentile units.
+     * 
+     * @return the width
+     */
+    public Extent getWidth() {
+        return (Extent) getProperty(PROPERTY_WIDTH);
+    }
 
     /**
      * Returns the component that is rendered at the given location.
@@ -1427,6 +1448,17 @@ public class Tree extends Component {
      */
     public void setShowsRootHandle(boolean newValue) {
         setProperty(PROPERTY_SHOWS_ROOT_HANDLE, Boolean.valueOf(newValue));
+    }
+    
+    /**
+     * Sets the overall width of the tree.
+     * This property supports <code>Extent</code>s with
+     * fixed or percentile units.
+     * 
+     * @param newValue the new width
+     */
+    public void setWidth(Extent newValue) {
+        setProperty(PROPERTY_WIDTH, newValue);
     }
 
     /**

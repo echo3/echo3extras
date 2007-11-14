@@ -59,4 +59,11 @@ extends EventListener, Serializable {
      * @param e the <code>TableColumnModelEvent</code> describing the update
      */
     public void columnRemoved(TreeColumnModelEvent e);
+    
+    /**
+     * Invoked when a <code>TableColumn</code> is resized.
+     * 
+     * @param e the <code>TableColumnModelEvent</code> describing the update
+     */
+    public void columnResized(TreeColumnModelEvent e);
 }

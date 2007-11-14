@@ -1,5 +1,8 @@
 package nextapp.echo.extras.testapp.testscreen;
 
+import java.util.Iterator;
+
+import nextapp.echo.app.Extent;
 import nextapp.echo.app.FillImage;
 import nextapp.echo.app.ImageReference;
 import nextapp.echo.app.ResourceImageReference;
@@ -8,6 +11,7 @@ import nextapp.echo.app.event.ActionListener;
 import nextapp.echo.extras.app.Tree;
 import nextapp.echo.extras.app.tree.AbstractTreeModel;
 import nextapp.echo.extras.app.tree.DefaultTreeCellRenderer;
+import nextapp.echo.extras.app.tree.TreeColumn;
 import nextapp.echo.extras.app.tree.TreeModel;
 import nextapp.echo.extras.app.tree.TreeSelectionModel;
 import nextapp.echo.extras.testapp.AbstractTest;
@@ -186,6 +190,39 @@ public class TreeTest extends AbstractTest {
         addBooleanPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_HEADER_VISIBLE);
         addBooleanPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_ROOT_VISIBLE);
         addBooleanPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_SHOWS_ROOT_HANDLE);
+        
+        addExtentPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_WIDTH, new Extent[] {new Extent(500), new Extent(100, Extent.PERCENT), null});
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set column widths (px)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int width = 100;
+                Iterator iterator = tree.getColumnModel().getColumns();
+                while (iterator.hasNext()) {
+                    TreeColumn column = (TreeColumn)iterator.next();
+                    column.setWidth(new Extent(width));
+                    width -= 10;
+                }
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set column widths (%)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int width = 100 / tree.getColumnModel().getColumnCount();
+                Iterator iterator = tree.getColumnModel().getColumns();
+                while (iterator.hasNext()) {
+                    TreeColumn column = (TreeColumn)iterator.next();
+                    column.setWidth(new Extent(width, Extent.PERCENT));
+                }
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Reset column widths", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Iterator iterator = tree.getColumnModel().getColumns();
+                while (iterator.hasNext()) {
+                    TreeColumn column = (TreeColumn)iterator.next();
+                    column.setWidth(null);
+                }
+            }
+        });
+        
         
 // FIXME enable when default tree model is available.        
 //        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Simple tree model", new ActionListener() {

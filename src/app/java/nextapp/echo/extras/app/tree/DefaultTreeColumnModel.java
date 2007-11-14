@@ -29,6 +29,8 @@
 
 package nextapp.echo.extras.app.tree;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.EventListener;
@@ -45,9 +47,6 @@ import nextapp.echo.extras.app.event.TreeColumnModelListener;
 public class DefaultTreeColumnModel
 implements Serializable, TreeColumnModel {
     
-    //FIXME. add prop change listeners to tree columns, fire resize events when widths change.
-    // modify treecolumnmodellistener interface to include resize() method.
-    
     /**
      * A collection of all columns in the column model in order.
      */
@@ -57,6 +56,14 @@ implements Serializable, TreeColumnModel {
      * A listener storage facility.
      */
     protected EventListenerList listenerList = new EventListenerList();
+    
+    private PropertyChangeListener columnChangeForwarder = new PropertyChangeListener() {
+        public void propertyChange(PropertyChangeEvent evt) {
+            int index = columns.indexOf(evt.getSource());
+            TreeColumnModelEvent event = new TreeColumnModelEvent(DefaultTreeColumnModel.this, index, index);
+            fireColumnResized(event);
+        }
+    };
     
     /**
      * Creates a new DefaultTreeColumnModel.
@@ -70,6 +77,7 @@ implements Serializable, TreeColumnModel {
      */
     public void addColumn(TreeColumn column) {
         columns.add(column);
+        column.addPropertyChangeListener(columnChangeForwarder);
         fireColumnAdded(new TreeColumnModelEvent(this, -1, columns.size() - 1));
     }
     
@@ -120,6 +128,20 @@ implements Serializable, TreeColumnModel {
         for (int index = 0; index < listeners.length; ++index) {
             ((TreeColumnModelListener) listeners[index]).columnRemoved(e);
         }   
+    }
+    
+    /**
+     * Notifies <code>TreeColumnModelListener</code>s that a column was 
+     * resized.
+     *
+     * @param e the <code>TreeColumnModelEvent</code> to fire
+     */
+    protected void fireColumnResized(TreeColumnModelEvent e) {
+        EventListener[] listeners = listenerList.getListeners(TreeColumnModelListener.class);
+
+        for (int index = 0; index < listeners.length; ++index) {
+            ((TreeColumnModelListener) listeners[index]).columnResized(e);
+        }
     }
     
     /**
@@ -194,6 +216,7 @@ implements Serializable, TreeColumnModel {
             // Do nothing, column is not in model.
             return;
         }
+        column.removePropertyChangeListener(columnChangeForwarder);
         columns.remove(columnIndex);
         fireColumnAdded(new TreeColumnModelEvent(this, columnIndex, -1));
     }
