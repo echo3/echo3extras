@@ -544,7 +544,6 @@ extends AbstractComponentSynchronizePeer {
      *      nextapp.echo.app.util.Context, nextapp.echo.app.Component, java.lang.String, int)
      */
     public Object getOutputProperty(Context context, Component component, String propertyName, int propertyIndex) {
-        System.out.println("get output property: " + propertyName);
         Tree tree = (Tree) component;
         if (PROPERTY_TREE_STRUCTURE.equals(propertyName)) {
             return new TreeStructure(tree);
