@@ -423,7 +423,9 @@ ExtrasRender.ComponentSync.MenuBarPane = Core.extend(ExtrasRender.ComponentSync.
        EchoRender.registerPeer("ExtrasApp.MenuBarPane", this);
     },
     
-    _itemInsets: new EchoApp.Insets("0px 12px"),
+    $construct: function() {
+	    this._itemInsets = new EchoApp.Insets("0px 12px");
+    },
     
     _renderMain: function() {
         var menuBarDivElement = document.createElement("div");
