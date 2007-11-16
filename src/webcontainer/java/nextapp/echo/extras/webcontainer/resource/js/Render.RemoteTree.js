@@ -1015,6 +1015,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             }
         }
         
+        this.component.setProperty("selectionUpdate", update);
         return true;
     },
     
