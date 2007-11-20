@@ -25,18 +25,18 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
         _defaultTabSpacing: new EchoApp.Extent(0)
     },
     
+    _element: null,
+    _activeTabId: null,
+    _tabs: null,
+    _contentContainerDivElement: null,
+    _headerContainerTrElement: null,
+    
     $load: function() {
         EchoRender.registerPeer("ExtrasApp.TabPane", this);
     },
     
     $construct: function() {
-        // state
-        this._activeTabId = null;
         this._tabs = [];
-        // elements
-        this._element = null;
-        this._headerContainerTrElement = null;
-        this._contentContainerDivElement = null;
     },
     
     /**

@@ -424,6 +424,7 @@ ExtrasRender.ComponentSync.MenuBarPane = Core.extend(ExtrasRender.ComponentSync.
     },
     
     $construct: function() {
+        ExtrasRender.ComponentSync.Menu.call(this);
 	    this._itemInsets = new EchoApp.Insets("0px 12px");
     },
     

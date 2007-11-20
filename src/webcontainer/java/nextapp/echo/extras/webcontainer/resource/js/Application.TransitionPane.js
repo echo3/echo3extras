@@ -10,6 +10,16 @@ ExtrasApp.TransitionPane = Core.extend(EchoApp.Component, {
     $static: {
     
         /**
+         * Default duration time (350ms).
+         */
+        DEFAULT_DURATION: 350,
+        
+        /**
+         * Default transition type (immediate replace).
+         */
+        DEFAULT_TYPE: 0,
+        
+        /**
          * Transition setting indicating new content should immediately 
          * final int replace old content with no visual effect.
          */
