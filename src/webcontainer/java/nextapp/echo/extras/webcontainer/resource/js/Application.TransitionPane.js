@@ -84,6 +84,10 @@ ExtrasApp.TransitionPane = Core.extend(EchoApp.Component, {
          */
         TYPE_FADE: 9
     },
+
+    $load: function() {
+        EchoApp.ComponentFactory.registerType("ExtrasApp.TransitionPane", this);
+    },
     
     componentType: "ExtrasApp.TransitionPane",
     pane: true
