@@ -226,7 +226,6 @@ ExtrasRender.ComponentSync.TransitionPane.FadeOpacityTransition = Core.extend(
     },
     
     step: function(progress) {
-    Core.Debug.consoleWrite("step: " + progress);
         if (this._transitionPane.childDivElement) {
             if (WebCore.Environment.PROPRIETARY_IE_OPACITY_FILTER_REQUIRED) {
                 var percent = parseInt(progress * 100);
