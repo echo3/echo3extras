@@ -179,7 +179,7 @@ ExtrasRender.ComponentSync.TransitionPane.Transition = Core.extend({
     
         duration: 350,
         
-        stepInterval: 10
+        stepInterval: 50
     },
 
     $abstract: {
@@ -222,6 +222,7 @@ ExtrasRender.ComponentSync.TransitionPane.FadeOpacityTransition = Core.extend(
                 this._transitionPane.childDivElement.style.opacity = 0;
             }
         }
+        this._transitionPane.childDivElement.style.display = "block";
     },
     
     step: function(progress) {
