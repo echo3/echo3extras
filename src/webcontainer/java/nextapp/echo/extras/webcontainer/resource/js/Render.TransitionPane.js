@@ -5,7 +5,7 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
     },
 
     _element: null,
-    _transitionDuration: null,
+    _duration: null,
     _transition: null,
     _runnable: null,
     
@@ -39,18 +39,17 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
     },
 
     _loadTransition: function() {
-        switch (this.component.getRenderProperty("transition")) {
+        switch (this.component.getRenderProperty("type")) {
         case ExtrasApp.TransitionPane.TYPE_FADE:
-            this._transition = new ExtrasRender.ComponentSync.TransitionPane.FadeOpacityTransition();
+            this._transition = new ExtrasRender.ComponentSync.TransitionPane.FadeOpacityTransition(this);
             break;
         default:
             this._transition = null;
-            this._transitionDuration = null;
+            this._duration = null;
         }
         
         if (this._transition) {
-            this._transitionDuration = this.component.getRenderProperty("duartion", 
-                    this._transition.constructor.DEFAULT_TRANSITION_DURATION);
+            this._duration = this.component.getRenderProperty("duration", this._transition.duration);
         }
     },
 
@@ -67,19 +66,21 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
     _renderAddChild: function(update) {
         this.childDivElement = document.createElement("div");
         this.childDivElement.style.cssText = "position:absolute;top:0;left:0;width:100%;height:100%;";
+        
+        EchoRender.renderComponentAdd(update, this.component.children[0], this.childDivElement);
+        
         if (this._initialContentLoaded) {
             this.childDivElement.style.display = "none";
+            if (this._transition) {
+                this._startTransition();
+            } else {
+                this.doImmediateTransition();
+            }
         } else {
             this._initialContentLoaded = true;
         }
-        EchoRender.renderComponentAdd(update, this.component.children[0], this.childDivElement);
+
         this._element.appendChild(this.childDivElement);
-        
-        if (this._transition) {
-            this._startTransition();
-        } else {
-            this.doImmediateTransition();
-        }
     },
     
     renderDisplay: function() {
@@ -124,13 +125,13 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
     },
     
     _startTransition: function() {
-        this._runnable = new ExtrasRender.ComponentSync.TransitionPane.Runnable();
+        this._runnable = new ExtrasRender.ComponentSync.TransitionPane.Runnable(this);
         Core.Scheduler.add(this._runnable); 
     },
     
     _stopTransition: function() {
         this.doImmediateTransition();
-        Core.Scheduler.add(this._runnable); 
+        Core.Scheduler.remove(this._runnable); 
     }
 });
 
@@ -150,18 +151,19 @@ ExtrasRender.ComponentSync.TransitionPane.Runnable = Core.extend(Core.Scheduler.
     
     $construct: function(transitionPane) {
         this.transitionPane = transitionPane;
+        this.timeInterval = transitionPane._transition.stepInterval;
     },
     
     run: function() {
         if (!this.initialized) {
             this._startTime = new Date().getTime();
-            this._endTime = this._startTime + this.transitionPane._transitionDuration;
+            this._endTime = this._startTime + this.transitionPane._duration;
             this.transitionPane._transition.init();
             this.initialized = true;
         } else {
             var time = new Date().getTime();
             if (time < this._endTime) {
-                var progress = (time - this._startTime) / this.transitionPane._transitionDuration;
+                var progress = (time - this._startTime) / this.transitionPane._duration;
                 this.transitionPane._transition.step(progress);
             } else {
                 this.transitionPane._transition.dispose();
@@ -172,6 +174,13 @@ ExtrasRender.ComponentSync.TransitionPane.Runnable = Core.extend(Core.Scheduler.
 }); 
 
 ExtrasRender.ComponentSync.TransitionPane.Transition = Core.extend({
+
+    $virtual: {
+    
+        duration: 350,
+        
+        stepInterval: 10
+    },
 
     $abstract: {
     
@@ -186,12 +195,7 @@ ExtrasRender.ComponentSync.TransitionPane.Transition = Core.extend({
 ExtrasRender.ComponentSync.TransitionPane.FadeOpacityTransition = Core.extend(
         ExtrasRender.ComponentSync.TransitionPane.Transition, {
     
-    $static: {
-    
-        DEFAULT_TRANSITION_DURATION: 1000,
-        
-        INTERVAL: 10
-    },
+    duration: 1000,
     
     _transitionPane: null,
     
@@ -221,7 +225,7 @@ ExtrasRender.ComponentSync.TransitionPane.FadeOpacityTransition = Core.extend(
     },
     
     step: function(progress) {
-Core.Debug.consoleWrite("progress:" +  progress);    
+    Core.Debug.consoleWrite("step: " + progress);
         if (this._transitionPane.childDivElement) {
             if (WebCore.Environment.PROPRIETARY_IE_OPACITY_FILTER_REQUIRED) {
                 var percent = parseInt(progress * 100);
