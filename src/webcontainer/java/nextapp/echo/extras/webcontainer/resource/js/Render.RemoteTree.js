@@ -62,7 +62,8 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         this._lineStyle = this.component.getRenderProperty("lineStyle", 2);
         this._showLines = this._lineStyle != ExtrasRender.ComponentSync.RemoteTree.LINE_STYLE_NONE;
         if (this._showLines) {
-            var lineImageIdSuffix = this._lineStyle == ExtrasRender.ComponentSync.RemoteTree.LINE_STYLE_SOLID ? "Solid" : "Dotted";
+            var solid = this._lineStyle == ExtrasRender.ComponentSync.RemoteTree.LINE_STYLE_SOLID;
+            var lineImageIdSuffix = solid ? "Solid" : "Dotted";
             this.verticalLineImage = this._getImageUri("lineVertical" + lineImageIdSuffix);
             this.horizontalLineImage = this._getImageUri("lineHorizontal" + lineImageIdSuffix);
         }
@@ -210,6 +211,9 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
                 return this.rowElement;
             },
             
+            /**
+             * Advance to the next row, and return the node element of that row.
+             */
             nextNodeElement : function() {
                 this.nextRow();
                 if (!this.rowElement) {
@@ -218,8 +222,11 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
                 return this.currentNodeElement();
             },
             
+            /**
+             * Returns the node element on the current row.
+             */
             currentNodeElement : function() {
-                var cellElement = this.rowElement.firstChild;
+                var cellElement = this._nestedTdElement(this.rowElement);
                 while (cellElement) {
                     if (cellElement.__ExtrasTreeCellType == "node") {
                         return cellElement;
@@ -229,8 +236,12 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
                 return null;
             },
     
+            /**
+             * Returns the expando element on the current row, if the current
+             * row does not contain an expando element, null is returned.
+             */
             currentExpandoElement : function() {
-                var cellElement = this.rowElement.firstChild;
+                var cellElement = this._nestedTdElement(this.rowElement);
                 while (cellElement) {
                     if (cellElement.__ExtrasTreeCellType == "expando") {
                         return cellElement;
@@ -238,6 +249,18 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
                     cellElement = cellElement.nextSibling;
                 }
                 return null;
+            },
+            
+            _nestedTdElement : function(rowElement) {
+                var count = 0;
+                var e = rowElement;
+                do {
+                    e = e.firstChild;
+                    if (e.tagName.toLowerCase() == "td") {
+                        ++count;
+                    }
+                } while (count < 2)
+                return e;
             }
         };
     },
@@ -258,8 +281,6 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         }
         var iterator = this._elementIterator(rowElement, endRow);
         this._renderNodeRecursive(update, node, iterator, nodeDepth, insertBefore);
-        
-        this._updateSpans(node);
     },
     
     _renderNodeRecursive: function(update, node, iterator, depth, insertBefore, visible) {
@@ -290,7 +311,6 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
                 for (var c = 0; c < this.columnCount - 1; ++c) {
                     var columnElement = document.createElement("td");
                     EchoAppRender.Border.renderComponentProperty(this.component, "border", null, columnElement);
-                    EchoAppRender.Insets.renderPixel(this._defaultInsets, columnElement, "padding");
                     
                     var columnComponent = this.component.application.getComponentByRenderId(node.getColumn(c));
                     EchoRender.renderComponentAdd(update, columnComponent, columnElement);
@@ -370,11 +390,11 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
     _renderExpandoElement: function(node, expandoElement) {
         if (node.isLeaf()) {
             var joinIcon = this._getJoinIcon(node);
-            var joinFillImage = new EchoApp.FillImage(joinIcon, EchoApp.FillImage.NO_REPEAT);
+            var joinFillImage = new EchoApp.FillImage(joinIcon, EchoApp.FillImage.NO_REPEAT, "50%", 0);
             EchoAppRender.FillImage.render(joinFillImage, expandoElement);
         } else {
             var toggleIcon = this._getToggleIcon(node);
-            var toggleFillImage = new EchoApp.FillImage(toggleIcon, EchoApp.FillImage.NO_REPEAT);
+            var toggleFillImage = new EchoApp.FillImage(toggleIcon, EchoApp.FillImage.NO_REPEAT, "50%", 0);
             EchoAppRender.FillImage.render(toggleFillImage, expandoElement);
         }
     },
@@ -524,66 +544,61 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         trElement.id = this.component.renderId + "_tr_" + node.getId();
         trElement.style.cursor = isHeader || !this._selectionEnabled ? "default" : "pointer";
         
-        var border = this._createMultiSidedBorder(this.component.getRenderProperty("border"));
-        var insets = this._defaultInsets;
-    
+        var nodeTable = document.createElement("table");
+        nodeTable.style.borderCollapse = "collapse";
+        nodeTable.style.cellPadding = "0px";
+        nodeTable.style.cellSpacing = "0px";
+        nodeTable.style.padding = "0px";
+        nodeTable.appendChild(document.createElement("tbody"));
+        var nodeRowElement = document.createElement("tr");
+        
         if (!this._rootVisible || (!this._showsRootHandle && node != this._treeStructure.getRootNode())) {
             --depth;
         }
         var parentNode = this._treeStructure.getNode(node.getParentId());
         for (var c = 0; c < depth - 1; ++c) {
             var rowHeaderElement = document.createElement("td");
+            rowHeaderElement.id = "tree_" + node.getId() + "_" + c;
             rowHeaderElement.style.padding = "0";
             rowHeaderElement.style.width = "19px";
-            
-            // apply top and bottom border style
-            this._applyBorder(border, [0, 2], rowHeaderElement);
     
             if (parentNode) {
                 if (this._showLines && this._treeStructure.hasNodeNextSibling(parentNode)) {
-                    var verticalLineFillImage = new EchoApp.FillImage(this.verticalLineImage, EchoApp.FillImage.REPEAT_VERTICAL, "50%", 0);
-                    this._applyInsets(this._defaultInsets, [0, 2], rowHeaderElement);
+                    var verticalLineFillImage = new EchoApp.FillImage(this.verticalLineImage, 
+                            EchoApp.FillImage.REPEAT_VERTICAL, "50%", 0);
                     EchoAppRender.FillImage.render(verticalLineFillImage, rowHeaderElement);
                 }
                 parentNode = this._treeStructure.getNode(parentNode.getParentId());
             }
-            trElement.insertBefore(rowHeaderElement, trElement.firstChild);
+            nodeRowElement.insertBefore(rowHeaderElement, nodeRowElement.firstChild);
         }
         
         var expandoElement;
         if (!isHeader && !(!this._showsRootHandle && node == this._treeStructure.getRootNode())) {
             expandoElement = document.createElement("td");
+            expandoElement.id = "tree_" + node.getId() + "_expando";
             expandoElement.__ExtrasTreeCellType = "expando";
-            // apply border and bottom style
-            this._applyBorder(border, [0, 2], expandoElement);
             expandoElement.style.padding = "0";
             expandoElement.style.width = "19px";
             expandoElement.style.textAlign = "center";
-            trElement.appendChild(expandoElement);
+            nodeRowElement.appendChild(expandoElement);
         }
         
         var tdElement = document.createElement("td");
-        tdElement.__ExtrasTreeCellType = "node";
+        tdElement.style.padding = "0px";
         trElement.appendChild(tdElement);
-    
-        if (tdElement == trElement.firstChild) {
-            // apply border, bottom and right style
-            this._applyBorder(border, [0,1,2,3], tdElement);
-            this._applyInsets(insets, [0,1,2,3], tdElement);
-        } else {
-            this._applyBorder(border, [0,1,2], tdElement);
-            this._applyInsets(insets, [0,1,2], tdElement);
-            
-            // apply border left side
-            this._applyBorder(border, [3], trElement.firstChild);
-            this._applyInsets(insets, [3], trElement.firstChild);
-        }   
+        EchoAppRender.Border.renderComponentProperty(this.component, "border", null, tdElement);
+        var nodeCellElement = document.createElement("td");
+        nodeCellElement.__ExtrasTreeCellType = "node";
+        nodeRowElement.appendChild(nodeCellElement);
+        nodeTable.firstChild.appendChild(nodeRowElement);
+        tdElement.appendChild(nodeTable);
         
         this._tbodyElement.insertBefore(trElement, insertBefore);
     
         var elements = {
             trElement: trElement,
-            tdElement: tdElement,
+            tdElement: nodeCellElement,
             expandoElement: expandoElement
         };
         if (!isHeader) {
@@ -591,95 +606,6 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         }
         
         return elements;
-    },
-    
-    /**
-     * Updates the column spans of the node cell element. This ensures all subsequent columns
-     * will be lined out correctly.
-     * <p>
-     * If the maximum depth (depth of the deepest visible node) is changed, all nodes will be 
-     * updated (including the header), if not, only the changed node 
-     * and the nodes below will be updated.
-     * 
-     * @param {ExtrasApp.RemoteTree.TreeNode} node the changed node, if node is the header node
-     *          nothing is done. 
-     */
-    _updateSpans: function(node) {
-        // update the col spans of the node cells
-        if (node == this._treeStructure.getHeaderNode()) {
-            // don't touch the spans if only the header node is re-rendered
-            return;
-        }
-        var maxDepth = this._treeStructure.getMaxDepth();
-        if (!this._rootVisible) {
-            --maxDepth;
-        }
-        var tbodyElement = this._tbodyElement;
-        // iterator object for easy navigating through the tree structure
-        var iterator = this._elementIterator(tbodyElement.firstChild);
-        var startNode;
-        if (this._prevMaxDepth == maxDepth) {
-            // no need to traverse the whole tree, update only changed nodes
-            startNode = node;
-        } else {
-            // max depth has changed, update all nodes
-            startNode = this._treeStructure.getRootNode();
-            if (this._headerVisible) {
-                // the header node is not part of the tree node structure, so it needs to be handled separately
-                this._updateSpansRecursive(this._treeStructure.getHeaderNode(), maxDepth, iterator);
-            }
-        }
-        // find the row to start with. The table element may not have been added to the DOM, 
-        // so navigate it's children to find the correct row.
-        var element = this._getRowElementForNode(startNode);
-        if (element) {
-            iterator.startRow = element;
-        } else {
-            while (iterator.startRow) {
-                if (iterator.startRow.id == this.component.renderId + "_tr_" + startNode.getId()) {
-                    break;
-                }
-                iterator.startRow = iterator.startRow.nextSibling;
-            }
-        }
-        
-        this._updateSpansRecursive(startNode, maxDepth, iterator);
-        if (this._colGroupElement) {
-            this._colGroupElement.firstChild.span = maxDepth;
-        }
-        
-        this._prevMaxDepth = maxDepth;
-    },
-    
-    _updateSpansRecursive: function(startNode, maxDepth, iterator) {
-        var depth = this._treeStructure.getNodeDepth(startNode);
-        if (!this._rootVisible) {
-            --depth;
-        }
-        var span = maxDepth - depth + 1;
-        if (startNode == this._treeStructure.getHeaderNode() && this._rootVisible && this.showsRootHandle) {
-            // the header row has no expando cell, it needs to span one extra column
-            ++span;
-        }
-        if (this._rootVisible || startNode != this._treeStructure.getRootNode()) {
-            do {
-                var nodeElement = iterator.nextNodeElement();
-            } while (iterator.rowElement.style.display == "none")
-            if (!nodeElement) {
-                return;
-            }
-            nodeElement.colSpan = span;
-        }
-        
-        if (!startNode.isExpanded()) {
-            return;
-        }
-        
-        var childCount = startNode.getChildNodeCount();
-        for (var i = 0; i < childCount; ++i) {
-            var childNode = startNode.getChildNode(i);
-            this._updateSpansRecursive(childNode, maxDepth, iterator);
-        }
     },
     
     /**
@@ -695,7 +621,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
      */
     _setDefaultRowStyle: function(rowElement) {
         // HACKHACK
-        this._setRowStyle(rowElement, "rollover", false);
+        this._setRowStyle(rowElement, false, "rollover");
     },
     
     /**
@@ -714,20 +640,55 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
      *          "rolloverForeground"
      */
     _setRowStyle: function(rowElement, state, prefix) {
-        var foreground = EchoAppRender.getEffectProperty(this.component, "foreground", prefix + "Foreground", state);
-        var background = EchoAppRender.getEffectProperty(this.component, "background", prefix + "Background", state);
-        var backgroundImage = EchoAppRender.getEffectProperty(this.component, "backgroundImage", prefix + "BackgroundImage", state);
-        var font = EchoAppRender.getEffectProperty(this.component, "font", prefix + "Font", state);
-        
+        var node = this._getNodeFromElement(rowElement);
+        var nodeComponent = this.component.application.getComponentByRenderId(node.getId());
+        var nodeLayout = nodeComponent.getRenderProperty("layoutData");
+        var index = -1;
         var cellElement = rowElement.firstChild;
         var visitedNodeCell = false;
         while (cellElement) {
-            visitedNodeCell |= cellElement.__ExtrasTreeCellType == "node";
-            if (visitedNodeCell) {
+            visitedNodeCell = index > -1;
+            var columnLayout;
+            if (index > -1) {
+                var columnComponent = this.component.application.getComponentByRenderId(node.getColumn(index));
+                columnLayout = columnComponent.getRenderProperty("layoutData");
+            } else {
+                this._renderNodeCellInsets(cellElement, nodeLayout);
+            }
+            if (!state) {
+                var layout = visitedNodeCell ? columnLayout : nodeLayout;
+                if (layout) {
+                    EchoAppRender.Color.renderComponentProperty(layout, "background", null, cellElement, "backgroundColor");
+                    EchoAppRender.FillImage.renderComponentProperty(layout, "backgroundImage", null, cellElement);
+                    if (visitedNodeCell) {
+                        EchoAppRender.Alignment.renderComponentProperty(layout, "alignment", null, cellElement, 
+                                true, this.component);
+                    }
+                }
+            } 
+            if (state || !(columnLayout || nodeLayout)) {
+                var foreground = EchoAppRender.getEffectProperty(this.component, "foreground", prefix + "Foreground", 
+                        state);
+                var background = EchoAppRender.getEffectProperty(this.component, "background", prefix + "Background", 
+                        state);
+                var backgroundImage = EchoAppRender.getEffectProperty(this.component, "backgroundImage", 
+                        prefix + "BackgroundImage", state);
                 EchoAppRender.Color.renderClear(foreground, cellElement, "color");
                 EchoAppRender.Color.renderClear(background, cellElement, "backgroundColor");
-                EchoAppRender.FillImage.renderClear(backgroundImage, cellElement, "backgroundColor");
+                EchoAppRender.FillImage.renderClear(backgroundImage, cellElement);
             }
+            if (visitedNodeCell) {
+                var insets;
+                if (columnLayout) {
+                    insets = columnLayout.getProperty("insets");
+                } else {
+                    insets = this._defaultInsets;
+                }
+                EchoAppRender.Insets.renderPixel(insets, cellElement, "padding");
+            }
+            ++index;
+            
+            var font = EchoAppRender.getEffectProperty(this.component, "font", prefix + "Font", state);
             EchoAppRender.Font.renderClear(null, cellElement);
             EchoAppRender.Font.renderClear(font, cellElement);
             
@@ -737,6 +698,37 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             }
             
             cellElement = cellElement.nextSibling;
+        }
+    },
+    
+    _renderNodeCellInsets: function(cellElement, nodeLayout) {
+        // Special handling for the first cell in a row (the 'node cell')
+        // because the node is rendered as a table within the td
+        var insets;
+        if (nodeLayout) {
+            insets = nodeLayout.getProperty("insets");
+        } else {
+            insets = this._defaultInsets;
+        }
+        var subRow = cellElement.firstChild.firstChild.firstChild; // cellElement.table.tbody.tr
+        var subCell = subRow.firstChild; 
+        while (subCell) {
+            // don't render insets on expando cell, would result in gapped lines
+            if (subCell.__ExtrasTreeCellType != "expando") {
+                if (subCell == subRow.firstChild && subCell == subRow.lastChild) {
+                    this._applyInsets(insets, [0, 1, 2, 3], subCell);
+                } else if (subCell == subRow.firstChild) {
+                    // render top, bottom and left insets
+                    this._applyInsets(insets, [0, 2, 3], subCell);
+                } else if (subCell != subRow.lastChild) {
+                    // render top and bottom insets
+                    this._applyInsets(insets, [0, 2], subCell);
+                } else if (subCell == subRow.lastChild) {
+                    // render top, bottom and right insets
+                    this._applyInsets(insets, [0, 1, 2], subCell);
+                }
+            }
+            subCell = subCell.nextSibling;
         }
     },
     
@@ -970,8 +962,9 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         WebCore.DOM.preventEventDefault(e);
         
         var update = new ExtrasApp.RemoteTree.SelectionUpdate();
-    
-        if (!this.selectionModel.isSelectionEmpty() && (this.selectionModel.isSingleSelection() || !(e.shiftKey || e.ctrlKey || e.metaKey || e.altKey))) {
+        
+        var specialKey = e.shiftKey || e.ctrlKey || e.metaKey || e.altKey;    
+        if (!this.selectionModel.isSelectionEmpty() && (this.selectionModel.isSingleSelection() || !(specialKey))) {
             update.clear = true;
             this._clearSelected();
         }
@@ -1090,7 +1083,8 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         // end of the hack
         
         var treeStructureUpdate = update.getUpdatedProperty("treeStructure");
-        var fullStructure = (treeStructureUpdate && treeStructureUpdate.newValue && treeStructureUpdate.newValue.fullRefresh);
+        var fullStructure = (treeStructureUpdate && treeStructureUpdate.newValue && 
+                treeStructureUpdate.newValue.fullRefresh);
         if (!fullStructure) {
             // removal of children indicates that the tree was invalidated, 
             // and thus all components are re-rendered, and the tree structure we have at the client 
@@ -1101,7 +1095,8 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
                 this._renderTreeStructureUpdate(treeStructureUpdate.newValue, update);
             }
             
-            if (Core.Arrays.containsAll(ExtrasRender.ComponentSync.RemoteTree._supportedPartialProperties, propertyNames, true)) {
+            if (Core.Arrays.containsAll(ExtrasRender.ComponentSync.RemoteTree._supportedPartialProperties, 
+                    propertyNames, true)) {
                 var selection = update.getUpdatedProperty("selection");
                 if (selection && this._selectionEnabled) {
                     this._setSelectedFromProperty(selection.newValue, true);

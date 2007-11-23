@@ -2,19 +2,30 @@ package nextapp.echo.extras.testapp.testscreen;
 
 import java.util.Iterator;
 
+import nextapp.echo.app.Component;
+import nextapp.echo.app.ContentPane;
 import nextapp.echo.app.Extent;
 import nextapp.echo.app.FillImage;
 import nextapp.echo.app.ImageReference;
+import nextapp.echo.app.Insets;
+import nextapp.echo.app.Label;
 import nextapp.echo.app.ResourceImageReference;
+import nextapp.echo.app.WindowPane;
 import nextapp.echo.app.event.ActionEvent;
 import nextapp.echo.app.event.ActionListener;
+import nextapp.echo.app.event.ChangeEvent;
+import nextapp.echo.app.event.ChangeListener;
 import nextapp.echo.extras.app.Tree;
 import nextapp.echo.extras.app.tree.AbstractTreeModel;
 import nextapp.echo.extras.app.tree.DefaultTreeCellRenderer;
 import nextapp.echo.extras.app.tree.TreeColumn;
+import nextapp.echo.extras.app.tree.TreeLayoutData;
 import nextapp.echo.extras.app.tree.TreeModel;
+import nextapp.echo.extras.app.tree.TreePath;
 import nextapp.echo.extras.app.tree.TreeSelectionModel;
 import nextapp.echo.extras.testapp.AbstractTest;
+import nextapp.echo.extras.testapp.InteractiveApp;
+import nextapp.echo.extras.testapp.StyleUtil;
 import nextapp.echo.extras.testapp.Styles;
 import nextapp.echo.extras.testapp.TestControlPane;
 
@@ -131,12 +142,16 @@ public class TreeTest extends AbstractTest {
     private static final ImageReference DEFAULT_LEAF_ICON = new ResourceImageReference("nextapp/echo/extras/app/resource/image/TreeLeaf.gif");
     
     final Tree tree;
+    final ContentPane pane;
     public TreeTest() {
         
         super("Tree", Styles.ICON_16_TREE);
         
+        pane = new ContentPane();
+        add(pane);
+        
         tree = new Tree(generateSimpleTreeTableModel());
-        add(tree);
+        pane.add(tree);
         
         setTestComponent(this, tree);
         // Add/Remove Tabs
@@ -222,7 +237,44 @@ public class TreeTest extends AbstractTest {
                 }
             }
         });
-        
+        testControlsPane.addControl(TestControlPane.CATEGORY_PROPERTIES, new Label("Cell Renderer Tests"));
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Reset cell renderer", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tree.setCellRenderer(new DefaultTreeCellRenderer());
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Random cell backgrounds", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tree.setCellRenderer(new DefaultTreeCellRenderer() {
+                    public Component getTreeCellRendererComponent(Tree tree,
+                            TreePath treePath, Object value, int column,
+                            int row, boolean leaf) {
+                        Component component = super.getTreeCellRendererComponent(tree, treePath, value, column, row,
+                                leaf);
+                        TreeLayoutData layout = new TreeLayoutData();
+                        layout.setBackground(StyleUtil.randomColor());
+                        component.setLayoutData(layout);
+                        return component;
+                    }
+                });
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Random cell insets (0-10px)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tree.setCellRenderer(new DefaultTreeCellRenderer() {
+                    public Component getTreeCellRendererComponent(Tree tree,
+                            TreePath treePath, Object value, int column,
+                            int row, boolean leaf) {
+                        Component component = super.getTreeCellRendererComponent(tree, treePath, value, column, row,
+                                leaf);
+                        TreeLayoutData layout = new TreeLayoutData();
+                        layout.setInsets(new Insets(StyleUtil.randomExtent(10)));
+                        component.setLayoutData(layout);
+                        return component;
+                    }
+                });
+            }
+        });
         
 // FIXME enable when default tree model is available.        
 //        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Simple tree model", new ActionListener() {
@@ -261,6 +313,27 @@ public class TreeTest extends AbstractTest {
         testControlsPane.addButton(TestControlPane.CATEGORY_INTEGRATION, "toggle visibility", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tree.setVisible(!tree.isVisible());
+            }
+        });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_INTEGRATION, "Add test window pane", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                WindowPane windowPane = new WindowPane("Tree Test Window Pane", new Extent(400), new Extent(400));
+                windowPane.setStyleName("Default");
+                Tree tree2 = new Tree(generateSimpleTreeTableModel());
+                windowPane.add(tree2);
+                pane.add(windowPane);
+                
+                tree2.setSelectionEnabled(true);
+                tree2.setSelectionBackground(StyleUtil.randomBrightColor());
+                final TreeSelectionModel selectionModel = tree2.getSelectionModel();
+                selectionModel.setSelectionMode(TreeSelectionModel.SINGLE_SELECTION);
+                selectionModel.addChangeListener(new ChangeListener() {
+                    public void stateChanged(ChangeEvent e) {
+                        TreePath path = selectionModel.getSelectionPath();
+                        InteractiveApp.getApp().consoleWrite("Select changed, new path: " + path);
+                    }
+                });
             }
         });
     }
