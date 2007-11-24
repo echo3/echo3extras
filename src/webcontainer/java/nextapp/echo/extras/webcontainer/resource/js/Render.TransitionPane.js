@@ -129,9 +129,10 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
         Core.Scheduler.add(this._runnable); 
     },
     
-    _stopTransition: function() {
+    _finishTransition: function() {
         this.doImmediateTransition();
-        Core.Scheduler.remove(this._runnable); 
+        Core.Scheduler.remove(this._runnable);
+        this._runnable = null;
     }
 });
 
@@ -158,7 +159,7 @@ ExtrasRender.ComponentSync.TransitionPane.Runnable = Core.extend(Core.Scheduler.
         if (!this.initialized) {
             this._startTime = new Date().getTime();
             this._endTime = this._startTime + this.transitionPane._duration;
-            this.transitionPane._transition.init();
+            this.transitionPane._transition.start();
             this.initialized = true;
         } else {
             var time = new Date().getTime();
@@ -166,8 +167,8 @@ ExtrasRender.ComponentSync.TransitionPane.Runnable = Core.extend(Core.Scheduler.
                 var progress = (time - this._startTime) / this.transitionPane._duration;
                 this.transitionPane._transition.step(progress);
             } else {
-                this.transitionPane._transition.dispose();
-                this.transitionPane._stopTransition();
+                this.transitionPane._transition.finish();
+                this.transitionPane._finishTransition();
             }
         }
     }
@@ -184,9 +185,9 @@ ExtrasRender.ComponentSync.TransitionPane.Transition = Core.extend({
 
     $abstract: {
     
-        dispose: function() { },
+        finish: function() { },
         
-        init: function() { },
+        start: function() { },
         
         step: function(progress) { }
     }
@@ -203,7 +204,7 @@ ExtrasRender.ComponentSync.TransitionPane.FadeOpacityTransition = Core.extend(
         this._transitionPane = transitionPane;
     },
     
-    dispose: function() {
+    finish: function() {
         if (this._transitionPane.childDivElement) {
             this._transitionPane.childDivElement.style.zIndex = 0;
             if (WebCore.Environment.PROPRIETARY_IE_OPACITY_FILTER_REQUIRED) {
@@ -214,7 +215,7 @@ ExtrasRender.ComponentSync.TransitionPane.FadeOpacityTransition = Core.extend(
         }
     },
     
-    init: function() {
+    start: function() {
         if (this._transitionPane.childDivElement) {
             if (WebCore.Environment.PROPRIETARY_IE_OPACITY_FILTER_REQUIRED) {
                 this._transitionPane.childDivElement.style.filter = "alpha(opacity=0)";
