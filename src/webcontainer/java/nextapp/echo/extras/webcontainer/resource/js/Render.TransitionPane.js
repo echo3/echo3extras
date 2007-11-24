@@ -1,3 +1,6 @@
+/**
+ * Synchronization peer for TransitionPane.
+ */
 ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync, {
 
     $load: function() {
@@ -88,6 +91,8 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
     },
     
     renderDispose: function(update) {
+        this._transitionFinish();
+        this._childDivElement = null;
         this._element = null;
     },
 
@@ -192,23 +197,52 @@ ExtrasRender.ComponentSync.TransitionPane.Runnable = Core.extend(Core.Scheduler.
     }
 }); 
 
+/**
+ * Abstract base class for transition implementations.
+ */
 ExtrasRender.ComponentSync.TransitionPane.Transition = Core.extend({
 
     $virtual: {
     
+        /**
+         * Duration of the transition, in milliseconds.
+         * This value should be overridden when a custom duration time is desired.
+         * This value will automatically be overridden if the TransitionPane component
+         * has its "duration" property set.
+         * @type Number
+         */
         duration: 350,
         
-        stepInterval: 50
+        /**
+         * Interval at which transition steps should be invoked, in milliseconds.
+         * @type Number
+         */
+        stepInterval: 10
     },
 
     $abstract: {
     
+        /**
+         * Finishes the transition.
+         */
         finish: function() { },
         
+        /**
+         * Starts the transition.
+         */
         start: function() { },
         
+        /**
+         * Renders a step of the transition.
+         * 
+         * @param {Number} value between 0 and 1 indicating the progress of the transition which should be displayed.
+         */
         step: function(progress) { }
-    }
+    },
+
+    $construct: function(transitionPane) {
+        this._transitionPane = transitionPane;
+    },
 });
 
 ExtrasRender.ComponentSync.TransitionPane.FadeOpacityTransition = Core.extend(
@@ -217,10 +251,6 @@ ExtrasRender.ComponentSync.TransitionPane.FadeOpacityTransition = Core.extend(
     duration: 1000,
     
     _transitionPane: null,
-    
-    $construct: function(transitionPane) {
-        this._transitionPane = transitionPane;
-    },
     
     finish: function() {
         if (this._transitionPane.childDivElement) {
