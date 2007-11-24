@@ -7,10 +7,11 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
         EchoRender.registerPeer("ExtrasApp.TransitionPane", this);
     },
 
-    _element: null,
+    element: null,
+    type: null,
     _duration: null,
     _transition: null,
-    _transitionType: null,
+    _transitionClass: null,
     _runnable: null,
     
     /**
@@ -39,28 +40,36 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
     },
 
     _loadTransition: function() {
-        switch (this.component.getRenderProperty("type")) {
+        this.type = this.component.getRenderProperty("type");
+        switch (this.type) {
         case ExtrasApp.TransitionPane.TYPE_FADE:
-            this._transitionType = ExtrasRender.ComponentSync.TransitionPane.FadeOpacityTransition;
+            this._transitionClass = ExtrasRender.ComponentSync.TransitionPane.FadeOpacityTransition;
             break;
+        case ExtrasApp.TransitionPane.TYPE_CAMERA_PAN_DOWN:
+        case ExtrasApp.TransitionPane.TYPE_CAMERA_PAN_LEFT:
+        case ExtrasApp.TransitionPane.TYPE_CAMERA_PAN_RIGHT:
+        case ExtrasApp.TransitionPane.TYPE_CAMERA_PAN_UP:
+            this._transitionClass = ExtrasRender.ComponentSync.TransitionPane.CameraPanTransition;
+            break;
+
         default:
-            this._transitionType = null;
+            this._transitionClass = null;
             this._duration = null;
         }
     },
     
     _removeOldContent: function() {
         if (this.oldChildDivElement) {
-            this._element.removeChild(this.oldChildDivElement);
+            this.element.removeChild(this.oldChildDivElement);
             this.oldChildDivElement = null;
         }
     },
 
     renderAdd: function(update, parentElement) {
         this._loadTransition();
-        this._element = document.createElement("div");
-        this._element.style.cssText = "position:absolute;overflow:hidden;top:0;left:0;width:100%;height:100%;";
-        parentElement.appendChild(this._element);
+        this.element = document.createElement("div");
+        this.element.style.cssText = "position:absolute;overflow:hidden;top:0;left:0;width:100%;height:100%;";
+        parentElement.appendChild(this.element);
         if (this.component.children.length > 0) {
             this._renderAddChild(update);
         }
@@ -74,7 +83,7 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
         
         if (this._initialContentLoaded) {
             this.childDivElement.style.display = "none";
-            if (this._transitionType) {
+            if (this._transitionClass) {
                 this._transitionStart();
             } else {
                 this.doImmediateTransition();
@@ -83,7 +92,7 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
             this._initialContentLoaded = true;
         }
 
-        this._element.appendChild(this.childDivElement);
+        this.element.appendChild(this.childDivElement);
     },
     
     renderDisplay: function() {
@@ -93,7 +102,7 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
     renderDispose: function(update) {
         this._transitionFinish();
         this._childDivElement = null;
-        this._element = null;
+        this.element = null;
     },
 
     renderUpdate: function(update) {
@@ -121,7 +130,7 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
             }
         }
         if (fullRender) {
-            var element = this._element;
+            var element = this.element;
             var containerElement = element.parentNode;
             EchoRender.renderComponentDispose(update, update.parent);
             containerElement.removeChild(element);
@@ -132,7 +141,7 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
     },
     
     _transitionStart: function() {
-        this._transition = new this._transitionType(this);
+        this._transition = new this._transitionClass(this);
         this._duration = this.component.getRenderProperty("duration", this._transition.duration);
         this._runnable = new ExtrasRender.ComponentSync.TransitionPane.Runnable(this);
         Core.Scheduler.add(this._runnable); 
@@ -249,14 +258,69 @@ ExtrasRender.ComponentSync.TransitionPane.Transition = Core.extend({
 
 ExtrasRender.ComponentSync.TransitionPane.CameraPanTransition = Core.extend(
         ExtrasRender.ComponentSync.TransitionPane.Transition, {
+        
+    _newChildOnScreen: false,
+    
+    _travel: null,
 
     finish: function() {
+        if (this.transitionPane.childDivElement) {
+            this.transitionPane.childDivElement.style.zIndex = 0;
+            this.transitionPane.childDivElement.style.top = "0px";
+            this.transitionPane.childDivElement.style.left = "0px";
+        }
     },
     
     start: function() {
+        var bounds = new WebCore.Measure.Bounds(this.transitionPane.element);
+        this._travel = (this.transitionPane.type == ExtrasApp.TransitionPane.TYPE_CAMERA_PAN_DOWN 
+                || this.transitionPane.type == ExtrasApp.TransitionPane.TYPE_CAMERA_PAN_UP)
+                ? bounds.height : bounds.width;
+        if (this.transitionPane.oldChildDivElement) {
+            this.transitionPane.oldChildDivElement.style.zIndex = 1;
+        }
     },
     
     step: function(progress) {
+        switch (this.transitionPane.type) {
+        case ExtrasApp.TransitionPane.TYPE_CAMERA_PAN_DOWN:
+            if (this.transitionPane.childDivElement) {
+                this.transitionPane.childDivElement.style.top = ((1 - progress) * this._travel) + "px";
+            }
+            if (this.transitionPane.oldChildDivElement) {
+                this.transitionPane.oldChildDivElement.style.top = (0 - (progress * this._travel)) + "px";
+            }
+            break;
+        case ExtrasApp.TransitionPane.TYPE_CAMERA_PAN_UP:
+            if (this.transitionPane.childDivElement) {
+                this.transitionPane.childDivElement.style.top = (0 - ((1 - progress) * this._travel)) + "px";
+            }
+            if (this.transitionPane.oldChildDivElement) {
+                this.transitionPane.oldChildDivElement.style.top = (progress * this._travel) + "px";
+            }
+            break;
+        case ExtrasApp.TransitionPane.TYPE_CAMERA_PAN_RIGHT:
+            if (this.transitionPane.childDivElement) {
+                this.transitionPane.childDivElement.style.left = ((1 - progress) * this._travel) + "px";
+            }
+            if (this.transitionPane.oldChildDivElement) {
+                this.transitionPane.oldChildDivElement.style.left = (0 - (progress * this._travel)) + "px";
+            }
+            break;
+        default:
+            if (this.transitionPane.childDivElement) {
+                this.transitionPane.childDivElement.style.left = (0 - ((1 - progress) * this._travel)) + "px";
+            }
+            if (this.transitionPane.oldChildDivElement) {
+                this.transitionPane.oldChildDivElement.style.left = (progress * this._travel) + "px";
+            }
+            break;
+        }
+        if (!this._newChildOnScreen && this.transitionPane.childDivElement) {
+            this.transitionPane.childDivElement.style.display = "block";
+            this.transitionPane.childDivElement.style.zIndex = 2;
+            this._newChildOnScreen = true;
+        }
     }
 });
 
