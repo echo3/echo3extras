@@ -244,7 +244,7 @@ ExtrasRender.ComponentSync.TransitionPane.Transition = Core.extend({
 
     $construct: function(transitionPane) {
         this.transitionPane = transitionPane;
-    },
+    }
 });
 
 ExtrasRender.ComponentSync.TransitionPane.CameraPanTransition = Core.extend(
