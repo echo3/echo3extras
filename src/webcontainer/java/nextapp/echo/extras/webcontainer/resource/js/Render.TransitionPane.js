@@ -7,6 +7,7 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
     _element: null,
     _duration: null,
     _transition: null,
+    _transitionType: null,
     _runnable: null,
     
     /**
@@ -28,11 +29,7 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
     },
     
     doImmediateTransition: function() {
-        if (this.oldChildDivElement) {
-            this._element.removeChild(this.oldChildDivElement);
-            this.oldChildDivElement = null;
-        }
-        
+        this._removeOldContent();
         if (this.childDivElement) {
             this.childDivElement.style.display = "block";
         }
@@ -41,15 +38,18 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
     _loadTransition: function() {
         switch (this.component.getRenderProperty("type")) {
         case ExtrasApp.TransitionPane.TYPE_FADE:
-            this._transition = new ExtrasRender.ComponentSync.TransitionPane.FadeOpacityTransition(this);
+            this._transitionType = ExtrasRender.ComponentSync.TransitionPane.FadeOpacityTransition;
             break;
         default:
-            this._transition = null;
+            this._transitionType = null;
             this._duration = null;
         }
-        
-        if (this._transition) {
-            this._duration = this.component.getRenderProperty("duration", this._transition.duration);
+    },
+    
+    _removeOldContent: function() {
+        if (this.oldChildDivElement) {
+            this._element.removeChild(this.oldChildDivElement);
+            this.oldChildDivElement = null;
         }
     },
 
@@ -71,8 +71,8 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
         
         if (this._initialContentLoaded) {
             this.childDivElement.style.display = "none";
-            if (this._transition) {
-                this._startTransition();
+            if (this._transitionType) {
+                this._transitionStart();
             } else {
                 this.doImmediateTransition();
             }
@@ -97,6 +97,8 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
             // Full render
             fullRender = true;
         } else {
+            this._transitionFinish();
+        
             var removedChildren = update.getRemovedChildren();
             if (removedChildren) {
                 // Remove children.
@@ -124,15 +126,32 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
         return fullRender;
     },
     
-    _startTransition: function() {
+    _transitionStart: function() {
+        this._transition = new this._transitionType(this);
+        this._duration = this.component.getRenderProperty("duration", this._transition.duration);
         this._runnable = new ExtrasRender.ComponentSync.TransitionPane.Runnable(this);
         Core.Scheduler.add(this._runnable); 
     },
     
-    _finishTransition: function() {
-        this.doImmediateTransition();
-        Core.Scheduler.remove(this._runnable);
-        this._runnable = null;
+    /**
+     * Finishes the transition.  This method is invoked by the runnable when the transition is completed,
+     * or by the synchronization peer itself if a second transition is required before the first transition has completed.
+     */
+    _transitionFinish: function() {
+        // Remove runnable task from scheduler.
+        if (this._runnable) {
+            Core.Scheduler.remove(this._runnable);
+            this._runnable = null;
+        }
+        
+        // Inform transition to finish immediately.
+        if (this._transition) {
+            this._transition.finish();
+            this.transition = null;
+        }
+        
+        // Remove content which was transitioned from.
+        this._removeOldContent();
     }
 });
 
@@ -167,8 +186,7 @@ ExtrasRender.ComponentSync.TransitionPane.Runnable = Core.extend(Core.Scheduler.
                 var progress = (time - this._startTime) / this.transitionPane._duration;
                 this.transitionPane._transition.step(progress);
             } else {
-                this.transitionPane._transition.finish();
-                this.transitionPane._finishTransition();
+                this.transitionPane._transitionFinish();
             }
         }
     }
