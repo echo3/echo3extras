@@ -119,7 +119,8 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
             var textPadding, iconPadding;
             if (hasIcons) {
                 iconPadding = new EchoApp.Insets(0, 0, 0, this._menuItemInsets.left);
-                textPadding = new EchoApp.Insets(this._menuItemInsets.top, this._menuItemInsets.right, this._menuItemInsets.bottom, this._menuItemIconTextMargin);
+                textPadding = new EchoApp.Insets(this._menuItemInsets.top, this._menuItemInsets.right, 
+                        this._menuItemInsets.bottom, this._menuItemIconTextMargin);
             } else {
                 textPadding = this._menuItemInsets;
             }
@@ -163,7 +164,8 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
                         menuItemContentTdElement.style.whiteSpace = "nowrap";
                     }
                     if (this._stateModel && !this._stateModel.isEnabled(item.modelId)) {
-                        EchoAppRender.Color.renderComponentProperty(this.component, "disabledForeground", ExtrasRender.ComponentSync.Menu._defaultDisabledForeground, menuItemContentTdElement, "color");
+                        EchoAppRender.Color.renderComponentProperty(this.component, "disabledForeground", 
+                                ExtrasRender.ComponentSync.Menu._defaultDisabledForeground, menuItemContentTdElement, "color");
                     }
                     menuItemContentTdElement.title = item.text;
                     menuItemContentTdElement.appendChild(document.createTextNode(item.text));
@@ -174,7 +176,8 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
                         var menuItemArrowTdElement = document.createElement("td");
                         menuItemArrowTdElement.style.textAlign = "right";
                         var imgElement = document.createElement("img");
-                        var expandImage = this.component.getRenderProperty("menuExpandIcon", ExtrasRender.ComponentSync.Menu._getImageUri("submenuRight"))
+                        var expandImage = this.component.getRenderProperty("menuExpandIcon", 
+                                ExtrasRender.ComponentSync.Menu._getImageUri("submenuRight"))
                         imgElement.setAttribute("src", expandImage.url ? expandImage.url : expandImage);
                         imgElement.setAttribute("alt", "");
                         menuItemArrowTdElement.appendChild(imgElement);
@@ -314,8 +317,10 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
         var menuElement = this._getMenuElement(menuModel);
         if (state) {
             EchoAppRender.FillImage.renderComponentProperty(this.component, "selectionBackgroundImage", null, menuElement);
-            EchoAppRender.Color.renderComponentProperty(this.component, "selectionBackground", ExtrasRender.ComponentSync.Menu._defaultSelectionBackground, menuElement, "backgroundColor");
-            EchoAppRender.Color.renderComponentProperty(this.component, "selectionForeground", ExtrasRender.ComponentSync.Menu._defaultSelectionForeground, menuElement, "color");
+            EchoAppRender.Color.renderComponentProperty(this.component, "selectionBackground", 
+                    ExtrasRender.ComponentSync.Menu._defaultSelectionBackground, menuElement, "backgroundColor");
+            EchoAppRender.Color.renderComponentProperty(this.component, "selectionForeground", 
+                    ExtrasRender.ComponentSync.Menu._defaultSelectionForeground, menuElement, "color");
         } else {
             menuElement.style.backgroundImage = "";
             menuElement.style.backgroundColor = "";
@@ -771,7 +776,8 @@ ExtrasRender.ComponentSync.ContextMenu = Core.extend(ExtrasRender.ComponentSync.
         contextMenuDivElement.id = this.component.renderId;
         
         WebCore.EventProcessor.add(contextMenuDivElement, "click", new Core.MethodRef(this, this._processClick), false);
-        WebCore.EventProcessor.add(contextMenuDivElement, "contextmenu", new Core.MethodRef(this, this._processContextClick), false);
+        WebCore.EventProcessor.add(contextMenuDivElement, "contextmenu", 
+                new Core.MethodRef(this, this._processContextClick), false);
         
         var componentCount = this.component.getComponentCount();
         if (componentCount > 0) {
@@ -786,7 +792,8 @@ ExtrasRender.ComponentSync.ContextMenu = Core.extend(ExtrasRender.ComponentSync.
     },
     
     renderUpdate: function(update) {
-    	if (Core.Arrays.containsAll(ExtrasRender.ComponentSync.ContextMenu._supportedPartialProperties, update.getUpdatedPropertyNames(), true)) {
+    	if (Core.Arrays.containsAll(ExtrasRender.ComponentSync.ContextMenu._supportedPartialProperties,
+    	        update.getUpdatedPropertyNames(), true)) {
     	    // partial update
     	    var removedChildren = update.getRemovedChildren();
     	    if (removedChildren) {
