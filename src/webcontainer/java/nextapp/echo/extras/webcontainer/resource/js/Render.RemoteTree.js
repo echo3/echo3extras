@@ -624,6 +624,20 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         this._setRowStyle(rowElement, false, "rollover");
     },
     
+    _getPropertyName: function(prefix, propName, state, preserveCasing) {
+        if (prefix && state) {
+            if (!preserveCasing) {
+                propName = propName.charAt(0).toUpperCase() + propName.substring(1);
+            }
+            return prefix + propName;
+        } else {
+            if (!preserveCasing) {
+                propName = propName.charAt(0).toLowerCase() + propName.substring(1);
+            }
+            return propName;
+        }
+    },
+    
     /**
      * Sets the style for rowElement. This method renders the following css properties:
      * <ul>
@@ -655,26 +669,33 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             } else {
                 this._renderNodeCellInsets(cellElement, nodeLayout);
             }
+            var foreground;
+            var background;
+            var backgroundImage;
             if (!state) {
+                // retrieve cell specific layout data properties
                 var layout = visitedNodeCell ? columnLayout : nodeLayout;
                 if (layout) {
-                    EchoAppRender.Color.renderComponentProperty(layout, "background", null, cellElement, "backgroundColor");
-                    EchoAppRender.FillImage.renderComponentProperty(layout, "backgroundImage", null, cellElement);
+                    background = layout.getProperty("background");
+                    backgroundImage = layout.getProperty("backgroundImage");
                     if (visitedNodeCell) {
                         EchoAppRender.Alignment.renderComponentProperty(layout, "alignment", null, cellElement, 
                                 true, this.component);
                     }
                 }
-            } 
-            if (state || !(columnLayout || nodeLayout)) {
-                var foreground = EchoAppRender.getEffectProperty(this.component, "foreground", prefix + "Foreground", 
-                        state);
-                var background = EchoAppRender.getEffectProperty(this.component, "background", prefix + "Background", 
-                        state);
-                var backgroundImage = EchoAppRender.getEffectProperty(this.component, "backgroundImage", 
-                        prefix + "BackgroundImage", state);
+            }
+            // override layout properties with effect properties 
+            foreground = this.component.getRenderProperty(this._getPropertyName(prefix, "foreground", state), foreground);
+            background = this.component.getRenderProperty(this._getPropertyName(prefix, "background", state), background);
+            backgroundImage = this.component.getRenderProperty(
+                    this._getPropertyName(prefix, "backgroundImage", state), backgroundImage);
+            if (foreground || !state) {
                 EchoAppRender.Color.renderClear(foreground, cellElement, "color");
+            }
+            if (background || !state) {
                 EchoAppRender.Color.renderClear(background, cellElement, "backgroundColor");
+            }
+            if (backgroundImage || !state) {
                 EchoAppRender.FillImage.renderClear(backgroundImage, cellElement);
             }
             if (visitedNodeCell) {
@@ -688,9 +709,13 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             }
             ++index;
             
-            var font = EchoAppRender.getEffectProperty(this.component, "font", prefix + "Font", state);
-            EchoAppRender.Font.renderClear(null, cellElement);
-            EchoAppRender.Font.renderClear(font, cellElement);
+            var font = this.component.getRenderProperty(this._getPropertyName(prefix, "font", state));
+            if (font || !state) {
+                EchoAppRender.Font.renderClear(null, cellElement);
+                if (font) {
+                    EchoAppRender.Font.renderClear(font, cellElement);
+                }
+            }
             
             // prevent text decoration for spacing cells, otherwise the nbsp will show up
             if (!visitedNodeCell) {
