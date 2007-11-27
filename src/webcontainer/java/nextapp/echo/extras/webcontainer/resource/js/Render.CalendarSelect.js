@@ -88,6 +88,16 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
         }
     },
     
+    _processMonthSelect: function(e) {
+        if (!this.client.verifyInput(this.component, EchoClient.FLAG_INPUT_PROPERTY)) {
+            this._monthSelect.selectedIndex = this._month;
+            return;
+        }
+        
+        this._month = this._monthSelect.selectedIndex;
+        this._updateCalendar();
+    },
+    
     renderAdd: function(update, parentElement) {
         var i, j, tdElement, trElement;
         var dayOfWeekNameAbbreviationLength = parseInt(this.component.getRenderProperty("dayOfWeekNameAbbreviationLength", 2));
@@ -177,9 +187,14 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
         parentElement.appendChild(this._element);
         
         this._setDate(1977, 1, 1);
+
+        WebCore.EventProcessor.add(this._monthSelect, "change", new Core.MethodRef(this, this._processMonthSelect), false);
     },
     
-    renderDispose: function(update) { 
+    renderDispose: function(update) {
+        WebCore.EventProcessor.removeAll(this._monthSelect);
+    
+        this._dayTdElements = null;
         this._element = null;
         this._monthSelect = null;
         this._yearField = null;
@@ -198,11 +213,15 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
         this._year = year;
         this._month = month;
         this._day = day;
-        this._calculateCalendarInformation();
+        
+        this._yearField.value = year;
+        this._monthSelect.selectedIndex = month;
+        
         this._updateCalendar();
     },
     
     _updateCalendar: function() {
+        this._calculateCalendarInformation();
         var day = 1 - this._firstDayOfMonth;
         for (var i = 0; i < 6; ++i) {
             for (var j = 0; j < 7; ++j) {
