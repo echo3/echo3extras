@@ -89,6 +89,43 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
         }
     },
     
+    _processDateSelect: function(e) {
+        if (!this.client.verifyInput(this.component, EchoClient.FLAG_INPUT_PROPERTY)) {
+            return;
+        }
+        if (e.target._cellIndex == null) {
+            return;
+        }
+        var cellIndex = e.target._cellIndex;
+        
+        var selectedDay, selectedMonth, selectedYear;
+        if (cellIndex < this._firstDayOfMonth) {
+            if (this._month == 0) {
+                selectedMonth = 11;
+                selectedYear = this._year - 1;
+            } else {
+                selectedMonth = this._month - 1;
+                selectedYear = this._year;
+            }
+            selectedDay = this._daysInPreviousMonth - this._firstDayOfMonth + cellIndex + 1;
+        } else if (cellIndex >= (this._firstDayOfMonth + this._daysInMonth)) {
+            if (this._month == 11) {
+                selectedMonth = 0;
+                selectedYear = this._year + 1;
+            } else {
+                selectedMonth = this._month + 1;
+                selectedYear = this._year;
+            }
+            selectedDay = cellIndex - this._firstDayOfMonth - this._daysInMonth + 1;
+        } else {
+            selectedMonth = this._month;
+            selectedYear = this._year;
+            selectedDay = cellIndex - this._firstDayOfMonth + 1;
+        }
+        
+        this._setDate(selectedYear, selectedMonth, selectedDay);
+    },
+    
     _processMonthSelect: function(e) {
         if (!this.client.verifyInput(this.component, EchoClient.FLAG_INPUT_PROPERTY)) {
             this._monthSelect.selectedIndex = this._month;
@@ -175,14 +212,14 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
         }
         this._element.appendChild(this._yearIncrementElement);
         
-        var tableElement = document.createElement("table");
-        tableElement.style.borderCollapse = "collapse";
-        tableElement.style.margin = "1px";
+        this._tableElement = document.createElement("table");
+        this._tableElement.style.borderCollapse = "collapse";
+        this._tableElement.style.margin = "1px";
         EchoAppRender.Border.renderComponentProperty(this.component, "border", 
-                ExtrasRender.ComponentSync.CalendarSelect.DEFAULT_BORDER, tableElement);
+                ExtrasRender.ComponentSync.CalendarSelect.DEFAULT_BORDER, this._tableElement);
         EchoAppRender.Color.renderComponentProperty(this.component, "foreground",
-                ExtrasRender.ComponentSync.CalendarSelect.DEFAULT_FOREGROUND, tableElement); 
-        EchoAppRender.FillImage.renderComponentProperty(this.component, "backgroundImage", null, tableElement); 
+                ExtrasRender.ComponentSync.CalendarSelect.DEFAULT_FOREGROUND, this._tableElement); 
+        EchoAppRender.FillImage.renderComponentProperty(this.component, "backgroundImage", null, this._tableElement); 
         
         var tbodyElement = document.createElement("tbody");
         
@@ -211,13 +248,14 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
             trElement = document.createElement("tr");
             for (j = 0; j < 7; ++j) {
                 this._dayTdElements[i][j] = prototypeTdElement.cloneNode(false);
+                this._dayTdElements[i][j]._cellIndex = i * 7 + j;
                 trElement.appendChild(this._dayTdElements[i][j]);
             }
             tbodyElement.appendChild(trElement);
         }
         
-        tableElement.appendChild(tbodyElement);
-        this._element.appendChild(tableElement);
+        this._tableElement.appendChild(tbodyElement);
+        this._element.appendChild(this._tableElement);
         
         parentElement.appendChild(this._element);
         
@@ -227,6 +265,8 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
                 new Core.MethodRef(this, this._processYearDecrement), false);
         WebCore.EventProcessor.add(this._yearIncrementElement, "click", 
                 new Core.MethodRef(this, this._processYearIncrement), false);
+        WebCore.EventProcessor.add(this._tableElement, "click", 
+                new Core.MethodRef(this, this._processDateSelect), false);
 
         //FIXME
         this._setDate(1977, 1, 1);
@@ -237,6 +277,7 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
         WebCore.EventProcessor.removeAll(this._yearField);
         WebCore.EventProcessor.removeAll(this._yearDecrementElement);
         WebCore.EventProcessor.removeAll(this._yearIncrementElement);
+        WebCore.EventProcessor.removeAll(this._tableElement);
     
         this._dayTdElements = null;
         this._element = null;
@@ -306,7 +347,6 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
                     }
                 }
                 var textNode = document.createTextNode(renderedText);
-                //EchoDomUtil.setCssText(tdElement, styleText);
                 tdElement.appendChild(textNode);
                 ++day;
             }
