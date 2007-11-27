@@ -6,11 +6,12 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
     $static: {
     
         DEFAULT_FOREGROUND: new EchoApp.Color("#000000"),
-        
         DEFAULT_BACKGROUND: new EchoApp.Color("#ffffff"),
-        
         DEFAULT_BORDER: new EchoApp.Border("2px groove #5f5faf"),
-        
+        DEFAULT_SELECTED_DATE_FOREGROUND: new EchoApp.Color("#000000"),
+        DEFAULT_SELECTED_DATE_BACKGROUND: new EchoApp.Color("#ffffaf"),
+        DEFAULT_ADJACENT_MONTH_DATE_FOREGROUND: new EchoApp.Color("#7f7f7f"),
+
         _DAYS_IN_MONTH: [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
         
         /**
@@ -109,7 +110,7 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
     
     _processYearDecrement: function(e) {
         if (!this.client.verifyInput(this.component, EchoClient.FLAG_INPUT_PROPERTY)) {
-            retrun;
+            return;
         }
         --this._year;
         this._yearField.value = this._year;
@@ -198,11 +199,18 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
         tbodyElement.appendChild(trElement);
         
         this._dayTdElements = [];
+        
+        var prototypeTdElement = document.createElement("td");
+        prototypeTdElement.style.cursor = "pointer";
+        prototypeTdElement.style.textAlign = "right";
+        prototypeTdElement.style.borderWidth = "0";
+        prototypeTdElement.style.padding = "0px 5px";
+        
         for (i = 0; i < 6; ++i) {
             this._dayTdElements[i] = [];
             trElement = document.createElement("tr");
             for (j = 0; j < 7; ++j) {
-                this._dayTdElements[i][j] = document.createElement("td");
+                this._dayTdElements[i][j] = prototypeTdElement.cloneNode(false);
                 trElement.appendChild(this._dayTdElements[i][j]);
             }
             tbodyElement.appendChild(trElement);
@@ -259,6 +267,16 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
     _updateCalendar: function() {
         this._calculateCalendarInformation();
         var day = 1 - this._firstDayOfMonth;
+        
+        var adjacentMonthDateForeground = this.component.getRenderProperty("adjacentMonthDateForeground",
+                ExtrasRender.ComponentSync.CalendarSelect.DEFAULT_ADJACENT_MONTH_DATE_FOREGROUND);
+        var foreground = this.component.getRenderProperty("foreground", 
+                ExtrasRender.ComponentSync.CalendarSelect.DEFAULT_FOREGROUND);
+        var selectedForeground = this.component.getRenderProperty("selectedForeground", 
+                ExtrasRender.ComponentSync.CalendarSelect.DEFAULT_SELECTED_DATE_FOREGROUND);
+        var selectedBackground = this.component.getRenderProperty("selectedBackground", 
+                ExtrasRender.ComponentSync.CalendarSelect.DEFAULT_SELECTED_DATE_BACKGROUND);
+        
         for (var i = 0; i < 6; ++i) {
             for (var j = 0; j < 7; ++j) {
                 var tdElement = this._dayTdElements[i][j];
@@ -271,16 +289,20 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
                 var styleText;
                 if (day < 1) {
                     renderedText = this._daysInPreviousMonth + day;
-                    //styleText = this.baseDayStyle + this.previousMonthDayStyle;
+                    EchoAppRender.Color.renderClear(adjacentMonthDateForeground, tdElement, "color");
+                    EchoAppRender.Color.renderClear(null, tdElement, "backgroundColor");
                 } else if (day > this._daysInMonth) {
                     renderedText = day - this._daysInMonth;
-                    //styleText = this.baseDayStyle + this.nextMonthDayStyle;
+                    EchoAppRender.Color.renderClear(adjacentMonthDateForeground, tdElement, "color");
+                    EchoAppRender.Color.renderClear(null, tdElement, "backgroundColor");
                 } else {
                     renderedText = day;
                     if (day == this._day) {
-                        //styleText = this.selectedDayStyle;
+                        EchoAppRender.Color.renderClear(selectedForeground, tdElement, "color");
+                        EchoAppRender.Color.renderClear(selectedBackground, tdElement, "backgroundColor");
                     } else {
-                        //styleText = this.baseDayStyle + this.currentMonthDayStyle;
+                        EchoAppRender.Color.renderClear(foreground, tdElement, "color");
+                        EchoAppRender.Color.renderClear(null, tdElement, "backgroundColor");
                     }
                 }
                 var textNode = document.createTextNode(renderedText);
