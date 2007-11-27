@@ -4,9 +4,37 @@
 ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync, {
 
     $static: {
+    
         DEFAULT_FOREGROUND: new EchoApp.Color("#000000"),
+        
         DEFAULT_BACKGROUND: new EchoApp.Color("#ffffff"),
-        DEFAULT_BORDER: new EchoApp.Border("2px groove #5f5faf")
+        
+        DEFAULT_BORDER: new EchoApp.Border("2px groove #5f5faf"),
+        
+        _DAYS_IN_MONTH: [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
+        
+        /**
+         * Determines the number of days in a specific month.
+         *
+         * @param year the year of the month
+         * @param month the month
+         * @return the number of days in the month
+         */
+        getDaysInMonth: function(year, month) {
+            if (month == 1) {
+                if (year % 400 === 0) {
+                    return 29;
+                } else if (year % 100 === 0) {
+                    return 28;
+                } else if (year % 4 === 0) {
+                    return 29;
+                } else {
+                    return 28;
+                }
+            } else {
+                return this._DAYS_IN_MONTH[month];
+            }
+        }
     },
 
     $load: function() {
@@ -16,6 +44,11 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
     _element: null,
     _monthSelect: null,
     _yearField: null,
+    _dayTdElements: null,
+    
+    _year: null,
+    _month: null,
+    _day: null,
     
     // FIXME temporary
     _icons: { },
@@ -42,6 +75,18 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
         "Month.11":        "December",
         "FirstDayOfWeek":  "0"
     }),
+    
+    _calculateCalendarInformation: function() {
+        var firstDate = new Date(this._year, this._month, 1);
+        this._firstDayOfMonth = firstDate.getDay();
+        
+        this._daysInMonth = ExtrasRender.ComponentSync.CalendarSelect.getDaysInMonth(this._year, this._month);
+        if (this._month == 0) {
+            this._daysInPreviousMonth = ExtrasRender.ComponentSync.CalendarSelect.getDaysInMonth(this._year - 1, 11);
+        } else {
+            this._daysInPreviousMonth = ExtrasRender.ComponentSync.CalendarSelect.getDaysInMonth(this._year, this._month - 1);
+        }
+    },
     
     renderAdd: function(update, parentElement) {
         var i, j, tdElement, trElement;
@@ -115,11 +160,13 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
         }
         tbodyElement.appendChild(trElement);
         
+        this._dayTdElements = [];
         for (i = 0; i < 6; ++i) {
+            this._dayTdElements[i] = [];
             trElement = document.createElement("tr");
             for (j = 0; j < 7; ++j) {
-                tdElement = document.createElement("td");
-                trElement.appendChild(tdElement);
+                this._dayTdElements[i][j] = document.createElement("td");
+                trElement.appendChild(this._dayTdElements[i][j]);
             }
             tbodyElement.appendChild(trElement);
         }
@@ -128,6 +175,8 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
         this._element.appendChild(tableElement);
         
         parentElement.appendChild(this._element);
+        
+        this._setDate(1977, 1, 1);
     },
     
     renderDispose: function(update) { 
@@ -143,6 +192,48 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
         containerElement.removeChild(element);
         this.renderAdd(update, containerElement);
         return false;
+    },
+    
+    _setDate: function(year, month, day) {
+        this._year = year;
+        this._month = month;
+        this._day = day;
+        this._calculateCalendarInformation();
+        this._updateCalendar();
+    },
+    
+    _updateCalendar: function() {
+        var day = 1 - this._firstDayOfMonth;
+        for (var i = 0; i < 6; ++i) {
+            for (var j = 0; j < 7; ++j) {
+                var tdElement = this._dayTdElements[i][j];
+                
+                while (tdElement.hasChildNodes()) {
+                    tdElement.removeChild(tdElement.firstChild);
+                }
+                
+                var renderedText;
+                var styleText;
+                if (day < 1) {
+                    renderedText = this._daysInPreviousMonth + day;
+                    //styleText = this.baseDayStyle + this.previousMonthDayStyle;
+                } else if (day > this._daysInMonth) {
+                    renderedText = day - this._daysInMonth;
+                    //styleText = this.baseDayStyle + this.nextMonthDayStyle;
+                } else {
+                    renderedText = day;
+                    if (day == this._day) {
+                        //styleText = this.selectedDayStyle;
+                    } else {
+                        //styleText = this.baseDayStyle + this.currentMonthDayStyle;
+                    }
+                }
+                var textNode = document.createTextNode(renderedText);
+                //EchoDomUtil.setCssText(tdElement, styleText);
+                tdElement.appendChild(textNode);
+                ++day;
+            }
+        }
     }
 });
     
