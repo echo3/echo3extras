@@ -123,7 +123,7 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
             selectedDay = cellIndex - this._firstDayOfMonth + 1;
         }
         
-        this._setDate(selectedYear, selectedMonth, selectedDay);
+        this._setDate(selectedYear, selectedMonth, selectedDay, true);
     },
     
     _processMonthSelect: function(e) {
@@ -268,8 +268,11 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
         WebCore.EventProcessor.add(this._tableElement, "click", 
                 new Core.MethodRef(this, this._processDateSelect), false);
 
-        //FIXME
-        this._setDate(1977, 1, 1);
+        var date = this.component.getProperty("date");
+        if (!date) {
+            date = new Date();
+        }
+        this._setDate(date.getFullYear(), date.getMonth(), date.getDate());
     },
     
     renderDispose: function(update) {
@@ -294,7 +297,7 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
         return false;
     },
     
-    _setDate: function(year, month, day) {
+    _setDate: function(year, month, day, update) {
         this._year = year;
         this._month = month;
         this._day = day;
