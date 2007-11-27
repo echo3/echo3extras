@@ -39,10 +39,18 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
         "Month.8":         "September",
         "Month.9":         "October",
         "Month.10":        "November",
-        "Month.11":        "December"
+        "Month.11":        "December",
+        "FirstDayOfWeek":  "0"
     }),
     
     renderAdd: function(update, parentElement) {
+        var i, j, tdElement, trElement;
+        var dayOfWeekNameAbbreviationLength = parseInt(this.component.getRenderProperty("dayOfWeekNameAbbreviationLength", 2));
+        var firstDayOfWeek = this._rb.get("FirstDayOfWeek");
+        if (!firstDayOfWeek) {
+            firstDayOfWeek = 0;
+        }
+    
         this._element = document.createElement("div");
         this._element.style.whiteSpace = "nowrap";
         
@@ -84,8 +92,42 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
         }
         this._element.appendChild(yearIncrementElement);
         
-        parentElement.appendChild(this._element);
+        var tableElement = document.createElement("table");
+        tableElement.style.borderCollapse = "collapse";
+        tableElement.style.margin = "1px";
+        EchoAppRender.Border.renderComponentProperty(this.component, "border", 
+                ExtrasRender.ComponentSync.CalendarSelect.DEFAULT_BORDER, tableElement);
+        EchoAppRender.Color.renderComponentProperty(this.component, "foreground",
+                ExtrasRender.ComponentSync.CalendarSelect.DEFAULT_FOREGROUND, tableElement); 
+        EchoAppRender.FillImage.renderComponentProperty(this.component, "backgroundImage", null, tableElement); 
         
+        var tbodyElement = document.createElement("tbody");
+        
+        trElement = document.createElement("tr");
+        for (j = 0; j < 7; ++j) {
+            tdElement = document.createElement("td");
+            var dayOfWeekName = this._rb.get("DayOfWeek." + ((firstDayOfWeek + j) % 7));
+            if (dayOfWeekNameAbbreviationLength > 0) {
+                dayOfWeekName = dayOfWeekName.substring(0, dayOfWeekNameAbbreviationLength);
+            }
+            tdElement.appendChild(document.createTextNode(dayOfWeekName));
+            trElement.appendChild(tdElement);
+        }
+        tbodyElement.appendChild(trElement);
+        
+        for (i = 0; i < 6; ++i) {
+            trElement = document.createElement("tr");
+            for (j = 0; j < 7; ++j) {
+                tdElement = document.createElement("td");
+                trElement.appendChild(tdElement);
+            }
+            tbodyElement.appendChild(trElement);
+        }
+        
+        tableElement.appendChild(tbodyElement);
+        this._element.appendChild(tableElement);
+        
+        parentElement.appendChild(this._element);
     },
     
     renderDispose: function(update) { 
