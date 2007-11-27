@@ -614,6 +614,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
      *  <li>foreground</li>
      *  <li>background</li>
      *  <li>backgroundImage</li>
+     *  <li>border</li>
      *  <li>font</li>
      * </ul>
      * 
@@ -621,21 +622,98 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
      */
     _setDefaultRowStyle: function(rowElement) {
         // HACKHACK
-        this._setRowStyle(rowElement, false, "rollover");
+        this._setRolloverState(rowElement, false);
     },
     
-    _getPropertyName: function(prefix, propName, state, preserveCasing) {
-        if (prefix && state) {
-            if (!preserveCasing) {
-                propName = propName.charAt(0).toUpperCase() + propName.substring(1);
-            }
-            return prefix + propName;
+    _resolvePropertyName: function(effect, propName, state) {
+        if (effect && state) {
+            return effect + propName.charAt(0).toUpperCase() + propName.substring(1);
         } else {
-            if (!preserveCasing) {
-                propName = propName.charAt(0).toLowerCase() + propName.substring(1);
-            }
-            return propName;
+            return propName.charAt(0).toLowerCase() + propName.substring(1);
         }
+    },
+    
+    _getProperty: function(propName, context, layoutData) {
+        var result;
+        var effect = context.getDefaultEffect();
+        var resolvedName = this._resolvePropertyName(effect, propName, false);
+        while (!result && effect) {
+            var state = context.isEffect(effect);
+            var resolvedEffectName = this._resolvePropertyName(effect, propName, state);
+            if (state) {
+                result = this.component.getRenderProperty(resolvedEffectName);
+            }
+            effect = context.getEffect(effect);
+        }
+        if (!result && layoutData) {
+            result = layoutData.getProperty(resolvedName);
+        }
+        if (!result) {
+            result = this.component.getRenderProperty(resolvedName);
+        }
+        return result;
+    },
+    
+    /**
+     * Creates a context object for rendering row styles.
+     * 
+     * @param {HTMLTableRowElement} rowElement the row element to apply the style on
+     * @param {String} effect the most significant effect (the effect that should be
+     *          rendered first, before trying the other effects)
+     * @param {Boolean} state the effect state, true if the effect should be rendered, false if not
+     */
+    _createRowStyleContext: function(rowElement, effect, state) {
+        var rowElement = rowElement;
+        var context = {
+            rowElement: rowElement,
+            effects: new Object(),
+            effectOrder: [],
+            
+            /**
+             * Returns the defualt effect (the first effect of which the state is enabled)
+             */
+            getDefaultEffect: function() {
+                for (var i = 0; i < this.effectOrder.length; i++) {
+                    var effect = this.effectOrder[i];
+                    if (this.isEffect(effect)) {
+                        return effect;
+                    }
+                }
+                return null;
+            },
+            
+            /**
+             * Gets the effect that should be applied afther the given effect 
+             */
+            getEffect: function(effect) {
+                var index;
+                if (effect) {
+                    index = Core.Arrays.indexOf(this.effectOrder, effect) + 1;
+                } else {
+                    index = 0;
+                }
+                return this.effectOrder[index];
+            },
+            
+            /**
+             * Checks if the given effect is enabled
+             */
+            isEffect: function(effect) {
+                return this.effects[effect];
+            },
+            
+            /**
+             * Add an affect
+             */
+            addEffect: function(effect, state) {
+                this.effectOrder.push(effect);
+                this.effects[effect] = state;
+            }
+        };
+        if (effect) {
+            context.addEffect(effect, state == null ? true : state);
+        }
+        return context;
     },
     
     /**
@@ -644,21 +722,19 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
      *  <li>foreground</li>
      *  <li>background</li>
      *  <li>backgroundImage</li>
+     *  <li>border</li>
      *  <li>font</li>
      * </ul>
      * 
-     * @param {HTMLTableRowElement} rowElement the row element to apply the style on
-     * @param {Boolean} state the effect state, true if the effect should be rendered, false if not
-     * @param {String} prefix the prefix used for the component properties. For example, when rendering
-     *          a rollover effect prefix should be "rollover", this will result in rendering of 
-     *          "rolloverForeground"
+     * @param {Object} context a context object created with #_createRowStyleContext()
      */
-    _setRowStyle: function(rowElement, state, prefix) {
-        var node = this._getNodeFromElement(rowElement);
+    _setRowStyle: function(context) {
+        var node = this._getNodeFromElement(context.rowElement);
         var nodeComponent = this.component.application.getComponentByRenderId(node.getId());
         var nodeLayout = nodeComponent.getRenderProperty("layoutData");
+        var effect = context.getDefaultEffect();
         var index = -1;
-        var cellElement = rowElement.firstChild;
+        var cellElement = context.rowElement.firstChild;
         var visitedNodeCell = false;
         while (cellElement) {
             visitedNodeCell = index > -1;
@@ -669,35 +745,17 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             } else {
                 this._renderNodeCellInsets(cellElement, nodeLayout);
             }
-            var foreground;
-            var background;
-            var backgroundImage;
-            if (!state) {
-                // retrieve cell specific layout data properties
-                var layout = visitedNodeCell ? columnLayout : nodeLayout;
-                if (layout) {
-                    background = layout.getProperty("background");
-                    backgroundImage = layout.getProperty("backgroundImage");
-                    if (visitedNodeCell) {
-                        EchoAppRender.Alignment.renderComponentProperty(layout, "alignment", null, cellElement, 
-                                true, this.component);
-                    }
-                }
-            }
-            // override layout properties with effect properties 
-            foreground = this.component.getRenderProperty(this._getPropertyName(prefix, "foreground", state), foreground);
-            background = this.component.getRenderProperty(this._getPropertyName(prefix, "background", state), background);
-            backgroundImage = this.component.getRenderProperty(
-                    this._getPropertyName(prefix, "backgroundImage", state), backgroundImage);
-            if (foreground || !state) {
-                EchoAppRender.Color.renderClear(foreground, cellElement, "color");
-            }
-            if (background || !state) {
-                EchoAppRender.Color.renderClear(background, cellElement, "backgroundColor");
-            }
-            if (backgroundImage || !state) {
-                EchoAppRender.FillImage.renderClear(backgroundImage, cellElement);
-            }
+            var layout = visitedNodeCell ? columnLayout : nodeLayout;
+            var foreground = this._getProperty("foreground", context, layout);
+            var background = this._getProperty("background", context, layout);
+            var backgroundImage = this._getProperty("backgroundImage", context, layout);
+            var border = this._getProperty("border", context, layout);
+            EchoAppRender.Color.renderClear(foreground, cellElement, "color");
+            EchoAppRender.Color.renderClear(background, cellElement, "backgroundColor");
+            EchoAppRender.FillImage.renderClear(backgroundImage, cellElement);
+            EchoAppRender.Border.renderClear(null, cellElement);
+            EchoAppRender.Border.renderComponentProperty(this.component, "border", null, cellElement);
+            this._renderBorder(cellElement, this._createMultiSidedBorder(border));
             if (visitedNodeCell) {
                 var insets;
                 if (columnLayout) {
@@ -709,8 +767,8 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             }
             ++index;
             
-            var font = this.component.getRenderProperty(this._getPropertyName(prefix, "font", state));
-            if (font || !state) {
+            var font = this.component.getRenderProperty(this._resolvePropertyName(effect, "font", true));
+            if (font || !effect) {
                 EchoAppRender.Font.renderClear(null, cellElement);
                 if (font) {
                     EchoAppRender.Font.renderClear(font, cellElement);
@@ -724,6 +782,23 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             
             cellElement = cellElement.nextSibling;
         }
+        if (WebCore.Environment.BROWSER_FIREFOX) {
+            var e1 = context.rowElement.nextSibling;
+            var e2 = context.rowElement.parentNode;
+            e2.removeChild(context.rowElement);
+            e2.insertBefore(context.rowElement, e1);
+        }
+    },
+    
+    _renderBorder: function(cellElement, border) {
+        var sides = [0,2];
+        if (!cellElement.previousSibling) {
+            sides.push(3);
+        }
+        if (!cellElement.nextSibling) {
+            sides.push(1);
+        }
+        this._applyBorder(border, sides, cellElement);
     },
     
     _renderNodeCellInsets: function(cellElement, nodeLayout) {
@@ -770,7 +845,8 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             rowElement = this._getRowElementForNode(node);
         }
         this.selectionModel.setSelectionState(node, selectionState);
-        this._setRowStyle(rowElement, selectionState, "selection");
+        var context = this._createRowStyleContext(rowElement, "selection", selectionState);
+        this._setRowStyle(context);
     },
     
     /**
@@ -816,11 +892,11 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
      */
     _setRolloverState: function(rowElement, rolloverState) {
         var node = this._getNodeFromElement(rowElement);
-        if (this._selectionEnabled && !rolloverState && this.selectionModel.isNodeSelected(node)) {
-            this._setRowStyle(rowElement, true, "selection");
-        } else {
-            this._setRowStyle(rowElement, rolloverState, "rollover");
+        var context = this._createRowStyleContext(rowElement, "rollover", rolloverState);
+        if (this._selectionEnabled && this.selectionModel.isNodeSelected(node)) {
+            context.addEffect("selection", true);
         }
+        this._setRowStyle(context);
     },
     
     /**
@@ -1065,6 +1141,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         if (!this.component.isActive()) {
             return;
         }
+//        debugger;
         this._setRolloverState(e.registeredTarget, true);
     },
     

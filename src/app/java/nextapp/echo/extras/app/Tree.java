@@ -264,12 +264,14 @@ public class Tree extends Component {
     public static final String PROPERTY_NODE_OPEN_BOTTOM_ICON = "nodeOpenBottomIcon";
     public static final String PROPERTY_ROLLOVER_BACKGROUND = "rolloverBackground";
     public static final String PROPERTY_ROLLOVER_BACKGROUND_IMAGE = "rolloverBackgroundImage";
+    public static final String PROPERTY_ROLLOVER_BORDER = "rolloverBorder";
     public static final String PROPERTY_ROLLOVER_ENABLED = "rolloverEnabled";
     public static final String PROPERTY_ROLLOVER_FONT = "rolloverFont";
     public static final String PROPERTY_ROLLOVER_FOREGROUND = "rolloverForeground";
     public static final String PROPERTY_ROOT_VISIBLE = "rootVisible";
     public static final String PROPERTY_SELECTION_BACKGROUND = "selectionBackground";
     public static final String PROPERTY_SELECTION_BACKGROUND_IMAGE = "selectionBackgroundImage";
+    public static final String PROPERTY_SELECTION_BORDER = "selectionBorder";
     public static final String PROPERTY_SELECTION_ENABLED = "selectionEnabled";
     public static final String PROPERTY_SELECTION_FONT = "selectionFont";
     public static final String PROPERTY_SELECTION_FOREGROUND = "selectionForeground";
@@ -1021,6 +1023,16 @@ public class Tree extends Component {
     }
 
     /**
+     * Return the rollover border displayed when the mouse is within
+     * the bounds of a row.
+     * 
+     * @return the font
+     */
+    public Border getRolloverBorder() {
+        return (Border) getProperty(PROPERTY_ROLLOVER_BORDER);
+    }
+    
+    /**
      * Return the rollover font displayed when the mouse is within
      * the bounds of a row.
      * 
@@ -1056,6 +1068,15 @@ public class Tree extends Component {
      */
     public FillImage getSelectionBackgroundImage() {
         return (FillImage) getProperty(PROPERTY_SELECTION_BACKGROUND_IMAGE);
+    }
+    
+    /**
+     * Returns the row selection border.
+     * 
+     * @return the border
+     */
+    public Border getSelectionBorder() {
+        return (Border) getProperty(PROPERTY_SELECTION_BORDER);
     }
     
     /**
@@ -1312,6 +1333,16 @@ public class Tree extends Component {
     public void setRolloverBackgroundImage(FillImage newValue) {
         setProperty(PROPERTY_ROLLOVER_BACKGROUND_IMAGE, newValue);
     }
+    
+    /**
+     * Sets the rollover border displayed when the mouse is within
+     * the bounds of a row.
+     * 
+     * @param newValue the new background image
+     */
+    public void setRolloverBorder(Border newValue) {
+        setProperty(PROPERTY_ROLLOVER_BORDER, newValue);
+    }
 
     /**
      * Sets whether rollover effects are enabled when the mouse cursor is 
@@ -1390,6 +1421,15 @@ public class Tree extends Component {
      */
     public void setSelectionBackgroundImage(FillImage newValue) {
         setProperty(PROPERTY_SELECTION_BACKGROUND_IMAGE, newValue);
+    }
+    
+    /**
+     * Sets the row selection border.
+     * 
+     * @param newValue the new border
+     */
+    public void setSelectionBorder(Border newValue) {
+        setProperty(PROPERTY_SELECTION_BORDER, newValue);
     }
     
     /**

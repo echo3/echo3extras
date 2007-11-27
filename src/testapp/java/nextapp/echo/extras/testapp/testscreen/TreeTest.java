@@ -165,6 +165,7 @@ public class TreeTest extends AbstractTest {
         addBooleanPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_ROLLOVER_ENABLED);
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_ROLLOVER_FOREGROUND);
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_ROLLOVER_BACKGROUND);
+        addBorderPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_ROLLOVER_BORDER);
         addFontPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_ROLLOVER_FONT);
         addFillImagePropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_ROLLOVER_BACKGROUND_IMAGE, TEST_FILL_IMAGES);
         
@@ -181,6 +182,7 @@ public class TreeTest extends AbstractTest {
         });
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_SELECTION_FOREGROUND);
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_SELECTION_BACKGROUND);
+        addBorderPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_SELECTION_BORDER);
         addFontPropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_SELECTION_FONT);
         addFillImagePropertyTests(TestControlPane.CATEGORY_PROPERTIES, Tree.PROPERTY_SELECTION_BACKGROUND_IMAGE, TEST_FILL_IMAGES);
         
