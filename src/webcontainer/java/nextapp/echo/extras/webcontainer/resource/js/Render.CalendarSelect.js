@@ -1,12 +1,12 @@
 /**
  * Component rendering peer: CalendarSelect
  */
-ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoArc.ComponentSync, {
+ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync, {
 
     $static: {
         DEFAULT_FOREGROUND: new EchoApp.Color("#000000"),
         DEFAULT_BACKGROUND: new EchoApp.Color("#ffffff"),
-        DEFAULT_BORDER: new EchoApp.Border("#5f5faf 2px groove")
+        DEFAULT_BORDER: new EchoApp.Border("2px groove #5f5faf")
     },
 
     $load: function() {
@@ -49,10 +49,10 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoArc.ComponentSync, {
         this._monthSelect = document.createElement("select");
         for (var i = 0; i < 12; ++i) {
             var optionElement = document.createElement("option");
-            optionElement.appendChild(document.createTextNode(this._rb["Month." + i]));
+            optionElement.appendChild(document.createTextNode(this._rb.get("Month." + i)));
             this._monthSelect.appendChild(optionElement);
         }
-        this._element.appendChild(monthSelect);
+        this._element.appendChild(this._monthSelect);
         
         this._element.appendChild(document.createTextNode(" "));
         
@@ -71,7 +71,7 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoArc.ComponentSync, {
         this._yearField.type = "text";
         this._yearField.maxLength = 4;
         this._yearField.size = 5;
-        this._element.appendChild(yearField);
+        this._element.appendChild(this._yearField);
 
         var yearIncrementElement = document.createElement("span");
         yearIncrementElement.style.cursor = "pointer";
@@ -80,7 +80,7 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoArc.ComponentSync, {
             imgElement.src = this._icons.increment;
             yearIncrementElement.appendChild(imgElement);
         } else {
-            yearIncrementElement.appendChild(document.createTextNode("<"));
+            yearIncrementElement.appendChild(document.createTextNode(">"));
         }
         this._element.appendChild(yearIncrementElement);
         
