@@ -98,6 +98,33 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
         this._updateCalendar();
     },
     
+    _processYearChange: function(e) {
+        if (!this.client.verifyInput(this.component, EchoClient.FLAG_INPUT_PROPERTY)) {
+            this._yearField.value = this._year;
+            return;
+        }
+        this._year = parseInt(this._yearField.value);
+        this._updateCalendar();
+    },
+    
+    _processYearDecrement: function(e) {
+        if (!this.client.verifyInput(this.component, EchoClient.FLAG_INPUT_PROPERTY)) {
+            retrun;
+        }
+        --this._year;
+        this._yearField.value = this._year;
+        this._updateCalendar();
+    },
+
+    _processYearIncrement: function(e) {
+        if (!this.client.verifyInput(this.component, EchoClient.FLAG_INPUT_PROPERTY)) {
+            retrun;
+        }
+        ++this._year;
+        this._yearField.value = this._year;
+        this._updateCalendar();
+    },
+
     renderAdd: function(update, parentElement) {
         var i, j, tdElement, trElement;
         var dayOfWeekNameAbbreviationLength = parseInt(this.component.getRenderProperty("dayOfWeekNameAbbreviationLength", 2));
@@ -119,16 +146,16 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
         
         this._element.appendChild(document.createTextNode(" "));
         
-        var yearDecrementElement = document.createElement("span");
-        yearDecrementElement.style.cursor = "pointer";
+        this._yearDecrementElement = document.createElement("span");
+        this._yearDecrementElement.style.cursor = "pointer";
         if (this._icons.decrement) {
             var imgElement = document.createElement("img");
             imgElement.src = this._icons.decrement;
-            yearDecrementElement.appendChild(imgElement);
+            this._yearDecrementElement.appendChild(imgElement);
         } else {
-            yearDecrementElement.appendChild(document.createTextNode("<"));
+            this._yearDecrementElement.appendChild(document.createTextNode("<"));
         }
-        this._element.appendChild(yearDecrementElement);
+        this._element.appendChild(this._yearDecrementElement);
         
         this._yearField = document.createElement("input");
         this._yearField.type = "text";
@@ -136,16 +163,16 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
         this._yearField.size = 5;
         this._element.appendChild(this._yearField);
 
-        var yearIncrementElement = document.createElement("span");
-        yearIncrementElement.style.cursor = "pointer";
+        this._yearIncrementElement = document.createElement("span");
+        this._yearIncrementElement.style.cursor = "pointer";
         if (this._icons.increment) {
             var imgElement = document.createElement("img");
             imgElement.src = this._icons.increment;
-            yearIncrementElement.appendChild(imgElement);
+            this._yearIncrementElement.appendChild(imgElement);
         } else {
-            yearIncrementElement.appendChild(document.createTextNode(">"));
+            this._yearIncrementElement.appendChild(document.createTextNode(">"));
         }
-        this._element.appendChild(yearIncrementElement);
+        this._element.appendChild(this._yearIncrementElement);
         
         var tableElement = document.createElement("table");
         tableElement.style.borderCollapse = "collapse";
@@ -186,13 +213,22 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
         
         parentElement.appendChild(this._element);
         
-        this._setDate(1977, 1, 1);
-
         WebCore.EventProcessor.add(this._monthSelect, "change", new Core.MethodRef(this, this._processMonthSelect), false);
+        WebCore.EventProcessor.add(this._yearField, "change", new Core.MethodRef(this, this._processYearChange), false);
+        WebCore.EventProcessor.add(this._yearDecrementElement, "click", 
+                new Core.MethodRef(this, this._processYearDecrement), false);
+        WebCore.EventProcessor.add(this._yearIncrementElement, "click", 
+                new Core.MethodRef(this, this._processYearIncrement), false);
+
+        //FIXME
+        this._setDate(1977, 1, 1);
     },
     
     renderDispose: function(update) {
         WebCore.EventProcessor.removeAll(this._monthSelect);
+        WebCore.EventProcessor.removeAll(this._yearField);
+        WebCore.EventProcessor.removeAll(this._yearDecrementElement);
+        WebCore.EventProcessor.removeAll(this._yearIncrementElement);
     
         this._dayTdElements = null;
         this._element = null;
