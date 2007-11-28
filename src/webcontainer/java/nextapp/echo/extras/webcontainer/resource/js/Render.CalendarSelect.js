@@ -123,7 +123,9 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
             selectedDay = cellIndex - this._firstDayOfMonth + 1;
         }
         
-        this._setDate(selectedYear, selectedMonth, selectedDay, true);
+        this._setDate(selectedYear, selectedMonth, selectedDay);
+        this._updateCalendarDisplay();
+        this._storeValue();
     },
     
     _processMonthSelect: function(e) {
@@ -133,7 +135,8 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
         }
         
         this._month = this._monthSelect.selectedIndex;
-        this._updateCalendar();
+        this._updateCalendarDisplay();
+        this._storeValue();
     },
     
     _processYearChange: function(e) {
@@ -142,7 +145,8 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
             return;
         }
         this._year = parseInt(this._yearField.value);
-        this._updateCalendar();
+        this._updateCalendarDisplay();
+        this._storeValue();
     },
     
     _processYearDecrement: function(e) {
@@ -151,7 +155,8 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
         }
         --this._year;
         this._yearField.value = this._year;
-        this._updateCalendar();
+        this._updateCalendarDisplay();
+        this._storeValue();
     },
 
     _processYearIncrement: function(e) {
@@ -160,7 +165,8 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
         }
         ++this._year;
         this._yearField.value = this._year;
-        this._updateCalendar();
+        this._updateCalendarDisplay();
+        this._storeValue();
     },
 
     renderAdd: function(update, parentElement) {
@@ -273,6 +279,8 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
             date = new Date();
         }
         this._setDate(date.getFullYear(), date.getMonth(), date.getDate());
+        
+        this._updateCalendarDisplay();
     },
     
     renderDispose: function(update) {
@@ -297,18 +305,20 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
         return false;
     },
     
-    _setDate: function(year, month, day, update) {
+    _setDate: function(year, month, day) {
         this._year = year;
         this._month = month;
         this._day = day;
-        
-        this._yearField.value = year;
-        this._monthSelect.selectedIndex = month;
-        
-        this._updateCalendar();
     },
     
-    _updateCalendar: function() {
+    _storeValue: function() {
+        this.component.setProperty("date", new Date(this._year, this._month, this._day));
+    },
+    
+    _updateCalendarDisplay: function() {
+        this._yearField.value = this._year;
+        this._monthSelect.selectedIndex = this._month;
+
         this._calculateCalendarInformation();
         var day = 1 - this._firstDayOfMonth;
         
