@@ -324,6 +324,14 @@ public class Tree extends Component {
          */
         public void treeNodesRemoved(TreeModelEvent e) {
             invalidate();
+            TreePath removedPath = e.getTreePath();
+            TreePath[] selectionPaths = getSelectionModel().getSelectionPaths();
+            for (int i = 0; i < selectionPaths.length; i++) {
+                TreePath selectionPath = selectionPaths[i];
+                if (removedPath.isDescendant(selectionPath)) {
+                    getSelectionModel().removeSelectionPath(selectionPath);
+                }
+            }
             if (isAutoCreateColumnsFromModel()) {
                 createDefaultColumnsFromModel();
             }
