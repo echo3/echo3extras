@@ -91,8 +91,10 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         var tableElement = document.createElement("table");
         this._element = tableElement;
         this._element.id = this.component.renderId;
-        tableElement.style.borderCollapse = "collapse";
+        tableElement.style.borderSpacing = "0px;";
         EchoAppRender.Border.renderComponentProperty(this.component, "border", null, tableElement);
+        
+        this._computeEffectBorderCompensation();
         
         if (width) {
             this._element.style.width = width;
@@ -121,6 +123,21 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         if (selection && this._selectionEnabled) {
             this._setSelectedFromProperty(selection);
         }
+    },
+    
+    _computeEffectBorderCompensation: function() {
+        var selectionBorder = this._createMultiSidedBorder(this.component.getRenderProperty("selectionBorder"));
+        var rolloverBorder = this._createMultiSidedBorder(this.component.getRenderProperty("rolloverBorder"));
+        var selectionBorderLeft = 0;
+        if (selectionBorder && this._selectionEnabled) {
+            selectionBorderLeft = EchoAppRender.Extent.toPixels(this._getBorderSide(selectionBorder, 3).size, true);
+        }
+        var rolloverBorderLeft = 0;
+        if (rolloverBorder && this._rolloverEnabled) {
+            rolloverBorderLeft = EchoAppRender.Extent.toPixels(this._getBorderSide(rolloverBorder, 3).size, true);
+        }
+        this._effectBorderCompensation = Math.max(selectionBorderLeft, rolloverBorderLeft);
+        Core.Debug.consoleWrite("compensation: " + this._effectBorderCompensation);
     },
     
     _renderColumnWidths: function() {
@@ -310,7 +327,6 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             if (this.columnCount > 1) {
                 for (var c = 0; c < this.columnCount - 1; ++c) {
                     var columnElement = document.createElement("td");
-                    EchoAppRender.Border.renderComponentProperty(this.component, "border", null, columnElement);
                     
                     var columnComponent = this.component.application.getComponentByRenderId(node.getColumn(c));
                     EchoRender.renderComponentAdd(update, columnComponent, columnElement);
@@ -463,16 +479,21 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         
         for (var i in sides) {
             var index = sides[i];
-            if (border.sides.length == 1) {
-                index = 0;
-            } else if (index == 2 && border.sides.length <= 2) {
-                index = 0;
-            } else if (index == 3 && border.sides.length <= 3) {
-                index = 1;
-            }
-            EchoAppRender.Border.renderSide(border.sides[index], element, 
+            var side = this._getBorderSide(border, index);
+            EchoAppRender.Border.renderSide(side, element, 
                     ExtrasRender.ComponentSync.RemoteTree._BORDER_SIDE_STYLE_NAMES[sides[i]]);
         }
+    },
+    
+    _getBorderSide: function(border, index) {
+        if (border.sides.length == 1) {
+            index = 0;
+        } else if (index == 2 && border.sides.length <= 2) {
+            index = 0;
+        } else if (index == 3 && border.sides.length <= 3) {
+            index = 1;
+        }
+        return border.sides[index];
     },
     
     /**
@@ -559,7 +580,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         for (var c = 0; c < depth - 1; ++c) {
             var rowHeaderElement = document.createElement("td");
             rowHeaderElement.id = "tree_" + node.getId() + "_" + c;
-            rowHeaderElement.style.padding = "0";
+            rowHeaderElement.style.padding = "0px";
             rowHeaderElement.style.width = "19px";
     
             if (parentNode) {
@@ -587,12 +608,13 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         var tdElement = document.createElement("td");
         tdElement.style.padding = "0px";
         trElement.appendChild(tdElement);
-        EchoAppRender.Border.renderComponentProperty(this.component, "border", null, tdElement);
         var nodeCellElement = document.createElement("td");
         nodeCellElement.__ExtrasTreeCellType = "node";
         nodeRowElement.appendChild(nodeCellElement);
         nodeTable.firstChild.appendChild(nodeRowElement);
         tdElement.appendChild(nodeTable);
+        
+        trElement.firstChild.style.paddingLeft = this._effectBorderCompensation + "px";
         
         this._tbodyElement.insertBefore(trElement, insertBefore);
     
@@ -633,7 +655,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         }
     },
     
-    _getProperty: function(propName, context, layoutData) {
+    _getProperty: function(propName, context, layoutData, onlyEffectProps) {
         var result;
         var effect = context.getDefaultEffect();
         var resolvedName = this._resolvePropertyName(effect, propName, false);
@@ -648,7 +670,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         if (!result && layoutData) {
             result = layoutData.getProperty(resolvedName);
         }
-        if (!result) {
+        if (!result && !onlyEffectProps) {
             result = this.component.getRenderProperty(resolvedName);
         }
         return result;
@@ -749,13 +771,10 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             var foreground = this._getProperty("foreground", context, layout);
             var background = this._getProperty("background", context, layout);
             var backgroundImage = this._getProperty("backgroundImage", context, layout);
-            var border = this._getProperty("border", context, layout);
+            var border = this._getProperty("border", context, layout, true);
             EchoAppRender.Color.renderClear(foreground, cellElement, "color");
             EchoAppRender.Color.renderClear(background, cellElement, "backgroundColor");
             EchoAppRender.FillImage.renderClear(backgroundImage, cellElement);
-            EchoAppRender.Border.renderClear(null, cellElement);
-            EchoAppRender.Border.renderComponentProperty(this.component, "border", null, cellElement);
-            this._renderBorder(cellElement, this._createMultiSidedBorder(border));
             if (visitedNodeCell) {
                 var insets;
                 if (columnLayout) {
@@ -775,27 +794,74 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
                 }
             }
             
-            // prevent text decoration for spacing cells, otherwise the nbsp will show up
+            // prevent text decoration for spacing cells, otherwise the nbsp will show up (underlined or striked through)
             if (!visitedNodeCell) {
                 cellElement.style.textDecoration = "none";
             }
             
             cellElement = cellElement.nextSibling;
         }
-        if (WebCore.Environment.BROWSER_FIREFOX) {
-            var e1 = context.rowElement.nextSibling;
-            var e2 = context.rowElement.parentNode;
-            e2.removeChild(context.rowElement);
-            e2.insertBefore(context.rowElement, e1);
-        }
+        this._renderRowBorder(context);
     },
     
-    _renderBorder: function(cellElement, border) {
-        var sides = [0,2];
-        if (!cellElement.previousSibling) {
+    /**
+     * Renders a border to a whole row. Mimicks border collapse, setting border-collapse to collapse
+     * causes bugs in Firefox, and the border would add to the total size of the table.
+     */
+    _renderRowBorder: function(context, override) {
+        if (!this._effectBorderRows) {
+            this._effectBorderRows = new Core.Arrays.LargeMap();
+        }
+        var effectBorder = this._createMultiSidedBorder(this._getProperty("border", context, null, true));
+        var defaultBorder = this._createMultiSidedBorder(this.component.getRenderProperty("border"));
+        var hadEffect = this._effectBorderRows.map[context.rowElement.id];
+        if (effectBorder) {
+            var node = this._getNodeFromElement(context.rowElement);
+            this._effectBorderRows.map[context.rowElement.id] = true;
+        } else {
+            if (hadEffect) {
+                this._effectBorderRows.remove(context.rowElement.id);
+            }
+        }
+        var prevRowHasEffect;
+        if (context.rowElement.previousSibling) {
+            prevRowHasEffect = this._effectBorderRows.map[context.rowElement.previousSibling.id];
+        }
+        if (!prevRowHasEffect && context.rowElement.previousSibling && (effectBorder || hadEffect)) {
+            var prevRowContext = this._createRowStyleContext(context.rowElement.previousSibling);
+            this._renderRowBorder(prevRowContext, effectBorder != null);
+        }
+        var cellE = context.rowElement.firstChild;
+        while (cellE) {
+            EchoAppRender.Border.renderClear(null, cellE);
+            this._renderBorder(cellE, defaultBorder, true, false, override);
+            this._renderBorder(cellE, effectBorder, false, true);
+            cellE = cellE.nextSibling;
+        }
+        var compensation = this._effectBorderCompensation;
+        if (effectBorder) {
+            var currentCompensation = EchoAppRender.Extent.toPixels(this._getBorderSide(effectBorder, 3).size, true);
+            if (currentCompensation == 0) {
+                compensation = 0;
+            } else {
+                compensation -= currentCompensation;
+            }
+        }
+        context.rowElement.firstChild.style.paddingLeft = compensation + "px";
+    },
+    
+    _renderBorder: function(cellElement, border, renderCellBorders, override, overrideBottom) {
+        var sides = [];
+        if (override || cellElement.parentNode.previousSibling) {
+            sides.push(0);
+        }
+        if (override || overrideBottom) {
+            sides.push(2);
+        }
+        if (override && !cellElement.previousSibling) {
             sides.push(3);
         }
-        if (!cellElement.nextSibling) {
+        if ((override && !cellElement.nextSibling) || (renderCellBorders && cellElement.nextSibling)) {
             sides.push(1);
         }
         this._applyBorder(border, sides, cellElement);
@@ -1168,6 +1234,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
                 WebCore.EventProcessor.removeAll(e);
             }
         }
+        this._effectBorderRows = null;
         this._prevMaxDepth = null;
         this._treeStructure = null;
         this._tbodyElement = null;
