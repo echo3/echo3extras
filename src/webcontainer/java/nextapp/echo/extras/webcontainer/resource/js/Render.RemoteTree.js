@@ -564,6 +564,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         var trElement = document.createElement("tr");
         trElement.id = this.component.renderId + "_tr_" + node.getId();
         trElement.style.cursor = isHeader || !this._selectionEnabled ? "default" : "pointer";
+        trElement.style.verticalAlign = "top";
         
         var nodeTable = document.createElement("table");
         nodeTable.style.borderCollapse = "collapse";
