@@ -261,6 +261,22 @@ public class TreeTest extends AbstractTest {
                 });
             }
         });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Random header backgrounds", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tree.setDefaultHeaderRenderer(new DefaultTreeCellRenderer() {
+                    public Component getTreeCellRendererComponent(Tree tree,
+                            TreePath treePath, Object value, int column,
+                            int row, boolean leaf) {
+                        Component component = super.getTreeCellRendererComponent(tree, treePath, value, column, row,
+                                leaf);
+                        TreeLayoutData layout = new TreeLayoutData();
+                        layout.setBackground(StyleUtil.randomColor());
+                        component.setLayoutData(layout);
+                        return component;
+                    }
+                });
+            }
+        });
         testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Random cell insets (0-10px)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tree.setCellRenderer(new DefaultTreeCellRenderer() {
