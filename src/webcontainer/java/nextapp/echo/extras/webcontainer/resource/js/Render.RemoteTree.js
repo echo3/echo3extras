@@ -91,7 +91,9 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         var tableElement = document.createElement("table");
         this._element = tableElement;
         this._element.id = this.component.renderId;
-        tableElement.style.borderSpacing = "0px;";
+        tableElement.style.borderSpacing = "0px";
+        tableElement.cellSpacing = "0";
+        tableElement.cellPadding = "0";
         EchoAppRender.Border.renderComponentProperty(this.component, "border", null, tableElement);
         
         this._computeEffectBorderCompensation();
