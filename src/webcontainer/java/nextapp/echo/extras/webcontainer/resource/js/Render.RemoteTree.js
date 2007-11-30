@@ -800,6 +800,10 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
                 cellElement.style.textDecoration = "none";
             }
             
+            if (!cellElement.firstChild) {
+                cellElement.appendChild(document.createTextNode("\u00a0"));
+            }
+            
             cellElement = cellElement.nextSibling;
         }
         this._renderRowBorder(context);
