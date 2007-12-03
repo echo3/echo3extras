@@ -1155,7 +1155,7 @@ public class Tree extends Component {
      */
     public Component getComponent(TreePath path, int column) {
         // FIXME throw when out of bounds?
-        if (model.getColumnCount() == 1) {
+        if (columnModel.getColumnCount() == 1) {
             return (Component) treePathToComponentCache.get(path);
         } else {
             List list = (List) treePathToComponentCache.get(path);
