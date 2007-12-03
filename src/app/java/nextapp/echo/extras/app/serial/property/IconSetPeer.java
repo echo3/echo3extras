@@ -61,7 +61,7 @@ implements SerialPropertyPeer {
     throws SerialException {
         SerialContext serialContext = (SerialContext) context.get(SerialContext.class);
         PropertyPeerFactory propertyPeerFactory = (PropertyPeerFactory) context.get(PropertyPeerFactory.class);
-        propertyElement.setAttribute("t", "map");
+        propertyElement.setAttribute("t", "m");
         IconSet iconSet = (IconSet) propertyValue;
         Iterator nameIt = iconSet.getIconNames();
         while (nameIt.hasNext()) {
