@@ -716,6 +716,7 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer = Core.extend(EchoRender.Compo
         contentDocument.open();
         contentDocument.write("<html><body>" + (text == null ? "" : text) + "</body></html>");
         contentDocument.close();
+        // workaround for Mozilla (not Firefox)
         var setDesignModeOn = function() {
             contentDocument.designMode="on";
         };
