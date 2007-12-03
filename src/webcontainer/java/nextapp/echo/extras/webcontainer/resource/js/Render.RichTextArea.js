@@ -716,7 +716,10 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer = Core.extend(EchoRender.Compo
         contentDocument.open();
         contentDocument.write("<html><body>" + (text == null ? "" : text) + "</body></html>");
         contentDocument.close();
-        contentDocument.designMode = "on";
+        var setDesignModeOn = function() {
+            contentDocument.designMode="on";
+        };
+        setTimeout(setDesignModeOn, 0);
         WebCore.EventProcessor.add(this._iframeElement.contentWindow.document, "keyup", 
                 new Core.MethodRef(this, this._processKeyUp), false);
         WebCore.EventProcessor.add(this._iframeElement.contentWindow.document, "mouseup", 
