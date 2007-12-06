@@ -26,13 +26,21 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
         }
     },    
         
+    /**
+     * Array containing models of open menus.
+     */
+    _openMenuPath: null,
+
+    _element: null,    
+    _menuModel: null,
+    _stateModel: null,
+    _processMaskClickRef: null,
+    _menuInsets: null,
+    _menuItemInsets: null,
+    _menuItemIconTextMargin: null,
+    
     $construct: function() {
-    	this._element = null;
-    	this._menuModel = null;
-    	this._stateModel = null;
-        /**
-         * Array containing models of open menus.
-         */
+        this._processMaskClickRef = Core.method(this, this._processMaskClick);
         this._openMenuPath = [];
         this._menuInsets = new EchoApp.Insets(2, 2, 2, 2);
         this._menuItemInsets = new EchoApp.Insets(1, 12, 1, 12);
@@ -207,9 +215,9 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
             bodyElement = document.getElementsByTagName("body")[0];    
             bodyElement.appendChild(menuDivElement);
         
-            WebCore.EventProcessor.add(menuDivElement, "click", new Core.MethodRef(this, this._processClick), false);
-            WebCore.EventProcessor.add(menuDivElement, "mouseover", new Core.MethodRef(this, this._processItemEnter), false);
-            WebCore.EventProcessor.add(menuDivElement, "mouseout", new Core.MethodRef(this, this._processItemExit), false);
+            WebCore.EventProcessor.add(menuDivElement, "click", Core.method(this, this._processClick), false);
+            WebCore.EventProcessor.add(menuDivElement, "mouseover", Core.method(this, this._processItemEnter), false);
+            WebCore.EventProcessor.add(menuDivElement, "mouseout", Core.method(this, this._processItemExit), false);
             WebCore.EventProcessor.addSelectionDenialListener(menuDivElement);
             
             return menuDivElement;
@@ -348,9 +356,8 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
         }
         this.maskDeployed = true;
         
-        var bodyElement = document.getElementsByTagName("body")[0];    
-        WebCore.EventProcessor.add(bodyElement, "click", new Core.MethodRef(this, this._processMaskClick), true);
-        WebCore.EventProcessor.add(bodyElement, "contextmenu", new Core.MethodRef(this, this._processMaskClick), true);
+        WebCore.EventProcessor.add(document.body, "click", this._processMaskClickRef, true);
+        WebCore.EventProcessor.add(document.body, "contextmenu", this._processMaskClickRef, true);
     },
     
     _removeMask: function() {
@@ -359,9 +366,8 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
         }
         this.maskDeployed = false;
     
-        var bodyElement = document.getElementsByTagName("body")[0];
-        WebCore.EventProcessor.remove(bodyElement, "click", new Core.MethodRef(this, this._processMaskClick), true);
-        WebCore.EventProcessor.remove(bodyElement, "contextmenu", new Core.MethodRef(this, this._processMaskClick), true);
+        WebCore.EventProcessor.remove(document.body, "click", this._processMaskClickRef, true);
+        WebCore.EventProcessor.remove(document.body, "contextmenu", this._processMaskClickRef, true);
     },
     
     _processMaskClick: function(e) {
@@ -480,9 +486,9 @@ ExtrasRender.ComponentSync.MenuBarPane = Core.extend(ExtrasRender.ComponentSync.
             }
         }
         
-        WebCore.EventProcessor.add(menuBarDivElement, "click", new Core.MethodRef(this, this._processClick), false);
-        WebCore.EventProcessor.add(menuBarDivElement, "mouseover", new Core.MethodRef(this, this._processItemEnter), false);
-        WebCore.EventProcessor.add(menuBarDivElement, "mouseout", new Core.MethodRef(this, this._processItemExit), false);
+        WebCore.EventProcessor.add(menuBarDivElement, "click", Core.method(this, this._processClick), false);
+        WebCore.EventProcessor.add(menuBarDivElement, "mouseover", Core.method(this, this._processItemEnter), false);
+        WebCore.EventProcessor.add(menuBarDivElement, "mouseout", Core.method(this, this._processItemExit), false);
     	WebCore.EventProcessor.addSelectionDenialListener(menuBarDivElement);
     
         return menuBarDivElement;
@@ -607,7 +613,7 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
         relativeContainerDivElement.appendChild(this._contentDivElement);
         dropDownDivElement.appendChild(relativeContainerDivElement);
     
-        WebCore.EventProcessor.add(dropDownDivElement, "click", new Core.MethodRef(this, this._processClick), false);
+        WebCore.EventProcessor.add(dropDownDivElement, "click", Core.method(this, this._processClick), false);
     	WebCore.EventProcessor.addSelectionDenialListener(dropDownDivElement);
     
         if (this._isSelectionEnabled()) {
@@ -775,9 +781,8 @@ ExtrasRender.ComponentSync.ContextMenu = Core.extend(ExtrasRender.ComponentSync.
         var contextMenuDivElement = document.createElement("div");
         contextMenuDivElement.id = this.component.renderId;
         
-        WebCore.EventProcessor.add(contextMenuDivElement, "click", new Core.MethodRef(this, this._processClick), false);
-        WebCore.EventProcessor.add(contextMenuDivElement, "contextmenu", 
-                new Core.MethodRef(this, this._processContextClick), false);
+        WebCore.EventProcessor.add(contextMenuDivElement, "click", Core.method(this, this._processClick), false);
+        WebCore.EventProcessor.add(contextMenuDivElement, "contextmenu", Core.method(this, this._processContextClick), false);
         
         var componentCount = this.component.getComponentCount();
         if (componentCount > 0) {

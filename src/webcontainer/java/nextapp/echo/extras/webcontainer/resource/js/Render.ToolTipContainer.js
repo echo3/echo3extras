@@ -75,9 +75,9 @@ ExtrasRender.ComponentSync.ToolTipContainer = Core.extend(EchoRender.ComponentSy
     	    var mouseEnterLeaveSupport = WebCore.Environment.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED;
     	    var enterEvent = mouseEnterLeaveSupport ? "mouseenter" : "mouseover";
     	    var exitEvent = mouseEnterLeaveSupport ? "mouseleave" : "mouseout";
-    	    WebCore.EventProcessor.add(applyDivElement, enterEvent, new Core.MethodRef(this, this._processRolloverEnter), false);
-    		WebCore.EventProcessor.add(applyDivElement, exitEvent, new Core.MethodRef(this, this._processRolloverExit), false);
-    		WebCore.EventProcessor.add(applyDivElement, "mousemove", new Core.MethodRef(this, this._processMove), false);
+    	    WebCore.EventProcessor.add(applyDivElement, enterEvent, Core.method(this, this._processRolloverEnter), false);
+    		WebCore.EventProcessor.add(applyDivElement, exitEvent, Core.method(this, this._processRolloverExit), false);
+    		WebCore.EventProcessor.add(applyDivElement, "mousemove", Core.method(this, this._processMove), false);
         }
         
         return applyDivElement;

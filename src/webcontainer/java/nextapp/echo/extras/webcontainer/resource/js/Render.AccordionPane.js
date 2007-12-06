@@ -330,10 +330,10 @@ ExtrasRender.ComponentSync.AccordionPane.Tab = Core.extend({
     },
     
     _addEventListeners: function() {
-        WebCore.EventProcessor.add(this._tabDivElement, "click", new Core.MethodRef(this, this._processClick), false);
+        WebCore.EventProcessor.add(this._tabDivElement, "click", Core.method(this, this._processClick), false);
         if (this._parent.component.getRenderProperty("tabRolloverEnabled", true)) {
-    	    WebCore.EventProcessor.add(this._tabDivElement, "mouseover", new Core.MethodRef(this, this._processEnter), false);
-    	    WebCore.EventProcessor.add(this._tabDivElement, "mouseout", new Core.MethodRef(this, this._processExit), false);
+    	    WebCore.EventProcessor.add(this._tabDivElement, "mouseover", Core.method(this, this._processEnter), false);
+    	    WebCore.EventProcessor.add(this._tabDivElement, "mouseout", Core.method(this, this._processExit), false);
         }
     	WebCore.EventProcessor.addSelectionDenialListener(this._tabDivElement);
     },

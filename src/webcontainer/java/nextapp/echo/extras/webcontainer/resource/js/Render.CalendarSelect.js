@@ -265,14 +265,11 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
         
         parentElement.appendChild(this._element);
         
-        WebCore.EventProcessor.add(this._monthSelect, "change", new Core.MethodRef(this, this._processMonthSelect), false);
-        WebCore.EventProcessor.add(this._yearField, "change", new Core.MethodRef(this, this._processYearChange), false);
-        WebCore.EventProcessor.add(this._yearDecrementElement, "click", 
-                new Core.MethodRef(this, this._processYearDecrement), false);
-        WebCore.EventProcessor.add(this._yearIncrementElement, "click", 
-                new Core.MethodRef(this, this._processYearIncrement), false);
-        WebCore.EventProcessor.add(this._tableElement, "click", 
-                new Core.MethodRef(this, this._processDateSelect), false);
+        WebCore.EventProcessor.add(this._monthSelect, "change", Core.method(this, this._processMonthSelect), false);
+        WebCore.EventProcessor.add(this._yearField, "change", Core.method(this, this._processYearChange), false);
+        WebCore.EventProcessor.add(this._yearDecrementElement, "click", Core.method(this, this._processYearDecrement), false);
+        WebCore.EventProcessor.add(this._yearIncrementElement, "click", Core.method(this, this._processYearIncrement), false);
+        WebCore.EventProcessor.add(this._tableElement, "click", Core.method(this, this._processDateSelect), false);
 
         var date = this.component.getProperty("date");
         if (!date) {

@@ -3,11 +3,21 @@ ExtrasRender.ComponentSync.ColorSelect = Core.extend(EchoRender.ComponentSync, {
     $load: function() {
         EchoRender.registerPeer("ExtrasApp.ColorSelect", this);
     },
+    
+    _h: 0,
+    _s: 0,
+    _v: 0,
 
-    $construct: function() { 
-        this._h = 0;
-        this._s = 0;
-        this._v = 0;
+    _processHMouseMoveRef: null,
+    _processHMouseUpRef: null,
+    _processSVMouseMoveRef: null,
+    _processSVMouseUpRef: null,
+
+    $construct: function() {
+        this._processHMouseMoveRef = Core.method(this, this._processHMouseMove);
+        this._processHMouseUpRef = Core.method(this, this._processHMouseUp);
+        this._processSVMouseMoveRef = Core.method(this, this._processSVMouseMove);
+        this._processSVMouseUpRef = Core.method(this, this._processSVMouseUp);
     },
         
     _hsvToRgb: function(h, s, v) {
@@ -58,10 +68,8 @@ ExtrasRender.ComponentSync.ColorSelect = Core.extend(EchoRender.ComponentSync, {
     },
     
     _processHMouseDown: function(e) {
-        WebCore.EventProcessor.add(this._hListenerDivElement, "mousemove", new Core.MethodRef(this, this._processHMouseMove), 
-                false);
-        WebCore.EventProcessor.add(this._hListenerDivElement, "mouseup", new Core.MethodRef(this, this._processHMouseUp), 
-                false);
+        WebCore.EventProcessor.add(this._hListenerDivElement, "mousemove", this._processHMouseMoveRef, false);
+        WebCore.EventProcessor.add(this._hListenerDivElement, "mouseup", this._processHMouseUpRef, false);
         this._processHUpdate(e);
     },
     
@@ -70,10 +78,8 @@ ExtrasRender.ComponentSync.ColorSelect = Core.extend(EchoRender.ComponentSync, {
     },
     
     _processHMouseUp: function(e) {
-        WebCore.EventProcessor.remove(this._hListenerDivElement, "mousemove", new Core.MethodRef(this, this._processHMouseMove), 
-                false);
-        WebCore.EventProcessor.remove(this._hListenerDivElement, "mouseup", new Core.MethodRef(this, this._processHMouseUp), 
-                false);
+        WebCore.EventProcessor.remove(this._hListenerDivElement, "mousemove", this._processHMouseMoveRef, false);
+        WebCore.EventProcessor.remove(this._hListenerDivElement, "mouseup", this._processHMouseUpRef, false);
         this._storeColor();
     },
     
@@ -84,10 +90,8 @@ ExtrasRender.ComponentSync.ColorSelect = Core.extend(EchoRender.ComponentSync, {
     },
     
     _processSVMouseDown: function(e) {
-        WebCore.EventProcessor.add(this._svListenerDivElement, "mousemove", new Core.MethodRef(this, this._processSVMouseMove), 
-                false);
-        WebCore.EventProcessor.add(this._svListenerDivElement, "mouseup", new Core.MethodRef(this, this._processSVMouseUp), 
-                false);
+        WebCore.EventProcessor.add(this._svListenerDivElement, "mousemove", this._processSVMouseMoveRef, false);
+        WebCore.EventProcessor.add(this._svListenerDivElement, "mouseup", this._processSVMouseUpRef, false);
         this._processSVUpdate(e);
     },
     
@@ -96,10 +100,8 @@ ExtrasRender.ComponentSync.ColorSelect = Core.extend(EchoRender.ComponentSync, {
     },
     
     _processSVMouseUp: function(e) {
-        WebCore.EventProcessor.remove(this._svListenerDivElement, "mousemove", new Core.MethodRef(this, this._processSVMouseMove), 
-                false);
-        WebCore.EventProcessor.remove(this._svListenerDivElement, "mouseup", new Core.MethodRef(this, this._processSVMouseUp), 
-                false);
+        WebCore.EventProcessor.remove(this._svListenerDivElement, "mousemove", this._processSVMouseMoveRef, false);
+        WebCore.EventProcessor.remove(this._svListenerDivElement, "mouseup", this._processSVMouseUpRef, false);
         this._storeColor();
     },
     
@@ -342,10 +344,8 @@ ExtrasRender.ComponentSync.ColorSelect = Core.extend(EchoRender.ComponentSync, {
     
         parentElement.appendChild(this._containerDivElement);
         
-        WebCore.EventProcessor.add(this._svListenerDivElement, "mousedown", new Core.MethodRef(this, this._processSVMouseDown), 
-                false);
-        WebCore.EventProcessor.add(this._hListenerDivElement, "mousedown", new Core.MethodRef(this, this._processHMouseDown), 
-                false);
+        WebCore.EventProcessor.add(this._svListenerDivElement, "mousedown", Core.method(this, this._processSVMouseDown), false);
+        WebCore.EventProcessor.add(this._hListenerDivElement, "mousedown", Core.method(this, this._processHMouseDown), false);
         
         this._setColor(this.component.getProperty("color"));
     },

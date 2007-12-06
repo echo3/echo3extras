@@ -622,14 +622,14 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
     },
     
     _addEventListeners: function() {
-        WebCore.EventProcessor.add(this._headerTdElement, "click", new Core.MethodRef(this, this._processClick), false);
+        WebCore.EventProcessor.add(this._headerTdElement, "click", Core.method(this, this._processClick), false);
         WebCore.EventProcessor.addSelectionDenialListener(this._headerTdElement);
         
         if (this._closeImageTdElement) {
             WebCore.EventProcessor.add(this._headerTdElement, "mouseover", 
-                    new Core.MethodRef(this, this._processEnter), false);
+                    Core.method(this, this._processEnter), false);
             WebCore.EventProcessor.add(this._headerTdElement, "mouseout", 
-                    new Core.MethodRef(this, this._processExit), false);
+                    Core.method(this, this._processExit), false);
         }
     },
     

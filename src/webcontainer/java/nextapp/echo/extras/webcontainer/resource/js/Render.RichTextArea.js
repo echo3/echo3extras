@@ -104,7 +104,7 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
                             }),
                             model: this._createMainMenuBarModel(),
                             events: {
-                                action: new Core.MethodRef(this, this._processMenuAction)
+                                action: Core.method(this, this._processMenuAction)
                             }
                         }),
                         // Main Layout Container
@@ -274,7 +274,7 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
             toolTipText: toolTipText
         });
         if (eventMethod) {
-            button.addListener("action", new Core.MethodRef(this, eventMethod));
+            button.addListener("action", Core.method(this, eventMethod));
         }
         return button;
     },
@@ -339,7 +339,7 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
      */
     _processSetBackgroundDialog: function(e) {
         var colorDialog = new ExtrasRender.ComponentSync.RichTextArea.ColorDialog(this.component, true);
-        colorDialog.addListener("colorSelect", new Core.MethodRef(this, this._processSetBackground));
+        colorDialog.addListener("colorSelect", Core.method(this, this._processSetBackground));
         this.baseComponent.add(colorDialog);
     },
     
@@ -355,7 +355,7 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
      */
     _processSetForegroundDialog: function(e) {
         var colorDialog = new ExtrasRender.ComponentSync.RichTextArea.ColorDialog(this.component, false);
-        colorDialog.addListener("colorSelect", new Core.MethodRef(this, this._processSetForeground));
+        colorDialog.addListener("colorSelect", Core.method(this, this._processSetForeground));
         this.baseComponent.add(colorDialog);
     },
     
@@ -381,7 +381,7 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
      */
     _processInsertTableDialog: function(e) {
         var tableDialog = new ExtrasRender.ComponentSync.RichTextArea.TableDialog(this.component);
-        tableDialog.addListener("tableInsert", new Core.MethodRef(this, this._processInsertTable));
+        tableDialog.addListener("tableInsert", Core.method(this, this._processInsertTable));
         this.baseComponent.add(tableDialog);
     },
     
@@ -392,7 +392,7 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
     
     _processInsertHyperlinkDialog: function(e) {
         var hyperlinkDialog = new ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog(this.component);
-        hyperlinkDialog.addListener("insertHyperlink", new Core.MethodRef(this, this._processInsertHyperlink));
+        hyperlinkDialog.addListener("insertHyperlink", Core.method(this, this._processInsertHyperlink));
         this.baseComponent.add(hyperlinkDialog);
     },
     
@@ -402,7 +402,7 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
     
     _processInsertImageDialog: function(e) {
         var imageDialog = new ExtrasRender.ComponentSync.RichTextArea.ImageDialog(this.component);
-        imageDialog.addListener("insertImage", new Core.MethodRef(this, this._processInsertImage));
+        imageDialog.addListener("insertImage", Core.method(this, this._processInsertImage));
         this.baseComponent.add(imageDialog);
     },
     
@@ -456,7 +456,7 @@ ExtrasRender.ComponentSync.RichTextArea.AbstractDialog = Core.extend(EchoApp.Win
             height: new EchoApp.Extent(200),
             resizable: false,
             events: {
-                close: new Core.MethodRef(this, this.processCancel)
+                close: Core.method(this, this.processCancel)
             },
             children: [
                 new EchoApp.SplitPane({
@@ -479,7 +479,7 @@ ExtrasRender.ComponentSync.RichTextArea.AbstractDialog = Core.extend(EchoApp.Win
             text: richTextArea.peer._rb.get("Generic.Ok"),
             icon: richTextArea.peer._icons.ok,
             events: {
-                action: new Core.MethodRef(this, this.processOk)
+                action: Core.method(this, this.processOk)
             }
         }));
         
@@ -490,7 +490,7 @@ ExtrasRender.ComponentSync.RichTextArea.AbstractDialog = Core.extend(EchoApp.Win
                 text: richTextArea.peer._rb.get("Generic.Cancel"),
                 icon: richTextArea.peer._icons.cancel,
                 events: {
-                    action: new Core.MethodRef(this, this.processCancel)
+                    action: Core.method(this, this.processCancel)
                 }
             }));
         }
@@ -722,9 +722,9 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer = Core.extend(EchoRender.Compo
         };
         setTimeout(setDesignModeOn, 0);
         WebCore.EventProcessor.add(this._iframeElement.contentWindow.document, "keyup", 
-                new Core.MethodRef(this, this._processKeyUp), false);
+                Core.method(this, this._processKeyUp), false);
         WebCore.EventProcessor.add(this._iframeElement.contentWindow.document, "mouseup", 
-                new Core.MethodRef(this, this._processMouseUp), false);
+                Core.method(this, this._processMouseUp), false);
         this._contentDocumentRendered = true;
     },
     

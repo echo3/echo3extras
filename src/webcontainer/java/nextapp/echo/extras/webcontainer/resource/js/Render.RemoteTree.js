@@ -1080,8 +1080,8 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
     },
     
     _addEventListeners: function(elements) {
-        var expansionRef = new Core.MethodRef(this, this._expansionHandler);
-        var selectionRef = new Core.MethodRef(this, this._selectionHandler);
+        var expansionRef = Core.method(this, this._expansionHandler);
+        var selectionRef = Core.method(this, this._selectionHandler);
         
         if (this._selectionEnabled) {
             WebCore.EventProcessor.add(elements.trElement, "click", selectionRef, false);
@@ -1096,8 +1096,8 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             var mouseEnterLeaveSupport = WebCore.Environment.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED;
             var enterEvent = mouseEnterLeaveSupport ? "mouseenter" : "mouseover";
             var exitEvent = mouseEnterLeaveSupport ? "mouseleave" : "mouseout";
-            var rolloverEnterRef = new Core.MethodRef(this, this._processRolloverEnter);
-            var rolloverExitRef = new Core.MethodRef(this, this._processRolloverExit);
+            var rolloverEnterRef = Core.method(this, this._processRolloverEnter);
+            var rolloverExitRef = Core.method(this, this._processRolloverExit);
             
             if (this._rolloverEnabled) {
                 WebCore.EventProcessor.add(elements.trElement, enterEvent, rolloverEnterRef, false);
