@@ -29,10 +29,7 @@
 
 package nextapp.echo.extras.testapp.testscreen;
 
-import nextapp.echo.app.ContentPane;
-import nextapp.echo.app.Label;
 import nextapp.echo.app.ResourceImageReference;
-import nextapp.echo.app.WindowPane;
 import nextapp.echo.app.event.ActionEvent;
 import nextapp.echo.app.event.ActionListener;
 import nextapp.echo.extras.app.DefaultIconSet;
@@ -48,7 +45,6 @@ public class RichTextAreaTest extends AbstractTest {
 
     public RichTextAreaTest() {
         super("RichTextArea", Styles.ICON_16_RICH_TEXT_AREA);
-        final ContentPane contentPane = new ContentPane();
         final RichTextArea richTextArea = new RichTextArea();
         richTextArea.setMenuStyleName("Default");
         richTextArea.setToolbarButtonStyleName("RichTextAreaToolbarButton");
@@ -56,24 +52,13 @@ public class RichTextAreaTest extends AbstractTest {
         richTextArea.setControlPaneSplitPaneStyleName("ControlPane.Container.Bottom");
         richTextArea.setControlPaneRowStyleName("ControlPane");
         richTextArea.setControlPaneButtonStyleName("ControlPane.Button");
-        
-        contentPane.add(richTextArea);
-        add(contentPane);
+        add(richTextArea);
         setTestComponent(this, richTextArea);
-        
-        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Show content in popup", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                WindowPane wp = new WindowPane();
-                wp.setStyleName("Default");
-                wp.add(new Label(richTextArea.getText()));
-                contentPane.add(wp);
-            }
-        });
         
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "foreground");
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "background");
         
-        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Text: null", new ActionListener() {
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Text: null", new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 richTextArea.setText(null);
             }
