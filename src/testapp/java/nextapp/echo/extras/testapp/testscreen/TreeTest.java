@@ -99,6 +99,45 @@ public class TreeTest extends AbstractTest {
         };
     }
     
+    private static TreeModel generateSimpleTreeTableModelWithLongNodeValues() {
+        return new AbstractTreeModel() {
+            
+            public Object getChild(Object parent, int index) {
+                return new Integer(index);
+            }
+            
+            public int getChildCount(Object parent) {
+                int parentValue = ((Integer) parent).intValue();
+                return parentValue;
+            }
+            
+            public int getColumnCount() {
+                return 5;
+            }
+            
+            public Object getValueAt(Object node, int column) {
+                if (0 == column) {
+                    return node + " - Lorem ipsum dolor sit amet, consectetuer adipiscing elit.";
+                }
+                return ((Integer) node).intValue() + " - " + column;
+            }
+            
+            public int getIndexOfChild(Object parent, Object child) {
+                int childValue = ((Integer) child).intValue();
+                return childValue;
+            }
+            
+            public Object getRoot() {
+                return new Integer(4);
+            }
+            
+            public boolean isLeaf(Object object) {
+                int objectValue = ((Integer) object).intValue();
+                return objectValue == 0;
+            }
+        };
+    }
+    
     private static final TreeModel generateEndlessOneNodeTreeModel() {
         return new AbstractTreeModel() {
 
@@ -306,6 +345,13 @@ public class TreeTest extends AbstractTest {
             public void actionPerformed(ActionEvent e) {
                 tree.setModel(generateSimpleTreeTableModel());
                 tree.setHeaderVisible(true);
+            }
+        });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Simle treetable model with long node values", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tree.setModel(generateSimpleTreeTableModelWithLongNodeValues());
+                tree.setHeaderVisible(false);
             }
         });
         

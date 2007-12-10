@@ -416,6 +416,8 @@ extends AbstractComponentSynchronizePeer {
     
     private static final String IMAGE_PREFIX = "/nextapp/echo/extras/webcontainer/resource/image/tree/";
     
+    private static final ImageReference DEFAULT_ICON_TRANS = new ResourceImageReference(IMAGE_PREFIX + "trans.gif");
+    
     // icons without lines
     private static final ImageReference DEFAULT_ICON_NODE_CLOSED = new ResourceImageReference(IMAGE_PREFIX + "Closed.gif");
     private static final ImageReference DEFAULT_ICON_NODE_OPEN = new ResourceImageReference(IMAGE_PREFIX + "Open.gif");
@@ -451,6 +453,8 @@ extends AbstractComponentSynchronizePeer {
             = new ResourceImageReference(IMAGE_PREFIX + "OpenDotted.gif");
     private static final ImageReference DEFAULT_ICON_NODE_OPEN_BOTTOM_DOTTED 
             = new ResourceImageReference(IMAGE_PREFIX + "OpenBottomDotted.gif");
+    
+    private static final String IMAGE_ID_TRANS = "EchoExtras.Tree.trans";
     
     // image ids for images without lines
     private static final String IMAGE_ID_NODE_CLOSED = "EchoExtras.Tree.nodeClosed";
@@ -492,6 +496,8 @@ extends AbstractComponentSynchronizePeer {
     
     static {
         ImageService.install();
+        ImageService.addGlobalImage(IMAGE_ID_TRANS, DEFAULT_ICON_TRANS);
+        
         ImageService.addGlobalImage(IMAGE_ID_NODE_CLOSED, DEFAULT_ICON_NODE_CLOSED);
         ImageService.addGlobalImage(IMAGE_ID_NODE_OPEN, DEFAULT_ICON_NODE_OPEN);
 

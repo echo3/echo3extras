@@ -585,6 +585,11 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             rowHeaderElement.id = "tree_" + node.getId() + "_" + c;
             rowHeaderElement.style.padding = "0px";
             rowHeaderElement.style.width = "19px";
+            var img = document.createElement("img");
+            img.src = this._getImageUri("trans");
+            img.style.width = "19px";
+//            img.style.height = "10px";
+            rowHeaderElement.appendChild(img);
     
             if (parentNode) {
                 if (this._showLines && this._treeStructure.hasNodeNextSibling(parentNode)) {
@@ -605,6 +610,11 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             expandoElement.style.padding = "0";
             expandoElement.style.width = "19px";
             expandoElement.style.textAlign = "center";
+            var img = document.createElement("img");
+            img.src = this._getImageUri("trans");
+            img.style.width = "19px";
+//            img.style.height = "10px";
+            expandoElement.appendChild(img);
             nodeRowElement.appendChild(expandoElement);
         }
         
@@ -616,6 +626,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         nodeRowElement.appendChild(nodeCellElement);
         nodeTable.firstChild.appendChild(nodeRowElement);
         tdElement.appendChild(nodeTable);
+        tdElement.style.overflow = "hidden";
         
         trElement.firstChild.style.paddingLeft = this._effectBorderCompensation + "px";
         
