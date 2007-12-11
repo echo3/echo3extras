@@ -139,7 +139,6 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             rolloverBorderLeft = EchoAppRender.Extent.toPixels(this._getBorderSide(rolloverBorder, 3).size, true);
         }
         this._effectBorderCompensation = Math.max(selectionBorderLeft, rolloverBorderLeft);
-        Core.Debug.consoleWrite("compensation: " + this._effectBorderCompensation);
     },
     
     _renderColumnWidths: function() {
