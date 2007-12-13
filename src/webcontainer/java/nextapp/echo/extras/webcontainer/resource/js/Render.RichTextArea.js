@@ -584,7 +584,6 @@ ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog = Core.extend(
                         })
                     ]
                 }));
-
     },
     
     processOk: function(e) {
