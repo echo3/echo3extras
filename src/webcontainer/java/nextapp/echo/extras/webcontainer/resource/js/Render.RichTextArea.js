@@ -3,6 +3,81 @@
  */
 ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
 
+    $static: {
+        MESSAGES: new Core.ResourceBundle({
+            "ColorDialog.Title.Foreground":     "Text Color",
+            "ColorDialog.Title.Background":     "Highlight Color",
+            "ColorDialog.PromptForeground":     "Foreground:",
+            "ColorDialog.PromptBackground":     "Background:",
+            "Error.ClipboardAccessDisabled":    "This browser has clipboard access disabled. "
+                                                + "Use keyboard shortcuts or change your security settings.",
+            "Generic.Cancel":                   "Cancel",
+            "Generic.Error":                    "Error",
+            "Generic.Ok":                       "Ok",
+            "HyperlinkDialog.Title":            "Insert Hyperlink",
+            "HyperlinkDialog.PromptURL":        "URL:",
+            "HyperlinkDialog.PromptDescription":
+                                                "Description Text:",
+            "HyperlinkDialog.ErrorDialogTitle": "Cannot Insert Hyperlink",
+            "HyperlinkDialog.ErrorDialog.URL":  
+                                                "The URL entered is not valid.",
+            "ImageDialog.Title":                "Insert Image",
+            "ImageDialog.PromptURL":            "URL:",
+            "ImageDialog.ErrorDialogTitle":     "Cannot Insert Image",
+            "ImageDialog.ErrorDialog.URL":  
+                                                "The URL entered is not valid.",
+            "Menu.Edit":                        "Edit",
+            "Menu.Undo":                        "Undo",
+            "Menu.Redo":                        "Redo",
+            "Menu.Cut":                         "Cut",
+            "Menu.Copy":                        "Copy",
+            "Menu.Paste":                       "Paste",
+            "Menu.Delete":                      "Delete",
+            "Menu.SelectAll":                   "Select All",
+            "Menu.Insert":                      "Insert",
+            "Menu.InsertImage":                 "Image...",
+            "Menu.InsertHyperlink":             "Hyperlink...",
+            "Menu.InsertHorizontalRule":        "Horizontal Rule",
+            "Menu.InsertTable":                 "Table...",
+            "Menu.BulletedList":                "Bulleted List",
+            "Menu.NumberedList":                "Numbered List",
+            "Menu.Format":                      "Format",
+            "Menu.Bold":                        "Bold",
+            "Menu.Italic":                      "Italic",
+            "Menu.Underline":                   "Underline",
+            "Menu.Strikethrough":               "Strikethrough",
+            "Menu.Superscript":                 "Superscript",
+            "Menu.Subscript":                   "Subscript",
+            "Menu.PlainText":                   "Plain Text",
+            "Menu.TextStyle":                   "Text Style",
+            "Menu.ParagraphStyle":              "Paragraph Style",
+            "Menu.Alignment":                   "Alignment",
+            "Menu.Left":                        "Left",
+            "Menu.Right":                       "Right",
+            "Menu.Center":                      "Center",
+            "Menu.Justified":                   "Justified",
+            "Menu.Indent":                      "Indent",
+            "Menu.Outdent":                     "Outdent",
+            "Menu.SetForeground":               "Set Text Color...",
+            "Menu.SetBackground":               "Set Highlight Color...",
+            "Menu.Heading1":                    "Heading 1",
+            "Menu.Heading2":                    "Heading 2",
+            "Menu.Heading3":                    "Heading 3",
+            "Menu.Heading4":                    "Heading 4",
+            "Menu.Heading5":                    "Heading 5",
+            "Menu.Heading6":                    "Heading 6",
+            "Menu.Normal":                      "Normal",
+            "Menu.Preformatted":                "Preformatted",
+            "TableDialog.Title":                "Insert Table",
+            "TableDialog.PromptRows":           "Rows:",
+            "TableDialog.PromptColumns":        "Columns:",
+            "TableDialog.ErrorDialogTitle":     "Cannot Insert Table",
+            "TableDialog.ErrorDialog.Columns":  "The entered columns value is not valid.  "
+                                                + "Please specify a number between 1 and 50.",
+            "TableDialog.ErrorDialog.Rows":     "The entered rows value is not valid.  Please specify a number between 1 and 50."
+        })
+    },
+
     $load: function() {
         EchoRender.registerPeer("ExtrasApp.RichTextArea", this);
     },
@@ -13,78 +88,14 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
         }
     },
     
-    _rb: new Core.ResourceBundle({
-        "ColorDialog.Title.Foreground":     "Text Color",
-        "ColorDialog.Title.Background":     "Highlight Color",
-        "ColorDialog.PromptForeground":     "Foreground:",
-        "ColorDialog.PromptBackground":     "Background:",
-        "Error.ClipboardAccessDisabled":    "This browser has clipboard access disabled. "
-                                            + "Use keyboard shortcuts or change your security settings.",
-        "Generic.Cancel":                   "Cancel",
-        "Generic.Error":                    "Error",
-        "Generic.Ok":                       "Ok",
-        "HyperlinkDialog.Title":            "Insert Hyperlink",
-        "HyperlinkDialog.PromptURL":        "URL:",
-        "HyperlinkDialog.PromptDescription":
-                                            "Description Text:",
-        "HyperlinkDialog.ErrorDialogTitle": "Cannot Insert Hyperlink",
-        "HyperlinkDialog.ErrorDialog.URL":  
-                                            "The URL entered is not valid.",
-        "ImageDialog.Title":                "Insert Image",
-        "ImageDialog.PromptURL":            "URL:",
-        "ImageDialog.ErrorDialogTitle":     "Cannot Insert Image",
-        "ImageDialog.ErrorDialog.URL":  
-                                            "The URL entered is not valid.",
-        "Menu.Edit":                        "Edit",
-        "Menu.Undo":                        "Undo",
-        "Menu.Redo":                        "Redo",
-        "Menu.Cut":                         "Cut",
-        "Menu.Copy":                        "Copy",
-        "Menu.Paste":                       "Paste",
-        "Menu.Delete":                      "Delete",
-        "Menu.SelectAll":                   "Select All",
-        "Menu.Insert":                      "Insert",
-        "Menu.InsertImage":                 "Image...",
-        "Menu.InsertHyperlink":             "Hyperlink...",
-        "Menu.InsertHorizontalRule":        "Horizontal Rule",
-        "Menu.InsertTable":                 "Table...",
-        "Menu.BulletedList":                "Bulleted List",
-        "Menu.NumberedList":                "Numbered List",
-        "Menu.Format":                      "Format",
-        "Menu.Bold":                        "Bold",
-        "Menu.Italic":                      "Italic",
-        "Menu.Underline":                   "Underline",
-        "Menu.Strikethrough":               "Strikethrough",
-        "Menu.Superscript":                 "Superscript",
-        "Menu.Subscript":                   "Subscript",
-        "Menu.PlainText":                   "Plain Text",
-        "Menu.TextStyle":                   "Text Style",
-        "Menu.ParagraphStyle":              "Paragraph Style",
-        "Menu.Alignment":                   "Alignment",
-        "Menu.Left":                        "Left",
-        "Menu.Right":                       "Right",
-        "Menu.Center":                      "Center",
-        "Menu.Justified":                   "Justified",
-        "Menu.Indent":                      "Indent",
-        "Menu.Outdent":                     "Outdent",
-        "Menu.SetForeground":               "Set Text Color...",
-        "Menu.SetBackground":               "Set Highlight Color...",
-        "Menu.Heading1":                    "Heading 1",
-        "Menu.Heading2":                    "Heading 2",
-        "Menu.Heading3":                    "Heading 3",
-        "Menu.Heading4":                    "Heading 4",
-        "Menu.Heading5":                    "Heading 5",
-        "Menu.Heading6":                    "Heading 6",
-        "Menu.Normal":                      "Normal",
-        "Menu.Preformatted":                "Preformatted",
-        "TableDialog.Title":                "Insert Table",
-        "TableDialog.PromptRows":           "Rows:",
-        "TableDialog.PromptColumns":        "Columns:",
-        "TableDialog.ErrorDialogTitle":     "Cannot Insert Table",
-        "TableDialog.ErrorDialog.Columns":  "The entered columns value is not valid.  "
-                                            + "Please specify a number between 1 and 50.",
-        "TableDialog.ErrorDialog.Rows":     "The entered rows value is not valid.  Please specify a number between 1 and 50."
-    }),
+    $construct: function() {
+        this._msg = ExtrasRender.ComponentSync.RichTextArea.MESSAGES.get(null);
+    },
+    
+    /**
+     * Localized messages for rendered locale.
+     */
+    _msg: null,
 
     createBaseComponent: function() {
         var controlsRow;
@@ -131,17 +142,17 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
         // Undo/Redo Tools
         controlsRow.add(new EchoApp.Row({
             children: [
-                this._createToolbarButton("<<<", this._icons.undo, this._rb.get("Menu.Undo"), this._processCommand, "undo"),
-                this._createToolbarButton(">>>", this._icons.redo, this._rb.get("Menu.Redo"), this._processCommand, "redo")
+                this._createToolbarButton("<<<", this._icons.undo, this._msg["Menu.Undo"], this._processCommand, "undo"),
+                this._createToolbarButton(">>>", this._icons.redo, this._msg["Menu.Redo"], this._processCommand, "redo")
             ]
         }));
         
         // Font Bold/Italic/Underline Tools
         controlsRow.add(new EchoApp.Row({
             children: [
-                this._createToolbarButton("B", this._icons.bold, this._rb.get("Menu.Bold"), this._processCommand, "bold"),
-                this._createToolbarButton("I", this._icons.italic, this._rb.get("Menu.Italic"), this._processCommand, "italic"),
-                this._createToolbarButton("U", this._icons.underline, this._rb.get("Menu.Underline"), 
+                this._createToolbarButton("B", this._icons.bold, this._msg["Menu.Bold"], this._processCommand, "bold"),
+                this._createToolbarButton("I", this._icons.italic, this._msg["Menu.Italic"], this._processCommand, "italic"),
+                this._createToolbarButton("U", this._icons.underline, this._msg["Menu.Underline"], 
                         this._processCommand, "underline")
             ]
         }));
@@ -149,9 +160,9 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
         //Super/Subscript Tools
         controlsRow.add(new EchoApp.Row({
             children: [
-                this._createToolbarButton("^", this._icons.superscript, this._rb.get("Menu.Superscript"), 
+                this._createToolbarButton("^", this._icons.superscript, this._msg["Menu.Superscript"], 
                         this._processCommand, "superscript"),
-                this._createToolbarButton("v", this._icons.subscript,this._rb.get("Menu.Subscript"), 
+                this._createToolbarButton("v", this._icons.subscript,this._msg["Menu.Subscript"], 
                         this._processCommand, "subscript")
             ]
         }));
@@ -159,13 +170,13 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
         // Alignment Tools
         controlsRow.add(new EchoApp.Row({
             children: [
-                this._createToolbarButton("<-", this._icons.alignmentLeft, this._rb.get("Menu.Left"), 
+                this._createToolbarButton("<-", this._icons.alignmentLeft, this._msg["Menu.Left"], 
                         this._processCommand, "justifyleft"),
-                this._createToolbarButton("-|-", this._icons.alignmentCenter, this._rb.get("Menu.Center"), 
+                this._createToolbarButton("-|-", this._icons.alignmentCenter, this._msg["Menu.Center"], 
                         this._processCommand, "justifycenter"),
-                this._createToolbarButton("->", this._icons.alignmentRight, this._rb.get("Menu.Right"), 
+                this._createToolbarButton("->", this._icons.alignmentRight, this._msg["Menu.Right"], 
                         this._processCommand, "justifyright"),
-                this._createToolbarButton("||", this._icons.alignmentJustify, this._rb.get("Menu.Justified"), 
+                this._createToolbarButton("||", this._icons.alignmentJustify, this._msg["Menu.Justified"], 
                         this._processCommand, "justifyfull")
             ]
         }));
@@ -173,9 +184,9 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
         // Color Tools
         controlsRow.add(new EchoApp.Row({
             children: [
-                this._createToolbarButton("FG", this._icons.foreground, this._rb.get("Menu.SetForeground"), 
+                this._createToolbarButton("FG", this._icons.foreground, this._msg["Menu.SetForeground"], 
                         this._processSetForegroundDialog),
-                this._createToolbarButton("BG", this._icons.background, this._rb.get("Menu.SetBackground"), 
+                this._createToolbarButton("BG", this._icons.background, this._msg["Menu.SetBackground"], 
                         this._processSetBackgroundDialog)
             ]
         }));
@@ -183,17 +194,17 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
         // Insert Tools
         controlsRow.add(new EchoApp.Row({
             children: [
-                this._createToolbarButton("Bulleted List", this._icons.bulletedList, this._rb.get("Menu.BulletedList"), 
+                this._createToolbarButton("Bulleted List", this._icons.bulletedList, this._msg["Menu.BulletedList"], 
                         this._processCommand, "insertunorderedlist"),
-                this._createToolbarButton("Numbered List", this._icons.numberedList, this._rb.get("Menu.NumberedList"), 
+                this._createToolbarButton("Numbered List", this._icons.numberedList, this._msg["Menu.NumberedList"], 
                         this._processCommand, "insertorderedlist"),
-                this._createToolbarButton("Horizontal Rule", this._icons.horizontalRule, this._rb.get("Menu.InsertHorizontalRule"), 
+                this._createToolbarButton("Horizontal Rule", this._icons.horizontalRule, this._msg["Menu.InsertHorizontalRule"], 
                         this._processCommand, "inserthorizontalrule"),
-                this._createToolbarButton("Image", this._icons.image, this._rb.get("Menu.InsertImage"), 
+                this._createToolbarButton("Image", this._icons.image, this._msg["Menu.InsertImage"], 
                         this._processInsertImageDialog),
-                this._createToolbarButton("Hyperlink", this._icons.hyperlink, this._rb.get("Menu.InsertHyperlink"), 
+                this._createToolbarButton("Hyperlink", this._icons.hyperlink, this._msg["Menu.InsertHyperlink"], 
                         this._processInsertHyperlinkDialog),
-                this._createToolbarButton("Table", this._icons.table, this._rb.get("Menu.InsertTable"), 
+                this._createToolbarButton("Table", this._icons.table, this._msg["Menu.InsertTable"], 
                         this._processInsertTableDialog)
             ]
         }));
@@ -205,62 +216,62 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
     
     _createMainMenuBarModel: function() {
         return new ExtrasApp.MenuModel(null, null, null, [
-            new ExtrasApp.MenuModel(null, this._rb.get("Menu.Edit"), null, [
-                new ExtrasApp.OptionModel("/undo", this._rb.get("Menu.Undo"), this._icons.undo),
-                new ExtrasApp.OptionModel("/redo", this._rb.get("Menu.Redo"), this._icons.redo),
+            new ExtrasApp.MenuModel(null, this._msg["Menu.Edit"], null, [
+                new ExtrasApp.OptionModel("/undo", this._msg["Menu.Undo"], this._icons.undo),
+                new ExtrasApp.OptionModel("/redo", this._msg["Menu.Redo"], this._icons.redo),
                 new ExtrasApp.SeparatorModel(),
-                new ExtrasApp.OptionModel("cut", this._rb.get("Menu.Cut"), this._icons.cut),
-                new ExtrasApp.OptionModel("copy", this._rb.get("Menu.Copy"), this._icons.copy),
-                new ExtrasApp.OptionModel("paste", this._rb.get("Menu.Paste"), this._icons.paste),
-                new ExtrasApp.OptionModel("delete", this._rb.get("Menu.Delete"), this._icons["delete"]),
+                new ExtrasApp.OptionModel("cut", this._msg["Menu.Cut"], this._icons.cut),
+                new ExtrasApp.OptionModel("copy", this._msg["Menu.Copy"], this._icons.copy),
+                new ExtrasApp.OptionModel("paste", this._msg["Menu.Paste"], this._icons.paste),
+                new ExtrasApp.OptionModel("delete", this._msg["Menu.Delete"], this._icons["delete"]),
                 new ExtrasApp.SeparatorModel(),
-                new ExtrasApp.OptionModel("/selectall", this._rb.get("Menu.SelectAll"), this._icons.selectAll)
+                new ExtrasApp.OptionModel("/selectall", this._msg["Menu.SelectAll"], this._icons.selectAll)
             ]),
-            new ExtrasApp.MenuModel(null, this._rb.get("Menu.Insert"), null, [
-                new ExtrasApp.OptionModel("/insertunorderedlist", this._rb.get("Menu.BulletedList"), this._icons.bulletedList),
-                new ExtrasApp.OptionModel("/insertorderedlist", this._rb.get("Menu.NumberedList"), this._icons.numberedList),
+            new ExtrasApp.MenuModel(null, this._msg["Menu.Insert"], null, [
+                new ExtrasApp.OptionModel("/insertunorderedlist", this._msg["Menu.BulletedList"], this._icons.bulletedList),
+                new ExtrasApp.OptionModel("/insertorderedlist", this._msg["Menu.NumberedList"], this._icons.numberedList),
                 new ExtrasApp.SeparatorModel(),
-                new ExtrasApp.OptionModel("/inserthorizontalrule", this._rb.get("Menu.InsertHorizontalRule"),
+                new ExtrasApp.OptionModel("/inserthorizontalrule", this._msg["Menu.InsertHorizontalRule"],
                         this._icons.horizontalRule),
-                new ExtrasApp.OptionModel("insertimage", this._rb.get("Menu.InsertImage"), this._icons.image),
-                new ExtrasApp.OptionModel("inserthyperlink", this._rb.get("Menu.InsertHyperlink"), this._icons.hyperlink),
+                new ExtrasApp.OptionModel("insertimage", this._msg["Menu.InsertImage"], this._icons.image),
+                new ExtrasApp.OptionModel("inserthyperlink", this._msg["Menu.InsertHyperlink"], this._icons.hyperlink),
                 new ExtrasApp.SeparatorModel(),
-                new ExtrasApp.OptionModel("inserttable", this._rb.get("Menu.InsertTable"), this._icons.table)
+                new ExtrasApp.OptionModel("inserttable", this._msg["Menu.InsertTable"], this._icons.table)
             ]),
-            new ExtrasApp.MenuModel(null, this._rb.get("Menu.Format"), null, [
-                new ExtrasApp.MenuModel(null, this._rb.get("Menu.TextStyle"), null, [
-                    new ExtrasApp.OptionModel("/removeformat",  this._rb.get("Menu.PlainText"), null),
+            new ExtrasApp.MenuModel(null, this._msg["Menu.Format"], null, [
+                new ExtrasApp.MenuModel(null, this._msg["Menu.TextStyle"], null, [
+                    new ExtrasApp.OptionModel("/removeformat",  this._msg["Menu.PlainText"], null),
                     new ExtrasApp.SeparatorModel(),
-                    new ExtrasApp.OptionModel("/bold",  this._rb.get("Menu.Bold"), this._icons.bold),
-                    new ExtrasApp.OptionModel("/italic",  this._rb.get("Menu.Italic"), this._icons.italic),
-                    new ExtrasApp.OptionModel("/underline",  this._rb.get("Menu.Underline"), this._icons.underline),
-                    new ExtrasApp.OptionModel("/strikethrough",  this._rb.get("Menu.Strikethrough"), this._icons.strikethrough),
+                    new ExtrasApp.OptionModel("/bold",  this._msg["Menu.Bold"], this._icons.bold),
+                    new ExtrasApp.OptionModel("/italic",  this._msg["Menu.Italic"], this._icons.italic),
+                    new ExtrasApp.OptionModel("/underline",  this._msg["Menu.Underline"], this._icons.underline),
+                    new ExtrasApp.OptionModel("/strikethrough",  this._msg["Menu.Strikethrough"], this._icons.strikethrough),
                     new ExtrasApp.SeparatorModel(),
-                    new ExtrasApp.OptionModel("/superscript", this._rb.get("Menu.Superscript"), this._icons.superscript),
-                    new ExtrasApp.OptionModel("/subscript", this._rb.get("Menu.Subscript"), this._icons.subscript)
+                    new ExtrasApp.OptionModel("/superscript", this._msg["Menu.Superscript"], this._icons.superscript),
+                    new ExtrasApp.OptionModel("/subscript", this._msg["Menu.Subscript"], this._icons.subscript)
                 ]),
-                new ExtrasApp.MenuModel(null, this._rb.get("Menu.Format"), null, [
-                    new ExtrasApp.OptionModel("/formatblock/<p>", this._rb.get("Menu.ParagraphStyle"), null),
-                    new ExtrasApp.OptionModel("/formatblock/<pre>", this._rb.get("Menu.Preformatted"), null),
-                    new ExtrasApp.OptionModel("/formatblock/<h1>", this._rb.get("Menu.Heading1"), null),
-                    new ExtrasApp.OptionModel("/formatblock/<h2>", this._rb.get("Menu.Heading2"), null),
-                    new ExtrasApp.OptionModel("/formatblock/<h3>", this._rb.get("Menu.Heading3"), null),
-                    new ExtrasApp.OptionModel("/formatblock/<h4>", this._rb.get("Menu.Heading4"), null),
-                    new ExtrasApp.OptionModel("/formatblock/<h5>", this._rb.get("Menu.Heading5"), null),
-                    new ExtrasApp.OptionModel("/formatblock/<h6>", this._rb.get("Menu.Heading6"), null)
+                new ExtrasApp.MenuModel(null, this._msg["Menu.Format"], null, [
+                    new ExtrasApp.OptionModel("/formatblock/<p>", this._msg["Menu.ParagraphStyle"], null),
+                    new ExtrasApp.OptionModel("/formatblock/<pre>", this._msg["Menu.Preformatted"], null),
+                    new ExtrasApp.OptionModel("/formatblock/<h1>", this._msg["Menu.Heading1"], null),
+                    new ExtrasApp.OptionModel("/formatblock/<h2>", this._msg["Menu.Heading2"], null),
+                    new ExtrasApp.OptionModel("/formatblock/<h3>", this._msg["Menu.Heading3"], null),
+                    new ExtrasApp.OptionModel("/formatblock/<h4>", this._msg["Menu.Heading4"], null),
+                    new ExtrasApp.OptionModel("/formatblock/<h5>", this._msg["Menu.Heading5"], null),
+                    new ExtrasApp.OptionModel("/formatblock/<h6>", this._msg["Menu.Heading6"], null)
                 ]),
-                new ExtrasApp.MenuModel(null, this._rb.get("Menu.Alignment"), null, [
-                    new ExtrasApp.OptionModel("/justifyleft",  this._rb.get("Menu.Left"), this._icons.alignmentLeft),
-                    new ExtrasApp.OptionModel("/justifycenter",  this._rb.get("Menu.Center"), this._icons.alignmentCenter),
-                    new ExtrasApp.OptionModel("/justifyright",  this._rb.get("Menu.Right"), this._icons.alignmentRight),
-                    new ExtrasApp.OptionModel("/justifyfull",  this._rb.get("Menu.Justified"), this._icons.alignmentJustify)
+                new ExtrasApp.MenuModel(null, this._msg["Menu.Alignment"], null, [
+                    new ExtrasApp.OptionModel("/justifyleft",  this._msg["Menu.Left"], this._icons.alignmentLeft),
+                    new ExtrasApp.OptionModel("/justifycenter",  this._msg["Menu.Center"], this._icons.alignmentCenter),
+                    new ExtrasApp.OptionModel("/justifyright",  this._msg["Menu.Right"], this._icons.alignmentRight),
+                    new ExtrasApp.OptionModel("/justifyfull",  this._msg["Menu.Justified"], this._icons.alignmentJustify)
                 ]),
                 new ExtrasApp.SeparatorModel(),
-                new ExtrasApp.OptionModel("/indent",  this._rb.get("Menu.Indent"), this._icons.indent),
-                new ExtrasApp.OptionModel("/outdent",  this._rb.get("Menu.Outdent"), this._icons.outdent),
+                new ExtrasApp.OptionModel("/indent",  this._msg["Menu.Indent"], this._icons.indent),
+                new ExtrasApp.OptionModel("/outdent",  this._msg["Menu.Outdent"], this._icons.outdent),
                 new ExtrasApp.SeparatorModel(),
-                new ExtrasApp.OptionModel("foreground",  this._rb.get("Menu.SetForeground"), this._icons.foreground),
-                new ExtrasApp.OptionModel("background",  this._rb.get("Menu.SetBackground"), this._icons.background)
+                new ExtrasApp.OptionModel("foreground",  this._msg["Menu.SetForeground"], this._icons.foreground),
+                new ExtrasApp.OptionModel("background",  this._msg["Menu.SetBackground"], this._icons.background)
             ])
         ]);
     },
@@ -321,7 +332,7 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
                     this._richTextInput.peer.doCommand(e.modelId);
                 } catch (ex) {
                     this.baseComponent.add(new ExtrasRender.ComponentSync.RichTextArea.MessageDialog(this.component,
-                            this._rb.get("Generic.Error"), this._rb.get("Error.ClipboardAccessDisabled"))); 
+                            this._msg["Generic.Error"], this._msg["Error.ClipboardAccessDisabled"])); 
                 }
             }
         }
@@ -476,7 +487,7 @@ ExtrasRender.ComponentSync.RichTextArea.AbstractDialog = Core.extend(EchoApp.Win
         this.controlsRow.add(new EchoApp.Button({
             styleName: controlPaneButtonStyleName,
             style: controlPaneButtonStyleName ? null : DEFAULT_CONTROL_PANE_BUTTON_STYLE,
-            text: richTextArea.peer._rb.get("Generic.Ok"),
+            text: richTextArea.peer._msg["Generic.Ok"],
             icon: richTextArea.peer._icons.ok,
             events: {
                 action: Core.method(this, this.processOk)
@@ -487,7 +498,7 @@ ExtrasRender.ComponentSync.RichTextArea.AbstractDialog = Core.extend(EchoApp.Win
             this.controlsRow.add(new EchoApp.Button({
                 styleName: controlPaneButtonStyleName,
                 style: controlPaneButtonStyleName ? null : DEFAULT_CONTROL_PANE_BUTTON_STYLE,
-                text: richTextArea.peer._rb.get("Generic.Cancel"),
+                text: richTextArea.peer._msg["Generic.Cancel"],
                 icon: richTextArea.peer._icons.cancel,
                 events: {
                     action: Core.method(this, this.processCancel)
@@ -519,8 +530,8 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog = Core.extend(
         ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.call(this, richTextArea,
                 ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL, 
                 {
-                    title: richTextArea.peer._rb.get(setBackground ? 
-                            "ColorDialog.Title.Background" : "ColorDialog.Title.Foreground"),
+                    title: richTextArea.peer._msg[setBackground ? 
+                            "ColorDialog.Title.Background" : "ColorDialog.Title.Foreground"],
                     icon: setBackground ? richTextArea.peer._icons.background : richTextArea.peer._icons.foreground,
                     width: new EchoApp.Extent(280),
                     height: new EchoApp.Extent(320)
@@ -529,8 +540,8 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog = Core.extend(
                     insets: new EchoApp.Insets(10),
                     children: [
                         new EchoApp.Label({
-                            text: richTextArea.peer._rb.get(
-                                    setBackground ? "ColorDialog.PromptBackground" : "ColorDialog.PromptForeground")
+                            text: richTextArea.peer._msg[
+                                    setBackground ? "ColorDialog.PromptBackground" : "ColorDialog.PromptForeground"]
                         }),
                         this._colorSelect = new ExtrasApp.ColorSelect({
                             displayValue: true
@@ -553,20 +564,20 @@ ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog = Core.extend(
         ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.call(this, richTextArea,
                 ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL,
                 {
-                    title: richTextArea.peer._rb.get("HyperlinkDialog.Title"), 
+                    title: richTextArea.peer._msg["HyperlinkDialog.Title"], 
                     icon: richTextArea.peer._icons.hyperlink
                 },
                 new EchoApp.Column({
                     insets: new EchoApp.Insets(10),
                     children: [
                         new EchoApp.Label({
-                            text: richTextArea.peer._rb.get("HyperlinkDialog.PromptURL")
+                            text: richTextArea.peer._msg["HyperlinkDialog.PromptURL"]
                         }),
                         this._urlField = new EchoApp.TextField({
                             width: new EchoApp.Extent("100%")
                         }),
                         new EchoApp.Label({
-                            text: richTextArea.peer._rb.get("HyperlinkDialog.PromptDescription")
+                            text: richTextArea.peer._msg["HyperlinkDialog.PromptDescription"]
                         }),
                         this._descriptionField = new EchoApp.TextField({
                             width: new EchoApp.Extent("100%")
@@ -583,8 +594,8 @@ ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog = Core.extend(
         };
         if (!data.url) {
             this.parent.add(new ExtrasRender.ComponentSync.RichTextArea.MessageDialog(this._richTextArea, 
-                    this._richTextArea.peer._rb.get("HyperlinkDialog.ErrorDialogTitle"), 
-                    this._richTextArea.peer._rb.get("HyperlinkDialog.ErrorDialog.URL")));
+                    this._richTextArea.peer._msg["HyperlinkDialog.ErrorDialogTitle"], 
+                    this._richTextArea.peer._msg["HyperlinkDialog.ErrorDialog.URL"]));
             return;
         }
         this.parent.remove(this);
@@ -599,14 +610,14 @@ ExtrasRender.ComponentSync.RichTextArea.ImageDialog = Core.extend(
         ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.call(this, richTextArea,
                 ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL,
                 {
-                    title: richTextArea.peer._rb.get("ImageDialog.Title"), 
+                    title: richTextArea.peer._msg["ImageDialog.Title"], 
                     image: richTextArea.peer._icons.image
                 },
                 new EchoApp.Column({
                     insets: new EchoApp.Insets(10),
                     children: [
                         new EchoApp.Label({
-                            text: richTextArea.peer._rb.get("ImageDialog.PromptURL")
+                            text: richTextArea.peer._msg["ImageDialog.PromptURL"]
                         }),
                         this._urlField = new EchoApp.TextField({
                             width: new EchoApp.Extent("100%")
@@ -621,8 +632,8 @@ ExtrasRender.ComponentSync.RichTextArea.ImageDialog = Core.extend(
         };
         if (!data.url) {
             this.parent.add(new ExtrasRender.ComponentSync.RichTextArea.MessageDialog(this._richTextArea, 
-                    this._richTextArea.peer._rb.get("ImageDialog.ErrorDialogTitle"), 
-                    this._richTextArea.peer._rb.get("ImageDialog.ErrorDialog.URL")));
+                    this._richTextArea.peer._msg["ImageDialog.ErrorDialogTitle"], 
+                    this._richTextArea.peer._msg["ImageDialog.ErrorDialog.URL"]));
             return;
         }
         this.parent.remove(this);
@@ -776,14 +787,14 @@ ExtrasRender.ComponentSync.RichTextArea.TableDialog = Core.extend(
         ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.call(this, richTextArea,
                 ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL,
                 {
-                    title: richTextArea.peer._rb.get("TableDialog.Title"), 
+                    title: richTextArea.peer._msg["TableDialog.Title"], 
                     icon: richTextArea.peer._icons.table
                 },
                 new EchoApp.Grid({
                     insets: new EchoApp.Insets(10),
                     children: [
                         new EchoApp.Label({
-                            text: richTextArea.peer._rb.get("TableDialog.PromptRows"),
+                            text: richTextArea.peer._msg["TableDialog.PromptRows"],
                             layoutData: new EchoApp.LayoutData({
                                 alignment: new EchoApp.Alignment(EchoApp.Alignment.TRAILING)
                             })
@@ -793,7 +804,7 @@ ExtrasRender.ComponentSync.RichTextArea.TableDialog = Core.extend(
                             width: new EchoApp.Extent("100px")   
                         }),
                         new EchoApp.Label({
-                            text: richTextArea.peer._rb.get("TableDialog.PromptColumns"),
+                            text: richTextArea.peer._msg["TableDialog.PromptColumns"],
                             layoutData: new EchoApp.LayoutData({
                                 alignment: new EchoApp.Alignment(EchoApp.Alignment.TRAILING)
                             })
@@ -813,14 +824,14 @@ ExtrasRender.ComponentSync.RichTextArea.TableDialog = Core.extend(
         };
         if (isNaN(data.rows) || data.rows < 1 || data.rows > 50) {
             this.parent.add(new ExtrasRender.ComponentSync.RichTextArea.MessageDialog(this._richTextArea, 
-                    this._richTextArea.peer._rb.get("TableDialog.ErrorDialogTitle"), 
-                    this._richTextArea.peer._rb.get("TableDialog.ErrorDialog.Rows")));
+                    this._richTextArea.peer._msg["TableDialog.ErrorDialogTitle"], 
+                    this._richTextArea.peer._msg["TableDialog.ErrorDialog.Rows"]));
             return;
         }
         if (isNaN(data.columns) || data.columns < 1 || data.columns > 50) {
             this.parent.add(new ExtrasRender.ComponentSync.RichTextArea.MessageDialog(this._richTextArea, 
-                    this._richTextArea.peer._rb.get("TableDialog.ErrorDialogTitle"), 
-                    this._richTextArea.peer._rb.get("TableDialog.ErrorDialog.Columns")));
+                    this._richTextArea.peer._msg["TableDialog.ErrorDialogTitle"], 
+                    this._richTextArea.peer._msg["TableDialog.ErrorDialog.Columns"]));
             return;
         }
         this.parent.remove(this);

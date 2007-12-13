@@ -35,7 +35,30 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
             } else {
                 return this._DAYS_IN_MONTH[month];
             }
-        }
+        },
+        
+        MESSAGES: new Core.ResourceBundle({
+            "DayOfWeek.0":     "Sunday",
+            "DayOfWeek.1":     "Monday",
+            "DayOfWeek.2":     "Tuesday",
+            "DayOfWeek.3":     "Wednesday",
+            "DayOfWeek.4":     "Thursday",
+            "DayOfWeek.5":     "Friday",
+            "DayOfWeek.6":     "Saturday",
+            "Month.0":         "January",
+            "Month.1":         "February",
+            "Month.2":         "March",
+            "Month.3":         "April",
+            "Month.4":         "May",
+            "Month.5":         "June",
+            "Month.6":         "July",
+            "Month.7":         "August",
+            "Month.8":         "September",
+            "Month.9":         "October",
+            "Month.10":        "November",
+            "Month.11":        "December",
+            "FirstDayOfWeek":  "0"
+        })
     },
 
     $load: function() {
@@ -51,31 +74,14 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
     _month: null,
     _day: null,
     
+    _msg: null,
+    
     // FIXME temporary
     _icons: { },
-
-    _rb: new Core.ResourceBundle({
-        "DayOfWeek.0":     "Sunday",
-        "DayOfWeek.1":     "Monday",
-        "DayOfWeek.2":     "Tuesday",
-        "DayOfWeek.3":     "Wednesday",
-        "DayOfWeek.4":     "Thursday",
-        "DayOfWeek.5":     "Friday",
-        "DayOfWeek.6":     "Saturday",
-        "Month.0":         "January",
-        "Month.1":         "February",
-        "Month.2":         "March",
-        "Month.3":         "April",
-        "Month.4":         "May",
-        "Month.5":         "June",
-        "Month.6":         "July",
-        "Month.7":         "August",
-        "Month.8":         "September",
-        "Month.9":         "October",
-        "Month.10":        "November",
-        "Month.11":        "December",
-        "FirstDayOfWeek":  "0"
-    }),
+    
+    $construct: function() {
+        this._msg = ExtrasRender.ComponentSync.CalendarSelect.MESSAGES.get(null);
+    },
     
     _calculateCalendarInformation: function() {
         var firstDate = new Date(this._year, this._month, 1);
@@ -172,7 +178,7 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
     renderAdd: function(update, parentElement) {
         var i, j, tdElement, trElement;
         var dayOfWeekNameAbbreviationLength = parseInt(this.component.getRenderProperty("dayOfWeekNameAbbreviationLength", 2));
-        var firstDayOfWeek = this._rb.get("FirstDayOfWeek");
+        var firstDayOfWeek = this._msg["FirstDayOfWeek"];
         if (!firstDayOfWeek) {
             firstDayOfWeek = 0;
         }
@@ -183,7 +189,7 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
         this._monthSelect = document.createElement("select");
         for (var i = 0; i < 12; ++i) {
             var optionElement = document.createElement("option");
-            optionElement.appendChild(document.createTextNode(this._rb.get("Month." + i)));
+            optionElement.appendChild(document.createTextNode(this._msg["Month." + i]));
             this._monthSelect.appendChild(optionElement);
         }
         this._element.appendChild(this._monthSelect);
@@ -232,7 +238,7 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
         trElement = document.createElement("tr");
         for (j = 0; j < 7; ++j) {
             tdElement = document.createElement("td");
-            var dayOfWeekName = this._rb.get("DayOfWeek." + ((firstDayOfWeek + j) % 7));
+            var dayOfWeekName = this._msg["DayOfWeek." + ((firstDayOfWeek + j) % 7)];
             if (dayOfWeekNameAbbreviationLength > 0) {
                 dayOfWeekName = dayOfWeekName.substring(0, dayOfWeekNameAbbreviationLength);
             }
