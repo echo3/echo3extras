@@ -623,7 +623,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
     
     _addEventListeners: function() {
         WebCore.EventProcessor.add(this._headerTdElement, "click", Core.method(this, this._processClick), false);
-        WebCore.EventProcessor.addSelectionDenialListener(this._headerTdElement);
+        WebCore.EventProcessor.Selection.disable(this._headerTdElement);
         
         if (this._closeImageTdElement) {
             WebCore.EventProcessor.add(this._headerTdElement, "mouseover", 

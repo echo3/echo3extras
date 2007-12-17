@@ -218,7 +218,7 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
             WebCore.EventProcessor.add(menuDivElement, "click", Core.method(this, this._processClick), false);
             WebCore.EventProcessor.add(menuDivElement, "mouseover", Core.method(this, this._processItemEnter), false);
             WebCore.EventProcessor.add(menuDivElement, "mouseout", Core.method(this, this._processItemExit), false);
-            WebCore.EventProcessor.addSelectionDenialListener(menuDivElement);
+            WebCore.EventProcessor.Selection.disable(menuDivElement);
             
             return menuDivElement;
         },
@@ -489,7 +489,7 @@ ExtrasRender.ComponentSync.MenuBarPane = Core.extend(ExtrasRender.ComponentSync.
         WebCore.EventProcessor.add(menuBarDivElement, "click", Core.method(this, this._processClick), false);
         WebCore.EventProcessor.add(menuBarDivElement, "mouseover", Core.method(this, this._processItemEnter), false);
         WebCore.EventProcessor.add(menuBarDivElement, "mouseout", Core.method(this, this._processItemExit), false);
-    	WebCore.EventProcessor.addSelectionDenialListener(menuBarDivElement);
+        WebCore.EventProcessor.Selection.disable(menuBarDivElement);
     
         return menuBarDivElement;
     },
@@ -614,7 +614,7 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
         dropDownDivElement.appendChild(relativeContainerDivElement);
     
         WebCore.EventProcessor.add(dropDownDivElement, "click", Core.method(this, this._processClick), false);
-    	WebCore.EventProcessor.addSelectionDenialListener(dropDownDivElement);
+        WebCore.EventProcessor.Selection.disable(dropDownDivElement);
     
         if (this._isSelectionEnabled()) {
         	var selection = this.component.getRenderProperty("selection");

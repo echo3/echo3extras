@@ -335,7 +335,7 @@ ExtrasRender.ComponentSync.AccordionPane.Tab = Core.extend({
     	    WebCore.EventProcessor.add(this._tabDivElement, "mouseover", Core.method(this, this._processEnter), false);
     	    WebCore.EventProcessor.add(this._tabDivElement, "mouseout", Core.method(this, this._processExit), false);
         }
-    	WebCore.EventProcessor.addSelectionDenialListener(this._tabDivElement);
+        WebCore.EventProcessor.Selection.disable(this._tabDivElement);
     },
     
     _getTitle: function() {
