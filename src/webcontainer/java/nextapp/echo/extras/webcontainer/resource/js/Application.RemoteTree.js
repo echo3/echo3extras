@@ -40,8 +40,7 @@ ExtrasApp.RemoteTree = Core.extend(EchoApp.Component, {
     componentType: "ExtrasApp.RemoteTree",
     
     doAction: function() {
-        var e = new Core.Event("action", this);
-        this.fireEvent(e);
+        this.fireEvent({type: "action", source: this});
     }
 });
 

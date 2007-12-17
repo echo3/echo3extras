@@ -1095,7 +1095,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         
         if (this._selectionEnabled) {
             WebCore.EventProcessor.add(elements.trElement, "click", selectionRef, false);
-            WebCore.EventProcessor.addSelectionDenialListener(elements.trElement);
+            WebCore.EventProcessor.Selection.disable(elements.trElement);
         }
         if (elements.expandoElement) {
             WebCore.EventProcessor.add(elements.expandoElement, "click", expansionRef, false);

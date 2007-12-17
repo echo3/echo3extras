@@ -553,7 +553,7 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog = Core.extend(
     processOk: function(e) {
         var color = this._colorSelect.getProperty("color");
         this.parent.remove(this);
-        this.fireEvent(new Core.Event("colorSelect", this, color));
+        this.fireEvent({type: "colorSelect", source: this, data : color});
     }
 });
 
@@ -598,7 +598,7 @@ ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog = Core.extend(
             return;
         }
         this.parent.remove(this);
-        this.fireEvent(new Core.Event("insertHyperlink", this, data));
+        this.fireEvent({type: "insertHyperlink", source: this, data: data});
     }
 });
 
@@ -636,7 +636,7 @@ ExtrasRender.ComponentSync.RichTextArea.ImageDialog = Core.extend(
             return;
         }
         this.parent.remove(this);
-        this.fireEvent(new Core.Event("insertImage", this, data));
+        this.fireEvent({type: "insertImage", source: this, data: data});
     }
 });
 
@@ -834,6 +834,6 @@ ExtrasRender.ComponentSync.RichTextArea.TableDialog = Core.extend(
             return;
         }
         this.parent.remove(this);
-        this.fireEvent(new Core.Event("tableInsert", this, data));
+        this.fireEvent({type: "tableInsert", source: this, data: data});
     }
 });

@@ -1,4 +1,5 @@
 // FIXME handle enabled/disabled state
+// FIXME fire events from components, not peer.
 
 /**
  * Component rendering peer: Menu
@@ -528,9 +529,7 @@ ExtrasRender.ComponentSync.MenuBarPane = Core.extend(ExtrasRender.ComponentSync.
     
     _doAction: function(menuModel) {
         var path = menuModel.getItemPositionPath().join(".");
-        var event = new Core.Event("action", this.component, path);
-        event.modelId = menuModel.modelId; 
-        this.component.fireEvent(event);
+        this.component.fireEvent({type: "action", source: this.component, data: path, modelId: menuModel.modelId});
     }
 });
 
@@ -760,7 +759,7 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
         }
         var path = menuModel.getItemPositionPath().join(".");
         this.component.setProperty("selection", path);
-        this.component.fireEvent(new Core.Event("action", this.component, path));
+        this.component.fireEvent({type: "action", source: this.component, data: path});
     }
 });
 
@@ -880,6 +879,6 @@ ExtrasRender.ComponentSync.ContextMenu = Core.extend(ExtrasRender.ComponentSync.
     
     _doAction: function(menuModel) {
         var path = menuModel.getItemPositionPath().join(".");
-        this.component.fireEvent(new Core.Event("action", this.component, path));
+        this.component.fireEvent({type: "action", source: this.component, data: path});
     }
 });

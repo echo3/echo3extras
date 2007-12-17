@@ -716,14 +716,14 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
             if (!this._isTabCloseEnabled()) {
                 return;
             }
-            this._parent.component.fireEvent(new Core.Event("tabClose", this._parent.component, 
-                    this._childComponent.renderId));
+            this._parent.component.fireEvent({type: "tabClose", source: this._parent.component, 
+                    data: this._childComponent.renderId});
         } else {
             // tab clicked
             this._parent._selectTab(this._childComponent.renderId);
             this._parent.component.setProperty("activeTab", this._childComponent.renderId);
-            this._parent.component.fireEvent(new Core.Event("tabSelect", this._parent.component, 
-                    this._childComponent.renderId));
+            this._parent.component.fireEvent({type: "tabSelect", source: this._parent.component, 
+                    data: this._childComponent.renderId});
         }
     },
     
