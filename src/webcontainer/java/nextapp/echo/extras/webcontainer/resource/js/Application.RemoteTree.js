@@ -386,7 +386,7 @@ ExtrasApp.RemoteTree.TreeNode = Core.extend({
      * @type Boolean
      */
     containsChildNode: function(node) {
-        return Core.Arrays.indexOf(this._childNodes, node) != -1;
+        return this.indexOf(node) != -1;
     },
     
     /**
@@ -396,7 +396,7 @@ ExtrasApp.RemoteTree.TreeNode = Core.extend({
      * @param {ExtrasApp.RemoteTree.TreeNode} node the node to add
      */
     addChildNode: function(node) {
-        var index = Core.Arrays.indexOf(this._childNodes, node);
+        var index = this.indexOf(node);
         if (index == -1) {
             this._childNodes.push(node);
         } else {
@@ -505,7 +505,12 @@ ExtrasApp.RemoteTree.TreeNode = Core.extend({
      * @type Integer
      */
     indexOf: function(node) {
-        return Core.Arrays.indexOf(this._childNodes, node);
+        for (var i = 0; i < this._childNodes.length; ++i) {
+            if (this._childNodes[i]._id == node._id) {
+                return i;
+            }
+        }
+        return -1;
     },
     
     /**
@@ -639,6 +644,10 @@ ExtrasApp.TreeSelectionModel = Core.extend({
         MULTIPLE_SELECTION: 2
     },
     
+    _selectionState: null,
+    
+    _selectionMode: null,
+    
     $construct: function(selectionMode) { 
         this._selectionState = [];
         this._selectionMode = selectionMode;
@@ -670,9 +679,12 @@ ExtrasApp.TreeSelectionModel = Core.extend({
      * @param node the node to add to the selection
      */
     addSelectedNode: function(node) {
-        if (Core.Arrays.indexOf(this._selectionState, node) == -1) {
-            this._selectionState.push(node);
+        for (var i = 0; i < this._selectionState.length; ++i) {
+            if (this._selectionState[i]._id == node._id) {
+                return;
+            }
         }
+        this._selectionState.push(node);
     },
     
     /**
@@ -681,7 +693,13 @@ ExtrasApp.TreeSelectionModel = Core.extend({
      * @param node the node to remove from the selection
      */
     removeSelectedNode: function(node) {
-        Core.Arrays.remove(this._selectionState, node);
+        for (var i = 0; i < this._selectionState.length; ++i) {
+            if (this._selectionState[i]._id == node._id) {
+                // Remove node.
+                this._selectionState.splice(i, 1);
+            }
+        }
+        
     },
     
     /**
@@ -723,7 +741,12 @@ ExtrasApp.TreeSelectionModel = Core.extend({
      * @type Boolean 
      */
     isNodeSelected: function(node) {
-        return Core.Arrays.indexOf(this._selectionState, node) != -1;
+        for (var i = 0; i < this._selectionState.length; ++i) {
+            if (this._selectionState[i]._id == node._id) {
+                return true;
+            }
+        }
+        return false;
     },
     
     /**
