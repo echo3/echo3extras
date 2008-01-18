@@ -97,7 +97,7 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
      */
     _msg: null,
 
-    createBaseComponent: function() {
+    createComponent: function() {
         var controlsRow;
         
         var contentPane = new EchoApp.ContentPane({
