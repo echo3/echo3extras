@@ -246,58 +246,58 @@
             depends="doc.app, doc.app.private, doc.webcontainer, doc.webcontainer.private"/>
 	
     <target name="release" depends="clean, dist, dist.testapp, doc.public">
-        <mkdir dir="${dir.build.release.root}"/>
-        <mkdir dir="${dir.build.release.root}/SourceCode"/>
-   		<mkdir dir="${dir.build.release.root}/SourceCode/src"/>
-        <mkdir dir="${dir.build.release.root}/Documentation"/>
-        <mkdir dir="${dir.build.release.root}/BinaryLibraries"/>
-        <mkdir dir="${dir.build.release.root}/BinaryApplications"/>
-        <mkdir dir="${dir.build.release.root}/Licensing"/>
-        <copy todir="${dir.build.release.root}" file="${dir.resource}/readme.txt"/>
+        <mkdir dir="${dir.build.server-java.release.root}"/>
+        <mkdir dir="${dir.build.server-java.release.root}/SourceCode"/>
+   		<mkdir dir="${dir.build.server-java.release.root}/SourceCode/src"/>
+        <mkdir dir="${dir.build.server-java.release.root}/Documentation"/>
+        <mkdir dir="${dir.build.server-java.release.root}/BinaryLibraries"/>
+        <mkdir dir="${dir.build.server-java.release.root}/BinaryApplications"/>
+        <mkdir dir="${dir.build.server-java.release.root}/Licensing"/>
+        <copy todir="${dir.build.server-java.release.root}" file="${dir.resource}/readme.txt"/>
         
         <!-- Source Code -->
-        <copy todir="${dir.build.release.root}/SourceCode/src">
+        <copy todir="${dir.build.server-java.release.root}/SourceCode/src">
             <fileset dir="${dir.src}">
                 <exclude name=".svn/**"/>
             </fileset>
         </copy>
-        <copy todir="${dir.build.release.root}/SourceCode/resource">
+        <copy todir="${dir.build.server-java.release.root}/SourceCode/resource">
             <fileset dir="${dir.resource}">
                 <exclude name=".svn/**"/>
             </fileset>
         </copy>
-        <copy todir="${dir.build.release.root}/SourceCode">
+        <copy todir="${dir.build.server-java.release.root}/SourceCode">
             <fileset file="build.xml"/>
             <fileset file="ant.properties"/>
         </copy>
         
         <!-- Binary Libraries -->
-        <copy todir="${dir.build.release.root}/BinaryLibraries">
+        <copy todir="${dir.build.server-java.release.root}/BinaryLibraries">
             <fileset dir="${dir.dist.lib}"/>
         </copy>
         
         <!-- Binary Web Applications: Test Application -->
-        <copy todir="${dir.build.release.root}/BinaryApplications">
+        <copy todir="${dir.build.server-java.release.root}/BinaryApplications">
             <fileset dir="${dir.dist.testapp}"/>
         </copy>
 
         <!-- Documentation -->
-        <copy todir="${dir.build.release.root}/Documentation/api/public">
+        <copy todir="${dir.build.server-java.release.root}/Documentation/api/public">
             <fileset dir="${dir.javadoc.public}"/>
         </copy>
-        <copy todir="${dir.build.release.root}/Documentation">
+        <copy todir="${dir.build.server-java.release.root}/Documentation">
             <fileset dir="${dir.resource}/Documentation"/>
         </copy>
         
         <!-- Licensing -->
-        <copy todir="${dir.build.release.root}/Licensing">
+        <copy todir="${dir.build.server-java.release.root}/Licensing">
             <fileset dir="${dir.resource}/Licensing"/>
         </copy>
         
         <!-- Zip & TarGz -->
         <mkdir dir="${dir.release}"/>
-        <zip zipfile="${dir.release}/${zipfile.release}" basedir="${dir.build.release}"/>
-        <tar tarfile="${dir.release}/${tarfile.release}" basedir="${dir.build.release}" longfile="gnu"/>
+        <zip zipfile="${dir.release}/${zipfile.release}" basedir="${dir.build.server-java.release}"/>
+        <tar tarfile="${dir.release}/${tarfile.release}" basedir="${dir.build.server-java.release}" longfile="gnu"/>
         <gzip src="${dir.release}/${tarfile.release}" zipfile="${dir.release}/${tgzfile.release}"/>
         <delete file="${dir.release}/${tarfile.release}"/>
     </target>
