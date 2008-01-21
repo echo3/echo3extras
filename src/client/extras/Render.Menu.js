@@ -246,8 +246,8 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
     },
     
     renderAdd: function(update, parentElement) {
-    	this._menuModel = this.component.getProperty("model");
-    	this._stateModel = this.component.getProperty("stateModel");
+    	this._menuModel = this.component.get("model");
+    	this._stateModel = this.component.get("stateModel");
     	
         this._element = this._renderMain(update);
         
@@ -758,7 +758,7 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
         	this._setSelection(menuModel);
         }
         var path = menuModel.getItemPositionPath().join(".");
-        this.component.setProperty("selection", path);
+        this.component.set("selection", path);
         this.component.fireEvent({type: "action", source: this.component, data: path});
     }
 });

@@ -107,7 +107,7 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
     },
     
     renderAdd: function(update, parentElement) {
-        this._activeTabId = this.component.getProperty("activeTab");
+        this._activeTabId = this.component.get("activeTab");
         this._element = this._render();
         
         this._headerContainerTrElement = this._element.childNodes[0].firstChild.rows[0];
@@ -128,7 +128,7 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
             this._activeTabId = null;
             if (componentCount > 0) {
                 this._selectTab(this.component.getComponent(0).renderId);
-                this.component.setProperty("activeTab", this._activeTabId);
+                this.component.set("activeTab", this._activeTabId);
             }
         }
         
@@ -406,8 +406,8 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         var centerTdElement = document.createElement("td");
         EchoAppRender.Insets.renderPixel(ExtrasRender.ComponentSync.TabPane._defaultTabInsets, centerTdElement, "padding");
         
-        var icon = layoutData ? layoutData.getProperty("icon") : null;
-        var title = layoutData ? layoutData.getProperty("title", "*") : "*";
+        var icon = layoutData ? layoutData.get("icon") : null;
+        var title = layoutData ? layoutData.get("title", "*") : "*";
         if (icon || this._parent._tabCloseEnabled) {
             // Render Text and Icon(s)
             var tableElement = document.createElement("table");
@@ -639,7 +639,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
     
     _isTabCloseEnabled: function() {
         var layoutData = this._childComponent.getRenderProperty("layoutData");
-        return layoutData ? layoutData.getProperty("closeEnabled", false) : false;
+        return layoutData ? layoutData.get("closeEnabled", false) : false;
     },
     
     _getLeftImage: function(state) {
@@ -721,7 +721,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         } else {
             // tab clicked
             this._parent._selectTab(this._childComponent.renderId);
-            this._parent.component.setProperty("activeTab", this._childComponent.renderId);
+            this._parent.component.set("activeTab", this._childComponent.renderId);
             this._parent.component.fireEvent({type: "tabSelect", source: this._parent.component, 
                     data: this._childComponent.renderId});
         }

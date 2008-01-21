@@ -347,7 +347,7 @@ ExtrasRender.ComponentSync.ColorSelect = Core.extend(EchoRender.ComponentSync, {
         WebCore.EventProcessor.add(this._svListenerDivElement, "mousedown", Core.method(this, this._processSVMouseDown), false);
         WebCore.EventProcessor.add(this._hListenerDivElement, "mousedown", Core.method(this, this._processHMouseDown), false);
         
-        this._setColor(this.component.getProperty("color"));
+        this._setColor(this.component.get("color"));
     },
     
     renderDispose: function(update) { 
@@ -412,7 +412,7 @@ ExtrasRender.ComponentSync.ColorSelect = Core.extend(EchoRender.ComponentSync, {
     _storeColor: function() {
         var renderColor = this._hsvToRgb(this._h, this._s, this._v);
         var renderHexTriplet = renderColor.toHexTriplet();
-        this.component.setProperty("color", new EchoApp.Color(renderHexTriplet));
+        this.component.set("color", new EchoApp.Color(renderHexTriplet));
     },
     
     _updateDisplayedColor: function() {

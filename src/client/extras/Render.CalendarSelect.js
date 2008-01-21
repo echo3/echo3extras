@@ -330,7 +330,7 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
         WebCore.EventProcessor.add(this._yearIncrementElement, "click", Core.method(this, this._processYearIncrement), false);
         WebCore.EventProcessor.add(this._tableElement, "click", Core.method(this, this._processDateSelect), false);
 
-        var date = this.component.getProperty("date");
+        var date = this.component.get("date");
         if (!date) {
             date = new Date();
         }
@@ -368,7 +368,7 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
     },
     
     _storeValue: function() {
-        this.component.setProperty("date", new Date(this._year, this._month, this._day));
+        this.component.set("date", new Date(this._year, this._month, this._day));
     },
     
     _updateCalendarDisplay: function() {

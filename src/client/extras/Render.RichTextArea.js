@@ -84,7 +84,7 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
 
     $virtual: {
         getIcons: function() {
-            return this.component.getProperty("icons");
+            return this.component.get("icons");
         }
     },
     
@@ -507,7 +507,7 @@ ExtrasRender.ComponentSync.RichTextArea.AbstractDialog = Core.extend(EchoApp.Win
         }
         
         for (var x in properties) {
-            this.setProperty(x, properties[x]);
+            this.set(x, properties[x]);
         }
     },
     
@@ -551,7 +551,7 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog = Core.extend(
     },
     
     processOk: function(e) {
-        var color = this._colorSelect.getProperty("color");
+        var color = this._colorSelect.get("color");
         this.parent.remove(this);
         this.fireEvent({type: "colorSelect", source: this, data : color});
     }
@@ -588,8 +588,8 @@ ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog = Core.extend(
     
     processOk: function(e) {
         var data = {
-            url: this._urlField.getProperty("text"),
-            description: this._descriptionField.getProperty("text")
+            url: this._urlField.get("text"),
+            description: this._descriptionField.get("text")
         };
         if (!data.url) {
             this.parent.add(new ExtrasRender.ComponentSync.RichTextArea.MessageDialog(this._richTextArea, 
@@ -627,7 +627,7 @@ ExtrasRender.ComponentSync.RichTextArea.ImageDialog = Core.extend(
     
     processOk: function(e) {
         var data = {
-            url: this._urlField.getProperty("text")
+            url: this._urlField.get("text")
         };
         if (!data.url) {
             this.parent.add(new ExtrasRender.ComponentSync.RichTextArea.MessageDialog(this._richTextArea, 
@@ -720,7 +720,7 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer = Core.extend(EchoRender.Compo
     },
     
     _renderContentDocument: function() {
-        var text = this.component._richTextArea.getProperty("text");
+        var text = this.component._richTextArea.get("text");
         
         var contentDocument = this._iframeElement.contentWindow.document;
         contentDocument.open();
@@ -751,7 +751,7 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer = Core.extend(EchoRender.Compo
     _storeData: function() {
         var contentDocument = this._iframeElement.contentWindow.document;
         var html = contentDocument.body.innerHTML;
-        this.component._richTextArea.setProperty("text", html);
+        this.component._richTextArea.set("text", html);
     },
     
     _storeRange: function() {
@@ -818,8 +818,8 @@ ExtrasRender.ComponentSync.RichTextArea.TableDialog = Core.extend(
     
     processOk: function(e) {
         var data = {
-            rows: parseInt(this._rowsField.getProperty("text")),
-            columns: parseInt(this._columnsField.getProperty("text"))
+            rows: parseInt(this._rowsField.get("text")),
+            columns: parseInt(this._columnsField.get("text"))
         };
         if (isNaN(data.rows) || data.rows < 1 || data.rows > 50) {
             this.parent.add(new ExtrasRender.ComponentSync.RichTextArea.MessageDialog(this._richTextArea, 

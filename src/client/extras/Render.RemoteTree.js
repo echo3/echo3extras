@@ -73,7 +73,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         this._rolloverEnabled = this.component.getRenderProperty("rolloverEnabled");
         this._selectionEnabled = this.component.getRenderProperty("selectionEnabled");
         if (this._selectionEnabled) {
-            this.selectionModel = new ExtrasApp.TreeSelectionModel(parseInt(this.component.getProperty("selectionMode")));
+            this.selectionModel = new ExtrasApp.TreeSelectionModel(parseInt(this.component.get("selectionMode")));
         }
         
         this._defaultInsets = this.component.getRenderProperty("insets");
@@ -107,9 +107,9 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         this._tbodyElement = tbodyElement;
         
         if (!this._treeStructure) {
-            this._treeStructure = this.component.getProperty("treeStructure")[0];
+            this._treeStructure = this.component.get("treeStructure")[0];
         }
-        this.columnCount = this.component.getProperty("columnCount");
+        this.columnCount = this.component.get("columnCount");
         
         this._renderColumnWidths();
         
@@ -681,7 +681,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             effect = context.getEffect(effect);
         }
         if (!result && layoutData) {
-            result = layoutData.getProperty(resolvedName);
+            result = layoutData.get(resolvedName);
         }
         if (!result && !onlyEffectProps) {
             result = this.component.getRenderProperty(resolvedName);
@@ -791,7 +791,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             if (visitedNodeCell) {
                 var insets;
                 if (columnLayout) {
-                    insets = columnLayout.getProperty("insets");
+                    insets = columnLayout.get("insets");
                 } else {
                     insets = this._defaultInsets;
                 }
@@ -889,7 +889,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         // because the node is rendered as a table within the td
         var insets;
         if (nodeLayout) {
-            insets = nodeLayout.getProperty("insets");
+            insets = nodeLayout.get("insets");
         } else {
             insets = this._defaultInsets;
         }
@@ -1135,7 +1135,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             this._renderNode(null, node);
         }
         var rowIndex = this._getRowIndexForNode(node);
-        this.component.setProperty("expansion", rowIndex);
+        this.component.set("expansion", rowIndex);
         return true;
     },
     
@@ -1192,7 +1192,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             }
         }
         
-        this.component.setProperty("selectionUpdate", update);
+        this.component.set("selectionUpdate", update);
         return true;
     },
     
