@@ -2,7 +2,7 @@
 
 <!--
  * This file is part of the Echo Extras Project.
- * Copyright (C) 2005-2007 NextApp, Inc.
+ * Copyright (C) 2005-2008 NextApp, Inc.
  *
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -61,14 +61,14 @@
     </target>
     
     <target name="compile.app" description="Compile Application source files">
-        <mkdir dir="${dir.build.app}"/>
-        <javac srcdir="${dir.src.app}" destdir="${dir.build.app}" debug="${debug}" deprecation="yes">
+        <mkdir dir="${dir.build.server-java.app}"/>
+        <javac srcdir="${dir.src.server-java.app}" destdir="${dir.build.server-java.app}" debug="${debug}" deprecation="yes">
         	<classpath>
         		<pathelement path="${echo3.app.lib.jar}"/>
         	 </classpath>
     	</javac>
-        <copy todir="${dir.build.app}">
-            <fileset dir="${dir.src.app}">
+        <copy todir="${dir.build.server-java.app}">
+            <fileset dir="${dir.src.server-java.app}">
                 <patternset refid="fileset.resources"/>
             </fileset>
         </copy>
@@ -76,21 +76,45 @@
     
     <target name="dist.app" depends="clean,compile.app">
         <mkdir dir="${dir.dist.lib}"/>
-        <jar jarfile="${dir.dist.lib}/${jarfile.extras.app}" basedir="${dir.build.app}"/>
+        <jar jarfile="${dir.dist.lib}/${jarfile.extras.app}" basedir="${dir.build.server-java.app}"/>
     </target>
-            
-    <target name="compile.webcontainer" depends="compile.app" description="Compile Web Container source files">
-        <mkdir dir="${dir.build.webcontainer}"/>
-        <javac srcdir="${dir.src.webcontainer}" destdir="${dir.build.webcontainer}" debug="${debug}" deprecation="yes">
+
+    <target name="checkenv">
+        <available property="servlet.api.available" classname="javax.servlet.http.HttpServlet">
             <classpath>
-                <pathelement path="${dir.build.app}"/>
+                <pathelement path="${servlet.lib.jar}"/>
+            </classpath>
+        </available>
+    </target>
+
+    <target name="verify.servlet.api" depends="checkenv" unless="servlet.api.available">
+        <echo message="************************************************************"/>
+        <echo message="*         Servlet API not found in build classpath         *"/>
+        <echo message="************************************************************"/>
+        <echo message="Specified JAR = ${servlet.lib.jar}"/>
+        <fail message="${servlet.lib.msg}"/>
+    </target>
+
+    <target name="compile.webcontainer" depends="verify.servlet.api,compile.webcontainer.impl" 
+    	description="Compile Echo Web Application Container"/>
+    
+    <target name="compile.webcontainer.impl" depends="verify.servlet.api, compile.app">
+        <mkdir dir="${dir.build.server-java.webcontainer}"/>
+        <javac srcdir="${dir.src.server-java.webcontainer}" destdir="${dir.build.server-java.webcontainer}" debug="${debug}" deprecation="yes">
+            <classpath>
+                <pathelement path="${dir.build.server-java.app}"/>
             	<pathelement path="${echo3.webcontainer.lib.jar}"/>
             	<pathelement path="${echo3.app.lib.jar}"/>
                 <pathelement path="${servlet.lib.jar}"/>
             </classpath>
         </javac>
-        <copy todir="${dir.build.webcontainer}">
-            <fileset dir="${dir.src.webcontainer}">
+        <copy todir="${dir.build.server-java.webcontainer}">
+            <fileset dir="${dir.src.server-java.webcontainer}">
+                <patternset refid="fileset.resources"/>
+            </fileset>
+        </copy>
+        <copy todir="${dir.build.server-java.webcontainer.js}">
+            <fileset dir="${dir.src.client.extras}">
                 <patternset refid="fileset.resources"/>
             </fileset>
         </copy>
@@ -98,26 +122,28 @@
     
     <target name="dist.webcontainer" depends="clean,compile.webcontainer">
         <mkdir dir="${dir.dist.lib}"/>
-        <jar jarfile="${dir.dist.lib}/${jarfile.extras.webcontainer}" basedir="${dir.build.webcontainer}"/>
+        <jar jarfile="${dir.dist.lib}/${jarfile.extras.webcontainer}" basedir="${dir.build.server-java.webcontainer}"/>
     </target>
         
     <target name="dist" depends="clean, dist.app, dist.webcontainer"/>
 	
     <target name="compile.testapp" depends="dist">
-        <mkdir dir="${dir.build.testapp}/WEB-INF/classes"/>
-        <mkdir dir="${dir.build.testapp}/WEB-INF/lib"/>
-        <copy todir="${dir.build.testapp}/WEB-INF/lib" file="${echo3.app.lib.jar}"/>
-        <copy todir="${dir.build.testapp}/WEB-INF/lib" file="${echo3.webcontainer.lib.jar}"/>
-        <copy todir="${dir.build.testapp}/WEB-INF/lib" file="${dir.dist.lib}/${jarfile.extras.app}"/>
-        <copy todir="${dir.build.testapp}/WEB-INF/lib" file="${dir.dist.lib}/${jarfile.extras.webcontainer}"/>
-        <copy todir="${dir.build.testapp}/WEB-INF">
-            <fileset dir="${dir.deploy.testapp}"/>
+        <mkdir dir="${dir.build.server-java.testapp}/WEB-INF/classes"/>
+        <mkdir dir="${dir.build.server-java.testapp}/WEB-INF/lib"/>
+        <copy todir="${dir.build.server-java.testapp}/WEB-INF/lib" file="${echo3.app.lib.jar}"/>
+        <copy todir="${dir.build.server-java.testapp}/WEB-INF/lib" file="${echo3.webcontainer.lib.jar}"/>
+        <copy todir="${dir.build.server-java.testapp}/WEB-INF/lib" file="${dir.dist.lib}/${jarfile.extras.app}"/>
+        <copy todir="${dir.build.server-java.testapp}/WEB-INF/lib" file="${dir.dist.lib}/${jarfile.extras.webcontainer}"/>
+        <copy todir="${dir.build.server-java.testapp}/WEB-INF">
+            <fileset dir="${dir.src.server-java.test-ia.deploy}"/>
         </copy>
-        <copy todir="${dir.build.testapp}">
-            <fileset dir="${dir.htdocs.testapp}"/>
+        <copy todir="${dir.build.server-java.testapp}">
+            <fileset dir="${dir.src.server-java.test-ia.htdocs}"/>
         </copy>
-        <javac srcdir="${dir.src.testapp}" destdir="${dir.build.testapp}/WEB-INF/classes" debug="${debug}" deprecation="yes">
+        <javac srcdir="${dir.src.server-java.test-ia.lib}" destdir="${dir.build.server-java.testapp}/WEB-INF/classes" 
+        	    debug="${debug}" deprecation="yes">
             <classpath>
+                <pathelement path="${servlet.lib.jar}"/>
                 <pathelement path="${dir.dist.lib}/${jarfile.extras.app}"/>
                 <pathelement path="${dir.dist.lib}/${jarfile.extras.webcontainer}"/>
                 <pathelement path="${servlet.lib.jar}"/>
@@ -125,8 +151,8 @@
                 <pathelement path="${echo3.webcontainer.lib.jar}"/>
             </classpath>
         </javac>
-        <copy todir="${dir.build.testapp}/WEB-INF/classes">
-            <fileset dir="${dir.src.testapp}">
+        <copy todir="${dir.build.server-java.testapp}/WEB-INF/classes">
+            <fileset dir="${dir.src.server-java.test-ia.lib}">
                 <patternset refid="fileset.resources"/>
             </fileset>
         </copy>
@@ -135,18 +161,18 @@
     <target name="dist.testapp" depends="compile.testapp" 
             description="Builds a web archive of the interactive test application">
         <mkdir dir="${dir.dist.testapp}"/>
-        <jar jarfile="${dir.dist.testapp}/${warfile.testapp}" basedir="${dir.build.testapp}"/>
+        <jar jarfile="${dir.dist.testapp}/${warfile.testapp}" basedir="${dir.build.server-java.testapp}"/>
     </target>
-	
-	<target name="doc.app"
-            description="Create public/protected JavaDoc documentation for Application">
+    
+    <target name="doc.app"
+            description="Create public/protected JavaDoc Document for Echo Extras Library">
         <mkdir dir="${dir.javadoc.app.public}"/>
-        <javadoc sourcepath="${dir.src.app}" packagenames="nextapp.echo.extras.app.*" 
+        <javadoc sourcepath="${dir.src.server-java.app}" packagenames="nextapp.echo.extras.app.*" 
                 stylesheetfile="${javadoc.cssfile}"
                 destdir="${dir.javadoc.app.public}" 
                 WindowTitle="${javadoc.windowtitle}"
                 DocTitle="${javadoc.doctitle.app}"
-                Overview="${dir.src.app}/overview.html"
+                Overview="${dir.src.server-java.app}/overview.html"
                 Header="${javadoc.header}">
             <classpath>
                 <pathelement path="${echo3.app.lib.jar}"/>
@@ -155,14 +181,14 @@
     </target>
     
     <target name="doc.app.private"
-            description="Create private JavaDoc documentation for Application">
+            description="Create private JavaDoc Document for Echo Extras Library">
         <mkdir dir="${dir.javadoc.app.private}"/>
-        <javadoc sourcepath="${dir.src.app}" packagenames="nextapp.echo.extras.app.*" 
+        <javadoc sourcepath="${dir.src.server-java.app}" packagenames="nextapp.echo.extras.app.*" 
                 stylesheetfile="${javadoc.cssfile}"
                 destdir="${dir.javadoc.app.private}" 
                 WindowTitle="${javadoc.windowtitle}"
                 DocTitle="${javadoc.doctitle.app}"
-                Overview="${dir.src.app}/overview.html"
+                Overview="${dir.src.server-java.app}/overview.html"
                 Header="${javadoc.header}"
                 Private="true">
             <classpath>
@@ -172,14 +198,15 @@
     </target>
    
     <target name="doc.webcontainer"
-            description="Create public/protected JavaDoc documentation for Web Container">
+            description="Create public/protected JavaDoc Document Echo Extras Library WebContainer">
         <mkdir dir="${dir.javadoc.webcontainer.public}"/>
-        <javadoc sourcepath="${dir.src.app};${dir.src.webcontainer}" packagenames="nextapp.echo.extras.webcontainer.*" 
+        <javadoc sourcepath="${dir.src.server-java.app};${dir.src.server-java.webcontainer}" 
+    	        packagenames="nextapp.echo.extras.webcontainer.*" 
                 stylesheetfile="${javadoc.cssfile}"
                 destdir="${dir.javadoc.webcontainer.public}" 
                 WindowTitle="${javadoc.windowtitle}"
                 DocTitle="${javadoc.doctitle.webcontainer}"
-                Overview="${dir.src.webcontainer}/overview.html"
+                Overview="${dir.src.server-java.webcontainer}/overview.html"
                 Header="${javadoc.header}">
             <classpath>
                 <pathelement path="${echo3.app.lib.jar}"/>
@@ -190,14 +217,15 @@
     </target>
     
     <target name="doc.webcontainer.private"
-            description="Create private JavaDoc documentation for Web Container">
+            description="Create private JavaDoc Document for Echo Extras Library WebContainer">
         <mkdir dir="${dir.javadoc.webcontainer.private}"/>
-        <javadoc sourcepath="${dir.src.app};${dir.src.webcontainer}" packagenames="nextapp.echo.extras.webcontainer.*" 
+        <javadoc sourcepath="${dir.src.server-java.app};${dir.src.server-java.webcontainer}" 
+        	    packagenames="nextapp.echo.extras.webcontainer.*" 
                 stylesheetfile="${javadoc.cssfile}"
                 destdir="${dir.javadoc.webcontainer.private}" 
                 WindowTitle="${javadoc.windowtitle}"
                 DocTitle="${javadoc.doctitle.webcontainer}"
-                Overview="${dir.src.webcontainer}/overview.html"
+                Overview="${dir.src.server-java.webcontainer}/overview.html"
                 Header="${javadoc.header}"
                 Private="true">
             <classpath>
