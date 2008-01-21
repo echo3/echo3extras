@@ -144,7 +144,7 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
         this._transition = new this._transitionClass(this);
         this._duration = this.component.getRenderProperty("duration", this._transition.duration);
         this._runnable = new ExtrasRender.ComponentSync.TransitionPane.Runnable(this);
-        Core.Scheduler.add(this._runnable); 
+        WebCore.Scheduler.add(this._runnable); 
     },
     
     /**
@@ -154,7 +154,7 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
     _transitionFinish: function() {
         // Remove runnable task from scheduler.
         if (this._runnable) {
-            Core.Scheduler.remove(this._runnable);
+            WebCore.Scheduler.remove(this._runnable);
             this._runnable = null;
         }
         
@@ -169,7 +169,7 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
     }
 });
 
-ExtrasRender.ComponentSync.TransitionPane.Runnable = Core.extend(Core.Scheduler.Runnable, {
+ExtrasRender.ComponentSync.TransitionPane.Runnable = Core.extend(WebCore.Scheduler.Runnable, {
 
     transitionPane: null,
 

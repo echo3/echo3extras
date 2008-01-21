@@ -1,3 +1,4 @@
+// FIXME Update animation to use WebCore.Scheduler.
 // FIXME handle enabled/disabled state
 
 /**
