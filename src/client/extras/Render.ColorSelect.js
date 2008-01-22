@@ -114,11 +114,11 @@ ExtrasRender.ComponentSync.ColorSelect = Core.extend(EchoRender.ComponentSync, {
     
     renderAdd: function(update, parentElement) {
         this._valueWidth = EchoAppRender.Extent.toPixels(
-                this.component.getRenderProperty("valueWidth", ExtrasApp.ColorSelect.DEFAULT_VALUE_WIDTH), true);
+                this.component.render("valueWidth", ExtrasApp.ColorSelect.DEFAULT_VALUE_WIDTH), true);
         this._saturationHeight = EchoAppRender.Extent.toPixels(
-                this.component.getRenderProperty("saturationHeight", ExtrasApp.ColorSelect.DEFAULT_SATURATION_HEIGHT), false);
+                this.component.render("saturationHeight", ExtrasApp.ColorSelect.DEFAULT_SATURATION_HEIGHT), false);
         this._hueWidth = EchoAppRender.Extent.toPixels(
-                this.component.getRenderProperty("hueWidth", ExtrasApp.ColorSelect.DEFAULT_HUE_WIDTH), true);
+                this.component.render("hueWidth", ExtrasApp.ColorSelect.DEFAULT_HUE_WIDTH), true);
     
         var svGradientImageSrc = this.client.getServiceUrl("EchoExtras.ColorSelect.SVGradient");
         var hGradientImageSrc = this.client.getServiceUrl("EchoExtras.ColorSelect.HGradient");
@@ -314,7 +314,7 @@ ExtrasRender.ComponentSync.ColorSelect = Core.extend(EchoRender.ComponentSync, {
         this._colorDivElement.style.borderWidth = "1px";
         this._colorDivElement.style.fontFamily = "monospace";
         this._colorDivElement.style.textAlign = "center";
-        if (this.component.getRenderProperty("displayValue")) {
+        if (this.component.render("displayValue")) {
             this._colorDivElement.appendChild(document.createTextNode("#000000"));
         }
         this._containerDivElement.appendChild(this._colorDivElement);
@@ -429,7 +429,7 @@ ExtrasRender.ComponentSync.ColorSelect = Core.extend(EchoRender.ComponentSync, {
         this._colorDivElement.style.backgroundColor = renderHexTriplet;
         this._colorDivElement.style.borderColor = renderHexTriplet;
         this._colorDivElement.style.color = this._v < 0.67 ? "#ffffff" : "#000000";
-        if (this.component.getRenderProperty("displayValue")) {
+        if (this.component.render("displayValue")) {
             this._colorDivElement.childNodes[0].nodeValue = renderHexTriplet;
         }
         

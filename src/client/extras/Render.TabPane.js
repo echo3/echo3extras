@@ -79,19 +79,19 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
     },
     
     _render: function() {
-        this._borderType = this.component.getRenderProperty("borderType", ExtrasRender.ComponentSync.TabPane._defaultBorderType);
-        this._insets = this.component.getRenderProperty("insets", ExtrasRender.ComponentSync.TabPane._defaultInsets);
-        this._tabActiveBorder = this.component.getRenderProperty("tabActiveBorder", 
+        this._borderType = this.component.render("borderType", ExtrasRender.ComponentSync.TabPane._defaultBorderType);
+        this._insets = this.component.render("insets", ExtrasRender.ComponentSync.TabPane._defaultInsets);
+        this._tabActiveBorder = this.component.render("tabActiveBorder", 
                 ExtrasRender.ComponentSync.TabPane._defaultTabActiveBorder);
-        this._tabActiveHeightIncrease = this.component.getRenderProperty("tabActiveHeightIncrease", 
+        this._tabActiveHeightIncrease = this.component.render("tabActiveHeightIncrease", 
                 ExtrasRender.ComponentSync.TabPane._defaultTabActiveHeightIncrease);
-        this._tabInactiveBorder = this.component.getRenderProperty("tabInactiveBorder", 
+        this._tabInactiveBorder = this.component.render("tabInactiveBorder", 
                 ExtrasRender.ComponentSync.TabPane._defaultTabInactiveBorder);
-        this._tabHeight = this.component.getRenderProperty("tabHeight", ExtrasRender.ComponentSync.TabPane._defaultTabHeight);
-        this._tabInset = this.component.getRenderProperty("tabInset", ExtrasRender.ComponentSync.TabPane._defaultTabInset);
-        this._tabPosition = this.component.getRenderProperty("tabPosition", ExtrasRender.ComponentSync.TabPane._defaultTabPosition);
-        this._tabSpacing = this.component.getRenderProperty("tabSpacing", ExtrasRender.ComponentSync.TabPane._defaultTabSpacing);
-        this._tabCloseEnabled = this.component.getRenderProperty("tabCloseEnabled", false);
+        this._tabHeight = this.component.render("tabHeight", ExtrasRender.ComponentSync.TabPane._defaultTabHeight);
+        this._tabInset = this.component.render("tabInset", ExtrasRender.ComponentSync.TabPane._defaultTabInset);
+        this._tabPosition = this.component.render("tabPosition", ExtrasRender.ComponentSync.TabPane._defaultTabPosition);
+        this._tabSpacing = this.component.render("tabSpacing", ExtrasRender.ComponentSync.TabPane._defaultTabSpacing);
+        this._tabCloseEnabled = this.component.render("tabCloseEnabled", false);
     
         var tabPaneDivElement = document.createElement("div");
         tabPaneDivElement.id = this.component.renderId;
@@ -374,7 +374,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
     },
     
     _renderHeaderContainer: function() {
-        var layoutData = this._childComponent.getRenderProperty("layoutData");
+        var layoutData = this._childComponent.render("layoutData");
         
         var headerTdElement = document.createElement("td");
         headerTdElement.id = this._parent.component.renderId + "_header_td_" + this._childComponent.renderId;
@@ -386,7 +386,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
            headerTableElement.cellPadding = "0px";
            headerTableElement.cellSpacing = "0px";
         headerTableElement.style.marginRight = this._parent._tabSpacing.toString();
-        var width = this._parent.component.getRenderProperty("tabWidth");
+        var width = this._parent.component.render("tabWidth");
         if (width) {
                headerTableElement.style.width = width.toString();
         }
@@ -465,7 +465,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
                 ExtrasRender.ComponentSync.TabPane._defaultTabAlignment, imgTdElement, true, this._parent.component);
         var imgElement = document.createElement("img");
         imgElement.src = icon.url;
-        imgElement.style.marginRight = this._parent.component.getRenderProperty("tabIconTextMargin", 
+        imgElement.style.marginRight = this._parent.component.render("tabIconTextMargin", 
                 ExtrasRender.ComponentSync.TabPane._defaultTabIconTextMargin);
         imgTdElement.appendChild(imgElement);
         return imgTdElement;
@@ -475,7 +475,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         var imgTdElement = document.createElement("td");
         EchoAppRender.Alignment.renderComponentProperty(this._parent.component, "tabAlignment", 
                 ExtrasRender.ComponentSync.TabPane._defaultTabAlignment, imgTdElement, true, this._parent.component);
-        imgTdElement.style.paddingLeft = this._parent.component.getRenderProperty("tabCloseIconTextMargin", 
+        imgTdElement.style.paddingLeft = this._parent.component.render("tabCloseIconTextMargin", 
                 ExtrasRender.ComponentSync.TabPane._defaultTabCloseIconTextMargin);
         imgTdElement.style.paddingTop = "0px";
         imgTdElement.style.paddingRight = "0px";
@@ -551,12 +551,12 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         var background;
         var border;
         if (state) {
-            foreground = this._parent.component.getRenderProperty("tabActiveForeground");
-            background = this._parent.component.getRenderProperty("tabActiveBackground");
+            foreground = this._parent.component.render("tabActiveForeground");
+            background = this._parent.component.render("tabActiveBackground");
             border = this._parent._tabActiveBorder;
         } else {
-            foreground = this._parent.component.getRenderProperty("tabInactiveForeground");
-            background = this._parent.component.getRenderProperty("tabInactiveBackground");
+            foreground = this._parent.component.render("tabInactiveForeground");
+            background = this._parent.component.render("tabInactiveBackground");
             border = this._parent._tabInactiveBorder;
         }
         EchoAppRender.Color.renderClear(foreground, headerContentTableElement, "color");
@@ -566,9 +566,9 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         
         var backgroundImage;
         if (state) {
-            backgroundImage = this._parent.component.getRenderProperty("tabActiveBackgroundImage");
+            backgroundImage = this._parent.component.render("tabActiveBackgroundImage");
         } else {
-            backgroundImage = this._parent.component.getRenderProperty("tabInactiveBackgroundImage");
+            backgroundImage = this._parent.component.render("tabInactiveBackgroundImage");
         }
         EchoAppRender.FillImage.renderClear(backgroundImage, centerTdElement, null);
         
@@ -585,9 +585,9 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         
         var font;
         if (state) {
-            font = this._parent.component.getRenderProperty("tabActiveFont");
+            font = this._parent.component.render("tabActiveFont");
         } else {
-            font = this._parent.component.getRenderProperty("tabInactiveFont");
+            font = this._parent.component.render("tabInactiveFont");
         }
         EchoAppRender.Font.renderClear(font, headerContentTableElement);
     
@@ -638,13 +638,13 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
     },
     
     _isTabCloseEnabled: function() {
-        var layoutData = this._childComponent.getRenderProperty("layoutData");
+        var layoutData = this._childComponent.render("layoutData");
         return layoutData ? layoutData.get("closeEnabled", false) : false;
     },
     
     _getLeftImage: function(state) {
         var propertyName = state ? "tabActiveLeftImage" : "tabInactiveLeftImage";
-        var image = this._parent.component.getRenderProperty(propertyName);
+        var image = this._parent.component.render(propertyName);
         if (!image) {
             return;
         }
@@ -659,7 +659,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
     
     _getRightImage: function(state) {
         var propertyName = state ? "tabActiveRightImage" : "tabInactiveRightImage";
-        var image = this._parent.component.getRenderProperty(propertyName);
+        var image = this._parent.component.render(propertyName);
         if (!image) {
             return;
         }
@@ -672,29 +672,29 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         if (!this._parent._tabCloseEnabled) {
             return false;
         }
-        if (this._parent.component.getRenderProperty("tabCloseIcon")) {
+        if (this._parent.component.render("tabCloseIcon")) {
             return true;
         }
-        if (this._parent.component.getRenderProperty("tabDisabledCloseIcon")) {
+        if (this._parent.component.render("tabDisabledCloseIcon")) {
             return true;
         }
-        if (this._parent.component.getRenderProperty("tabCloseIconRolloverEnabled")) {
-            return this._parent.component.getRenderProperty("tabRolloverCloseIcon") != null;
+        if (this._parent.component.render("tabCloseIconRolloverEnabled")) {
+            return this._parent.component.render("tabRolloverCloseIcon") != null;
         }
         return false;
     },
     
     _getCloseImage: function(rollover) {
         if (this._isTabCloseEnabled()) {
-            if (rollover && this._parent.component.getRenderProperty("tabCloseIconRolloverEnabled")) {
-                var image = this._parent.component.getRenderProperty("tabRolloverCloseIcon");
+            if (rollover && this._parent.component.render("tabCloseIconRolloverEnabled")) {
+                var image = this._parent.component.render("tabRolloverCloseIcon");
                 if (image) {
                     return image;
                 }
             }
-            return this._parent.component.getRenderProperty("tabCloseIcon");
+            return this._parent.component.render("tabCloseIcon");
         } else {
-            return this._parent.component.getRenderProperty("tabDisabledCloseIcon");
+            return this._parent.component.render("tabDisabledCloseIcon");
         }
     },
     
@@ -702,7 +702,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         if (this._childComponent.pane) {
             return ExtrasRender.ComponentSync.TabPane._paneInsets;
         } else {
-            return this._parent.component.getRenderProperty("defaultContentInsets", 
+            return this._parent.component.render("defaultContentInsets", 
                     ExtrasRender.ComponentSync.TabPane._defaultTabContentInsets);
         }
     },

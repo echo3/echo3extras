@@ -66,39 +66,39 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
             EchoAppRender.Insets.renderPixel(this._menuInsets, menuDivElement, "padding");
             EchoAppRender.Border.render(this._getMenuBorder(), menuDivElement);
             var background;
-            var menuBackground = this.component.getRenderProperty("menuBackground");
+            var menuBackground = this.component.render("menuBackground");
             if (menuBackground) {
                 background = menuBackground;
             } else {
-                background = this.component.getRenderProperty("background", ExtrasRender.ComponentSync.Menu._defaultBackground);
+                background = this.component.render("background", ExtrasRender.ComponentSync.Menu._defaultBackground);
             }
             EchoAppRender.Color.render(background, menuDivElement, "backgroundColor");
             var foreground;
-            var menuForeground = this.component.getRenderProperty("menuForeground");
+            var menuForeground = this.component.render("menuForeground");
             if (menuForeground) {
                 foreground = menuForeground;
             } else {
-                foreground = this.component.getRenderProperty("foreground", ExtrasRender.ComponentSync.Menu._defaultForeground);
+                foreground = this.component.render("foreground", ExtrasRender.ComponentSync.Menu._defaultForeground);
             }
             EchoAppRender.Color.render(foreground, menuDivElement, "color");
             menuDivElement.style.zIndex = ExtrasRender.ComponentSync.Menu.MAX_Z_INDEX;
             // Apply menu background image if it is set, or apply default background 
             // image if it is set and the menu background is NOT set.
             var backgroundImage;
-            var menuBackgroundImage = this.component.getRenderProperty("menuBackgroundImage");
+            var menuBackgroundImage = this.component.render("menuBackgroundImage");
             if (menuBackgroundImage) {
                 backgroundImage = menuBackgroundImage;
             } else if (menuBackground == null) {
-                backgroundImage = this.component.getRenderProperty("backgroundImage");
+                backgroundImage = this.component.render("backgroundImage");
             }
             if (backgroundImage) {
                 EchoAppRender.FillImage.render(backgroundImage, menuDivElement, null); 
             }
             // Apply menu font if it is set, or apply default font 
             // if it is set and the menu font is NOT set.
-            var font = this.component.getRenderProperty("menuFont");
+            var font = this.component.render("menuFont");
             if (!font) {
-                font = this.component.getRenderProperty("font");
+                font = this.component.render("font");
             }
             if (font) {
                 EchoAppRender.Font.render(font, menuDivElement);
@@ -168,7 +168,7 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
                     
                     var menuItemContentTdElement = document.createElement("td");
                     EchoAppRender.Insets.renderPixel(textPadding, menuItemContentTdElement, "padding");
-                    var lineWrap = this.component.getRenderProperty("lineWrap");
+                    var lineWrap = this.component.render("lineWrap");
                     if (lineWrap != null && !lineWrap) {
                         menuItemContentTdElement.style.whiteSpace = "nowrap";
                     }
@@ -185,7 +185,7 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
                         var menuItemArrowTdElement = document.createElement("td");
                         menuItemArrowTdElement.style.textAlign = "right";
                         var imgElement = document.createElement("img");
-                        var expandImage = this.component.getRenderProperty("menuExpandIcon", 
+                        var expandImage = this.component.render("menuExpandIcon", 
                                 ExtrasRender.ComponentSync.Menu._getImageUri("submenuRight"))
                         imgElement.setAttribute("src", expandImage.url ? expandImage.url : expandImage);
                         imgElement.setAttribute("alt", "");
@@ -410,7 +410,7 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
     },
     
     _getBorder: function() {
-        var border = this.component.getRenderProperty("border");
+        var border = this.component.render("border");
     	if (!border) {
     		border = new EchoApp.Border("1px outset #cfcfcf");
     	}
@@ -418,7 +418,7 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
     },
     
     _getMenuBorder: function() {
-    	var border = this.component.getRenderProperty("menuBorder");
+    	var border = this.component.render("menuBorder");
     	if (!border) {
     		border = this._getBorder();
     	}
@@ -551,14 +551,14 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
         dropDownDivElement.id = this.component.renderId;
         dropDownDivElement.style.cursor = "pointer";
         dropDownDivElement.style.overflow = "hidden";
-        var width = this.component.getRenderProperty("width");
+        var width = this.component.render("width");
         if (width) {
             dropDownDivElement.style.width = width.toString();
         } else {
         	// if the width is not set, IE won't fire click events.
         	dropDownDivElement.style.width = "100%";
         }
-        var height = this.component.getRenderProperty("height");
+        var height = this.component.render("height");
         if (height) {
             dropDownDivElement.style.height = height.toString();
         }
@@ -570,8 +570,8 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
         //EchoAppRender.Insets.renderComponentProperty(this.component, "insets", null, relativeContainerDivElement, "padding");
         relativeContainerDivElement.appendChild(document.createTextNode("\u00a0"));
         
-        var expandIcon = this.component.getRenderProperty("expandIcon", ExtrasRender.ComponentSync.Menu._getImageUri("submenuDown"));
-        var expandIconWidth = this.component.getRenderProperty("expandIconWidth", new EchoApp.Extent("10px"));
+        var expandIcon = this.component.render("expandIcon", ExtrasRender.ComponentSync.Menu._getImageUri("submenuDown"));
+        var expandIconWidth = this.component.render("expandIconWidth", new EchoApp.Extent("10px"));
         
         var expandElement = document.createElement("span");
         expandElement.style.position = "absolute";
@@ -588,7 +588,7 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
         this._contentDivElement.style.top = "0px";
         this._contentDivElement.style.left = "0px";
     	this._contentDivElement.style.right = expandIconWidth.toString();
-    	var insets = this.component.getRenderProperty("insets");
+    	var insets = this.component.render("insets");
     	if (insets) {
     	    EchoAppRender.Insets.renderPixel(insets, this._contentDivElement, "padding");
     	    if (height) {
@@ -616,13 +616,13 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
         WebCore.EventProcessor.Selection.disable(dropDownDivElement);
     
         if (this._isSelectionEnabled()) {
-        	var selection = this.component.getRenderProperty("selection");
+        	var selection = this.component.render("selection");
         	if (selection) {
     	    	this._setSelection(this._menuModel.getItemModelFromPositions(selection.split(".")), contentSpanElement);
         	}
         }
         if (!this._selectedItem) {
-        	var selectionText = this.component.getRenderProperty("selectionText");
+        	var selectionText = this.component.render("selectionText");
         	if (selectionText) {
     	    	contentSpanElement.appendChild(document.createTextNode(selectionText));
         	}
@@ -634,13 +634,13 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
     renderMenu: function(menuModel, xPosition, yPosition) {
     	var menuDivElement = ExtrasRender.ComponentSync.Menu.prototype.renderMenu.call(this, menuModel, xPosition, yPosition);
         
-        var menuWidth = this.component.getRenderProperty("menuWidth");
+        var menuWidth = this.component.render("menuWidth");
         if (menuWidth) {
     	    menuDivElement.style.width = menuWidth;
     	    menuDivElement.style.overflowX = "hidden";
     	    menuDivElement.firstChild.style.width = "100%";
     	}
-        var menuHeight = this.component.getRenderProperty("menuHeight");
+        var menuHeight = this.component.render("menuHeight");
         if (menuHeight) {
     	    if (WebCore.Environment.NOT_SUPPORTED_CSS_MAX_HEIGHT) {
     		    var measure = new WebCore.Measure(menuDivElement);
@@ -662,7 +662,7 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
     },
     
     _isSelectionEnabled: function() {
-        return this.component.getRenderProperty("selectionEnabled");
+        return this.component.render("selectionEnabled");
     },
     
     _isTopMenuElement: function(element) {

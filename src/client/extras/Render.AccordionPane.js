@@ -212,17 +212,17 @@ ExtrasRender.ComponentSync.AccordionPane = Core.extend(EchoRender.ComponentSync,
     },
     
     _getTabBackground: function() {
-    	var background = this.component.getRenderProperty("tabBackground");
+    	var background = this.component.render("tabBackground");
     	return background ? background : ExtrasRender.ComponentSync.AccordionPane._defaultTabBackground;
     },
     
     _getTabBorder: function() {
-    	var border = this.component.getRenderProperty("tabBorder");
+    	var border = this.component.render("tabBorder");
     	return border ? border : ExtrasRender.ComponentSync.AccordionPane._defaultTabBorder;
     },
     
     _getTabInsets: function() {
-    	var insets = this.component.getRenderProperty("tabInsets");
+    	var insets = this.component.render("tabInsets");
     	return insets ? insets : ExtrasRender.ComponentSync.AccordionPane._defaultTabInsets;
     },
     
@@ -294,26 +294,27 @@ ExtrasRender.ComponentSync.AccordionPane.Tab = Core.extend({
     _highlight: function(state) {
         var tabDivElement = this._tabDivElement;
         if (state) {
-            var background = this._parent.component.getRenderProperty("tabRolloverBackground");
+            var background = this._parent.component.render("tabRolloverBackground");
             if (!background) {
             	background = ExtrasRender.Color.adjustIntensity(this._parent._getTabBackground());
             }
             EchoAppRender.Color.render(background, tabDivElement, "backgroundColor");
-            var backgroundImage = this._parent.component.getRenderProperty("tabRolloverBackgroundImage");
+            var backgroundImage = this._parent.component.render("tabRolloverBackgroundImage");
             if (backgroundImage) {
     	        tabDivElement.style.backgroundImage = "";
     	        tabDivElement.style.backgroundPosition = "";
     	        tabDivElement.style.backgroundRepeat = "";
     	        EchoAppRender.FillImage.render(backgroundImage, tabDivElement, null);
             }
-            var foreground = this._parent.component.getRenderProperty("tabRolloverForeground");
+            var foreground = this._parent.component.render("tabRolloverForeground");
             if (foreground) {
             	EchoAppRender.Color.render(foreground, tabDivElement, "color");
             }
-            var border = this._parent.component.getRenderProperty("tabRolloverBorder");
+            var border = this._parent.component.render("tabRolloverBorder");
             if (!border) {
             	var defaultBorder = this._parent._getTabBorder();
-            	border = new EchoApp.Border(defaultBorder.size, defaultBorder.style, ExtrasRender.Color.adjustIntensity(defaultBorder.color));
+            	border = new EchoApp.Border(defaultBorder.size, defaultBorder.style, 
+            	        ExtrasRender.Color.adjustIntensity(defaultBorder.color));
             }
     	    EchoAppRender.Border.renderSide(border, tabDivElement, "borderTop");
     	    EchoAppRender.Border.renderSide(border, tabDivElement, "borderBottom");
@@ -322,7 +323,8 @@ ExtrasRender.ComponentSync.AccordionPane.Tab = Core.extend({
     	    EchoAppRender.Border.renderSide(border, tabDivElement, "borderTop");
     	    EchoAppRender.Border.renderSide(border, tabDivElement, "borderBottom");
     	    EchoAppRender.Color.render(this._parent._getTabBackground(), tabDivElement, "backgroundColor");
-    	    EchoAppRender.Color.renderComponentProperty(this._parent.component, "tabForeground", ExtrasRender.ComponentSync.AccordionPane._defaultTabForeground, tabDivElement, "color");
+    	    EchoAppRender.Color.renderComponentProperty(this._parent.component, "tabForeground", 
+    	            ExtrasRender.ComponentSync.AccordionPane._defaultTabForeground, tabDivElement, "color");
             tabDivElement.style.backgroundImage = "";
             tabDivElement.style.backgroundPosition = "";
             tabDivElement.style.backgroundRepeat = "";
@@ -332,7 +334,7 @@ ExtrasRender.ComponentSync.AccordionPane.Tab = Core.extend({
     
     _addEventListeners: function() {
         WebCore.EventProcessor.add(this._tabDivElement, "click", Core.method(this, this._processClick), false);
-        if (this._parent.component.getRenderProperty("tabRolloverEnabled", true)) {
+        if (this._parent.component.render("tabRolloverEnabled", true)) {
     	    WebCore.EventProcessor.add(this._tabDivElement, "mouseover", Core.method(this, this._processEnter), false);
     	    WebCore.EventProcessor.add(this._tabDivElement, "mouseout", Core.method(this, this._processExit), false);
         }
@@ -340,7 +342,7 @@ ExtrasRender.ComponentSync.AccordionPane.Tab = Core.extend({
     },
     
     _getTitle: function() {
-    	var layoutData = this._childComponent.getRenderProperty("layoutData");
+    	var layoutData = this._childComponent.render("layoutData");
     	return layoutData ? layoutData.get("title") : null;
     },
     
@@ -348,7 +350,7 @@ ExtrasRender.ComponentSync.AccordionPane.Tab = Core.extend({
         if (this._childComponent.pane) {
     		return ExtrasRender.ComponentSync.AccordionPane._paneInsets;
     	} else {
-    		var insets = this._parent.component.getRenderProperty("defaultContentInsets");
+    		var insets = this._parent.component.render("defaultContentInsets");
     		return insets ? insets : ExtrasRender.ComponentSync.AccordionPane._defaultTabContentInsets;
     	}
     },

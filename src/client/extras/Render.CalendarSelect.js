@@ -230,7 +230,7 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
 
     renderAdd: function(update, parentElement) {
         var i, j, tdElement, trElement;
-        var dayOfWeekNameAbbreviationLength = parseInt(this.component.getRenderProperty("dayOfWeekNameAbbreviationLength", 2));
+        var dayOfWeekNameAbbreviationLength = parseInt(this.component.render("dayOfWeekNameAbbreviationLength", 2));
         var firstDayOfWeek = this._msg["FirstDayOfWeek"];
         if (!firstDayOfWeek) {
             firstDayOfWeek = 0;
@@ -378,13 +378,13 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
         this._calculateCalendarInformation();
         var day = 1 - this._firstDayOfMonth;
         
-        var adjacentMonthDateForeground = this.component.getRenderProperty("adjacentMonthDateForeground",
+        var adjacentMonthDateForeground = this.component.render("adjacentMonthDateForeground",
                 ExtrasRender.ComponentSync.CalendarSelect.DEFAULT_ADJACENT_MONTH_DATE_FOREGROUND);
-        var foreground = this.component.getRenderProperty("foreground", 
+        var foreground = this.component.render("foreground", 
                 ExtrasRender.ComponentSync.CalendarSelect.DEFAULT_FOREGROUND);
-        var selectedForeground = this.component.getRenderProperty("selectedForeground", 
+        var selectedForeground = this.component.render("selectedForeground", 
                 ExtrasRender.ComponentSync.CalendarSelect.DEFAULT_SELECTED_DATE_FOREGROUND);
-        var selectedBackground = this.component.getRenderProperty("selectedBackground", 
+        var selectedBackground = this.component.render("selectedBackground", 
                 ExtrasRender.ComponentSync.CalendarSelect.DEFAULT_SELECTED_DATE_BACKGROUND);
         
         for (var i = 0; i < 6; ++i) {

@@ -30,9 +30,9 @@ ExtrasRender.ComponentSync.BorderPane = Core.extend(EchoRender.ComponentSync, {
     },
     
     _renderBorder: function() {
-        var border = this.component.getRenderProperty("border", ExtrasApp.BorderPane.DEFAULT_BORDER);
+        var border = this.component.render("border", ExtrasApp.BorderPane.DEFAULT_BORDER);
         var borderInsets = EchoAppRender.Insets.toPixels(border.borderInsets);
-        var flags = this.component.getRenderProperty("ieAlphaRenderBorder") 
+        var flags = this.component.render("ieAlphaRenderBorder") 
                 ? EchoAppRender.FillImage.FLAG_ENABLE_IE_PNG_ALPHA_FILTER : 0;
         var cornerElement;
         
@@ -131,7 +131,7 @@ ExtrasRender.ComponentSync.BorderPane = Core.extend(EchoRender.ComponentSync, {
         EchoAppRender.Color.renderFB(this.component, this._contentDivElement);
         EchoAppRender.Font.renderDefault(this.component, this._contentDivElement);
     
-        var border = this.component.getRenderProperty("border", ExtrasApp.BorderPane.DEFAULT_BORDER);
+        var border = this.component.render("border", ExtrasApp.BorderPane.DEFAULT_BORDER);
         var contentInsets = EchoAppRender.Insets.toPixels(border.contentInsets);
     
         this._contentDivElement.style.top = contentInsets.top + "px";
@@ -142,7 +142,7 @@ ExtrasRender.ComponentSync.BorderPane = Core.extend(EchoRender.ComponentSync, {
         var componentCount = this.component.getComponentCount();
         if (componentCount == 1) {
     	    var child = this.component.getComponent(0);
-    	    var insets = child.pane ? null : this.component.getRenderProperty("insets");
+    	    var insets = child.pane ? null : this.component.render("insets");
     	    if (insets) {
     	    	EchoAppRender.Insets.renderPixel(insets, this._contentDivElement, "padding");
     	    }

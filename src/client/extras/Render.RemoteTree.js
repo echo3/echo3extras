@@ -59,7 +59,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
     },
     
     renderAdd: function(update, parentElement) {
-        this._lineStyle = this.component.getRenderProperty("lineStyle", 2);
+        this._lineStyle = this.component.render("lineStyle", 2);
         this._showLines = this._lineStyle != ExtrasRender.ComponentSync.RemoteTree.LINE_STYLE_NONE;
         if (this._showLines) {
             var solid = this._lineStyle == ExtrasRender.ComponentSync.RemoteTree.LINE_STYLE_SOLID;
@@ -67,22 +67,22 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             this.verticalLineImage = this._getImageUri("lineVertical" + lineImageIdSuffix);
             this.horizontalLineImage = this._getImageUri("lineHorizontal" + lineImageIdSuffix);
         }
-        this._showsRootHandle = this.component.getRenderProperty("showsRootHandle", false);
-        this._rootVisible = this.component.getRenderProperty("rootVisible", true);
-        this._headerVisible = this.component.getRenderProperty("headerVisible", false);
-        this._rolloverEnabled = this.component.getRenderProperty("rolloverEnabled");
-        this._selectionEnabled = this.component.getRenderProperty("selectionEnabled");
+        this._showsRootHandle = this.component.render("showsRootHandle", false);
+        this._rootVisible = this.component.render("rootVisible", true);
+        this._headerVisible = this.component.render("headerVisible", false);
+        this._rolloverEnabled = this.component.render("rolloverEnabled");
+        this._selectionEnabled = this.component.render("selectionEnabled");
         if (this._selectionEnabled) {
             this.selectionModel = new ExtrasApp.TreeSelectionModel(parseInt(this.component.get("selectionMode")));
         }
         
-        this._defaultInsets = this.component.getRenderProperty("insets");
+        this._defaultInsets = this.component.render("insets");
         if (!this._defaultInsets) {
             this._defaultInsets = new EchoApp.Insets(0);
         }
         this._defaultCellPadding = EchoAppRender.Insets.toCssValue(this._defaultInsets);
         
-        var width = this.component.getRenderProperty("width");
+        var width = this.component.render("width");
         if (width && WebCore.Environment.QUIRK_IE_TABLE_PERCENT_WIDTH_SCROLLBAR_ERROR && width.units == "%") {
             this._renderPercentWidthByMeasure = width.value;
             width = null;
@@ -121,15 +121,15 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         
         parentElement.appendChild(tableElement);
     
-        var selection = this.component.getRenderProperty("selection");
+        var selection = this.component.render("selection");
         if (selection && this._selectionEnabled) {
             this._setSelectedFromProperty(selection);
         }
     },
     
     _computeEffectBorderCompensation: function() {
-        var selectionBorder = this._createMultiSidedBorder(this.component.getRenderProperty("selectionBorder"));
-        var rolloverBorder = this._createMultiSidedBorder(this.component.getRenderProperty("rolloverBorder"));
+        var selectionBorder = this._createMultiSidedBorder(this.component.render("selectionBorder"));
+        var rolloverBorder = this._createMultiSidedBorder(this.component.render("rolloverBorder"));
         var selectionBorderLeft = 0;
         if (selectionBorder && this._selectionEnabled) {
             selectionBorderLeft = EchoAppRender.Extent.toPixels(this._getBorderSide(selectionBorder, 3).size, true);
@@ -142,7 +142,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
     },
     
     _renderColumnWidths: function() {
-        if (!this.component.getRenderProperty("columnWidth")) {
+        if (!this.component.render("columnWidth")) {
             return;
         }
         // If any column widths are set, render colgroup.
@@ -156,7 +156,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         var renderRelative = !WebCore.Environment.NOT_SUPPORTED_RELATIVE_COLUMN_WIDTHS;
         for (var i = 0; i < this.columnCount; ++i) {
             var colElement = document.createElement("col");
-            var width = this.component.getRenderIndexedProperty("columnWidth", i); 
+            var width = this.component.renderIndex("columnWidth", i); 
             if (width != null) {
                 if (width.units == "%") {
                     colElement.width = width.value + (renderRelative ? "*" : "%");
@@ -364,7 +364,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
     },
     
     _getImage: function(property, defaultImageName) {
-        var image = this.component.getRenderProperty(property);
+        var image = this.component.render(property);
         if (!image) {
             image = new EchoApp.ImageReference(this._getImageUri(defaultImageName ? defaultImageName : property));
         }
@@ -676,7 +676,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             var state = context.isEffect(effect);
             var resolvedEffectName = this._resolvePropertyName(effect, propName, state);
             if (state) {
-                result = this.component.getRenderProperty(resolvedEffectName);
+                result = this.component.render(resolvedEffectName);
             }
             effect = context.getEffect(effect);
         }
@@ -684,7 +684,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             result = layoutData.get(resolvedName);
         }
         if (!result && !onlyEffectProps) {
-            result = this.component.getRenderProperty(resolvedName);
+            result = this.component.render(resolvedName);
         }
         return result;
     },
@@ -766,7 +766,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
     _setRowStyle: function(context) {
         var node = this._getNodeFromElement(context.rowElement);
         var nodeComponent = this.component.application.getComponentByRenderId(node.getId());
-        var nodeLayout = nodeComponent.getRenderProperty("layoutData");
+        var nodeLayout = nodeComponent.render("layoutData");
         var effect = context.getDefaultEffect();
         var index = -1;
         var cellElement = context.rowElement.firstChild;
@@ -776,7 +776,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             var columnLayout;
             if (index > -1) {
                 var columnComponent = this.component.application.getComponentByRenderId(node.getColumn(index));
-                columnLayout = columnComponent.getRenderProperty("layoutData");
+                columnLayout = columnComponent.render("layoutData");
             } else {
                 this._renderNodeCellInsets(cellElement, nodeLayout);
             }
@@ -799,7 +799,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             }
             ++index;
             
-            var font = this.component.getRenderProperty(this._resolvePropertyName(effect, "font", true));
+            var font = this.component.render(this._resolvePropertyName(effect, "font", true));
             if (font || !effect) {
                 EchoAppRender.Font.renderClear(null, cellElement);
                 if (font) {
@@ -830,7 +830,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             this._effectBorderRows = new Core.Arrays.LargeMap();
         }
         var effectBorder = this._createMultiSidedBorder(this._getProperty("border", context, null, true));
-        var defaultBorder = this._createMultiSidedBorder(this.component.getRenderProperty("border"));
+        var defaultBorder = this._createMultiSidedBorder(this.component.render("border"));
         var hadEffect = this._effectBorderRows.map[context.rowElement.id];
         if (effectBorder) {
             var node = this._getNodeFromElement(context.rowElement);

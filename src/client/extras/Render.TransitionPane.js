@@ -40,7 +40,7 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
     },
 
     _loadTransition: function() {
-        this.type = this.component.getRenderProperty("type");
+        this.type = this.component.render("type");
         switch (this.type) {
         case ExtrasApp.TransitionPane.TYPE_FADE:
             this._transitionClass = ExtrasRender.ComponentSync.TransitionPane.FadeOpacityTransition;
@@ -142,7 +142,7 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
     
     _transitionStart: function() {
         this._transition = new this._transitionClass(this);
-        this._duration = this.component.getRenderProperty("duration", this._transition.duration);
+        this._duration = this.component.render("duration", this._transition.duration);
         this._runnable = new ExtrasRender.ComponentSync.TransitionPane.Runnable(this);
         WebCore.Scheduler.add(this._runnable); 
     },

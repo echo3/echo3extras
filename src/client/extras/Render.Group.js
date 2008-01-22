@@ -36,7 +36,7 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
     },
     
     renderAdd: function(update, parentElement) {
-    	this._borderImages = this.component.getRenderProperty("borderImage");
+    	this._borderImages = this.component.render("borderImage");
     	
         this._groupDivElement = document.createElement("div");
         this._groupDivElement.id = this.component.renderId;
@@ -70,10 +70,10 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
     _renderBorder: function(contentElem) {
     	var borderParts = [];
     	
-    	var borderInsets = this.component.getRenderProperty("borderInsets", 
+    	var borderInsets = this.component.render("borderInsets", 
     	        ExtrasRender.ComponentSync.Group.DEFAULT_BORDER_INSETS);
         var borderPixelInsets = EchoAppRender.Insets.toPixels(borderInsets);
-        var flags = this.component.getRenderProperty("ieAlphaRenderBorder") 
+        var flags = this.component.render("ieAlphaRenderBorder") 
                 ? EchoAppRender.FillImage.FLAG_ENABLE_IE_PNG_ALPHA_FILTER : 0;
         
         var topRightElem = document.createElement("div");
@@ -86,7 +86,7 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
         EchoAppRender.FillImage.render(this._getBorderImage(0, "0px", "100%"), topLeftElem, flags);
     	topRightElem.appendChild(topLeftElem);
     	
-    	var title = this.component.getRenderProperty("title");
+    	var title = this.component.render("title");
     	if (title) {
     	    var topTableElem = document.createElement("table");
     	    topTableElem.style.padding = "0px";
@@ -97,7 +97,7 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
     	    var topRowElem = document.createElement("tr");
     	    topTbodyElem.appendChild(topRowElem);
     	    
-    	    var titlePosition = this.component.getRenderProperty("titlePosition");
+    	    var titlePosition = this.component.render("titlePosition");
     	    if (titlePosition) {
     		    var topPosElem = document.createElement("td");
     		    if (titlePosition.units == "%") {
@@ -120,7 +120,7 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
     		EchoAppRender.Font.renderComponentProperty(this.component, "titleFont", null, titleElem);
     		EchoAppRender.Insets.renderComponentProperty(this.component, "titleInsets",
                     ExtrasRender.ComponentSync.Group.DEFAULT_TITLE_INSETS, titleElem, "padding");
-    		var titleImage = this.component.getRenderProperty("titleBackgroundImage");
+    		var titleImage = this.component.render("titleBackgroundImage");
     		if (titleImage) {
         		EchoAppRender.FillImage.render(
         		      new EchoApp.FillImage(titleImage, EchoApp.FillImage.REPEAT_HORIZONTAL, "0px", "100%"), titleElem, flags);

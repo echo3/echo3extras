@@ -109,7 +109,7 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
                     children: [
                         // Menu Bar
                         new ExtrasApp.MenuBarPane({
-                            styleName: this.component.getRenderProperty("menuStyleName"),
+                            styleName: this.component.render("menuStyleName"),
                             layoutData: new EchoApp.LayoutData({
                                 overflow: EchoApp.SplitPane.OVERFLOW_HIDDEN
                             }),
@@ -126,7 +126,7 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
                             children: [
                                 // Controls Row (control groups added later)
                                 controlsRow = new EchoApp.Row({
-                                    styleName: this.component.getRenderProperty("toolbarRowStyleName"),
+                                    styleName: this.component.render("toolbarRowStyleName"),
                                     cellSpacing: new EchoApp.Extent(10),
                                     insets: new EchoApp.Insets(2)
                                 }),
@@ -279,7 +279,7 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
     _createToolbarButton: function(text, icon, toolTipText, eventMethod, actionCommand) {
         var button = new EchoApp.Button({
             actionCommand: actionCommand,
-            styleName: this.component.getRenderProperty("toolbarButtonStyleName"),
+            styleName: this.component.render("toolbarButtonStyleName"),
             text: icon ? null : text,
             icon: icon,
             toolTipText: toolTipText
@@ -456,12 +456,12 @@ ExtrasRender.ComponentSync.RichTextArea.AbstractDialog = Core.extend(EchoApp.Win
     $construct: function(richTextArea, type, properties, content) {
         this._richTextArea = richTextArea;
     
-        var controlPaneSplitPaneStyleName = richTextArea.getRenderProperty("controlPaneSplitPaneStyleName");
-        var controlPaneRowStyleName = richTextArea.getRenderProperty("controlPaneRowStyleName");
-        var controlPaneButtonStyleName = richTextArea.getRenderProperty("controlPaneButtonStyleName"); 
+        var controlPaneSplitPaneStyleName = richTextArea.render("controlPaneSplitPaneStyleName");
+        var controlPaneRowStyleName = richTextArea.render("controlPaneRowStyleName");
+        var controlPaneButtonStyleName = richTextArea.render("controlPaneButtonStyleName"); 
         
         EchoApp.WindowPane.call(this, {
-            styleName: richTextArea.getRenderProperty("windowPaneStyleName"),
+            styleName: richTextArea.render("windowPaneStyleName"),
             iconInsets: new EchoApp.Insets(6, 10),
             width: new EchoApp.Extent(280),
             height: new EchoApp.Extent(200),
