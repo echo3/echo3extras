@@ -83,13 +83,14 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
         this._insets = this.component.render("insets", ExtrasRender.ComponentSync.TabPane._defaultInsets);
         this._tabActiveBorder = this.component.render("tabActiveBorder", 
                 ExtrasRender.ComponentSync.TabPane._defaultTabActiveBorder);
-        this._tabActiveHeightIncrease = this.component.render("tabActiveHeightIncrease", 
-                ExtrasRender.ComponentSync.TabPane._defaultTabActiveHeightIncrease);
+        this._tabActiveHeightIncreasePx = EchoAppRender.Extent.toPixels(this.component.render("tabActiveHeightIncrease", 
+                ExtrasRender.ComponentSync.TabPane._defaultTabActiveHeightIncrease));
         this._tabInactiveBorder = this.component.render("tabInactiveBorder", 
                 ExtrasRender.ComponentSync.TabPane._defaultTabInactiveBorder);
         this._tabHeightPx = EchoAppRender.Extent.toPixels(this.component.render("tabHeight",
                 ExtrasRender.ComponentSync.TabPane._defaultTabHeight));
-        this._tabInset = this.component.render("tabInset", ExtrasRender.ComponentSync.TabPane._defaultTabInset);
+        this._tabInsetPx = EchoAppRender.Extent.toPixels(this.component.render("tabInset",
+                 ExtrasRender.ComponentSync.TabPane._defaultTabInset));
         this._tabPosition = this.component.render("tabPosition", ExtrasRender.ComponentSync.TabPane._defaultTabPosition);
         this._tabSpacing = this.component.render("tabSpacing", ExtrasRender.ComponentSync.TabPane._defaultTabSpacing);
         this._tabCloseEnabled = this.component.render("tabCloseEnabled", false);
@@ -209,13 +210,11 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
         } else {
             headerContainerDivElement.style.top = "0px";
         }
-        headerContainerDivElement.style.left = this._tabInset.toString();
-        headerContainerDivElement.style.right = this._tabInset.toString();
+        headerContainerDivElement.style.left = this._tabInsetPx + "px";
+        headerContainerDivElement.style.right = this._tabInsetPx + "px";
         
-        
-        this._tabActiveBorder.size
-        
-        headerContainerDivElement.style.height = (this._tabHeightPx + this._tabActiveBorder.size.value) + "px";
+        var borderSize = EchoAppRender.Border.getPixelSize(this._tabActiveBorder);
+        headerContainerDivElement.style.height = (this._tabHeightPx + borderSize) + "px";
         EchoAppRender.Font.render(this.component.render("font"), headerContainerDivElement);
         EchoAppRender.FillImage.render(this.component.render("tabBackgroundImage"), headerContainerDivElement);
     
@@ -343,9 +342,9 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
      */
     _calculateTabHeight: function(state) {
         if (state) {
-            return this._tabHeightPx + this._tabActiveBorder.size.value;
+            return this._tabHeightPx + EchoAppRender.Border.getPixelSize(this._tabActiveBorder);
         } else {
-            return this._tabHeightPx - this._tabActiveHeightIncrease.value;
+            return this._tabHeightPx - this._tabActiveHeightIncreasePx;
         }
     }
 });
@@ -577,10 +576,10 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         
         if (this._parent._tabPosition == ExtrasApp.TabPane.TAB_POSITION_BOTTOM) {
             headerContentTableElement.style.marginTop = state ? "0px" : this._parent._tabActiveBorder.size.toString();
-            headerContentTableElement.style.marginBottom = state ? "0px" : this._parent._tabActiveHeightIncrease.toString();
+            headerContentTableElement.style.marginBottom = state ? "0px" : this._parent._tabActiveHeightIncreasePx + "px";
             EchoAppRender.Border.renderSide(border, headerContentTableElement, "borderBottom");
         } else {
-            headerContentTableElement.style.marginTop = state ? "0px" : this._parent._tabActiveHeightIncrease.toString();
+            headerContentTableElement.style.marginTop = state ? "0px" : this._parent._tabActiveHeightIncreasePx + "px";
             EchoAppRender.Border.renderSide(border, headerContentTableElement, "borderTop");
         }
         EchoAppRender.Border.renderSide(border, headerContentTableElement, "borderLeft");
