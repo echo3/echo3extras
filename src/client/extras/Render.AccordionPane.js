@@ -231,11 +231,10 @@ ExtrasRender.ComponentSync.AccordionPane = Core.extend(EchoRender.ComponentSync,
      * @type {Number}
      */
     _calculateTabHeight: function() {
-    	var height = ExtrasRender.ComponentSync.AccordionPane._defaultTabHeight;
-    	var insets = this._getTabInsets();
+    	var height = EchoAppRender.Extent.toPixels(ExtrasRender.ComponentSync.AccordionPane._defaultTabHeight);
+    	var insets = EchoAppRender.Insets.toPixels(this._getTabInsets());
     	var border = this._getTabBorder();
-    	return EchoAppRender.Extent.toPixels(height) + EchoAppRender.Extent.toPixels(insets.top)
-                + EchoAppRender.Extent.toPixels(insets.bottom) + EchoAppRender.Extent.toPixels(border.size) * 2; 
+    	return height + insets.top + insets.bottom + EchoAppRender.Border.getPixelSize(border) * 2;
     }
 });
 
@@ -313,6 +312,7 @@ ExtrasRender.ComponentSync.AccordionPane.Tab = Core.extend({
             }
             var border = this._parent.component.render("tabRolloverBorder");
             if (!border) {
+            // FIXME use methods in EchoAppRender to retrieve individual border components.
             	var defaultBorder = this._parent._getTabBorder();
             	border = new EchoApp.Border(defaultBorder.size, defaultBorder.style, 
             	        EchoAppRender.Color.adjust(defaultBorder.color, 20, 20, 20));
