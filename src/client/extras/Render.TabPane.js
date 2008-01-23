@@ -87,7 +87,8 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
                 ExtrasRender.ComponentSync.TabPane._defaultTabActiveHeightIncrease);
         this._tabInactiveBorder = this.component.render("tabInactiveBorder", 
                 ExtrasRender.ComponentSync.TabPane._defaultTabInactiveBorder);
-        this._tabHeight = this.component.render("tabHeight", ExtrasRender.ComponentSync.TabPane._defaultTabHeight);
+        this._tabHeightPx = EchoAppRender.Extent.toPixels(this.component.render("tabHeight",
+                ExtrasRender.ComponentSync.TabPane._defaultTabHeight));
         this._tabInset = this.component.render("tabInset", ExtrasRender.ComponentSync.TabPane._defaultTabInset);
         this._tabPosition = this.component.render("tabPosition", ExtrasRender.ComponentSync.TabPane._defaultTabPosition);
         this._tabSpacing = this.component.render("tabSpacing", ExtrasRender.ComponentSync.TabPane._defaultTabSpacing);
@@ -161,9 +162,9 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
         
         if (this._tabPosition == ExtrasApp.TabPane.TAB_POSITION_BOTTOM) {
             contentContainerDivElement.style.top = "0px";
-            contentContainerDivElement.style.bottom = this._tabHeight.toString();
+            contentContainerDivElement.style.bottom = this._tabHeightPx + "px";
         } else {
-            contentContainerDivElement.style.top = this._tabHeight.toString();
+            contentContainerDivElement.style.top = this._tabHeightPx + "px";
             contentContainerDivElement.style.bottom = "0px";
         }
         contentContainerDivElement.style.left = "0px";
@@ -210,7 +211,11 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
         }
         headerContainerDivElement.style.left = this._tabInset.toString();
         headerContainerDivElement.style.right = this._tabInset.toString();
-        headerContainerDivElement.style.height = (this._tabHeight.value + this._tabActiveBorder.size.value) + "px";
+        
+        
+        this._tabActiveBorder.size
+        
+        headerContainerDivElement.style.height = (this._tabHeightPx + this._tabActiveBorder.size.value) + "px";
         EchoAppRender.Font.render(this.component.render("font"), headerContainerDivElement);
         EchoAppRender.FillImage.render(this.component.render("tabBackgroundImage"), headerContainerDivElement);
     
@@ -337,11 +342,10 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
      * @type {Number}
      */
     _calculateTabHeight: function(state) {
-        var height = this._tabHeight;
         if (state) {
-            return height.value + this._tabActiveBorder.size.value;
+            return this._tabHeightPx + this._tabActiveBorder.size.value;
         } else {
-            return height.value - this._tabActiveHeightIncrease.value;
+            return this._tabHeightPx - this._tabActiveHeightIncrease.value;
         }
     }
 });
@@ -411,8 +415,8 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
             // Render Text and Icon(s)
             var tableElement = document.createElement("table");
             tableElement.style.height = "100%";
-               tableElement.cellPadding = "0px";
-               tableElement.cellSpacing = "0px";
+            tableElement.cellPadding = "0px";
+            tableElement.cellSpacing = "0px";
             tableElement.style.padding = "0px";
             tableElement.style.borderCollapse = "collapse";
             var tbodyElement = document.createElement("tbody");

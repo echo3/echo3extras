@@ -346,7 +346,6 @@ ExtrasRender.ComponentSync.ColorSelect = Core.extend(EchoRender.ComponentSync, {
         
         WebCore.EventProcessor.add(this._svListenerDivElement, "mousedown", Core.method(this, this._processSVMouseDown), false);
         WebCore.EventProcessor.add(this._hListenerDivElement, "mousedown", Core.method(this, this._processHMouseDown), false);
-        
         this._setColor(this.component.get("color"));
     },
     
@@ -376,9 +375,15 @@ ExtrasRender.ComponentSync.ColorSelect = Core.extend(EchoRender.ComponentSync, {
      * @private
      */
     _setColor: function(color) {
-        var r = parseInt(parseInt(color.substring(1), 16) / 0x10000);
-        var g = parseInt(parseInt(color.substring(1), 16) / 0x100) % 0x100;
-        var b = parseInt(color.substring(1), 16) % 0x100;
+        var r, g, b;
+        
+        if (color) {
+            r = parseInt(parseInt(color.substring(1), 16) / 0x10000);
+            g = parseInt(parseInt(color.substring(1), 16) / 0x100) % 0x100;
+            b = parseInt(color.substring(1), 16) % 0x100;
+        } else {
+            r = g = b = 0;
+        }
         
         var min = Math.min(r, g, b);
         var max = Math.max(r, g, b);
