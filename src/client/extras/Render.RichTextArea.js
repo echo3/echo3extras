@@ -110,9 +110,9 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
                         // Menu Bar
                         new ExtrasApp.MenuBarPane({
                             styleName: this.component.render("menuStyleName"),
-                            layoutData: new EchoApp.LayoutData({
+                            layoutData: {
                                 overflow: EchoApp.SplitPane.OVERFLOW_HIDDEN
-                            }),
+                            },
                             model: this._createMainMenuBarModel(),
                             events: {
                                 action: Core.method(this, this._processMenuAction)
@@ -120,15 +120,15 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
                         }),
                         // Main Layout Container
                         new EchoApp.Column({
-                            layoutData: new EchoApp.LayoutData({
+                            layoutData: {
                                 overflow: EchoApp.SplitPane.OVERFLOW_HIDDEN
-                            }),
+                            },
                             children: [
                                 // Controls Row (control groups added later)
                                 controlsRow = new EchoApp.Row({
                                     styleName: this.component.render("toolbarRowStyleName"),
                                     cellSpacing: 10,
-                                    insets: new EchoApp.Insets(2)
+                                    insets: 2
                                 }),
                                 // Text Input Field
                                 this._richTextInput = new ExtrasRender.ComponentSync.RichTextArea.InputComponent()
@@ -462,7 +462,7 @@ ExtrasRender.ComponentSync.RichTextArea.AbstractDialog = Core.extend(EchoApp.Win
         
         EchoApp.WindowPane.call(this, {
             styleName: richTextArea.render("windowPaneStyleName"),
-            iconInsets: new EchoApp.Insets(6, 10),
+            iconInsets: "6px 10px",
             width: 280,
             height: 200,
             resizable: false,
@@ -537,7 +537,7 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog = Core.extend(
                     height: 320
                 },
                 new EchoApp.Column({
-                    insets: new EchoApp.Insets(10),
+                    insets: 10,
                     children: [
                         new EchoApp.Label({
                             text: richTextArea.peer._msg[
@@ -568,7 +568,7 @@ ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog = Core.extend(
                     icon: richTextArea.peer._icons.hyperlink
                 },
                 new EchoApp.Column({
-                    insets: new EchoApp.Insets(10),
+                    insets: 10,
                     children: [
                         new EchoApp.Label({
                             text: richTextArea.peer._msg["HyperlinkDialog.PromptURL"]
@@ -613,7 +613,7 @@ ExtrasRender.ComponentSync.RichTextArea.ImageDialog = Core.extend(
                     image: richTextArea.peer._icons.image
                 },
                 new EchoApp.Column({
-                    insets: new EchoApp.Insets(10),
+                    insets: 10,
                     children: [
                         new EchoApp.Label({
                             text: richTextArea.peer._msg["ImageDialog.PromptURL"]
@@ -772,9 +772,9 @@ ExtrasRender.ComponentSync.RichTextArea.MessageDialog = Core.extend(
                 },
                 new EchoApp.Label({
                     text: message,
-                    layoutData: new EchoApp.LayoutData({
-                        insets: new EchoApp.Insets(30)
-                    })
+                    layoutData: {
+                        insets: 30, 
+                    }
                 }));
     }
 });
@@ -790,27 +790,27 @@ ExtrasRender.ComponentSync.RichTextArea.TableDialog = Core.extend(
                     icon: richTextArea.peer._icons.table
                 },
                 new EchoApp.Grid({
-                    insets: new EchoApp.Insets(10),
+                    insets: 10,
                     children: [
                         new EchoApp.Label({
                             text: richTextArea.peer._msg["TableDialog.PromptRows"],
-                            layoutData: new EchoApp.LayoutData({
+                            layoutData: {
                                 alignment: new EchoApp.Alignment(EchoApp.Alignment.TRAILING)
-                            })
+                            }
                         }),
                         this._rowsField = new EchoApp.TextField({
                             text: "2",
-                            width: "100px"   
+                            width: 100   
                         }),
                         new EchoApp.Label({
                             text: richTextArea.peer._msg["TableDialog.PromptColumns"],
-                            layoutData: new EchoApp.LayoutData({
+                            layoutData: {
                                 alignment: new EchoApp.Alignment(EchoApp.Alignment.TRAILING)
-                            })
+                            }
                         }),
                         this._columnsField = new EchoApp.TextField({
                             text: "3",
-                            width: "100px"
+                            width: 100
                         })
                     ]
                 }));

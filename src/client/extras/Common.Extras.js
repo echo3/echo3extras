@@ -38,16 +38,16 @@ ExtrasRender = {
     }),
     
     DEFAULT_CONTROL_PANE_ROW_STYLE: new EchoApp.Style({
-        insets: new EchoApp.Insets("2px 10px"),
+        insets: "2px 10px",
         cellSpacing: 3,
-        layoutData: new EchoApp.LayoutData({
+        layoutData: {
             overflow: EchoApp.SplitPane.OVERFLOW_HIDDEN,
             background: "#cfcfdf"
-        })
+        }
     }),
     
     DEFAULT_CONTROL_PANE_BUTTON_STYLE: new EchoApp.Style({
-        insets: new EchoApp.Insets("0px 8px"),
+        insets: "0px 8px",
         lineWrap: false,
         foreground: "#000000",
         rolloverEnabled: true,

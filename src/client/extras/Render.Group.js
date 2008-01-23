@@ -5,9 +5,9 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
 
     $static: {
     
-        DEFAULT_TITLE_INSETS: new EchoApp.Insets(0, 2),
+        DEFAULT_TITLE_INSETS: "0px 2px",
         
-        DEFAULT_BORDER_INSETS: new EchoApp.Insets(10),
+        DEFAULT_BORDER_INSETS: "10px",
     
         /**
          * Gets an URI for default border images.

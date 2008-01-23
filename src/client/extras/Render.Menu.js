@@ -43,8 +43,8 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
     $construct: function() {
         this._processMaskClickRef = Core.method(this, this._processMaskClick);
         this._openMenuPath = [];
-        this._menuInsets = new EchoApp.Insets(2, 2, 2, 2);
-        this._menuItemInsets = new EchoApp.Insets(1, 12, 1, 12);
+        this._menuInsets = "2px";
+        this._menuItemInsets = "1px 12px";
         this._menuItemIconTextMargin = 5;
     },
     
@@ -126,10 +126,12 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
                 }
             }
             var textPadding, iconPadding;
+            
             if (hasIcons) {
-                iconPadding = new EchoApp.Insets(0, 0, 0, this._menuItemInsets.left);
-                textPadding = new EchoApp.Insets(this._menuItemInsets.top, this._menuItemInsets.right, 
-                        this._menuItemInsets.bottom, this._menuItemIconTextMargin);
+                var pixelInsets = EchoAppRender.Insets.toPixels(this._menuItemInsets);
+                iconPadding = "0px 0px 0px " + pixelInsets.left + "px";
+                textPadding = pixelInsets.top + "px " + pixelInsets.right + "px " + 
+                        pixelInsets.bottom + "px " + pixelInsets.left + "px";
             } else {
                 textPadding = this._menuItemInsets;
             }
@@ -437,7 +439,7 @@ ExtrasRender.ComponentSync.MenuBarPane = Core.extend(ExtrasRender.ComponentSync.
     
     $construct: function() {
         ExtrasRender.ComponentSync.Menu.call(this);
-	    this._itemInsets = new EchoApp.Insets("0px 12px");
+	    this._itemInsets = "0px 12px";
     },
     
     _renderMain: function() {

@@ -78,7 +78,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         
         this._defaultInsets = this.component.render("insets");
         if (!this._defaultInsets) {
-            this._defaultInsets = new EchoApp.Insets(0);
+            this._defaultInsets = "0px";
         }
         this._defaultCellPadding = EchoAppRender.Insets.toCssValue(this._defaultInsets);
         
@@ -500,7 +500,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
     /**
      * Renders insets to element, only the sides provided in the sides argument will be applied.
      * 
-     * @param {EchoApp.Insets} insets the insets to render, may not be null
+     * @param {String} insets the insets to render, may not be null
      * @param {Array} sides the indices of the insets sides to render, possible values are:
      *          <ul>
      *              <li>0 (top)</li>
@@ -512,32 +512,19 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
      * @param element the element to render insets to
      */
     _applyInsets: function(insets, sides, element) {
-        var newValues = [];
-        var setInset = function(side, value) {
-            switch (side) {
-                case 0:
-                    newValues[0] = value ? value : insets.top;
-                    break;
-                case 1:
-                    newValues[1] = value ? value : insets.right;
-                    break;
-                case 2:
-                    newValues[2] = value ? value : insets.bottom;
-                    break;
-                case 3:
-                    newValues[3] = value ? value : insets.left;
-                    break;
-            }
-        };
-        for (var i = 0; i < 4; ++i) {
-            if (!insets || Core.Arrays.indexOf(sides, i) == -1) {
-                setInset(i, 0);
-            } else {
-                setInset(i, null);
-            }
+        var pixelInsets = EchoAppRender.Insets.toPixels(insets);
+        if (sides[0]) {
+            element.style.paddingTop = pixelInsets.top + "px";
         }
-        var newInsets = new EchoApp.Insets(newValues);
-        EchoAppRender.Insets.render(newInsets, element, "padding");
+        if (sides[1]) {
+            element.style.paddingRight = pixelInsets.right + "px";
+        }
+        if (sides[2]) {
+            element.style.paddingBottom = pixelInsets.bottom + "px";
+        }
+        if (sides[3]) {
+            element.style.paddingLeft = pixelInsets.left + "px";
+        }
     },
     
     /**
@@ -681,7 +668,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             effect = context.getEffect(effect);
         }
         if (!result && layoutData) {
-            result = layoutData.get(resolvedName);
+            result = layoutData[resolvedName];
         }
         if (!result && !onlyEffectProps) {
             result = this.component.render(resolvedName);

@@ -7,20 +7,20 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
 
     $static: {
         _supportedPartialProperties: ["activeTab"],
-        _paneInsets: new EchoApp.Insets(0),
+        _paneInsets: 0,
         _defaultBorderType: ExtrasApp.TabPane.BORDER_TYPE_ADJACENT_TO_TABS,
         _defaultForeground: "#000000",
-        _defaultInsets: new EchoApp.Insets(2),
+        _defaultInsets: 2,
         _defaultTabActiveBorder: new EchoApp.Border("1px solid #00004f"),
         _defaultTabActiveHeightIncrease: 2,
         _defaultTabAlignment: new EchoApp.Alignment(EchoApp.Alignment.DEFAULT, EchoApp.Alignment.TOP),
         _defaultTabCloseIconTextMargin: 5,
-        _defaultTabContentInsets: new EchoApp.Insets(0),
+        _defaultTabContentInsets: 0,
         _defaultTabHeight: 32,
         _defaultTabIconTextMargin: 5,
         _defaultTabInactiveBorder: new EchoApp.Border("1px solid #7f7f7f"),
         _defaultTabInset: 10,
-        _defaultTabInsets: new EchoApp.Insets(3, 8),
+        _defaultTabInsets: "3px 8px",
         _defaultTabPosition: ExtrasApp.TabPane.TAB_POSITION_TOP,
         _defaultTabSpacing: 0
     },
@@ -136,20 +136,20 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
     },
     
     _renderBorderInsets: function(tabPaneDivElement) {
-        var borderInsets;
+        var pixelInsets = EchoAppRender.Insets.toPixels(this._insets);
         if (this._borderType == ExtrasApp.TabPane.BORDER_TYPE_SURROUND) {
-            borderInsets = this._insets;
+            // Do nothing, pixelInsets values are correct.
         } else if (this._borderType == ExtrasApp.TabPane.BORDER_TYPE_PARALLEL_TO_TABS) {
-            borderInsets = new EchoApp.Insets(this._insets.top, 0, this._insets.bottom, 0);
+            pixelInsets.left = pixelInsets.right = 0;
         } else if (this._tabPosition == ExtrasApp.TabPane.TAB_POSITION_BOTTOM) {
-            borderInsets = new EchoApp.Insets(0, 0, this._insets.bottom, 0);
+            pixelInsets.left = pixelInsets.right = pixelInsets.top = 0;
         } else {
-            borderInsets = new EchoApp.Insets(this._insets.top, 0, 0, 0);
+            pixelInsets.left = pixelInsets.right = pixelInsets.bottom = 0;
         }
-        tabPaneDivElement.style.top = borderInsets.top.toString();
-        tabPaneDivElement.style.right = borderInsets.right.toString();
-        tabPaneDivElement.style.bottom = borderInsets.bottom.toString();
-        tabPaneDivElement.style.left = borderInsets.left.toString();
+        tabPaneDivElement.style.top = pixelInsets.top + "px";
+        tabPaneDivElement.style.right = pixelInsets.right + "px";
+        tabPaneDivElement.style.bottom = pixelInsets.bottom + "px";
+        tabPaneDivElement.style.left = pixelInsets.left + "px";
     },
     
     _renderContentContainer: function() {
@@ -405,8 +405,8 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         var centerTdElement = document.createElement("td");
         EchoAppRender.Insets.render(ExtrasRender.ComponentSync.TabPane._defaultTabInsets, centerTdElement, "padding");
         
-        var icon = layoutData ? layoutData.get("icon") : null;
-        var title = layoutData ? layoutData.get("title", "*") : "*";
+        var icon = layoutData ? layoutData.icon : null;
+        var title = layoutData ? (layoutData.title ? layoutData.title : "*") : "*";
         if (icon || this._parent._tabCloseEnabled) {
             // Render Text and Icon(s)
             var tableElement = document.createElement("table");

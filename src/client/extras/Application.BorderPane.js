@@ -5,7 +5,7 @@
 ExtrasApp.BorderPane = Core.extend(EchoApp.Component, {
     
     $static: {
-        DEFAULT_BORDER: new EchoApp.FillImageBorder("#00007f", new EchoApp.Insets("20px"), new EchoApp.Insets("3px"))
+        DEFAULT_BORDER: new EchoApp.FillImageBorder("#00007f", 20, 3)
     },
     
     $load: function() {

@@ -7,12 +7,12 @@
 ExtrasRender.ComponentSync.AccordionPane = Core.extend(EchoRender.ComponentSync, {
 
     $static: {
-        _paneInsets: new EchoApp.Insets(0),
+        _paneInsets: "0px",
         _defaultTabBackground: "#cfcfcf",
         _defaultTabBorder: new EchoApp.Border("1px outset #cfcfcf"),
         _defaultTabForeground: "#000000",
         _defaultTabHeight: 20,
-        _defaultTabInsets: new EchoApp.Insets(2, 5),
+        _defaultTabInsets: "2px 5px",
         _defaultTabContentInsets: this._paneInsets
     },
     
@@ -344,7 +344,7 @@ ExtrasRender.ComponentSync.AccordionPane.Tab = Core.extend({
     
     _getTitle: function() {
     	var layoutData = this._childComponent.render("layoutData");
-    	return layoutData ? layoutData.get("title") : null;
+    	return layoutData ? layoutData.title : null;
     },
     
     _getContentInsets: function() {
