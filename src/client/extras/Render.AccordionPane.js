@@ -87,7 +87,7 @@ ExtrasRender.ComponentSync.AccordionPane = Core.extend(EchoRender.ComponentSync,
         paneDivElement.style.width = "100%";
         paneDivElement.style.height = "100%";
         EchoAppRender.Color.renderFB(this.component, paneDivElement);
-        EchoAppRender.Font.renderDefault(this.component, paneDivElement);
+        EchoAppRender.Font.render(this.component.render("font"), paneDivElement);
         return paneDivElement;
     },
     

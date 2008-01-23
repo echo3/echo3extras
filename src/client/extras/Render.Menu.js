@@ -454,7 +454,7 @@ ExtrasRender.ComponentSync.MenuBarPane = Core.extend(ExtrasRender.ComponentSync.
         EchoAppRender.Border.renderSide(border, menuBarDivElement, "borderTop");
         EchoAppRender.Border.renderSide(border, menuBarDivElement, "borderBottom");
         EchoAppRender.FillImage.render(this.component.render("backgroundImage"), menuBarDivElement); 
-        EchoAppRender.Font.renderDefault(this.component, menuBarDivElement, null);
+        EchoAppRender.Font.render(this.component.render("font"), menuBarDivElement, null);
         
         var menuBarTableElement = document.createElement("table");
         menuBarTableElement.style.height = "100%";
@@ -607,7 +607,7 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
         contentSpanElement.style.width = "100%";
         contentSpanElement.style.overflow = "hidden";
         contentSpanElement.style.whiteSpace = "nowrap";
-        EchoAppRender.Font.renderDefault(this.component, contentSpanElement, null);
+        EchoAppRender.Font.render(this.component.render("font"), contentSpanElement, null);
         this._contentDivElement.appendChild(contentSpanElement);
         
         relativeContainerDivElement.appendChild(this._contentDivElement);

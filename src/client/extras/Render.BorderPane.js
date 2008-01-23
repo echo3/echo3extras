@@ -129,7 +129,7 @@ ExtrasRender.ComponentSync.BorderPane = Core.extend(EchoRender.ComponentSync, {
         this._contentDivElement.style.overflow = "auto";
         
         EchoAppRender.Color.renderFB(this.component, this._contentDivElement);
-        EchoAppRender.Font.renderDefault(this.component, this._contentDivElement);
+        EchoAppRender.Font.render(this.component.render("font"), this._contentDivElement);
     
         var border = this.component.render("border", ExtrasApp.BorderPane.DEFAULT_BORDER);
         var contentInsets = EchoAppRender.Insets.toPixels(border.contentInsets);

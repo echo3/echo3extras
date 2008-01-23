@@ -211,7 +211,7 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
         headerContainerDivElement.style.left = this._tabInset.toString();
         headerContainerDivElement.style.right = this._tabInset.toString();
         headerContainerDivElement.style.height = (this._tabHeight.value + this._tabActiveBorder.size.value) + "px";
-        EchoAppRender.Font.renderDefault(this.component, headerContainerDivElement);
+        EchoAppRender.Font.render(this.component.render("font"), headerContainerDivElement);
         EchoAppRender.FillImage.render(this.component.render("tabBackgroundImage"), headerContainerDivElement);
     
         var headerTableElement = document.createElement("table");

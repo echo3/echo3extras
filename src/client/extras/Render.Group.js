@@ -195,7 +195,7 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
         
         EchoAppRender.FillImage.render(this.component.render("backgroundImage"), contentDivElement);
         EchoAppRender.Color.render(this.component.render("background"), contentDivElement, "backgroundColor")
-        EchoAppRender.Font.renderDefault(this.component, contentDivElement);
+        EchoAppRender.Font.render(this.component.render("font"), contentDivElement);
         EchoAppRender.Insets.render(this.component.render("insets"), contentDivElement, "padding");
         
         var componentCount = this.component.getComponentCount();
