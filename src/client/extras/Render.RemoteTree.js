@@ -83,8 +83,8 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         this._defaultCellPadding = EchoAppRender.Insets.toCssValue(this._defaultInsets);
         
         var width = this.component.render("width");
-        if (width && WebCore.Environment.QUIRK_IE_TABLE_PERCENT_WIDTH_SCROLLBAR_ERROR && width.units == "%") {
-            this._renderPercentWidthByMeasure = width.value;
+        if (width && WebCore.Environment.QUIRK_IE_TABLE_PERCENT_WIDTH_SCROLLBAR_ERROR && EchoAppRender.Extent.isPercent(width)) {
+            this._renderPercentWidthByMeasure = parseInt(width);
             width = null;
         }
         
@@ -94,7 +94,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         tableElement.style.borderSpacing = "0px";
         tableElement.cellSpacing = "0";
         tableElement.cellPadding = "0";
-        EchoAppRender.Border.renderComponentProperty(this.component, "border", null, tableElement);
+        EchoAppRender.Border.render(this.component.render("border"), tableElement);
         
         this._computeEffectBorderCompensation();
         
@@ -158,10 +158,10 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             var colElement = document.createElement("col");
             var width = this.component.renderIndex("columnWidth", i); 
             if (width != null) {
-                if (width.units == "%") {
+                if (EchoAppRender.Extent.isPercent(width)) {
                     colElement.width = width.value + (renderRelative ? "*" : "%");
                 } else {
-                    var columnPixels = WebCore.Measure.extentToPixels(width.value, width.units, true);
+                    var columnPixels = EchoAppRender.Extent.toPixels(width, true);
                     if (columnPixelAdjustment) {
                         colElement.width = columnPixels - columnPixelAdjustment;
                     } else {
@@ -531,7 +531,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         };
         for (var i = 0; i < 4; ++i) {
             if (!insets || Core.Arrays.indexOf(sides, i) == -1) {
-                setInset(i, new EchoApp.Extent(0, "px"));
+                setInset(i, 0);
             } else {
                 setInset(i, null);
             }

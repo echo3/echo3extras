@@ -32,26 +32,26 @@ ExtrasRender = {
     
     DEFAULT_CONTROL_PANE_SPLIT_PANE_STYLE: new EchoApp.Style({
         orientation: EchoApp.SplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP,
-        separatorColor: new EchoApp.Color("#dfdfef"),
-        separatorHeight: new EchoApp.Extent("1px"),
-        separatorPosition: new EchoApp.Extent("30px")
+        separatorColor: "#dfdfef",
+        separatorHeight: 1,
+        separatorPosition: 30
     }),
     
     DEFAULT_CONTROL_PANE_ROW_STYLE: new EchoApp.Style({
         insets: new EchoApp.Insets("2px 10px"),
-        cellSpacing: new EchoApp.Extent("3px"),
+        cellSpacing: 3,
         layoutData: new EchoApp.LayoutData({
             overflow: EchoApp.SplitPane.OVERFLOW_HIDDEN,
-            background: new EchoApp.Color("#cfcfdf")
+            background: "#cfcfdf"
         })
     }),
     
     DEFAULT_CONTROL_PANE_BUTTON_STYLE: new EchoApp.Style({
         insets: new EchoApp.Insets("0px 8px"),
         lineWrap: false,
-        foreground: new EchoApp.Color("#000000"),
+        foreground: "#000000",
         rolloverEnabled: true,
-        rolloverForeground: new EchoApp.Color("#6f0f0f")
+        rolloverForeground: "#6f0f0f"
     })
 };
 
@@ -60,16 +60,15 @@ ExtrasRender.Color = {
     /**
      * Adjusts the intensity of the given color.
      * 
-     * @param {EchoApp.Color} color
+     * @param the color
      * @param {Number} factor
      * @return 
-     * @type EchoApp.Color the adjusted color 
+     * @type the adjusted color 
      */
     adjustIntensity: function(color, factor) {
-        var colorString = color.value;
-        var red = parseInt(colorString.substring(1, 3), 16);
-        var green = parseInt(colorString.substring(3, 5), 16);
-        var blue = parseInt(colorString.substring(5, 7), 16);
+        var red = parseInt(color.substring(1, 3), 16);
+        var green = parseInt(color.substring(3, 5), 16);
+        var blue = parseInt(color.substring(5, 7), 16);
         red = parseInt(red * factor);
         green = parseInt(green * factor);
         blue = parseInt(blue * factor);
@@ -89,6 +88,6 @@ ExtrasRender.Color = {
             out += "0";
         }
         out += blue.toString(16);
-        return new EchoApp.Color(out);
+        return out;
     }
 };

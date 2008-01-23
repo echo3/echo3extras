@@ -5,9 +5,9 @@
 ExtrasApp.ColorSelect = Core.extend(EchoApp.Component, {
     
     $static: {
-        DEFAULT_VALUE_WIDTH: new EchoApp.Extent(150),
-        DEFAULT_SATURATION_HEIGHT: new EchoApp.Extent(150),
-        DEFAULT_HUE_WIDTH: new EchoApp.Extent(20)
+        DEFAULT_VALUE_WIDTH: 150,
+        DEFAULT_SATURATION_HEIGHT: 150,
+        DEFAULT_HUE_WIDTH: 20
     },
     
     $load: function() {

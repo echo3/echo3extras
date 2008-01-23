@@ -8,10 +8,10 @@ ExtrasRender.ComponentSync.AccordionPane = Core.extend(EchoRender.ComponentSync,
 
     $static: {
         _paneInsets: new EchoApp.Insets(0),
-        _defaultTabBackground: new EchoApp.Color("#cfcfcf"),
+        _defaultTabBackground: "#cfcfcf",
         _defaultTabBorder: new EchoApp.Border("1px outset #cfcfcf"),
-        _defaultTabForeground: new EchoApp.Color("#000000"),
-        _defaultTabHeight: new EchoApp.Extent(20),
+        _defaultTabForeground: "#000000",
+        _defaultTabHeight: 20,
         _defaultTabInsets: new EchoApp.Insets(2, 5),
         _defaultTabContentInsets: this._paneInsets
     },
@@ -234,7 +234,8 @@ ExtrasRender.ComponentSync.AccordionPane = Core.extend(EchoRender.ComponentSync,
     	var height = ExtrasRender.ComponentSync.AccordionPane._defaultTabHeight;
     	var insets = this._getTabInsets();
     	var border = this._getTabBorder();
-        return height.value + insets.top.value + insets.bottom.value + (border.size.value * 2);
+    	return EchoAppRender.Extent.toPixels(height) + EchoAppRender.Extent.toPixels(insets.top)
+                + EchoAppRender.Extent.toPixels(insets.bottom) + EchoAppRender.Extent.toPixels(border.size) * 2; 
     }
 });
 
@@ -323,12 +324,12 @@ ExtrasRender.ComponentSync.AccordionPane.Tab = Core.extend({
     	    EchoAppRender.Border.renderSide(border, tabDivElement, "borderTop");
     	    EchoAppRender.Border.renderSide(border, tabDivElement, "borderBottom");
     	    EchoAppRender.Color.render(this._parent._getTabBackground(), tabDivElement, "backgroundColor");
-    	    EchoAppRender.Color.renderComponentProperty(this._parent.component, "tabForeground", 
-    	            ExtrasRender.ComponentSync.AccordionPane._defaultTabForeground, tabDivElement, "color");
+    	    EchoAppRender.Color.render(this._parent.component.render("tabForeground", 
+    	            ExtrasRender.ComponentSync.AccordionPane._defaultTabForeground), tabDivElement, "color");
             tabDivElement.style.backgroundImage = "";
             tabDivElement.style.backgroundPosition = "";
             tabDivElement.style.backgroundRepeat = "";
-    	    EchoAppRender.FillImage.renderComponentProperty(this._parent.component, "tabBackgroundImage", null, tabDivElement);
+    	    EchoAppRender.FillImage.render(this._parent.component.render("tabBackgroundImage"), tabDivElement);
         }
     },
     

@@ -105,7 +105,7 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
                 // Menu SplitPane
                 new EchoApp.SplitPane({
                     orientation: EchoApp.SplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM,
-                    separatorPosition: new EchoApp.Extent(26),
+                    separatorPosition: 26,
                     children: [
                         // Menu Bar
                         new ExtrasApp.MenuBarPane({
@@ -127,7 +127,7 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
                                 // Controls Row (control groups added later)
                                 controlsRow = new EchoApp.Row({
                                     styleName: this.component.render("toolbarRowStyleName"),
-                                    cellSpacing: new EchoApp.Extent(10),
+                                    cellSpacing: 10,
                                     insets: new EchoApp.Insets(2)
                                 }),
                                 // Text Input Field
@@ -463,8 +463,8 @@ ExtrasRender.ComponentSync.RichTextArea.AbstractDialog = Core.extend(EchoApp.Win
         EchoApp.WindowPane.call(this, {
             styleName: richTextArea.render("windowPaneStyleName"),
             iconInsets: new EchoApp.Insets(6, 10),
-            width: new EchoApp.Extent(280),
-            height: new EchoApp.Extent(200),
+            width: 280,
+            height: 200,
             resizable: false,
             events: {
                 close: Core.method(this, this.processCancel)
@@ -533,8 +533,8 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog = Core.extend(
                     title: richTextArea.peer._msg[setBackground ? 
                             "ColorDialog.Title.Background" : "ColorDialog.Title.Foreground"],
                     icon: setBackground ? richTextArea.peer._icons.background : richTextArea.peer._icons.foreground,
-                    width: new EchoApp.Extent(280),
-                    height: new EchoApp.Extent(320)
+                    width: 280,
+                    height: 320
                 },
                 new EchoApp.Column({
                     insets: new EchoApp.Insets(10),
@@ -574,13 +574,13 @@ ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog = Core.extend(
                             text: richTextArea.peer._msg["HyperlinkDialog.PromptURL"]
                         }),
                         this._urlField = new EchoApp.TextField({
-                            width: new EchoApp.Extent("100%")
+                            width: "100%"
                         }),
                         new EchoApp.Label({
                             text: richTextArea.peer._msg["HyperlinkDialog.PromptDescription"]
                         }),
                         this._descriptionField = new EchoApp.TextField({
-                            width: new EchoApp.Extent("100%")
+                            width: "100%"
                         })
                     ]
                 }));
@@ -619,7 +619,7 @@ ExtrasRender.ComponentSync.RichTextArea.ImageDialog = Core.extend(
                             text: richTextArea.peer._msg["ImageDialog.PromptURL"]
                         }),
                         this._urlField = new EchoApp.TextField({
-                            width: new EchoApp.Extent("100%")
+                            width: "100%"
                         })
                     ]
                 }));
@@ -800,7 +800,7 @@ ExtrasRender.ComponentSync.RichTextArea.TableDialog = Core.extend(
                         }),
                         this._rowsField = new EchoApp.TextField({
                             text: "2",
-                            width: new EchoApp.Extent("100px")   
+                            width: "100px"   
                         }),
                         new EchoApp.Label({
                             text: richTextArea.peer._msg["TableDialog.PromptColumns"],
@@ -810,7 +810,7 @@ ExtrasRender.ComponentSync.RichTextArea.TableDialog = Core.extend(
                         }),
                         this._columnsField = new EchoApp.TextField({
                             text: "3",
-                            width: new EchoApp.Extent("100px")
+                            width: "100px"
                         })
                     ]
                 }));

@@ -7,11 +7,11 @@
 ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
     
     $static: {
-        _defaultForeground: new EchoApp.Color("#000000"),
-        _defaultBackground: new EchoApp.Color("#cfcfcf"),
-        _defaultDisabledForeground: new EchoApp.Color("#7f7f7f"),
-        _defaultSelectionForeground: new EchoApp.Color("#ffffff"),
-        _defaultSelectionBackground: new EchoApp.Color("#3f3f3f"),
+        _defaultForeground: "#000000",
+        _defaultBackground: "#cfcfcf",
+        _defaultDisabledForeground: "#7f7f7f",
+        _defaultSelectionForeground: "#ffffff",
+        _defaultSelectionBackground: "#3f3f3f",
         MAX_Z_INDEX: 65535,
     
         /**
@@ -45,7 +45,7 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
         this._openMenuPath = [];
         this._menuInsets = new EchoApp.Insets(2, 2, 2, 2);
         this._menuItemInsets = new EchoApp.Insets(1, 12, 1, 12);
-        this._menuItemIconTextMargin = new EchoApp.Extent(5);
+        this._menuItemIconTextMargin = 5;
     },
     
     $virtual: {
@@ -173,8 +173,8 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
                         menuItemContentTdElement.style.whiteSpace = "nowrap";
                     }
                     if (this._stateModel && !this._stateModel.isEnabled(item.modelId)) {
-                        EchoAppRender.Color.renderComponentProperty(this.component, "disabledForeground", 
-                                ExtrasRender.ComponentSync.Menu._defaultDisabledForeground, menuItemContentTdElement, "color");
+                        EchoAppRender.Color.render(this.component.render("disabledForeground", 
+                                ExtrasRender.ComponentSync.Menu._defaultDisabledForeground), menuItemContentTdElement, "color");
                     }
                     menuItemContentTdElement.title = item.text;
                     menuItemContentTdElement.appendChild(document.createTextNode(item.text));
@@ -325,11 +325,11 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
         }
         var menuElement = this._getMenuElement(menuModel);
         if (state) {
-            EchoAppRender.FillImage.renderComponentProperty(this.component, "selectionBackgroundImage", null, menuElement);
-            EchoAppRender.Color.renderComponentProperty(this.component, "selectionBackground", 
-                    ExtrasRender.ComponentSync.Menu._defaultSelectionBackground, menuElement, "backgroundColor");
-            EchoAppRender.Color.renderComponentProperty(this.component, "selectionForeground", 
-                    ExtrasRender.ComponentSync.Menu._defaultSelectionForeground, menuElement, "color");
+            EchoAppRender.FillImage.render(this.component.render("selectionBackgroundImage"), menuElement);
+            EchoAppRender.Color.render(this.component.render("selectionBackground", 
+                    ExtrasRender.ComponentSync.Menu._defaultSelectionBackground), menuElement, "backgroundColor");
+            EchoAppRender.Color.render(this.component.render("selectionForeground", 
+                    ExtrasRender.ComponentSync.Menu._defaultSelectionForeground), menuElement, "color");
         } else {
             menuElement.style.backgroundImage = "";
             menuElement.style.backgroundColor = "";
@@ -453,7 +453,7 @@ ExtrasRender.ComponentSync.MenuBarPane = Core.extend(ExtrasRender.ComponentSync.
         var border = this._getBorder();
         EchoAppRender.Border.renderSide(border, menuBarDivElement, "borderTop");
         EchoAppRender.Border.renderSide(border, menuBarDivElement, "borderBottom");
-        EchoAppRender.FillImage.renderComponentProperty(this.component, "backgroundImage", null, menuBarDivElement); 
+        EchoAppRender.FillImage.render(this.component.render("backgroundImage"), menuBarDivElement); 
         EchoAppRender.Font.renderDefault(this.component, menuBarDivElement, null);
         
         var menuBarTableElement = document.createElement("table");
@@ -567,11 +567,12 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
         var relativeContainerDivElement = document.createElement("div");
         relativeContainerDivElement.style.position = "relative";
         relativeContainerDivElement.style.height = "100%";
-        //EchoAppRender.Insets.renderComponentProperty(this.component, "insets", null, relativeContainerDivElement, "padding");
+        //FIXME this was commented out...by whom, why?
+        //EchoAppRender.Insets.render(this.component.render("insets"), relativeContainerDivElement, "padding");
         relativeContainerDivElement.appendChild(document.createTextNode("\u00a0"));
         
         var expandIcon = this.component.render("expandIcon", ExtrasRender.ComponentSync.Menu._getImageUri("submenuDown"));
-        var expandIconWidth = this.component.render("expandIconWidth", new EchoApp.Extent("10px"));
+        var expandIconWidth = this.component.render("expandIconWidth", 10);
         
         var expandElement = document.createElement("span");
         expandElement.style.position = "absolute";
@@ -598,7 +599,7 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
     	} else {
     	    this._contentDivElement.style.height = "100%";
     	}
-        EchoAppRender.FillImage.renderComponentProperty(this.component, "backgroundImage", null, this._contentDivElement); 
+        EchoAppRender.FillImage.render(this.component.render("backgroundImage"), this._contentDivElement); 
         
         var contentSpanElement = document.createElement("div");
         contentSpanElement.id = this.component.renderId + "_content";

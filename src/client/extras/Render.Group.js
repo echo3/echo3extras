@@ -40,7 +40,7 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
     	
         this._groupDivElement = document.createElement("div");
         this._groupDivElement.id = this.component.renderId;
-        EchoAppRender.Color.renderComponentProperty(this.component, "foreground", null, this._groupDivElement, "color")
+        EchoAppRender.Color.render(this.component.render("foreground"), this._groupDivElement, "color");
     
         var contentElement = this._renderContent();
         var borderParts = this._renderBorder(contentElement);
@@ -100,12 +100,12 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
     	    var titlePosition = this.component.render("titlePosition");
     	    if (titlePosition) {
     		    var topPosElem = document.createElement("td");
-    		    if (titlePosition.units == "%") {
+    		    if (EchoAppRender.Extent.isPercent(titlePosition)) {
     		    	topPosElem.style.width = titlePosition.toString();
     		    }
     		    var topPosElemImg = document.createElement("img");
     		    topPosElemImg.src = EchoRender.Util.TRANSPARENT_IMAGE;
-    		    if (titlePosition.units != "%") {
+    		    if (EchoAppRender.Extent.isPercent(titlePosition)) {
     			    topPosElemImg.style.width = titlePosition.toString();
     		    }
     		    topPosElemImg.style.height = "1px";
@@ -117,9 +117,9 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
     	    
     	    var titleElem = document.createElement("td");
     	    titleElem.style.whiteSpace = "nowrap";
-    		EchoAppRender.Font.renderComponentProperty(this.component, "titleFont", null, titleElem);
-    		EchoAppRender.Insets.renderComponentProperty(this.component, "titleInsets",
-                    ExtrasRender.ComponentSync.Group.DEFAULT_TITLE_INSETS, titleElem, "padding");
+    		EchoAppRender.Font.render(this.component.render("titleFont"), titleElem);
+    		EchoAppRender.Insets.render(this.component.render("titleInsets",
+                    ExtrasRender.ComponentSync.Group.DEFAULT_TITLE_INSETS), titleElem, "padding");
     		var titleImage = this.component.render("titleBackgroundImage");
     		if (titleImage) {
         		EchoAppRender.FillImage.render(
@@ -129,8 +129,8 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
     		topRowElem.appendChild(titleElem);
     		
     	    var topFillElem = document.createElement("td");
-    		if (titlePosition && titlePosition.units == "%") {
-    		    topFillElem.style.width = (100 - titlePosition.value) + "%";
+    		if (titlePosition && EchoAppRender.Extent.isPercent(titlePosition)) {
+    		    topFillElem.style.width = (100 - parseInt(titlePosition)) + "%";
     		} else {
     		    topFillElem.style.width = "100%";
     		}
@@ -193,10 +193,10 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
     _renderContent: function(update) {
         var contentDivElement = document.createElement("div");
         
-        EchoAppRender.FillImage.renderComponentProperty(this.component, "backgroundImage", null, contentDivElement);
-        EchoAppRender.Color.renderComponentProperty(this.component, "background", null, contentDivElement, "backgroundColor")
+        EchoAppRender.FillImage.render(this.component.render("backgroundImage"), contentDivElement);
+        EchoAppRender.Color.render(this.component.render("background"), contentDivElement, "backgroundColor")
         EchoAppRender.Font.renderDefault(this.component, contentDivElement);
-        EchoAppRender.Insets.renderComponentProperty(this.component, "insets", null, contentDivElement, "padding");
+        EchoAppRender.Insets.render(this.component.render("insets"), contentDivElement, "padding");
         
         var componentCount = this.component.getComponentCount();
         for (var i = 0; i < componentCount; i++) {

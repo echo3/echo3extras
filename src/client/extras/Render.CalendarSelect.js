@@ -5,12 +5,12 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
 
     $static: {
     
-        DEFAULT_FOREGROUND: new EchoApp.Color("#000000"),
-        DEFAULT_BACKGROUND: new EchoApp.Color("#ffffff"),
+        DEFAULT_FOREGROUND: "#000000",
+        DEFAULT_BACKGROUND: "#ffffff",
         DEFAULT_BORDER: new EchoApp.Border("2px groove #5f5faf"),
-        DEFAULT_SELECTED_DATE_FOREGROUND: new EchoApp.Color("#000000"),
-        DEFAULT_SELECTED_DATE_BACKGROUND: new EchoApp.Color("#ffffaf"),
-        DEFAULT_ADJACENT_MONTH_DATE_FOREGROUND: new EchoApp.Color("#7f7f7f"),
+        DEFAULT_SELECTED_DATE_FOREGROUND: "#000000",
+        DEFAULT_SELECTED_DATE_BACKGROUND: "#ffffaf",
+        DEFAULT_ADJACENT_MONTH_DATE_FOREGROUND: "#7f7f7f",
 
         _DAYS_IN_MONTH: [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
         
@@ -280,11 +280,11 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
         this._tableElement = document.createElement("table");
         this._tableElement.style.borderCollapse = "collapse";
         this._tableElement.style.margin = "1px";
-        EchoAppRender.Border.renderComponentProperty(this.component, "border", 
-                ExtrasRender.ComponentSync.CalendarSelect.DEFAULT_BORDER, this._tableElement);
-        EchoAppRender.Color.renderComponentProperty(this.component, "foreground",
-                ExtrasRender.ComponentSync.CalendarSelect.DEFAULT_FOREGROUND, this._tableElement); 
-        EchoAppRender.FillImage.renderComponentProperty(this.component, "backgroundImage", null, this._tableElement); 
+        EchoAppRender.Border.render(this.component.render("border", 
+                ExtrasRender.ComponentSync.CalendarSelect.DEFAULT_BORDER), this._tableElement);
+        EchoAppRender.Color.render(this.component.render("foreground",
+                ExtrasRender.ComponentSync.CalendarSelect.DEFAULT_FOREGROUND), this._tableElement); 
+        EchoAppRender.FillImage.render(this.component.render("backgroundImage"), this._tableElement); 
         
         var tbodyElement = document.createElement("tbody");
         

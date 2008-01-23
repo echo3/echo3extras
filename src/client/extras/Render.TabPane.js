@@ -9,20 +9,20 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
         _supportedPartialProperties: ["activeTab"],
         _paneInsets: new EchoApp.Insets(0),
         _defaultBorderType: ExtrasApp.TabPane.BORDER_TYPE_ADJACENT_TO_TABS,
-        _defaultForeground: new EchoApp.Color("#000000"),
+        _defaultForeground: "#000000",
         _defaultInsets: new EchoApp.Insets(2),
         _defaultTabActiveBorder: new EchoApp.Border("1px solid #00004f"),
-        _defaultTabActiveHeightIncrease: new EchoApp.Extent(2),
+        _defaultTabActiveHeightIncrease: 2,
         _defaultTabAlignment: new EchoApp.Alignment(EchoApp.Alignment.DEFAULT, EchoApp.Alignment.TOP),
-        _defaultTabCloseIconTextMargin: new EchoApp.Extent(5),
+        _defaultTabCloseIconTextMargin: 5,
         _defaultTabContentInsets: new EchoApp.Insets(0),
-        _defaultTabHeight: new EchoApp.Extent(32),
-        _defaultTabIconTextMargin: new EchoApp.Extent(5),
+        _defaultTabHeight: 32,
+        _defaultTabIconTextMargin: 5,
         _defaultTabInactiveBorder: new EchoApp.Border("1px solid #7f7f7f"),
-        _defaultTabInset: new EchoApp.Extent(10),
+        _defaultTabInset: 10,
         _defaultTabInsets: new EchoApp.Insets(3, 8),
         _defaultTabPosition: ExtrasApp.TabPane.TAB_POSITION_TOP,
-        _defaultTabSpacing: new EchoApp.Extent(0)
+        _defaultTabSpacing: 0
     },
     
     _element: null,
@@ -212,8 +212,7 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
         headerContainerDivElement.style.right = this._tabInset.toString();
         headerContainerDivElement.style.height = (this._tabHeight.value + this._tabActiveBorder.size.value) + "px";
         EchoAppRender.Font.renderDefault(this.component, headerContainerDivElement);
-        EchoAppRender.FillImage.renderComponentProperty(this.component, "tabBackgroundImage", 
-                null, headerContainerDivElement);
+        EchoAppRender.FillImage.render(this.component.render("tabBackgroundImage"), headerContainerDivElement);
     
         var headerTableElement = document.createElement("table");
         headerTableElement.style.borderWidth = "0px";
@@ -423,8 +422,8 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
             }
             var textTdElement = document.createElement("td");
             textTdElement.style.whiteSpace = "nowrap";
-            EchoAppRender.Alignment.renderComponentProperty(this._parent.component, "tabAlignment", 
-                    ExtrasRender.ComponentSync.TabPane._defaultTabAlignment, textTdElement, true, this._parent.component);
+            EchoAppRender.Alignment.render(this._parent.component.render("tabAlignment", 
+                    ExtrasRender.ComponentSync.TabPane._defaultTabAlignment), textTdElement, true, this._parent.component);
             textTdElement.appendChild(document.createTextNode(title));
             tableElement.appendChild(tbodyElement);
             tbodyElement.appendChild(trElement);
@@ -437,8 +436,8 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         } else {
             // Render Text Only
             centerTdElement.style.whiteSpace = "nowrap";
-            EchoAppRender.Alignment.renderComponentProperty(this._parent.component, "tabAlignment", 
-                    ExtrasRender.ComponentSync.TabPane._defaultTabAlignment, centerTdElement, true, this._parent.component);
+            EchoAppRender.Alignment.render(this._parent.component.render("tabAlignment", 
+                    ExtrasRender.ComponentSync.TabPane._defaultTabAlignment), centerTdElement, true, this._parent.component);
             centerTdElement.appendChild(document.createTextNode(title));
         }
         headerTrElement.appendChild(centerTdElement);
@@ -461,8 +460,8 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
     
     _renderIconElement: function(icon) {
         var imgTdElement = document.createElement("td");
-        EchoAppRender.Alignment.renderComponentProperty(this._parent.component, "tabAlignment", 
-                ExtrasRender.ComponentSync.TabPane._defaultTabAlignment, imgTdElement, true, this._parent.component);
+        EchoAppRender.Alignment.render(this._parent.component.render("tabAlignment", 
+                ExtrasRender.ComponentSync.TabPane._defaultTabAlignment), imgTdElement, true, this._parent.component);
         var imgElement = document.createElement("img");
         imgElement.src = icon.url;
         imgElement.style.marginRight = this._parent.component.render("tabIconTextMargin", 
@@ -473,8 +472,8 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
     
     _renderCloseIconElement: function() {
         var imgTdElement = document.createElement("td");
-        EchoAppRender.Alignment.renderComponentProperty(this._parent.component, "tabAlignment", 
-                ExtrasRender.ComponentSync.TabPane._defaultTabAlignment, imgTdElement, true, this._parent.component);
+        EchoAppRender.Alignment.render(this._parent.component.render("tabAlignment", 
+                ExtrasRender.ComponentSync.TabPane._defaultTabAlignment), imgTdElement, true, this._parent.component);
         imgTdElement.style.paddingLeft = this._parent.component.render("tabCloseIconTextMargin", 
                 ExtrasRender.ComponentSync.TabPane._defaultTabCloseIconTextMargin);
         imgTdElement.style.paddingTop = "0px";
@@ -648,8 +647,8 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         if (!image) {
             return;
         }
-        var horOffset = new EchoApp.Extent(0);
-        var verOffset = new EchoApp.Extent(0);
+        var horOffset = 0;
+        var verOffset = 0;
         return new EchoApp.FillImage(image, EchoApp.FillImage.NO_REPEAT, horOffset, verOffset);
     },
     
@@ -663,8 +662,8 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         if (!image) {
             return;
         }
-        var horOffset = new EchoApp.Extent("100%");
-        var verOffset = new EchoApp.Extent(0);
+        var horOffset = "100%";
+        var verOffset = 0;
         return new EchoApp.FillImage(image, EchoApp.FillImage.NO_REPEAT, horOffset, verOffset);
     },
     

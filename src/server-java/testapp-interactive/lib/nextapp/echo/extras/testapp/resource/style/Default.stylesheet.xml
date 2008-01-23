@@ -2,23 +2,23 @@
 <!-- FIXME. Temporarily using full class names -->
 <ss>
  <s n="Default" t="nextapp.echo.app.button.AbstractButton">
-  <p n="background" t="Color" v="#4f4f5f"/>
-  <p n="foreground" t="Color" v="#efefff"/>
+  <p n="background" t="Color">#4f4f5f</p>
+  <p n="foreground" t="Color">#efefff</p>
   <p n="border" t="Border" v="1px outset #6f6f8f"/>
   <p n="rolloverEnabled" t="b" v="true"/>
-  <p n="rolloverBackground" t="Color" v="#6f6f87"/>
-  <p n="rolloverForeground" t="Color" v="#ffffaf"/>
+  <p n="rolloverBackground" t="Color">#6f6f87</p>
+  <p n="rolloverForeground" t="Color">#ffffaf</p>
   <p n="rolloverBorder" t="Border" v="1px outset #8f8faf"/>
   <p n="pressedEnabled" t="b" v="true"/>
-  <p n="pressedBackground" t="Color" v="#2f2f3f"/>
-  <p n="pressedForeground" t="Color" v="#ffafaf"/>
+  <p n="pressedBackground" t="Color">#2f2f3f</p>
+  <p n="pressedForeground" t="Color">#ffafaf</p>
   <p n="pressedBorder" t="Border" v="1px inset #4f4f6f"/>
   <p n="insets" t="Insets" v="3px 20px"/>
  </s>
  <s n="TestPane" t="nextapp.echo.app.SplitPane">
   <p n="separatorPosition" t="Extent" v="40px"/>
   <p n="separatorHeight" t="Extent" v="1px"/>
-  <p n="separatorColor" t="Color" v="#1d1d1d"/>
+  <p n="separatorColor" t="Color">#1d1d1d</p>
  </s>
  <s n="Default" t="nextapp.echo.app.Table">
   <p n="insets" t="Insets" v="2px 5px"/>
@@ -26,21 +26,21 @@
  </s>
  <s n="EvenCellLabel" t="nextapp.echo.app.Label">
   <p n="layoutData" t="nextapp.echo.app.layout.TableLayoutData">
-   <p n="background" t="Color" v="#afffaf"/>
+   <p n="background" t="Color">#afffaf</p>
   </p>
  </s>
  <s n="OddCellLabel" t="nextapp.echo.app.Label">
   <p n="layoutData" t="nextapp.echo.app.layout.TableLayoutData">
-   <p n="background" t="Color" v="#ffffaf"/>
+   <p n="background" t="Color">#ffffaf</p>
   </p>
  </s>
  <s b="Default" n="Selected" t="nextapp.echo.app.Button">
-  <p n="background" t="Color" v="#3f3f4f"/>
-  <p n="foreground" t="Color" v="#ffcfcf"/>
+  <p n="background" t="Color">#3f3f4f</p>
+  <p n="foreground" t="Color">#ffcfcf</p>
  </s>
  <s n="Default" t="nextapp.echo.app.text.TextComponent">
-  <p n="background" t="Color" v="#ffffdf"/>
-  <p n="foreground" t="Color" v="#000000"/>
+  <p n="background" t="Color">#ffffdf</p>
+  <p n="foreground" t="Color">#000000</p>
   <p n="border" t="Border" v="1px inset #ffffaf"/>
  </s>
  <s n="DefaultResizable" t="nextapp.echo.app.SplitPane">
@@ -63,13 +63,13 @@
     <tf n="Verdana"/>
    </f>
   </p>
-  <p n="foreground" t="Color" v="#ffffff"/>
+  <p n="foreground" t="Color">#ffffff</p>
   <p n="lineWrap" t="b" v="false"/>
   <p n="layoutData" t="nextapp.echo.app.layout.SplitPaneLayoutData">
    <p n="alignment" t="Alignment">
     <a h="center"/>
    </p>
-   <p n="background" t="Color" v="#1b1b21"/>
+   <p n="background" t="Color">#1b1b21</p>
    <p n="backgroundImage" t="FillImage">
     <fi r="0" t="r">
      <i r="/nextapp/echo/extras/testapp/resource/image/HeaderBackground.png"/>
@@ -85,7 +85,7 @@
     <tf n="Verdana"/>
    </f>
   </p>
-  <p n="foreground" t="Color" v="#000000"/>
+  <p n="foreground" t="Color">#000000</p>
   <p n="layoutData" t="nextapp.echo.app.layout.SplitPaneLayoutData">
    <p n="backgroundImage" t="FillImage">
     <fi r="0" t="r" y="100%">
@@ -117,13 +117,13 @@
   <!-- Container-specific property to enable Internet Explorer PNG Alpha Renderer for shadow window border. -->
   <p n="ieAlphaRenderBorder" t="b" v="true"/>
   <p n="titleInsets" t="Insets" v="5px 10px"/>
-  <p n="titleBackground" t="Color" v="#2f2f4f"/>
+  <p n="titleBackground" t="Color">#2f2f4f</p>
   <p n="titleBackgroundImage" t="FillImage">
    <fi r="x" t="r" y="100%">
     <i r="/nextapp/echo/extras/testapp/resource/image/WindowPaneTitleBackground.png"/>
    </fi>
   </p>
-  <p n="titleForeground" t="Color" v="#ffffff"/>
+  <p n="titleForeground" t="Color">#ffffff</p>
   <p n="border" t="FillImageBorder">
    <fib bi="17px 23px 23px 17px" ci="8px 14px 14px 8px">
     <fi t="r">
@@ -156,16 +156,16 @@
  <s n="ControlPane.Button" t="nextapp.echo.app.button.AbstractButton">
   <p n="lineWrap" t="b" v="false"/>
   <p n="insets" t="Insets" v="0px 8px"/>
-  <p n="foreground" t="Color" v="#000000"/>
+  <p n="foreground" t="Color">#000000</p>
   <p n="rolloverEnabled" t="b" v="true"/>
-  <p n="rolloverForeground" t="Color" v="#6f0f0f"/>
+  <p n="rolloverForeground" t="Color">#6f0f0f</p>
  </s> 
  <s n="ControlPane.Button" t="nextapp.echo.app.Button">  <!--FIXME-->
   <p n="lineWrap" t="b" v="false"/>
   <p n="insets" t="Insets" v="0px 8px"/>
-  <p n="foreground" t="Color" v="#000000"/>
+  <p n="foreground" t="Color">#000000</p>
   <p n="rolloverEnabled" t="b" v="true"/>
-  <p n="rolloverForeground" t="Color" v="#6f0f0f"/>
+  <p n="rolloverForeground" t="Color">#6f0f0f</p>
  </s>
  <s n="ControlPane.Container.Top" t="nextapp.echo.app.SplitPane">
   <p n="separatorPosition" v="32px"/>
@@ -180,7 +180,7 @@
   <p n="cellSpacing" t="Extent" v="3px"/>
   <p n="layoutData" t="nextapp.echo.app.layout.SplitPaneLayoutData">
    <p n="overflow" t="i" v="OVERFLOW_HIDDEN"/>
-   <p n="background" t="Color" v="#cfcfdf"/>
+   <p n="background" t="Color">#cfcfdf</p>
    <p n="backgroundImage" t="FillImage">
     <fi t="r">
      <i r="/nextapp/echo/extras/testapp/resource/image/ControlPaneFill.png"/>
@@ -193,16 +193,16 @@
   <p n="font" t="Font">
    <f it="1" sz="10px"/>
   </p>
-  <p n="background" t="Color" v="#3f3f4f"/>
-  <p n="foreground" t="Color" v="#ffffff"/>
+  <p n="background" t="Color">#3f3f4f</p>
+  <p n="foreground" t="Color">#ffffff</p>
   <p n="border" t="Border" v="1px outset #3f3f4f"/>
   <p n="rolloverEnabled" t="b" v="true"/>
-  <p n="rolloverBackground" t="Color" v="#8f8fa7"/>
-  <p n="rolloverForeground" t="Color" v="#ffffaf"/>
+  <p n="rolloverBackground" t="Color">#8f8fa7</p>
+  <p n="rolloverForeground" t="Color">#ffffaf</p>
   <p n="rolloverBorder" t="Border" v="1px outset #8f8faf"/>
   <p n="pressedEnabled" t="b" v="true"/>
-  <p n="pressedBackground" t="Color" v="#2f2f3f"/>
-  <p n="pressedForeground" t="Color" v="#ffafaf"/>
+  <p n="pressedBackground" t="Color">#2f2f3f</p>
+  <p n="pressedForeground" t="Color">#ffafaf</p>
   <p n="pressedBorder" t="Border" v="1px inset #4f4f6f"/>
   <p n="insets" t="Insets" v="3px 20px"/>
  </s>
@@ -210,16 +210,16 @@
   <p n="font" t="Font">
    <f sz="9px"/>
   </p>
-  <p n="background" t="Color" v="#cfcfdf"/>
-  <p n="foreground" t="Color" v="#000000"/>
+  <p n="background" t="Color">#cfcfdf</p>
+  <p n="foreground" t="Color">#000000</p>
   <p n="border" t="Border" v="1px outset #cfcfdf"/>
   <p n="rolloverEnabled" t="b" v="true"/>
-  <p n="rolloverBackground" t="Color" v="#efefff"/>
-  <p n="rolloverForeground" t="Color" v="#000000"/>
+  <p n="rolloverBackground" t="Color">#efefff</p>
+  <p n="rolloverForeground" t="Color">#000000</p>
   <p n="rolloverBorder" t="Border" v="1px outset #efefff"/>
   <p n="pressedEnabled" t="b" v="true"/>
-  <p n="pressedBackground" t="Color" v="#afafbf"/>
-  <p n="pressedForeground" t="Color" v="#000000"/>
+  <p n="pressedBackground" t="Color">#afafbf</p>
+  <p n="pressedForeground" t="Color">#000000</p>
   <p n="pressedBorder" t="Border" v="1px inset #afafbf"/>
   <p n="insets" t="Insets" v="1px 3px"/>
  </s>
@@ -230,7 +230,7 @@
  <s n="TestControlAccordion" t="nextapp.echo.extras.app.AccordionPane">
   <p n="defaultContentInsets" t="Insets" v="7px 10px"/>
   <p n="layoutData" t="nextapp.echo.app.layout.SplitPaneLayoutData">
-   <p n="background" t="Color" v="#afafef"/>
+   <p n="background" t="Color">#afafef</p>
    <p n="backgroundImage" t="FillImage">
     <fi r="y" t="r" x="100%">
      <i r="/nextapp/echo/extras/testapp/resource/image/BlueSteelBackground.jpg"/>
@@ -300,7 +300,7 @@
   </p>
  </s>
  <s n="TooltipPanel" t="nextapp.echo.app.Panel">
-  <p n="background" t="Color" v="#FFFFE1"/>
+  <p n="background" t="Color">#FFFFE1</p>
   <p n="insets" t="Insets" v="2px"/>
   <p n="border" t="Border" v="1px solid #000000"/>
  </s>

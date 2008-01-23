@@ -372,14 +372,13 @@ ExtrasRender.ComponentSync.ColorSelect = Core.extend(EchoRender.ComponentSync, {
     /**
      * Sets the selected color.
      *
-     * @param rgb the color to select as an <code>ExtrasColorSelect.RGB</code>
-     *            value.
+     * @param rgb the color to select as an 24 bit hexadecimal string color value
      * @private
      */
     _setColor: function(color) {
-        var r = color ? color.getRed() / 255 : 0;
-        var g = color ? color.getGreen() / 255 : 0;
-        var b = color ? color.getBlue() / 255 : 0;
+        var r = parseInt(parseInt(color.substring(1), 16) / 0x10000);
+        var g = parseInt(parseInt(color.substring(1), 16) / 0x100) % 0x100;
+        var b = parseInt(color.substring(1), 16) % 0x100;
         
         var min = Math.min(r, g, b);
         var max = Math.max(r, g, b);
@@ -412,7 +411,7 @@ ExtrasRender.ComponentSync.ColorSelect = Core.extend(EchoRender.ComponentSync, {
     _storeColor: function() {
         var renderColor = this._hsvToRgb(this._h, this._s, this._v);
         var renderHexTriplet = renderColor.toHexTriplet();
-        this.component.set("color", new EchoApp.Color(renderHexTriplet));
+        this.component.set("color", renderHexTriplet);
     },
     
     _updateDisplayedColor: function() {
