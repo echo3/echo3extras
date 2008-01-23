@@ -254,7 +254,7 @@ ExtrasRender.ComponentSync.AccordionPane.Tab = Core.extend({
         this._tabDivElement.id = this._parent.component.renderId + "_tab_" + this._childComponent.renderId;
         this._tabDivElement.style.cursor = "pointer";
         this._tabDivElement.style.height = ExtrasRender.ComponentSync.AccordionPane._defaultTabHeight;
-        EchoAppRender.Insets.renderPixel(this._parent._getTabInsets(), this._tabDivElement, "padding");
+        EchoAppRender.Insets.render(this._parent._getTabInsets(), this._tabDivElement, "padding");
         this._tabDivElement.style.position = "absolute";
         this._tabDivElement.style.left = "0px";
         this._tabDivElement.style.right = "0px";
@@ -267,7 +267,7 @@ ExtrasRender.ComponentSync.AccordionPane.Tab = Core.extend({
         this._contentDivElement.style.position = "absolute";
         this._contentDivElement.style.left = "0px";
         this._contentDivElement.style.right = "0px";
-        EchoAppRender.Insets.renderPixel(this._getContentInsets(), this._contentDivElement, "padding");
+        EchoAppRender.Insets.render(this._getContentInsets(), this._contentDivElement, "padding");
         this._contentDivElement.style.overflow = "auto";
     
     	EchoRender.renderComponentAdd(update, this._childComponent, this._contentDivElement);

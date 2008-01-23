@@ -403,7 +403,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         
         // center
         var centerTdElement = document.createElement("td");
-        EchoAppRender.Insets.renderPixel(ExtrasRender.ComponentSync.TabPane._defaultTabInsets, centerTdElement, "padding");
+        EchoAppRender.Insets.render(ExtrasRender.ComponentSync.TabPane._defaultTabInsets, centerTdElement, "padding");
         
         var icon = layoutData ? layoutData.get("icon") : null;
         var title = layoutData ? layoutData.get("title", "*") : "*";
@@ -515,7 +515,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
             contentDivElement.style.bottom = "0px";
         }
         contentDivElement.style.left = "0px";
-        EchoAppRender.Insets.renderPixel(this._getContentInsets(), contentDivElement, "padding");
+        EchoAppRender.Insets.render(this._getContentInsets(), contentDivElement, "padding");
         contentDivElement.style.overflow = "auto";
         
         EchoRender.renderComponentAdd(update, this._childComponent, contentDivElement);

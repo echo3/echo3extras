@@ -144,7 +144,7 @@ ExtrasRender.ComponentSync.BorderPane = Core.extend(EchoRender.ComponentSync, {
     	    var child = this.component.getComponent(0);
     	    var insets = child.pane ? null : this.component.render("insets");
     	    if (insets) {
-    	    	EchoAppRender.Insets.renderPixel(insets, this._contentDivElement, "padding");
+    	    	EchoAppRender.Insets.render(insets, this._contentDivElement, "padding");
     	    }
     	    EchoRender.renderComponentAdd(update, child, this._contentDivElement);
         } else if (componentCount > 1) {

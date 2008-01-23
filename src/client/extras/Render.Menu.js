@@ -63,7 +63,7 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
         renderMenu: function(menuModel, xPosition, yPosition) {
             var menuDivElement = document.createElement("div");
             menuDivElement.id = this.component.renderId + "_menu_" + menuModel.id;
-            EchoAppRender.Insets.renderPixel(this._menuInsets, menuDivElement, "padding");
+            EchoAppRender.Insets.render(this._menuInsets, menuDivElement, "padding");
             EchoAppRender.Border.render(this._getMenuBorder(), menuDivElement);
             var background;
             var menuBackground = this.component.render("menuBackground");
@@ -144,7 +144,7 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
         
                     if (hasIcons) {
                         var menuItemIconTdElement = document.createElement("td");
-                        EchoAppRender.Insets.renderPixel(iconPadding, menuItemIconTdElement, "padding");
+                        EchoAppRender.Insets.render(iconPadding, menuItemIconTdElement, "padding");
                         if (item instanceof ExtrasApp.ToggleOptionModel) {
                             var iconIdentifier;
                             var selected = this._stateModel && this._stateModel.isSelected(item.modelId);
@@ -167,7 +167,7 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
                     }
                     
                     var menuItemContentTdElement = document.createElement("td");
-                    EchoAppRender.Insets.renderPixel(textPadding, menuItemContentTdElement, "padding");
+                    EchoAppRender.Insets.render(textPadding, menuItemContentTdElement, "padding");
                     var lineWrap = this.component.render("lineWrap");
                     if (lineWrap != null && !lineWrap) {
                         menuItemContentTdElement.style.whiteSpace = "nowrap";
@@ -479,7 +479,7 @@ ExtrasRender.ComponentSync.MenuBarPane = Core.extend(ExtrasRender.ComponentSync.
                     menuBarItemTdElement.style.cursor = "pointer";
                     menuBarTrElement.appendChild(menuBarItemTdElement);
                     var menuBarItemDivElement = document.createElement("div");
-                    EchoAppRender.Insets.renderPixel(this._itemInsets, menuBarItemDivElement, "padding");
+                    EchoAppRender.Insets.render(this._itemInsets, menuBarItemDivElement, "padding");
                     menuBarItemTdElement.appendChild(menuBarItemDivElement);
                     var textNode = document.createTextNode(item.text);
                     menuBarItemDivElement.appendChild(textNode);
@@ -591,7 +591,7 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
     	this._contentDivElement.style.right = expandIconWidth.toString();
     	var insets = this.component.render("insets");
     	if (insets) {
-    	    EchoAppRender.Insets.renderPixel(insets, this._contentDivElement, "padding");
+    	    EchoAppRender.Insets.render(insets, this._contentDivElement, "padding");
     	    if (height) {
     	    	var compensatedHeight = Math.max(0, height.value - insets.top.value - insets.bottom.value);
     		    this._contentDivElement.style.height = compensatedHeight + "px";

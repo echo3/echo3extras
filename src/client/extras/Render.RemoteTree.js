@@ -537,7 +537,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             }
         }
         var newInsets = new EchoApp.Insets(newValues);
-        EchoAppRender.Insets.renderPixel(newInsets, element, "padding");
+        EchoAppRender.Insets.render(newInsets, element, "padding");
     },
     
     /**
@@ -795,7 +795,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
                 } else {
                     insets = this._defaultInsets;
                 }
-                EchoAppRender.Insets.renderPixel(insets, cellElement, "padding");
+                EchoAppRender.Insets.render(insets, cellElement, "padding");
             }
             ++index;
             
