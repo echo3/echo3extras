@@ -297,7 +297,7 @@ ExtrasRender.ComponentSync.AccordionPane.Tab = Core.extend({
         if (state) {
             var background = this._parent.component.render("tabRolloverBackground");
             if (!background) {
-            	background = ExtrasRender.Color.adjustIntensity(this._parent._getTabBackground());
+            	background = EchoAppRender.Color.adjust(this._parent._getTabBackground(), 20, 20, 20);
             }
             EchoAppRender.Color.render(background, tabDivElement, "backgroundColor");
             var backgroundImage = this._parent.component.render("tabRolloverBackgroundImage");
@@ -315,7 +315,7 @@ ExtrasRender.ComponentSync.AccordionPane.Tab = Core.extend({
             if (!border) {
             	var defaultBorder = this._parent._getTabBorder();
             	border = new EchoApp.Border(defaultBorder.size, defaultBorder.style, 
-            	        ExtrasRender.Color.adjustIntensity(defaultBorder.color));
+            	        EchoAppRender.Color.adjust(defaultBorder.color, 20, 20, 20));
             }
     	    EchoAppRender.Border.renderSide(border, tabDivElement, "borderTop");
     	    EchoAppRender.Border.renderSide(border, tabDivElement, "borderBottom");
