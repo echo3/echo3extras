@@ -7,11 +7,11 @@
 ExtrasRender.ComponentSync.AccordionPane = Core.extend(EchoRender.ComponentSync, {
 
     $static: {
-        _paneInsets: "0px",
+        _paneInsets: 0,
         _defaultTabBackground: "#cfcfcf",
         _defaultTabBorder: new EchoApp.Border("1px outset #cfcfcf"),
         _defaultTabForeground: "#000000",
-        _defaultTabHeight: 20,
+        _defaultTabHeight: "20px",
         _defaultTabInsets: "2px 5px",
         _defaultTabContentInsets: this._paneInsets
     },
@@ -421,8 +421,8 @@ ExtrasRender.ComponentSync.AccordionPane.Rotation = Core.extend({
         this._oldTab = oldTab;
         this._newTab = newTab;
         
-        this._oldTabContentInsets = this._oldTab._getContentInsets();
-        this._newTabContentInsets = this._newTab._getContentInsets();
+        this._oldTabContentInsets = EchoAppRender.Insets.toPixels(this._oldTab._getContentInsets());
+        this._newTabContentInsets = EchoAppRender.Insets.toPixels(this._newTab._getContentInsets());
         
         this._animationStartTime = new Date().getTime();
         this._animationEndTime = this._animationStartTime + this._parent._animationTime;
@@ -510,7 +510,7 @@ ExtrasRender.ComponentSync.AccordionPane.Rotation = Core.extend({
                 }
                 
                 // Adjust height of expanding new tab content to fill expanding space.
-                var newContentHeight = stepPosition - this._oldTabContentInsets.top.value - this._oldTabContentInsets.bottom.value;
+                var newContentHeight = stepPosition - this._oldTabContentInsets.top - this._oldTabContentInsets.bottom;
                 if (newContentHeight < 0) {
                     newContentHeight = 0;
                 }
@@ -529,7 +529,7 @@ ExtrasRender.ComponentSync.AccordionPane.Rotation = Core.extend({
                 
                 // Reduce height of contracting old tab content to fit within contracting space.
                 var oldContentHeight = this._regionHeight - oldTop - ((this._numberOfTabsBelow - 1) * this._tabHeight) 
-                        - this._oldTabContentInsets.top.value - this._oldTabContentInsets.bottom.value;
+                        - this._oldTabContentInsets.top - this._oldTabContentInsets.bottom;
                 if (oldContentHeight < 0) {
                     oldContentHeight = 0;
                 }
@@ -553,14 +553,14 @@ ExtrasRender.ComponentSync.AccordionPane.Rotation = Core.extend({
                 // Reduce height of contracting old tab content to fit within contracting space.
                 var oldContentHeight = this._regionHeight - stepPosition 
                         - ((this._numberOfTabsAbove + this._numberOfTabsBelow + 1) * this._tabHeight)
-                        - this._oldTabContentInsets.top.value - this._oldTabContentInsets.bottom.value;
+                        - this._oldTabContentInsets.top - this._oldTabContentInsets.bottom;
                 if (oldContentHeight < 0) {
                     oldContentHeight = 0;
                 }
                 this._oldTab._contentDivElement.style.height = oldContentHeight + "px";
                 
                 // Increase height of expanding tab content to fit within expanding space.
-                var newContentHeight = stepPosition - this._newTabContentInsets.top.value - this._newTabContentInsets.bottom.value;
+                var newContentHeight = stepPosition - this._newTabContentInsets.top - this._newTabContentInsets.bottom;
                 if (newContentHeight < 0) {
                     newContentHeight = 0;
                 };
