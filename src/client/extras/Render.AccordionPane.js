@@ -537,7 +537,8 @@ ExtrasRender.ComponentSync.AccordionPane.Rotation = Core.extend({
             } else {
                 // Move each moving tab to next step position.
                 for (var i = 0; i < this._rotatingTabs.length; ++i) {
-                    var newPosition = stepPosition + this._startBottomPosition + (this._tabHeight * (this._rotatingTabs.length - i - 1));
+                    var newPosition = stepPosition + this._startBottomPosition 
+                            + (this._tabHeight * (this._rotatingTabs.length - i - 1));
                     this._rotatingTabs[i]._tabDivElement.style.bottom = newPosition + "px";
                 }
                 
