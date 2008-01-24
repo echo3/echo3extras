@@ -15,7 +15,7 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
         MAX_Z_INDEX: 65535,
     
         /**
-         * Gets an URI for default menu images.
+         * Gets a URI for default menu images.
          * 
          * @param {String} identifier the image identifier
          * @return the image URI
@@ -156,13 +156,11 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
                                 iconIdentifier = selected ? "toggleOn" : "toggleOff";
                             }
                             var imgElement = document.createElement("img");
-                            imgElement.setAttribute("src", ExtrasRender.ComponentSync.Menu._getImageUri(iconIdentifier));
-                            imgElement.setAttribute("alt", "");
+                            imgElement.src = ExtrasRender.ComponentSync.Menu._getImageUri(iconIdentifier);
                             menuItemIconTdElement.appendChild(imgElement);
                         } else if (item.icon) {
                             var imgElement = document.createElement("img");
-                            imgElement.setAttribute("src", item.icon.url);
-                            imgElement.setAttribute("alt", "");
+                            EchoAppRender.ImageReference.renderImg(item.icon, imgElement);
                             menuItemIconTdElement.appendChild(imgElement);
                         }
                         menuItemTrElement.appendChild(menuItemIconTdElement);
@@ -582,7 +580,7 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
         expandElement.style.top = "0px";
         expandElement.style.right = "0px";
         var imgElement = document.createElement("img");
-        imgElement.src = expandIcon.url ? expandIcon.url : expandIcon;
+        EchoAppRender.ImageReference.renderImg(expandIcon, imgElement);
         expandElement.appendChild(imgElement);
         relativeContainerDivElement.appendChild(expandElement);
         
@@ -707,7 +705,7 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
                 var trElement = document.createElement("tr");
                 var tdElement = document.createElement("td");
                 var imgElement = document.createElement("img");
-                imgElement.src = menuModel.icon.url;
+                EchoAppRender.ImageReference.renderImg(menuModel.icon, imgElement);
                 tdElement.appendChild(imgElement);
                 trElement.appendChild(tdElement);
                 tdElement = document.createElement("td");
@@ -726,7 +724,7 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
         } else if (menuModel.icon) {
             // Render Icon Only
             var imgElement = document.createElement("img");
-            imgElement.src = menuModel.icon.url;
+            EchoAppRender.ImageReference.renderImg(menuModel.icon, imgElement);
             contentElement.appendChild(imgElement);
         }
     },
