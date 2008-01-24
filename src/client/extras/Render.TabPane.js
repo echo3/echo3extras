@@ -13,7 +13,7 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
         _defaultInsets: 2,
         _defaultTabActiveBorder: "1px solid #00004f",
         _defaultTabActiveHeightIncrease: 2,
-        _defaultTabAlignment: new EchoApp.Alignment(EchoApp.Alignment.DEFAULT, EchoApp.Alignment.TOP),
+        _defaultTabAlignment: "top",
         _defaultTabCloseIconTextMargin: 5,
         _defaultTabContentInsets: 0,
         _defaultTabHeight: 32,
@@ -176,12 +176,12 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
         } else if (this._borderType == ExtrasApp.TabPane.BORDER_TYPE_SURROUND) {
             EchoAppRender.Border.render(this._tabActiveBorder, contentContainerDivElement);
         } else if (this._borderType == ExtrasApp.TabPane.BORDER_TYPE_PARALLEL_TO_TABS) {
-            EchoAppRender.Border.renderSide(this._tabActiveBorder, contentContainerDivElement, "borderTop")
-            EchoAppRender.Border.renderSide(this._tabActiveBorder, contentContainerDivElement, "borderBottom")
+            EchoAppRender.Border.render(this._tabActiveBorder, contentContainerDivElement, "borderTop")
+            EchoAppRender.Border.render(this._tabActiveBorder, contentContainerDivElement, "borderBottom")
         } else if (this._tabPosition == ExtrasApp.TabPane.TAB_POSITION_BOTTOM) {
-            EchoAppRender.Border.renderSide(this._tabActiveBorder, contentContainerDivElement, "borderBottom")
+            EchoAppRender.Border.render(this._tabActiveBorder, contentContainerDivElement, "borderBottom")
         } else {
-            EchoAppRender.Border.renderSide(this._tabActiveBorder, contentContainerDivElement, "borderTop")
+            EchoAppRender.Border.render(this._tabActiveBorder, contentContainerDivElement, "borderTop")
         }
         
         return contentContainerDivElement;
@@ -577,13 +577,13 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         if (this._parent._tabPosition == ExtrasApp.TabPane.TAB_POSITION_BOTTOM) {
             headerContentTableElement.style.marginTop = state ? "0px" : this._parent._tabActiveBorder.size.toString();
             headerContentTableElement.style.marginBottom = state ? "0px" : this._parent._tabActiveHeightIncreasePx + "px";
-            EchoAppRender.Border.renderSide(border, headerContentTableElement, "borderBottom");
+            EchoAppRender.Border.render(border, headerContentTableElement, "borderBottom");
         } else {
             headerContentTableElement.style.marginTop = state ? "0px" : this._parent._tabActiveHeightIncreasePx + "px";
-            EchoAppRender.Border.renderSide(border, headerContentTableElement, "borderTop");
+            EchoAppRender.Border.render(border, headerContentTableElement, "borderTop");
         }
-        EchoAppRender.Border.renderSide(border, headerContentTableElement, "borderLeft");
-        EchoAppRender.Border.renderSide(border, headerContentTableElement, "borderRight");
+        EchoAppRender.Border.render(border, headerContentTableElement, "borderLeft");
+        EchoAppRender.Border.render(border, headerContentTableElement, "borderRight");
         
         var font;
         if (state) {
