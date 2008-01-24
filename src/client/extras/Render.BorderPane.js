@@ -40,30 +40,30 @@ ExtrasRender.ComponentSync.BorderPane = Core.extend(EchoRender.ComponentSync, {
         if (borderInsets.top > 0) {
             // Render top left corner
             if (borderInsets.left > 0) {
-                cornerElement = this._renderBorderPart(border, 0, flags, 
+                cornerElement = this._renderBorderPart(border, "topLeft", flags, 
                         borderInsets.left, borderInsets.top, 0, null, null, 0);
                 this._element.appendChild(cornerElement);
             }
             // Render top side
-            this._borderTopElement = this._renderBorderPart(border, 1, flags, 
+            this._borderTopElement = this._renderBorderPart(border, "top", flags, 
                     null, borderInsets.top, 0, borderInsets.right, null, borderInsets.left);
             this._element.appendChild(this._borderTopElement);
             // Render top right corner
             if (borderInsets.right > 0) {
-    	        cornerElement = this._renderBorderPart(border, 2, flags, 
+    	        cornerElement = this._renderBorderPart(border, "topRight", flags, 
                         borderInsets.right, borderInsets.top, 0, 0, null, null);
                 this._element.appendChild(cornerElement);
             }
         }
         // Render left side
         if (borderInsets.left > 0) {
-            this._borderLeftElement = this._renderBorderPart(border, 3, flags, 
+            this._borderLeftElement = this._renderBorderPart(border, "left", flags, 
                     borderInsets.left, null, borderInsets.top, null, borderInsets.bottom, 0);
             this._element.appendChild(this._borderLeftElement);
         }
         // Render right side
         if (borderInsets.right > 0) {
-            this._borderRightElement = this._renderBorderPart(border, 4, flags, 
+            this._borderRightElement = this._renderBorderPart(border, "right", flags, 
                     borderInsets.right, null, borderInsets.top, 0, borderInsets.bottom, null);
             this._element.appendChild(this._borderRightElement);
         }
@@ -71,24 +71,24 @@ ExtrasRender.ComponentSync.BorderPane = Core.extend(EchoRender.ComponentSync, {
         if (borderInsets.bottom > 0) {
             // Render bottom left corner
             if (borderInsets.left > 0) {
-    	        cornerElement = this._renderBorderPart(border, 5, flags, 
+    	        cornerElement = this._renderBorderPart(border, "bottomLeft", flags, 
                         borderInsets.left, borderInsets.bottom, null, null, 0, 0);
                 this._element.appendChild(cornerElement);
             }
             // Render bottom side
-            this._borderBottomElement = this._renderBorderPart(border, 6, flags, 
+            this._borderBottomElement = this._renderBorderPart(border, "bottom", flags, 
                     null, borderInsets.bottom, null, borderInsets.right, 0, borderInsets.left);
             this._element.appendChild(this._borderBottomElement);
             // Render bottom right corner
             if (borderInsets.right > 0) {
-    	        cornerElement = this._renderBorderPart(border, 7, flags, 
+    	        cornerElement = this._renderBorderPart(border, "bottomRight", flags, 
                         borderInsets.right, borderInsets.bottom, null, 0, 0, null);
                 this._element.appendChild(cornerElement);
             }
         }
     },
     
-    _renderBorderPart: function(border, pos, flags, width, height, top, right, bottom, left) {
+    _renderBorderPart: function(border, position, flags, width, height, top, right, bottom, left) {
     	var borderDivElement = document.createElement("div");
         
         borderDivElement.style.fontSize = "1px";
@@ -115,8 +115,8 @@ ExtrasRender.ComponentSync.BorderPane = Core.extend(EchoRender.ComponentSync, {
         if (border.color) {
         	EchoAppRender.Color.render(border.color, borderDivElement, "backgroundColor");
         }
-        if (border.fillImages[pos]) {
-            EchoAppRender.FillImage.render(border.fillImages[pos], borderDivElement, flags);
+        if (border[position]) {
+            EchoAppRender.FillImage.render(border[position], borderDivElement, flags);
         }
         
         return borderDivElement;
