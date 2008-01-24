@@ -9,7 +9,7 @@ ExtrasRender.ComponentSync.AccordionPane = Core.extend(EchoRender.ComponentSync,
     $static: {
         _paneInsets: 0,
         _defaultTabBackground: "#cfcfcf",
-        _defaultTabBorder: new EchoApp.Border("1px outset #cfcfcf"),
+        _defaultTabBorder: "1px outset #cfcfcf",
         _defaultTabForeground: "#000000",
         _defaultTabHeight: "20px",
         _defaultTabInsets: "2px 5px",
@@ -312,17 +312,16 @@ ExtrasRender.ComponentSync.AccordionPane.Tab = Core.extend({
             }
             var border = this._parent.component.render("tabRolloverBorder");
             if (!border) {
-            // FIXME use methods in EchoAppRender to retrieve individual border components.
-            	var defaultBorder = this._parent._getTabBorder();
-            	border = new EchoApp.Border(defaultBorder.size, defaultBorder.style, 
-            	        EchoAppRender.Color.adjust(defaultBorder.color, 20, 20, 20));
+            	var borderData = EchoAppRender.Border.parse(this._parent._getTabBorder());
+            	border = EchoAppRender.Border.compose(borderData.size, borderData.style,
+            	        EchoAppRender.Color.adjust(borderData.color, 20, 20, 20));
             }
-    	    EchoAppRender.Border.renderSide(border, tabDivElement, "borderTop");
-    	    EchoAppRender.Border.renderSide(border, tabDivElement, "borderBottom");
+    	    EchoAppRender.Border.render(border, tabDivElement, "borderTop");
+    	    EchoAppRender.Border.render(border, tabDivElement, "borderBottom");
         } else {
     	    var border = this._parent._getTabBorder();
-    	    EchoAppRender.Border.renderSide(border, tabDivElement, "borderTop");
-    	    EchoAppRender.Border.renderSide(border, tabDivElement, "borderBottom");
+    	    EchoAppRender.Border.render(border, tabDivElement, "borderTop");
+    	    EchoAppRender.Border.render(border, tabDivElement, "borderBottom");
     	    EchoAppRender.Color.render(this._parent._getTabBackground(), tabDivElement, "backgroundColor");
     	    EchoAppRender.Color.render(this._parent.component.render("tabForeground", 
     	            ExtrasRender.ComponentSync.AccordionPane._defaultTabForeground), tabDivElement, "color");

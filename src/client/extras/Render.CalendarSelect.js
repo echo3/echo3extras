@@ -7,7 +7,7 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
     
         DEFAULT_FOREGROUND: "#000000",
         DEFAULT_BACKGROUND: "#ffffff",
-        DEFAULT_BORDER: new EchoApp.Border("2px groove #5f5faf"),
+        DEFAULT_BORDER: "2px groove #5f5faf",
         DEFAULT_SELECTED_DATE_FOREGROUND: "#000000",
         DEFAULT_SELECTED_DATE_BACKGROUND: "#ffffaf",
         DEFAULT_ADJACENT_MONTH_DATE_FOREGROUND: "#7f7f7f",

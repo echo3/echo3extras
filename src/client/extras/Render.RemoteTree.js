@@ -429,6 +429,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         }
     },
     
+    //FIXME broken with new API.
     /**
      * Creates a multisided border based on the given border. If the provided border is not
      * multisided, a new border will be created with the values set to one side. If the border

@@ -414,7 +414,7 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
     _getBorder: function() {
         var border = this.component.render("border");
     	if (!border) {
-    		border = new EchoApp.Border("1px outset #cfcfcf");
+    		border = "1px outset #cfcfcf";
     	}
     	return border;
     },
@@ -453,8 +453,8 @@ ExtrasRender.ComponentSync.MenuBarPane = Core.extend(ExtrasRender.ComponentSync.
         
         EchoAppRender.Color.renderFB(this.component, menuBarDivElement);
         var border = this._getBorder();
-        EchoAppRender.Border.renderSide(border, menuBarDivElement, "borderTop");
-        EchoAppRender.Border.renderSide(border, menuBarDivElement, "borderBottom");
+        EchoAppRender.Border.render(border, menuBarDivElement, "borderTop");
+        EchoAppRender.Border.render(border, menuBarDivElement, "borderBottom");
         EchoAppRender.FillImage.render(this.component.render("backgroundImage"), menuBarDivElement); 
         EchoAppRender.Font.render(this.component.render("font"), menuBarDivElement, null);
         
