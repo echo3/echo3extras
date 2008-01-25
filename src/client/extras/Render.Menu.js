@@ -593,7 +593,8 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
     	if (insets) {
     	    EchoAppRender.Insets.render(insets, this._contentDivElement, "padding");
     	    if (height) {
-    	    	var compensatedHeight = Math.max(0, height.value - insets.top.value - insets.bottom.value);
+                var insetsPx = EchoAppRender.Insets.toPixels(insets);
+    	    	var compensatedHeight = Math.max(0, EchoAppRender.Extent.toPixels(height) - insetsPx.top - insetsPx.top);
     		    this._contentDivElement.style.height = compensatedHeight + "px";
     	    }
     	} else {
@@ -643,10 +644,11 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
     	}
         var menuHeight = this.component.render("menuHeight");
         if (menuHeight) {
+            var menuHeightPx = EchoAppRender.Extent.toPixels(menuHeight);
     	    if (WebCore.Environment.NOT_SUPPORTED_CSS_MAX_HEIGHT) {
     		    var measure = new WebCore.Measure(menuDivElement);
-    		    if (measure.height > menuHeight.value) {
-    			    menuDivElement.style.height = menuHeight.value + "px";
+    		    if (measure.height > menuHeight) {
+    			    menuDivElement.style.height = menuHeight + "px";
     		    }
     	    } else {
     		    menuDivElement.style.maxHeight = menuHeight;
