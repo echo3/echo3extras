@@ -56,7 +56,7 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
     	if (this._borderImages) {
     		image = this._borderImages[position];
     	} else {
-    		image = new EchoApp.ImageReference(ExtrasRender.ComponentSync.Group._getImageUri("border" + position));
+    		image = new ExtrasRender.ComponentSync.Group._getImageUri("border" + position);
     	}
     	if (image) {
     		return new EchoApp.FillImage(image, repeat, x, y);

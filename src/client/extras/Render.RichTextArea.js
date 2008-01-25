@@ -795,7 +795,7 @@ ExtrasRender.ComponentSync.RichTextArea.TableDialog = Core.extend(
                         new EchoApp.Label({
                             text: richTextArea.peer._msg["TableDialog.PromptRows"],
                             layoutData: {
-                                alignment: new EchoApp.Alignment(EchoApp.Alignment.TRAILING)
+                                alignment: "trailing"
                             }
                         }),
                         this._rowsField = new EchoApp.TextField({
@@ -805,7 +805,7 @@ ExtrasRender.ComponentSync.RichTextArea.TableDialog = Core.extend(
                         new EchoApp.Label({
                             text: richTextArea.peer._msg["TableDialog.PromptColumns"],
                             layoutData: {
-                                alignment: new EchoApp.Alignment(EchoApp.Alignment.TRAILING)
+                                alignment: "trailing"
                             }
                         }),
                         this._columnsField = new EchoApp.TextField({

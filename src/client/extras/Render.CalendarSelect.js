@@ -229,6 +229,8 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
     },
 
     renderAdd: function(update, parentElement) {
+        var enabled = this.component.isRenderEnabled()
+    
         var i, j, tdElement, trElement;
         var dayOfWeekNameAbbreviationLength = parseInt(this.component.render("dayOfWeekNameAbbreviationLength", 2));
         var firstDayOfWeek = this._msg["FirstDayOfWeek"];
@@ -244,6 +246,9 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
             var optionElement = document.createElement("option");
             optionElement.appendChild(document.createTextNode(this._msg["Month." + i]));
             this._monthSelect.appendChild(optionElement);
+        }
+        if (!enabled) {
+            this._monthSelect.disabled = true;
         }
         this._element.appendChild(this._monthSelect);
         
@@ -264,6 +269,9 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
         this._yearField.type = "text";
         this._yearField.maxLength = 4;
         this._yearField.size = 5;
+        if (!enabled) {
+            this._yearField.readOnly = true;
+        }
         this._element.appendChild(this._yearField);
 
         this._yearIncrementElement = document.createElement("span");
@@ -324,6 +332,7 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
         
         parentElement.appendChild(this._element);
         
+
         WebCore.EventProcessor.add(this._monthSelect, "change", Core.method(this, this._processMonthSelect), false);
         WebCore.EventProcessor.add(this._yearField, "change", Core.method(this, this._processYearChange), false);
         WebCore.EventProcessor.add(this._yearDecrementElement, "click", Core.method(this, this._processYearDecrement), false);

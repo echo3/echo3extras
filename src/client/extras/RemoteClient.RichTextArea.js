@@ -58,11 +58,10 @@ ExtrasRender.ComponentSync.RemoteRichTextArea = Core.extend(ExtrasRender.Compone
         ];
         this._defaultIcons = {};
         for (var i = 0; i < iconNames.length; ++i) {
-            this._defaultIcons[iconNames[i]] = new EchoApp.ImageReference(imageServiceUrl 
-                    + "&iid=EchoExtras.RemoteRichTextArea." + iconNames[i]);
+            this._defaultIcons[iconNames[i]] = imageServiceUrl + "&iid=EchoExtras.RemoteRichTextArea." + iconNames[i];
         }
         
-        this._defaultIcons.ok = new EchoApp.ImageReference(imageServiceUrl + "&iid=EchoExtras.CommonImages.ok");
-        this._defaultIcons.cancel = new EchoApp.ImageReference(imageServiceUrl + "&iid=EchoExtras.CommonImages.cancel");
+        this._defaultIcons.ok = imageServiceUrl + "&iid=EchoExtras.CommonImages.ok";
+        this._defaultIcons.cancel = imageServiceUrl + "&iid=EchoExtras.CommonImages.cancel";
     }
 });

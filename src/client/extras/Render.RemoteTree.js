@@ -366,7 +366,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
     _getImage: function(property, defaultImageName) {
         var image = this.component.render(property);
         if (!image) {
-            image = new EchoApp.ImageReference(this._getImageUri(defaultImageName ? defaultImageName : property));
+            image = this._getImageUri(defaultImageName ? defaultImageName : property);
         }
         return image;
     },
