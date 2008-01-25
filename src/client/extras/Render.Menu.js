@@ -588,7 +588,7 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
         this._contentDivElement.style.position = "absolute";
         this._contentDivElement.style.top = "0px";
         this._contentDivElement.style.left = "0px";
-    	this._contentDivElement.style.right = expandIconWidth.toString();
+    	this._contentDivElement.style.right = EchoAppRender.Extent.toCssValue(expandIconWidth);
     	var insets = this.component.render("insets");
     	if (insets) {
     	    EchoAppRender.Insets.render(insets, this._contentDivElement, "padding");
