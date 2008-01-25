@@ -652,7 +652,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         }
         var horOffset = 0;
         var verOffset = 0;
-        return new EchoApp.FillImage(image, EchoApp.FillImage.NO_REPEAT, horOffset, verOffset);
+        return { url: image, repeat: "no-repeat", x: horOffset, y: verOffset };
     },
     
     _hasRightImage: function() {
@@ -667,7 +667,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         }
         var horOffset = "100%";
         var verOffset = 0;
-        return new EchoApp.FillImage(image, EchoApp.FillImage.NO_REPEAT, horOffset, verOffset);
+        return { url: image, repeat: "no-repeat", x: horOffset, y: verOffset };
     },
     
     _hasCloseImage: function() {
