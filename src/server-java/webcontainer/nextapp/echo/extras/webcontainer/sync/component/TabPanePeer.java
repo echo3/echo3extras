@@ -107,27 +107,17 @@ implements LazyRenderContainer {
         });
     }
     
+    public String getClientComponentType(boolean shortType) {
+        return "ExtrasApp.TabPane";
+    }
+
     /**
      * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#getComponentClass()
      */
     public Class getComponentClass() {
         return TabPane.class;
     }
-
-    public String getClientComponentType(boolean shortType) {
-        return "ExtrasApp.TabPane";
-    }
     
-    /**
-     * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#init(nextapp.echo.app.util.Context)
-     */
-    public void init(Context context) {
-        super.init(context);
-        ServerMessage serverMessage = (ServerMessage) context.get(ServerMessage.class);
-        serverMessage.addLibrary(CommonService.INSTANCE.getId());
-        serverMessage.addLibrary(TAB_PANE_SERVICE.getId());
-    }
-
     /**
      * @see ComponentSynchronizePeer#getInputPropertyClass(String)
      */
@@ -163,35 +153,7 @@ implements LazyRenderContainer {
             return super.getOutputProperty(context, component, propertyName, propertyIndex);
         }
     }
-    
-    public Iterator getUpdatedOutputPropertyNames(Context context, Component component, ServerComponentUpdate update) {
-        Iterator normalPropertyIterator = super.getUpdatedOutputPropertyNames(context, component, update);
-        
-        if (update.hasUpdatedProperty(TabPane.ACTIVE_TAB_INDEX_CHANGED_PROPERTY) || update.hasAddedChildren() || update.hasRemovedChildren()) {
-            return new MultiIterator(
-                    new Iterator[]{ normalPropertyIterator, new ArrayIterator(new String[] {PROPERTY_ACTIVE_TAB}) });
-        }
-        return normalPropertyIterator;
-    }
-    
-    /**
-     * @see ComponentSynchronizePeer#storeInputProperty(Context, Component, String, int, Object)
-     */
-    public void storeInputProperty(Context context, Component component, String propertyName, int index, Object newValue) {
-        if (PROPERTY_ACTIVE_TAB.equals(propertyName)) {
-            ClientUpdateManager clientUpdateManager = (ClientUpdateManager) context.get(ClientUpdateManager.class);
-            clientUpdateManager.setComponentProperty(component, TabPane.ACTIVE_TAB_INDEX_CHANGED_PROPERTY, getTabIndex(context, (TabPane)component, (String)newValue));
-        }
-    }
-    
-    /**
-     * @see LazyRenderContainer#isRendered(Context, Component, Component)
-     */
-    public boolean isRendered(Context context, Component component, Component child) {
-        // FIXME implement lazy behavior
-        return true;
-    }
-    
+
     /**
      * Gets the index of the component with the given element id.
      * 
@@ -209,5 +171,45 @@ implements LazyRenderContainer {
             }
         }
         return null;
+    }
+    
+    public Iterator getUpdatedOutputPropertyNames(Context context, Component component, ServerComponentUpdate update) {
+        Iterator normalPropertyIterator = super.getUpdatedOutputPropertyNames(context, component, update);
+        
+        if (update.hasUpdatedProperty(TabPane.ACTIVE_TAB_INDEX_CHANGED_PROPERTY) || update.hasAddedChildren() 
+                || update.hasRemovedChildren()) {
+            return new MultiIterator(
+                    new Iterator[]{ normalPropertyIterator, new ArrayIterator(new String[] {PROPERTY_ACTIVE_TAB}) });
+        }
+        return normalPropertyIterator;
+    }
+    
+    /**
+     * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#init(nextapp.echo.app.util.Context)
+     */
+    public void init(Context context) {
+        super.init(context);
+        ServerMessage serverMessage = (ServerMessage) context.get(ServerMessage.class);
+        serverMessage.addLibrary(CommonService.INSTANCE.getId());
+        serverMessage.addLibrary(TAB_PANE_SERVICE.getId());
+    }
+    
+    /**
+     * @see LazyRenderContainer#isRendered(Context, Component, Component)
+     */
+    public boolean isRendered(Context context, Component component, Component child) {
+        // FIXME implement lazy behavior
+        return true;
+    }
+    
+    /**
+     * @see ComponentSynchronizePeer#storeInputProperty(Context, Component, String, int, Object)
+     */
+    public void storeInputProperty(Context context, Component component, String propertyName, int index, Object newValue) {
+        if (PROPERTY_ACTIVE_TAB.equals(propertyName)) {
+            ClientUpdateManager clientUpdateManager = (ClientUpdateManager) context.get(ClientUpdateManager.class);
+            clientUpdateManager.setComponentProperty(component, TabPane.ACTIVE_TAB_INDEX_CHANGED_PROPERTY, getTabIndex(context, 
+                    (TabPane) component, (String) newValue));
+        }
     }
 }

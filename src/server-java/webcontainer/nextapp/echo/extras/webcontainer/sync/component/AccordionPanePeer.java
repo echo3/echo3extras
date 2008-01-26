@@ -29,8 +29,11 @@
 
 package nextapp.echo.extras.webcontainer.sync.component;
 
+import java.util.Iterator;
+
 import nextapp.echo.app.Component;
 import nextapp.echo.app.update.ClientUpdateManager;
+import nextapp.echo.app.update.ServerComponentUpdate;
 import nextapp.echo.app.util.Context;
 import nextapp.echo.extras.app.AccordionPane;
 import nextapp.echo.extras.webcontainer.service.CommonService;
@@ -42,6 +45,8 @@ import nextapp.echo.webcontainer.Service;
 import nextapp.echo.webcontainer.UserInstance;
 import nextapp.echo.webcontainer.WebContainerServlet;
 import nextapp.echo.webcontainer.service.JavaScriptService;
+import nextapp.echo.webcontainer.util.ArrayIterator;
+import nextapp.echo.webcontainer.util.MultiIterator;
 
 /**
  * Synchronization peer for <code>AccordionPane</code>s.
@@ -50,17 +55,17 @@ import nextapp.echo.webcontainer.service.JavaScriptService;
  */
 public class AccordionPanePeer extends AbstractComponentSynchronizePeer implements LazyRenderContainer {
 
-    private static final String PROPERTY_ACTIVE_TAB = "activeTab";
+    private static final Service ACCORDION_PANE_SERVICE = JavaScriptService.forResources("EchoExtras.AccordionPane",
+            new String[] {  "/nextapp/echo/extras/webcontainer/resource/js/Application.AccordionPane.js",  
+                            "/nextapp/echo/extras/webcontainer/resource/js/Render.AccordionPane.js"});
     
+    private static final String PROPERTY_ACTIVE_TAB = "activeTab";
+
     /**
      * Component property to enabled/disable lazy rendering of child tabs.
      * Default value is interpreted to be true.
      */
     public static final String PROPERTY_LAZY_RENDER_ENABLED = "lazyRenderEnabled";
-
-    private static final Service ACCORDION_PANE_SERVICE = JavaScriptService.forResources("EchoExtras.AccordionPane",
-            new String[] {  "/nextapp/echo/extras/webcontainer/resource/js/Application.AccordionPane.js",  
-                            "/nextapp/echo/extras/webcontainer/resource/js/Render.AccordionPane.js"});
 
     static {
         WebContainerServlet.getServiceRegistry().add(ACCORDION_PANE_SERVICE);
@@ -71,29 +76,19 @@ public class AccordionPanePeer extends AbstractComponentSynchronizePeer implemen
     }
     
     /**
-     * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#getComponentClass()
-     */
-    public Class getComponentClass() {
-        return AccordionPane.class;
-    }
-
-    /**
      * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#getClientComponentType(boolean)
      */
     public String getClientComponentType(boolean shortType) {
         return "ExtrasApp.AccordionPane";
     }
-    
-    /**
-     * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#init(nextapp.echo.app.util.Context)
-     */
-    public void init(Context context) {
-        super.init(context);
-        ServerMessage serverMessage = (ServerMessage) context.get(ServerMessage.class);
-        serverMessage.addLibrary(CommonService.INSTANCE.getId());
-        serverMessage.addLibrary(ACCORDION_PANE_SERVICE.getId());
-    }
 
+    /**
+     * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#getComponentClass()
+     */
+    public Class getComponentClass() {
+        return AccordionPane.class;
+    }
+    
     /**
      * @see ComponentSynchronizePeer#getInputPropertyClass(String)
      */
@@ -120,6 +115,39 @@ public class AccordionPanePeer extends AbstractComponentSynchronizePeer implemen
             return super.getOutputProperty(context, component, propertyName, propertyIndex);
         }
     }
+
+    /**
+     * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#getUpdatedOutputPropertyNames(nextapp.echo.app.util.Context,
+     *      nextapp.echo.app.Component, nextapp.echo.app.update.ServerComponentUpdate)
+     */
+    public Iterator getUpdatedOutputPropertyNames(Context context, Component component, ServerComponentUpdate update) {
+        Iterator normalPropertyIterator = super.getUpdatedOutputPropertyNames(context, component, update);
+        
+        if (update.hasUpdatedProperty(AccordionPane.ACTIVE_TAB_INDEX_CHANGED_PROPERTY) || update.hasAddedChildren() 
+                || update.hasRemovedChildren()) {
+            return new MultiIterator(
+                    new Iterator[]{ normalPropertyIterator, new ArrayIterator(new String[] {PROPERTY_ACTIVE_TAB}) });
+        }
+        return normalPropertyIterator;
+    }
+
+    /**
+     * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#init(nextapp.echo.app.util.Context)
+     */
+    public void init(Context context) {
+        super.init(context);
+        ServerMessage serverMessage = (ServerMessage) context.get(ServerMessage.class);
+        serverMessage.addLibrary(CommonService.INSTANCE.getId());
+        serverMessage.addLibrary(ACCORDION_PANE_SERVICE.getId());
+    }
+    
+    /**
+     * @see LazyRenderContainer#isRendered(Context, Component, Component)
+     */
+    public boolean isRendered(Context context, Component component, Component child) {
+        // FIXME implement lazy behavior
+        return true;
+    }
     
     /**
      * @see ComponentSynchronizePeer#storeInputProperty(Context, Component, String, int, Object)
@@ -136,13 +164,5 @@ public class AccordionPanePeer extends AbstractComponentSynchronizePeer implemen
                 }
             }
         }
-    }
-    
-    /**
-     * @see LazyRenderContainer#isRendered(Context, Component, Component)
-     */
-    public boolean isRendered(Context context, Component component, Component child) {
-        // FIXME implement lazy behavior
-        return true;
     }
 }
