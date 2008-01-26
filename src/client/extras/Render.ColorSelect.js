@@ -378,9 +378,11 @@ ExtrasRender.ComponentSync.ColorSelect = Core.extend(EchoRender.ComponentSync, {
         var r, g, b;
         
         if (color) {
-            r = parseInt(parseInt(color.substring(1), 16) / 0x10000);
-            g = parseInt(parseInt(color.substring(1), 16) / 0x100) % 0x100;
-            b = parseInt(color.substring(1), 16) % 0x100;
+            // Remove leading #.
+            color = color.substring(1); 
+            r = (parseInt(parseInt(color, 16) / 0x10000)) / 255;
+            g = (parseInt(parseInt(color, 16) / 0x100) % 0x100) / 255;
+            b = (parseInt(color, 16) % 0x100) / 255;
         } else {
             r = g = b = 0;
         }
@@ -406,6 +408,8 @@ ExtrasRender.ComponentSync.ColorSelect = Core.extend(EchoRender.ComponentSync, {
                 this._h += 360;
             }
         }
+
+
         this._updateDisplayedColor();
     },
     
@@ -429,6 +433,7 @@ ExtrasRender.ComponentSync.ColorSelect = Core.extend(EchoRender.ComponentSync, {
         this._svDivElement.style.backgroundColor = baseColor.toHexTriplet();
     
         var renderColor = this._hsvToRgb(this._h, this._s, this._v);
+        
         var renderHexTriplet = renderColor.toHexTriplet();
         this._colorDivElement.style.backgroundColor = renderHexTriplet;
         this._colorDivElement.style.borderColor = renderHexTriplet;
@@ -496,5 +501,9 @@ ExtrasRender.ComponentSync.ColorSelect.RGB = Core.extend({
             bString = "0" + bString;
         }
         return "#" + rString + gString + bString;
+    },
+    
+    toString: function() {
+        return this.toHexTriplet();
     }
 });

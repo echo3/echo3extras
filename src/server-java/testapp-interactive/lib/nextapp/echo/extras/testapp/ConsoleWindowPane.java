@@ -77,6 +77,7 @@ public class ConsoleWindowPane extends WindowPane {
         logPane = new ContentPane();
         logPane.setFont(new Font(Font.MONOSPACE, Font.PLAIN, new Extent(10)));
         logPane.setForeground(Color.GREEN);
+        logPane.setBackground(Color.BLACK);
         splitPaneLayoutData = new SplitPaneLayoutData();
         splitPaneLayoutData.setBackground(Color.BLACK);
         logPane.setLayoutData(splitPaneLayoutData);
