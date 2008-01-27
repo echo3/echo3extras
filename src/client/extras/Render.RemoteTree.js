@@ -34,6 +34,8 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
 
     $static: {
         _BORDER_SIDE_STYLE_NAMES: ["borderTop", "borderRight", "borderBottom", "borderLeft"],
+
+        _SIDE_TO_PADDING_MAP: { "top": "paddingTop", "right" : "paddingRight", "bottom" : "paddingBottom", "left" : "paddingLeft" },
         
         LINE_STYLE_NONE: 0,
         LINE_STYLE_SOLID: 1,
@@ -455,27 +457,19 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
      * @param {String} insets the insets to render, may not be null
      * @param {Array} sides the indices of the insets sides to render, possible values are:
      *          <ul>
-     *              <li>0 (top)</li>
-     *              <li>1 (right)</li>
-     *              <li>2 (bottom)</li>
-     *              <li>3 (left)</li>
+     *              <li>top</li>
+     *              <li>right</li>
+     *              <li>bottom</li>
+     *              <li>left</li>
      *          </ul>
      *          The elements of the array need not be ordered.
      * @param element the element to render insets to
      */
     _applyInsets: function(insets, sides, element) {
         var pixelInsets = EchoAppRender.Insets.toPixels(insets);
-        if (sides[0]) {
-            element.style.paddingTop = pixelInsets.top + "px";
-        }
-        if (sides[1]) {
-            element.style.paddingRight = pixelInsets.right + "px";
-        }
-        if (sides[2]) {
-            element.style.paddingBottom = pixelInsets.bottom + "px";
-        }
-        if (sides[3]) {
-            element.style.paddingLeft = pixelInsets.left + "px";
+        for (var i = 0; i < sides.length; ++i) {
+            var padding = ExtrasRender.ComponentSync.RemoteTree._SIDE_TO_PADDING_MAP[sides[i]];
+            element.style[padding] = pixelInsets[sides[i]] + "px";
         }
     },
     
@@ -837,16 +831,13 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             // don't render insets on expando cell, would result in gapped lines
             if (subCell.__ExtrasTreeCellType != "expando") {
                 if (subCell == subRow.firstChild && subCell == subRow.lastChild) {
-                    this._applyInsets(insets, [0, 1, 2, 3], subCell);
+                    this._applyInsets(insets, ["top", "right", "left", "bottom"], subCell);
                 } else if (subCell == subRow.firstChild) {
-                    // render top, bottom and left insets
-                    this._applyInsets(insets, [0, 2, 3], subCell);
+                    this._applyInsets(insets, ["top", "bottom", "left"], subCell);
                 } else if (subCell != subRow.lastChild) {
-                    // render top and bottom insets
-                    this._applyInsets(insets, [0, 2], subCell);
+                    this._applyInsets(insets, ["top", "bottom"], subCell);
                 } else if (subCell == subRow.lastChild) {
-                    // render top, bottom and right insets
-                    this._applyInsets(insets, [0, 1, 2], subCell);
+                    this._applyInsets(insets, ["top", "bottom", "right"], subCell);
                 }
             }
             subCell = subCell.nextSibling;
