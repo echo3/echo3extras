@@ -128,15 +128,15 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
     },
     
     _computeEffectBorderCompensation: function() {
-        var selectionBorder = this._createMultiSidedBorder(this.component.render("selectionBorder"));
-        var rolloverBorder = this._createMultiSidedBorder(this.component.render("rolloverBorder"));
+        var selectionBorder = this.component.render("selectionBorder");
+        var rolloverBorder = this.component.render("rolloverBorder");
         var selectionBorderLeft = 0;
         if (selectionBorder && this._selectionEnabled) {
-            selectionBorderLeft = EchoAppRender.Extent.toPixels(this._getBorderSide(selectionBorder, 3).size, true);
+            selectionBorderLeft = EchoAppRender.Border.getPixelSize(selectionBorder, "left");
         }
         var rolloverBorderLeft = 0;
         if (rolloverBorder && this._rolloverEnabled) {
-            rolloverBorderLeft = EchoAppRender.Extent.toPixels(this._getBorderSide(rolloverBorder, 3).size, true);
+            rolloverBorderLeft = EchoAppRender.Border.getPixelSize(rolloverBorder, "left");
         }
         this._effectBorderCompensation = Math.max(selectionBorderLeft, rolloverBorderLeft);
     },
@@ -428,48 +428,14 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             this._hideNode(childNode, iterator);
         }
     },
-    
-    //FIXME broken with new API.
-    /**
-     * Creates a multisided border based on the given border. If the provided border is not
-     * multisided, a new border will be created with the values set to one side. If the border
-     * is multisided, no new border will be created.
-     * <p>
-     * If border is null, this method returns silently.
-     * 
-     * @param border the border
-     * 
-     * @return the resulting multisided border
-     */
-    _createMultiSidedBorder: function(border) {
-        if (!border) {
-            return null;
-        }
         
-        if (border.multisided) {
-            return border;
-        } else {
-            var side = new EchoApp.Border.Side();
-            side.size = border.size;
-            side.style = border.style;
-            side.color = border.color;
-            return new EchoApp.Border([side]);
-        }
-    },
-    
     /**
      * Renders border to element, only the sides provided in the sides argument will be applied.
      * <p>
      * If border is null, this method returns silently.
      * 
      * @param border the border to render
-     * @param {Array} sides the indices of the border sides to render, possible values are:
-     *          <ul>
-     *              <li>0 (top)</li>
-     *              <li>1 (right)</li>
-     *              <li>2 (bottom)</li>
-     *              <li>3 (left)</li>
-     *          </ul>
+     * @param {Array} side names to render, (borderLeft/borderRight/borderTop/borderBottom)
      *          The elements of the array need not be ordered.
      * @param element the element to render border to
      */
@@ -479,22 +445,8 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         }
         
         for (var i in sides) {
-            var index = sides[i];
-            var side = this._getBorderSide(border, index);
-            EchoAppRender.Border.renderSide(side, element, 
-                    ExtrasRender.ComponentSync.RemoteTree._BORDER_SIDE_STYLE_NAMES[sides[i]]);
+            EchoAppRender.Border.render(border, element, sides[i]);
         }
-    },
-    
-    _getBorderSide: function(border, index) {
-        if (border.sides.length == 1) {
-            index = 0;
-        } else if (index == 2 && border.sides.length <= 2) {
-            index = 0;
-        } else if (index == 3 && border.sides.length <= 3) {
-            index = 1;
-        }
-        return border.sides[index];
     },
     
     /**
@@ -815,8 +767,8 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         if (!this._effectBorderRows) {
             this._effectBorderRows = new Core.Arrays.LargeMap();
         }
-        var effectBorder = this._createMultiSidedBorder(this._getProperty("border", context, null, true));
-        var defaultBorder = this._createMultiSidedBorder(this.component.render("border"));
+        var effectBorder = this._getProperty("border", context, null, true);
+        var defaultBorder = this.component.render("border");
         var hadEffect = this._effectBorderRows.map[context.rowElement.id];
         if (effectBorder) {
             var node = this._getNodeFromElement(context.rowElement);
@@ -843,7 +795,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         }
         var compensation = this._effectBorderCompensation;
         if (effectBorder) {
-            var currentCompensation = EchoAppRender.Extent.toPixels(this._getBorderSide(effectBorder, 3).size, true);
+            var currentCompensation = EchoAppRender.Border.getPixelSize(effectBorder, "left");
             if (currentCompensation == 0) {
                 compensation = 0;
             } else {
@@ -856,16 +808,16 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
     _renderBorder: function(cellElement, border, renderCellBorders, override, overrideBottom) {
         var sides = [];
         if (override || cellElement.parentNode.previousSibling) {
-            sides.push(0);
+            sides.push("borderTop");
         }
         if (override || overrideBottom) {
-            sides.push(2);
+            sides.push("borderBottom");
         }
         if (override && !cellElement.previousSibling) {
-            sides.push(3);
+            sides.push("borderLeft");
         }
         if ((override && !cellElement.nextSibling) || (renderCellBorders && cellElement.nextSibling)) {
-            sides.push(1);
+            sides.push("borderRight");
         }
         this._applyBorder(border, sides, cellElement);
     },
