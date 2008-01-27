@@ -56,15 +56,15 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
     	if (this._borderImages) {
     		image = this._borderImages[position];
     	} else {
-    		image = new ExtrasRender.ComponentSync.Group._getImageUri("border" + position);
+    		image = ExtrasRender.ComponentSync.Group._getImageUri("border" + position);
     	}
     	if (image) {
-    		return new EchoApp.FillImage(image, repeat, x, y);
+    		return { url: image, repeat: repeat, x: x, y: y };
     	}
     },
     
     _getBorderImage: function(position, x, y) {
-    	return this._getRepeatingBorderImage(position, EchoApp.FillImage.NO_REPEAT, x, y);
+    	return this._getRepeatingBorderImage(position, "no-repeat", x, y);
     },
     
     _renderBorder: function(contentElem) {
@@ -83,7 +83,7 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
         var topLeftElem = document.createElement("div");
         topLeftElem.style.paddingRight = borderPixelInsets.right + "px";
         topLeftElem.style.paddingLeft = borderPixelInsets.left + "px";
-        EchoAppRender.FillImage.render(this._getBorderImage(0, "0px", "100%"), topLeftElem, flags);
+        EchoAppRender.FillImage.render(this._getBorderImage(0, 0, "100%"), topLeftElem, flags);
     	topRightElem.appendChild(topLeftElem);
     	
     	var title = this.component.render("title");
@@ -111,7 +111,7 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
     		    topPosElemImg.style.height = "1px";
     		    topPosElem.appendChild(topPosElemImg);
     		    EchoAppRender.FillImage.render(
-    		            this._getRepeatingBorderImage(1, EchoApp.FillImage.REPEAT_HORIZONTAL, "0px", "100%"), topPosElem, flags);
+    		            this._getRepeatingBorderImage(1, "repeat-x", 0, "100%"), topPosElem, flags);
     			topRowElem.appendChild(topPosElem);
     	    }
     	    
@@ -122,8 +122,7 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
                     ExtrasRender.ComponentSync.Group.DEFAULT_TITLE_INSETS), titleElem, "padding");
     		var titleImage = this.component.render("titleBackgroundImage");
     		if (titleImage) {
-        		EchoAppRender.FillImage.render(
-        		      new EchoApp.FillImage(titleImage, EchoApp.FillImage.REPEAT_HORIZONTAL, "0px", "100%"), titleElem, flags);
+        		EchoAppRender.FillImage.render({ url: titleImage, repeat: "repeat-x", x: 0, y: "100%" }, titleElem, flags);
     		}
     		titleElem.appendChild(document.createTextNode(title));
     		topRowElem.appendChild(titleElem);
@@ -135,7 +134,7 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
     		    topFillElem.style.width = "100%";
     		}
     	    topFillElem.style.height = borderPixelInsets.top + "px";
-    	    EchoAppRender.FillImage.render(this._getRepeatingBorderImage(1, EchoApp.FillImage.REPEAT_HORIZONTAL, "0px", "100%"), 
+    	    EchoAppRender.FillImage.render(this._getRepeatingBorderImage(1, "repeat-x", 0, "100%"), 
     	            topFillElem, flags);
     		topRowElem.appendChild(topFillElem);
     		
@@ -145,7 +144,7 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
         	topElem.style.width = "100%";
         	topElem.style.height = borderPixelInsets.top + "px";
         	topElem.style.fontSize = "1px";
-        	EchoAppRender.FillImage.render(this._getRepeatingBorderImage(1, EchoApp.FillImage.REPEAT_HORIZONTAL, "0px", "100%"), 
+        	EchoAppRender.FillImage.render(this._getRepeatingBorderImage(1, "repeat-x", 0, "100%"), 
         	        topElem, flags);
         	topLeftElem.appendChild(topElem);
     	}
@@ -154,13 +153,13 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
     	
     	var rightElem = document.createElement("div");
         rightElem.style.width = "100%";
-        EchoAppRender.FillImage.render(this._getRepeatingBorderImage(4, EchoApp.FillImage.REPEAT_VERTICAL, "100%", "0px"), 
+        EchoAppRender.FillImage.render(this._getRepeatingBorderImage(4, "repeat-y", "100%", 0), 
                 rightElem, flags);
         
         var leftElem = document.createElement("div");
         leftElem.style.paddingRight = borderPixelInsets.right + "px";
         leftElem.style.paddingLeft = borderPixelInsets.left + "px";
-        EchoAppRender.FillImage.render(this._getRepeatingBorderImage(3, EchoApp.FillImage.REPEAT_VERTICAL, "0px", "0px"), 
+        EchoAppRender.FillImage.render(this._getRepeatingBorderImage(3, "repeat-y", 0, 0), 
                 leftElem, flags);
     	leftElem.appendChild(contentElem);
     	rightElem.appendChild(leftElem);
@@ -175,14 +174,14 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
         var bottomLeftElem = document.createElement("div");
         bottomLeftElem.style.paddingRight = borderPixelInsets.right + "px";
         bottomLeftElem.style.paddingLeft = borderPixelInsets.left + "px";
-        EchoAppRender.FillImage.render(this._getBorderImage(5, "0px", "100%"), bottomLeftElem, flags);
+        EchoAppRender.FillImage.render(this._getBorderImage(5, 0, "100%"), bottomLeftElem, flags);
     	bottomRightElem.appendChild(bottomLeftElem);
         
     	var bottomElem = document.createElement("div");
         bottomElem.style.width = "100%";
         bottomElem.style.height = borderPixelInsets.bottom + "px";
         bottomElem.style.fontSize = "1px";
-        EchoAppRender.FillImage.render(this._getRepeatingBorderImage(6, EchoApp.FillImage.REPEAT_HORIZONTAL, "0px", "100%"), 
+        EchoAppRender.FillImage.render(this._getRepeatingBorderImage(6, "repeat-x", 0, "100%"), 
                 bottomElem, flags);
     	bottomLeftElem.appendChild(bottomElem);
     	borderParts.push(bottomRightElem);
