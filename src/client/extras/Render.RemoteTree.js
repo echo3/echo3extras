@@ -407,11 +407,11 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
     _renderExpandoElement: function(node, expandoElement) {
         if (node.isLeaf()) {
             var joinIcon = this._getJoinIcon(node);
-            var joinFillImage = new EchoApp.FillImage(joinIcon, EchoApp.FillImage.NO_REPEAT, "50%", 0);
+            var joinFillImage = { url: joinIcon, repeat: "no-repeat", x: "50%", y: 0 };
             EchoAppRender.FillImage.render(joinFillImage, expandoElement);
         } else {
             var toggleIcon = this._getToggleIcon(node);
-            var toggleFillImage = new EchoApp.FillImage(toggleIcon, EchoApp.FillImage.NO_REPEAT, "50%", 0);
+            var toggleFillImage = { url: toggleIcon, repeat: "no-repeat", x: "50%", y: 0 };
             EchoAppRender.FillImage.render(toggleFillImage, expandoElement);
         }
     },
@@ -437,10 +437,9 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
      * <p>
      * If border is null, this method returns silently.
      * 
-     * @param {EchoApp.Border} border the border
+     * @param border the border
      * 
      * @return the resulting multisided border
-     * @type EchoApp.Border
      */
     _createMultiSidedBorder: function(border) {
         if (!border) {
@@ -463,7 +462,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
      * <p>
      * If border is null, this method returns silently.
      * 
-     * @param {EchoApp.Border} border the border to render
+     * @param border the border to render
      * @param {Array} sides the indices of the border sides to render, possible values are:
      *          <ul>
      *              <li>0 (top)</li>
@@ -580,8 +579,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
     
             if (parentNode) {
                 if (this._showLines && this._treeStructure.hasNodeNextSibling(parentNode)) {
-                    var verticalLineFillImage = new EchoApp.FillImage(this.verticalLineImage, 
-                            EchoApp.FillImage.REPEAT_VERTICAL, "50%", 0);
+                    var verticalLineFillImage = { url: this.verticalLineImage, repeat: "no-repeat", x: "50%", y: 0 };
                     EchoAppRender.FillImage.render(verticalLineFillImage, rowHeaderElement);
                 }
                 parentNode = this._treeStructure.getNode(parentNode.getParentId());
