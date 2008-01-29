@@ -66,7 +66,6 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
     },
 
     renderAdd: function(update, parentElement) {
-        this._loadTransition();
         this.element = document.createElement("div");
         this.element.style.cssText = "position:absolute;overflow:hidden;top:0;left:0;width:100%;height:100%;";
         parentElement.appendChild(this.element);
@@ -76,6 +75,7 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
     },
     
     _renderAddChild: function(update) {
+        this._loadTransition();
         this.childDivElement = document.createElement("div");
         this.childDivElement.style.cssText = "position:absolute;top:0;left:0;width:100%;height:100%;";
         
@@ -107,9 +107,23 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
 
     renderUpdate: function(update) {
         var fullRender = false;
-        if (update.hasUpdatedProperties() || update.hasUpdatedLayoutDataChildren()) {
-            // Full render
+        if (update.hasUpdatedLayoutDataChildren()) {
             fullRender = true;
+        } else if (update.hasUpdatedProperties()) {
+            // Property updates
+            var propertyNames = update.getUpdatedPropertyNames();
+            if (!(propertyNames.length == 1 && propertyNames[0] == "type")) {
+                // Properties other than 'type' have changed.
+                fullRender = true;
+            }
+        }
+
+        if (fullRender) {
+            var element = this.element;
+            var containerElement = element.parentNode;
+            EchoRender.renderComponentDispose(update, update.parent);
+            containerElement.removeChild(element);
+            this.renderAdd(update, containerElement);
         } else {
             this._transitionFinish();
         
@@ -128,13 +142,6 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
                 // Add children.
                 this._renderAddChild(update); 
             }
-        }
-        if (fullRender) {
-            var element = this.element;
-            var containerElement = element.parentNode;
-            EchoRender.renderComponentDispose(update, update.parent);
-            containerElement.removeChild(element);
-            this.renderAdd(update, containerElement);
         }
         
         return fullRender;
