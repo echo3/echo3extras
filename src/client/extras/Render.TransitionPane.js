@@ -35,7 +35,7 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
     doImmediateTransition: function() {
         this._removeOldContent();
         if (this.childDivElement) {
-            this.childDivElement.style.display = "block";
+            this._showContent();
         }
     },
 
@@ -64,6 +64,18 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
             this.oldChildDivElement = null;
         }
     },
+    
+    _hideContent: function() {
+        if (this.childDivElement) {
+            this.childDivElement.style.visibility = "hidden";
+        }
+    },
+    
+    _showContent: function() {
+        if (this.childDivElement) {
+            this.childDivElement.style.visibility = "visible";
+        }
+    },
 
     renderAdd: function(update, parentElement) {
         this.element = document.createElement("div");
@@ -82,7 +94,7 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
         EchoRender.renderComponentAdd(update, this.component.children[0], this.childDivElement);
         
         if (this._initialContentLoaded) {
-            this.childDivElement.style.display = "none";
+            this._hideContent();
             if (this._transitionClass) {
                 this._transitionStart();
             } else {
@@ -324,7 +336,7 @@ ExtrasRender.ComponentSync.TransitionPane.CameraPanTransition = Core.extend(
             break;
         }
         if (!this._newChildOnScreen && this.transitionPane.childDivElement) {
-            this.transitionPane.childDivElement.style.display = "block";
+            this.transitionPane._showContent();
             this.transitionPane.childDivElement.style.zIndex = 2;
             this._newChildOnScreen = true;
         }
@@ -355,7 +367,7 @@ ExtrasRender.ComponentSync.TransitionPane.FadeOpacityTransition = Core.extend(
                 this.transitionPane.childDivElement.style.opacity = 0;
             }
         }
-        this.transitionPane.childDivElement.style.display = "block";
+        this.transitionPane._showContent();
     },
     
     step: function(progress) {
