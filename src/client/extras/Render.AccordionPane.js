@@ -55,15 +55,32 @@ ExtrasRender.ComponentSync.AccordionPane = Core.extend(EchoRender.ComponentSync,
             this._tabs[i]._renderDisplay();
         }
     },
-
+    
     renderUpdate: function(update) {
-        // FIXME partial update / lazy rendering
-        var element = this._paneDivElement;
-        var containerElement = element.parentNode;
-        EchoRender.renderComponentDispose(update, update.parent);
-        containerElement.removeChild(element);
-        this.renderAdd(update, containerElement);
-        return true;
+        var fullRender;
+
+        if (update.hasUpdatedLayoutDataChildren() || update.hasAddedChildren() || update.hasRemovedChildren()) {
+            // Add/remove/layout data change: full render.
+            fullRender = true;
+        } else {
+            var propertyNames = update.getUpdatedPropertyNames();
+            if (propertyNames.length == 1 && propertyNames[0] == "activeTab") {
+                this._selectTab(update.getUpdatedProperty("activeTab").newValue);
+                fullRender = false;
+            } else {
+                fullRender = true;
+            }
+        }
+
+        if (fullRender) {
+            var element = this._paneDivElement;
+            var containerElement = element.parentNode;
+            EchoRender.renderComponentDispose(update, update.parent);
+            containerElement.removeChild(element);
+            this.renderAdd(update, containerElement);
+        }
+
+        return fullRender;
     },
 
     renderDispose: function(update) {
@@ -482,7 +499,7 @@ ExtrasRender.ComponentSync.AccordionPane.Rotation = Core.extend({
             // Number of pixels across which animation will occur.
             this._animationDistance = this._endBottomPosition - this._startBottomPosition;
         }
-        
+
         this._overflowUpdate();
         this._animationStep();
     },
@@ -504,7 +521,8 @@ ExtrasRender.ComponentSync.AccordionPane.Rotation = Core.extend({
     
                 // Move each moving tab to next step position.
                 for (var i = 0; i < this._rotatingTabs.length; ++i) {
-                    var newPosition = stepPosition + this._startTopPosition + (this._tabHeight * (this._rotatingTabs.length - i - 1));
+                    var newPosition = stepPosition + this._startTopPosition 
+                            + (this._tabHeight * (this._rotatingTabs.length - i - 1));
                     this._rotatingTabs[i]._tabDivElement.style.top = newPosition + "px";
                 }
                 
