@@ -728,7 +728,7 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer = Core.extend(EchoRender.Compo
         contentDocument.close();
         // workaround for Mozilla (not Firefox)
         var setDesignModeOn = function() {
-            contentDocument.designMode="on";
+            contentDocument.designMode = "on";
         };
         setTimeout(setDesignModeOn, 0);
         WebCore.EventProcessor.add(this._iframeElement.contentWindow.document, "keyup", 
@@ -773,7 +773,7 @@ ExtrasRender.ComponentSync.RichTextArea.MessageDialog = Core.extend(
                 new EchoApp.Label({
                     text: message,
                     layoutData: {
-                        insets: 30, 
+                        insets: 30 
                     }
                 }));
     }
