@@ -486,7 +486,7 @@ ExtrasRender.ComponentSync.RichTextArea.AbstractDialog = Core.extend(EchoApp.Win
         
         this.controlsRow.add(new EchoApp.Button({
             styleName: controlPaneButtonStyleName,
-            style: controlPaneButtonStyleName ? null : DEFAULT_CONTROL_PANE_BUTTON_STYLE,
+            style: controlPaneButtonStyleName ? null : ExtrasRender.DEFAULT_CONTROL_PANE_BUTTON_STYLE,
             text: richTextArea.peer._msg["Generic.Ok"],
             icon: richTextArea.peer._icons.ok,
             events: {
@@ -497,7 +497,7 @@ ExtrasRender.ComponentSync.RichTextArea.AbstractDialog = Core.extend(EchoApp.Win
         if (type == ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL) {
             this.controlsRow.add(new EchoApp.Button({
                 styleName: controlPaneButtonStyleName,
-                style: controlPaneButtonStyleName ? null : DEFAULT_CONTROL_PANE_BUTTON_STYLE,
+                style: controlPaneButtonStyleName ? null : ExtrasRender.DEFAULT_CONTROL_PANE_BUTTON_STYLE,
                 text: richTextArea.peer._msg["Generic.Cancel"],
                 icon: richTextArea.peer._icons.cancel,
                 events: {
