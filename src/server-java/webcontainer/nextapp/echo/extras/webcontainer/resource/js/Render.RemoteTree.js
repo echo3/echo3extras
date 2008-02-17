@@ -56,8 +56,8 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
      * @type {String}
      */
     _getImageUri: function(identifier) {
-    	// FIXME abstract this somehow so it works with FreeClient too
-    	return "?sid=Echo.Image&iid=EchoExtras.Tree." + identifier;
+        // FIXME abstract this somehow so it works with FreeClient too
+        return "?sid=Echo.Image&iid=EchoExtras.Tree." + identifier;
     },
     
     renderAdd: function(update, parentElement) {
@@ -882,9 +882,9 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         if (this.selectionModel.equalsSelectionIdArray(selectedIds)) {
             return;
         }
-    	if (clearPrevious) {
-    		this._clearSelected();
-    	}
+        if (clearPrevious) {
+            this._clearSelected();
+        }
         for (var i = 0; i < selectedIds.length; i++) {
             if (selectedIds[i] == "") {
                 continue;

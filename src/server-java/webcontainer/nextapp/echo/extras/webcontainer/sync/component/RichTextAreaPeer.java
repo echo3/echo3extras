@@ -39,7 +39,6 @@ import nextapp.echo.app.Component;
 import nextapp.echo.app.ContentPane;
 import nextapp.echo.app.Grid;
 import nextapp.echo.app.Label;
-import nextapp.echo.app.ResourceImageReference;
 import nextapp.echo.app.Row;
 import nextapp.echo.app.SplitPane;
 import nextapp.echo.app.TextField;
@@ -49,13 +48,14 @@ import nextapp.echo.app.util.Context;
 import nextapp.echo.extras.app.ColorSelect;
 import nextapp.echo.extras.app.MenuBarPane;
 import nextapp.echo.extras.app.RichTextArea;
-import nextapp.echo.extras.webcontainer.CommonImages;
+import nextapp.echo.extras.webcontainer.CommonResources;
 import nextapp.echo.extras.webcontainer.service.CommonService;
 import nextapp.echo.webcontainer.AbstractComponentSynchronizePeer;
+import nextapp.echo.webcontainer.ContentType;
+import nextapp.echo.webcontainer.ResourceRegistry;
 import nextapp.echo.webcontainer.ServerMessage;
 import nextapp.echo.webcontainer.Service;
 import nextapp.echo.webcontainer.WebContainerServlet;
-import nextapp.echo.webcontainer.service.ImageService;
 import nextapp.echo.webcontainer.service.JavaScriptService;
 
 /**
@@ -69,40 +69,34 @@ public class RichTextAreaPeer extends AbstractComponentSynchronizePeer {
                             "/nextapp/echo/extras/webcontainer/resource/js/Render.RichTextArea.js",
                             "/nextapp/echo/extras/webcontainer/resource/js/RemoteClient.RichTextArea.js" });
     
-    private static final String ICON_FILE_PREFIX = "/nextapp/echo/extras/webcontainer/resource/image/richtext/";
-    private static final String ICON_ID_PREFIX = "EchoExtras.RemoteRichTextArea.";
-
-    private static final void addDefaultIcon(String id, String image) {
-        ImageService.addGlobalImage(ICON_ID_PREFIX + id, new ResourceImageReference(ICON_FILE_PREFIX + image));
-    }
-    
     static {
         WebContainerServlet.getServiceRegistry().add(RICH_TEXT_AREA_SERVICE);
-        CommonImages.install();
-        addDefaultIcon(RichTextArea.ICON_FOREGROUND, "Foreground.gif");  
-        addDefaultIcon(RichTextArea.ICON_BACKGROUND, "Background.gif");  
-        addDefaultIcon(RichTextArea.ICON_BOLD, "Bold.gif");
-        addDefaultIcon(RichTextArea.ICON_ITALIC, "Italic.gif");
-        addDefaultIcon(RichTextArea.ICON_UNDERLINE, "Underline.gif");  
-        addDefaultIcon(RichTextArea.ICON_UNDO, "Undo.gif");
-        addDefaultIcon(RichTextArea.ICON_REDO, "Redo.gif");
-        addDefaultIcon(RichTextArea.ICON_INDENT, "Indent.gif");  
-        addDefaultIcon(RichTextArea.ICON_OUTDENT, "Outdent.gif");  
-        addDefaultIcon(RichTextArea.ICON_CUT, "Cut.gif");
-        addDefaultIcon(RichTextArea.ICON_COPY, "Copy.gif");  
-        addDefaultIcon(RichTextArea.ICON_PASTE, "Paste.gif");  
-        addDefaultIcon(RichTextArea.ICON_BULLETED_LIST, "BulletedList.gif");  
-        addDefaultIcon(RichTextArea.ICON_NUMBERED_LIST, "NumberedList.gif");  
-        addDefaultIcon(RichTextArea.ICON_TABLE, "Table.gif");  
-        addDefaultIcon(RichTextArea.ICON_IMAGE, "Image.gif");  
-        addDefaultIcon(RichTextArea.ICON_HORIZONTAL_RULE, "HorizontalRule.gif");  
-        addDefaultIcon(RichTextArea.ICON_HYPERLINK, "Hyperlink.gif");  
-        addDefaultIcon(RichTextArea.ICON_SUBSCRIPT, "Subscript.gif");  
-        addDefaultIcon(RichTextArea.ICON_SUPERSCRIPT, "Superscript.gif");  
-        addDefaultIcon(RichTextArea.ICON_ALIGNMENT_LEFT, "AlignLeft.gif");  
-        addDefaultIcon(RichTextArea.ICON_ALIGNMENT_CENTER, "AlignCenter.gif");  
-        addDefaultIcon(RichTextArea.ICON_ALIGNMENT_RIGHT, "AlignRight.gif");  
-        addDefaultIcon(RichTextArea.ICON_ALIGNMENT_JUSTIFY, "AlignJustify.gif");
+        CommonResources.install();
+        ResourceRegistry resources = WebContainerServlet.getResourceRegistry();
+        resources.add("Extras", "image/richtext/Foreground.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/richtext/Background.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/richtext/Bold.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/richtext/Italic.gif.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/richtext/Underline.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/richtext/Undo.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/richtext/Redo.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/richtext/Indent.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/richtext/Outdent.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/richtext/Cut.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/richtext/Copy.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/richtext/Paste.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/richtext/BulletedList.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/richtext/NumberedList.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/richtext/Table.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/richtext/Image.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/richtext/HorizontalRule.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/richtext/Hyperlink.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/richtext/Subscript.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/richtext/Superscript.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/richtext/AlignLeft.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/richtext/AlignCenter.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/richtext/AlignRight.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/richtext/AlignJustify.gif", ContentType.IMAGE_GIF);
     }
     
     public RichTextAreaPeer() {

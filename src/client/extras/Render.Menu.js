@@ -12,19 +12,7 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
         _defaultDisabledForeground: "#7f7f7f",
         _defaultSelectionForeground: "#ffffff",
         _defaultSelectionBackground: "#3f3f3f",
-        MAX_Z_INDEX: 65535,
-    
-        /**
-         * Gets a URI for default menu images.
-         * 
-         * @param {String} identifier the image identifier
-         * @return the image URI
-         * @type {String}
-         */
-        _getImageUri: function(identifier) {
-            // FIXME abstract this somehow so it works with FreeClient too
-            return "?sid=Echo.Image&iid=EchoExtras.Menu." + identifier;
-        }
+        MAX_Z_INDEX: 65535
     },    
         
     /**
@@ -151,12 +139,12 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
                             var iconIdentifier;
                             var selected = this._stateModel && this._stateModel.isSelected(item.modelId);
                             if (item instanceof ExtrasApp.RadioOptionModel) {
-                                iconIdentifier = selected ? "radioOn" : "radioOff";
+                                iconIdentifier = selected ? "image/RadioOn.gif" : "image/RadioOff.gif";
                             } else {
-                                iconIdentifier = selected ? "toggleOn" : "toggleOff";
+                                iconIdentifier = selected ? "image/ToggleOn.gif" : "image/ToggleOff.gif";
                             }
                             var imgElement = document.createElement("img");
-                            imgElement.src = ExtrasRender.ComponentSync.Menu._getImageUri(iconIdentifier);
+                            imgElement.src = this.client.getResourceUrl("Extras", iconIdentifier);
                             menuItemIconTdElement.appendChild(imgElement);
                         } else if (item.icon) {
                             var imgElement = document.createElement("img");
@@ -186,7 +174,7 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
                         menuItemArrowTdElement.style.textAlign = "right";
                         var imgElement = document.createElement("img");
                         var expandImage = this.component.render("menuExpandIcon", 
-                                ExtrasRender.ComponentSync.Menu._getImageUri("submenuRight"))
+                                this.client.getResourceUrl("Extras", "image/ArrowRight.gif"));
                         imgElement.setAttribute("src", expandImage.url ? expandImage.url : expandImage);
                         imgElement.setAttribute("alt", "");
                         menuItemArrowTdElement.appendChild(imgElement);
@@ -246,9 +234,9 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
     },
     
     renderAdd: function(update, parentElement) {
-    	this._menuModel = this.component.get("model");
-    	this._stateModel = this.component.get("stateModel");
-    	
+        this._menuModel = this.component.get("model");
+        this._stateModel = this.component.get("stateModel");
+        
         this._element = this._renderMain(update);
         
         parentElement.appendChild(this._element);
@@ -340,14 +328,14 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
     _processItemEnter: function(e) {
         var modelId = this._getElementModelId(e.target);
         if (modelId) {
-    		this._highlight(this._menuModel.getItem(modelId), true);
+            this._highlight(this._menuModel.getItem(modelId), true);
         }
     },
     
     _processItemExit: function(e) {
         var modelId = this._getElementModelId(e.target);
         if (modelId) {
-    		this._highlight(this._menuModel.getItem(modelId), false);
+            this._highlight(this._menuModel.getItem(modelId), false);
         }
     },
     
@@ -374,7 +362,7 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
     _processMaskClick: function(e) {
         var modelId = this._getElementModelId(e.target);
         if (!modelId) {
-    		this._closeMenu();
+            this._closeMenu();
         }
         return true;
     },
@@ -411,18 +399,18 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
     
     _getBorder: function() {
         var border = this.component.render("border");
-    	if (!border) {
-    		border = "1px outset #cfcfcf";
-    	}
-    	return border;
+        if (!border) {
+            border = "1px outset #cfcfcf";
+        }
+        return border;
     },
     
     _getMenuBorder: function() {
-    	var border = this.component.render("menuBorder");
-    	if (!border) {
-    		border = this._getBorder();
-    	}
-    	return border;
+        var border = this.component.render("menuBorder");
+        if (!border) {
+            border = this._getBorder();
+        }
+        return border;
     }
 });
 
@@ -437,7 +425,7 @@ ExtrasRender.ComponentSync.MenuBarPane = Core.extend(ExtrasRender.ComponentSync.
     
     $construct: function() {
         ExtrasRender.ComponentSync.Menu.call(this);
-	    this._itemInsets = "0px 12px";
+        this._itemInsets = "0px 12px";
     },
     
     _renderMain: function() {
@@ -520,8 +508,8 @@ ExtrasRender.ComponentSync.MenuBarPane = Core.extend(ExtrasRender.ComponentSync.
     
         var modelId = this._getElementModelId(e.target);
         if (modelId) {
-    	    this._renderMask();
-    	    this._activateItem(this._menuModel.getItem(modelId));
+            this._renderMask();
+            this._activateItem(this._menuModel.getItem(modelId));
         } else {
             this._closeMenu();
         }
@@ -555,8 +543,8 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
         if (width) {
             dropDownDivElement.style.width = width.toString();
         } else {
-        	// if the width is not set, IE won't fire click events.
-        	dropDownDivElement.style.width = "100%";
+            // if the width is not set, IE won't fire click events.
+            dropDownDivElement.style.width = "100%";
         }
         var height = this.component.render("height");
         if (height) {
@@ -571,7 +559,8 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
         //EchoAppRender.Insets.render(this.component.render("insets"), relativeContainerDivElement, "padding");
         relativeContainerDivElement.appendChild(document.createTextNode("\u00a0"));
         
-        var expandIcon = this.component.render("expandIcon", ExtrasRender.ComponentSync.Menu._getImageUri("submenuDown"));
+        var expandIcon = this.component.render("expandIcon", 
+                this.client.getResourceUrl("Extras", "image/ArrowDown.gif"));
         var expandIconWidth = this.component.render("expandIconWidth", 10);
         
         var expandElement = document.createElement("span");
@@ -588,18 +577,18 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
         this._contentDivElement.style.position = "absolute";
         this._contentDivElement.style.top = "0px";
         this._contentDivElement.style.left = "0px";
-    	this._contentDivElement.style.right = EchoAppRender.Extent.toCssValue(expandIconWidth);
-    	var insets = this.component.render("insets");
-    	if (insets) {
-    	    EchoAppRender.Insets.render(insets, this._contentDivElement, "padding");
-    	    if (height) {
+        this._contentDivElement.style.right = EchoAppRender.Extent.toCssValue(expandIconWidth);
+        var insets = this.component.render("insets");
+        if (insets) {
+            EchoAppRender.Insets.render(insets, this._contentDivElement, "padding");
+            if (height) {
                 var insetsPx = EchoAppRender.Insets.toPixels(insets);
-    	    	var compensatedHeight = Math.max(0, EchoAppRender.Extent.toPixels(height) - insetsPx.top - insetsPx.top);
-    		    this._contentDivElement.style.height = compensatedHeight + "px";
-    	    }
-    	} else {
-    	    this._contentDivElement.style.height = "100%";
-    	}
+                var compensatedHeight = Math.max(0, EchoAppRender.Extent.toPixels(height) - insetsPx.top - insetsPx.top);
+                this._contentDivElement.style.height = compensatedHeight + "px";
+            }
+        } else {
+            this._contentDivElement.style.height = "100%";
+        }
         EchoAppRender.FillImage.render(this.component.render("backgroundImage"), this._contentDivElement); 
         
         var contentSpanElement = document.createElement("div");
@@ -618,50 +607,50 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
         WebCore.EventProcessor.Selection.disable(dropDownDivElement);
     
         if (this._isSelectionEnabled()) {
-        	var selection = this.component.render("selection");
-        	if (selection) {
-    	    	this._setSelection(this._menuModel.getItemModelFromPositions(selection.split(".")), contentSpanElement);
-        	}
+            var selection = this.component.render("selection");
+            if (selection) {
+                this._setSelection(this._menuModel.getItemModelFromPositions(selection.split(".")), contentSpanElement);
+            }
         }
         if (!this._selectedItem) {
-        	var selectionText = this.component.render("selectionText");
-        	if (selectionText) {
-    	    	contentSpanElement.appendChild(document.createTextNode(selectionText));
-        	}
+            var selectionText = this.component.render("selectionText");
+            if (selectionText) {
+                contentSpanElement.appendChild(document.createTextNode(selectionText));
+            }
         }
     
         return dropDownDivElement;
     },
     
     renderMenu: function(menuModel, xPosition, yPosition) {
-    	var menuDivElement = ExtrasRender.ComponentSync.Menu.prototype.renderMenu.call(this, menuModel, xPosition, yPosition);
+        var menuDivElement = ExtrasRender.ComponentSync.Menu.prototype.renderMenu.call(this, menuModel, xPosition, yPosition);
         
         var menuWidth = this.component.render("menuWidth");
         if (menuWidth) {
-    	    menuDivElement.style.width = menuWidth;
-    	    menuDivElement.style.overflowX = "hidden";
-    	    menuDivElement.firstChild.style.width = "100%";
-    	}
+            menuDivElement.style.width = menuWidth;
+            menuDivElement.style.overflowX = "hidden";
+            menuDivElement.firstChild.style.width = "100%";
+        }
         var menuHeight = this.component.render("menuHeight");
         if (menuHeight) {
             var menuHeightPx = EchoAppRender.Extent.toPixels(menuHeight);
-    	    if (WebCore.Environment.NOT_SUPPORTED_CSS_MAX_HEIGHT) {
-    		    var measure = new WebCore.Measure(menuDivElement);
-    		    if (measure.height > menuHeight) {
-    			    menuDivElement.style.height = menuHeight + "px";
-    		    }
-    	    } else {
-    		    menuDivElement.style.maxHeight = menuHeight;
-    	    }
-    	    menuDivElement.style.overflowY = "auto";
-    	}
-    	return menuDivElement;
+            if (WebCore.Environment.NOT_SUPPORTED_CSS_MAX_HEIGHT) {
+                var measure = new WebCore.Measure(menuDivElement);
+                if (measure.height > menuHeight) {
+                    menuDivElement.style.height = menuHeight + "px";
+                }
+            } else {
+                menuDivElement.style.maxHeight = menuHeight;
+            }
+            menuDivElement.style.overflowY = "auto";
+        }
+        return menuDivElement;
     },
     
     renderDispose: function(update) {
-    	ExtrasRender.ComponentSync.Menu.prototype.renderDispose.call(this, update);
-    	this._selectedItem = null;
-    	this._contentDivElement = null;
+        ExtrasRender.ComponentSync.Menu.prototype.renderDispose.call(this, update);
+        this._selectedItem = null;
+        this._contentDivElement = null;
     },
     
     _isSelectionEnabled: function() {
@@ -687,13 +676,13 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
      * @param contentElement the contentElement element, may be null
      */
     _setSelection: function(menuModel, contentElement) {
-    	if (this._selectedItem == menuModel) {
-    		return;
-    	}
-    	this._selectedItem = menuModel;
+        if (this._selectedItem == menuModel) {
+            return;
+        }
+        this._selectedItem = menuModel;
         
         if (!contentElement) {
-        	contentElement = document.getElementById(this.component.renderId + "_content");
+            contentElement = document.getElementById(this.component.renderId + "_content");
         }
         for (var i = contentElement.childNodes.length - 1; i >= 0; --i) {
             contentElement.removeChild(contentElement.childNodes[i]);
@@ -745,9 +734,9 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
         var modelId = this._getElementModelId(e.target);
         var model;
         if (modelId) {
-        	model = this._menuModel.getItem(modelId);
+            model = this._menuModel.getItem(modelId);
         } else {
-        	model = this._menuModel;
+            model = this._menuModel;
         }
         
         this._renderMask();
@@ -758,7 +747,7 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
     
     _doAction: function(menuModel) {
         if (this._isSelectionEnabled()) {
-        	this._setSelection(menuModel);
+            this._setSelection(menuModel);
         }
         var path = menuModel.getItemPositionPath().join(".");
         this.component.set("selection", path);
@@ -788,7 +777,7 @@ ExtrasRender.ComponentSync.ContextMenu = Core.extend(ExtrasRender.ComponentSync.
         
         var componentCount = this.component.getComponentCount();
         if (componentCount > 0) {
-    	    EchoRender.renderComponentAdd(update, this.component.getComponent(0), contextMenuDivElement);
+            EchoRender.renderComponentAdd(update, this.component.getComponent(0), contextMenuDivElement);
         }
         
         return contextMenuDivElement;
@@ -799,44 +788,44 @@ ExtrasRender.ComponentSync.ContextMenu = Core.extend(ExtrasRender.ComponentSync.
     },
     
     renderUpdate: function(update) {
-    	if (Core.Arrays.containsAll(ExtrasRender.ComponentSync.ContextMenu._supportedPartialProperties,
-    	        update.getUpdatedPropertyNames(), true)) {
-    	    // partial update
-    	    var removedChildren = update.getRemovedChildren();
-    	    if (removedChildren) {
-    	        WebCore.DOM.removeNode(this._element.firstChild);
-    	    }
-    	    var addedChildren = update.getAddedChildren();
-    	    if (addedChildren) {
-    		    EchoRender.renderComponentAdd(update, addedChildren[0], this._element);
-    	    }
-    		var modelUpdate = update.getUpdatedProperty("model");
-    		var stateModelUpdate = update.getUpdatedProperty("stateModel");
-    		
-    		var reOpenMenu = this.maskDeployed && (modelUpdate || stateModelUpdate);
-    		if (reOpenMenu) {
-    	        this._closeDescendantMenus(null);
-    		}
-    		if (modelUpdate) {
-    			this._menuModel = modelUpdate.newValue;
-    		}
-    		if (stateModelUpdate) {
-    			this._stateModel = stateModelUpdate.newValue;
-    		}
-    		if (reOpenMenu) {
-    		    this._activateItem(this._menuModel);
-    		}
-    		return false;
-    	}
-    	// full update
-    	ExtrasRender.ComponentSync.Menu.prototype.renderUpdate.call(this, update);
-    	return true;
+        if (Core.Arrays.containsAll(ExtrasRender.ComponentSync.ContextMenu._supportedPartialProperties,
+                update.getUpdatedPropertyNames(), true)) {
+            // partial update
+            var removedChildren = update.getRemovedChildren();
+            if (removedChildren) {
+                WebCore.DOM.removeNode(this._element.firstChild);
+            }
+            var addedChildren = update.getAddedChildren();
+            if (addedChildren) {
+                EchoRender.renderComponentAdd(update, addedChildren[0], this._element);
+            }
+            var modelUpdate = update.getUpdatedProperty("model");
+            var stateModelUpdate = update.getUpdatedProperty("stateModel");
+            
+            var reOpenMenu = this.maskDeployed && (modelUpdate || stateModelUpdate);
+            if (reOpenMenu) {
+                this._closeDescendantMenus(null);
+            }
+            if (modelUpdate) {
+                this._menuModel = modelUpdate.newValue;
+            }
+            if (stateModelUpdate) {
+                this._stateModel = stateModelUpdate.newValue;
+            }
+            if (reOpenMenu) {
+                this._activateItem(this._menuModel);
+            }
+            return false;
+        }
+        // full update
+        ExtrasRender.ComponentSync.Menu.prototype.renderUpdate.call(this, update);
+        return true;
     },
     
     renderDispose: function(update) {
-    	ExtrasRender.ComponentSync.Menu.prototype.renderDispose.call(this, update);
-    	this._mousePosX = null;
-    	this._mousePosY = null;
+        ExtrasRender.ComponentSync.Menu.prototype.renderDispose.call(this, update);
+        this._mousePosX = null;
+        this._mousePosY = null;
     },
     
     _isTopMenuElement: function(element) {
@@ -858,11 +847,11 @@ ExtrasRender.ComponentSync.ContextMenu = Core.extend(ExtrasRender.ComponentSync.
         
         var modelId = this._getElementModelId(e.target);
         if (modelId) {
-    	    WebCore.DOM.preventEventDefault(e);
-    	    this._renderMask();
-    	    this._activateItem(this._menuModel.getItem(modelId));
+            WebCore.DOM.preventEventDefault(e);
+            this._renderMask();
+            this._activateItem(this._menuModel.getItem(modelId));
         } else {
-    	    return true;
+            return true;
         }
     },
     
@@ -873,9 +862,9 @@ ExtrasRender.ComponentSync.ContextMenu = Core.extend(ExtrasRender.ComponentSync.
     
         WebCore.DOM.preventEventDefault(e);
         
-    	this._mousePosX = e.pageX || (e.clientX + (document.documentElement.scrollLeft || document.body.scrollLeft));
-    	this._mousePosY = e.pageY || (e.clientY + (document.documentElement.scrollTop || document.body.scrollTop));
-    	
+        this._mousePosX = e.pageX || (e.clientX + (document.documentElement.scrollLeft || document.body.scrollLeft));
+        this._mousePosY = e.pageY || (e.clientY + (document.documentElement.scrollTop || document.body.scrollTop));
+        
         this._renderMask();
         this._activateItem(this._menuModel);
     },

@@ -30,8 +30,6 @@
 package nextapp.echo.extras.webcontainer.sync.component;
 
 import nextapp.echo.app.Component;
-import nextapp.echo.app.ImageReference;
-import nextapp.echo.app.ResourceImageReference;
 import nextapp.echo.app.serial.SerialContext;
 import nextapp.echo.app.serial.SerialException;
 import nextapp.echo.app.serial.SerialPropertyPeer;
@@ -43,15 +41,16 @@ import nextapp.echo.extras.app.menu.MenuModel;
 import nextapp.echo.extras.app.menu.MenuStateModel;
 import nextapp.echo.extras.app.menu.ToggleOptionModel;
 import nextapp.echo.extras.app.serial.property.SerialPropertyPeerConstants;
+import nextapp.echo.extras.webcontainer.CommonResources;
 import nextapp.echo.extras.webcontainer.service.CommonService;
 import nextapp.echo.webcontainer.AbstractComponentSynchronizePeer;
 import nextapp.echo.webcontainer.ComponentSynchronizePeer;
+import nextapp.echo.webcontainer.ContentType;
+import nextapp.echo.webcontainer.ResourceRegistry;
 import nextapp.echo.webcontainer.ServerMessage;
 import nextapp.echo.webcontainer.Service;
 import nextapp.echo.webcontainer.WebContainerServlet;
-import nextapp.echo.webcontainer.service.ImageService;
 import nextapp.echo.webcontainer.service.JavaScriptService;
-import nextapp.echo.webcontainer.service.TransparentImageService;
 
 import org.w3c.dom.Element;
 
@@ -131,26 +130,6 @@ abstract class AbstractMenuPeer extends AbstractComponentSynchronizePeer {
             }
         }
     }
-    
-    private static final String IMAGE_ID_PREFIX = "EchoExtras.Menu.";
-    
-    private static final String IMAGE_ID_SUBMENU_DOWN = IMAGE_ID_PREFIX + "submenuDown";
-    private static final String IMAGE_ID_SUBMENU_LEFT = IMAGE_ID_PREFIX + "submenuLeft";
-    private static final String IMAGE_ID_SUBMENU_RIGHT = IMAGE_ID_PREFIX + "submenuRight";
-    
-    private static final String IMAGE_ID_TOGGLE_OFF = IMAGE_ID_PREFIX + "toggleOff";
-    private static final String IMAGE_ID_TOGGLE_ON = IMAGE_ID_PREFIX + "toggleOn";
-    private static final String IMAGE_ID_RADIO_OFF = IMAGE_ID_PREFIX + "radioOff";
-    private static final String IMAGE_ID_RADIO_ON = IMAGE_ID_PREFIX + "radioOn";
-    
-    private static final String IMAGE_PREFIX = "/nextapp/echo/extras/webcontainer/resource/image/";
-    private static final ImageReference DEFAULT_ICON_SUBMENU_DOWN = new ResourceImageReference(IMAGE_PREFIX + "ArrowDown.gif");
-    private static final ImageReference DEFAULT_ICON_SUBMENU_LEFT = new ResourceImageReference(IMAGE_PREFIX + "ArrowLeft.gif");
-    private static final ImageReference DEFAULT_ICON_SUBMENU_RIGHT = new ResourceImageReference(IMAGE_PREFIX + "ArrowRight.gif");
-    private static final ImageReference DEFAULT_ICON_TOGGLE_OFF = new ResourceImageReference(IMAGE_PREFIX + "ToggleOff.gif");
-    private static final ImageReference DEFAULT_ICON_TOGGLE_ON = new ResourceImageReference(IMAGE_PREFIX + "ToggleOn.gif");
-    private static final ImageReference DEFAULT_ICON_RADIO_OFF = new ResourceImageReference(IMAGE_PREFIX + "RadioOff.gif");
-    private static final ImageReference DEFAULT_ICON_RADIO_ON = new ResourceImageReference(IMAGE_PREFIX + "RadioOn.gif");
 
     private static final Service MENU_SERVICE = JavaScriptService.forResources("EchoExtras.Menu", 
             new String[] {  "/nextapp/echo/extras/webcontainer/resource/js/Application.Menu.js",  
@@ -158,17 +137,16 @@ abstract class AbstractMenuPeer extends AbstractComponentSynchronizePeer {
                             "/nextapp/echo/extras/webcontainer/resource/js/Render.Menu.js"});
     
     static {
-        ImageService.install();
-        ImageService.addGlobalImage(IMAGE_ID_SUBMENU_DOWN, DEFAULT_ICON_SUBMENU_DOWN);
-        ImageService.addGlobalImage(IMAGE_ID_SUBMENU_LEFT, DEFAULT_ICON_SUBMENU_LEFT);
-        ImageService.addGlobalImage(IMAGE_ID_SUBMENU_RIGHT, DEFAULT_ICON_SUBMENU_RIGHT);
-        ImageService.addGlobalImage(IMAGE_ID_TOGGLE_OFF, DEFAULT_ICON_TOGGLE_OFF);
-        ImageService.addGlobalImage(IMAGE_ID_TOGGLE_ON, DEFAULT_ICON_TOGGLE_ON);
-        ImageService.addGlobalImage(IMAGE_ID_RADIO_OFF, DEFAULT_ICON_RADIO_OFF);
-        ImageService.addGlobalImage(IMAGE_ID_RADIO_ON, DEFAULT_ICON_RADIO_ON);
-        TransparentImageService.install();
-        
         WebContainerServlet.getServiceRegistry().add(MENU_SERVICE);
+        CommonResources.install();
+        ResourceRegistry resources = WebContainerServlet.getResourceRegistry();
+        resources.add("Extras", "image/ArrowDown.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/ArrowLeft.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/ArrowRight.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/ToggleOff.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/ToggleOn.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/RadioOff.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/RadioOn.gif", ContentType.IMAGE_GIF);
     }
     
     public AbstractMenuPeer() {

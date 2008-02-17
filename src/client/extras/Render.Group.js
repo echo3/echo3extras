@@ -27,17 +27,17 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
     },
 
     $construct: function() {
-    	this._groupDivElement = null;
-    	this._borderImages = null;
+        this._groupDivElement = null;
+        this._borderImages = null;
     },
     
     getElement: function() {
-    	return this._groupDivElement;
+        return this._groupDivElement;
     },
     
     renderAdd: function(update, parentElement) {
-    	this._borderImages = this.component.render("borderImage");
-    	
+        this._borderImages = this.component.render("borderImage");
+        
         this._groupDivElement = document.createElement("div");
         this._groupDivElement.id = this.component.renderId;
         EchoAppRender.Color.render(this.component.render("foreground"), this._groupDivElement, "color");
@@ -45,33 +45,33 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
         var contentElement = this._renderContent();
         var borderParts = this._renderBorder(contentElement);
         for (var i = 0; i < borderParts.length; i++) {
-    	    this._groupDivElement.appendChild(borderParts[i]);
+            this._groupDivElement.appendChild(borderParts[i]);
         }
         
         parentElement.appendChild(this._groupDivElement);
     },
     
     _getRepeatingBorderImage: function(position, repeat, x, y) {
-    	var image;
-    	if (this._borderImages) {
-    		image = this._borderImages[position];
-    	} else {
-    		image = ExtrasRender.ComponentSync.Group._getImageUri("border" + position);
-    	}
-    	if (image) {
-    		return { url: image, repeat: repeat, x: x, y: y };
-    	}
+        var image;
+        if (this._borderImages) {
+            image = this._borderImages[position];
+        } else {
+            image = ExtrasRender.ComponentSync.Group._getImageUri("border" + position);
+        }
+        if (image) {
+            return { url: image, repeat: repeat, x: x, y: y };
+        }
     },
     
     _getBorderImage: function(position, x, y) {
-    	return this._getRepeatingBorderImage(position, "no-repeat", x, y);
+        return this._getRepeatingBorderImage(position, "no-repeat", x, y);
     },
     
     _renderBorder: function(contentElem) {
-    	var borderParts = [];
-    	
-    	var borderInsets = this.component.render("borderInsets", 
-    	        ExtrasRender.ComponentSync.Group.DEFAULT_BORDER_INSETS);
+        var borderParts = [];
+        
+        var borderInsets = this.component.render("borderInsets", 
+                ExtrasRender.ComponentSync.Group.DEFAULT_BORDER_INSETS);
         var borderPixelInsets = EchoAppRender.Insets.toPixels(borderInsets);
         var flags = this.component.render("ieAlphaRenderBorder") 
                 ? EchoAppRender.FillImage.FLAG_ENABLE_IE_PNG_ALPHA_FILTER : 0;
@@ -84,74 +84,74 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
         topLeftElem.style.paddingRight = borderPixelInsets.right + "px";
         topLeftElem.style.paddingLeft = borderPixelInsets.left + "px";
         EchoAppRender.FillImage.render(this._getBorderImage(0, 0, "100%"), topLeftElem, flags);
-    	topRightElem.appendChild(topLeftElem);
-    	
-    	var title = this.component.render("title");
-    	if (title) {
-    	    var topTableElem = document.createElement("table");
-    	    topTableElem.style.padding = "0px";
-    	    topTableElem.style.borderCollapse = "collapse";
-    	    topTableElem.style.width = "100%";
-    	    var topTbodyElem = document.createElement("tbody");
-    	    topTableElem.appendChild(topTbodyElem);
-    	    var topRowElem = document.createElement("tr");
-    	    topTbodyElem.appendChild(topRowElem);
-    	    
-    	    var titlePosition = this.component.render("titlePosition");
-    	    if (titlePosition) {
-    		    var topPosElem = document.createElement("td");
-    		    if (EchoAppRender.Extent.isPercent(titlePosition)) {
-    		    	topPosElem.style.width = titlePosition.toString();
-    		    }
-    		    var topPosElemImg = document.createElement("img");
-    		    topPosElemImg.src = EchoRender.Util.TRANSPARENT_IMAGE;
-    		    if (EchoAppRender.Extent.isPercent(titlePosition)) {
-    			    topPosElemImg.style.width = titlePosition.toString();
-    		    }
-    		    topPosElemImg.style.height = "1px";
-    		    topPosElem.appendChild(topPosElemImg);
-    		    EchoAppRender.FillImage.render(
-    		            this._getRepeatingBorderImage(1, "repeat-x", 0, "100%"), topPosElem, flags);
-    			topRowElem.appendChild(topPosElem);
-    	    }
-    	    
-    	    var titleElem = document.createElement("td");
-    	    titleElem.style.whiteSpace = "nowrap";
-    		EchoAppRender.Font.render(this.component.render("titleFont"), titleElem);
-    		EchoAppRender.Insets.render(this.component.render("titleInsets",
-                    ExtrasRender.ComponentSync.Group.DEFAULT_TITLE_INSETS), titleElem, "padding");
-    		var titleImage = this.component.render("titleBackgroundImage");
-    		if (titleImage) {
-        		EchoAppRender.FillImage.render({ url: titleImage, repeat: "repeat-x", x: 0, y: "100%" }, titleElem, flags);
-    		}
-    		titleElem.appendChild(document.createTextNode(title));
-    		topRowElem.appendChild(titleElem);
-    		
-    	    var topFillElem = document.createElement("td");
-    		if (titlePosition && EchoAppRender.Extent.isPercent(titlePosition)) {
-    		    topFillElem.style.width = (100 - parseInt(titlePosition)) + "%";
-    		} else {
-    		    topFillElem.style.width = "100%";
-    		}
-    	    topFillElem.style.height = borderPixelInsets.top + "px";
-    	    EchoAppRender.FillImage.render(this._getRepeatingBorderImage(1, "repeat-x", 0, "100%"), 
-    	            topFillElem, flags);
-    		topRowElem.appendChild(topFillElem);
-    		
-    	    topLeftElem.appendChild(topTableElem);
-    	} else {
-    		var topElem = document.createElement("div");
-        	topElem.style.width = "100%";
-        	topElem.style.height = borderPixelInsets.top + "px";
-        	topElem.style.fontSize = "1px";
-        	EchoAppRender.FillImage.render(this._getRepeatingBorderImage(1, "repeat-x", 0, "100%"), 
-        	        topElem, flags);
-        	topLeftElem.appendChild(topElem);
-    	}
+        topRightElem.appendChild(topLeftElem);
         
-    	borderParts.push(topRightElem);
-    	
-    	var rightElem = document.createElement("div");
+        var title = this.component.render("title");
+        if (title) {
+            var topTableElem = document.createElement("table");
+            topTableElem.style.padding = "0px";
+            topTableElem.style.borderCollapse = "collapse";
+            topTableElem.style.width = "100%";
+            var topTbodyElem = document.createElement("tbody");
+            topTableElem.appendChild(topTbodyElem);
+            var topRowElem = document.createElement("tr");
+            topTbodyElem.appendChild(topRowElem);
+            
+            var titlePosition = this.component.render("titlePosition");
+            if (titlePosition) {
+                var topPosElem = document.createElement("td");
+                if (EchoAppRender.Extent.isPercent(titlePosition)) {
+                    topPosElem.style.width = titlePosition.toString();
+                }
+                var topPosElemImg = document.createElement("img");
+                topPosElemImg.src = EchoRender.Util.TRANSPARENT_IMAGE;
+                if (EchoAppRender.Extent.isPercent(titlePosition)) {
+                    topPosElemImg.style.width = titlePosition.toString();
+                }
+                topPosElemImg.style.height = "1px";
+                topPosElem.appendChild(topPosElemImg);
+                EchoAppRender.FillImage.render(
+                        this._getRepeatingBorderImage(1, "repeat-x", 0, "100%"), topPosElem, flags);
+                topRowElem.appendChild(topPosElem);
+            }
+            
+            var titleElem = document.createElement("td");
+            titleElem.style.whiteSpace = "nowrap";
+            EchoAppRender.Font.render(this.component.render("titleFont"), titleElem);
+            EchoAppRender.Insets.render(this.component.render("titleInsets",
+                    ExtrasRender.ComponentSync.Group.DEFAULT_TITLE_INSETS), titleElem, "padding");
+            var titleImage = this.component.render("titleBackgroundImage");
+            if (titleImage) {
+                EchoAppRender.FillImage.render({ url: titleImage, repeat: "repeat-x", x: 0, y: "100%" }, titleElem, flags);
+            }
+            titleElem.appendChild(document.createTextNode(title));
+            topRowElem.appendChild(titleElem);
+            
+            var topFillElem = document.createElement("td");
+            if (titlePosition && EchoAppRender.Extent.isPercent(titlePosition)) {
+                topFillElem.style.width = (100 - parseInt(titlePosition)) + "%";
+            } else {
+                topFillElem.style.width = "100%";
+            }
+            topFillElem.style.height = borderPixelInsets.top + "px";
+            EchoAppRender.FillImage.render(this._getRepeatingBorderImage(1, "repeat-x", 0, "100%"), 
+                    topFillElem, flags);
+            topRowElem.appendChild(topFillElem);
+            
+            topLeftElem.appendChild(topTableElem);
+        } else {
+            var topElem = document.createElement("div");
+            topElem.style.width = "100%";
+            topElem.style.height = borderPixelInsets.top + "px";
+            topElem.style.fontSize = "1px";
+            EchoAppRender.FillImage.render(this._getRepeatingBorderImage(1, "repeat-x", 0, "100%"), 
+                    topElem, flags);
+            topLeftElem.appendChild(topElem);
+        }
+        
+        borderParts.push(topRightElem);
+        
+        var rightElem = document.createElement("div");
         rightElem.style.width = "100%";
         EchoAppRender.FillImage.render(this._getRepeatingBorderImage(4, "repeat-y", "100%", 0), 
                 rightElem, flags);
@@ -161,11 +161,11 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
         leftElem.style.paddingLeft = borderPixelInsets.left + "px";
         EchoAppRender.FillImage.render(this._getRepeatingBorderImage(3, "repeat-y", 0, 0), 
                 leftElem, flags);
-    	leftElem.appendChild(contentElem);
-    	rightElem.appendChild(leftElem);
-    	borderParts.push(rightElem);
-    	
-    	var bottomRightElem = document.createElement("div");
+        leftElem.appendChild(contentElem);
+        rightElem.appendChild(leftElem);
+        borderParts.push(rightElem);
+        
+        var bottomRightElem = document.createElement("div");
         bottomRightElem.style.width = "100%";
         bottomRightElem.style.height = borderPixelInsets.bottom + "px";
         bottomRightElem.style.fontSize = "1px";
@@ -175,18 +175,18 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
         bottomLeftElem.style.paddingRight = borderPixelInsets.right + "px";
         bottomLeftElem.style.paddingLeft = borderPixelInsets.left + "px";
         EchoAppRender.FillImage.render(this._getBorderImage(5, 0, "100%"), bottomLeftElem, flags);
-    	bottomRightElem.appendChild(bottomLeftElem);
+        bottomRightElem.appendChild(bottomLeftElem);
         
-    	var bottomElem = document.createElement("div");
+        var bottomElem = document.createElement("div");
         bottomElem.style.width = "100%";
         bottomElem.style.height = borderPixelInsets.bottom + "px";
         bottomElem.style.fontSize = "1px";
         EchoAppRender.FillImage.render(this._getRepeatingBorderImage(6, "repeat-x", 0, "100%"), 
                 bottomElem, flags);
-    	bottomLeftElem.appendChild(bottomElem);
-    	borderParts.push(bottomRightElem);
-    	
-    	return borderParts;
+        bottomLeftElem.appendChild(bottomElem);
+        borderParts.push(bottomRightElem);
+        
+        return borderParts;
     },
     
     _renderContent: function(update) {
@@ -199,8 +199,8 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
         
         var componentCount = this.component.getComponentCount();
         for (var i = 0; i < componentCount; i++) {
-    	    var child = this.component.getComponent(i);
-    	    EchoRender.renderComponentAdd(update, child, contentDivElement);
+            var child = this.component.getComponent(i);
+            EchoRender.renderComponentAdd(update, child, contentDivElement);
         }
         
         return contentDivElement;
@@ -216,8 +216,8 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
     },
     
     renderDispose: function(update) {
-    	this._borderImages = null;
-    	this._groupDivElement.id = "";
-    	this._groupDivElement = null;
+        this._borderImages = null;
+        this._groupDivElement.id = "";
+        this._groupDivElement = null;
     }
 });

@@ -186,36 +186,36 @@ ExtrasApp.MenuStateModel = Core.extend({
     },
     
     isEnabled: function(modelId) {
-    	if (modelId) {
-    		for (var i = 0; i < this._disabledItems.length; i++) {
-    			if (this._disabledItems[i] == modelId) {
-    				return false;
-    			}
-    		}
-    	}
-    	return true;
+        if (modelId) {
+            for (var i = 0; i < this._disabledItems.length; i++) {
+                if (this._disabledItems[i] == modelId) {
+                    return false;
+                }
+            }
+        }
+        return true;
     },
     
     isSelected: function(modelId) {
-    	if (modelId) {
-    		for (var i = 0; i < this._selectedItems.length; i++) {
-    			if (this._selectedItems[i] == modelId) {
-    				return true;
-    			}
-    		}
-    	}
-    	return false;
+        if (modelId) {
+            for (var i = 0; i < this._selectedItems.length; i++) {
+                if (this._selectedItems[i] == modelId) {
+                    return true;
+                }
+            }
+        }
+        return false;
     },
     
     setEnabled: function(modelId, enabled) {
-    	if (!enabled) {
-    		this._disabledItems.push(modelId);
-    	}
+        if (!enabled) {
+            this._disabledItems.push(modelId);
+        }
     },
     
     setSelected: function(modelId, selected) {
-    	if (selected) {
-    		this._selectedItems.push(modelId);
-    	}
+        if (selected) {
+            this._selectedItems.push(modelId);
+        }
     }
 });

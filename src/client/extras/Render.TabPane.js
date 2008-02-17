@@ -270,8 +270,8 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
             if (addedChildren) {
                 // Add children.
                 for (var i = 0; i < addedChildren.length; ++i) {
-    		        var tab = new ExtrasRender.ComponentSync.TabPane.Tab(addedChildren[i], this);
-    		        this._addTab(update, tab, this.component.indexOf(addedChildren[i]));
+                    var tab = new ExtrasRender.ComponentSync.TabPane.Tab(addedChildren[i], this);
+                    this._addTab(update, tab, this.component.indexOf(addedChildren[i]));
                 }
             }
             if (update.hasUpdatedProperties()) {
@@ -304,18 +304,18 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
             return;
         }
         if (this._activeTabId) {
-        	var tab = this._getTabById(this._activeTabId);
-        	if (tab) {
-    	        tab._highlight(false);
-        	}
+            var tab = this._getTabById(this._activeTabId);
+            if (tab) {
+                tab._highlight(false);
+            }
         }
         
         var tab = this._getTabById(tabId);
         if (tab) {
-    	    this._activeTabId = tabId;
-    	    tab._highlight(true);
+            this._activeTabId = tabId;
+            tab._highlight(true);
         } else {
-    	    this._activeTabId = null;
+            this._activeTabId = null;
         }
     },
     
@@ -617,9 +617,9 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
             contentDivElement.style.display = state ? "block" : "none";
         }
         if (state) {
-        	// FIXME hack to notify the tab content component that it's size may have changed, this is
-        	// required because any previous notifications could have taken place when this tab was hidden.
-        	EchoRender.renderComponentDisplay(this._childComponent);
+            // FIXME hack to notify the tab content component that it's size may have changed, this is
+            // required because any previous notifications could have taken place when this tab was hidden.
+            EchoRender.renderComponentDisplay(this._childComponent);
         }
     },
     

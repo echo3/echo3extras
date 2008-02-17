@@ -1,24 +1,24 @@
 ExtrasSerial.PropertyTranslator.ItemModel = {
 
     _parseIcon: function(client, propertyElement) {
-    	var icon = WebCore.DOM.getChildElementByTagName(propertyElement, "icon");
-    	if (icon) {
-    		return EchoSerial.PropertyTranslator.ImageReference.toProperty(client, icon);
-    	}
-    	return null;
+        var icon = WebCore.DOM.getChildElementByTagName(propertyElement, "icon");
+        if (icon) {
+            return EchoSerial.PropertyTranslator.ImageReference.toProperty(client, icon);
+        }
+        return null;
     },
     
     toProperty: function(client, propertyElement) {
-    	var type = propertyElement.getAttribute("t");
-    	if (type.indexOf(ExtrasSerial.PROPERTY_TYPE_PREFIX) == 0) {
-    		type = type.substring(ExtrasSerial.PROPERTY_TYPE_PREFIX.length);
-    	}
-    	var translator = ExtrasSerial.PropertyTranslator[type];
-      	if (translator) {
-      		return translator.toProperty(client, propertyElement);
-    	} else {
-    		throw new Error("Unsupported model type: " + type);
-    	}
+        var type = propertyElement.getAttribute("t");
+        if (type.indexOf(ExtrasSerial.PROPERTY_TYPE_PREFIX) == 0) {
+            type = type.substring(ExtrasSerial.PROPERTY_TYPE_PREFIX.length);
+        }
+        var translator = ExtrasSerial.PropertyTranslator[type];
+          if (translator) {
+              return translator.toProperty(client, propertyElement);
+        } else {
+            throw new Error("Unsupported model type: " + type);
+        }
     }
 };
 
@@ -32,9 +32,9 @@ ExtrasSerial.PropertyTranslator.MenuModel = {
         
         var children = WebCore.DOM.getChildElementsByTagName(propertyElement, "item");
         for (var i = 0; i < children.length; i++) {
-        	var childElement = children[i];
-        	var subModel = ExtrasSerial.PropertyTranslator.ItemModel.toProperty(client, childElement);
-        	model.addItem(subModel);
+            var childElement = children[i];
+            var subModel = ExtrasSerial.PropertyTranslator.ItemModel.toProperty(client, childElement);
+            model.addItem(subModel);
        }
        return model;
     }

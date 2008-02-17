@@ -8,7 +8,7 @@ ExtrasRender.ComponentSync.BorderPane = Core.extend(EchoRender.ComponentSync, {
     },
 
     $construct: function() {
-    	this._element = null;
+        this._element = null;
     },
     
     renderAdd: function(update, parentElement) {
@@ -50,7 +50,7 @@ ExtrasRender.ComponentSync.BorderPane = Core.extend(EchoRender.ComponentSync, {
             this._element.appendChild(this._borderTopElement);
             // Render top right corner
             if (borderInsets.right > 0) {
-    	        cornerElement = this._renderBorderPart(border, "topRight", flags, 
+                cornerElement = this._renderBorderPart(border, "topRight", flags, 
                         borderInsets.right, borderInsets.top, 0, 0, null, null);
                 this._element.appendChild(cornerElement);
             }
@@ -71,7 +71,7 @@ ExtrasRender.ComponentSync.BorderPane = Core.extend(EchoRender.ComponentSync, {
         if (borderInsets.bottom > 0) {
             // Render bottom left corner
             if (borderInsets.left > 0) {
-    	        cornerElement = this._renderBorderPart(border, "bottomLeft", flags, 
+                cornerElement = this._renderBorderPart(border, "bottomLeft", flags, 
                         borderInsets.left, borderInsets.bottom, null, null, 0, 0);
                 this._element.appendChild(cornerElement);
             }
@@ -81,7 +81,7 @@ ExtrasRender.ComponentSync.BorderPane = Core.extend(EchoRender.ComponentSync, {
             this._element.appendChild(this._borderBottomElement);
             // Render bottom right corner
             if (borderInsets.right > 0) {
-    	        cornerElement = this._renderBorderPart(border, "bottomRight", flags, 
+                cornerElement = this._renderBorderPart(border, "bottomRight", flags, 
                         borderInsets.right, borderInsets.bottom, null, 0, 0, null);
                 this._element.appendChild(cornerElement);
             }
@@ -89,31 +89,31 @@ ExtrasRender.ComponentSync.BorderPane = Core.extend(EchoRender.ComponentSync, {
     },
     
     _renderBorderPart: function(border, position, flags, width, height, top, right, bottom, left) {
-    	var borderDivElement = document.createElement("div");
+        var borderDivElement = document.createElement("div");
         
         borderDivElement.style.fontSize = "1px";
         borderDivElement.style.position = "absolute";
-    	if (width != null) {
-    		borderDivElement.style.width = width + "px";
-    	}
-    	if (height != null) {
-    	    borderDivElement.style.height = height + "px";
-    	}
+        if (width != null) {
+            borderDivElement.style.width = width + "px";
+        }
+        if (height != null) {
+            borderDivElement.style.height = height + "px";
+        }
         if (top != null) {
-    	    borderDivElement.style.top = top + "px";
+            borderDivElement.style.top = top + "px";
         }
         if (right != null) {
-    	    borderDivElement.style.right = right + "px";
+            borderDivElement.style.right = right + "px";
         }
         if (bottom != null) {
-    	    borderDivElement.style.bottom = bottom + "px";
+            borderDivElement.style.bottom = bottom + "px";
         }
         if (left != null) {
-    	    borderDivElement.style.left = left + "px";
+            borderDivElement.style.left = left + "px";
         }
         
         if (border.color) {
-        	EchoAppRender.Color.render(border.color, borderDivElement, "backgroundColor");
+            EchoAppRender.Color.render(border.color, borderDivElement, "backgroundColor");
         }
         if (border[position]) {
             EchoAppRender.FillImage.render(border[position], borderDivElement, flags);
@@ -141,12 +141,12 @@ ExtrasRender.ComponentSync.BorderPane = Core.extend(EchoRender.ComponentSync, {
         
         var componentCount = this.component.getComponentCount();
         if (componentCount == 1) {
-    	    var child = this.component.getComponent(0);
-    	    var insets = child.pane ? null : this.component.render("insets");
-    	    if (insets) {
-    	    	EchoAppRender.Insets.render(insets, this._contentDivElement, "padding");
-    	    }
-    	    EchoRender.renderComponentAdd(update, child, this._contentDivElement);
+            var child = this.component.getComponent(0);
+            var insets = child.pane ? null : this.component.render("insets");
+            if (insets) {
+                EchoAppRender.Insets.render(insets, this._contentDivElement, "padding");
+            }
+            EchoRender.renderComponentAdd(update, child, this._contentDivElement);
         } else if (componentCount > 1) {
             throw new Error("Too many children: " + componentCount);
         }
@@ -182,7 +182,7 @@ ExtrasRender.ComponentSync.BorderPane = Core.extend(EchoRender.ComponentSync, {
     
     renderDispose: function(update) {
         this._contentDivElement = null;
-    	this._element = null;
+        this._element = null;
         this._borderLeftElement = null;
         this._borderRightElement = null;
         this._borderTopElement = null;

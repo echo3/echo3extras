@@ -120,12 +120,12 @@ ExtrasRender.ComponentSync.ColorSelect = Core.extend(EchoRender.ComponentSync, {
         this._hueWidth = EchoAppRender.Extent.toPixels(
                 this.component.render("hueWidth", ExtrasApp.ColorSelect.DEFAULT_HUE_WIDTH), true);
     
-        var svGradientImageSrc = this.client.getServiceUrl("EchoExtras.ColorSelect.SVGradient");
-        var hGradientImageSrc = this.client.getServiceUrl("EchoExtras.ColorSelect.HGradient");
-        var arrowDownImageSrc = this.client.getServiceUrl("EchoExtras.ColorSelect.ArrowDown");
-        var arrowUpImageSrc = this.client.getServiceUrl("EchoExtras.ColorSelect.ArrowUp");
-        var arrowRightImageSrc = this.client.getServiceUrl("EchoExtras.ColorSelect.ArrowRight");
-        var arrowLeftImageSrc = this.client.getServiceUrl("EchoExtras.ColorSelect.ArrowLeft");
+        var svGradientImageSrc = this.client.getResourceUrl("EchoExtras.ColorSelect.SVGradient");
+        var hGradientImageSrc = this.client.getResourceUrl("EchoExtras.ColorSelect.HGradient");
+        var arrowDownImageSrc = this.client.getResourceUrl("EchoExtras.ColorSelect.ArrowDown");
+        var arrowUpImageSrc = this.client.getResourceUrl("EchoExtras.ColorSelect.ArrowUp");
+        var arrowRightImageSrc = this.client.getResourceUrl("EchoExtras.ColorSelect.ArrowRight");
+        var arrowLeftImageSrc = this.client.getResourceUrl("EchoExtras.ColorSelect.ArrowLeft");
         
         // Create container div element, relatively positioned.
         this._containerDivElement = document.createElement("div");

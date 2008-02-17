@@ -29,7 +29,7 @@ ExtrasRender.ComponentSync.RemoteRichTextArea = Core.extend(ExtrasRender.Compone
     },
     
     _installIcons: function() {
-        var imageServiceUrl = this.client.getServiceUrl("Echo.Image");
+        var imageServiceUrl = this.client.getResourceUrl("Echo.Image");
         var iconNames = [
             "undo",
             "redo",

@@ -111,7 +111,10 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
         
     },
     
+    i : 0,
+    
     renderDispose: function(update) {
+        this._initialContentLoaded = false;
         this._transitionFinish();
         this._childDivElement = null;
         this.element = null;
