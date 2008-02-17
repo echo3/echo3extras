@@ -48,16 +48,8 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         EchoRender.registerPeer("ExtrasApp.RemoteTree", this);
     },
 
-    /**
-     * Gets an URI for default tree images
-     * 
-     * @param {String} identifier the image identifier
-     * @return the image URI
-     * @type {String}
-     */
-    _getImageUri: function(identifier) {
-        // FIXME abstract this somehow so it works with FreeClient too
-        return "?sid=Echo.Image&iid=EchoExtras.Tree." + identifier;
+    _getLineImageUrl: function(name, suffix) {
+        return this.client.getResourceUrl("Extras", "image/tree/" + name + suffix + ".gif");
     },
     
     renderAdd: function(update, parentElement) {
@@ -66,8 +58,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         if (this._showLines) {
             var solid = this._lineStyle == ExtrasRender.ComponentSync.RemoteTree.LINE_STYLE_SOLID;
             var lineImageIdSuffix = solid ? "Solid" : "Dotted";
-            this.verticalLineImage = this._getImageUri("lineVertical" + lineImageIdSuffix);
-            this.horizontalLineImage = this._getImageUri("lineHorizontal" + lineImageIdSuffix);
+            this.verticalLineImage = this._getLineImageUrl("Vertical", lineImageIdSuffix);
         }
         this._showsRootHandle = this.component.render("showsRootHandle", false);
         this._rootVisible = this.component.render("rootVisible", true);
@@ -368,7 +359,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
     _getImage: function(property, defaultImageName) {
         var image = this.component.render(property);
         if (!image) {
-            image = this._getImageUri(defaultImageName ? defaultImageName : property);
+            image = this.client.getResourceUrl("Extras", defaultImageName);
         }
         return image;
     },
@@ -391,9 +382,9 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             bottom = "Bottom";
         }
         if (node.isExpanded()) {
-            return this._getImage("nodeOpen" + bottom + "Icon", "nodeOpen" + bottom + imageSuffix);
+            return this._getImage("nodeOpen" + bottom + "Icon", "image/tree/Open" + bottom + imageSuffix + ".gif");
         } else {
-            return this._getImage("nodeClosed" + bottom + "Icon", "nodeClosed" + bottom + imageSuffix);
+            return this._getImage("nodeClosed" + bottom + "Icon", "image/tree/Closed" + bottom + imageSuffix + ".gif");
         }
     },
     
@@ -403,7 +394,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         if (!this._treeStructure.hasNodeNextSibling(node)) {
             bottom = "Bottom";
         }
-        return this._getImage("lineJoin" + bottom + "Icon", "lineJoin" + bottom + imageSuffix);
+        return this._getImage("lineJoin" + bottom + "Icon", "image/tree/Join" + bottom + imageSuffix + ".gif");
     },
     
     _renderExpandoElement: function(node, expandoElement) {
@@ -518,7 +509,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             rowHeaderElement.style.padding = "0px";
             rowHeaderElement.style.width = "19px";
             var img = document.createElement("img");
-            img.src = this._getImageUri("trans");
+            img.src = this.client.getResourceUrl("Extras", "image/tree/Transparent.gif");
             img.style.width = "19px";
 //            img.style.height = "10px";
             rowHeaderElement.appendChild(img);
@@ -542,7 +533,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             expandoElement.style.width = "19px";
             expandoElement.style.textAlign = "center";
             var img = document.createElement("img");
-            img.src = this._getImageUri("trans");
+            img.src = this.client.getResourceUrl("Extras", "image/tree/Transparent.gif");
             img.style.width = "19px";
 //            img.style.height = "10px";
             expandoElement.appendChild(img);

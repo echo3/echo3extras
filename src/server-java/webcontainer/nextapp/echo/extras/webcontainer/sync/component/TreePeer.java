@@ -434,7 +434,7 @@ extends AbstractComponentSynchronizePeer {
         WebContainerServlet.getServiceRegistry().add(TREE_SERVICE);
         CommonResources.install();
         ResourceRegistry resources = WebContainerServlet.getResourceRegistry();
-        resources.add("Extras", "image/tree/trans.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/tree/Transparent.gif", ContentType.IMAGE_GIF);
         resources.add("Extras", "image/tree/Closed.gif", ContentType.IMAGE_GIF);
         resources.add("Extras", "image/tree/Open.gif", ContentType.IMAGE_GIF);
         resources.add("Extras", "image/tree/JoinSolid.gif", ContentType.IMAGE_GIF);
