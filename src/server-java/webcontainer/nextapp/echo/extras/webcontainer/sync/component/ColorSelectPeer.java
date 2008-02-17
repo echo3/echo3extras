@@ -34,50 +34,39 @@ import nextapp.echo.app.Component;
 import nextapp.echo.app.update.ClientUpdateManager;
 import nextapp.echo.app.util.Context;
 import nextapp.echo.extras.app.ColorSelect;
+import nextapp.echo.extras.webcontainer.CommonResources;
 import nextapp.echo.extras.webcontainer.service.CommonService;
 import nextapp.echo.webcontainer.AbstractComponentSynchronizePeer;
+import nextapp.echo.webcontainer.ContentType;
+import nextapp.echo.webcontainer.ResourceRegistry;
 import nextapp.echo.webcontainer.ServerMessage;
 import nextapp.echo.webcontainer.Service;
 import nextapp.echo.webcontainer.ServiceRegistry;
 import nextapp.echo.webcontainer.WebContainerServlet;
 import nextapp.echo.webcontainer.service.JavaScriptService;
-import nextapp.echo.webcontainer.service.StaticBinaryService;
 
 /**
  * Synchronization peer for <code>ColorSelect</code>s.
  */
 public class ColorSelectPeer extends AbstractComponentSynchronizePeer {
 
-    private static final String IMAGE_RESOURCE_PATH = "/nextapp/echo/extras/webcontainer/resource/image/";
-
-    private static final Service ARROW_DOWN_IMAGE_SERVICE = StaticBinaryService.forResource(
-            "EchoExtras.ColorSelect.ArrowDown", "image/gif", IMAGE_RESOURCE_PATH + "ColorSelectArrowDown.gif");
-    private static final Service ARROW_LEFT_IMAGE_SERVICE = StaticBinaryService.forResource(
-            "EchoExtras.ColorSelect.ArrowLeft", "image/gif", IMAGE_RESOURCE_PATH + "ColorSelectArrowLeft.gif");
-    private static final Service ARROW_RIGHT_IMAGE_SERVICE = StaticBinaryService.forResource(
-            "EchoExtras.ColorSelect.ArrowRight", "image/gif", IMAGE_RESOURCE_PATH + "ColorSelectArrowRight.gif");
-    private static final Service ARROW_UP_IMAGE_SERVICE = StaticBinaryService.forResource(
-            "EchoExtras.ColorSelect.ArrowUp", "image/gif", IMAGE_RESOURCE_PATH + "ColorSelectArrowUp.gif");
-    private static final Service H_GRADIENT_IMAGE_SERVICE = StaticBinaryService.forResource(
-            "EchoExtras.ColorSelect.HGradient", "image/png", IMAGE_RESOURCE_PATH + "ColorSelectHGradient.png");
-    private static final Service SV_GRADIENT_IMAGE_SERVICE = StaticBinaryService.forResource(
-            "EchoExtras.ColorSelect.SVGradient", "image/png", IMAGE_RESOURCE_PATH + "ColorSelectSVGradient.png");
-
     private static final Service COLOR_SELECT_SERVICE = JavaScriptService.forResources("EchoExtras.ColorSelect",
             new String[] {  "/nextapp/echo/extras/webcontainer/resource/js/Application.ColorSelect.js",  
                             "/nextapp/echo/extras/webcontainer/resource/js/Render.ColorSelect.js"});
-
     static {
+        CommonResources.install();
+        ResourceRegistry resources = WebContainerServlet.getResourceRegistry();
+        resources.add("Extras", "image/ColorSelectArrowDown.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/ColorSelectArrowLeft.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/ColorSelectArrowRight.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/ColorSelectArrowUp.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/ColorSelectHGradient.png", ContentType.IMAGE_PNG);
+        resources.add("Extras", "image/ColorSelectSVGradient.png", ContentType.IMAGE_PNG);
+
         ServiceRegistry services = WebContainerServlet.getServiceRegistry();
         services.add(COLOR_SELECT_SERVICE);
-        services.add(ARROW_DOWN_IMAGE_SERVICE);
-        services.add(ARROW_LEFT_IMAGE_SERVICE);
-        services.add(ARROW_RIGHT_IMAGE_SERVICE);
-        services.add(ARROW_UP_IMAGE_SERVICE);
-        services.add(H_GRADIENT_IMAGE_SERVICE);
-        services.add(SV_GRADIENT_IMAGE_SERVICE);
     }
-
+    
     public ColorSelectPeer() {
         super();
         addOutputProperty(ColorSelect.COLOR_CHANGED_PROPERTY);

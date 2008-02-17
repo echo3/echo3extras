@@ -76,7 +76,7 @@ public class RichTextAreaPeer extends AbstractComponentSynchronizePeer {
         resources.add("Extras", "image/richtext/Foreground.gif", ContentType.IMAGE_GIF);
         resources.add("Extras", "image/richtext/Background.gif", ContentType.IMAGE_GIF);
         resources.add("Extras", "image/richtext/Bold.gif", ContentType.IMAGE_GIF);
-        resources.add("Extras", "image/richtext/Italic.gif.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/richtext/Italic.gif", ContentType.IMAGE_GIF);
         resources.add("Extras", "image/richtext/Underline.gif", ContentType.IMAGE_GIF);
         resources.add("Extras", "image/richtext/Undo.gif", ContentType.IMAGE_GIF);
         resources.add("Extras", "image/richtext/Redo.gif", ContentType.IMAGE_GIF);

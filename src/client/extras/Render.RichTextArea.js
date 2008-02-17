@@ -84,7 +84,14 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
 
     $virtual: {
         getIcons: function() {
-            return this.component.get("icons");
+            var icons = this._getDefaultIcons();
+            var customIcons = this.component.get("icons");
+            if (customIcons) {
+                for (var x in customIcons) {
+                    icons[x] = customIcons[x];
+                }
+            }
+            return icons;
         }
     },
     
@@ -212,6 +219,35 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
         this._richTextInput._richTextArea = this.component;
         
         return contentPane;
+    },
+    
+    _getDefaultIcons: function() {
+        return { 
+            ok: this.client.getResourceUrl("Extras", "image/Ok.gif"),
+            cancel: this.client.getResourceUrl("Extras", "image/Cancel.gif"),
+            undo: this.client.getResourceUrl("Extras", "image/richtext/Undo.gif"),
+            redo: this.client.getResourceUrl("Extras", "image/richtext/Redo.gif"),
+            cut: this.client.getResourceUrl("Extras", "image/richtext/Cut.gif"),
+            copy: this.client.getResourceUrl("Extras", "image/richtext/Copy.gif"),
+            paste: this.client.getResourceUrl("Extras", "image/richtext/Paste.gif"),
+            bold: this.client.getResourceUrl("Extras", "image/richtext/Bold.gif"),
+            underline: this.client.getResourceUrl("Extras", "image/richtext/Underline.gif"),
+            italic: this.client.getResourceUrl("Extras", "image/richtext/Italic.gif"),
+            superscript: this.client.getResourceUrl("Extras", "image/richtext/Superscript.gif"),
+            subscript: this.client.getResourceUrl("Extras", "image/richtext/Subscript.gif"),
+            alignmentLeft: this.client.getResourceUrl("Extras", "image/richtext/AlignLeft.gif"),
+            alignmentCenter: this.client.getResourceUrl("Extras", "image/richtext/AlignCenter.gif"),
+            alignmentRight: this.client.getResourceUrl("Extras", "image/richtext/AlignRight.gif"),
+            alignmentJustify: this.client.getResourceUrl("Extras", "image/richtext/AlignJustify.gif"),
+            foreground: this.client.getResourceUrl("Extras", "image/richtext/Foreground.gif"),
+            background: this.client.getResourceUrl("Extras", "image/richtext/Background.gif"),
+            bulletedList: this.client.getResourceUrl("Extras", "image/richtext/BulletedList.gif"),
+            numberedList: this.client.getResourceUrl("Extras", "image/richtext/NumberedList.gif"),
+            horizontalRule: this.client.getResourceUrl("Extras", "image/richtext/HorizontalRule.gif"),
+            image: this.client.getResourceUrl("Extras", "image/richtext/Image.gif"),
+            hyperlink: this.client.getResourceUrl("Extras", "image/richtext/Hyperlink.gif"),
+            table: this.client.getResourceUrl("Extras", "image/richtext/Table.gif")
+        };
     },
     
     _createMainMenuBarModel: function() {
