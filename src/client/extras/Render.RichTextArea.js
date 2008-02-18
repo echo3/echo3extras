@@ -223,8 +223,8 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
     
     _getDefaultIcons: function() {
         return { 
-            ok: this.client.getResourceUrl("Extras", "image/Ok.gif"),
-            cancel: this.client.getResourceUrl("Extras", "image/Cancel.gif"),
+            ok: this.client.getResourceUrl("Extras", "image/richtext/Ok.gif"),
+            cancel: this.client.getResourceUrl("Extras", "image/richtext/Cancel.gif"),
             undo: this.client.getResourceUrl("Extras", "image/richtext/Undo.gif"),
             redo: this.client.getResourceUrl("Extras", "image/richtext/Redo.gif"),
             cut: this.client.getResourceUrl("Extras", "image/richtext/Cut.gif"),

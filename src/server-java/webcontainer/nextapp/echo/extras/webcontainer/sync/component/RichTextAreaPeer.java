@@ -73,6 +73,8 @@ public class RichTextAreaPeer extends AbstractComponentSynchronizePeer {
         WebContainerServlet.getServiceRegistry().add(RICH_TEXT_AREA_SERVICE);
         CommonResources.install();
         ResourceRegistry resources = WebContainerServlet.getResourceRegistry();
+        resources.add("Extras", "image/richtext/Ok.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/richtext/Cancel.gif", ContentType.IMAGE_GIF);
         resources.add("Extras", "image/richtext/Foreground.gif", ContentType.IMAGE_GIF);
         resources.add("Extras", "image/richtext/Background.gif", ContentType.IMAGE_GIF);
         resources.add("Extras", "image/richtext/Bold.gif", ContentType.IMAGE_GIF);
