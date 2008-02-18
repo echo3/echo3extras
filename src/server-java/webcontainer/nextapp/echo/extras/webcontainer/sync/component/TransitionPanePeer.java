@@ -16,8 +16,8 @@ public class TransitionPanePeer
 extends AbstractComponentSynchronizePeer {
 
     private static final Service TRANSITION_PANE_SERVICE = JavaScriptService.forResources("EchoExtras.TransitionPane",
-            new String[] {  "/nextapp/echo/extras/webcontainer/resource/js/Application.TransitionPane.js",  
-                            "/nextapp/echo/extras/webcontainer/resource/js/Render.TransitionPane.js"});
+            new String[] {  "/nextapp/echo/extras/webcontainer/resource/Application.TransitionPane.js",  
+                            "/nextapp/echo/extras/webcontainer/resource/Render.TransitionPane.js"});
 
     static {
         WebContainerServlet.getServiceRegistry().add(TRANSITION_PANE_SERVICE);

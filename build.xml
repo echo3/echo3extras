@@ -113,7 +113,7 @@
                 <patternset refid="fileset.resources"/>
             </fileset>
         </copy>
-        <copy todir="${dir.build.server-java.webcontainer.js}">
+        <copy todir="${dir.build.server-java.webcontainer.res}">
             <fileset dir="${dir.src.client.extras}">
                 <patternset refid="fileset.resources"/>
             </fileset>
