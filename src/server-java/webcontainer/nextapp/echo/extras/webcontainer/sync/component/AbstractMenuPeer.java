@@ -140,13 +140,13 @@ abstract class AbstractMenuPeer extends AbstractComponentSynchronizePeer {
         WebContainerServlet.getServiceRegistry().add(MENU_SERVICE);
         CommonResources.install();
         ResourceRegistry resources = WebContainerServlet.getResourceRegistry();
-        resources.add("Extras", "image/ArrowDown.gif", ContentType.IMAGE_GIF);
-        resources.add("Extras", "image/ArrowLeft.gif", ContentType.IMAGE_GIF);
-        resources.add("Extras", "image/ArrowRight.gif", ContentType.IMAGE_GIF);
-        resources.add("Extras", "image/ToggleOff.gif", ContentType.IMAGE_GIF);
-        resources.add("Extras", "image/ToggleOn.gif", ContentType.IMAGE_GIF);
-        resources.add("Extras", "image/RadioOff.gif", ContentType.IMAGE_GIF);
-        resources.add("Extras", "image/RadioOn.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/menu/ArrowDown.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/menu/ArrowLeft.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/menu/ArrowRight.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/menu/ToggleOff.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/menu/ToggleOn.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/menu/RadioOff.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/menu/RadioOn.gif", ContentType.IMAGE_GIF);
     }
     
     public AbstractMenuPeer() {

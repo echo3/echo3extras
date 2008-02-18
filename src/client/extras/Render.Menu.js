@@ -139,9 +139,9 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
                             var iconIdentifier;
                             var selected = this._stateModel && this._stateModel.isSelected(item.modelId);
                             if (item instanceof ExtrasApp.RadioOptionModel) {
-                                iconIdentifier = selected ? "image/RadioOn.gif" : "image/RadioOff.gif";
+                                iconIdentifier = selected ? "image/menu/RadioOn.gif" : "image/menu/RadioOff.gif";
                             } else {
-                                iconIdentifier = selected ? "image/ToggleOn.gif" : "image/ToggleOff.gif";
+                                iconIdentifier = selected ? "image/menu/ToggleOn.gif" : "image/menu/ToggleOff.gif";
                             }
                             var imgElement = document.createElement("img");
                             imgElement.src = this.client.getResourceUrl("Extras", iconIdentifier);
@@ -174,7 +174,7 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
                         menuItemArrowTdElement.style.textAlign = "right";
                         var imgElement = document.createElement("img");
                         var expandImage = this.component.render("menuExpandIcon", 
-                                this.client.getResourceUrl("Extras", "image/ArrowRight.gif"));
+                                this.client.getResourceUrl("Extras", "image/menu/ArrowRight.gif"));
                         imgElement.setAttribute("src", expandImage.url ? expandImage.url : expandImage);
                         imgElement.setAttribute("alt", "");
                         menuItemArrowTdElement.appendChild(imgElement);
@@ -560,7 +560,7 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
         relativeContainerDivElement.appendChild(document.createTextNode("\u00a0"));
         
         var expandIcon = this.component.render("expandIcon", 
-                this.client.getResourceUrl("Extras", "image/ArrowDown.gif"));
+                this.client.getResourceUrl("Extras", "image/menu/ArrowDown.gif"));
         var expandIconWidth = this.component.render("expandIconWidth", 10);
         
         var expandElement = document.createElement("span");

@@ -10,14 +10,14 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
         DEFAULT_BORDER_INSETS: "10px",
         
         DEFAULT_BORDER_IMAGES: [
-            "image/GroupBorderTopLeft.png",
-            "image/GroupBorderTop.png",
-            "image/GroupBorderTopRight.png",
-            "image/GroupBorderLeft.png",
-            "image/GroupBorderRight.png",
-            "image/GroupBorderBottomLeft.png",
-            "image/GroupBorderBottom.png",
-            "image/GroupBorderBottomRight.png"
+            "image/group/GroupBorderTopLeft.png",
+            "image/group/GroupBorderTop.png",
+            "image/group/GroupBorderTopRight.png",
+            "image/group/GroupBorderLeft.png",
+            "image/group/GroupBorderRight.png",
+            "image/group/GroupBorderBottomLeft.png",
+            "image/group/GroupBorderBottom.png",
+            "image/group/GroupBorderBottomRight.png"
         ]
     },
 
