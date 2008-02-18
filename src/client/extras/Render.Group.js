@@ -8,18 +8,17 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
         DEFAULT_TITLE_INSETS: "0px 2px",
         
         DEFAULT_BORDER_INSETS: "10px",
-    
-        /**
-         * Gets an URI for default border images.
-         * 
-         * @param {String} identifier the image identifier
-         * @return the image URI
-         * @type {String}
-         */
-        _getImageUri: function(identifier) {
-            // FIXME abstract this somehow so it works with FreeClient too
-            return "?sid=Echo.Image&iid=EchoExtras.Group." + identifier;
-        }
+        
+        DEFAULT_BORDER_IMAGES: [
+            "image/GroupBorderTopLeft.png",
+            "image/GroupBorderTop.png",
+            "image/GroupBorderTopRight.png",
+            "image/GroupBorderLeft.png",
+            "image/GroupBorderRight.png",
+            "image/GroupBorderBottomLeft.png",
+            "image/GroupBorderBottom.png",
+            "image/GroupBorderBottomRight.png"
+        ]
     },
 
     $load: function() {
@@ -29,6 +28,17 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
     $construct: function() {
         this._groupDivElement = null;
         this._borderImages = null;
+    },
+    
+    /**
+     * Gets an URI for default border images.
+     * 
+     * @param {Number} position the image position (0-7)
+     * @return the image URI
+     * @type {String}
+     */
+    _getImageUri: function(position) {
+        return this.client.getResourceUrl("Extras", ExtrasRender.ComponentSync.Group.DEFAULT_BORDER_IMAGES[position]);
     },
     
     getElement: function() {
@@ -56,7 +66,7 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
         if (this._borderImages) {
             image = this._borderImages[position];
         } else {
-            image = ExtrasRender.ComponentSync.Group._getImageUri("border" + position);
+            image = this._getImageUri(position);
         }
         if (image) {
             return { url: image, repeat: repeat, x: x, y: y };
