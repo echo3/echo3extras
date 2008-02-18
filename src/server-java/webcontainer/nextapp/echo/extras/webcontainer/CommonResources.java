@@ -1,6 +1,5 @@
 package nextapp.echo.extras.webcontainer;
 
-import nextapp.echo.webcontainer.ContentType;
 import nextapp.echo.webcontainer.ResourceRegistry;
 import nextapp.echo.webcontainer.WebContainerServlet;
 
