@@ -56,12 +56,12 @@ public class ColorSelectPeer extends AbstractComponentSynchronizePeer {
     static {
         CommonResources.install();
         ResourceRegistry resources = WebContainerServlet.getResourceRegistry();
-        resources.add("Extras", "image/ColorSelectArrowDown.gif", ContentType.IMAGE_GIF);
-        resources.add("Extras", "image/ColorSelectArrowLeft.gif", ContentType.IMAGE_GIF);
-        resources.add("Extras", "image/ColorSelectArrowRight.gif", ContentType.IMAGE_GIF);
-        resources.add("Extras", "image/ColorSelectArrowUp.gif", ContentType.IMAGE_GIF);
-        resources.add("Extras", "image/ColorSelectHGradient.png", ContentType.IMAGE_PNG);
-        resources.add("Extras", "image/ColorSelectSVGradient.png", ContentType.IMAGE_PNG);
+        resources.add("Extras", "image/colorselect/ColorSelectArrowDown.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/colorselect/ColorSelectArrowLeft.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/colorselect/ColorSelectArrowRight.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/colorselect/ColorSelectArrowUp.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/colorselect/ColorSelectHGradient.png", ContentType.IMAGE_PNG);
+        resources.add("Extras", "image/colorselect/ColorSelectSVGradient.png", ContentType.IMAGE_PNG);
 
         ServiceRegistry services = WebContainerServlet.getServiceRegistry();
         services.add(COLOR_SELECT_SERVICE);
