@@ -41,25 +41,49 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         LINE_STYLE_SOLID: 1,
         LINE_STYLE_DOTTED: 2,
     
-        _supportedPartialProperties: ["treeStructure", "selection"]
+        _supportedPartialProperties: ["treeStructure", "selection"],
+        
+        TREE_IMAGES: {
+            0: {
+                open: "image/tree/Open.gif",
+                openBottom: "image/tree/Open.gif",
+                closed: "image/tree/Closed.gif",
+                closedBottom: "image/tree/Closed.gif"
+            },
+            1: {
+                vertical: "image/tree/VerticalSolid.gif",
+                open: "image/tree/OpenSolid.gif",
+                openBottom: "image/tree/OpenBottomSolid.gif",
+                closed: "image/tree/ClosedSolid.gif",
+                closedBottom: "image/tree/ClosedBottomSolid.gif",
+                join: "image/tree/JoinSolid.gif",
+                joinBottom: "image/tree/JoinBottomSolid.gif"
+            },
+            2: {
+                vertical: "image/tree/VerticalDotted.gif",
+                open: "image/tree/OpenDotted.gif",
+                openBottom: "image/tree/OpenBottomDotted.gif",
+                closed: "image/tree/ClosedDotted.gif",
+                closedBottom: "image/tree/ClosedBottomDotted.gif",
+                join: "image/tree/JoinDotted.gif",
+                joinBottom: "image/tree/JoinBottomDotted.gif"
+            } 
+        }
     },
     
     $load: function() {
         EchoRender.registerPeer("ExtrasApp.RemoteTree", this);
     },
-
-    _getLineImageUrl: function(name, suffix) {
-        return this.client.getResourceUrl("Extras", "image/tree/" + name + suffix + ".gif");
-    },
     
     renderAdd: function(update, parentElement) {
         this._lineStyle = this.component.render("lineStyle", 2);
-        this._showLines = this._lineStyle != ExtrasRender.ComponentSync.RemoteTree.LINE_STYLE_NONE;
-        if (this._showLines) {
-            var solid = this._lineStyle == ExtrasRender.ComponentSync.RemoteTree.LINE_STYLE_SOLID;
-            var lineImageIdSuffix = solid ? "Solid" : "Dotted";
-            this.verticalLineImage = this._getLineImageUrl("Vertical", lineImageIdSuffix);
+        this._imageSet = { };
+        for (var x in ExtrasRender.ComponentSync.RemoteTree.TREE_IMAGES[this._lineStyle]) {
+            this._imageSet[x] = this.client.getResourceUrl("Extras", 
+                    ExtrasRender.ComponentSync.RemoteTree.TREE_IMAGES[this._lineStyle][x]);
         }
+        this._showLines = this._lineStyle != ExtrasRender.ComponentSync.RemoteTree.LINE_STYLE_NONE;
+
         this._showsRootHandle = this.component.render("showsRootHandle", false);
         this._rootVisible = this.component.render("rootVisible", true);
         this._headerVisible = this.component.render("headerVisible", false);
@@ -356,14 +380,6 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         }
     },
     
-    _getImage: function(property, defaultImageName) {
-        var image = this.component.render(property);
-        if (!image) {
-            image = this.client.getResourceUrl("Extras", defaultImageName);
-        }
-        return image;
-    },
-    
     _getIconLineStyleSuffix: function() {
         switch (this._lineStyle) {
             case ExtrasRender.ComponentSync.RemoteTree.LINE_STYLE_NONE:
@@ -382,9 +398,9 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             bottom = "Bottom";
         }
         if (node.isExpanded()) {
-            return this._getImage("nodeOpen" + bottom + "Icon", "image/tree/Open" + bottom + imageSuffix + ".gif");
+            return this.component.render("nodeOpen" + bottom + "Icon", this._imageSet["open" + bottom]);
         } else {
-            return this._getImage("nodeClosed" + bottom + "Icon", "image/tree/Closed" + bottom + imageSuffix + ".gif");
+            return this.component.render("nodeClosed" + bottom + "Icon", this._imageSet["closed" + bottom]);
         }
     },
     
@@ -394,7 +410,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         if (!this._treeStructure.hasNodeNextSibling(node)) {
             bottom = "Bottom";
         }
-        return this._getImage("lineJoin" + bottom + "Icon", "image/tree/Join" + bottom + imageSuffix + ".gif");
+        return this.component.render("lineJoin" + bottom + "Icon", this._imageSet["join" + bottom]);
     },
     
     _renderExpandoElement: function(node, expandoElement) {
@@ -515,8 +531,8 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             rowHeaderElement.appendChild(img);
     
             if (parentNode) {
-                if (this._showLines && this._treeStructure.hasNodeNextSibling(parentNode)) {
-                    var verticalLineFillImage = { url: this.verticalLineImage, repeat: "no-repeat", x: "50%", y: 0 };
+                if (this._showLines && this._treeStructure.hasNodeNextSibling(parentNode) && this._imageSet.vertical) {
+                    var verticalLineFillImage = { url: this._imageSet.vertical, repeat: "no-repeat", x: "50%", y: 0 };
                     EchoAppRender.FillImage.render(verticalLineFillImage, rowHeaderElement);
                 }
                 parentNode = this._treeStructure.getNode(parentNode.getParentId());
