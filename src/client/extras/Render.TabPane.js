@@ -384,22 +384,22 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         headerTdElement.style.padding = "0px";
         
         var headerTableElement = document.createElement("table");
-           headerTableElement.style.padding = "0px";
-           headerTableElement.cellPadding = "0px";
-           headerTableElement.cellSpacing = "0px";
+        headerTableElement.style.padding = "0px";
+        headerTableElement.cellPadding = "0px";
+        headerTableElement.cellSpacing = "0px";
         headerTableElement.style.marginRight = this._parent._tabSpacing.toString();
         var width = this._parent.component.render("tabWidth");
         if (width) {
-               headerTableElement.style.width = width.toString();
+            headerTableElement.style.width = width.toString();
         }
         
         var headerTbodyElement = document.createElement("tbody");
         var headerTrElement = document.createElement("tr");
         
-           // left
+        // left
         if (this._hasLeftImage()) {
-               this._leftTdElement = document.createElement("td");
-               this._leftTdElement.id = this._parent.component.renderId + "_header_td_" + this._childComponent.renderId + "_left";
+            this._leftTdElement = document.createElement("td");
+            this._leftTdElement.id = this._parent.component.renderId + "_header_td_" + this._childComponent.renderId + "_left";
             this._leftTdElement.appendChild(document.createTextNode("\u00a0"));
             headerTrElement.appendChild(this._leftTdElement);
         }
@@ -448,8 +448,8 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
     
         // right
         if (this._hasRightImage()) {
-               this._rightTdElement = document.createElement("td");
-               this._rightTdElement.id = this._parent.component.renderId + "_header_td_" + this._childComponent.renderId + "_right";
+            this._rightTdElement = document.createElement("td");
+            this._rightTdElement.id = this._parent.component.renderId + "_header_td_" + this._childComponent.renderId + "_right";
             this._rightTdElement.appendChild(document.createTextNode("\u00a0"));
             headerTrElement.appendChild(this._rightTdElement);
         }
