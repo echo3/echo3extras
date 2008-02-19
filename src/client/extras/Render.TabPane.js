@@ -388,7 +388,6 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         headerTableElement.cellPadding = "0px";
         headerTableElement.cellSpacing = "0px";
         headerTableElement.style.marginRight = this._parent._tabSpacing.toString();
-        Core.Debug.consoleWrite(this._parent._tabSpacing.toString());
         var width = this._parent.component.render("tabWidth");
         if (width) {
             headerTableElement.style.width = width.toString();
