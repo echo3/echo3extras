@@ -487,7 +487,7 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
     
     renderUpdate: function(update) {
         if (update.isUpdatedPropertySetIn({text: true })) {
-            if (update.getProperty("text") == this._richTextInput.peer._renderedHtml) {
+            if (update.getUpdatedProperty("text").newValue == this._richTextInput.peer._renderedHtml) {
                 return;
             }
         }
