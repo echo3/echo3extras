@@ -467,7 +467,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         EchoAppRender.Alignment.render(this._parent.component.render("tabAlignment", 
                 ExtrasRender.ComponentSync.TabPane._defaultTabAlignment), imgTdElement, true, this._parent.component);
         var imgElement = document.createElement("img");
-        imgElement.src = icon.url;
+        imgElement.src = EchoAppRender.ImageReference.getUrl(icon);
         imgElement.style.marginRight = this._parent.component.render("tabIconTextMargin", 
                 ExtrasRender.ComponentSync.TabPane._defaultTabIconTextMargin + "px");
         imgTdElement.appendChild(imgElement);
@@ -478,11 +478,8 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         var imgTdElement = document.createElement("td");
         EchoAppRender.Alignment.render(this._parent.component.render("tabAlignment", 
                 ExtrasRender.ComponentSync.TabPane._defaultTabAlignment), imgTdElement, true, this._parent.component);
-        imgTdElement.style.paddingLeft = this._parent.component.render("tabCloseIconTextMargin", 
+        imgTdElement.style.padding = "0 0 0 " + this._parent.component.render("tabCloseIconTextMargin", 
                 ExtrasRender.ComponentSync.TabPane._defaultTabCloseIconTextMargin + "px");
-        imgTdElement.style.paddingTop = "0px";
-        imgTdElement.style.paddingRight = "0px";
-        imgTdElement.style.paddingBottom = "0px";
         imgTdElement.style.cursor = "pointer";
         var imgElement = document.createElement("img");
         imgElement.style.visibility = "hidden";
@@ -491,10 +488,11 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
             closeImage = this._getCloseImage(true);
         }
         if (closeImage) {
-            imgElement.src = closeImage.url;
+            imgElement.src = EchoAppRender.ImageReference.getUrl(closeImage);
         } else {
             imgElement.src = EchoRender.Util.TRANSPARENT_IMAGE;
         }
+        
         if (WebCore.Environment.BROWSER_INTERNET_EXPLORER) {
             // remove auto-calculated width & height, to prevent problems with different image sizes
             imgElement.removeAttribute("width");
@@ -739,11 +737,11 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         var closeImage = this._getCloseImage(rollover);
         
         if (closeImage) {
-            this._closeImageTdElement.firstChild.src = closeImage.url;
-               this._closeImageTdElement.firstChild.style.visibility = "visible";
+            this._closeImageTdElement.firstChild.src = EchoAppRender.ImageReference.getUrl(closeImage);
+            this._closeImageTdElement.firstChild.style.visibility = "visible";
         } else {
-               this._closeImageTdElement.firstChild.src = EchoRender.Util.TRANSPARENT_IMAGE;
-               this._closeImageTdElement.firstChild.style.visibility = "hidden";
+            this._closeImageTdElement.firstChild.src = EchoRender.Util.TRANSPARENT_IMAGE;
+            this._closeImageTdElement.firstChild.style.visibility = "hidden";
         }
     },
     
