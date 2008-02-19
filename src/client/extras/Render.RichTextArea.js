@@ -713,6 +713,12 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer = Core.extend(EchoRender.Compo
      * and thus whether the RichTextArea's input region should consume available vertical space.
      */
     _paneRender: false,
+    
+    //FIXME.  Calculate (rather than hardcode) trimHeight value.
+    /**
+     * Height of trim for RichTextArea, i.e., menu bar, toolbars, etc.
+     */
+    _trimHeight: 60,
 
     $construct: function() { },
     
@@ -778,14 +784,6 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer = Core.extend(EchoRender.Compo
         parentElement.appendChild(this._mainDivElement);
     },
     
-    renderDispose: function(update) {
-        WebCore.EventProcessor.removeAll(this._iframeElement.contentWindow.document);
-        this._mainDivElement = null;
-        this._iframeElement = null;
-        this._contentDocumentRendered = false;
-        this._selectionRange = null;
-    },
-    
     _renderContentDocument: function() {
         var text = this.component._richTextArea.get("text");
         
@@ -805,9 +803,27 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer = Core.extend(EchoRender.Compo
         this._contentDocumentRendered = true;
     },
     
+    renderDispose: function(update) {
+        WebCore.EventProcessor.removeAll(this._iframeElement.contentWindow.document);
+        this._mainDivElement = null;
+        this._iframeElement = null;
+        this._contentDocumentRendered = false;
+        this._selectionRange = null;
+    },
+    
     renderDisplay: function() {
         if (!this._contentDocumentRendered) {
             this._renderContentDocument();
+        }
+        
+        var rtaMainDivElement = this.component._richTextArea.peer._mainDivElement;
+        var bounds = new WebCore.Measure.Bounds(rtaMainDivElement.parentNode);
+        
+        if (bounds.height) {
+            var calculatedHeight = (bounds.height < this._trimHeight + 100 ? 100 : bounds.height - this._trimHeight) + "px";
+            if (this._iframeElement.style.height != calculatedHeight) {
+                this._iframeElement.style.height = calculatedHeight; 
+            }
         }
     },
     
