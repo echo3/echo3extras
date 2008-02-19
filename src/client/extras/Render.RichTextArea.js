@@ -384,7 +384,7 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
      * Event handler for color selection events from background ColorDialog.
      */
     _processSetBackground: function(e) {
-        this._richTextInput.peer.doCommand("hilitecolor", e.data.value);
+        this._richTextInput.peer.doCommand("hilitecolor", e.data);
     },
     
     /**
@@ -400,7 +400,7 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
      * Event handler for color selection events from foreground ColorDialog.
      */
     _processSetForeground: function(e) {
-        this._richTextInput.peer.doCommand("forecolor", e.data.value);
+        this._richTextInput.peer.doCommand("forecolor", e.data);
     },
     
     /**
