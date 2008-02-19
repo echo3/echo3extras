@@ -432,7 +432,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
             tableElement.appendChild(tbodyElement);
             tbodyElement.appendChild(trElement);
             trElement.appendChild(textTdElement);
-            if (this._hasCloseImage()) {
+            if (this._parent._tabCloseEnabled) {
                 this._closeImageTdElement = this._renderCloseIconElement();
                 trElement.appendChild(this._closeImageTdElement);
             }
@@ -490,7 +490,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         if (closeImage) {
             imgElement.src = EchoAppRender.ImageReference.getUrl(closeImage);
         } else {
-            imgElement.src = EchoRender.Util.TRANSPARENT_IMAGE;
+            imgElement.src = this._parent.client.getResourceUrl("Extras", "image/tabpane/Close.gif");
         }
         
         if (WebCore.Environment.BROWSER_INTERNET_EXPLORER) {
@@ -669,22 +669,6 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         return { url: image, repeat: "no-repeat", x: horOffset, y: verOffset };
     },
     
-    _hasCloseImage: function() {
-        if (!this._parent._tabCloseEnabled) {
-            return false;
-        }
-        if (this._parent.component.render("tabCloseIcon")) {
-            return true;
-        }
-        if (this._parent.component.render("tabDisabledCloseIcon")) {
-            return true;
-        }
-        if (this._parent.component.render("tabCloseIconRolloverEnabled")) {
-            return this._parent.component.render("tabRolloverCloseIcon") != null;
-        }
-        return false;
-    },
-    
     _getCloseImage: function(rollover) {
         if (this._isTabCloseEnabled()) {
             if (rollover && this._parent.component.render("tabCloseIconRolloverEnabled")) {
@@ -733,14 +717,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
             return;
         }
         
-        var rollover = WebCore.DOM.isAncestorOf(this._closeImageTdElement, e.target);
-        var closeImage = this._getCloseImage(rollover);
-        
-        if (closeImage) {
-            this._closeImageTdElement.firstChild.style.visibility = "visible";
-        } else {
-            this._closeImageTdElement.firstChild.style.visibility = "hidden";
-        }
+        this._closeImageTdElement.firstChild.style.visibility = "visible";
     },
     
     _processExit: function(e) {

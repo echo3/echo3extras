@@ -36,10 +36,13 @@ import nextapp.echo.app.update.ClientUpdateManager;
 import nextapp.echo.app.update.ServerComponentUpdate;
 import nextapp.echo.app.util.Context;
 import nextapp.echo.extras.app.TabPane;
+import nextapp.echo.extras.webcontainer.CommonResources;
 import nextapp.echo.extras.webcontainer.service.CommonService;
 import nextapp.echo.webcontainer.AbstractComponentSynchronizePeer;
 import nextapp.echo.webcontainer.ComponentSynchronizePeer;
+import nextapp.echo.webcontainer.ContentType;
 import nextapp.echo.webcontainer.LazyRenderContainer;
+import nextapp.echo.webcontainer.ResourceRegistry;
 import nextapp.echo.webcontainer.ServerMessage;
 import nextapp.echo.webcontainer.Service;
 import nextapp.echo.webcontainer.UserInstance;
@@ -70,6 +73,9 @@ implements LazyRenderContainer {
 
     static {
         WebContainerServlet.getServiceRegistry().add(TAB_PANE_SERVICE);
+        CommonResources.install();
+        ResourceRegistry resources = WebContainerServlet.getResourceRegistry();
+        resources.add("Extras", "image/tabpane/Close.gif", ContentType.IMAGE_GIF);
     }
 
     public TabPanePeer() {
