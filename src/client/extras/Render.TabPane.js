@@ -737,10 +737,8 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         var closeImage = this._getCloseImage(rollover);
         
         if (closeImage) {
-            this._closeImageTdElement.firstChild.src = EchoAppRender.ImageReference.getUrl(closeImage);
             this._closeImageTdElement.firstChild.style.visibility = "visible";
         } else {
-            this._closeImageTdElement.firstChild.src = EchoRender.Util.TRANSPARENT_IMAGE;
             this._closeImageTdElement.firstChild.style.visibility = "hidden";
         }
     },
