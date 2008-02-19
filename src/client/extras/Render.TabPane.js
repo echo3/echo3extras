@@ -388,6 +388,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         headerTableElement.cellPadding = "0px";
         headerTableElement.cellSpacing = "0px";
         headerTableElement.style.marginRight = this._parent._tabSpacing.toString();
+        Core.Debug.consoleWrite(this._parent._tabSpacing.toString());
         var width = this._parent.component.render("tabWidth");
         if (width) {
             headerTableElement.style.width = width.toString();
@@ -468,7 +469,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         var imgElement = document.createElement("img");
         imgElement.src = icon.url;
         imgElement.style.marginRight = this._parent.component.render("tabIconTextMargin", 
-                ExtrasRender.ComponentSync.TabPane._defaultTabIconTextMargin);
+                ExtrasRender.ComponentSync.TabPane._defaultTabIconTextMargin + "px");
         imgTdElement.appendChild(imgElement);
         return imgTdElement;
     },
@@ -478,7 +479,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         EchoAppRender.Alignment.render(this._parent.component.render("tabAlignment", 
                 ExtrasRender.ComponentSync.TabPane._defaultTabAlignment), imgTdElement, true, this._parent.component);
         imgTdElement.style.paddingLeft = this._parent.component.render("tabCloseIconTextMargin", 
-                ExtrasRender.ComponentSync.TabPane._defaultTabCloseIconTextMargin);
+                ExtrasRender.ComponentSync.TabPane._defaultTabCloseIconTextMargin + "px");
         imgTdElement.style.paddingTop = "0px";
         imgTdElement.style.paddingRight = "0px";
         imgTdElement.style.paddingBottom = "0px";
@@ -641,7 +642,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
     
     _isTabCloseEnabled: function() {
         var layoutData = this._childComponent.render("layoutData");
-        return layoutData ? layoutData.get("closeEnabled", false) : false;
+        return layoutData ? layoutData.closeEnabled : false;
     },
     
     _getLeftImage: function(state) {
