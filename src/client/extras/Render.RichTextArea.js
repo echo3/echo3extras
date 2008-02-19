@@ -103,6 +103,12 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
      * Localized messages for rendered locale.
      */
     _msg: null,
+    
+    /**
+     * {Boolean} Flag indicating whether the parent component is a pane, and thus whether the RichTextArea should consume
+     * horizontal and vertical space.
+     */
+    _paneRender: false,
 
     createComponent: function() {
         var controlsRow;
@@ -459,8 +465,14 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
             this._icons = {};
         }
         
+        this._paneRender = this.component.parent.pane;
+        
         this._mainDivElement = document.createElement("div");
-        this._mainDivElement.style.height = "300px";
+
+        if (!this._paneRender) {
+            // FIXME. set height of component based on height setting.
+            this._mainDivElement.style.height = "300px";
+        }
         parentElement.appendChild(this._mainDivElement);
     },
     
@@ -678,6 +690,11 @@ ExtrasRender.ComponentSync.RichTextArea.ImageDialog = Core.extend(
 
 ExtrasRender.ComponentSync.RichTextArea.InputComponent = Core.extend(EchoApp.Component, {
 
+    /**
+     * The containing RichTextArea component.
+     */
+    _richTextArea: null,
+
     $load: function() {
         EchoApp.ComponentFactory.registerType("ExtrasApp.RichTextInput", this);
     },
@@ -690,6 +707,12 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer = Core.extend(EchoRender.Compo
     $load: function() {
         EchoRender.registerPeer("ExtrasApp.RichTextInput", this);
     },
+
+    /**
+     * {Boolean} Flag indicating whether the parent component of the associated RichTextArea is a pane, 
+     * and thus whether the RichTextArea's input region should consume available vertical space.
+     */
+    _paneRender: false,
 
     $construct: function() { },
     
@@ -738,7 +761,15 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer = Core.extend(EchoRender.Compo
         this._iframeElement.style.backgroundColor = "white";
         this._iframeElement.style.color = "black";
         this._iframeElement.style.width = this.width ? this.width : "100%";
-        this._iframeElement.style.height = this.height ? this.height: "200px";
+        
+        this._paneRender = this.component._richTextArea.peer._paneRender;
+        
+        if (this._paneRender) {
+        //FIXME testing hack
+            this._iframeElement.style.height = "400px";
+        } else {
+            this._iframeElement.style.height = this.height ? this.height : "200px";
+        }
         this._iframeElement.style.border = "0px none";
         this._iframeElement.frameBorder = "0";
     
