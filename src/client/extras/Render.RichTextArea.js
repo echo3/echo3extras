@@ -337,7 +337,7 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
     },
     
     _processCommand: function(e) {
-        this._richTextInput.peer.doCommand(e.data);
+        this._richTextInput.peer.doCommand(e.actionCommand);
     },
     
     _processMenuAction: function(e) {
