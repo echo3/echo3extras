@@ -486,6 +486,12 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
     },
     
     renderUpdate: function(update) {
+        if (update.isUpdatedPropertySetIn({text: true })) {
+            if (update.getProperty("text") == this._richTextInput.peer._renderedHtml) {
+                return;
+            }
+        }
+    
         var element = this._mainDivElement;
         var containerElement = element.parentNode;
         EchoRender.renderComponentDispose(update, update.parent);
@@ -719,6 +725,8 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer = Core.extend(EchoRender.Compo
      * Height of trim for RichTextArea, i.e., menu bar, toolbars, etc.
      */
     _trimHeight: 60,
+    
+    _renderedHtml: null,
 
     $construct: function() { },
     
@@ -834,6 +842,7 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer = Core.extend(EchoRender.Compo
     _storeData: function() {
         var contentDocument = this._iframeElement.contentWindow.document;
         var html = contentDocument.body.innerHTML;
+        this._renderedHtml = html;
         this.component._richTextArea.set("text", html);
     },
     
