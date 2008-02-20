@@ -183,6 +183,7 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
         // Inform transition to finish immediately.
         if (this._transition) {
             this._transition.finish();
+            this._showContent();
             this.transition = null;
         }
         
