@@ -573,7 +573,8 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         EchoAppRender.FillImage.renderClear(backgroundImage, centerTdElement, null);
         
         if (this._parent._tabPosition == ExtrasApp.TabPane.TAB_POSITION_BOTTOM) {
-            headerContentTableElement.style.marginTop = state ? "0px" : this._parent._tabActiveBorder.size.toString();
+            var borderSize = EchoAppRender.Border.getPixelSize(this._parent._tabActiveBorder);
+            headerContentTableElement.style.marginTop = state ? "0px" : borderSize + "px";
             headerContentTableElement.style.marginBottom = state ? "0px" : this._parent._tabActiveHeightIncreasePx + "px";
             EchoAppRender.Border.render(border, headerContentTableElement, "borderBottom");
         } else {
