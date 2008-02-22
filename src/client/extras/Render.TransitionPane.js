@@ -184,7 +184,7 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
         if (this._transition) {
             this._transition.finish();
             this._showContent();
-            this.transition = null;
+            this._transition = null;
         }
         
         // Remove content which was transitioned from.
