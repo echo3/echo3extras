@@ -15,7 +15,6 @@ ExtrasRender.ComponentSync.ToolTipContainer = Core.extend(EchoRender.ComponentSy
     
     renderAdd: function(update, parentElement) {
         this._divElement = document.createElement("div");
-        
         var componentCount = this.component.getComponentCount();
         
         if (componentCount > 0) {
@@ -25,7 +24,7 @@ ExtrasRender.ComponentSync.ToolTipContainer = Core.extend(EchoRender.ComponentSy
         
         if (componentCount > 1) {
             this._tooltipDivElement = this._createToolTip(update);
-            document.getElementsByTagName("body")[0].appendChild(this._tooltipDivElement);
+            document.body.appendChild(this._tooltipDivElement);
         }
         
         parentElement.appendChild(this._divElement);
@@ -59,6 +58,10 @@ ExtrasRender.ComponentSync.ToolTipContainer = Core.extend(EchoRender.ComponentSy
         var tooltipDivElement = document.createElement("div");
         tooltipDivElement.style.visibility = "hidden";
         tooltipDivElement.style.position = "absolute";
+        var width = this.component.render("width");
+        if (width) {
+            tooltipDivElement.style.width = EchoAppRender.Extent.toCssValue(width);
+        }
         EchoRender.renderComponentAdd(update, this.component.getComponent(1), tooltipDivElement);
         return tooltipDivElement;
     },
@@ -75,9 +78,9 @@ ExtrasRender.ComponentSync.ToolTipContainer = Core.extend(EchoRender.ComponentSy
             var mouseEnterLeaveSupport = WebCore.Environment.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED;
             var enterEvent = mouseEnterLeaveSupport ? "mouseenter" : "mouseover";
             var exitEvent = mouseEnterLeaveSupport ? "mouseleave" : "mouseout";
-            WebCore.EventProcessor.add(applyDivElement, enterEvent, Core.method(this, this._processRolloverEnter), false);
-            WebCore.EventProcessor.add(applyDivElement, exitEvent, Core.method(this, this._processRolloverExit), false);
-            WebCore.EventProcessor.add(applyDivElement, "mousemove", Core.method(this, this._processMove), false);
+            WebCore.EventProcessor.add(applyDivElement, enterEvent, Core.method(this, this._processRolloverEnter), true);
+            WebCore.EventProcessor.add(applyDivElement, exitEvent, Core.method(this, this._processRolloverExit), true);
+            WebCore.EventProcessor.add(applyDivElement, "mousemove", Core.method(this, this._processMove), true);
         }
         
         return applyDivElement;
@@ -96,6 +99,7 @@ ExtrasRender.ComponentSync.ToolTipContainer = Core.extend(EchoRender.ComponentSy
             return;
         }
         this._positionToolTip(e);
+        return true;
     },
     
     _processRolloverEnter: function(e) {
@@ -104,6 +108,7 @@ ExtrasRender.ComponentSync.ToolTipContainer = Core.extend(EchoRender.ComponentSy
         }
         this._positionToolTip(e);
         this._tooltipDivElement.style.visibility = "visible";
+        return true;
     },
     
     _processRolloverExit: function(e) {
@@ -111,5 +116,6 @@ ExtrasRender.ComponentSync.ToolTipContainer = Core.extend(EchoRender.ComponentSy
             return;
         }
         this._tooltipDivElement.style.visibility = "hidden";
+        return true;
     }
 });
