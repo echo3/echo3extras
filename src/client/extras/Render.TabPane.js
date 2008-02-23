@@ -1,4 +1,5 @@
 // FIXME handle enabled/disabled state
+// FIXME support setting/getting activeTabIndex property thoroughly (currently only works on initial render). 
 
 /**
  * Component rendering peer: TabPane
