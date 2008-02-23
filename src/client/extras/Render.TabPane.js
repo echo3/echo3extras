@@ -58,6 +58,17 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
         }
     },
     
+    _getActiveTabId: function() {
+        var activeTabId = this.component.get("activeTab")
+        if (!activeTabId) {
+            var activeTabIndex = this.component.get("activeTabIndex");
+            if (activeTabIndex != null && activeTabIndex < this.component.children.length) {
+                activeTabId = this.component.children[activeTabIndex].renderId;
+            }
+        }
+        return activeTabId;
+    },
+    
     /**
      * Removes a specific tab.
      *
@@ -109,7 +120,7 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
     },
     
     renderAdd: function(update, parentElement) {
-        this._activeTabId = this.component.get("activeTab");
+        this._activeTabId = this._getActiveTabId();
         this._element = this._render();
         
         this._headerContainerTrElement = this._element.childNodes[0].firstChild.rows[0];
