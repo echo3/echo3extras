@@ -327,7 +327,8 @@ ExtrasRender.ComponentSync.ColorSelect = Core.extend(EchoRender.ComponentSync, {
         this._svListenerDivElement.style.width = (this._valueWidth + 14) + "px";
         this._svListenerDivElement.style.height = (this._saturationHeight + 14) + "px";
         this._svListenerDivElement.style.cursor = "crosshair";
-    //    this._svListenerDivElement.style.backgroundImage = "url(" + this.transparentImageSrc + ")";
+        this._svListenerDivElement.style.backgroundImage = "url(" +
+                this.client.getResourceUrl("Echo", "resource/Transparent.gif") + ")";
         this._containerDivElement.appendChild(this._svListenerDivElement);
         
         this._hListenerDivElement = document.createElement("div");
@@ -339,7 +340,8 @@ ExtrasRender.ComponentSync.ColorSelect = Core.extend(EchoRender.ComponentSync, {
         this._hListenerDivElement.style.width = (this._hueWidth + 14) + "px";
         this._hListenerDivElement.style.height = (this._saturationHeight + 16) + "px";
         this._hListenerDivElement.style.cursor = "crosshair";
-    //    this._hListenerDivElement.style.backgroundImage = "url(" + this.transparentImageSrc + ")";
+        this._hListenerDivElement.style.backgroundImage = "url(" +
+                this.client.getResourceUrl("Echo", "resource/Transparent.gif") + ")";
         this._containerDivElement.appendChild(this._hListenerDivElement);
     
         parentElement.appendChild(this._containerDivElement);
