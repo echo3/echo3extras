@@ -444,10 +444,17 @@ ExtrasRender.ComponentSync.MenuBarPane = Core.extend(ExtrasRender.ComponentSync.
         EchoAppRender.FillImage.render(this.component.render("backgroundImage"), menuBarDivElement); 
         EchoAppRender.Font.render(this.component.render("font"), menuBarDivElement, null);
         
+        // This 100% high "inner div" element ensures the table will actually render to 100% height on all browsers.
+        // IE7 has a peculiar issue here otherwise.
+        var menuBarInnerDivElement = document.createElement("div");
+        menuBarInnerDivElement.style.position = "absolute";
+        menuBarInnerDivElement.style.height = "100%";
+        menuBarDivElement.appendChild(menuBarInnerDivElement);
+        
         var menuBarTableElement = document.createElement("table");
         menuBarTableElement.style.height = "100%";
         menuBarTableElement.style.borderCollapse = "collapse";
-        menuBarDivElement.appendChild(menuBarTableElement);
+        menuBarInnerDivElement.appendChild(menuBarTableElement);
         
         var menuBarTbodyElement = document.createElement("tbody");
         menuBarTableElement.appendChild(menuBarTbodyElement);
