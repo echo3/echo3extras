@@ -799,11 +799,15 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer = Core.extend(EchoRender.Compo
         contentDocument.open();
         contentDocument.write("<html><body>" + (text == null ? "" : text) + "</body></html>");
         contentDocument.close();
-        // workaround for Mozilla (not Firefox)
-        var setDesignModeOn = function() {
+        if (WebCore.Environment.BROWSER_MOZILLA && !WebCore.Environment.BROWSER_FIREFOX) {
+            // workaround for Mozilla (not Firefox)
+            var setDesignModeOn = function() {
+                contentDocument.designMode = "on";
+            };
+            setTimeout(setDesignModeOn, 0);
+        } else {
             contentDocument.designMode = "on";
-        };
-        setTimeout(setDesignModeOn, 0);
+        }
         WebCore.EventProcessor.add(this._iframeElement.contentWindow.document, "keyup", 
                 Core.method(this, this._processKeyUp), false);
         WebCore.EventProcessor.add(this._iframeElement.contentWindow.document, "mouseup", 
