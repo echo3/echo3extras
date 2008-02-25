@@ -84,8 +84,8 @@ ExtrasRender.ComponentSync.ColorSelect = Core.extend(EchoRender.ComponentSync, {
     },
     
     _processHUpdate: function(e) {
-        var bounds = new WebCore.Measure.Bounds(this._hListenerDivElement);
-        this._h = (this._saturationHeight - (e.clientY - bounds.top - 7)) * 360 / this._saturationHeight;
+        var offset = WebCore.DOM.getEventOffset(e);
+        this._h = (this._saturationHeight - (offset.y - 7)) * 360 / this._saturationHeight;
         this._updateDisplayedColor();
     },
     
@@ -106,9 +106,9 @@ ExtrasRender.ComponentSync.ColorSelect = Core.extend(EchoRender.ComponentSync, {
     },
     
     _processSVUpdate: function(e) {
-        var bounds = new WebCore.Measure.Bounds(this._svListenerDivElement);
-        this._v = (e.clientX - bounds.left - 7) / this._valueWidth;
-        this._s = 1 - ((e.clientY - bounds.top - 7) / this._saturationHeight);
+        var offset = WebCore.DOM.getEventOffset(e);
+        this._v = (offset.x - 7) / this._valueWidth;
+        this._s = 1 - ((offset.y - 7) / this._saturationHeight);
         this._updateDisplayedColor();
     },
     
