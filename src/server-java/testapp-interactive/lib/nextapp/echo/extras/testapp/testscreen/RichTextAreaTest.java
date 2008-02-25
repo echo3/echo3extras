@@ -35,6 +35,7 @@ import nextapp.echo.app.event.ActionListener;
 import nextapp.echo.extras.app.DefaultIconSet;
 import nextapp.echo.extras.app.RichTextArea;
 import nextapp.echo.extras.testapp.AbstractTest;
+import nextapp.echo.extras.testapp.InteractiveApp;
 import nextapp.echo.extras.testapp.Styles;
 import nextapp.echo.extras.testapp.TestControlPane;
 
@@ -79,6 +80,12 @@ public class RichTextAreaTest extends AbstractTest {
         testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Text: This is <b>underline</b>.", new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 richTextArea.setText("This is <u>underline</u>.");
+            }
+        });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Display Text", new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                InteractiveApp.getApp().consoleWrite("RichTextArea text: \"" + richTextArea.getText() + "\"");
             }
         });
         
