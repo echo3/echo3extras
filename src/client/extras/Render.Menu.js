@@ -190,7 +190,6 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
                         EchoAppRender.Color.render(this.component.render("disabledForeground", 
                                 ExtrasRender.ComponentSync.Menu._defaultDisabledForeground), menuItemContentTdElement, "color");
                     }
-                    menuItemContentTdElement.title = item.text;
                     menuItemContentTdElement.appendChild(document.createTextNode(item.text));
                     menuItemTrElement.appendChild(menuItemContentTdElement);
                     
