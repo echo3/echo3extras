@@ -326,6 +326,9 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
     },
     
     _processItemEnter: function(e) {
+        if (!this.client.verifyInput(this.component) || WebCore.dragInProgress) {
+            return;
+        }
         var modelId = this._getElementModelId(e.target);
         if (modelId) {
             this._highlight(this._menuModel.getItem(modelId), true);
@@ -333,6 +336,9 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
     },
     
     _processItemExit: function(e) {
+        if (!this.client.verifyInput(this.component) || WebCore.dragInProgress) {
+            return;
+        }
         var modelId = this._getElementModelId(e.target);
         if (modelId) {
             this._highlight(this._menuModel.getItem(modelId), false);
