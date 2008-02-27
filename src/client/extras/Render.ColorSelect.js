@@ -68,6 +68,9 @@ ExtrasRender.ComponentSync.ColorSelect = Core.extend(EchoRender.ComponentSync, {
     },
     
     _processHMouseDown: function(e) {
+        if (!this.client.verifyInput(this.component) || WebCore.dragInProgress) {
+            return;
+        }
         WebCore.EventProcessor.add(this._hListenerDivElement, "mousemove", this._processHMouseMoveRef, false);
         WebCore.EventProcessor.add(this._hListenerDivElement, "mouseup", this._processHMouseUpRef, false);
         this._processHUpdate(e);
@@ -90,6 +93,9 @@ ExtrasRender.ComponentSync.ColorSelect = Core.extend(EchoRender.ComponentSync, {
     },
     
     _processSVMouseDown: function(e) {
+        if (!this.client.verifyInput(this.component) || WebCore.dragInProgress) {
+            return;
+        }
         WebCore.EventProcessor.add(this._svListenerDivElement, "mousemove", this._processSVMouseMoveRef, false);
         WebCore.EventProcessor.add(this._svListenerDivElement, "mouseup", this._processSVMouseUpRef, false);
         this._processSVUpdate(e);
