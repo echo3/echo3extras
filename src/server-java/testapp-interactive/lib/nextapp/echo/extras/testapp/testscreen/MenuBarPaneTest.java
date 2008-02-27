@@ -87,7 +87,7 @@ public class MenuBarPaneTest extends AbstractTest {
         addBorderPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "border");
         addFillImagePropertyTests(TestControlPane.CATEGORY_PROPERTIES, "backgroundImage", TEST_FILL_IMAGES);
         addFontPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "font");
-        
+        addIntegerPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "menuOpacity", new int[]{0, 10, 50, 90, 100});
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "menuForeground");
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "menuBackground");
         addFillImagePropertyTests(TestControlPane.CATEGORY_PROPERTIES, "menuBackgroundImage", TEST_FILL_IMAGES);

@@ -51,16 +51,20 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
         renderMenu: function(menuModel, xPosition, yPosition) {
             var menuDivElement = document.createElement("div");
             menuDivElement.id = this.component.renderId + "_menu_" + menuModel.id;
-            EchoAppRender.Insets.render(this._menuInsets, menuDivElement, "padding");
-            EchoAppRender.Border.render(this._getMenuBorder(), menuDivElement);
-            var background;
-            var menuBackground = this.component.render("menuBackground");
-            if (menuBackground) {
-                background = menuBackground;
-            } else {
-                background = this.component.render("background", ExtrasRender.ComponentSync.Menu._defaultBackground);
-            }
-            EchoAppRender.Color.render(background, menuDivElement, "backgroundColor");
+            menuDivElement.style.position = "absolute";
+            menuDivElement.style.zIndex = ExtrasRender.ComponentSync.Menu.MAX_Z_INDEX;
+            menuDivElement.style.top = yPosition + "px";
+            menuDivElement.style.left = xPosition + "px";
+            
+            var opacity = WebCore.Environment.NOT_SUPPORTED_CSS_OPACITY ? 100 : this.component.render("menuOpacity", 100);
+
+            var menuContentDivElement = document.createElement("div");
+            menuContentDivElement.style.position = "relative";
+            menuContentDivElement.style.zIndex = 10;
+            menuDivElement.appendChild(menuContentDivElement);
+
+            EchoAppRender.Insets.render(this._menuInsets, menuContentDivElement, "padding");
+            EchoAppRender.Border.render(this._getMenuBorder(), menuContentDivElement);
             var foreground;
             var menuForeground = this.component.render("menuForeground");
             if (menuForeground) {
@@ -68,8 +72,42 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
             } else {
                 foreground = this.component.render("foreground", ExtrasRender.ComponentSync.Menu._defaultForeground);
             }
-            EchoAppRender.Color.render(foreground, menuDivElement, "color");
-            menuDivElement.style.zIndex = ExtrasRender.ComponentSync.Menu.MAX_Z_INDEX;
+            EchoAppRender.Color.render(foreground, menuContentDivElement, "color");
+
+            // Apply menu font if it is set, or apply default font 
+            // if it is set and the menu font is NOT set.
+            var font = this.component.render("menuFont");
+            if (!font) {
+                font = this.component.render("font");
+            }
+            if (font) {
+                EchoAppRender.Font.render(font, menuContentDivElement);
+            }
+
+            var backgroundDivElement;
+            if (opacity < 100) {
+                backgroundDivElement = document.createElement("div");
+                backgroundDivElement.style.opacity = opacity / 100;
+                backgroundDivElement.style.position = "absolute";
+                backgroundDivElement.style.zIndex = 1;
+                backgroundDivElement.style.width = "100%";
+                backgroundDivElement.style.height = "100%";
+                backgroundDivElement.style.top = 0;
+                backgroundDivElement.style.bottom = 0;
+                menuDivElement.appendChild(backgroundDivElement);
+            } else {
+                backgroundDivElement = menuDivElement;
+            }
+            
+            var background;
+            var menuBackground = this.component.render("menuBackground");
+            if (menuBackground) {
+                background = menuBackground;
+            } else {
+                background = this.component.render("background", ExtrasRender.ComponentSync.Menu._defaultBackground);
+            }
+            EchoAppRender.Color.render(background, backgroundDivElement, "backgroundColor");
+
             // Apply menu background image if it is set, or apply default background 
             // image if it is set and the menu background is NOT set.
             var backgroundImage;
@@ -80,24 +118,12 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
                 backgroundImage = this.component.render("backgroundImage");
             }
             if (backgroundImage) {
-                EchoAppRender.FillImage.render(backgroundImage, menuDivElement, null); 
+                EchoAppRender.FillImage.render(backgroundImage, backgroundDivElement, null); 
             }
-            // Apply menu font if it is set, or apply default font 
-            // if it is set and the menu font is NOT set.
-            var font = this.component.render("menuFont");
-            if (!font) {
-                font = this.component.render("font");
-            }
-            if (font) {
-                EchoAppRender.Font.render(font, menuDivElement);
-            }
-            menuDivElement.style.position = "absolute";
-            menuDivElement.style.top = yPosition + "px";
-            menuDivElement.style.left = xPosition + "px";
             
             var menuTableElement = document.createElement("table");
             menuTableElement.style.borderCollapse = "collapse";
-            menuDivElement.appendChild(menuTableElement);
+            menuContentDivElement.appendChild(menuTableElement);
             
             var menuTbodyElement = document.createElement("tbody");
             menuTableElement.appendChild(menuTbodyElement);
@@ -201,8 +227,7 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
                 }
             }
             
-            bodyElement = document.getElementsByTagName("body")[0];    
-            bodyElement.appendChild(menuDivElement);
+            document.body.appendChild(menuDivElement);
         
             WebCore.EventProcessor.add(menuDivElement, "click", Core.method(this, this._processClick), false);
             WebCore.EventProcessor.add(menuDivElement, "mouseover", Core.method(this, this._processItemEnter), false);

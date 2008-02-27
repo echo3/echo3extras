@@ -59,6 +59,7 @@ implements Pane {
     public static final String PROPERTY_MENU_BORDER = "menuBorder";
     public static final String PROPERTY_MENU_EXPAND_ICON = "menuExpandIcon";
     public static final String PROPERTY_MENU_FOREGROUND = "menuForeground";
+    public static final String PROPERTY_MENU_OPACITY = "menuOpacity";
     public static final String PROPERTY_SELECTION_BACKGROUND = "selectionBackground";
     public static final String PROPERTY_SELECTION_BACKGROUND_IMAGE = "selectionBackgroundImage";
     public static final String PROPERTY_SELECTION_FOREGROUND = "selectionForeground";
@@ -200,6 +201,19 @@ implements Pane {
      */
     public Color getMenuForeground() {
         return (Color) getProperty(PROPERTY_MENU_FOREGROUND);
+    }
+    
+    /**
+     * Returns the opacity setting (percent) that will be used for the background
+     * color/image displayed in pulldown menus.  Valid values are between
+     * 1 and 100.  Some clients may not support this setting and will
+     * always render menus with 100% opacity.
+     * 
+     * @return the opacity setting
+     */
+    public int getMenuOpacity() {
+        Integer opacity = (Integer) getProperty(PROPERTY_MENU_OPACITY);
+        return opacity == null ? 100 : opacity.intValue();
     }
     
     /**
@@ -348,6 +362,18 @@ implements Pane {
      */
     public void setMenuForeground(Color newValue) {
         setProperty(PROPERTY_MENU_FOREGROUND, newValue);
+    }
+    
+    /**
+     * Sets the opacity (percent) that will be used for the background
+     * color/image displayed in pulldown menus.  Valid values are between
+     * 1 and 100.  Some clients may not support this setting and will
+     * always render menus with 100% opacity.
+     * 
+     * @param newValue the new opacity setting
+     */
+    public void setMenuOpacity(int newValue) {
+        setProperty(PROPERTY_MENU_OPACITY, new Integer(newValue));
     }
     
     /**
