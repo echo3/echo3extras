@@ -654,9 +654,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         if (!image) {
             return;
         }
-        var horOffset = 0;
-        var verOffset = 0;
-        return { url: image, repeat: "no-repeat", x: horOffset, y: verOffset };
+        return { url: image, repeat: "no-repeat", x: 0, y: 0 };
     },
     
     _hasRightImage: function() {
@@ -669,9 +667,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         if (!image) {
             return;
         }
-        var horOffset = "100%";
-        var verOffset = 0;
-        return { url: image, repeat: "no-repeat", x: horOffset, y: verOffset };
+        return { url: image, repeat: "no-repeat", x: "100%", y: 0 };
     },
     
     _getCloseImage: function(rollover) {
