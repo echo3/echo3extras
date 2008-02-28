@@ -391,24 +391,24 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         headerTdElement.style.borderWidth = "0px";
         headerTdElement.style.padding = "0px";
         
-        var headerTableElement = document.createElement("table");
-        headerTableElement.style.padding = "0px";
-        headerTableElement.cellPadding = "0px";
-        headerTableElement.cellSpacing = "0px";
-        headerTableElement.style.marginRight = this._parent._tabSpacing.toString();
+        var tabTableElement = document.createElement("table");
+        tabTableElement.style.padding = "0px";
+        tabTableElement.cellPadding = "0px";
+        tabTableElement.cellSpacing = "0px";
+        tabTableElement.style.marginRight = this._parent._tabSpacing.toString();
         var width = this._parent.component.render("tabWidth");
         if (width) {
-            headerTableElement.style.width = width.toString();
+            tabTableElement.style.width = width.toString();
         }
         
-        var headerTbodyElement = document.createElement("tbody");
-        var headerTrElement = document.createElement("tr");
+        var tabTbodyElement = document.createElement("tbody");
+        var tabTrElement = document.createElement("tr");
         
         // left
         if (this._hasLeftImage()) {
             this._leftTdElement = document.createElement("td");
             this._leftTdElement.appendChild(document.createTextNode("\u00a0"));
-            headerTrElement.appendChild(this._leftTdElement);
+            tabTrElement.appendChild(this._leftTdElement);
         }
         
         // center
@@ -450,19 +450,19 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
                     ExtrasRender.ComponentSync.TabPane._defaultTabAlignment), centerTdElement, true, this._parent.component);
             centerTdElement.appendChild(document.createTextNode(title));
         }
-        headerTrElement.appendChild(centerTdElement);
+        tabTrElement.appendChild(centerTdElement);
         this._centerTdElement = centerTdElement;
     
         // right
         if (this._hasRightImage()) {
             this._rightTdElement = document.createElement("td");
             this._rightTdElement.appendChild(document.createTextNode("\u00a0"));
-            headerTrElement.appendChild(this._rightTdElement);
+            tabTrElement.appendChild(this._rightTdElement);
         }
     
-        headerTbodyElement.appendChild(headerTrElement);
-        headerTableElement.appendChild(headerTbodyElement);
-        headerTdElement.appendChild(headerTableElement);
+        tabTbodyElement.appendChild(tabTrElement);
+        tabTableElement.appendChild(tabTbodyElement);
+        headerTdElement.appendChild(tabTableElement);
         
         return headerTdElement;
     },
