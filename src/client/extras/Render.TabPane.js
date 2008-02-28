@@ -168,7 +168,6 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
     
     _renderContentContainer: function() {
         var contentContainerDivElement = document.createElement("div");
-        contentContainerDivElement.id = this.component.renderId + "_content";
         contentContainerDivElement.style.position = "absolute";
         contentContainerDivElement.style.overflow = "hidden";
         EchoAppRender.Color.renderFB(this.component, contentContainerDivElement);
@@ -212,7 +211,6 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
     
     _renderHeaderContainer: function() {
         var headerContainerDivElement = document.createElement("div");
-        headerContainerDivElement.id = this.component.renderId + "_header";
         headerContainerDivElement.style.overflow = "hidden";
         headerContainerDivElement.style.zIndex = 1;
         headerContainerDivElement.style.position = "absolute";
@@ -239,7 +237,6 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
         headerTableElement.appendChild(headerTbodyElement);
         
         var headerTrElement = document.createElement("tr");
-        headerTrElement.id = this.component.renderId + "_header_tr";
         headerTbodyElement.appendChild(headerTrElement);
         
         headerContainerDivElement.appendChild(headerTableElement);
@@ -391,7 +388,6 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         var layoutData = this._childComponent.render("layoutData");
         
         var headerTdElement = document.createElement("td");
-        headerTdElement.id = this._parent.component.renderId + "_header_td_" + this._childComponent.renderId;
         headerTdElement.style.borderWidth = "0px";
         headerTdElement.style.padding = "0px";
         
@@ -411,7 +407,6 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         // left
         if (this._hasLeftImage()) {
             this._leftTdElement = document.createElement("td");
-            this._leftTdElement.id = this._parent.component.renderId + "_header_td_" + this._childComponent.renderId + "_left";
             this._leftTdElement.appendChild(document.createTextNode("\u00a0"));
             headerTrElement.appendChild(this._leftTdElement);
         }
@@ -461,7 +456,6 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         // right
         if (this._hasRightImage()) {
             this._rightTdElement = document.createElement("td");
-            this._rightTdElement.id = this._parent.component.renderId + "_header_td_" + this._childComponent.renderId + "_right";
             this._rightTdElement.appendChild(document.createTextNode("\u00a0"));
             headerTrElement.appendChild(this._rightTdElement);
         }
@@ -515,7 +509,6 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
     
     _renderContentContainer: function(update) {
         var contentDivElement = document.createElement("div");
-        contentDivElement.id = this._parent.component.renderId + "_content_" + this._childComponent.renderId;
         contentDivElement.style.position = "absolute";
         contentDivElement.style.top = "0px";
         // hide content
