@@ -134,18 +134,18 @@ public class AbstractTest extends SplitPane {
                 setTestComponentProperty(propertyName, Alignment.class, StyleUtil.randomAlignmentHV());
             }
         });
-	}
+    }
 
     protected void addImageReferencePropertyTests(String category, final String propertyName, final ImageReference[] imageReferenceValues) {
-    	for (int i = 0; i < imageReferenceValues.length; ++i) {
-    		final int index = i;
-    		String name = imageReferenceValues[i] == null ? "null" : Integer.toString(i);
-    		testControlsPane.addButton(category, propertyName + ": " + name, new ActionListener(){
-    			public void actionPerformed(ActionEvent e) {
-    				setTestComponentProperty(propertyName, ImageReference.class, imageReferenceValues[index]);
-    			}
-    		});
-    	}
+        for (int i = 0; i < imageReferenceValues.length; ++i) {
+            final int index = i;
+            String name = imageReferenceValues[i] == null ? "null" : Integer.toString(i);
+            testControlsPane.addButton(category, propertyName + ": " + name, new ActionListener(){
+                public void actionPerformed(ActionEvent e) {
+                    setTestComponentProperty(propertyName, ImageReference.class, imageReferenceValues[index]);
+                }
+            });
+        }
     }
     
     protected void addExtentPropertyTests(String category, final String propertyName, final Extent[] extentValues) {

@@ -37,12 +37,12 @@ import java.util.EventListener;
  * @author n.beekman
  */
 public interface TabSelectionListener extends EventListener {
-	
-	/**
-	 * Invoked when a user selects a tab in a <code>TabPane</code>.
-	 * Use {@link TabPaneEvent#getTabIndex()} to retrieve the index of the tab.
-	 * 
-	 * @param e the <code>TabPaneEvent</code> describing the change
-	 */
-	public void tabSelected(TabPaneEvent e);
+    
+    /**
+     * Invoked when a user selects a tab in a <code>TabPane</code>.
+     * Use {@link TabPaneEvent#getTabIndex()} to retrieve the index of the tab.
+     * 
+     * @param e the <code>TabPaneEvent</code> describing the change
+     */
+    public void tabSelected(TabPaneEvent e);
 }

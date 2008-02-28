@@ -55,8 +55,8 @@ public class DragSource extends Component {
     
     public static final String PROPERTY_TOOL_TIP_TEXT = "toolTipText";
     
-	private List dropTargets;
-	
+    private List dropTargets;
+    
     /**
      * Creates an empty DragSource
      */
@@ -67,19 +67,19 @@ public class DragSource extends Component {
      * Component visually draggable 
      * @param draggable The Component. 
      */
-	public DragSource(Component draggable) {
-		this.add(draggable);
-	}
+    public DragSource(Component draggable) {
+        this.add(draggable);
+    }
    
     /**
      * Adds a target component to the drop target list.
      * @param dropTarget the drop target.
      */
-	public void addDropTarget(Component dropTarget) {
+    public void addDropTarget(Component dropTarget) {
         if (getDropTargetList().indexOf(dropTarget) < 0) {
             getDropTargetList().add(dropTarget);
         }
-	}
+    }
     
     /**
      * Adds a <code>DropListener</code> to the listener list
@@ -114,9 +114,9 @@ public class DragSource extends Component {
      * @param n the index.
      * @return the drop target.
      */
-	public Component getDropTargetAt(int n) {
-		return (Component) getDropTargetList().get(n);
-	}
+    public Component getDropTargetAt(int n) {
+        return (Component) getDropTargetList().get(n);
+    }
     
     /**
      * Returns total number of drop target <code>Components</code>
@@ -132,13 +132,13 @@ public class DragSource extends Component {
      * 
      * @return the drop target list
      */
-	protected List getDropTargetList() {
-		if (this.dropTargets == null) {
-			this.dropTargets = new LinkedList();
-		}       
-		return this.dropTargets;
-	}
-	
+    protected List getDropTargetList() {
+        if (this.dropTargets == null) {
+            this.dropTargets = new LinkedList();
+        }       
+        return this.dropTargets;
+    }
+    
     /**
      * Returns all drop target <code>Components</code>
      * 
@@ -147,7 +147,7 @@ public class DragSource extends Component {
     public Component[] getDropTargets() {
         return (Component[]) getDropTargetList().toArray(new Component[]{});
     }
-	
+    
     /**
      * Gets the tool tip text (displayed when the draggable 
      * component is over a valid drop target).
@@ -157,7 +157,7 @@ public class DragSource extends Component {
     public String getToolTipText(String newValue) {
         return (String) getProperty(PROPERTY_TOOL_TIP_TEXT);
     }
-	
+    
     /**
      * @see nextapp.echo.app.Component#processInput(java.lang.String, java.lang.Object)
      */
@@ -171,17 +171,17 @@ public class DragSource extends Component {
     /**
      * Removes all <code>Components</code> from the drop target list
      */
-	public void removeAllDropTargets(){
-		getDropTargetList().clear();
-	}
+    public void removeAllDropTargets(){
+        getDropTargetList().clear();
+    }
     
     /**
      * Removes a <code>Component</code> from the drop target list
      * @param dropTarget the component.
      */
-	public void removeDropTarget(Component dropTarget) {
-		getDropTargetList().remove(dropTarget);
-	}
+    public void removeDropTarget(Component dropTarget) {
+        getDropTargetList().remove(dropTarget);
+    }
     
     /**
      * Removes a <code>DropListener</code> from the listener list
@@ -194,7 +194,7 @@ public class DragSource extends Component {
         }
         getEventListenerList().removeListener(DropListener.class, listener);
     }
-	
+    
     /**
      * Sets the tool tip text (displayed when the draggable 
      * component is over a valid drop target).

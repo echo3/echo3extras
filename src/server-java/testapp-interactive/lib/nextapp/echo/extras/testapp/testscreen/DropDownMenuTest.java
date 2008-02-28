@@ -65,7 +65,7 @@ public class DropDownMenuTest extends AbstractTest {
             Styles.FILL_IMAGE_PEWTER_LINE, Styles.FILL_IMAGE_LIGHT_BLUE_LINE,
             Styles.FILL_IMAGE_SILVER_LINE, Styles.FILL_IMAGE_DROPDOWN_MENU_BACKGROUND};
     private static final ImageReference[] TEST_TOGGLE_IMAGES = new ImageReference[] {
-    		null, Styles.DROPDOWN_TOGGLE_IMAGE
+            null, Styles.DROPDOWN_TOGGLE_IMAGE
     };
     private static final Extent[] EXTENT_VALUES = new Extent[]{null, new Extent(16), new Extent(32), new Extent(64), 
         new Extent(128), new Extent(256), new Extent(512), new Extent(100, Extent.PERCENT)};

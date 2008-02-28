@@ -127,23 +127,23 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @see nextapp.echo.extras.app.menu.AbstractMenuComponent#processInput(java.lang.String, java.lang.Object)
      */
     public void processInput(String name, Object value) {
-    	if (SELECTION_CHANGED_PROPERTY.equals(name) && selectionModel != null) {
-    		selectionModel.setSelectedId(((OptionModel)value).getId());
-    	} else {
-    		super.processInput(name, value);
-    	}
+        if (SELECTION_CHANGED_PROPERTY.equals(name) && selectionModel != null) {
+            selectionModel.setSelectedId(((OptionModel)value).getId());
+        } else {
+            super.processInput(name, value);
+        }
     }
     
     /**
      * @see nextapp.echo.extras.app.menu.AbstractMenuComponent#doAction(nextapp.echo.extras.app.menu.OptionModel)
      */
     public void doAction(OptionModel optionModel) {
-    	if (selectionModel == null) {
-    		super.doAction(optionModel);
-    	} else {
-    		selectionModel.setSelectedId(optionModel.getId());
-    		fireActionPerformed(optionModel);
-    	}
+        if (selectionModel == null) {
+            super.doAction(optionModel);
+        } else {
+            selectionModel.setSelectedId(optionModel.getId());
+            fireActionPerformed(optionModel);
+        }
     }
     
     public MenuSelectionModel getSelectionModel() {
@@ -233,7 +233,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @return the width of the expand icon
      */
     public Extent getExpandIconWidth() {
-    	return (Extent) getProperty(PROPERTY_EXPAND_ICON_WIDTH);
+        return (Extent) getProperty(PROPERTY_EXPAND_ICON_WIDTH);
     }
     
     /**
@@ -251,7 +251,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @return the height
      */
     public Extent getMenuHeight() {
-    	return (Extent) getProperty(PROPERTY_MENU_HEIGHT);
+        return (Extent) getProperty(PROPERTY_MENU_HEIGHT);
     }
     
     /**
@@ -260,7 +260,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @return the width
      */
     public Extent getMenuWidth() {
-    	return (Extent) getProperty(PROPERTY_MENU_WIDTH);
+        return (Extent) getProperty(PROPERTY_MENU_WIDTH);
     }
     
     /**
@@ -270,7 +270,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @see #setInsets
      */
     public Insets getInsets() {
-    	return (Insets) getProperty(PROPERTY_INSETS);
+        return (Insets) getProperty(PROPERTY_INSETS);
     }
     
     /**
@@ -336,7 +336,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @return the menu font
      */
     public Font getMenuFont() {
-    	return (Font) getProperty(PROPERTY_MENU_FONT);
+        return (Font) getProperty(PROPERTY_MENU_FONT);
     }
     
     /**
@@ -464,11 +464,11 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @param newValue the new width of the expand icon
      */
     public void setExpandIconWidth(Extent newValue) {
-    	Extent.validate(newValue, Extent.PX);
+        Extent.validate(newValue, Extent.PX);
         if (newValue != null && newValue.getValue() < 0) {
             throw new IllegalArgumentException("Extent value may not be negative.");
         }
-    	setProperty(PROPERTY_EXPAND_ICON_WIDTH, newValue);
+        setProperty(PROPERTY_EXPAND_ICON_WIDTH, newValue);
     }
     
     /**
@@ -496,7 +496,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @param newValue the new height
      */
     public void setMenuHeight(Extent newValue) {
-    	setProperty(PROPERTY_MENU_HEIGHT, newValue);
+        setProperty(PROPERTY_MENU_HEIGHT, newValue);
     }
     
     /**
@@ -505,7 +505,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @param newValue the new width
      */
     public void setMenuWidth(Extent newValue) {
-    	setProperty(PROPERTY_MENU_WIDTH, newValue);
+        setProperty(PROPERTY_MENU_WIDTH, newValue);
     }
     
     /**
@@ -516,7 +516,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @param newValue the new height
      */
     public void setInsets(Insets newValue) {
-    	setProperty(PROPERTY_INSETS, newValue);
+        setProperty(PROPERTY_INSETS, newValue);
     }
     
     /**
@@ -582,7 +582,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @param newValue the new menu font
      */
     public void setMenuFont(Font newValue) {
-    	setProperty(PROPERTY_MENU_FONT, newValue);
+        setProperty(PROPERTY_MENU_FONT, newValue);
     }
     
     /**

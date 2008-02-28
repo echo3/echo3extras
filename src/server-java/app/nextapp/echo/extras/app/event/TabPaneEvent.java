@@ -35,8 +35,8 @@ import java.util.EventObject;
  * An event describing an update to the state of a <code>TabPane</code>.
  */
 public class TabPaneEvent extends EventObject {
-	private int tabIndex;
-	
+    private int tabIndex;
+    
     /**
      * Creates a new <code>TabPaneEvent</code>.
      * 
@@ -53,8 +53,8 @@ public class TabPaneEvent extends EventObject {
      * @param tabIndex the tab index on which the event occurred
      */
     public TabPaneEvent(Object source, int tabIndex) {
-    	super(source);
-    	this.tabIndex = tabIndex;
+        super(source);
+        this.tabIndex = tabIndex;
     }
     
     /**

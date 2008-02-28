@@ -63,10 +63,10 @@
     <target name="compile.app" description="Compile Application source files">
         <mkdir dir="${dir.build.server-java.app}"/>
         <javac srcdir="${dir.src.server-java.app}" destdir="${dir.build.server-java.app}" debug="${debug}" deprecation="yes">
-        	<classpath>
-        		<pathelement path="${echo3.app.lib.jar}"/>
-        	 </classpath>
-    	</javac>
+            <classpath>
+                <pathelement path="${echo3.app.lib.jar}"/>
+             </classpath>
+        </javac>
         <copy todir="${dir.build.server-java.app}">
             <fileset dir="${dir.src.server-java.app}">
                 <patternset refid="fileset.resources"/>
@@ -96,15 +96,15 @@
     </target>
 
     <target name="compile.webcontainer" depends="verify.servlet.api,compile.webcontainer.impl" 
-    	description="Compile Echo Web Application Container"/>
+        description="Compile Echo Web Application Container"/>
     
     <target name="compile.webcontainer.impl" depends="verify.servlet.api, compile.app">
         <mkdir dir="${dir.build.server-java.webcontainer}"/>
         <javac srcdir="${dir.src.server-java.webcontainer}" destdir="${dir.build.server-java.webcontainer}" debug="${debug}" deprecation="yes">
             <classpath>
                 <pathelement path="${dir.build.server-java.app}"/>
-            	<pathelement path="${echo3.webcontainer.lib.jar}"/>
-            	<pathelement path="${echo3.app.lib.jar}"/>
+                <pathelement path="${echo3.webcontainer.lib.jar}"/>
+                <pathelement path="${echo3.app.lib.jar}"/>
                 <pathelement path="${servlet.lib.jar}"/>
             </classpath>
         </javac>
@@ -126,7 +126,7 @@
     </target>
         
     <target name="dist" depends="clean, dist.app, dist.webcontainer"/>
-	
+    
     <target name="compile.testapp" depends="dist">
         <mkdir dir="${dir.build.server-java.testapp}/WEB-INF/classes"/>
         <mkdir dir="${dir.build.server-java.testapp}/WEB-INF/lib"/>
@@ -141,7 +141,7 @@
             <fileset dir="${dir.src.server-java.test-ia.htdocs}"/>
         </copy>
         <javac srcdir="${dir.src.server-java.test-ia.lib}" destdir="${dir.build.server-java.testapp}/WEB-INF/classes" 
-        	    debug="${debug}" deprecation="yes">
+                debug="${debug}" deprecation="yes">
             <classpath>
                 <pathelement path="${servlet.lib.jar}"/>
                 <pathelement path="${dir.dist.lib}/${jarfile.extras.app}"/>
@@ -201,7 +201,7 @@
             description="Create public/protected JavaDoc Document Echo Extras Library WebContainer">
         <mkdir dir="${dir.javadoc.webcontainer.public}"/>
         <javadoc sourcepath="${dir.src.server-java.app};${dir.src.server-java.webcontainer}" 
-    	        packagenames="nextapp.echo.extras.webcontainer.*" 
+                packagenames="nextapp.echo.extras.webcontainer.*" 
                 stylesheetfile="${javadoc.cssfile}"
                 destdir="${dir.javadoc.webcontainer.public}" 
                 WindowTitle="${javadoc.windowtitle}"
@@ -220,7 +220,7 @@
             description="Create private JavaDoc Document for Echo Extras Library WebContainer">
         <mkdir dir="${dir.javadoc.webcontainer.private}"/>
         <javadoc sourcepath="${dir.src.server-java.app};${dir.src.server-java.webcontainer}" 
-        	    packagenames="nextapp.echo.extras.webcontainer.*" 
+                packagenames="nextapp.echo.extras.webcontainer.*" 
                 stylesheetfile="${javadoc.cssfile}"
                 destdir="${dir.javadoc.webcontainer.private}" 
                 WindowTitle="${javadoc.windowtitle}"
@@ -244,11 +244,11 @@
 
     <target name="doc" 
             depends="doc.app, doc.app.private, doc.webcontainer, doc.webcontainer.private"/>
-	
+    
     <target name="release" depends="clean, dist, dist.testapp, doc.public">
         <mkdir dir="${dir.build.server-java.release.root}"/>
         <mkdir dir="${dir.build.server-java.release.root}/SourceCode"/>
-   		<mkdir dir="${dir.build.server-java.release.root}/SourceCode/src"/>
+           <mkdir dir="${dir.build.server-java.release.root}/SourceCode/src"/>
         <mkdir dir="${dir.build.server-java.release.root}/Documentation"/>
         <mkdir dir="${dir.build.server-java.release.root}/BinaryLibraries"/>
         <mkdir dir="${dir.build.server-java.release.root}/BinaryApplications"/>

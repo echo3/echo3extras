@@ -194,9 +194,9 @@ implements Pane, PaneContainer {
     }
 
     /**
-	 * Notifies <code>TabClosingListener</code>s that the user has requested to
-	 * close a tab.
-	 */
+     * Notifies <code>TabClosingListener</code>s that the user has requested to
+     * close a tab.
+     */
     protected void fireTabClosing(int tabIndex) {
         if (!hasEventListenerList()) {
             return;
@@ -250,17 +250,17 @@ implements Pane, PaneContainer {
      * Notifies <code>TabSelectionListener</code>s that the user has selected a tab.
      */
     protected void fireTabSelected(int tabIndex) {
-    	if (!hasEventListenerList()) {
-    		return;
-    	}
-    	EventListener[] listeners = getEventListenerList().getListeners(TabSelectionListener.class);
-    	if (listeners.length == 0) {
-    		return;
-    	}
-    	TabPaneEvent e = new TabPaneEvent(this, tabIndex);
-    	for (int i = 0; i < listeners.length; ++i) {
-    		((TabSelectionListener) listeners[i]).tabSelected(e);
-    	}
+        if (!hasEventListenerList()) {
+            return;
+        }
+        EventListener[] listeners = getEventListenerList().getListeners(TabSelectionListener.class);
+        if (listeners.length == 0) {
+            return;
+        }
+        TabPaneEvent e = new TabPaneEvent(this, tabIndex);
+        for (int i = 0; i < listeners.length; ++i) {
+            ((TabSelectionListener) listeners[i]).tabSelected(e);
+        }
     }
     
     /**
@@ -326,7 +326,7 @@ implements Pane, PaneContainer {
      * @return the insets
      */
     public Insets getInsets() {
-    	return (Insets) getProperty(PROPERTY_INSETS);
+        return (Insets) getProperty(PROPERTY_INSETS);
     }
     
     /**
@@ -335,7 +335,7 @@ implements Pane, PaneContainer {
      * @return the active tab left image
      */
     public ImageReference getTabActiveLeftImage() {
-    	return (ImageReference) getProperty(PROPERTY_TAB_ACTIVE_LEFT_IMAGE);
+        return (ImageReference) getProperty(PROPERTY_TAB_ACTIVE_LEFT_IMAGE);
     }
     
     /**
@@ -434,7 +434,7 @@ implements Pane, PaneContainer {
      * @return the active tab height increase
      */
     public Extent getTabActiveHeightIncrease() {
-    	return (Extent) getProperty(PROPERTY_TAB_ACTIVE_HEIGHT_INCREASE);
+        return (Extent) getProperty(PROPERTY_TAB_ACTIVE_HEIGHT_INCREASE);
     }
     
     /**
@@ -443,7 +443,7 @@ implements Pane, PaneContainer {
      * @return the inactive tab left image
      */
     public ImageReference getTabInactiveLeftImage() {
-    	return (ImageReference) getProperty(PROPERTY_TAB_INACTIVE_LEFT_IMAGE);
+        return (ImageReference) getProperty(PROPERTY_TAB_INACTIVE_LEFT_IMAGE);
     }
     
     /**
@@ -549,7 +549,7 @@ implements Pane, PaneContainer {
      * @return the tab alignment.
      */
     public Alignment getTabAlignment() {
-    	return (Alignment) getProperty(PROPERTY_TAB_ALIGNMENT);
+        return (Alignment) getProperty(PROPERTY_TAB_ALIGNMENT);
     }
     
     /**
@@ -641,7 +641,7 @@ implements Pane, PaneContainer {
      * @return newValue the new inset
      */
     public void setInsets(Insets newValue) {
-    	setProperty(PROPERTY_INSETS, newValue);
+        setProperty(PROPERTY_INSETS, newValue);
     }
     
     /**
@@ -651,7 +651,7 @@ implements Pane, PaneContainer {
      * @param newValue the active tab left image
      */
     public void setTabActiveLeftImage(ImageReference newValue) {
-    	setProperty(PROPERTY_TAB_ACTIVE_LEFT_IMAGE, newValue);
+        setProperty(PROPERTY_TAB_ACTIVE_LEFT_IMAGE, newValue);
     }
     
     /**
@@ -750,7 +750,7 @@ implements Pane, PaneContainer {
      * @param newValue the new active tab height increase
      */
     public void setTabActiveHeightIncrease(Extent newValue) {
-    	setProperty(PROPERTY_TAB_ACTIVE_HEIGHT_INCREASE, newValue);
+        setProperty(PROPERTY_TAB_ACTIVE_HEIGHT_INCREASE, newValue);
     }
     
     /**
@@ -760,7 +760,7 @@ implements Pane, PaneContainer {
      * @param newValue the inactive tab left image
      */
     public void setTabInactiveLeftImage(ImageReference newValue) {
-    	setProperty(PROPERTY_TAB_INACTIVE_LEFT_IMAGE, newValue);
+        setProperty(PROPERTY_TAB_INACTIVE_LEFT_IMAGE, newValue);
     }
     
     /**
@@ -867,19 +867,19 @@ implements Pane, PaneContainer {
      * @param newValue the new tab alignment
      */
     public void setTabAlignment(Alignment newValue) {
-    	setProperty(PROPERTY_TAB_ALIGNMENT, newValue);
+        setProperty(PROPERTY_TAB_ALIGNMENT, newValue);
     }
     
     /**
-	 * Determines if tab close is enabled in general. Individual tabs can
-	 * explicitly disable close support using
-	 * {@link TabPaneLayoutData#setCloseEnabled(boolean)}.
-	 * 
-	 * @return true if tab close is enabled
-	 */
+     * Determines if tab close is enabled in general. Individual tabs can
+     * explicitly disable close support using
+     * {@link TabPaneLayoutData#setCloseEnabled(boolean)}.
+     * 
+     * @return true if tab close is enabled
+     */
     public boolean isTabCloseEnabled() {
-    	Boolean value = (Boolean) getProperty(PROPERTY_TAB_CLOSE_ENABLED);
-    	return value == null ? false : value.booleanValue();
+        Boolean value = (Boolean) getProperty(PROPERTY_TAB_CLOSE_ENABLED);
+        return value == null ? false : value.booleanValue();
     }
     
     /**
@@ -902,42 +902,42 @@ implements Pane, PaneContainer {
     }
 
     /**
-	 * Returns the close icon that is displayed when tab close is disabled.
-	 * 
-	 * @return the icon
-	 */
+     * Returns the close icon that is displayed when tab close is disabled.
+     * 
+     * @return the icon
+     */
     public ImageReference getTabDisabledCloseIcon() {
         return (ImageReference) getProperty(PROPERTY_TAB_DISABLED_CLOSE_ICON);
     }
 
     /**
-	 * Returns the close icon that is displayed when the mouse cursor is inside
-	 * its bounds.
-	 * 
-	 * @return the icon
-	 */
+     * Returns the close icon that is displayed when the mouse cursor is inside
+     * its bounds.
+     * 
+     * @return the icon
+     */
     public ImageReference getTabRolloverCloseIcon() {
         return (ImageReference) getProperty(PROPERTY_TAB_ROLLOVER_CLOSE_ICON);
     }
 
     /**
-	 * Sets if tab close is enabled in general. Individual tabs can explicitly
-	 * disable close support using
-	 * {@link TabPaneLayoutData#setCloseEnabled(boolean)}.
-	 * 
-	 * @param newValue the new state
-	 */
+     * Sets if tab close is enabled in general. Individual tabs can explicitly
+     * disable close support using
+     * {@link TabPaneLayoutData#setCloseEnabled(boolean)}.
+     * 
+     * @param newValue the new state
+     */
     public void setTabCloseEnabled(boolean newValue) {
-    	setProperty(PROPERTY_TAB_CLOSE_ENABLED, new Boolean(newValue));
+        setProperty(PROPERTY_TAB_CLOSE_ENABLED, new Boolean(newValue));
     }
     
     /**
      * Sets if close icon rollover effects are enabled.
      * 
-	 * @param newValue true if close icon rollover effects should be enabled
+     * @param newValue true if close icon rollover effects should be enabled
      */
     public void setTabCloseIconRolloverEnabled(boolean newValue) {
-    	setProperty(PROPERTY_TAB_CLOSE_ICON_ROLLOVER_ENABLED, new Boolean(newValue));
+        setProperty(PROPERTY_TAB_CLOSE_ICON_ROLLOVER_ENABLED, new Boolean(newValue));
     }
 
     /**
@@ -946,26 +946,26 @@ implements Pane, PaneContainer {
      * @param newValue the new icon
      */
     public void setTabCloseIcon(ImageReference newValue) {
-    	setProperty(PROPERTY_TAB_CLOSE_ICON, newValue);
+        setProperty(PROPERTY_TAB_CLOSE_ICON, newValue);
     }
 
     /**
-	 * Sets the close icon that is displayed when tab close is disabled.
-	 * 
+     * Sets the close icon that is displayed when tab close is disabled.
+     * 
      * @param newValue the new icon
-	 */
+     */
     public void setTabDisabledCloseIcon(ImageReference newValue) {
-    	setProperty(PROPERTY_TAB_DISABLED_CLOSE_ICON, newValue);
+        setProperty(PROPERTY_TAB_DISABLED_CLOSE_ICON, newValue);
     }
 
     /**
-	 * Sets the close icon that is displayed when the mouse cursor is inside
-	 * its bounds.
-	 * 
+     * Sets the close icon that is displayed when the mouse cursor is inside
+     * its bounds.
+     * 
      * @param newValue the new icon
-	 */
+     */
     public void setTabRolloverCloseIcon(ImageReference newValue) {
-    	setProperty(PROPERTY_TAB_ROLLOVER_CLOSE_ICON, newValue);
+        setProperty(PROPERTY_TAB_ROLLOVER_CLOSE_ICON, newValue);
     }
 
     /**

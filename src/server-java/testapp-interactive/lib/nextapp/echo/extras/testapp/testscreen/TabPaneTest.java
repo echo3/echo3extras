@@ -56,28 +56,28 @@ import nextapp.echo.extras.webcontainer.sync.component.TabPanePeer;
 public class TabPaneTest extends AbstractTest {
     
     private static final ImageReference[] LEFT_IMAGES = new ImageReference[] {
-		null, new ResourceImageReference(Styles.IMAGE_PATH + "TabLeft.png", new Extent(10), null)
-	};
-	
-	private static final ImageReference[] RIGHT_IMAGES = new ImageReference[] {
-		null, new ResourceImageReference(Styles.IMAGE_PATH + "TabRight.png", new Extent(10), null)
-	};
-	
-	private static final ImageReference[] CLOSE_ICON_IMAGES = new ImageReference[] {
-		null, new ResourceImageReference(Styles.IMAGE_PATH + "TabClose.png"),
-		new ResourceImageReference(Styles.IMAGE_PATH + "TabCloseDisabled.png"),
-		new ResourceImageReference(Styles.IMAGE_PATH + "TabCloseRollover.png")
-	};
-	
-	private static final Extent[] EXTENT_VALUES = new Extent[] {
-		null, new Extent(0), new Extent(1), new Extent(2), new Extent(5), new Extent(10), new Extent(20),
-		new Extent(25), new Extent(32), new Extent(40)
-	};
-	
-	private static final Extent[] EXTENT_WIDTH_VALUES = new Extent[] {
-	    null, new Extent(50), new Extent(75), new Extent(100), new Extent(150), new Extent(200)
-	};
-	
+        null, new ResourceImageReference(Styles.IMAGE_PATH + "TabLeft.png", new Extent(10), null)
+    };
+    
+    private static final ImageReference[] RIGHT_IMAGES = new ImageReference[] {
+        null, new ResourceImageReference(Styles.IMAGE_PATH + "TabRight.png", new Extent(10), null)
+    };
+    
+    private static final ImageReference[] CLOSE_ICON_IMAGES = new ImageReference[] {
+        null, new ResourceImageReference(Styles.IMAGE_PATH + "TabClose.png"),
+        new ResourceImageReference(Styles.IMAGE_PATH + "TabCloseDisabled.png"),
+        new ResourceImageReference(Styles.IMAGE_PATH + "TabCloseRollover.png")
+    };
+    
+    private static final Extent[] EXTENT_VALUES = new Extent[] {
+        null, new Extent(0), new Extent(1), new Extent(2), new Extent(5), new Extent(10), new Extent(20),
+        new Extent(25), new Extent(32), new Extent(40)
+    };
+    
+    private static final Extent[] EXTENT_WIDTH_VALUES = new Extent[] {
+        null, new Extent(50), new Extent(75), new Extent(100), new Extent(150), new Extent(200)
+    };
+    
     private int tabNumber;
 
     public TabPaneTest() {
@@ -129,17 +129,17 @@ public class TabPaneTest extends AbstractTest {
         });
 
         testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add Label With Tab Icon", new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		Label label = createTestTab(Styles.ICON_16_TAB_PANE);
-        		tabPane.add(label);
-        	}
+            public void actionPerformed(ActionEvent e) {
+                Label label = createTestTab(Styles.ICON_16_TAB_PANE);
+                tabPane.add(label);
+            }
         });
         
         testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add Label With Unclosable Tab", new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		Label label = createTestTab(false);
-        		tabPane.add(label);
-        	}
+            public void actionPerformed(ActionEvent e) {
+                Label label = createTestTab(false);
+                tabPane.add(label);
+            }
         });
         
         testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add Big Label", new ActionListener() {
@@ -440,7 +440,7 @@ public class TabPaneTest extends AbstractTest {
         });
     }
     
-	private void addLabelRandomly(TabPane tabPane) {
+    private void addLabelRandomly(TabPane tabPane) {
         Label label = createTestTab();
         int position = ((int) (Math.random() * (tabPane.getComponentCount() + 1)));
         tabPane.add(label, position);
@@ -448,15 +448,15 @@ public class TabPaneTest extends AbstractTest {
     }
     
     private Label createTestTab() {
-    	return createTestTab(true);
+        return createTestTab(true);
     }
     
     private Label createTestTab(boolean closeEnabled) {
-    	return createTestTab(closeEnabled, null);
+        return createTestTab(closeEnabled, null);
     }
     
     private Label createTestTab(ImageReference icon) {
-    	return createTestTab(true, icon);
+        return createTestTab(true, icon);
     }
     
     private Label createTestTab(boolean closeEnabled, ImageReference icon) {

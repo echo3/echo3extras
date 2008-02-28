@@ -37,9 +37,9 @@ import nextapp.echo.app.LayoutData;
  * components.
  */
 public class TabPaneLayoutData implements LayoutData {
-	
-	private boolean closeEnabled = true;
-	private ImageReference icon;
+    
+    private boolean closeEnabled = true;
+    private ImageReference icon;
     private String title;
     
     /**
@@ -48,7 +48,7 @@ public class TabPaneLayoutData implements LayoutData {
      * @return true if the tab can be closed, default is true
      */
     public boolean isCloseEnabled() {
-    	return closeEnabled;
+        return closeEnabled;
     }
     
     /**
@@ -75,7 +75,7 @@ public class TabPaneLayoutData implements LayoutData {
      * @param newValue the new state
      */
     public void setCloseEnabled(boolean newValue) {
-    	this.closeEnabled = newValue;
+        this.closeEnabled = newValue;
     }
     
     /**
