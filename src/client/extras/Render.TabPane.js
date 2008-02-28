@@ -395,8 +395,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         
         var tabTableElement = document.createElement("table");
         tabTableElement.style.padding = "0px";
-        tabTableElement.cellPadding = "0px";
-        tabTableElement.cellSpacing = "0px";
+        tabTableElement.style.borderCollapse = "collapse";
         tabTableElement.style.marginRight = this._parent._tabSpacing.toString();
         var width = this._parent.component.render("tabWidth");
         if (width) {
