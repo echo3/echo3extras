@@ -402,7 +402,6 @@ ExtrasRender.ComponentSync.ColorSelect = Core.extend(EchoRender.ComponentSync, {
         var delta = max - min;
         if (max == 0 || delta == 0) {
             this._s = 0;
-            this._h = 0;
         } else {
             this._s = delta / max;
             if (r == max) {
