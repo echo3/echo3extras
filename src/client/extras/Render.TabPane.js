@@ -215,6 +215,7 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
         headerContainerDivElement.style.zIndex = 1;
         headerContainerDivElement.style.position = "absolute";
         headerContainerDivElement.style.width = "100%";
+        
         if (this._tabPosition == ExtrasApp.TabPane.TAB_POSITION_BOTTOM) {
             headerContainerDivElement.style.bottom = "0px";
         } else {
@@ -376,15 +377,15 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
     },
     
     _render: function(update) {
-        this._headerTdElement = this._renderHeaderContainer();
+        this._headerTdElement = this._renderHeader();
         this._headerContentTableElement = this._headerTdElement.firstChild;
-        this._contentDivElement = this._renderContentContainer(update);
+        this._contentDivElement = this._renderContent(update);
         
         this._highlight(this._childComponent.renderId == this._parent._activeTabId);
         this._addEventListeners();
     },
     
-    _renderHeaderContainer: function() {
+    _renderHeader: function() {
         var layoutData = this._childComponent.render("layoutData");
         
         var headerTdElement = document.createElement("td");
@@ -507,7 +508,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         return imgTdElement;
     },
     
-    _renderContentContainer: function(update) {
+    _renderContent: function(update) {
         var contentDivElement = document.createElement("div");
         contentDivElement.style.position = "absolute";
         contentDivElement.style.top = "0px";
