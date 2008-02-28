@@ -23,15 +23,15 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
         _defaultTabSpacing: 0
     },
     
+    $load: function() {
+        EchoRender.registerPeer("ExtrasApp.TabPane", this);
+    },
+    
     _element: null,
     _activeTabId: null,
     _tabs: null,
     _contentContainerDivElement: null,
     _headerContainerTrElement: null,
-    
-    $load: function() {
-        EchoRender.registerPeer("ExtrasApp.TabPane", this);
-    },
     
     $construct: function() {
         this._tabs = [];
@@ -224,6 +224,15 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
         return contentContainerDivElement;
     },
     
+    renderDisplay: function() {
+        WebCore.VirtualPosition.redraw(this._element);
+        WebCore.VirtualPosition.redraw(this._contentContainerDivElement);
+        
+        for (var i = 0; i < this._tabs.length; ++i) {
+            this._tabs[i]._renderDisplay();
+        }
+    },
+    
     renderDispose: function(update) {
         this._activeTabId = null;
         for (var i = 0; i < this._tabs.length; i++) {
@@ -270,15 +279,6 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
         headerContainerDivElement.appendChild(headerTableElement);
         
         return headerContainerDivElement;
-    },
-    
-    renderDisplay: function() {
-        WebCore.VirtualPosition.redraw(this._element);
-        WebCore.VirtualPosition.redraw(this._contentContainerDivElement);
-        
-        for (var i = 0; i < this._tabs.length; ++i) {
-            this._tabs[i]._renderDisplay();
-        }
     },
     
     renderUpdate: function(update) {
@@ -389,6 +389,209 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         this._closeImageTdElement = null;
     },
     
+    _addEventListeners: function() {
+        WebCore.EventProcessor.add(this._headerTdElement, "click", Core.method(this, this._processClick), false);
+        WebCore.EventProcessor.Selection.disable(this._headerTdElement);
+        
+        if (this._closeImageTdElement) {
+            WebCore.EventProcessor.add(this._headerTdElement, "mouseover", 
+                    Core.method(this, this._processEnter), false);
+            WebCore.EventProcessor.add(this._headerTdElement, "mouseout", 
+                    Core.method(this, this._processExit), false);
+        }
+    },
+    
+    _dispose: function() {
+        WebCore.EventProcessor.removeAll(this._headerTdElement);
+        
+        this._parent = null;
+        this._childComponent = null;
+        this._headerTdElement = null;
+        this._headerContentTableElement = null;
+        this._contentDivElement = null;
+        this._leftTdElement = null;
+        this._centerTdElement = null;
+        this._rightTdElement = null;
+        this._closeImageTdElement = null;
+    },
+    
+    _getCloseImage: function(rollover) {
+        if (this._isTabCloseEnabled()) {
+            if (rollover && this._parent.component.render("tabCloseIconRolloverEnabled")) {
+                var image = this._parent.component.render("tabRolloverCloseIcon");
+                if (image) {
+                    return image;
+                }
+            }
+            return this._parent.component.render("tabCloseIcon");
+        } else {
+            return this._parent.component.render("tabDisabledCloseIcon");
+        }
+    },
+    
+    _getContentInsets: function() {
+        if (this._childComponent.pane) {
+            return ExtrasRender.ComponentSync.TabPane._paneInsets;
+        } else {
+            return this._parent.component.render("defaultContentInsets", 
+                    ExtrasRender.ComponentSync.TabPane._defaultTabContentInsets);
+        }
+    },
+    
+    _getLeftImage: function(state) {
+        var propertyName = state ? "tabActiveLeftImage" : "tabInactiveLeftImage";
+        var image = this._parent.component.render(propertyName);
+        if (!image) {
+            return;
+        }
+        return { url: image, repeat: "no-repeat", x: 0, y: 0 };
+    },
+    
+    _getRightImage: function(state) {
+        var propertyName = state ? "tabActiveRightImage" : "tabInactiveRightImage";
+        var image = this._parent.component.render(propertyName);
+        if (!image) {
+            return;
+        }
+        return { url: image, repeat: "no-repeat", x: "100%", y: 0 };
+    },
+    
+    _hasLeftImage: function() {
+        return this._getLeftImage(true) != null || this._getLeftImage(false) != null;
+    },
+    
+    _hasRightImage: function() {
+        return this._getRightImage(true) != null || this._getRightImage(false) != null;
+    },
+    
+    _highlight: function(state) {
+        var headerContentTableElement = this._headerContentTableElement;
+        var centerTdElement = this._centerTdElement;
+        var contentDivElement = this._contentDivElement;
+        
+        var foreground;
+        var background;
+        var border;
+        if (state) {
+            foreground = this._parent.component.render("tabActiveForeground");
+            background = this._parent.component.render("tabActiveBackground");
+            border = this._parent._tabActiveBorder;
+        } else {
+            foreground = this._parent.component.render("tabInactiveForeground");
+            background = this._parent.component.render("tabInactiveBackground");
+            border = this._parent._tabInactiveBorder;
+        }
+        EchoAppRender.Color.renderClear(foreground, headerContentTableElement, "color");
+        EchoAppRender.Color.renderClear(background, headerContentTableElement, "backgroundColor");
+        headerContentTableElement.style.cursor = state ? "default" : "pointer";
+        headerContentTableElement.style.height = this._parent._calculateTabHeight(state) + "px";
+        
+        var backgroundImage;
+        if (state) {
+            backgroundImage = this._parent.component.render("tabActiveBackgroundImage");
+        } else {
+            backgroundImage = this._parent.component.render("tabInactiveBackgroundImage");
+        }
+        EchoAppRender.FillImage.renderClear(backgroundImage, centerTdElement, null);
+        
+        var borderSize = EchoAppRender.Border.getPixelSize(this._parent._tabActiveBorder);
+        if (this._parent._tabPosition == ExtrasApp.TabPane.TAB_POSITION_BOTTOM) {
+            headerContentTableElement.style.marginTop = state ? "0px" : borderSize + "px";
+            headerContentTableElement.style.marginBottom = state ? "0px" : this._parent._tabActiveHeightIncreasePx + "px";
+            EchoAppRender.Border.render(border, headerContentTableElement, "borderBottom");
+        } else {
+            headerContentTableElement.style.marginBottom = state ? "0px" : borderSize + "px";
+            headerContentTableElement.style.marginTop = state ? "0px" : this._parent._tabActiveHeightIncreasePx + "px";
+            EchoAppRender.Border.render(border, headerContentTableElement, "borderTop");
+        }
+        EchoAppRender.Border.render(border, headerContentTableElement, "borderLeft");
+        EchoAppRender.Border.render(border, headerContentTableElement, "borderRight");
+        
+        var font;
+        if (state) {
+            font = this._parent.component.render("tabActiveFont");
+        } else {
+            font = this._parent.component.render("tabInactiveFont");
+        }
+        EchoAppRender.Font.renderClear(font, headerContentTableElement);
+    
+        if (this._leftTdElement) {
+            var leftImage = this._getLeftImage(state); 
+            EchoAppRender.FillImage.renderClear(leftImage, this._leftTdElement, null);
+            if (leftImage && leftImage.width) {
+                this._leftTdElement.style.width = leftImage.width.toString();
+            }
+        }
+        
+        if (this._rightTdElement) {
+            var rightImage = this._getRightImage(state); 
+            EchoAppRender.FillImage.renderClear(rightImage, this._rightTdElement, null);
+            if (rightImage && rightImage.width) {
+                this._rightTdElement.style.width = rightImage.width.toString();
+            }
+        }
+        
+        // show/hide content
+        if (WebCore.Environment.BROWSER_MOZILLA && !WebCore.Environment.BROWSER_FIREFOX) {
+            contentDivElement.style.right = state ? "0px" : "100%";
+            contentDivElement.style.bottom = state ? "0px" : "100%";
+        } else {
+            contentDivElement.style.display = state ? "block" : "none";
+        }
+        if (state) {
+            // FIXME hack to notify the tab content component that it's size may have changed, this is
+            // required because any previous notifications could have taken place when this tab was hidden.
+            EchoRender.renderComponentDisplay(this._childComponent);
+        }
+    },
+    
+    _isTabCloseEnabled: function() {
+        var layoutData = this._childComponent.render("layoutData");
+        return layoutData ? layoutData.closeEnabled : false;
+    },
+    
+    _processClick: function(e) {
+        if (!this._parent.component.isActive()) {
+            return;
+        }
+        if (this._closeImageTdElement && WebCore.DOM.isAncestorOf(this._closeImageTdElement, e.target)) {
+            // close icon clicked
+            if (!this._isTabCloseEnabled()) {
+                return;
+            }
+            this._parent.component.fireEvent({type: "tabClose", source: this._parent.component, 
+                    data: this._childComponent.renderId});
+        } else {
+            // tab clicked
+            this._parent._selectTab(this._childComponent.renderId);
+            this._parent._setActiveTabId(this._childComponent.renderId);
+            this._parent.component.fireEvent({type: "tabSelect", source: this._parent.component, 
+                    data: this._childComponent.renderId});
+        }
+    },
+    
+    _processEnter: function(e) {
+        if (!this._parent.component.isActive()) {
+            return;
+        }
+        
+        this._closeImageTdElement.firstChild.style.visibility = "visible";
+    },
+    
+    _processExit: function(e) {
+        if (!this._parent.component.isActive()) {
+            return;
+        }
+    
+        var relTarget = WebCore.DOM.getEventRelatedTarget(e);
+        if (relTarget && WebCore.DOM.isAncestorOf(this._headerTdElement, relTarget)) {
+            // within tab box
+            return;
+        }
+           
+        this._closeImageTdElement.firstChild.style.visibility = "hidden";
+    },
+    
     _render: function(update) {
         this._headerTdElement = this._renderHeader();
         this._headerContentTableElement = this._headerTdElement.firstChild;
@@ -398,6 +601,60 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         this._addEventListeners();
     },
     
+    _renderCloseIconElement: function() {
+        var imgTdElement = document.createElement("td");
+        EchoAppRender.Alignment.render(this._parent.component.render("tabAlignment", 
+                ExtrasRender.ComponentSync.TabPane._defaultTabAlignment), imgTdElement, true, this._parent.component);
+        imgTdElement.style.padding = "0 0 0 " + this._parent.component.render("tabCloseIconTextMargin", 
+                ExtrasRender.ComponentSync.TabPane._defaultTabCloseIconTextMargin + "px");
+        imgTdElement.style.cursor = "pointer";
+        var imgElement = document.createElement("img");
+        imgElement.style.visibility = "hidden";
+        var closeImage = this._getCloseImage(false);
+        if (!closeImage) {
+            closeImage = this._getCloseImage(true);
+        }
+        if (closeImage) {
+            imgElement.src = EchoAppRender.ImageReference.getUrl(closeImage);
+        } else {
+            imgElement.src = this._parent.client.getResourceUrl("Extras", "image/tabpane/Close.gif");
+        }
+        
+        if (WebCore.Environment.BROWSER_INTERNET_EXPLORER) {
+            // remove auto-calculated width & height, to prevent problems with different image sizes
+            imgElement.removeAttribute("width");
+            imgElement.removeAttribute("height");
+        }
+        imgTdElement.appendChild(imgElement);
+        return imgTdElement;
+    },
+    
+    _renderContent: function(update) {
+        var contentDivElement = document.createElement("div");
+        contentDivElement.style.position = "absolute";
+        contentDivElement.style.top = "0px";
+        // hide content
+        if (WebCore.Environment.BROWSER_MOZILLA && !WebCore.Environment.BROWSER_FIREFOX) {
+            contentDivElement.style.right = "100%";
+            contentDivElement.style.bottom = "100%";
+        } else {
+            contentDivElement.style.display = "none";
+            contentDivElement.style.right = "0px";
+            contentDivElement.style.bottom = "0px";
+        }
+        contentDivElement.style.left = "0px";
+        EchoAppRender.Insets.render(this._getContentInsets(), contentDivElement, "padding");
+        contentDivElement.style.overflow = "auto";
+        
+        EchoRender.renderComponentAdd(update, this._childComponent, contentDivElement);
+        
+        return contentDivElement;
+    },
+    
+    _renderDisplay: function() {
+        WebCore.VirtualPosition.redraw(this._contentDivElement);
+    },
+
     _renderHeader: function() {
         var layoutData = this._childComponent.render("layoutData");
         
@@ -490,262 +747,5 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
                 ExtrasRender.ComponentSync.TabPane._defaultTabIconTextMargin + "px");
         imgTdElement.appendChild(imgElement);
         return imgTdElement;
-    },
-    
-    _renderCloseIconElement: function() {
-        var imgTdElement = document.createElement("td");
-        EchoAppRender.Alignment.render(this._parent.component.render("tabAlignment", 
-                ExtrasRender.ComponentSync.TabPane._defaultTabAlignment), imgTdElement, true, this._parent.component);
-        imgTdElement.style.padding = "0 0 0 " + this._parent.component.render("tabCloseIconTextMargin", 
-                ExtrasRender.ComponentSync.TabPane._defaultTabCloseIconTextMargin + "px");
-        imgTdElement.style.cursor = "pointer";
-        var imgElement = document.createElement("img");
-        imgElement.style.visibility = "hidden";
-        var closeImage = this._getCloseImage(false);
-        if (!closeImage) {
-            closeImage = this._getCloseImage(true);
-        }
-        if (closeImage) {
-            imgElement.src = EchoAppRender.ImageReference.getUrl(closeImage);
-        } else {
-            imgElement.src = this._parent.client.getResourceUrl("Extras", "image/tabpane/Close.gif");
-        }
-        
-        if (WebCore.Environment.BROWSER_INTERNET_EXPLORER) {
-            // remove auto-calculated width & height, to prevent problems with different image sizes
-            imgElement.removeAttribute("width");
-            imgElement.removeAttribute("height");
-        }
-        imgTdElement.appendChild(imgElement);
-        return imgTdElement;
-    },
-    
-    _renderContent: function(update) {
-        var contentDivElement = document.createElement("div");
-        contentDivElement.style.position = "absolute";
-        contentDivElement.style.top = "0px";
-        // hide content
-        if (WebCore.Environment.BROWSER_MOZILLA && !WebCore.Environment.BROWSER_FIREFOX) {
-            contentDivElement.style.right = "100%";
-            contentDivElement.style.bottom = "100%";
-        } else {
-            contentDivElement.style.display = "none";
-            contentDivElement.style.right = "0px";
-            contentDivElement.style.bottom = "0px";
-        }
-        contentDivElement.style.left = "0px";
-        EchoAppRender.Insets.render(this._getContentInsets(), contentDivElement, "padding");
-        contentDivElement.style.overflow = "auto";
-        
-        EchoRender.renderComponentAdd(update, this._childComponent, contentDivElement);
-        
-        return contentDivElement;
-    },
-    
-    _renderDisplay: function() {
-        WebCore.VirtualPosition.redraw(this._contentDivElement);
-    },
-    
-    _dispose: function() {
-        WebCore.EventProcessor.removeAll(this._headerTdElement);
-        
-        this._parent = null;
-        this._childComponent = null;
-        this._headerTdElement = null;
-        this._headerContentTableElement = null;
-        this._contentDivElement = null;
-        this._leftTdElement = null;
-        this._centerTdElement = null;
-        this._rightTdElement = null;
-        this._closeImageTdElement = null;
-    },
-    
-    _highlight: function(state) {
-        var headerContentTableElement = this._headerContentTableElement;
-        var centerTdElement = this._centerTdElement;
-        var contentDivElement = this._contentDivElement;
-        
-        var foreground;
-        var background;
-        var border;
-        if (state) {
-            foreground = this._parent.component.render("tabActiveForeground");
-            background = this._parent.component.render("tabActiveBackground");
-            border = this._parent._tabActiveBorder;
-        } else {
-            foreground = this._parent.component.render("tabInactiveForeground");
-            background = this._parent.component.render("tabInactiveBackground");
-            border = this._parent._tabInactiveBorder;
-        }
-        EchoAppRender.Color.renderClear(foreground, headerContentTableElement, "color");
-        EchoAppRender.Color.renderClear(background, headerContentTableElement, "backgroundColor");
-        headerContentTableElement.style.cursor = state ? "default" : "pointer";
-        headerContentTableElement.style.height = this._parent._calculateTabHeight(state) + "px";
-        
-        var backgroundImage;
-        if (state) {
-            backgroundImage = this._parent.component.render("tabActiveBackgroundImage");
-        } else {
-            backgroundImage = this._parent.component.render("tabInactiveBackgroundImage");
-        }
-        EchoAppRender.FillImage.renderClear(backgroundImage, centerTdElement, null);
-        
-        var borderSize = EchoAppRender.Border.getPixelSize(this._parent._tabActiveBorder);
-        if (this._parent._tabPosition == ExtrasApp.TabPane.TAB_POSITION_BOTTOM) {
-            headerContentTableElement.style.marginTop = state ? "0px" : borderSize + "px";
-            headerContentTableElement.style.marginBottom = state ? "0px" : this._parent._tabActiveHeightIncreasePx + "px";
-            EchoAppRender.Border.render(border, headerContentTableElement, "borderBottom");
-        } else {
-            headerContentTableElement.style.marginBottom = state ? "0px" : borderSize + "px";
-            headerContentTableElement.style.marginTop = state ? "0px" : this._parent._tabActiveHeightIncreasePx + "px";
-            EchoAppRender.Border.render(border, headerContentTableElement, "borderTop");
-        }
-        EchoAppRender.Border.render(border, headerContentTableElement, "borderLeft");
-        EchoAppRender.Border.render(border, headerContentTableElement, "borderRight");
-        
-        var font;
-        if (state) {
-            font = this._parent.component.render("tabActiveFont");
-        } else {
-            font = this._parent.component.render("tabInactiveFont");
-        }
-        EchoAppRender.Font.renderClear(font, headerContentTableElement);
-    
-        if (this._leftTdElement) {
-            var leftImage = this._getLeftImage(state); 
-            EchoAppRender.FillImage.renderClear(leftImage, this._leftTdElement, null);
-            if (leftImage && leftImage.width) {
-                this._leftTdElement.style.width = leftImage.width.toString();
-            }
-        }
-        
-        if (this._rightTdElement) {
-            var rightImage = this._getRightImage(state); 
-            EchoAppRender.FillImage.renderClear(rightImage, this._rightTdElement, null);
-            if (rightImage && rightImage.width) {
-                this._rightTdElement.style.width = rightImage.width.toString();
-            }
-        }
-        
-        // show/hide content
-        if (WebCore.Environment.BROWSER_MOZILLA && !WebCore.Environment.BROWSER_FIREFOX) {
-            contentDivElement.style.right = state ? "0px" : "100%";
-            contentDivElement.style.bottom = state ? "0px" : "100%";
-        } else {
-            contentDivElement.style.display = state ? "block" : "none";
-        }
-        if (state) {
-            // FIXME hack to notify the tab content component that it's size may have changed, this is
-            // required because any previous notifications could have taken place when this tab was hidden.
-            EchoRender.renderComponentDisplay(this._childComponent);
-        }
-    },
-    
-    _addEventListeners: function() {
-        WebCore.EventProcessor.add(this._headerTdElement, "click", Core.method(this, this._processClick), false);
-        WebCore.EventProcessor.Selection.disable(this._headerTdElement);
-        
-        if (this._closeImageTdElement) {
-            WebCore.EventProcessor.add(this._headerTdElement, "mouseover", 
-                    Core.method(this, this._processEnter), false);
-            WebCore.EventProcessor.add(this._headerTdElement, "mouseout", 
-                    Core.method(this, this._processExit), false);
-        }
-    },
-    
-    _hasLeftImage: function() {
-        return this._getLeftImage(true) != null || this._getLeftImage(false) != null;
-    },
-    
-    _isTabCloseEnabled: function() {
-        var layoutData = this._childComponent.render("layoutData");
-        return layoutData ? layoutData.closeEnabled : false;
-    },
-    
-    _getLeftImage: function(state) {
-        var propertyName = state ? "tabActiveLeftImage" : "tabInactiveLeftImage";
-        var image = this._parent.component.render(propertyName);
-        if (!image) {
-            return;
-        }
-        return { url: image, repeat: "no-repeat", x: 0, y: 0 };
-    },
-    
-    _hasRightImage: function() {
-        return this._getRightImage(true) != null || this._getRightImage(false) != null;
-    },
-    
-    _getRightImage: function(state) {
-        var propertyName = state ? "tabActiveRightImage" : "tabInactiveRightImage";
-        var image = this._parent.component.render(propertyName);
-        if (!image) {
-            return;
-        }
-        return { url: image, repeat: "no-repeat", x: "100%", y: 0 };
-    },
-    
-    _getCloseImage: function(rollover) {
-        if (this._isTabCloseEnabled()) {
-            if (rollover && this._parent.component.render("tabCloseIconRolloverEnabled")) {
-                var image = this._parent.component.render("tabRolloverCloseIcon");
-                if (image) {
-                    return image;
-                }
-            }
-            return this._parent.component.render("tabCloseIcon");
-        } else {
-            return this._parent.component.render("tabDisabledCloseIcon");
-        }
-    },
-    
-    _getContentInsets: function() {
-        if (this._childComponent.pane) {
-            return ExtrasRender.ComponentSync.TabPane._paneInsets;
-        } else {
-            return this._parent.component.render("defaultContentInsets", 
-                    ExtrasRender.ComponentSync.TabPane._defaultTabContentInsets);
-        }
-    },
-    
-    _processClick: function(e) {
-        if (!this._parent.component.isActive()) {
-            return;
-        }
-        if (this._closeImageTdElement && WebCore.DOM.isAncestorOf(this._closeImageTdElement, e.target)) {
-            // close icon clicked
-            if (!this._isTabCloseEnabled()) {
-                return;
-            }
-            this._parent.component.fireEvent({type: "tabClose", source: this._parent.component, 
-                    data: this._childComponent.renderId});
-        } else {
-            // tab clicked
-            this._parent._selectTab(this._childComponent.renderId);
-            this._parent._setActiveTabId(this._childComponent.renderId);
-            this._parent.component.fireEvent({type: "tabSelect", source: this._parent.component, 
-                    data: this._childComponent.renderId});
-        }
-    },
-    
-    _processEnter: function(e) {
-        if (!this._parent.component.isActive()) {
-            return;
-        }
-        
-        this._closeImageTdElement.firstChild.style.visibility = "visible";
-    },
-    
-    _processExit: function(e) {
-        if (!this._parent.component.isActive()) {
-            return;
-        }
-    
-        var relTarget = WebCore.DOM.getEventRelatedTarget(e);
-        if (relTarget && WebCore.DOM.isAncestorOf(this._headerTdElement, relTarget)) {
-            // within tab box
-            return;
-        }
-           
-        this._closeImageTdElement.firstChild.style.visibility = "hidden";
     }
 });
