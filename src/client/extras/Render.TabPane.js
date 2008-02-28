@@ -1,6 +1,3 @@
-// FIXME handle enabled/disabled state
-// FIXME support setting/getting activeTabIndex property thoroughly (currently only works on initial render). 
-
 /**
  * Component rendering peer: TabPane
  */
@@ -59,6 +56,19 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
         }
     },
     
+    /**
+     * @param state {Boolean} whether the tab is active or inactive
+     * @return the tab height in pixels
+     * @type {Number}
+     */
+    _calculateTabHeight: function(state) {
+        if (state) {
+            return this._tabHeightPx + EchoAppRender.Border.getPixelSize(this._tabActiveBorder);
+        } else {
+            return this._tabHeightPx - this._tabActiveHeightIncreasePx;
+        }
+    },
+
     _getActiveTabId: function() {
         var activeTabId = this.component.get("activeTab")
         if (!activeTabId) {
@@ -68,6 +78,22 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
             }
         }
         return activeTabId;
+    },
+
+    /**
+     * Retrieves the tab instance with the specified tab id.
+     * 
+     * @param tabId the tab id
+     * @return the tab, or null if no tab is present with the specified id
+     */
+    _getTabById: function(tabId) {
+        for (var i = 0; i < this._tabs.length; ++i) {
+            var tab = this._tabs[i];
+            if (tab._childComponent.renderId == tabId) {
+                return tab;
+            }
+        }
+        return null;
     },
     
     /**
@@ -142,7 +168,7 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
             this._activeTabId = null;
             if (componentCount > 0) {
                 this._selectTab(this.component.getComponent(0).renderId);
-                this.component.set("activeTab", this._activeTabId);
+                this._setActiveTabId(this._activeTabId);
             }
         }
         
@@ -330,32 +356,18 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
         }
     },
     
-    /**
-     * Retrieves the tab instance with the specified tab id.
-     * 
-     * @param tabId the tab id
-     * @return the tab, or null if no tab is present with the specified id
-     */
-    _getTabById: function(tabId) {
-        for (var i = 0; i < this._tabs.length; ++i) {
-            var tab = this._tabs[i];
-            if (tab._childComponent.renderId == tabId) {
-                return tab;
+    _setActiveTabId: function(activeTabId) {
+        this.component.set("activeTab", activeTabId);
+        var indexSet = false;
+        for (var i = 0; i < this.component.children.length; ++i) {
+            if (this.component.children[i].renderId == activeTabId) {
+                this.component.set("activeTabIndex", i);
+                indexSet = true;
+                break;
             }
         }
-        return null;
-    },
-    
-    /**
-     * @param state {Boolean} whether the tab is active or inactive
-     * @return the tab height in pixels
-     * @type {Number}
-     */
-    _calculateTabHeight: function(state) {
-        if (state) {
-            return this._tabHeightPx + EchoAppRender.Border.getPixelSize(this._tabActiveBorder);
-        } else {
-            return this._tabHeightPx - this._tabActiveHeightIncreasePx;
+        if (!indexSet) {
+            this.component.set("activeTabIndex", null);
         }
     }
 });
@@ -709,7 +721,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         } else {
             // tab clicked
             this._parent._selectTab(this._childComponent.renderId);
-            this._parent.component.set("activeTab", this._childComponent.renderId);
+            this._parent._setActiveTabId(this._childComponent.renderId);
             this._parent.component.fireEvent({type: "tabSelect", source: this._parent.component, 
                     data: this._childComponent.renderId});
         }
