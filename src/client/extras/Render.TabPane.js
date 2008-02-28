@@ -231,7 +231,8 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
     
         var headerTableElement = document.createElement("table");
         headerTableElement.style.borderWidth = "0px";
-        headerTableElement.style.borderCollapse = "collapse";
+        headerTableElement.cellPadding = "0px";
+        headerTableElement.cellSpacing = "0px";
         headerTableElement.style.padding = "0px";
         
         var headerTbodyElement = document.createElement("tbody");
@@ -423,7 +424,8 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
             // Render Text and Icon(s)
             var tableElement = document.createElement("table");
             tableElement.style.padding = "0px";
-            tableElement.style.borderCollapse = "collapse";
+            tableElement.cellPadding = "0px";
+            tableElement.cellSpacing = "0px";
             var tbodyElement = document.createElement("tbody");
             var trElement = document.createElement("tr");
             if (icon) {
