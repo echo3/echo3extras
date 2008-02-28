@@ -391,11 +391,12 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         var headerTdElement = document.createElement("td");
         headerTdElement.style.borderWidth = "0px";
         headerTdElement.style.padding = "0px";
-        headerTdElement.vAlign = "top";
+        headerTdElement.vAlign = this._parent._tabPosition == ExtrasApp.TabPane.TAB_POSITION_BOTTOM ? "top" : "bottom";
         
         var tabTableElement = document.createElement("table");
+        tabTableElement.cellPadding = "0px";
+        tabTableElement.cellSpacing = "0px";
         tabTableElement.style.padding = "0px";
-        tabTableElement.style.borderCollapse = "collapse";
         tabTableElement.style.marginRight = this._parent._tabSpacing.toString();
         var width = this._parent.component.render("tabWidth");
         if (width) {
@@ -575,12 +576,13 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         }
         EchoAppRender.FillImage.renderClear(backgroundImage, centerTdElement, null);
         
+        var borderSize = EchoAppRender.Border.getPixelSize(this._parent._tabActiveBorder);
         if (this._parent._tabPosition == ExtrasApp.TabPane.TAB_POSITION_BOTTOM) {
-            var borderSize = EchoAppRender.Border.getPixelSize(this._parent._tabActiveBorder);
             headerContentTableElement.style.marginTop = state ? "0px" : borderSize + "px";
             headerContentTableElement.style.marginBottom = state ? "0px" : this._parent._tabActiveHeightIncreasePx + "px";
             EchoAppRender.Border.render(border, headerContentTableElement, "borderBottom");
         } else {
+            headerContentTableElement.style.marginBottom = state ? "0px" : borderSize + "px";
             headerContentTableElement.style.marginTop = state ? "0px" : this._parent._tabActiveHeightIncreasePx + "px";
             EchoAppRender.Border.render(border, headerContentTableElement, "borderTop");
         }
