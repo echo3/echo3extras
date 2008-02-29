@@ -384,7 +384,11 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
      * Event handler for color selection events from background ColorDialog.
      */
     _processSetBackground: function(e) {
-        this._richTextInput.peer.doCommand("hilitecolor", e.data);
+        if (WebCore.Environment.BROWSER_INTERNET_EXPLORER) {
+            this._richTextInput.peer.doCommand("backcolor", e.data);
+        } else {
+            this._richTextInput.peer.doCommand("hilitecolor", e.data);
+        }
     },
     
     /**
