@@ -19,18 +19,20 @@ ExtrasRender.ComponentSync.AccordionPane = Core.extend(EchoRender.ComponentSync,
     $load: function() {
         EchoRender.registerPeer("ExtrasApp.AccordionPane", this);
     },
-       
+    
+    _animationTime: 0,
+    
     $construct: function() {
         this._paneDivElement = null;
         this._activeTabId = null;
         this._tabs = [];
         this._rotation = null;
         this._animationEnabled = true;
-        this._animationTime = 350;
         this._animationSleepInterval = 1;
     },
     
     renderAdd: function(update, parentElement) {
+        this._animationTime = this.component.render("animationTime", ExtrasApp.AccordionPane.DEFAULT_ANIMATION_TIME);
         this._activeTabId = this.component.get("activeTab");
         
         this._paneDivElement = this._render();
@@ -195,6 +197,10 @@ ExtrasRender.ComponentSync.AccordionPane = Core.extend(EchoRender.ComponentSync,
      * @param newTabId {String} the id of the tab that will be displayed
      */
     _rotateTabs: function(oldTabId, newTabId) {
+        if (this._animationTime < 1) {
+            this._redrawTabs();
+            return;
+        }
         var oldTab = this._getTabById(oldTabId);
         if (oldTab == null) {
             // Old tab has been removed.

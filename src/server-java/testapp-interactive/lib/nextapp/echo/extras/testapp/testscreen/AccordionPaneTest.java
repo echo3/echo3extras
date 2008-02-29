@@ -327,6 +327,8 @@ public class AccordionPaneTest extends AbstractTest {
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "tabRolloverBackground");
         addBorderPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "tabRolloverBorder");
         
+        addIntegerPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "animationTime", new int[]{0, 150, 350, 1000});
+        
         // Selection Properties
 
         for (int i = 0; i < 10; ++i) {

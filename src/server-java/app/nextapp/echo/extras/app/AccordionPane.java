@@ -45,6 +45,8 @@ import nextapp.echo.app.PaneContainer;
 public class AccordionPane extends Component
 implements Pane, PaneContainer {
 
+    public static final int DEFAULT_ANIMATION_TIME = 350;
+    
     public static final String INPUT_TAB_INDEX = "inputTabIndex";
     public static final String ACTIVE_TAB_INDEX_CHANGED_PROPERTY = "activeTabIndex";
     
@@ -60,6 +62,8 @@ implements Pane, PaneContainer {
     public static final String PROPERTY_TAB_ROLLOVER_BORDER = "tabRolloverBorder";
     public static final String PROPERTY_TAB_ROLLOVER_ENABLED = "tabRolloverEnabled";
     public static final String PROPERTY_TAB_ROLLOVER_FOREGROUND = "tabRolloverForeground";
+    
+    public static final String PROPERTY_ANIMATION_TIME = "animationTime";
     
     /**
      * Index of active tab.
@@ -80,6 +84,16 @@ implements Pane, PaneContainer {
      */
     public int getActiveTabIndex() {
         return activeTabIndex;
+    }
+    
+    /**
+     * Returns the animation time (in milliseconds).  A value of zero indicates animation is disabled.
+     * 
+     * @return the animation time
+     */
+    public int getAnimationTime() {
+        Integer animationTime = (Integer) getProperty(PROPERTY_ANIMATION_TIME);
+        return animationTime == null ? DEFAULT_ANIMATION_TIME : animationTime.intValue(); 
     }
     
     /**
@@ -217,6 +231,15 @@ implements Pane, PaneContainer {
         firePropertyChange(ACTIVE_TAB_INDEX_CHANGED_PROPERTY, new Integer(oldValue), new Integer(newValue));
     }
 
+    /**
+     * Sets the animation time (in milliseconds).  A value of zero indicates animation is disabled.
+     * 
+     * @param newValue the new animation time
+     */
+    public void setAnimationTime(int newValue) {
+        setProperty(PROPERTY_ANIMATION_TIME, new Integer(newValue));
+    }
+    
     /**
      * Sets the default content inset margin.  This margin is applied by 
      * default to each child component.
