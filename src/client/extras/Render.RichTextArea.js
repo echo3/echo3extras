@@ -760,12 +760,36 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer = Core.extend(EchoRender.Compo
         }
     },
     
+    _processKeyPress: function(e) {
+        if (!this.client.verifyInput(this.component)) {
+            WebCore.DOM.preventEventDefault(e);
+            return;
+        }
+    },
+    
     _processKeyUp: function(e) {
+        if (!this.client.verifyInput(this.component)) {
+            WebCore.DOM.preventEventDefault(e);
+            return;
+        }
+    
         this._storeData();
         this._storeRange();
     },
     
+    _processMouseDown: function(e) {
+        if (!this.client.verifyInput(this.component)) {
+            WebCore.DOM.preventEventDefault(e);
+            return;
+        }
+    },
+
     _processMouseUp: function(e) {
+        if (!this.client.verifyInput(this.component)) {
+            WebCore.DOM.preventEventDefault(e);
+            return;
+        }
+
         this._storeRange();
     },
     
@@ -812,8 +836,12 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer = Core.extend(EchoRender.Compo
         } else {
             contentDocument.designMode = "on";
         }
+        WebCore.EventProcessor.add(this._iframeElement.contentWindow.document, "keypress", 
+                Core.method(this, this._processKeyPress), false);
         WebCore.EventProcessor.add(this._iframeElement.contentWindow.document, "keyup", 
                 Core.method(this, this._processKeyUp), false);
+        WebCore.EventProcessor.add(this._iframeElement.contentWindow.document, "mousedown", 
+                Core.method(this, this._processMouseDown), false);
         WebCore.EventProcessor.add(this._iframeElement.contentWindow.document, "mouseup", 
                 Core.method(this, this._processMouseUp), false);
         this._contentDocumentRendered = true;
