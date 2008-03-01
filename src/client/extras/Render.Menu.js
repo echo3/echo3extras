@@ -21,12 +21,12 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
     _openMenuPath: null,
 
     _element: null,    
-    _menuModel: null,
-    _stateModel: null,
-    _processMaskClickRef: null,
     _menuInsets: null,
     _menuItemInsets: null,
     _menuItemIconTextMargin: null,
+    _menuModel: null,
+    _processMaskClickRef: null,
+    _stateModel: null,
     
     $construct: function() {
         this._processMaskClickRef = Core.method(this, this._processMaskClick);
@@ -38,16 +38,6 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
     
     $virtual: {
     
-        renderDispose: function(update) {
-            this._closeMenu();
-            WebCore.EventProcessor.removeAll(this._element);
-            this._element.id = "";
-            this._element = null;
-            this._menuModel = null;
-            this._stateModel = null;
-            this._openMenuPath = [];
-        },
-        
         renderMenu: function(menuModel, xPosition, yPosition) {
             var menuDivElement = document.createElement("div");
             menuDivElement.id = this.component.renderId + "_menu_" + menuModel.id;
@@ -245,25 +235,7 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
             
             this.renderMenu(menuModel, menuBounds.left, containerBounds.top + containerBounds.height);
             // FIXME handle overflow
-        },
-
-        renderUpdate: function(update) {
-            var element = this._element;
-            var containerElement = element.parentNode;
-            EchoRender.renderComponentDispose(update, update.parent);
-            containerElement.removeChild(element);
-            this.renderAdd(update, containerElement);
-            return false;
         }
-    },
-    
-    renderAdd: function(update, parentElement) {
-        this._menuModel = this.component.get("model");
-        this._stateModel = this.component.get("stateModel");
-        
-        this._element = this._renderMain(update);
-        
-        parentElement.appendChild(this._element);
     },
     
     _activateItem: function(itemModel) {
@@ -276,6 +248,91 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
             this._doAction(itemModel);
         } else if (itemModel instanceof ExtrasApp.MenuModel) {
             this._openMenu(itemModel);
+        }
+    },
+    
+    _closeMenu: function() {
+        this._removeMask();
+        this._closeDescendantMenus(null);
+    },
+    
+    /**
+     * @param menuModel the menu model whose descendants should be closed;
+     * the menu model itself will remain open; providing null will close all descendant menus; 
+     */
+    _closeDescendantMenus: function(menuModel) {
+        for (var i = this._openMenuPath.length - 1;  i >= 0; --i) {
+            if (menuModel != null && this._openMenuPath[i].id == menuModel.id) {
+                // Stop once specified menu is found.
+                return;
+            }
+            this._disposeMenu(this._openMenuPath[i]);
+            --this._openMenuPath.length;
+        }
+    },
+    
+    _disposeMenu: function(menuModel) {
+        var menuElement = document.getElementById(this.component.renderId + "_menu_" + menuModel.id);
+    
+        WebCore.EventProcessor.removeAll(menuElement);
+        menuElement.parentNode.removeChild(menuElement);
+    },
+    
+    _getBorder: function() {
+        var border = this.component.render("border");
+        if (!border) {
+            border = "1px outset #cfcfcf";
+        }
+        return border;
+    },
+    
+    _getElementModelId: function(element) {
+        if (!element.id) {
+            return this._getElementModelId(element.parentNode);
+        }
+        if (element.id.indexOf(this.component.renderId + "_") != 0 || element.id.indexOf("_item_") == -1) {
+            return null;
+        }
+        return element.id.substring(element.id.lastIndexOf("_") + 1);
+    },
+    
+    _getMenuBorder: function() {
+        var border = this.component.render("menuBorder");
+        if (!border) {
+            border = this._getBorder();
+        }
+        return border;
+    },
+    
+    _highlight: function(menuModel, state) {
+        if (this._stateModel && !this._stateModel.isEnabled(menuModel.modelId)) {
+            return;
+        }
+        var menuElement = this._getMenuElement(menuModel);
+        if (state) {
+            EchoAppRender.FillImage.render(this.component.render("selectionBackgroundImage"), menuElement);
+            EchoAppRender.Color.render(this.component.render("selectionBackground", 
+                    ExtrasRender.ComponentSync.Menu._defaultSelectionBackground), menuElement, "backgroundColor");
+            EchoAppRender.Color.render(this.component.render("selectionForeground", 
+                    ExtrasRender.ComponentSync.Menu._defaultSelectionForeground), menuElement, "color");
+        } else {
+            menuElement.style.backgroundImage = "";
+            menuElement.style.backgroundColor = "";
+            menuElement.style.color = "";
+        }
+    },
+    
+    _openMenu: function(menuModel) {
+        if (!this._prepareOpenMenu(menuModel)) {
+            // Do nothing: menu is already open.
+            return;
+        }
+    
+        var menuElement = this._getMenuElement(menuModel);
+        if (this._isTopMenuElement(menuElement)) { 
+            this.renderTopMenu(menuModel);
+        } else {
+            this._renderSubMenu(menuModel);
         }
     },
     
@@ -300,55 +357,6 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
         
     },
     
-    _openMenu: function(menuModel) {
-        if (!this._prepareOpenMenu(menuModel)) {
-            // Do nothing: menu is already open.
-            return;
-        }
-    
-        var menuElement = this._getMenuElement(menuModel);
-        if (this._isTopMenuElement(menuElement)) { 
-            this.renderTopMenu(menuModel);
-        } else {
-            this._renderSubMenu(menuModel);
-        }
-    },
-    
-    _renderSubMenu: function(menuModel) {
-        var menuElement = this._getMenuElement(menuModel);
-        var containerElement = menuElement.parentNode.parentNode.parentNode;
-        
-        var menuBounds = new WebCore.Measure.Bounds(menuElement);
-        var containerBounds = new WebCore.Measure.Bounds(containerElement);
-        
-        this.renderMenu(menuModel, containerBounds.left + containerBounds.width, menuBounds.top);
-    },
-    
-    _disposeMenu: function(menuModel) {
-        var menuElement = document.getElementById(this.component.renderId + "_menu_" + menuModel.id);
-    
-        WebCore.EventProcessor.removeAll(menuElement);
-        menuElement.parentNode.removeChild(menuElement);
-    },
-    
-    _highlight: function(menuModel, state) {
-        if (this._stateModel && !this._stateModel.isEnabled(menuModel.modelId)) {
-            return;
-        }
-        var menuElement = this._getMenuElement(menuModel);
-        if (state) {
-            EchoAppRender.FillImage.render(this.component.render("selectionBackgroundImage"), menuElement);
-            EchoAppRender.Color.render(this.component.render("selectionBackground", 
-                    ExtrasRender.ComponentSync.Menu._defaultSelectionBackground), menuElement, "backgroundColor");
-            EchoAppRender.Color.render(this.component.render("selectionForeground", 
-                    ExtrasRender.ComponentSync.Menu._defaultSelectionForeground), menuElement, "color");
-        } else {
-            menuElement.style.backgroundImage = "";
-            menuElement.style.backgroundColor = "";
-            menuElement.style.color = "";
-        }
-    },
-    
     _processItemEnter: function(e) {
         if (!this.client.verifyInput(this.component) || WebCore.dragInProgress) {
             return;
@@ -369,14 +377,22 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
         }
     },
     
-    _renderMask: function() {
-        if (this.maskDeployed) {
-            return;
+    _processMaskClick: function(e) {
+        var modelId = this._getElementModelId(e.target);
+        if (!modelId) {
+            this._closeMenu();
         }
-        this.maskDeployed = true;
-        
-        WebCore.EventProcessor.add(document.body, "click", this._processMaskClickRef, true);
-        WebCore.EventProcessor.add(document.body, "contextmenu", this._processMaskClickRef, true);
+        return true;
+    },
+    
+    renderDispose: function(update) {
+        this._closeMenu();
+        WebCore.EventProcessor.removeAll(this._element);
+        this._element.id = "";
+        this._element = null;
+        this._menuModel = null;
+        this._stateModel = null;
+        this._openMenuPath = [];
     },
     
     _removeMask: function() {
@@ -389,58 +405,42 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
         WebCore.EventProcessor.remove(document.body, "contextmenu", this._processMaskClickRef, true);
     },
     
-    _processMaskClick: function(e) {
-        var modelId = this._getElementModelId(e.target);
-        if (!modelId) {
-            this._closeMenu();
-        }
-        return true;
+    renderAdd: function(update, parentElement) {
+        this._menuModel = this.component.get("model");
+        this._stateModel = this.component.get("stateModel");
+        
+        this._element = this._renderMain(update);
+        
+        parentElement.appendChild(this._element);
     },
     
-    _closeMenu: function() {
-        this._removeMask();
-        this._closeDescendantMenus(null);
+    _renderMask: function() {
+        if (this.maskDeployed) {
+            return;
+        }
+        this.maskDeployed = true;
+        
+        WebCore.EventProcessor.add(document.body, "click", this._processMaskClickRef, true);
+        WebCore.EventProcessor.add(document.body, "contextmenu", this._processMaskClickRef, true);
     },
     
-    /**
-     * @param menuModel the menu model whose descendants should be closed;
-     * the menu model itself will remain open; providing null will close all descendant menus; 
-     */
-    _closeDescendantMenus: function(menuModel) {
-        for (var i = this._openMenuPath.length - 1;  i >= 0; --i) {
-            if (menuModel != null && this._openMenuPath[i].id == menuModel.id) {
-                // Stop once specified menu is found.
-                return;
-            }
-            this._disposeMenu(this._openMenuPath[i]);
-            --this._openMenuPath.length;
-        }
+    _renderSubMenu: function(menuModel) {
+        var menuElement = this._getMenuElement(menuModel);
+        var containerElement = menuElement.parentNode.parentNode.parentNode;
+        
+        var menuBounds = new WebCore.Measure.Bounds(menuElement);
+        var containerBounds = new WebCore.Measure.Bounds(containerElement);
+        
+        this.renderMenu(menuModel, containerBounds.left + containerBounds.width, menuBounds.top);
     },
-    
-    _getElementModelId: function(element) {
-        if (!element.id) {
-            return this._getElementModelId(element.parentNode);
-        }
-        if (element.id.indexOf(this.component.renderId + "_") != 0 || element.id.indexOf("_item_") == -1) {
-            return null;
-        }
-        return element.id.substring(element.id.lastIndexOf("_") + 1);
-    },
-    
-    _getBorder: function() {
-        var border = this.component.render("border");
-        if (!border) {
-            border = "1px outset #cfcfcf";
-        }
-        return border;
-    },
-    
-    _getMenuBorder: function() {
-        var border = this.component.render("menuBorder");
-        if (!border) {
-            border = this._getBorder();
-        }
-        return border;
+
+    renderUpdate: function(update) {
+        var element = this._element;
+        var containerElement = element.parentNode;
+        EchoRender.renderComponentDispose(update, update.parent);
+        containerElement.removeChild(element);
+        this.renderAdd(update, containerElement);
+        return false;
     }
 });
 
@@ -456,6 +456,43 @@ ExtrasRender.ComponentSync.MenuBarPane = Core.extend(ExtrasRender.ComponentSync.
     $construct: function() {
         ExtrasRender.ComponentSync.Menu.call(this);
         this._itemInsets = "0px 12px";
+    },
+    
+    _doAction: function(menuModel) {
+        var path = menuModel.getItemPositionPath().join(".");
+        this.component.fireEvent({type: "action", source: this.component, data: path, modelId: menuModel.modelId});
+    },
+    
+    _getMenuElement: function(itemModel) {
+        var menuElement = document.getElementById(this.component.renderId + "_bar_td_item_" + itemModel.id);
+        if (menuElement == null) {
+            menuElement = document.getElementById(this.component.renderId + "_tr_item_" + itemModel.id);
+        }
+        return menuElement;
+    },
+    
+    _isTopMenuElement: function(element) {
+        return element.id.indexOf("_bar_td_item") != -1;
+    },
+    
+    _processClick: function(e) {
+        if (!this.component.isActive()) {
+            return;
+        }
+        
+        WebCore.DOM.preventEventDefault(e);
+    
+        var modelId = this._getElementModelId(e.target);
+        if (modelId) {
+            this._renderMask();
+            this._activateItem(this._menuModel.getItem(modelId));
+        } else {
+            this._closeMenu();
+        }
+    },
+    
+    renderDisplay: function() {
+        WebCore.VirtualPosition.redraw(this._element);
     },
     
     _renderMain: function() {
@@ -518,43 +555,6 @@ ExtrasRender.ComponentSync.MenuBarPane = Core.extend(ExtrasRender.ComponentSync.
         WebCore.EventProcessor.Selection.disable(menuBarDivElement);
     
         return menuBarDivElement;
-    },
-    
-    _isTopMenuElement: function(element) {
-        return element.id.indexOf("_bar_td_item") != -1;
-    },
-    
-    _getMenuElement: function(itemModel) {
-        var menuElement = document.getElementById(this.component.renderId + "_bar_td_item_" + itemModel.id);
-        if (menuElement == null) {
-            menuElement = document.getElementById(this.component.renderId + "_tr_item_" + itemModel.id);
-        }
-        return menuElement;
-    },
-    
-    renderDisplay: function() {
-        WebCore.VirtualPosition.redraw(this._element);
-    },
-    
-    _processClick: function(e) {
-        if (!this.component.isActive()) {
-            return;
-        }
-        
-        WebCore.DOM.preventEventDefault(e);
-    
-        var modelId = this._getElementModelId(e.target);
-        if (modelId) {
-            this._renderMask();
-            this._activateItem(this._menuModel.getItem(modelId));
-        } else {
-            this._closeMenu();
-        }
-    },
-    
-    _doAction: function(menuModel) {
-        var path = menuModel.getItemPositionPath().join(".");
-        this.component.fireEvent({type: "action", source: this.component, data: path, modelId: menuModel.modelId});
     }
 });
 
@@ -570,6 +570,62 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
     _selectedItem: null,
     
     _contentDivElement: null,
+    
+    _doAction: function(menuModel) {
+        if (this._isSelectionEnabled()) {
+            this._setSelection(menuModel);
+        }
+        var path = menuModel.getItemPositionPath().join(".");
+        this.component.set("selection", path);
+        this.component.fireEvent({type: "action", source: this.component, data: path});
+    },
+    
+    _getMenuElement: function(itemModel) {
+        var menuElement = document.getElementById(this.component.renderId + "_tr_item_" + itemModel.id);
+        if (menuElement == null) {
+            menuElement = document.getElementById(this.component.renderId);
+        }
+        return menuElement;
+    },
+    
+    _isSelectionEnabled: function() {
+        return this.component.render("selectionEnabled");
+    },
+    
+    _isTopMenuElement: function(element) {
+        return element.id == this.component.renderId;
+    },
+    
+    _processClick: function(e) {
+        if (!this.component.isActive()) {
+            return;
+        }
+        
+        WebCore.DOM.preventEventDefault(e);
+    
+        var modelId = this._getElementModelId(e.target);
+        var model;
+        if (modelId) {
+            model = this._menuModel.getItem(modelId);
+        } else {
+            model = this._menuModel;
+        }
+        
+        this._renderMask();
+        this._activateItem(model);
+        
+        return true;
+    },
+    
+    renderDisplay: function() {
+        WebCore.VirtualPosition.redraw(this._contentDivElement);
+    },
+    
+    renderDispose: function(update) {
+        ExtrasRender.ComponentSync.Menu.prototype.renderDispose.call(this, update);
+        this._selectedItem = null;
+        this._contentDivElement = null;
+    },
     
     _renderMain: function() {
         var dropDownDivElement = document.createElement("div");
@@ -684,28 +740,6 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
         return menuDivElement;
     },
     
-    renderDispose: function(update) {
-        ExtrasRender.ComponentSync.Menu.prototype.renderDispose.call(this, update);
-        this._selectedItem = null;
-        this._contentDivElement = null;
-    },
-    
-    _isSelectionEnabled: function() {
-        return this.component.render("selectionEnabled");
-    },
-    
-    _isTopMenuElement: function(element) {
-        return element.id == this.component.renderId;
-    },
-    
-    _getMenuElement: function(itemModel) {
-        var menuElement = document.getElementById(this.component.renderId + "_tr_item_" + itemModel.id);
-        if (menuElement == null) {
-            menuElement = document.getElementById(this.component.renderId);
-        }
-        return menuElement;
-    },
-    
     /**
      * Sets the selection to the given menu model.
      *
@@ -755,40 +789,6 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
             EchoAppRender.ImageReference.renderImg(menuModel.icon, imgElement);
             contentElement.appendChild(imgElement);
         }
-    },
-    
-    renderDisplay: function() {
-        WebCore.VirtualPosition.redraw(this._contentDivElement);
-    },
-    
-    _processClick: function(e) {
-        if (!this.component.isActive()) {
-            return;
-        }
-        
-        WebCore.DOM.preventEventDefault(e);
-    
-        var modelId = this._getElementModelId(e.target);
-        var model;
-        if (modelId) {
-            model = this._menuModel.getItem(modelId);
-        } else {
-            model = this._menuModel;
-        }
-        
-        this._renderMask();
-        this._activateItem(model);
-        
-        return true;
-    },
-    
-    _doAction: function(menuModel) {
-        if (this._isSelectionEnabled()) {
-            this._setSelection(menuModel);
-        }
-        var path = menuModel.getItemPositionPath().join(".");
-        this.component.set("selection", path);
-        this.component.fireEvent({type: "action", source: this.component, data: path});
     }
 });
 
@@ -803,6 +803,58 @@ ExtrasRender.ComponentSync.ContextMenu = Core.extend(ExtrasRender.ComponentSync.
     
     $load: function() {
         EchoRender.registerPeer("ExtrasApp.ContextMenu", this);
+    },
+    
+    _doAction: function(menuModel) {
+        var path = menuModel.getItemPositionPath().join(".");
+        this.component.fireEvent({type: "action", source: this.component, data: path});
+    },
+    
+    _getMenuElement: function(itemModel) {
+        var menuElement = document.getElementById(this.component.renderId + "_tr_item_" + itemModel.id);
+        if (menuElement == null) {
+            menuElement = document.getElementById(this.component.renderId);
+        }
+        return menuElement;
+    },
+    
+    _isTopMenuElement: function(element) {
+        return element.id == this.component.renderId;
+    },
+    
+    _processClick: function(e) {
+        if (!this.component.isActive()) {
+            return;
+        }
+        
+        var modelId = this._getElementModelId(e.target);
+        if (modelId) {
+            WebCore.DOM.preventEventDefault(e);
+            this._renderMask();
+            this._activateItem(this._menuModel.getItem(modelId));
+        } else {
+            return true;
+        }
+    },
+    
+    _processContextClick: function(e) {
+        if (!this.component.isActive()) {
+            return;
+        }
+    
+        WebCore.DOM.preventEventDefault(e);
+        
+        this._mousePosX = e.pageX || (e.clientX + (document.documentElement.scrollLeft || document.body.scrollLeft));
+        this._mousePosY = e.pageY || (e.clientY + (document.documentElement.scrollTop || document.body.scrollTop));
+        
+        this._renderMask();
+        this._activateItem(this._menuModel);
+    },
+    
+    renderDispose: function(update) {
+        ExtrasRender.ComponentSync.Menu.prototype.renderDispose.call(this, update);
+        this._mousePosX = null;
+        this._mousePosY = null;
     },
     
     _renderMain: function(update) {
@@ -857,57 +909,5 @@ ExtrasRender.ComponentSync.ContextMenu = Core.extend(ExtrasRender.ComponentSync.
         // full update
         ExtrasRender.ComponentSync.Menu.prototype.renderUpdate.call(this, update);
         return true;
-    },
-    
-    renderDispose: function(update) {
-        ExtrasRender.ComponentSync.Menu.prototype.renderDispose.call(this, update);
-        this._mousePosX = null;
-        this._mousePosY = null;
-    },
-    
-    _isTopMenuElement: function(element) {
-        return element.id == this.component.renderId;
-    },
-    
-    _getMenuElement: function(itemModel) {
-        var menuElement = document.getElementById(this.component.renderId + "_tr_item_" + itemModel.id);
-        if (menuElement == null) {
-            menuElement = document.getElementById(this.component.renderId);
-        }
-        return menuElement;
-    },
-    
-    _processClick: function(e) {
-        if (!this.component.isActive()) {
-            return;
-        }
-        
-        var modelId = this._getElementModelId(e.target);
-        if (modelId) {
-            WebCore.DOM.preventEventDefault(e);
-            this._renderMask();
-            this._activateItem(this._menuModel.getItem(modelId));
-        } else {
-            return true;
-        }
-    },
-    
-    _processContextClick: function(e) {
-        if (!this.component.isActive()) {
-            return;
-        }
-    
-        WebCore.DOM.preventEventDefault(e);
-        
-        this._mousePosX = e.pageX || (e.clientX + (document.documentElement.scrollLeft || document.body.scrollLeft));
-        this._mousePosY = e.pageY || (e.clientY + (document.documentElement.scrollTop || document.body.scrollTop));
-        
-        this._renderMask();
-        this._activateItem(this._menuModel);
-    },
-    
-    _doAction: function(menuModel) {
-        var path = menuModel.getItemPositionPath().join(".");
-        this.component.fireEvent({type: "action", source: this.component, data: path});
     }
 });
