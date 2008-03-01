@@ -476,7 +476,7 @@ ExtrasRender.ComponentSync.MenuBarPane = Core.extend(ExtrasRender.ComponentSync.
     },
     
     _processClick: function(e) {
-        if (!this.component.isActive()) {
+        if (!this.client.verifyInput(this.component)) {
             return;
         }
         
