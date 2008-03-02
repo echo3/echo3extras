@@ -1,4 +1,3 @@
-// FIXME handle enabled/disabled state
 // FIXME fire events from components, not peer.
 
 /**
