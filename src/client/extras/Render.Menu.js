@@ -261,7 +261,7 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
      */
     _closeDescendantMenus: function(menuModel) {
         for (var i = this._openMenuPath.length - 1;  i >= 0; --i) {
-            if (menuModel != null && this._openMenuPath[i].id == menuModel.id) {
+            if (menuModel != null && this._openMenuPath[i].menuModel.id == menuModel.id) {
                 // Stop once specified menu is found.
                 return;
             }
@@ -270,7 +270,8 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
         }
     },
     
-    _disposeMenu: function(menuModel) {
+    _disposeMenu: function(menuState) {
+        var menuModel = menuState.menuModel;
         var menuElement = document.getElementById(this.component.renderId + "_menu_" + menuModel.id);
     
         WebCore.EventProcessor.removeAll(menuElement);
@@ -341,17 +342,17 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
     _prepareOpenMenu: function(menuModel) {
         if (this._openMenuPath.length != 0) {
             var openMenu = this._openMenuPath[this._openMenuPath.length - 1];
-            if (openMenu.id == menuModel.id || menuModel.parent == null) {
+            if (openMenu.menuModel.id == menuModel.id || menuModel.parent == null) {
                 // Do nothing: menu is already open
                 return false;
             }
-            if (openMenu.id != menuModel.parent.id) {
+            if (openMenu.menuModel.id != menuModel.parent.id) {
                 // Close previous menu
                 this._closeDescendantMenus(menuModel.parent);
             }
         }
         
-        this._openMenuPath.push(menuModel);
+        this._openMenuPath.push(new ExtrasRender.ComponentSync.Menu.State(menuModel));
         return true;
         
     },
@@ -440,6 +441,15 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
         containerElement.removeChild(element);
         this.renderAdd(update, containerElement);
         return false;
+    }
+});
+
+ExtrasRender.ComponentSync.Menu.State = Core.extend({
+
+    menuModel: null,
+    
+    $construct: function(menuModel) {
+        this.menuModel = menuModel;
     }
 });
 
