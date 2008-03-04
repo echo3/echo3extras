@@ -197,7 +197,7 @@ ExtrasRender.ComponentSync.Menu.RenderedMenu = Core.extend({
         
             timeInterval: 10,
             repeat: true,
-            _runTime: 150,
+            _runTime: null,
             
             _element: null,
             _fadeIn: null,
@@ -205,10 +205,11 @@ ExtrasRender.ComponentSync.Menu.RenderedMenu = Core.extend({
             
             _startTime: null,
             
-            $construct: function(element, fullOpacity, fadeIn) {
+            $construct: function(element, fadeIn, fullOpacity, runTime) {
                 this._element = element;
                 this._fullOpacity = fullOpacity;
                 this._fadeIn = fadeIn;
+                this._runTime = runTime;
             },
             
             run: function() {
@@ -258,12 +259,14 @@ ExtrasRender.ComponentSync.Menu.RenderedMenu = Core.extend({
         this.element.style.left = x + "px";
         this.element.style.top = y + "px";
 
-        if (WebCore.Environment.NOT_SUPPORTED_CSS_OPACITY) {
+        var animationTime = this.component.render("animationTime", 0);
+        if (!animationTime || WebCore.Environment.NOT_SUPPORTED_CSS_OPACITY) {
             document.body.appendChild(this.element);
         } else {
             this.element.style.opacity = 0;
             var fullOpacity = WebCore.Environment.NOT_SUPPORTED_CSS_OPACITY ? 100 : this.component.render("menuOpacity", 100) / 100;
-            var fadeRunnable = new ExtrasRender.ComponentSync.Menu.RenderedMenu.FadeRunnable(this.element, fullOpacity, true);
+            var fadeRunnable = new ExtrasRender.ComponentSync.Menu.RenderedMenu.FadeRunnable(this.element, true, fullOpacity, 
+                    animationTime);
             WebCore.Scheduler.add(fadeRunnable);
             document.body.appendChild(this.element);
         }
@@ -275,11 +278,13 @@ ExtrasRender.ComponentSync.Menu.RenderedMenu = Core.extend({
     },
 
     close: function() {
-        if (WebCore.Environment.NOT_SUPPORTED_CSS_OPACITY) {
+        var animationTime = this.component.render("animationTime", 0);
+        if (!animationTime || WebCore.Environment.NOT_SUPPORTED_CSS_OPACITY) {
             document.body.removeChild(this.element);
         } else {
             var fullOpacity = WebCore.Environment.NOT_SUPPORTED_CSS_OPACITY ? 100 : this.component.render("menuOpacity", 100) / 100;
-            var fadeRunnable = new ExtrasRender.ComponentSync.Menu.RenderedMenu.FadeRunnable(this.element, fullOpacity, false);
+            var fadeRunnable = new ExtrasRender.ComponentSync.Menu.RenderedMenu.FadeRunnable(this.element, false, fullOpacity, 
+                    animationTime);
             WebCore.Scheduler.add(fadeRunnable);
         }
         

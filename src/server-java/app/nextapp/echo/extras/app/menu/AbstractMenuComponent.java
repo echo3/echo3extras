@@ -16,6 +16,10 @@ public abstract class AbstractMenuComponent extends Component {
     
     public static final String ACTION_LISTENERS_CHANGED_PROPERTY = "actionListeners";
 
+    public static final String PROPERTY_ANIMATION_TIME = "animationTime";
+    
+    public static final int DEFAULT_ANIMATION_TIME = 0;
+
     private MenuModel model;
     private MenuStateModel stateModel;
 
@@ -54,6 +58,16 @@ public abstract class AbstractMenuComponent extends Component {
      */
     public void addActionListener(ActionListener l) {
         getEventListenerList().addListener(ActionListener.class, l);
+    }
+    
+    /**
+     * Returns the animation time (in milliseconds).  A value of zero indicates animation is disabled.
+     * 
+     * @return the animation time
+     */
+    public int getAnimationTime() {
+        Integer animationTime = (Integer) getProperty(PROPERTY_ANIMATION_TIME);
+        return animationTime == null ? DEFAULT_ANIMATION_TIME : animationTime.intValue(); 
     }
     
     /**
@@ -170,6 +184,15 @@ public abstract class AbstractMenuComponent extends Component {
         getEventListenerList().removeListener(ActionListener.class, l);
     }
     
+    /**
+     * Sets the animation time (in milliseconds).  A value of zero indicates animation is disabled.
+     * 
+     * @param newValue the new animation time
+     */
+    public void setAnimationTime(int newValue) {
+        setProperty(PROPERTY_ANIMATION_TIME, new Integer(newValue));
+    }
+
     /**
      * Sets the model.
      * 

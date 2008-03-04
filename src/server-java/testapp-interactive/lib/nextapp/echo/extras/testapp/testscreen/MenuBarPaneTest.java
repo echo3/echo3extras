@@ -96,6 +96,7 @@ public class MenuBarPaneTest extends AbstractTest {
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "selectionForeground");
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "selectionBackground");
         addFillImagePropertyTests(TestControlPane.CATEGORY_PROPERTIES, "selectionBackgroundImage", TEST_FILL_IMAGES);
+        addIntegerPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "animationTime", new int[]{0, 150, 300, 1500});
         
         testControlsPane.addButton(TestControlPane.CATEGORY_INTEGRATION, "Add Test WindowPane", new ActionListener(){
         
