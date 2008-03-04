@@ -72,14 +72,11 @@ ExtrasRender.FadeRunnable = Core.extend(WebCore.Scheduler.Runnable, {
         this._fullOpacity = fullOpacity;
         this._fadeIn = fadeIn;
         this._runTime = runTime;
+        this._startTime = new Date().getTime();
     },
     
     run: function() {
         var time = new Date().getTime();
-        if (this._startTime == null) {
-            this._startTime = time;
-            return;
-        }
         if (time < this._startTime + this._runTime) {
             var opacity = ((time - this._startTime) / this._runTime) * this._fullOpacity; 
             this._element.style.opacity = this._fadeIn ? opacity : this._fullOpacity - opacity;
