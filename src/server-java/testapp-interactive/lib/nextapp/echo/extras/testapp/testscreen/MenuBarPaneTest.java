@@ -37,6 +37,7 @@ import nextapp.echo.app.SplitPane;
 import nextapp.echo.app.WindowPane;
 import nextapp.echo.app.event.ActionEvent;
 import nextapp.echo.app.event.ActionListener;
+import nextapp.echo.app.layout.SplitPaneLayoutData;
 import nextapp.echo.extras.app.MenuBarPane;
 import nextapp.echo.extras.app.menu.DefaultMenuStateModel;
 import nextapp.echo.extras.app.menu.DefaultOptionModel;
@@ -68,10 +69,14 @@ public class MenuBarPaneTest extends AbstractTest {
         
         SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL, DEFAULT_MENU_HEIGHT);
         splitPane.setStyleName("DefaultResizable");
+        splitPane.setSeparatorPosition(new Extent(50));
         add(splitPane);
         
         final MenuBarPane menu = new MenuBarPane(createMenuModel());
         menu.setStateModel(createMenuStateModel());
+        SplitPaneLayoutData layoutData = new SplitPaneLayoutData();
+        layoutData.setMinimumSize(new Extent(12));
+        menu.setLayoutData(layoutData);
         menu.addActionListener(new ActionListener(){
         
             public void actionPerformed(ActionEvent e) {
