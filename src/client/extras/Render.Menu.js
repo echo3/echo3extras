@@ -934,6 +934,10 @@ ExtrasRender.ComponentSync.MenuBarPane = Core.extend(ExtrasRender.ComponentSync.
         this._processRollover(e, false);
     },
     
+    renderDisplay: function() {
+        WebCore.VirtualPosition.redraw(this.element);
+    },
+
     renderDispose: function(update) {
         WebCore.EventProcessor.removeAll(this.element);
         ExtrasRender.ComponentSync.Menu.prototype.renderDispose.call(this, update);
