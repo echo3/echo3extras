@@ -278,16 +278,7 @@ ExtrasRender.ComponentSync.Menu.RenderedMenu = Core.extend({
     },
 
     close: function() {
-        var animationTime = this.component.render("animationTime", 0);
-        if (!animationTime || WebCore.Environment.NOT_SUPPORTED_CSS_OPACITY) {
-            document.body.removeChild(this.element);
-        } else {
-            var fullOpacity = WebCore.Environment.NOT_SUPPORTED_CSS_OPACITY ? 100 : this.component.render("menuOpacity", 100) / 100;
-            var fadeRunnable = new ExtrasRender.ComponentSync.Menu.RenderedMenu.FadeRunnable(this.element, false, fullOpacity, 
-                    animationTime);
-            WebCore.Scheduler.add(fadeRunnable);
-        }
-        
+        document.body.removeChild(this.element);
         this.element = null;
         this.itemElements = null;
         this._activeItem = null;
