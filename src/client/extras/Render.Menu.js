@@ -223,7 +223,8 @@ ExtrasRender.ComponentSync.Menu.RenderedMenu = Core.extend({
             document.body.appendChild(this.element);
         } else {
             this.element.style.opacity = 0;
-            var fullOpacity = WebCore.Environment.NOT_SUPPORTED_CSS_OPACITY ? 100 : this.component.render("menuOpacity", 100) / 100;
+            var fullOpacity = (WebCore.Environment.NOT_SUPPORTED_CSS_OPACITY ? 
+                    100 : this.component.render("menuOpacity", 100)) / 100;
             var fadeRunnable = new ExtrasRender.FadeRunnable(this.element, true, fullOpacity, animationTime);
             WebCore.Scheduler.add(fadeRunnable);
             document.body.appendChild(this.element);
@@ -247,11 +248,10 @@ ExtrasRender.ComponentSync.Menu.RenderedMenu = Core.extend({
         this.element.style.position = "absolute";
         this.element.style.zIndex = ExtrasRender.ComponentSync.Menu.MAX_Z_INDEX;
 
-        var opacity = WebCore.Environment.NOT_SUPPORTED_CSS_OPACITY ? 100 : this.component.render("menuOpacity", 100);
+        var opacity = (WebCore.Environment.NOT_SUPPORTED_CSS_OPACITY ? 100 : this.component.render("menuOpacity", 100)) / 100;
 
         var menuContentDivElement = document.createElement("div");
-        menuContentDivElement.style.position = "relative";
-        menuContentDivElement.style.zIndex = 10;
+        menuContentDivElement.style.cssText = "position:relative;z-index:10;";
         this.element.appendChild(menuContentDivElement);
 
         EchoAppRender.Insets.render(ExtrasRender.ComponentSync.Menu.RenderedMenu.defaultMenuInsets, 
@@ -278,15 +278,10 @@ ExtrasRender.ComponentSync.Menu.RenderedMenu = Core.extend({
         }
 
         var backgroundDivElement;
-        if (opacity < 100) {
+        if (opacity < 1) {
             backgroundDivElement = document.createElement("div");
-            backgroundDivElement.style.opacity = opacity / 100;
-            backgroundDivElement.style.position = "absolute";
-            backgroundDivElement.style.zIndex = 1;
-            backgroundDivElement.style.width = "100%";
-            backgroundDivElement.style.height = "100%";
-            backgroundDivElement.style.top = 0;
-            backgroundDivElement.style.bottom = 0;
+            backgroundDivElement.style.cssText = "position:absolute;z-index:1;width:100%;height:100%;top:0;bottom:0;";
+            backgroundDivElement.style.opacity = opacity;
             this.element.appendChild(backgroundDivElement);
         } else {
             backgroundDivElement = this.element;
@@ -408,12 +403,7 @@ ExtrasRender.ComponentSync.Menu.RenderedMenu = Core.extend({
                 menuItemContentTdElement.colSpan = hasIcons ? 3 : 2;
                 menuItemContentTdElement.style.padding = "3px 0px";
                 var hrDivElement = document.createElement("div");
-                hrDivElement.style.borderTopWidth = "1px";
-                hrDivElement.style.borderTopStyle = "solid";
-                hrDivElement.style.borderTopColor = "#a7a7a7";
-                hrDivElement.style.height = "0px";
-                hrDivElement.style.fontSize = "1px";
-                hrDivElement.style.lineHeight = "0px";
+                hrDivElement.style.cssText = "border-top:1px solid #a7a7a7;height:0;font-size:1px;line-height:0";
                 menuItemContentTdElement.appendChild(hrDivElement);
                 menuItemTrElement.appendChild(menuItemContentTdElement);
             }
@@ -702,10 +692,8 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
         relativeContainerDivElement.appendChild(expandElement);
         
         this._containerDivElement = document.createElement("div");
-        this._containerDivElement.style.position = "absolute";
-        this._containerDivElement.style.top = "0px";
-        this._containerDivElement.style.left = "0px";
-        this._containerDivElement.style.right = EchoAppRender.Extent.toCssValue(expandIconWidth);
+        this._containerDivElement.style.cssText = "position:absolute;top:0;left:0;right:" +
+                EchoAppRender.Extent.toCssValue(expandIconWidth) + ";";
         var insets = this.component.render("insets");
         if (insets) {
             EchoAppRender.Insets.render(insets, this._containerDivElement, "padding");
@@ -720,10 +708,7 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
         EchoAppRender.FillImage.render(this.component.render("backgroundImage"), this._containerDivElement); 
         
         this._selectionSpanElement = document.createElement("div");
-        this._selectionSpanElement.style.height = "100%";
-        this._selectionSpanElement.style.width = "100%";
-        this._selectionSpanElement.style.overflow = "hidden";
-        this._selectionSpanElement.style.whiteSpace = "nowrap";
+        this._selectionSpanElement.style.cssText = "width:100%;height:100%;overflow:hidden;white-space:nowrap;";
         EchoAppRender.Font.render(this.component.render("font"), this._selectionSpanElement, null);
         this._containerDivElement.appendChild(this._selectionSpanElement);
         
