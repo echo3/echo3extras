@@ -708,7 +708,7 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
         EchoAppRender.FillImage.render(this.component.render("backgroundImage"), this._containerDivElement); 
         
         this._selectionSpanElement = document.createElement("div");
-        this._selectionSpanElement.style.cssText = "width:100%;height:100%;overflow:hidden;white-space:nowrap;";
+        this._selectionSpanElement.syle.cssText = "width:100%;height:100%;overflow:hidden;white-space:nowrap;";
         EchoAppRender.Font.render(this.component.render("font"), this._selectionSpanElement, null);
         this._containerDivElement.appendChild(this._selectionSpanElement);
         
@@ -854,10 +854,12 @@ ExtrasRender.ComponentSync.MenuBarPane = Core.extend(ExtrasRender.ComponentSync.
         if (!itemElement) {
             throw new Error("Invalid menu: " + menuModel);
         }
-
+        
+        var containerBounds = new WebCore.Measure.Bounds(this.element);
         var itemBounds = new WebCore.Measure.Bounds(itemElement);
+
         var x = itemBounds.left
-        var y = itemBounds.top + itemBounds.height;
+        var y = containerBounds.top + containerBounds.height;
 
         var availableWidth = document.body.offsetWidth;
         
