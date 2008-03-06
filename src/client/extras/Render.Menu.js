@@ -858,7 +858,7 @@ ExtrasRender.ComponentSync.MenuBarPane = Core.extend(ExtrasRender.ComponentSync.
         var containerBounds = new WebCore.Measure.Bounds(this.element);
         var itemBounds = new WebCore.Measure.Bounds(itemElement);
 
-        var x = itemBounds.left
+        var x = itemBounds.left;
         var y = containerBounds.top + containerBounds.height;
 
         var availableWidth = document.body.offsetWidth;
