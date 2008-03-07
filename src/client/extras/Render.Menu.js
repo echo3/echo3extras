@@ -29,9 +29,11 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
     _maskDeployed: false,
     
     _processMaskClickRef: null,
+    _processKeyPressRef: null,
     
     $construct: function() {
         this._processMaskClickRef = Core.method(this, this._processMaskClick);
+        this._processKeyPressRef = Core.method(this, this.processKeyPress);
         this._openMenuPath = [];
     },
 
@@ -54,6 +56,12 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
             }
             this.active = true;
             this.addMask();
+            
+            WebCore.DOM.focusElement(this.element);
+            WebCore.EventProcessor.add(this.element, 
+                    WebCore.Environment.QUIRK_IE_KEY_DOWN_EVENT_REPEAT ? "keydown" : "keypress",
+                    this._processKeyPressRef, true);
+            
             return true;
         },
 
@@ -72,6 +80,15 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
         processAction: function(itemModel) {
             var path = itemModel.getItemPositionPath().join(".");
             this.component.fireEvent({type: "action", source: this.component, data: path, modelId: itemModel.modelId});
+        },
+        
+        processKeyPress: function(e) {
+            switch (e.keyCode) {
+            case 27:
+                this.deactivate();
+                return false;
+            }
+            return true;
         }
     },
 
@@ -108,6 +125,10 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
             return;
         }
         this.active = false;
+
+        WebCore.EventProcessor.remove(this.element, 
+                WebCore.Environment.QUIRK_IE_KEY_DOWN_EVENT_REPEAT ? "keydown" : "keypress",
+                this._processKeyPressRef, true);
         
         this.closeAll();
         this.removeMask();
@@ -169,6 +190,8 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
         this.stateModel = this.component.get("stateModel");
         
         this.element = this.renderMain(update);
+        this.element.tabIndex = "-1";
+        this.element.style.outlineStyle = "none";
         parentElement.appendChild(this.element);
     },
     
@@ -858,7 +881,7 @@ ExtrasRender.ComponentSync.MenuBarPane = Core.extend(ExtrasRender.ComponentSync.
         var containerBounds = new WebCore.Measure.Bounds(this.element);
         var itemBounds = new WebCore.Measure.Bounds(itemElement);
 
-        var x = itemBounds.left;
+        var x = itemBounds.left
         var y = containerBounds.top + containerBounds.height;
 
         var availableWidth = document.body.offsetWidth;
