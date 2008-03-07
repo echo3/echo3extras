@@ -117,8 +117,8 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
     },
     
     renderAdd: function(update, parentElement) {
+        // Configure Properties
         this._activeTabId = this._getActiveTabId();
-
         this._borderType = this.component.render("borderType", ExtrasRender.ComponentSync.TabPane._defaultBorderType);
         this._insets = this.component.render("insets", ExtrasRender.ComponentSync.TabPane._defaultInsets);
         this._tabActiveBorder = this.component.render("tabActiveBorder", 
@@ -134,16 +134,30 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
         this._tabPosition = this.component.render("tabPosition", ExtrasRender.ComponentSync.TabPane._defaultTabPosition);
         this._tabSpacing = this.component.render("tabSpacing", ExtrasRender.ComponentSync.TabPane._defaultTabSpacing);
         this._tabCloseEnabled = this.component.render("tabCloseEnabled", false);
-    
+
+        // Create Main Element
         this._element = document.createElement("div");
         this._element.id = this.component.renderId;
         this._element.style.position = "absolute";
         this._element.style.overflow = "hidden";
     
-        this._renderBorderInsets(this._element);
+        // Render Border Insets
+        var pixelInsets = EchoAppRender.Insets.toPixels(this._insets);
+        if (this._borderType == ExtrasApp.TabPane.BORDER_TYPE_SURROUND) {
+            // Do nothing, pixelInsets values are correct.
+        } else if (this._borderType == ExtrasApp.TabPane.BORDER_TYPE_PARALLEL_TO_TABS) {
+            pixelInsets.left = pixelInsets.right = 0;
+        } else if (this._tabPosition == ExtrasApp.TabPane.TAB_POSITION_BOTTOM) {
+            pixelInsets.left = pixelInsets.right = pixelInsets.top = 0;
+        } else {
+            pixelInsets.left = pixelInsets.right = pixelInsets.bottom = 0;
+        }
+        this._element.style.top = pixelInsets.top + "px";
+        this._element.style.right = pixelInsets.right + "px";
+        this._element.style.bottom = pixelInsets.bottom + "px";
+        this._element.style.left = pixelInsets.left + "px";
         
         // Render Header Container
-        
         var headerContainerDivElement = document.createElement("div");
         headerContainerDivElement.style.overflow = "hidden";
         headerContainerDivElement.style.zIndex = 1;
@@ -180,7 +194,6 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
         this._element.appendChild(headerContainerDivElement);
         
         // Render Content Container
-        
         this._contentContainerDivElement = document.createElement("div");
         this._contentContainerDivElement.style.position = "absolute";
         this._contentContainerDivElement.style.overflow = "hidden";
@@ -211,6 +224,7 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
         
         this._element.appendChild(this._contentContainerDivElement);
         
+        // Render Tabs
         var activeTabFound = false;
         var componentCount = this.component.getComponentCount();
         for (var i = 0; i < componentCount; ++i) {
@@ -231,23 +245,6 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
         }
         
         parentElement.appendChild(this._element);
-    },
-    
-    _renderBorderInsets: function(tabPaneDivElement) {
-        var pixelInsets = EchoAppRender.Insets.toPixels(this._insets);
-        if (this._borderType == ExtrasApp.TabPane.BORDER_TYPE_SURROUND) {
-            // Do nothing, pixelInsets values are correct.
-        } else if (this._borderType == ExtrasApp.TabPane.BORDER_TYPE_PARALLEL_TO_TABS) {
-            pixelInsets.left = pixelInsets.right = 0;
-        } else if (this._tabPosition == ExtrasApp.TabPane.TAB_POSITION_BOTTOM) {
-            pixelInsets.left = pixelInsets.right = pixelInsets.top = 0;
-        } else {
-            pixelInsets.left = pixelInsets.right = pixelInsets.bottom = 0;
-        }
-        tabPaneDivElement.style.top = pixelInsets.top + "px";
-        tabPaneDivElement.style.right = pixelInsets.right + "px";
-        tabPaneDivElement.style.bottom = pixelInsets.bottom + "px";
-        tabPaneDivElement.style.left = pixelInsets.left + "px";
     },
     
     renderDisplay: function() {
