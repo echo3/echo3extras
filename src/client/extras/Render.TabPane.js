@@ -116,7 +116,9 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
         tab._dispose();
     },
     
-    _render: function() {
+    renderAdd: function(update, parentElement) {
+        this._activeTabId = this._getActiveTabId();
+
         this._borderType = this.component.render("borderType", ExtrasRender.ComponentSync.TabPane._defaultBorderType);
         this._insets = this.component.render("insets", ExtrasRender.ComponentSync.TabPane._defaultInsets);
         this._tabActiveBorder = this.component.render("tabActiveBorder", 
@@ -133,25 +135,81 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
         this._tabSpacing = this.component.render("tabSpacing", ExtrasRender.ComponentSync.TabPane._defaultTabSpacing);
         this._tabCloseEnabled = this.component.render("tabCloseEnabled", false);
     
-        var tabPaneDivElement = document.createElement("div");
-        tabPaneDivElement.id = this.component.renderId;
-        tabPaneDivElement.style.position = "absolute";
-        tabPaneDivElement.style.overflow = "hidden";
+        this._element = document.createElement("div");
+        this._element.id = this.component.renderId;
+        this._element.style.position = "absolute";
+        this._element.style.overflow = "hidden";
     
-        this._renderBorderInsets(tabPaneDivElement);
+        this._renderBorderInsets(this._element);
         
-        tabPaneDivElement.appendChild(this._renderHeaderContainer());
-        tabPaneDivElement.appendChild(this._renderContentContainer());
+        // Render Header Container
         
-        return tabPaneDivElement;
-    },
+        var headerContainerDivElement = document.createElement("div");
+        headerContainerDivElement.style.overflow = "hidden";
+        headerContainerDivElement.style.zIndex = 1;
+        headerContainerDivElement.style.position = "absolute";
+        headerContainerDivElement.style.width = "100%";
+        
+        if (this._tabPosition == ExtrasApp.TabPane.TAB_POSITION_BOTTOM) {
+            headerContainerDivElement.style.bottom = "0px";
+        } else {
+            headerContainerDivElement.style.top = "0px";
+        }
+        headerContainerDivElement.style.left = this._tabInsetPx + "px";
+        headerContainerDivElement.style.right = this._tabInsetPx + "px";
+        
+        var borderSize = EchoAppRender.Border.getPixelSize(this._tabActiveBorder);
+        headerContainerDivElement.style.height = (this._tabHeightPx + borderSize) + "px";
+        EchoAppRender.Font.render(this.component.render("font"), headerContainerDivElement);
+        EchoAppRender.FillImage.render(this.component.render("tabBackgroundImage"), headerContainerDivElement);
     
-    renderAdd: function(update, parentElement) {
-        this._activeTabId = this._getActiveTabId();
-        this._element = this._render();
+        var headerTableElement = document.createElement("table");
+        headerTableElement.style.borderWidth = "0px";
+        headerTableElement.cellPadding = "0px";
+        headerTableElement.cellSpacing = "0px";
+        headerTableElement.style.padding = "0px";
         
-        this._headerContainerTrElement = this._element.childNodes[0].firstChild.rows[0];
-        this._contentContainerDivElement = this._element.childNodes[1];
+        var headerTbodyElement = document.createElement("tbody");
+        headerTableElement.appendChild(headerTbodyElement);
+        
+        this._headerContainerTrElement = document.createElement("tr");
+        headerTbodyElement.appendChild(this._headerContainerTrElement);
+        
+        headerContainerDivElement.appendChild(headerTableElement);
+        
+        this._element.appendChild(headerContainerDivElement);
+        
+        // Render Content Container
+        
+        this._contentContainerDivElement = document.createElement("div");
+        this._contentContainerDivElement.style.position = "absolute";
+        this._contentContainerDivElement.style.overflow = "hidden";
+        EchoAppRender.Color.renderFB(this.component, this._contentContainerDivElement);
+        
+        if (this._tabPosition == ExtrasApp.TabPane.TAB_POSITION_BOTTOM) {
+            this._contentContainerDivElement.style.top = "0px";
+            this._contentContainerDivElement.style.bottom = this._tabHeightPx + "px";
+        } else {
+            this._contentContainerDivElement.style.top = this._tabHeightPx + "px";
+            this._contentContainerDivElement.style.bottom = "0px";
+        }
+        this._contentContainerDivElement.style.left = "0px";
+        this._contentContainerDivElement.style.right = "0px";
+        
+        if (this._borderType == ExtrasApp.TabPane.BORDER_TYPE_NONE) {
+            this._contentContainerDivElement.style.border = "0px none";
+        } else if (this._borderType == ExtrasApp.TabPane.BORDER_TYPE_SURROUND) {
+            EchoAppRender.Border.render(this._tabActiveBorder, this._contentContainerDivElement);
+        } else if (this._borderType == ExtrasApp.TabPane.BORDER_TYPE_PARALLEL_TO_TABS) {
+            EchoAppRender.Border.render(this._tabActiveBorder, this._contentContainerDivElement, "borderTop")
+            EchoAppRender.Border.render(this._tabActiveBorder, this._contentContainerDivElement, "borderBottom")
+        } else if (this._tabPosition == ExtrasApp.TabPane.TAB_POSITION_BOTTOM) {
+            EchoAppRender.Border.render(this._tabActiveBorder, this._contentContainerDivElement, "borderBottom")
+        } else {
+            EchoAppRender.Border.render(this._tabActiveBorder, this._contentContainerDivElement, "borderTop")
+        }
+        
+        this._element.appendChild(this._contentContainerDivElement);
         
         var activeTabFound = false;
         var componentCount = this.component.getComponentCount();
@@ -192,38 +250,6 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
         tabPaneDivElement.style.left = pixelInsets.left + "px";
     },
     
-    _renderContentContainer: function() {
-        var contentContainerDivElement = document.createElement("div");
-        contentContainerDivElement.style.position = "absolute";
-        contentContainerDivElement.style.overflow = "hidden";
-        EchoAppRender.Color.renderFB(this.component, contentContainerDivElement);
-        
-        if (this._tabPosition == ExtrasApp.TabPane.TAB_POSITION_BOTTOM) {
-            contentContainerDivElement.style.top = "0px";
-            contentContainerDivElement.style.bottom = this._tabHeightPx + "px";
-        } else {
-            contentContainerDivElement.style.top = this._tabHeightPx + "px";
-            contentContainerDivElement.style.bottom = "0px";
-        }
-        contentContainerDivElement.style.left = "0px";
-        contentContainerDivElement.style.right = "0px";
-        
-        if (this._borderType == ExtrasApp.TabPane.BORDER_TYPE_NONE) {
-            contentContainerDivElement.style.border = "0px none";
-        } else if (this._borderType == ExtrasApp.TabPane.BORDER_TYPE_SURROUND) {
-            EchoAppRender.Border.render(this._tabActiveBorder, contentContainerDivElement);
-        } else if (this._borderType == ExtrasApp.TabPane.BORDER_TYPE_PARALLEL_TO_TABS) {
-            EchoAppRender.Border.render(this._tabActiveBorder, contentContainerDivElement, "borderTop")
-            EchoAppRender.Border.render(this._tabActiveBorder, contentContainerDivElement, "borderBottom")
-        } else if (this._tabPosition == ExtrasApp.TabPane.TAB_POSITION_BOTTOM) {
-            EchoAppRender.Border.render(this._tabActiveBorder, contentContainerDivElement, "borderBottom")
-        } else {
-            EchoAppRender.Border.render(this._tabActiveBorder, contentContainerDivElement, "borderTop")
-        }
-        
-        return contentContainerDivElement;
-    },
-    
     renderDisplay: function() {
         WebCore.VirtualPosition.redraw(this._element);
         WebCore.VirtualPosition.redraw(this._contentContainerDivElement);
@@ -242,43 +268,6 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
         this._element = null;
         this._headerContainerTrElement = null;
         this._contentContainerDivElement = null;
-    },
-    
-    _renderHeaderContainer: function() {
-        var headerContainerDivElement = document.createElement("div");
-        headerContainerDivElement.style.overflow = "hidden";
-        headerContainerDivElement.style.zIndex = 1;
-        headerContainerDivElement.style.position = "absolute";
-        headerContainerDivElement.style.width = "100%";
-        
-        if (this._tabPosition == ExtrasApp.TabPane.TAB_POSITION_BOTTOM) {
-            headerContainerDivElement.style.bottom = "0px";
-        } else {
-            headerContainerDivElement.style.top = "0px";
-        }
-        headerContainerDivElement.style.left = this._tabInsetPx + "px";
-        headerContainerDivElement.style.right = this._tabInsetPx + "px";
-        
-        var borderSize = EchoAppRender.Border.getPixelSize(this._tabActiveBorder);
-        headerContainerDivElement.style.height = (this._tabHeightPx + borderSize) + "px";
-        EchoAppRender.Font.render(this.component.render("font"), headerContainerDivElement);
-        EchoAppRender.FillImage.render(this.component.render("tabBackgroundImage"), headerContainerDivElement);
-    
-        var headerTableElement = document.createElement("table");
-        headerTableElement.style.borderWidth = "0px";
-        headerTableElement.cellPadding = "0px";
-        headerTableElement.cellSpacing = "0px";
-        headerTableElement.style.padding = "0px";
-        
-        var headerTbodyElement = document.createElement("tbody");
-        headerTableElement.appendChild(headerTbodyElement);
-        
-        var headerTrElement = document.createElement("tr");
-        headerTbodyElement.appendChild(headerTrElement);
-        
-        headerContainerDivElement.appendChild(headerTableElement);
-        
-        return headerContainerDivElement;
     },
     
     renderUpdate: function(update) {
