@@ -29,6 +29,9 @@
 
 package nextapp.echo.extras.testapp.testscreen;
 
+import nextapp.echo.app.Button;
+import nextapp.echo.app.Column;
+import nextapp.echo.app.ContentPane;
 import nextapp.echo.app.ResourceImageReference;
 import nextapp.echo.app.event.ActionEvent;
 import nextapp.echo.app.event.ActionListener;
@@ -43,17 +46,25 @@ import nextapp.echo.extras.testapp.TestControlPane;
  * Interactive test module for <code>RichTextArea</code>s.
  */
 public class RichTextAreaTest extends AbstractTest {
+    
+    private ContentPane mainContent;
+    private RichTextArea richTextArea;
 
     public RichTextAreaTest() {
         super("RichTextArea", Styles.ICON_16_RICH_TEXT_AREA);
-        final RichTextArea richTextArea = new RichTextArea();
+        
+        mainContent = new ContentPane();
+        add(mainContent);
+
+        richTextArea = new RichTextArea();
         richTextArea.setMenuStyleName("Default");
         richTextArea.setToolbarButtonStyleName("RichTextAreaToolbarButton");
         richTextArea.setWindowPaneStyleName("Default");
         richTextArea.setControlPaneSplitPaneStyleName("ControlPane.Container.Bottom");
         richTextArea.setControlPaneRowStyleName("ControlPane");
         richTextArea.setControlPaneButtonStyleName("ControlPane.Button");
-        add(richTextArea);
+        mainContent.add(richTextArea);
+        
         setTestComponent(this, richTextArea);
         
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "foreground");
@@ -151,5 +162,38 @@ public class RichTextAreaTest extends AbstractTest {
         });
         
         addStandardIntegrationTests();
+        testControlsPane.addButton(TestControlPane.CATEGORY_INTEGRATION, "Render in ContentPane", new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                mainContent.removeAll();
+                mainContent.add(richTextArea);
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_INTEGRATION, "Render in Column", new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                mainContent.removeAll();
+                Column column = new Column();
+                mainContent.add(column);
+                
+                Button button1 = new Button("Test");
+                button1.setStyleName("Default");
+                button1.addActionListener(new ActionListener(){
+                    public void actionPerformed(ActionEvent e) {
+                        InteractiveApp.getApp().consoleWrite("Button1 Clicked.");
+                    }
+                });
+                column.add(button1);
+                
+                column.add(richTextArea);
+                
+                Button button2 = new Button("Test");
+                button2.setStyleName("Default");
+                button2.addActionListener(new ActionListener(){
+                    public void actionPerformed(ActionEvent e) {
+                        InteractiveApp.getApp().consoleWrite("Button2 Clicked.");
+                    }
+                });
+                column.add(button2);
+            }
+        });
     }
 }
