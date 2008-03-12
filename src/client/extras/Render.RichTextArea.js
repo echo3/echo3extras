@@ -473,10 +473,14 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
         
         this._mainDivElement = document.createElement("div");
 
-        if (!this._paneRender) {
+        if (this._paneRender) {
+            this._mainDivElement.style.cssText = "position:absolute;top:0px;left:0px;right:0px;bottom:0px;";
+        } else {
+            this._mainDivElement.style.position = "relative";
             // FIXME. set height of component based on height setting.
             this._mainDivElement.style.height = "300px";
         }
+        
         parentElement.appendChild(this._mainDivElement);
     },
     
@@ -486,6 +490,7 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
     },
     
     renderDisplay: function() {
+        WebCore.VirtualPosition.redraw(this._mainDivElement);
         EchoArc.ComponentSync.prototype.renderDisplay.call(this);
     },
     
