@@ -1,8 +1,8 @@
 ----------------------------------------------------------------------
 Echo Extras, version 3.0
-Copyright (C) 2002-2007 NextApp, Inc.
+Copyright (C) 2002-2008 NextApp, Inc.
 
-http://www.nextapp.com/products/echo3/extras
+http://echo.nextapp.com/site/echo3/addons/extras
 
 ----------------------------------------------------------------------
 Echo Extras is licensed under the Mozilla Public License.
