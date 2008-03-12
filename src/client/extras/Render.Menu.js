@@ -731,7 +731,7 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
         EchoAppRender.FillImage.render(this.component.render("backgroundImage"), this._containerDivElement); 
         
         this._selectionSpanElement = document.createElement("div");
-        this._selectionSpanElement.syle.cssText = "width:100%;height:100%;overflow:hidden;white-space:nowrap;";
+        this._selectionSpanElement.style.cssText = "width:100%;height:100%;overflow:hidden;white-space:nowrap;";
         EchoAppRender.Font.render(this.component.render("font"), this._selectionSpanElement, null);
         this._containerDivElement.appendChild(this._selectionSpanElement);
         
