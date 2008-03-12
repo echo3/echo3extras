@@ -1,6 +1,6 @@
 /* 
  * This file is part of the Echo Extras Project.
- * Copyright (C) 2005-2007 NextApp, Inc.
+ * Copyright (C) 2005-2008 NextApp, Inc.
  *
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -26,6 +26,7 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
+
 package nextapp.echo.extras.app;
 
 import nextapp.echo.app.Component;
