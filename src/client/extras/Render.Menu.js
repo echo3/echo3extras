@@ -246,9 +246,7 @@ ExtrasRender.ComponentSync.Menu.RenderedMenu = Core.extend({
             document.body.appendChild(this.element);
         } else {
             this.element.style.opacity = 0;
-            var fullOpacity = (WebCore.Environment.NOT_SUPPORTED_CSS_OPACITY ? 
-                    100 : this.component.render("menuOpacity", 100)) / 100;
-            var fadeRunnable = new ExtrasRender.FadeRunnable(this.element, true, fullOpacity, animationTime);
+            var fadeRunnable = new ExtrasRender.FadeRunnable(this.element, true, 1, animationTime);
             WebCore.Scheduler.add(fadeRunnable);
             document.body.appendChild(this.element);
         }
