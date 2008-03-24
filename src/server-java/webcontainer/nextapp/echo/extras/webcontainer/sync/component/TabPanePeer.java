@@ -68,8 +68,8 @@ implements LazyRenderContainer {
     public static final String PROPERTY_LAZY_RENDER_ENABLED = "lazyRenderEnabled";
 
     private static final Service TAB_PANE_SERVICE = JavaScriptService.forResources("EchoExtras.TabPane",
-            new String[] {  "/nextapp/echo/extras/webcontainer/resource/Application.TabPane.js",  
-                            "/nextapp/echo/extras/webcontainer/resource/Render.TabPane.js"});
+            new String[] {  "nextapp/echo/extras/webcontainer/resource/Application.TabPane.js",  
+                            "nextapp/echo/extras/webcontainer/resource/Render.TabPane.js"});
 
     static {
         WebContainerServlet.getServiceRegistry().add(TAB_PANE_SERVICE);

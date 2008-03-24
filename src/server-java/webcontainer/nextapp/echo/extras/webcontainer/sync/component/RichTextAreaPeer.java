@@ -65,9 +65,9 @@ public class RichTextAreaPeer extends AbstractComponentSynchronizePeer {
 
     private static final String LOCALIZATION_DATA = "localizationData";
     private static final Service RICH_TEXT_AREA_SERVICE = JavaScriptService.forResources("EchoExtras.RichTextArea",
-            new String[] {  "/nextapp/echo/extras/webcontainer/resource/Application.RichTextArea.js",  
-                            "/nextapp/echo/extras/webcontainer/resource/Render.RichTextArea.js",
-                            "/nextapp/echo/extras/webcontainer/resource/RemoteClient.RichTextArea.js" });
+            new String[] {  "nextapp/echo/extras/webcontainer/resource/Application.RichTextArea.js",  
+                            "nextapp/echo/extras/webcontainer/resource/Render.RichTextArea.js",
+                            "nextapp/echo/extras/webcontainer/resource/RemoteClient.RichTextArea.js" });
     
     static {
         WebContainerServlet.getServiceRegistry().add(RICH_TEXT_AREA_SERVICE);

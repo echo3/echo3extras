@@ -56,8 +56,8 @@ import nextapp.echo.webcontainer.util.MultiIterator;
 public class AccordionPanePeer extends AbstractComponentSynchronizePeer implements LazyRenderContainer {
 
     private static final Service ACCORDION_PANE_SERVICE = JavaScriptService.forResources("EchoExtras.AccordionPane",
-            new String[] {  "/nextapp/echo/extras/webcontainer/resource/Application.AccordionPane.js",  
-                            "/nextapp/echo/extras/webcontainer/resource/Render.AccordionPane.js"});
+            new String[] {  "nextapp/echo/extras/webcontainer/resource/Application.AccordionPane.js",  
+                            "nextapp/echo/extras/webcontainer/resource/Render.AccordionPane.js"});
     
     private static final String PROPERTY_ACTIVE_TAB = "activeTab";
 

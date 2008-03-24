@@ -46,8 +46,8 @@ public class CalendarSelectPeer
 extends AbstractComponentSynchronizePeer {
 
     private static final Service CALENDAR_SELECT_SERVICE = JavaScriptService.forResources("EchoExtras.CalendarSelect",
-            new String[] {  "/nextapp/echo/extras/webcontainer/resource/Application.CalendarSelect.js",  
-                            "/nextapp/echo/extras/webcontainer/resource/Render.CalendarSelect.js"});
+            new String[] {  "nextapp/echo/extras/webcontainer/resource/Application.CalendarSelect.js",  
+                            "nextapp/echo/extras/webcontainer/resource/Render.CalendarSelect.js"});
 
     static {
         WebContainerServlet.getServiceRegistry().add(CALENDAR_SELECT_SERVICE);

@@ -51,8 +51,8 @@ import nextapp.echo.webcontainer.service.JavaScriptService;
 public class ColorSelectPeer extends AbstractComponentSynchronizePeer {
 
     private static final Service COLOR_SELECT_SERVICE = JavaScriptService.forResources("EchoExtras.ColorSelect",
-            new String[] {  "/nextapp/echo/extras/webcontainer/resource/Application.ColorSelect.js",  
-                            "/nextapp/echo/extras/webcontainer/resource/Render.ColorSelect.js"});
+            new String[] {  "nextapp/echo/extras/webcontainer/resource/Application.ColorSelect.js",  
+                            "nextapp/echo/extras/webcontainer/resource/Render.ColorSelect.js"});
     static {
         CommonResources.install();
         ResourceRegistry resources = WebContainerServlet.getResourceRegistry();

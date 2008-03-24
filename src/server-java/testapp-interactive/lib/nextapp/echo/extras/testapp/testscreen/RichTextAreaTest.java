@@ -110,53 +110,53 @@ public class RichTextAreaTest extends AbstractTest {
             public void actionPerformed(ActionEvent e) {
                 DefaultIconSet icons = new DefaultIconSet();
                 icons.addIcon(RichTextArea.ICON_FOREGROUND,
-                        new ResourceImageReference("/nextapp/echo/extras/webcontainer/resource/image/richtext/Foreground.gif"));  
+                        new ResourceImageReference("nextapp/echo/extras/webcontainer/resource/image/richtext/Foreground.gif"));  
                 icons.addIcon(RichTextArea.ICON_BACKGROUND,
-                        new ResourceImageReference("/nextapp/echo/extras/webcontainer/resource/image/richtext/Background.gif"));  
+                        new ResourceImageReference("nextapp/echo/extras/webcontainer/resource/image/richtext/Background.gif"));  
                 icons.addIcon(RichTextArea.ICON_BOLD,
-                        new ResourceImageReference("/nextapp/echo/extras/webcontainer/resource/image/richtext/Bold.gif"));  
+                        new ResourceImageReference("nextapp/echo/extras/webcontainer/resource/image/richtext/Bold.gif"));  
                 icons.addIcon(RichTextArea.ICON_ITALIC,
-                        new ResourceImageReference("/nextapp/echo/extras/webcontainer/resource/image/richtext/Italic.gif"));  
+                        new ResourceImageReference("nextapp/echo/extras/webcontainer/resource/image/richtext/Italic.gif"));  
                 icons.addIcon(RichTextArea.ICON_UNDERLINE,
-                        new ResourceImageReference("/nextapp/echo/extras/webcontainer/resource/image/richtext/Underline.gif"));  
+                        new ResourceImageReference("nextapp/echo/extras/webcontainer/resource/image/richtext/Underline.gif"));  
                 icons.addIcon(RichTextArea.ICON_UNDO,
-                        new ResourceImageReference("/nextapp/echo/extras/webcontainer/resource/image/richtext/Undo.gif"));  
+                        new ResourceImageReference("nextapp/echo/extras/webcontainer/resource/image/richtext/Undo.gif"));  
                 icons.addIcon(RichTextArea.ICON_REDO,
-                        new ResourceImageReference("/nextapp/echo/extras/webcontainer/resource/image/richtext/Redo.gif"));  
+                        new ResourceImageReference("nextapp/echo/extras/webcontainer/resource/image/richtext/Redo.gif"));  
                 icons.addIcon(RichTextArea.ICON_INDENT,
-                        new ResourceImageReference("/nextapp/echo/extras/webcontainer/resource/image/richtext/Indent.gif"));  
+                        new ResourceImageReference("nextapp/echo/extras/webcontainer/resource/image/richtext/Indent.gif"));  
                 icons.addIcon(RichTextArea.ICON_OUTDENT,
-                        new ResourceImageReference("/nextapp/echo/extras/webcontainer/resource/image/richtext/Outdent.gif"));  
+                        new ResourceImageReference("nextapp/echo/extras/webcontainer/resource/image/richtext/Outdent.gif"));  
                 icons.addIcon(RichTextArea.ICON_CUT,
-                        new ResourceImageReference("/nextapp/echo/extras/webcontainer/resource/image/richtext/Cut.gif"));  
+                        new ResourceImageReference("nextapp/echo/extras/webcontainer/resource/image/richtext/Cut.gif"));  
                 icons.addIcon(RichTextArea.ICON_COPY,
-                        new ResourceImageReference("/nextapp/echo/extras/webcontainer/resource/image/richtext/Copy.gif"));  
+                        new ResourceImageReference("nextapp/echo/extras/webcontainer/resource/image/richtext/Copy.gif"));  
                 icons.addIcon(RichTextArea.ICON_PASTE,
-                        new ResourceImageReference("/nextapp/echo/extras/webcontainer/resource/image/richtext/Paste.gif"));  
+                        new ResourceImageReference("nextapp/echo/extras/webcontainer/resource/image/richtext/Paste.gif"));  
                 icons.addIcon(RichTextArea.ICON_BULLETED_LIST,
-                        new ResourceImageReference("/nextapp/echo/extras/webcontainer/resource/image/richtext/BulletedList.gif"));  
+                        new ResourceImageReference("nextapp/echo/extras/webcontainer/resource/image/richtext/BulletedList.gif"));  
                 icons.addIcon(RichTextArea.ICON_NUMBERED_LIST,
-                        new ResourceImageReference("/nextapp/echo/extras/webcontainer/resource/image/richtext/NumberedList.gif"));  
+                        new ResourceImageReference("nextapp/echo/extras/webcontainer/resource/image/richtext/NumberedList.gif"));  
                 icons.addIcon(RichTextArea.ICON_TABLE,
-                        new ResourceImageReference("/nextapp/echo/extras/webcontainer/resource/image/richtext/Table.gif"));  
+                        new ResourceImageReference("nextapp/echo/extras/webcontainer/resource/image/richtext/Table.gif"));  
                 icons.addIcon(RichTextArea.ICON_IMAGE,
-                        new ResourceImageReference("/nextapp/echo/extras/webcontainer/resource/image/richtext/Image.gif"));  
+                        new ResourceImageReference("nextapp/echo/extras/webcontainer/resource/image/richtext/Image.gif"));  
                 icons.addIcon(RichTextArea.ICON_HORIZONTAL_RULE,
-                        new ResourceImageReference("/nextapp/echo/extras/webcontainer/resource/image/richtext/HorizontalRule.gif"));  
+                        new ResourceImageReference("nextapp/echo/extras/webcontainer/resource/image/richtext/HorizontalRule.gif"));  
                 icons.addIcon(RichTextArea.ICON_HYPERLINK,
-                        new ResourceImageReference("/nextapp/echo/extras/webcontainer/resource/image/richtext/Hyperlink.gif"));  
+                        new ResourceImageReference("nextapp/echo/extras/webcontainer/resource/image/richtext/Hyperlink.gif"));  
                 icons.addIcon(RichTextArea.ICON_SUBSCRIPT,
-                        new ResourceImageReference("/nextapp/echo/extras/webcontainer/resource/image/richtext/Subscript.gif"));  
+                        new ResourceImageReference("nextapp/echo/extras/webcontainer/resource/image/richtext/Subscript.gif"));  
                 icons.addIcon(RichTextArea.ICON_SUPERSCRIPT,
-                        new ResourceImageReference("/nextapp/echo/extras/webcontainer/resource/image/richtext/Superscript.gif"));  
+                        new ResourceImageReference("nextapp/echo/extras/webcontainer/resource/image/richtext/Superscript.gif"));  
                 icons.addIcon(RichTextArea.ICON_ALIGNMENT_LEFT,
-                        new ResourceImageReference("/nextapp/echo/extras/webcontainer/resource/image/richtext/AlignLeft.gif"));  
+                        new ResourceImageReference("nextapp/echo/extras/webcontainer/resource/image/richtext/AlignLeft.gif"));  
                 icons.addIcon(RichTextArea.ICON_ALIGNMENT_CENTER,
-                        new ResourceImageReference("/nextapp/echo/extras/webcontainer/resource/image/richtext/AlignCenter.gif"));  
+                        new ResourceImageReference("nextapp/echo/extras/webcontainer/resource/image/richtext/AlignCenter.gif"));  
                 icons.addIcon(RichTextArea.ICON_ALIGNMENT_RIGHT,
-                        new ResourceImageReference("/nextapp/echo/extras/webcontainer/resource/image/richtext/AlignRight.gif"));  
+                        new ResourceImageReference("nextapp/echo/extras/webcontainer/resource/image/richtext/AlignRight.gif"));  
                 icons.addIcon(RichTextArea.ICON_ALIGNMENT_JUSTIFY,
-                        new ResourceImageReference("/nextapp/echo/extras/webcontainer/resource/image/richtext/AlignJustify.gif"));  
+                        new ResourceImageReference("nextapp/echo/extras/webcontainer/resource/image/richtext/AlignJustify.gif"));  
                 richTextArea.setIcons(icons);
             }
         });
