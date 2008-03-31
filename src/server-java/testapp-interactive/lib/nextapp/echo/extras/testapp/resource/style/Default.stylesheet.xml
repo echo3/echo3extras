@@ -236,8 +236,6 @@
      <i r="/nextapp/echo/extras/testapp/resource/image/BlueSteelBackground.jpg"/>
     </fi>
    </p>
-   <p n="minimumSize" t="Extent" v="200px"/>
-   <p n="maximumSize" t="Extent" v="300px"/>
   </p>
   <p n="tabBackgroundImage" t="FillImage">
    <fi r="0" t="r">

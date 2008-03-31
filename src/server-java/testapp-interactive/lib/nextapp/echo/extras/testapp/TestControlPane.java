@@ -61,8 +61,6 @@ public class TestControlPane extends SplitPane {
         add(controlGroupsAccordion);
     }
     
-    
-    
     public void addControl(String category, Component control) {
         Column controlsColumn = (Column) getComponent(category);
         if (controlsColumn == null) {
