@@ -110,9 +110,10 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
             this._activeTabId = null;
         }
         this._tabs.splice(tabIndex, 1);
-    
-        tab._headerTdElement.parentNode.removeChild(tab._headerTdElement);
-        tab._contentDivElement.parentNode.removeChild(tab._contentDivElement);
+        
+        WebCore.DOM.removeNode(tab._headerTdElement);
+        WebCore.DOM.removeNode(tab._contentDivElement);
+        
         tab._dispose();
     },
     
