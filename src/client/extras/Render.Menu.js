@@ -564,10 +564,6 @@ ExtrasRender.ComponentSync.Menu.RenderedMenu = Core.extend({
  */
 ExtrasRender.ComponentSync.ContextMenu = Core.extend(ExtrasRender.ComponentSync.Menu, {
 
-    $static: {
-        _supportedPartialProperties: ["model", "stateModel"]
-    },
-    
     $load: function() {
         EchoRender.registerPeer("ExtrasApp.ContextMenu", this);
     },
@@ -580,7 +576,7 @@ ExtrasRender.ComponentSync.ContextMenu = Core.extend(ExtrasRender.ComponentSync.
     },
 
     _processContextClick: function(e) {
-        if (!this.client.verifyInput(this.component) || WebCore.dragInProgress) {
+        if (!this.client.verifyInput(this.component, EchoClient.FLAG_INPUT_PROPERTY) || WebCore.dragInProgress) {
             return;
         }
     
@@ -610,6 +606,41 @@ ExtrasRender.ComponentSync.ContextMenu = Core.extend(ExtrasRender.ComponentSync.
         }
         
         return contextMenuDivElement;
+    },
+    
+    renderUpdate: function(update) {
+        if (update.isUpdatedPropertySetIn({ stateModel: true, model: true })) {
+            // partial update
+            var removedChildren = update.getRemovedChildren();
+            if (removedChildren) {
+                WebCore.DOM.removeNode(this.element.firstChild);
+            }
+            var addedChildren = update.getAddedChildren();
+            if (addedChildren) {
+                EchoRender.renderComponentAdd(update, addedChildren[0], this.element);
+            }
+            var modelUpdate = update.getUpdatedProperty("model");
+            var stateModelUpdate = update.getUpdatedProperty("stateModel");
+            
+            var reOpenMenu = this.maskDeployed && (modelUpdate || stateModelUpdate);
+            if (reOpenMenu) {
+	            this.deactivate();
+            }
+            if (modelUpdate) {
+                this.menuModel = modelUpdate.newValue;
+            }
+            if (stateModelUpdate) {
+                this.stateModel = stateModelUpdate.newValue;
+            }
+            if (reOpenMenu) {
+	            this.activate();
+                this.activateItem(this.menuModel);
+            }
+            return false;
+        }
+        // full update
+        ExtrasRender.ComponentSync.Menu.prototype.renderUpdate.call(this, update);
+        return true;
     }
 });
 
