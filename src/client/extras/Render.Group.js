@@ -114,7 +114,7 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
                     topPosElem.style.width = titlePosition.toString();
                 }
                 var topPosElemImg = document.createElement("img");
-                topPosElemImg.src = EchoRender.Util.TRANSPARENT_IMAGE;
+                topPosElemImg.src = this.client.getResourceUrl("Echo", "resource/Transparent.gif");
                 if (EchoAppRender.Extent.isPercent(titlePosition)) {
                     topPosElemImg.style.width = titlePosition.toString();
                 }
