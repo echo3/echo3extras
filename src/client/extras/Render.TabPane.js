@@ -134,7 +134,13 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
         this._tabPosition = this.component.render("tabPosition", ExtrasRender.ComponentSync.TabPane._defaultTabPosition);
         this._tabSpacing = this.component.render("tabSpacing", ExtrasRender.ComponentSync.TabPane._defaultTabSpacing);
         this._tabCloseEnabled = this.component.render("tabCloseEnabled", false);
-
+        if (this._tabCloseEnabled) {
+            this._tabCloseIcons = {};
+            this._tabCloseIcons.defaultIcon = this.component.render("tabCloseIcon");
+            this._tabCloseIcons.disabledIcon = this.component.render("tabDisabledCloseIcon");
+            this._tabCloseIcons.fallbackDefaultIcon = this.client.getResourceUrl("Extras", "image/tabpane/Close.gif");
+            this._tabCloseIcons.rolloverIcon = this.component.render("tabRolloverCloseIcon");
+        }
         // Create Main Element
         this._element = document.createElement("div");
         this._element.id = this.component.renderId;
@@ -365,6 +371,12 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         this._childComponent = childComponent;
         this._parent = parent;
         this._rendered = false;
+        if (parent._tabCloseEnabled) {
+            var layoutData = this._childComponent.render("layoutData");
+            this._tabCloseEnabled = layoutData ? layoutData.closeEnabled : false;
+        } else {
+            this._tabCloseEnabled = false;
+        }
         // elements
         this._headerTdElement = null;
         this._headerContentTableElement = null;
@@ -379,11 +391,9 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         WebCore.EventProcessor.add(this._headerTdElement, "click", Core.method(this, this._processClick), false);
         WebCore.EventProcessor.Selection.disable(this._headerTdElement);
         
-        if (this._closeImageTdElement) {
+        if (this._tabCloseEnabled) {
             WebCore.EventProcessor.add(this._headerTdElement, "mouseover", 
                     Core.method(this, this._processEnter), false);
-            WebCore.EventProcessor.add(this._headerTdElement, "mouseout", 
-                    Core.method(this, this._processExit), false);
         }
     },
     
@@ -402,17 +412,16 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
     },
     
     _getCloseImage: function(rollover) {
-        if (this._isTabCloseEnabled()) {
+        var icons = this._parent._tabCloseIcons;
+        var icon;
+        if (this._tabCloseEnabled) {
             if (rollover && this._parent.component.render("tabCloseIconRolloverEnabled")) {
-                var image = this._parent.component.render("tabRolloverCloseIcon");
-                if (image) {
-                    return image;
-                }
+                icon = icons.rolloverIcon;
             }
-            return this._parent.component.render("tabCloseIcon");
         } else {
-            return this._parent.component.render("tabDisabledCloseIcon");
+            icon = icons.disabledIcon;
         }
+        return icon ? icon : icons.defaultIcon || icons.fallbackDefaultIcon;
     },
     
     _getContentInsets: function() {
@@ -531,18 +540,13 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         }
     },
     
-    _isTabCloseEnabled: function() {
-        var layoutData = this._childComponent.render("layoutData");
-        return layoutData ? layoutData.closeEnabled : false;
-    },
-    
     _processClick: function(e) {
         if (!this._parent.component.isActive()) {
             return;
         }
         if (this._closeImageTdElement && WebCore.DOM.isAncestorOf(this._closeImageTdElement, e.target)) {
             // close icon clicked
-            if (!this._isTabCloseEnabled()) {
+            if (!this._tabCloseEnabled) {
                 return;
             }
             this._parent.component.fireEvent({type: "tabClose", source: this._parent.component, 
@@ -561,21 +565,9 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
             return;
         }
         
-        this._closeImageTdElement.firstChild.style.visibility = "visible";
-    },
-    
-    _processExit: function(e) {
-        if (!this._parent.component.isActive()) {
-            return;
-        }
-    
-        var relTarget = WebCore.DOM.getEventRelatedTarget(e);
-        if (relTarget && WebCore.DOM.isAncestorOf(this._headerTdElement, relTarget)) {
-            // within tab box
-            return;
-        }
-           
-        this._closeImageTdElement.firstChild.style.visibility = "hidden";
+        var rollover = WebCore.DOM.isAncestorOf(this._closeImageTdElement, e.target);
+        
+        this._closeImageTdElement.firstChild.src = EchoAppRender.ImageReference.getUrl(this._getCloseImage(rollover));
     },
     
     _render: function(update) {
@@ -595,16 +587,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
                 ExtrasRender.ComponentSync.TabPane._defaultTabCloseIconTextMargin + "px");
         imgTdElement.style.cursor = "pointer";
         var imgElement = document.createElement("img");
-        imgElement.style.visibility = "hidden";
-        var closeImage = this._getCloseImage(false);
-        if (!closeImage) {
-            closeImage = this._getCloseImage(true);
-        }
-        if (closeImage) {
-            imgElement.src = EchoAppRender.ImageReference.getUrl(closeImage);
-        } else {
-            imgElement.src = this._parent.client.getResourceUrl("Extras", "image/tabpane/Close.gif");
-        }
+        imgElement.src = EchoAppRender.ImageReference.getUrl(this._getCloseImage(false));
         
         if (WebCore.Environment.BROWSER_INTERNET_EXPLORER) {
             // remove auto-calculated width & height, to prevent problems with different image sizes
@@ -675,7 +658,8 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         
         var icon = layoutData ? layoutData.icon : null;
         var title = layoutData ? (layoutData.title ? layoutData.title : "*") : "*";
-        if (icon || this._parent._tabCloseEnabled) {
+        var closeIcon = this._parent._tabCloseEnabled && (this._tabCloseEnabled || this._parent._tabCloseIcons.disabledIcon);
+        if (icon || closeIcon) {
             // Render Text and Icon(s)
             var tableElement = document.createElement("table");
             tableElement.style.padding = "0px";
@@ -694,7 +678,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
             tableElement.appendChild(tbodyElement);
             tbodyElement.appendChild(trElement);
             trElement.appendChild(textTdElement);
-            if (this._parent._tabCloseEnabled) {
+            if (closeIcon) {
                 this._closeImageTdElement = this._renderCloseIconElement();
                 trElement.appendChild(this._closeImageTdElement);
             }
