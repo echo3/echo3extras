@@ -4,7 +4,7 @@
 ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
 
     $static: {
-        _supportedPartialProperties: ["activeTab"],
+        _supportedPartialProperties: ["activeTab", "activeTabIndex"],
         _paneInsets: 0,
         _defaultBorderType: ExtrasApp.TabPane.BORDER_TYPE_ADJACENT_TO_TABS,
         _defaultForeground: "#000000",
@@ -309,6 +309,11 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
                 var activeTabUpdate = update.getUpdatedProperty("activeTab");
                 if (activeTabUpdate) {
                     this._selectTab(activeTabUpdate.newValue);
+                } else {
+                    var activeTabIndexUpdate = update.getUpdatedProperty("activeTabIndex");
+                    if (activeTabIndexUpdate && activeTabIndexUpdate.newValue < this.component.children.length) {
+                        this._selectTab(this.component.children[activeTabIndexUpdate.newValue].renderId);
+                    }
                 }
             }
         }
