@@ -63,8 +63,6 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
 
     $load: function() {
         EchoRender.registerPeer("ExtrasApp.CalendarSelect", this);
-        
-        EchoClient.addResourceChangeListener(Core.method(this, this._processClientResourceChanged));
     },
     
     _element: null,
