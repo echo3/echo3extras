@@ -14,7 +14,7 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
 
         _DAYS_IN_MONTH: [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
         
-        messages: new Core.ResourceBundle({
+        resource: new Core.ResourceBundle({
             "DayOfWeek.0":     "Sunday",
             "DayOfWeek.1":     "Monday",
             "DayOfWeek.2":     "Tuesday",
@@ -58,17 +58,6 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
             } else {
                 return this._DAYS_IN_MONTH[month];
             }
-        },
-        
-        _processClientResourceChanged: function(e) {
-            if (e.path[0] != "ExtrasRender.ComponentSync.CalendarSelect" != 0) {
-                return;
-            }
-            
-            var messageMaps = EchoClient.getResource(["ExtrasRender.ComponentSync.CalendarSelect", "messages"]);
-            for (var x in messageMaps) {
-                this.messages.set(x, messageMaps[x]);
-            } 
         }
     },
 
@@ -76,46 +65,6 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
         EchoRender.registerPeer("ExtrasApp.CalendarSelect", this);
         
         EchoClient.addResourceChangeListener(Core.method(this, this._processClientResourceChanged));
-        
-// FIXME. Following is test code for localization stuff that is in-development in Echo3 core.        
-        
-//        EchoClient.setResource(["ExtrasRender.ComponentSync.CalendarSelect", "messages", "de"], {
-//            "DayOfWeek.0":      "Sonntag",
-//            "DayOfWeek.1":      "Montag",
-//            "DayOfWeek.2":      "Dienstag",
-//            "DayOfWeek.3":      "Mittwoch",
-//            "DayOfWeek.4":      "Donnerstag",
-//            "DayOfWeek.5":      "Freitag",
-//            "DayOfWeek.6":      "Samstag",
-//            "Month.0":          "Januar",
-//            "Month.1":          "Februar",
-//            "Month.2":          "M\u00e4rz",
-//            "Month.3":          "April",
-//            "Month.4":          "Mai",
-//            "Month.5":          "Juni",
-//            "Month.6":          "Juli",
-//            "Month.7":          "August",
-//            "Month.8":          "September",
-//            "Month.10":         "November",
-//            "Month.11":         "Dezember",
-//            "FirstDayOfWeek":   "1"
-//        });
-//
-//        EchoClient.setResource(["ExtrasRender.ComponentSync.CalendarSelect", "messages", "de-DE"], {
-//            "DayOfWeek.0":      "Sonntag",
-//            "DayOfWeek.1":      "Montag",
-//            "DayOfWeek.2":      "Dienstag",
-//            "DayOfWeek.3":      "Mittwoch",
-//            "DayOfWeek.4":      "Donnerstag",
-//            "DayOfWeek.5":      "Freitag",
-//            "DayOfWeek.6":      "Samstag",
-//            "Month.0":          "Januaraaaaaaaa",
-//            "Month.2":          "M\u00e4rz",
-//            "Month.3":          "April",
-//            "Month.4":          "Mai",
-//            "Month.5":          "Juni",
-//            "FirstDayOfWeek":   "1"
-//        });
     },
     
     _element: null,
@@ -133,7 +82,7 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
     _icons: { },
     
     $construct: function() {
-        this._msg = ExtrasRender.ComponentSync.CalendarSelect.messages.get(null);
+        this._msg = ExtrasRender.ComponentSync.CalendarSelect.resource.get("de");
     },
     
     _calculateCalendarInformation: function() {

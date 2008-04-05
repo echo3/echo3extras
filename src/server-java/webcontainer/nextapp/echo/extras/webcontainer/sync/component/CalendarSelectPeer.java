@@ -30,6 +30,9 @@
 package nextapp.echo.extras.webcontainer.sync.component;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 import nextapp.echo.app.Component;
 import nextapp.echo.app.update.ClientUpdateManager;
@@ -45,14 +48,26 @@ import nextapp.echo.webcontainer.service.JavaScriptService;
 public class CalendarSelectPeer
 extends AbstractComponentSynchronizePeer {
 
+    private static final String RESOURCE_DIR = "nextapp/echo/extras/webcontainer/resource/";
+    
     private static final Service CALENDAR_SELECT_SERVICE = JavaScriptService.forResources("EchoExtras.CalendarSelect",
-            new String[] {  "nextapp/echo/extras/webcontainer/resource/Application.CalendarSelect.js",  
-                            "nextapp/echo/extras/webcontainer/resource/Render.CalendarSelect.js"});
-
+            new String[] { "nextapp/echo/extras/webcontainer/resource/Application.CalendarSelect.js",  
+                           "nextapp/echo/extras/webcontainer/resource/Render.CalendarSelect.js" });
+    
+    private static final Map LOCALE_SERVICES = new HashMap();
+    
     static {
         WebContainerServlet.getServiceRegistry().add(CALENDAR_SELECT_SERVICE);
+        addLocaleService(Locale.GERMAN, "de");
     }
-
+    
+    private static void addLocaleService(Locale locale, String localeCode) {
+        Service service = JavaScriptService.forResource("EchoExtras.CalendarSelect." + localeCode, 
+                RESOURCE_DIR + "RenderLocale.CalendarSelect." + localeCode + ".js");
+        WebContainerServlet.getServiceRegistry().add(service);
+        LOCALE_SERVICES.put(locale, service);
+    }
+    
     public CalendarSelectPeer() {
         super();
         addOutputProperty(CalendarSelect.DATE_CHANGED_PROPERTY);
@@ -82,6 +97,15 @@ extends AbstractComponentSynchronizePeer {
         return null;
     }
 
+    private void installLocaleService(Context context, Component component) {
+        Locale locale = component.getApplicationInstance().getLocale();
+        if (LOCALE_SERVICES.containsKey(locale)) {
+            ServerMessage serverMessage = (ServerMessage) context.get(ServerMessage.class);
+            serverMessage.addLibrary(((Service) LOCALE_SERVICES.get(locale)).getId());
+        }
+        
+    }
+
     /**
      * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#getOutputProperty(
      *      nextapp.echo.app.util.Context, nextapp.echo.app.Component, java.lang.String, int)
@@ -96,13 +120,14 @@ extends AbstractComponentSynchronizePeer {
     }
 
     /**
-     * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#init(nextapp.echo.app.util.Context)
+     * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#init(nextapp.echo.app.util.Context, Component)
      */
-    public void init(Context context) {
-        super.init(context);
+    public void init(Context context, Component component) {
+        super.init(context, component);
         ServerMessage serverMessage = (ServerMessage) context.get(ServerMessage.class);
         serverMessage.addLibrary(CommonService.INSTANCE.getId());
         serverMessage.addLibrary(CALENDAR_SELECT_SERVICE.getId());
+        installLocaleService(context, component);
     }
 
     /**
