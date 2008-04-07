@@ -701,7 +701,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             if (visitedNodeCell) {
                 var insets;
                 if (columnLayout) {
-                    insets = columnLayout.get("insets");
+                    insets = columnLayout.insets;
                 } else {
                     insets = this._defaultInsets;
                 }
@@ -799,7 +799,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         // because the node is rendered as a table within the td
         var insets;
         if (nodeLayout) {
-            insets = nodeLayout.get("insets");
+            insets = nodeLayout.insets;
         } else {
             insets = this._defaultInsets;
         }
