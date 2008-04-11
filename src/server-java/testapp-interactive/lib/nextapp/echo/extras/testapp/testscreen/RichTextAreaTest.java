@@ -32,7 +32,9 @@ package nextapp.echo.extras.testapp.testscreen;
 import nextapp.echo.app.Button;
 import nextapp.echo.app.Column;
 import nextapp.echo.app.ContentPane;
+import nextapp.echo.app.Extent;
 import nextapp.echo.app.ResourceImageReference;
+import nextapp.echo.app.WindowPane;
 import nextapp.echo.app.event.ActionEvent;
 import nextapp.echo.app.event.ActionListener;
 import nextapp.echo.extras.app.DefaultIconSet;
@@ -193,6 +195,14 @@ public class RichTextAreaTest extends AbstractTest {
                     }
                 });
                 column.add(button2);
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_INTEGRATION, "Add RTA WidndowPane", new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                WindowPane windowPane = new WindowPane("Rich Text Area", new Extent(600), new Extent(600));
+                windowPane.setStyleName("Default");
+                windowPane.add(new RichTextArea());
+                InteractiveApp.getApp().getDefaultWindow().getContent().add(windowPane);
             }
         });
     }
