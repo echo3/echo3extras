@@ -4,7 +4,7 @@
 ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
 
     $static: {
-        MESSAGES: new Core.ResourceBundle({
+        resource: new Core.ResourceBundle({
             "ColorDialog.Title.Foreground":     "Text Color",
             "ColorDialog.Title.Background":     "Highlight Color",
             "ColorDialog.PromptForeground":     "Foreground:",
@@ -93,10 +93,6 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
             }
             return icons;
         }
-    },
-    
-    $construct: function() {
-        this._msg = ExtrasRender.ComponentSync.RichTextArea.MESSAGES.get(null);
     },
     
     /**
@@ -466,6 +462,8 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
     },
     
     renderAdd: function(update, parentElement) {
+        this._msg = ExtrasRender.ComponentSync.RichTextArea.resource.get("de");
+
         this._icons = this.getIcons();
         if (!this._icons) {
             this._icons = {};

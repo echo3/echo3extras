@@ -79,10 +79,6 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
     // FIXME temporary
     _icons: { },
     
-    $construct: function() {
-        this._msg = ExtrasRender.ComponentSync.CalendarSelect.resource.get("de");
-    },
-    
     _calculateCalendarInformation: function() {
         var firstDate = new Date(this._year, this._month, 1);
         this._firstDayOfMonth = firstDate.getDay();
@@ -176,6 +172,9 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
     },
 
     renderAdd: function(update, parentElement) {
+        // Load localization data.
+        this._msg = ExtrasRender.ComponentSync.CalendarSelect.resource.get("de");
+
         var enabled = this.component.isRenderEnabled()
     
         var i, j, tdElement, trElement;
