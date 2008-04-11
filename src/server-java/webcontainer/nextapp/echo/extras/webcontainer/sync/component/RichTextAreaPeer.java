@@ -29,11 +29,7 @@
 
 package nextapp.echo.extras.webcontainer.sync.component;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import nextapp.echo.app.Button;
-import nextapp.echo.app.Color;
 import nextapp.echo.app.Column;
 import nextapp.echo.app.Component;
 import nextapp.echo.app.ContentPane;
@@ -63,7 +59,6 @@ import nextapp.echo.webcontainer.service.JavaScriptService;
  */
 public class RichTextAreaPeer extends AbstractComponentSynchronizePeer {
 
-    private static final String LOCALIZATION_DATA = "localizationData";
     private static final Service RICH_TEXT_AREA_SERVICE = JavaScriptService.forResources("EchoExtras.RichTextArea",
             new String[] {  "nextapp/echo/extras/webcontainer/resource/Application.RichTextArea.js",  
                             "nextapp/echo/extras/webcontainer/resource/Render.RichTextArea.js",
@@ -117,7 +112,6 @@ public class RichTextAreaPeer extends AbstractComponentSynchronizePeer {
         addRequiredComponentClass(WindowPane.class);
 
         addOutputProperty(RichTextArea.TEXT_CHANGED_PROPERTY);
-        addOutputProperty(LOCALIZATION_DATA);
     }
     
     /**
@@ -152,14 +146,6 @@ public class RichTextAreaPeer extends AbstractComponentSynchronizePeer {
         if (propertyName.equals(RichTextArea.TEXT_CHANGED_PROPERTY)) {
             RichTextArea rta = (RichTextArea) component;
             return rta.getText();
-        } else if (propertyName.equals(LOCALIZATION_DATA)) {
-            //FIXME test code.
-            Map testMap = new HashMap();
-            testMap.put("Integer", new Integer(5));
-            testMap.put("Boolean", Boolean.TRUE);
-            testMap.put("String", "TestString");
-            testMap.put("Color", new Color(0xabcdef));
-            return testMap;
         } else {
             return super.getOutputProperty(context, component, propertyName, propertyIndex);
         }
