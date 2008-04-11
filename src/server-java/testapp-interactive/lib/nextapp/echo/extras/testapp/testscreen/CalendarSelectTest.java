@@ -32,6 +32,7 @@ package nextapp.echo.extras.testapp.testscreen;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 import nextapp.echo.app.Extent;
 import nextapp.echo.app.Insets;
@@ -89,6 +90,26 @@ public class CalendarSelectTest extends AbstractTest {
                 calendarSelect.setBackgroundImage(Styles.FILL_IMAGE_LIGHT_BLUE_LINE);
                 windowPane.add(calendarSelect);
                 InteractiveApp.getApp().getDefaultWindow().getContent().add(windowPane);
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Locale Null", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                calendarSelect.setLocale(null);
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Locale English", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                calendarSelect.setLocale(Locale.ENGLISH);
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Locale German", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                calendarSelect.setLocale(Locale.GERMAN);
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Locale Germany", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                calendarSelect.setLocale(Locale.GERMANY);
             }
         });
         

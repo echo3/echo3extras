@@ -98,12 +98,11 @@ extends AbstractComponentSynchronizePeer {
     }
 
     private void installLocaleService(Context context, Component component) {
-        Locale locale = component.getApplicationInstance().getLocale();
+        Locale locale = component.getRenderLocale();
         if (LOCALE_SERVICES.containsKey(locale)) {
             ServerMessage serverMessage = (ServerMessage) context.get(ServerMessage.class);
             serverMessage.addLibrary(((Service) LOCALE_SERVICES.get(locale)).getId());
         }
-        
     }
 
     /**
