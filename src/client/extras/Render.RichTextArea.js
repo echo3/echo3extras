@@ -462,7 +462,7 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
     },
     
     renderAdd: function(update, parentElement) {
-        this._msg = ExtrasRender.ComponentSync.RichTextArea.resource.get("de");
+        this._msg = ExtrasRender.ComponentSync.RichTextArea.resource.get(this.component.getRenderLocale());
 
         this._icons = this.getIcons();
         if (!this._icons) {

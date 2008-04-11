@@ -173,7 +173,7 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
 
     renderAdd: function(update, parentElement) {
         // Load localization data.
-        this._msg = ExtrasRender.ComponentSync.CalendarSelect.resource.get("de");
+        this._msg = ExtrasRender.ComponentSync.CalendarSelect.resource.get(this.component.getRenderLocale());
 
         var enabled = this.component.isRenderEnabled()
     
