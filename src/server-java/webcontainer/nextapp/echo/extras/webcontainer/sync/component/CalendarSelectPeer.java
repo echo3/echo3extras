@@ -97,14 +97,6 @@ extends AbstractComponentSynchronizePeer {
         return null;
     }
 
-    private void installLocaleService(Context context, Component component) {
-        Locale locale = component.getRenderLocale();
-        if (LOCALE_SERVICES.containsKey(locale)) {
-            ServerMessage serverMessage = (ServerMessage) context.get(ServerMessage.class);
-            serverMessage.addLibrary(((Service) LOCALE_SERVICES.get(locale)).getId());
-        }
-    }
-
     /**
      * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#getOutputProperty(
      *      nextapp.echo.app.util.Context, nextapp.echo.app.Component, java.lang.String, int)
@@ -117,7 +109,7 @@ extends AbstractComponentSynchronizePeer {
             return super.getOutputProperty(context, component, propertyName, propertyIndex);
         }
     }
-
+    
     /**
      * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#init(nextapp.echo.app.util.Context, Component)
      */
@@ -127,6 +119,14 @@ extends AbstractComponentSynchronizePeer {
         serverMessage.addLibrary(CommonService.INSTANCE.getId());
         serverMessage.addLibrary(CALENDAR_SELECT_SERVICE.getId());
         installLocaleService(context, component);
+    }
+    
+    private void installLocaleService(Context context, Component component) {
+        Locale locale = component.getRenderLocale();
+        if (LOCALE_SERVICES.containsKey(locale)) {
+            ServerMessage serverMessage = (ServerMessage) context.get(ServerMessage.class);
+            serverMessage.addLibrary(((Service) LOCALE_SERVICES.get(locale)).getId());
+        }
     }
 
     /**

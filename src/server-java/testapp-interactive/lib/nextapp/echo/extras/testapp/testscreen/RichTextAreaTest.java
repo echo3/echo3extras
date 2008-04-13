@@ -29,6 +29,8 @@
 
 package nextapp.echo.extras.testapp.testscreen;
 
+import java.util.Locale;
+
 import nextapp.echo.app.Button;
 import nextapp.echo.app.Column;
 import nextapp.echo.app.ContentPane;
@@ -203,6 +205,26 @@ public class RichTextAreaTest extends AbstractTest {
                 windowPane.setStyleName("Default");
                 windowPane.add(new RichTextArea());
                 InteractiveApp.getApp().getDefaultWindow().getContent().add(windowPane);
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Locale Null", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                richTextArea.setLocale(null);
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Locale English", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                richTextArea.setLocale(Locale.ENGLISH);
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Locale German", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                richTextArea.setLocale(Locale.GERMAN);
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Locale Germany", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                richTextArea.setLocale(Locale.GERMANY);
             }
         });
     }

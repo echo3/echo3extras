@@ -29,6 +29,10 @@
 
 package nextapp.echo.extras.webcontainer.sync.component;
 
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
 import nextapp.echo.app.Button;
 import nextapp.echo.app.Column;
 import nextapp.echo.app.Component;
@@ -59,13 +63,18 @@ import nextapp.echo.webcontainer.service.JavaScriptService;
  */
 public class RichTextAreaPeer extends AbstractComponentSynchronizePeer {
 
+    private static final String RESOURCE_DIR = "nextapp/echo/extras/webcontainer/resource/";
+    
     private static final Service RICH_TEXT_AREA_SERVICE = JavaScriptService.forResources("EchoExtras.RichTextArea",
-            new String[] {  "nextapp/echo/extras/webcontainer/resource/Application.RichTextArea.js",  
-                            "nextapp/echo/extras/webcontainer/resource/Render.RichTextArea.js",
-                            "nextapp/echo/extras/webcontainer/resource/RemoteClient.RichTextArea.js" });
+            new String[] { RESOURCE_DIR + "Application.RichTextArea.js",
+                           RESOURCE_DIR + "Render.RichTextArea.js",
+                           RESOURCE_DIR + "RemoteClient.RichTextArea.js" });
+    
+    private static final Map LOCALE_SERVICES = new HashMap();
     
     static {
         WebContainerServlet.getServiceRegistry().add(RICH_TEXT_AREA_SERVICE);
+        addLocaleService(Locale.GERMAN, "de");
         CommonResources.install();
         ResourceRegistry resources = WebContainerServlet.getResourceRegistry();
         resources.add("Extras", "image/richtext/AlignCenter.gif", ContentType.IMAGE_GIF);
@@ -94,6 +103,13 @@ public class RichTextAreaPeer extends AbstractComponentSynchronizePeer {
         resources.add("Extras", "image/richtext/Table.gif", ContentType.IMAGE_GIF);
         resources.add("Extras", "image/richtext/Underline.gif", ContentType.IMAGE_GIF);
         resources.add("Extras", "image/richtext/Undo.gif", ContentType.IMAGE_GIF);
+    }
+    
+    private static void addLocaleService(Locale locale, String localeCode) {
+        Service service = JavaScriptService.forResource("EchoExtras.RichTextArea." + localeCode, 
+                RESOURCE_DIR + "RenderLocale.RichTextArea." + localeCode + ".js");
+        WebContainerServlet.getServiceRegistry().add(service);
+        LOCALE_SERVICES.put(locale, service);
     }
     
     public RichTextAreaPeer() {
@@ -159,6 +175,15 @@ public class RichTextAreaPeer extends AbstractComponentSynchronizePeer {
         ServerMessage serverMessage = (ServerMessage) context.get(ServerMessage.class);
         serverMessage.addLibrary(CommonService.INSTANCE.getId());
         serverMessage.addLibrary(RICH_TEXT_AREA_SERVICE.getId());
+        installLocaleService(context, component);
+    }
+
+    private void installLocaleService(Context context, Component component) {
+        Locale locale = component.getRenderLocale();
+        if (LOCALE_SERVICES.containsKey(locale)) {
+            ServerMessage serverMessage = (ServerMessage) context.get(ServerMessage.class);
+            serverMessage.addLibrary(((Service) LOCALE_SERVICES.get(locale)).getId());
+        }
     }
 
     /**
