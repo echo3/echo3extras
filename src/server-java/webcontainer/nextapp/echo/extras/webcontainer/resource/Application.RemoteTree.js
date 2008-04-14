@@ -1,14 +1,14 @@
 /**
  * @class RemoteTree component.
- * @base EchoApp.Component
+ * @base Echo.Component
  */
-ExtrasApp.RemoteTree = Core.extend(EchoApp.Component, {
+Extras.RemoteTree = Core.extend(Echo.Component, {
     
     $load: function() {
-        EchoApp.ComponentFactory.registerType("ExtrasApp.RemoteTree", this);
+        Echo.ComponentFactory.registerType("Extras.RemoteTree", this);
     },
 
-    componentType: "ExtrasApp.RemoteTree",
+    componentType: "Extras.RemoteTree",
     
     doAction: function() {
         this.fireEvent({type: "action", source: this});
@@ -17,15 +17,15 @@ ExtrasApp.RemoteTree = Core.extend(EchoApp.Component, {
 
 /**
  * @class Class for managing the tree structure. The tree structure is based on nodes 
- *          (ExtrasApp.RemoteTree.TreeNode) that have an id. This class stores all nodes
+ *          (Extras.RemoteTree.TreeNode) that have an id. This class stores all nodes
  *          in a map based on their id. 
  */
-ExtrasApp.RemoteTree.TreeStructure = Core.extend({
+Extras.RemoteTree.TreeStructure = Core.extend({
     
     /**
      * Creates a new TreeStructure object.
      * 
-     * @param {ExtrasApp.RemoteTree.TreeNode} rootNode the root node
+     * @param {Extras.RemoteTree.TreeNode} rootNode the root node
      * @constructor
      */
     $construct: function(rootNode) { 
@@ -41,7 +41,7 @@ ExtrasApp.RemoteTree.TreeStructure = Core.extend({
      * @param id the id of the node
      * 
      * @return the node
-     * @type ExtrasApp.RemoteTree.TreeNode
+     * @type Extras.RemoteTree.TreeNode
      */
     getNode: function(id) {
         return this._idNodeMap[id];
@@ -51,7 +51,7 @@ ExtrasApp.RemoteTree.TreeStructure = Core.extend({
      * Adds node to this structure. If node has a parent id, the node will be added
      * to the node with the parent id. Any child nodes will be added as well.
      * 
-     * @param {ExtrasApp.RemoteTree.TreeNode} node the node to add
+     * @param {Extras.RemoteTree.TreeNode} node the node to add
      */
     addNode: function(node) {
         this._idNodeMap[node.getId()] = node;
@@ -69,7 +69,7 @@ ExtrasApp.RemoteTree.TreeStructure = Core.extend({
      * 
      * @see #addNode
      * 
-     * @param {ExtrasApp.RemoteTree.TreeNode} node the node to add the child nodes from
+     * @param {Extras.RemoteTree.TreeNode} node the node to add the child nodes from
      */
     addChildNodes: function(node) {
         var childCount = node.getChildNodeCount();
@@ -84,7 +84,7 @@ ExtrasApp.RemoteTree.TreeStructure = Core.extend({
      * this method will remove the node from it's parent node. Any child nodes 
      * will be automatically removed.
      * 
-     * @param {ExtrasApp.RemoteTree.TreeNode} node the node to remove
+     * @param {Extras.RemoteTree.TreeNode} node the node to remove
      */
     removeNode: function(node) {
         this.removeChildNodes(node);
@@ -100,7 +100,7 @@ ExtrasApp.RemoteTree.TreeStructure = Core.extend({
      * 
      * @see removeNode
      * 
-     * @param {ExtrasApp.RemoteTree.TreeNode} node the node to remove the child nodes of
+     * @param {Extras.RemoteTree.TreeNode} node the node to remove the child nodes of
      */
     removeChildNodes: function(node) {
         var childCount = node.getChildNodeCount();
@@ -114,7 +114,7 @@ ExtrasApp.RemoteTree.TreeStructure = Core.extend({
      * Gets the root node of this structure.
      * 
      * @return the root node
-     * @type ExtrasApp.RemoteTree.TreeNode
+     * @type Extras.RemoteTree.TreeNode
      */
     getRootNode: function() {
         return this._rootNode;
@@ -152,7 +152,7 @@ ExtrasApp.RemoteTree.TreeStructure = Core.extend({
      * 
      * @see getMaxDepth
      * 
-     * @param {ExtrasApp.RemoteTree.TreeNode} node the node to get the depth for
+     * @param {Extras.RemoteTree.TreeNode} node the node to get the depth for
      * 
      * @return the depth of node
      * @type Integer
@@ -170,7 +170,7 @@ ExtrasApp.RemoteTree.TreeStructure = Core.extend({
     /**
      * Determines whether node has a next sibling on the same level.
      * 
-     * @param {ExtrasApp.RemoteTree.TreeNode} node the node to check
+     * @param {Extras.RemoteTree.TreeNode} node the node to check
      * 
      * @return true if node has a next sibling, false if not
      * @type Boolean
@@ -186,12 +186,12 @@ ExtrasApp.RemoteTree.TreeStructure = Core.extend({
     /**
      * Gets the next sibling of node.
      * 
-     * @param {ExtrasApp.RemoteTree.TreeNode} node the node to get the next sibling for
+     * @param {Extras.RemoteTree.TreeNode} node the node to get the next sibling for
      * @param {Boolean} useParentSibling if true, the next sibling of the parent node of node
      *          will be returned if node has no next sibling on the same level
      * 
      * @return the next sibling, or null if it does not exist.
-     * @type ExtrasApp.RemoteTree.TreeNode
+     * @type Extras.RemoteTree.TreeNode
      */
     getNodeNextSibling: function(node, useParentSibling) {
         if (!node.getParentId()) {
@@ -222,7 +222,7 @@ ExtrasApp.RemoteTree.TreeStructure = Core.extend({
      * Gets the header node. The header node is not part of the structure.
      * 
      * @return the node that represents the header row
-     * @type ExtrasApp.RemoteTree.TreeNode
+     * @type Extras.RemoteTree.TreeNode
      */
     getHeaderNode: function() {
         return this._headerNode;
@@ -231,9 +231,9 @@ ExtrasApp.RemoteTree.TreeStructure = Core.extend({
     /**
      * Returns a depth-first iterator that iterates through node and all it's child nodes.
      * 
-     * @param {ExtrasApp.RemoteTree.TreeNode} node the node to start the iteration
+     * @param {Extras.RemoteTree.TreeNode} node the node to start the iteration
      * @param {Boolean} includeHidden true if hidden nodes should be included, false if not
-     * @param {ExtrasApp.RemoteTree.TreeNode} endNode the node that ends the iteration, if endNode
+     * @param {Extras.RemoteTree.TreeNode} endNode the node that ends the iteration, if endNode
      *          is encountered the iterator stops and returns null for subsequent calls
      * 
      * @return the iterator
@@ -312,7 +312,7 @@ ExtrasApp.RemoteTree.TreeStructure = Core.extend({
 /**
  * @class Represents a tree node
  */
-ExtrasApp.RemoteTree.TreeNode = Core.extend({
+Extras.RemoteTree.TreeNode = Core.extend({
     /**
      * Constructs a new tree node object
      * 
@@ -351,7 +351,7 @@ ExtrasApp.RemoteTree.TreeNode = Core.extend({
     /**
      * Determines if node is a child node of this node.
      * 
-     * @param {ExtrasApp.RemoteTree.TreeNode} node the node to check
+     * @param {Extras.RemoteTree.TreeNode} node the node to check
      * 
      * @return true if node is a child node of this node, false otherwise
      * @type Boolean
@@ -364,7 +364,7 @@ ExtrasApp.RemoteTree.TreeNode = Core.extend({
      * Adds node as a child node to this node, if an equal node already exists
      * in the child array, the original child node is replaced with the specified one.
      * 
-     * @param {ExtrasApp.RemoteTree.TreeNode} node the node to add
+     * @param {Extras.RemoteTree.TreeNode} node the node to add
      */
     addChildNode: function(node) {
         var index = this.indexOf(node);
@@ -381,7 +381,7 @@ ExtrasApp.RemoteTree.TreeNode = Core.extend({
     /**
      * Removes node as a child node of this node.
      * 
-     * @param {ExtrasApp.RemoteTree.TreeNode} node the node to remove as a child node
+     * @param {Extras.RemoteTree.TreeNode} node the node to remove as a child node
      */
     removeChildNode: function(node) {
         this._childNodes.splice(this._childNodes.indexOf(node), 1);
@@ -393,7 +393,7 @@ ExtrasApp.RemoteTree.TreeNode = Core.extend({
      * @param {Integer} index the index of the child node
      * 
      * @return the child node at the given index, or null if the index is invalid
-     * @type ExtrasApp.RemoteTree.TreeNode
+     * @type Extras.RemoteTree.TreeNode
      */
     getChildNode: function(index) {
         return this._childNodes[index];
@@ -470,7 +470,7 @@ ExtrasApp.RemoteTree.TreeNode = Core.extend({
     /**
      * Gets the index of node in the node's child array.
      * 
-     * @param {ExtrasApp.RemoteTree.TreeNode} node the node to get the index for
+     * @param {Extras.RemoteTree.TreeNode} node the node to get the index for
      * 
      * @return the index of node, -1 if node is not a child node of this node
      * @type Integer
@@ -487,7 +487,7 @@ ExtrasApp.RemoteTree.TreeNode = Core.extend({
     /**
      * Checks if this node is equal to that.
      * 
-     * @param {ExtrasApp.RemoteTree.TreeNode} that the node to test
+     * @param {Extras.RemoteTree.TreeNode} that the node to test
      * 
      * @return true if the nodes are equal, false if not
      * @type Boolean
@@ -516,9 +516,9 @@ ExtrasApp.RemoteTree.TreeNode = Core.extend({
  * @constructor
  * @class Class to keep track of selection updates.
  */
-ExtrasApp.RemoteTree.SelectionUpdate = Core.extend({
+Extras.RemoteTree.SelectionUpdate = Core.extend({
 
-    className: "ExtrasApp.RemoteTree.SelectionUpdate",
+    className: "Extras.RemoteTree.SelectionUpdate",
 
     $construct: function() {
     
@@ -595,7 +595,7 @@ ExtrasApp.RemoteTree.SelectionUpdate = Core.extend({
  * @param {Number} selectionMode the selectionMode
  * @constructor
  */
-ExtrasApp.TreeSelectionModel = Core.extend({
+Extras.TreeSelectionModel = Core.extend({
     
     $static: {
         /**
@@ -631,7 +631,7 @@ ExtrasApp.TreeSelectionModel = Core.extend({
      * @type Boolean
      */
     isSingleSelection: function() {
-        return this._selectionMode == ExtrasApp.TreeSelectionModel.SINGLE_SELECTION;
+        return this._selectionMode == Extras.TreeSelectionModel.SINGLE_SELECTION;
     },
     
     /**

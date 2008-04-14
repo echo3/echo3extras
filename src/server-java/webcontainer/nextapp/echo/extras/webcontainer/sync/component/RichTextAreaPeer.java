@@ -141,7 +141,7 @@ public class RichTextAreaPeer extends AbstractComponentSynchronizePeer {
      * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#getClientComponentType(boolean)
      */
     public String getClientComponentType(boolean shortType) {
-        return "ExtrasApp.RemoteRichTextArea";
+        return "Extras.RemoteRichTextArea";
     }
     
     /**

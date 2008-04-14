@@ -1,12 +1,12 @@
 /**
  * Component rendering peer: TabPane
  */
-ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
+Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
 
     $static: {
         _supportedPartialProperties: ["activeTab", "activeTabIndex"],
         _paneInsets: 0,
-        _defaultBorderType: ExtrasApp.TabPane.BORDER_TYPE_ADJACENT_TO_TABS,
+        _defaultBorderType: Extras.TabPane.BORDER_TYPE_ADJACENT_TO_TABS,
         _defaultForeground: "#000000",
         _defaultInsets: 2,
         _defaultTabActiveBorder: "1px solid #00004f",
@@ -19,12 +19,12 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
         _defaultTabInactiveBorder: "1px solid #7f7f7f",
         _defaultTabInset: 10,
         _defaultTabInsets: "3px 8px",
-        _defaultTabPosition: ExtrasApp.TabPane.TAB_POSITION_TOP,
+        _defaultTabPosition: Extras.TabPane.TAB_POSITION_TOP,
         _defaultTabSpacing: 0
     },
     
     $load: function() {
-        EchoRender.registerPeer("ExtrasApp.TabPane", this);
+        Echo.Render.registerPeer("Extras.TabPane", this);
     },
     
     _element: null,
@@ -63,7 +63,7 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
      */
     _calculateTabHeight: function(state) {
         if (state) {
-            return this._tabHeightPx + EchoAppRender.Border.getPixelSize(this._tabActiveBorder);
+            return this._tabHeightPx + Echo.Sync.Border.getPixelSize(this._tabActiveBorder);
         } else {
             return this._tabHeightPx - this._tabActiveHeightIncreasePx;
         }
@@ -111,8 +111,8 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
         }
         this._tabs.splice(tabIndex, 1);
         
-        WebCore.DOM.removeNode(tab._headerTdElement);
-        WebCore.DOM.removeNode(tab._contentDivElement);
+        Core.Web.DOM.removeNode(tab._headerTdElement);
+        Core.Web.DOM.removeNode(tab._contentDivElement);
         
         tab._dispose();
     },
@@ -120,20 +120,20 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
     renderAdd: function(update, parentElement) {
         // Configure Properties
         this._activeTabId = this._getActiveTabId();
-        this._borderType = this.component.render("borderType", ExtrasRender.ComponentSync.TabPane._defaultBorderType);
-        this._insets = this.component.render("insets", ExtrasRender.ComponentSync.TabPane._defaultInsets);
+        this._borderType = this.component.render("borderType", Extras.Sync.TabPane._defaultBorderType);
+        this._insets = this.component.render("insets", Extras.Sync.TabPane._defaultInsets);
         this._tabActiveBorder = this.component.render("tabActiveBorder", 
-                ExtrasRender.ComponentSync.TabPane._defaultTabActiveBorder);
-        this._tabActiveHeightIncreasePx = EchoAppRender.Extent.toPixels(this.component.render("tabActiveHeightIncrease", 
-                ExtrasRender.ComponentSync.TabPane._defaultTabActiveHeightIncrease));
+                Extras.Sync.TabPane._defaultTabActiveBorder);
+        this._tabActiveHeightIncreasePx = Echo.Sync.Extent.toPixels(this.component.render("tabActiveHeightIncrease", 
+                Extras.Sync.TabPane._defaultTabActiveHeightIncrease));
         this._tabInactiveBorder = this.component.render("tabInactiveBorder", 
-                ExtrasRender.ComponentSync.TabPane._defaultTabInactiveBorder);
-        this._tabHeightPx = EchoAppRender.Extent.toPixels(this.component.render("tabHeight",
-                ExtrasRender.ComponentSync.TabPane._defaultTabHeight));
-        this._tabInsetPx = EchoAppRender.Extent.toPixels(this.component.render("tabInset",
-                 ExtrasRender.ComponentSync.TabPane._defaultTabInset));
-        this._tabPosition = this.component.render("tabPosition", ExtrasRender.ComponentSync.TabPane._defaultTabPosition);
-        this._tabSpacing = this.component.render("tabSpacing", ExtrasRender.ComponentSync.TabPane._defaultTabSpacing);
+                Extras.Sync.TabPane._defaultTabInactiveBorder);
+        this._tabHeightPx = Echo.Sync.Extent.toPixels(this.component.render("tabHeight",
+                Extras.Sync.TabPane._defaultTabHeight));
+        this._tabInsetPx = Echo.Sync.Extent.toPixels(this.component.render("tabInset",
+                 Extras.Sync.TabPane._defaultTabInset));
+        this._tabPosition = this.component.render("tabPosition", Extras.Sync.TabPane._defaultTabPosition);
+        this._tabSpacing = this.component.render("tabSpacing", Extras.Sync.TabPane._defaultTabSpacing);
         this._tabCloseEnabled = this.component.render("tabCloseEnabled", false);
         if (this._tabCloseEnabled) {
             this._tabCloseIcons = {};
@@ -149,12 +149,12 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
         this._element.style.overflow = "hidden";
     
         // Render Border Insets
-        var pixelInsets = EchoAppRender.Insets.toPixels(this._insets);
-        if (this._borderType == ExtrasApp.TabPane.BORDER_TYPE_SURROUND) {
+        var pixelInsets = Echo.Sync.Insets.toPixels(this._insets);
+        if (this._borderType == Extras.TabPane.BORDER_TYPE_SURROUND) {
             // Do nothing, pixelInsets values are correct.
-        } else if (this._borderType == ExtrasApp.TabPane.BORDER_TYPE_PARALLEL_TO_TABS) {
+        } else if (this._borderType == Extras.TabPane.BORDER_TYPE_PARALLEL_TO_TABS) {
             pixelInsets.left = pixelInsets.right = 0;
-        } else if (this._tabPosition == ExtrasApp.TabPane.TAB_POSITION_BOTTOM) {
+        } else if (this._tabPosition == Extras.TabPane.TAB_POSITION_BOTTOM) {
             pixelInsets.left = pixelInsets.right = pixelInsets.top = 0;
         } else {
             pixelInsets.left = pixelInsets.right = pixelInsets.bottom = 0;
@@ -171,7 +171,7 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
         headerContainerDivElement.style.position = "absolute";
         headerContainerDivElement.style.width = "100%";
         
-        if (this._tabPosition == ExtrasApp.TabPane.TAB_POSITION_BOTTOM) {
+        if (this._tabPosition == Extras.TabPane.TAB_POSITION_BOTTOM) {
             headerContainerDivElement.style.bottom = "0px";
         } else {
             headerContainerDivElement.style.top = "0px";
@@ -179,10 +179,10 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
         headerContainerDivElement.style.left = this._tabInsetPx + "px";
         headerContainerDivElement.style.right = this._tabInsetPx + "px";
         
-        var borderSize = EchoAppRender.Border.getPixelSize(this._tabActiveBorder);
+        var borderSize = Echo.Sync.Border.getPixelSize(this._tabActiveBorder);
         headerContainerDivElement.style.height = (this._tabHeightPx + borderSize) + "px";
-        EchoAppRender.Font.render(this.component.render("font"), headerContainerDivElement);
-        EchoAppRender.FillImage.render(this.component.render("tabBackgroundImage"), headerContainerDivElement);
+        Echo.Sync.Font.render(this.component.render("font"), headerContainerDivElement);
+        Echo.Sync.FillImage.render(this.component.render("tabBackgroundImage"), headerContainerDivElement);
     
         var headerTableElement = document.createElement("table");
         headerTableElement.style.borderWidth = "0px";
@@ -204,9 +204,9 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
         this._contentContainerDivElement = document.createElement("div");
         this._contentContainerDivElement.style.position = "absolute";
         this._contentContainerDivElement.style.overflow = "hidden";
-        EchoAppRender.Color.renderFB(this.component, this._contentContainerDivElement);
+        Echo.Sync.Color.renderFB(this.component, this._contentContainerDivElement);
         
-        if (this._tabPosition == ExtrasApp.TabPane.TAB_POSITION_BOTTOM) {
+        if (this._tabPosition == Extras.TabPane.TAB_POSITION_BOTTOM) {
             this._contentContainerDivElement.style.top = "0px";
             this._contentContainerDivElement.style.bottom = this._tabHeightPx + "px";
         } else {
@@ -216,17 +216,17 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
         this._contentContainerDivElement.style.left = "0px";
         this._contentContainerDivElement.style.right = "0px";
         
-        if (this._borderType == ExtrasApp.TabPane.BORDER_TYPE_NONE) {
+        if (this._borderType == Extras.TabPane.BORDER_TYPE_NONE) {
             this._contentContainerDivElement.style.border = "0px none";
-        } else if (this._borderType == ExtrasApp.TabPane.BORDER_TYPE_SURROUND) {
-            EchoAppRender.Border.render(this._tabActiveBorder, this._contentContainerDivElement);
-        } else if (this._borderType == ExtrasApp.TabPane.BORDER_TYPE_PARALLEL_TO_TABS) {
-            EchoAppRender.Border.render(this._tabActiveBorder, this._contentContainerDivElement, "borderTop")
-            EchoAppRender.Border.render(this._tabActiveBorder, this._contentContainerDivElement, "borderBottom")
-        } else if (this._tabPosition == ExtrasApp.TabPane.TAB_POSITION_BOTTOM) {
-            EchoAppRender.Border.render(this._tabActiveBorder, this._contentContainerDivElement, "borderBottom")
+        } else if (this._borderType == Extras.TabPane.BORDER_TYPE_SURROUND) {
+            Echo.Sync.Border.render(this._tabActiveBorder, this._contentContainerDivElement);
+        } else if (this._borderType == Extras.TabPane.BORDER_TYPE_PARALLEL_TO_TABS) {
+            Echo.Sync.Border.render(this._tabActiveBorder, this._contentContainerDivElement, "borderTop")
+            Echo.Sync.Border.render(this._tabActiveBorder, this._contentContainerDivElement, "borderBottom")
+        } else if (this._tabPosition == Extras.TabPane.TAB_POSITION_BOTTOM) {
+            Echo.Sync.Border.render(this._tabActiveBorder, this._contentContainerDivElement, "borderBottom")
         } else {
-            EchoAppRender.Border.render(this._tabActiveBorder, this._contentContainerDivElement, "borderTop")
+            Echo.Sync.Border.render(this._tabActiveBorder, this._contentContainerDivElement, "borderTop")
         }
         
         this._element.appendChild(this._contentContainerDivElement);
@@ -239,7 +239,7 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
             if (this._activeTabId == child.renderId) {
                 activeTabFound = true;
             }
-            var tab = new ExtrasRender.ComponentSync.TabPane.Tab(child, this);
+            var tab = new Extras.Sync.TabPane.Tab(child, this);
             this._addTab(update, tab);
         }
         
@@ -255,8 +255,8 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
     },
     
     renderDisplay: function() {
-        WebCore.VirtualPosition.redraw(this._element);
-        WebCore.VirtualPosition.redraw(this._contentContainerDivElement);
+        Core.Web.VirtualPosition.redraw(this._element);
+        Core.Web.VirtualPosition.redraw(this._contentContainerDivElement);
         
         for (var i = 0; i < this._tabs.length; ++i) {
             this._tabs[i]._renderDisplay();
@@ -281,7 +281,7 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
             fullRender = true;
         }
         if (!fullRender) {
-            if (!Core.Arrays.containsAll(ExtrasRender.ComponentSync.TabPane._supportedPartialProperties, 
+            if (!Core.Arrays.containsAll(Extras.Sync.TabPane._supportedPartialProperties, 
                     update.getUpdatedPropertyNames(), true)) {
                 // Update contains property changes that cannot be partially re-rendered.
                 fullRender = true;
@@ -300,7 +300,7 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
             if (addedChildren) {
                 // Add children.
                 for (var i = 0; i < addedChildren.length; ++i) {
-                    var tab = new ExtrasRender.ComponentSync.TabPane.Tab(addedChildren[i], this);
+                    var tab = new Extras.Sync.TabPane.Tab(addedChildren[i], this);
                     this._addTab(update, tab, this.component.indexOf(addedChildren[i]));
                 }
             }
@@ -322,7 +322,7 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
         if (fullRender) {
             var element = this._element;
             var containerElement = element.parentNode;
-            EchoRender.renderComponentDispose(update, update.parent);
+            Echo.Render.renderComponentDispose(update, update.parent);
             containerElement.removeChild(element);
             this.renderAdd(update, containerElement);
         }
@@ -370,7 +370,7 @@ ExtrasRender.ComponentSync.TabPane = Core.extend(EchoRender.ComponentSync, {
     }
 });
 
-ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
+Extras.Sync.TabPane.Tab = Core.extend({
 
     $construct: function(childComponent, parent) {
         // state
@@ -394,17 +394,17 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
     },
     
     _addEventListeners: function() {
-        WebCore.EventProcessor.add(this._headerTdElement, "click", Core.method(this, this._processClick), false);
-        WebCore.EventProcessor.Selection.disable(this._headerTdElement);
+        Core.Web.Event.add(this._headerTdElement, "click", Core.method(this, this._processClick), false);
+        Core.Web.Event.Selection.disable(this._headerTdElement);
         
         if (this._tabCloseEnabled) {
-            WebCore.EventProcessor.add(this._headerTdElement, "mouseover", 
+            Core.Web.Event.add(this._headerTdElement, "mouseover", 
                     Core.method(this, this._processEnter), false);
         }
     },
     
     _dispose: function() {
-        WebCore.EventProcessor.removeAll(this._headerTdElement);
+        Core.Web.Event.removeAll(this._headerTdElement);
         
         this._parent = null;
         this._childComponent = null;
@@ -432,10 +432,10 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
     
     _getContentInsets: function() {
         if (this._childComponent.pane) {
-            return ExtrasRender.ComponentSync.TabPane._paneInsets;
+            return Extras.Sync.TabPane._paneInsets;
         } else {
             return this._parent.component.render("defaultContentInsets", 
-                    ExtrasRender.ComponentSync.TabPane._defaultTabContentInsets);
+                    Extras.Sync.TabPane._defaultTabContentInsets);
         }
     },
     
@@ -482,8 +482,8 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
             background = this._parent.component.render("tabInactiveBackground");
             border = this._parent._tabInactiveBorder;
         }
-        EchoAppRender.Color.renderClear(foreground, headerContentTableElement, "color");
-        EchoAppRender.Color.renderClear(background, headerContentTableElement, "backgroundColor");
+        Echo.Sync.Color.renderClear(foreground, headerContentTableElement, "color");
+        Echo.Sync.Color.renderClear(background, headerContentTableElement, "backgroundColor");
         headerContentTableElement.style.cursor = state ? "default" : "pointer";
         headerContentTableElement.style.height = this._parent._calculateTabHeight(state) + "px";
         
@@ -493,20 +493,20 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         } else {
             backgroundImage = this._parent.component.render("tabInactiveBackgroundImage");
         }
-        EchoAppRender.FillImage.renderClear(backgroundImage, centerTdElement, null);
+        Echo.Sync.FillImage.renderClear(backgroundImage, centerTdElement, null);
         
-        var borderSize = EchoAppRender.Border.getPixelSize(this._parent._tabActiveBorder);
-        if (this._parent._tabPosition == ExtrasApp.TabPane.TAB_POSITION_BOTTOM) {
+        var borderSize = Echo.Sync.Border.getPixelSize(this._parent._tabActiveBorder);
+        if (this._parent._tabPosition == Extras.TabPane.TAB_POSITION_BOTTOM) {
             headerContentTableElement.style.marginTop = state ? "0px" : borderSize + "px";
             headerContentTableElement.style.marginBottom = state ? "0px" : this._parent._tabActiveHeightIncreasePx + "px";
-            EchoAppRender.Border.render(border, headerContentTableElement, "borderBottom");
+            Echo.Sync.Border.render(border, headerContentTableElement, "borderBottom");
         } else {
             headerContentTableElement.style.marginBottom = state ? "0px" : borderSize + "px";
             headerContentTableElement.style.marginTop = state ? "0px" : this._parent._tabActiveHeightIncreasePx + "px";
-            EchoAppRender.Border.render(border, headerContentTableElement, "borderTop");
+            Echo.Sync.Border.render(border, headerContentTableElement, "borderTop");
         }
-        EchoAppRender.Border.render(border, headerContentTableElement, "borderLeft");
-        EchoAppRender.Border.render(border, headerContentTableElement, "borderRight");
+        Echo.Sync.Border.render(border, headerContentTableElement, "borderLeft");
+        Echo.Sync.Border.render(border, headerContentTableElement, "borderRight");
         
         var font;
         if (state) {
@@ -514,11 +514,11 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         } else {
             font = this._parent.component.render("tabInactiveFont");
         }
-        EchoAppRender.Font.renderClear(font, headerContentTableElement);
+        Echo.Sync.Font.renderClear(font, headerContentTableElement);
     
         if (this._leftTdElement) {
             var leftImage = this._getLeftImage(state); 
-            EchoAppRender.FillImage.renderClear(leftImage, this._leftTdElement, null);
+            Echo.Sync.FillImage.renderClear(leftImage, this._leftTdElement, null);
             if (leftImage && leftImage.width) {
                 this._leftTdElement.style.width = leftImage.width.toString();
             }
@@ -526,14 +526,14 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         
         if (this._rightTdElement) {
             var rightImage = this._getRightImage(state); 
-            EchoAppRender.FillImage.renderClear(rightImage, this._rightTdElement, null);
+            Echo.Sync.FillImage.renderClear(rightImage, this._rightTdElement, null);
             if (rightImage && rightImage.width) {
                 this._rightTdElement.style.width = rightImage.width.toString();
             }
         }
         
         // show/hide content
-        if (WebCore.Environment.BROWSER_MOZILLA && !WebCore.Environment.BROWSER_FIREFOX) {
+        if (Core.Web.Env.BROWSER_MOZILLA && !Core.Web.Env.BROWSER_FIREFOX) {
             contentDivElement.style.right = state ? "0px" : "100%";
             contentDivElement.style.bottom = state ? "0px" : "100%";
         } else {
@@ -542,7 +542,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         if (state) {
             // FIXME hack to notify the tab content component that it's size may have changed, this is
             // required because any previous notifications could have taken place when this tab was hidden.
-            EchoRender.renderComponentDisplay(this._childComponent);
+            Echo.Render.renderComponentDisplay(this._childComponent);
         }
     },
     
@@ -550,7 +550,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         if (!this._parent.component.isActive()) {
             return;
         }
-        if (this._closeImageTdElement && WebCore.DOM.isAncestorOf(this._closeImageTdElement, e.target)) {
+        if (this._closeImageTdElement && Core.Web.DOM.isAncestorOf(this._closeImageTdElement, e.target)) {
             // close icon clicked
             if (!this._tabCloseEnabled) {
                 return;
@@ -571,9 +571,9 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
             return;
         }
         
-        var rollover = WebCore.DOM.isAncestorOf(this._closeImageTdElement, e.target);
+        var rollover = Core.Web.DOM.isAncestorOf(this._closeImageTdElement, e.target);
         
-        this._closeImageTdElement.firstChild.src = EchoAppRender.ImageReference.getUrl(this._getCloseImage(rollover));
+        this._closeImageTdElement.firstChild.src = Echo.Sync.ImageReference.getUrl(this._getCloseImage(rollover));
     },
     
     _render: function(update) {
@@ -587,15 +587,15 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
     
     _renderCloseIconElement: function() {
         var imgTdElement = document.createElement("td");
-        EchoAppRender.Alignment.render(this._parent.component.render("tabAlignment", 
-                ExtrasRender.ComponentSync.TabPane._defaultTabAlignment), imgTdElement, true, this._parent.component);
+        Echo.Sync.Alignment.render(this._parent.component.render("tabAlignment", 
+                Extras.Sync.TabPane._defaultTabAlignment), imgTdElement, true, this._parent.component);
         imgTdElement.style.padding = "0 0 0 " + this._parent.component.render("tabCloseIconTextMargin", 
-                ExtrasRender.ComponentSync.TabPane._defaultTabCloseIconTextMargin + "px");
+                Extras.Sync.TabPane._defaultTabCloseIconTextMargin + "px");
         imgTdElement.style.cursor = "pointer";
         var imgElement = document.createElement("img");
-        imgElement.src = EchoAppRender.ImageReference.getUrl(this._getCloseImage(false));
+        imgElement.src = Echo.Sync.ImageReference.getUrl(this._getCloseImage(false));
         
-        if (WebCore.Environment.BROWSER_INTERNET_EXPLORER) {
+        if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
             // remove auto-calculated width & height, to prevent problems with different image sizes
             imgElement.removeAttribute("width");
             imgElement.removeAttribute("height");
@@ -609,7 +609,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         contentDivElement.style.position = "absolute";
         contentDivElement.style.top = "0px";
         // hide content
-        if (WebCore.Environment.BROWSER_MOZILLA && !WebCore.Environment.BROWSER_FIREFOX) {
+        if (Core.Web.Env.BROWSER_MOZILLA && !Core.Web.Env.BROWSER_FIREFOX) {
             contentDivElement.style.right = "100%";
             contentDivElement.style.bottom = "100%";
         } else {
@@ -618,16 +618,16 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
             contentDivElement.style.bottom = "0px";
         }
         contentDivElement.style.left = "0px";
-        EchoAppRender.Insets.render(this._getContentInsets(), contentDivElement, "padding");
+        Echo.Sync.Insets.render(this._getContentInsets(), contentDivElement, "padding");
         contentDivElement.style.overflow = "auto";
         
-        EchoRender.renderComponentAdd(update, this._childComponent, contentDivElement);
+        Echo.Render.renderComponentAdd(update, this._childComponent, contentDivElement);
         
         return contentDivElement;
     },
     
     _renderDisplay: function() {
-        WebCore.VirtualPosition.redraw(this._contentDivElement);
+        Core.Web.VirtualPosition.redraw(this._contentDivElement);
     },
 
     _renderHeader: function() {
@@ -636,7 +636,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         var headerTdElement = document.createElement("td");
         headerTdElement.style.borderWidth = "0px";
         headerTdElement.style.padding = "0px";
-        headerTdElement.vAlign = this._parent._tabPosition == ExtrasApp.TabPane.TAB_POSITION_BOTTOM ? "top" : "bottom";
+        headerTdElement.vAlign = this._parent._tabPosition == Extras.TabPane.TAB_POSITION_BOTTOM ? "top" : "bottom";
         
         var tabTableElement = document.createElement("table");
         tabTableElement.cellPadding = "0px";
@@ -660,7 +660,7 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         
         // center
         var centerTdElement = document.createElement("td");
-        EchoAppRender.Insets.render(ExtrasRender.ComponentSync.TabPane._defaultTabInsets, centerTdElement, "padding");
+        Echo.Sync.Insets.render(Extras.Sync.TabPane._defaultTabInsets, centerTdElement, "padding");
         
         var icon = layoutData ? layoutData.icon : null;
         var title = layoutData ? (layoutData.title ? layoutData.title : "*") : "*";
@@ -678,8 +678,8 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
             }
             var textTdElement = document.createElement("td");
             textTdElement.style.whiteSpace = "nowrap";
-            EchoAppRender.Alignment.render(this._parent.component.render("tabAlignment", 
-                    ExtrasRender.ComponentSync.TabPane._defaultTabAlignment), textTdElement, true, this._parent.component);
+            Echo.Sync.Alignment.render(this._parent.component.render("tabAlignment", 
+                    Extras.Sync.TabPane._defaultTabAlignment), textTdElement, true, this._parent.component);
             textTdElement.appendChild(document.createTextNode(title));
             tableElement.appendChild(tbodyElement);
             tbodyElement.appendChild(trElement);
@@ -692,8 +692,8 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
         } else {
             // Render Text Only
             centerTdElement.style.whiteSpace = "nowrap";
-            EchoAppRender.Alignment.render(this._parent.component.render("tabAlignment", 
-                    ExtrasRender.ComponentSync.TabPane._defaultTabAlignment), centerTdElement, true, this._parent.component);
+            Echo.Sync.Alignment.render(this._parent.component.render("tabAlignment", 
+                    Extras.Sync.TabPane._defaultTabAlignment), centerTdElement, true, this._parent.component);
             centerTdElement.appendChild(document.createTextNode(title));
         }
         tabTrElement.appendChild(centerTdElement);
@@ -715,12 +715,12 @@ ExtrasRender.ComponentSync.TabPane.Tab = Core.extend({
     
     _renderIconElement: function(icon) {
         var imgTdElement = document.createElement("td");
-        EchoAppRender.Alignment.render(this._parent.component.render("tabAlignment", 
-                ExtrasRender.ComponentSync.TabPane._defaultTabAlignment), imgTdElement, true, this._parent.component);
+        Echo.Sync.Alignment.render(this._parent.component.render("tabAlignment", 
+                Extras.Sync.TabPane._defaultTabAlignment), imgTdElement, true, this._parent.component);
         var imgElement = document.createElement("img");
-        imgElement.src = EchoAppRender.ImageReference.getUrl(icon);
+        imgElement.src = Echo.Sync.ImageReference.getUrl(icon);
         imgElement.style.marginRight = this._parent.component.render("tabIconTextMargin", 
-                ExtrasRender.ComponentSync.TabPane._defaultTabIconTextMargin + "px");
+                Extras.Sync.TabPane._defaultTabIconTextMargin + "px");
         imgTdElement.appendChild(imgElement);
         return imgTdElement;
     }

@@ -79,7 +79,7 @@ public class AccordionPanePeer extends AbstractComponentSynchronizePeer implemen
      * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#getClientComponentType(boolean)
      */
     public String getClientComponentType(boolean shortType) {
-        return "ExtrasApp.AccordionPane";
+        return "Extras.AccordionPane";
     }
 
     /**

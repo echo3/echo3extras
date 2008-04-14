@@ -1,13 +1,13 @@
 /**
  * @class RichTextArea component.
- * @base EchoApp.Component
+ * @base Echo.Component
  */
-ExtrasApp.RichTextArea = Core.extend(EchoApp.Component, {
+Extras.RichTextArea = Core.extend(Echo.Component, {
 
     $load: function() {
-        EchoApp.ComponentFactory.registerType("ExtrasApp.RichTextArea", this);
+        Echo.ComponentFactory.registerType("Extras.RichTextArea", this);
     },
 
-    componentType: "ExtrasApp.RichTextArea"
+    componentType: "Extras.RichTextArea"
 });
 

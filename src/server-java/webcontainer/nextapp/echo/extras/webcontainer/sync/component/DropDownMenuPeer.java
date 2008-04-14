@@ -58,7 +58,7 @@ public class DropDownMenuPeer extends AbstractMenuPeer {
      * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#getClientComponentType(boolean)
      */
     public String getClientComponentType(boolean shortType) {
-        return "ExtrasApp.DropDownMenu";
+        return "Extras.DropDownMenu";
     }
     
     /**

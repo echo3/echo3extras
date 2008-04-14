@@ -42,7 +42,7 @@ public class ContextMenuPeer extends AbstractMenuPeer {
      * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#getClientComponentType(boolean)
      */
     public String getClientComponentType(boolean shortType) {
-        return "ExtrasApp.ContextMenu";
+        return "Extras.ContextMenu";
     }
 
     /**

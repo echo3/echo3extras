@@ -1,7 +1,7 @@
 /**
  * Component rendering peer: Tree (Remote)
  */
-ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
+Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
 
     $static: {
         _BORDER_SIDE_STYLE_NAMES: ["borderTop", "borderRight", "borderBottom", "borderLeft"],
@@ -43,17 +43,17 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
     },
     
     $load: function() {
-        EchoRender.registerPeer("ExtrasApp.RemoteTree", this);
+        Echo.Render.registerPeer("Extras.RemoteTree", this);
     },
     
     renderAdd: function(update, parentElement) {
         this._lineStyle = this.component.render("lineStyle", 2);
         this._imageSet = { };
-        for (var x in ExtrasRender.ComponentSync.RemoteTree.TREE_IMAGES[this._lineStyle]) {
+        for (var x in Extras.Sync.RemoteTree.TREE_IMAGES[this._lineStyle]) {
             this._imageSet[x] = this.client.getResourceUrl("Extras", 
-                    ExtrasRender.ComponentSync.RemoteTree.TREE_IMAGES[this._lineStyle][x]);
+                    Extras.Sync.RemoteTree.TREE_IMAGES[this._lineStyle][x]);
         }
-        this._showLines = this._lineStyle != ExtrasRender.ComponentSync.RemoteTree.LINE_STYLE_NONE;
+        this._showLines = this._lineStyle != Extras.Sync.RemoteTree.LINE_STYLE_NONE;
 
         this._showsRootHandle = this.component.render("showsRootHandle", false);
         this._rootVisible = this.component.render("rootVisible", true);
@@ -61,17 +61,17 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         this._rolloverEnabled = this.component.render("rolloverEnabled");
         this._selectionEnabled = this.component.render("selectionEnabled");
         if (this._selectionEnabled) {
-            this.selectionModel = new ExtrasApp.TreeSelectionModel(parseInt(this.component.get("selectionMode")));
+            this.selectionModel = new Extras.TreeSelectionModel(parseInt(this.component.get("selectionMode")));
         }
         
         this._defaultInsets = this.component.render("insets");
         if (!this._defaultInsets) {
             this._defaultInsets = "0px";
         }
-        this._defaultCellPadding = EchoAppRender.Insets.toCssValue(this._defaultInsets);
+        this._defaultCellPadding = Echo.Sync.Insets.toCssValue(this._defaultInsets);
         
         var width = this.component.render("width");
-        if (width && WebCore.Environment.QUIRK_IE_TABLE_PERCENT_WIDTH_SCROLLBAR_ERROR && EchoAppRender.Extent.isPercent(width)) {
+        if (width && Core.Web.Env.QUIRK_IE_TABLE_PERCENT_WIDTH_SCROLLBAR_ERROR && Echo.Sync.Extent.isPercent(width)) {
             this._renderPercentWidthByMeasure = parseInt(width);
             width = null;
         }
@@ -82,7 +82,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         tableElement.style.borderSpacing = "0px";
         tableElement.cellSpacing = "0";
         tableElement.cellPadding = "0";
-        EchoAppRender.Border.render(this.component.render("border"), tableElement);
+        Echo.Sync.Border.render(this.component.render("border"), tableElement);
         
         this._computeEffectBorderCompensation();
         
@@ -120,11 +120,11 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         var rolloverBorder = this.component.render("rolloverBorder");
         var selectionBorderLeft = 0;
         if (selectionBorder && this._selectionEnabled) {
-            selectionBorderLeft = EchoAppRender.Border.getPixelSize(selectionBorder, "left");
+            selectionBorderLeft = Echo.Sync.Border.getPixelSize(selectionBorder, "left");
         }
         var rolloverBorderLeft = 0;
         if (rolloverBorder && this._rolloverEnabled) {
-            rolloverBorderLeft = EchoAppRender.Border.getPixelSize(rolloverBorder, "left");
+            rolloverBorderLeft = Echo.Sync.Border.getPixelSize(rolloverBorder, "left");
         }
         this._effectBorderCompensation = Math.max(selectionBorderLeft, rolloverBorderLeft);
     },
@@ -135,21 +135,21 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         }
         // If any column widths are set, render colgroup.
         var columnPixelAdjustment;
-        if (WebCore.Environment.QUIRK_TABLE_CELL_WIDTH_EXCLUDES_PADDING) {
-            var pixelInsets = EchoAppRender.Insets.toPixels(this._defaultInsets);
+        if (Core.Web.Env.QUIRK_TABLE_CELL_WIDTH_EXCLUDES_PADDING) {
+            var pixelInsets = Echo.Sync.Insets.toPixels(this._defaultInsets);
             columnPixelAdjustment = pixelInsets.left + pixelInsets.right;
         }
         
         this._colGroupElement = document.createElement("colgroup");
-        var renderRelative = !WebCore.Environment.NOT_SUPPORTED_RELATIVE_COLUMN_WIDTHS;
+        var renderRelative = !Core.Web.Env.NOT_SUPPORTED_RELATIVE_COLUMN_WIDTHS;
         for (var i = 0; i < this.columnCount; ++i) {
             var colElement = document.createElement("col");
             var width = this.component.renderIndex("columnWidth", i); 
             if (width != null) {
-                if (EchoAppRender.Extent.isPercent(width)) {
+                if (Echo.Sync.Extent.isPercent(width)) {
                     colElement.width = width.value + (renderRelative ? "*" : "%");
                 } else {
-                    var columnPixels = EchoAppRender.Extent.toPixels(width, true);
+                    var columnPixels = Echo.Sync.Extent.toPixels(width, true);
                     if (columnPixelAdjustment) {
                         colElement.width = columnPixels - columnPixelAdjustment;
                     } else {
@@ -311,14 +311,14 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             expandoElement = elems.expandoElement;
             
             var component = this.component.application.getComponentByRenderId(node.getId());
-            EchoRender.renderComponentAdd(update, component, tdElement);
+            Echo.Render.renderComponentAdd(update, component, tdElement);
             
             if (this.columnCount > 1) {
                 for (var c = 0; c < this.columnCount - 1; ++c) {
                     var columnElement = document.createElement("td");
                     
                     var columnComponent = this.component.application.getComponentByRenderId(node.getColumn(c));
-                    EchoRender.renderComponentAdd(update, columnComponent, columnElement);
+                    Echo.Render.renderComponentAdd(update, columnComponent, columnElement);
                     
                     trElement.appendChild(columnElement);
                 }
@@ -353,11 +353,11 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
     
     _getIconLineStyleSuffix: function() {
         switch (this._lineStyle) {
-            case ExtrasRender.ComponentSync.RemoteTree.LINE_STYLE_NONE:
+            case Extras.Sync.RemoteTree.LINE_STYLE_NONE:
                 return "";
-            case ExtrasRender.ComponentSync.RemoteTree.LINE_STYLE_SOLID:
+            case Extras.Sync.RemoteTree.LINE_STYLE_SOLID:
                 return "Solid";
-            case ExtrasRender.ComponentSync.RemoteTree.LINE_STYLE_DOTTED:
+            case Extras.Sync.RemoteTree.LINE_STYLE_DOTTED:
                 return "Dotted";
         }
     },
@@ -388,11 +388,11 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         if (node.isLeaf()) {
             var joinIcon = this._getJoinIcon(node);
             var joinFillImage = { url: joinIcon, repeat: "no-repeat", x: "50%", y: 0 };
-            EchoAppRender.FillImage.render(joinFillImage, expandoElement);
+            Echo.Sync.FillImage.render(joinFillImage, expandoElement);
         } else {
             var toggleIcon = this._getToggleIcon(node);
             var toggleFillImage = { url: toggleIcon, repeat: "no-repeat", x: "50%", y: 0 };
-            EchoAppRender.FillImage.render(toggleFillImage, expandoElement);
+            Echo.Sync.FillImage.render(toggleFillImage, expandoElement);
         }
     },
     
@@ -425,7 +425,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         }
         
         for (var i in sides) {
-            EchoAppRender.Border.render(border, element, sides[i]);
+            Echo.Sync.Border.render(border, element, sides[i]);
         }
     },
     
@@ -444,9 +444,9 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
      * @param element the element to render insets to
      */
     _applyInsets: function(insets, sides, element) {
-        var pixelInsets = EchoAppRender.Insets.toPixels(insets);
+        var pixelInsets = Echo.Sync.Insets.toPixels(insets);
         for (var i = 0; i < sides.length; ++i) {
-            var padding = ExtrasRender.ComponentSync.RemoteTree._SIDE_TO_PADDING_MAP[sides[i]];
+            var padding = Extras.Sync.RemoteTree._SIDE_TO_PADDING_MAP[sides[i]];
             element.style[padding] = pixelInsets[sides[i]] + "px";
         }
     },
@@ -458,7 +458,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
      * 
      * @param {HTMLTableRowElement} insertBefore the row element to insert the resulting row before, if null
      *          the resulting row will be appended to the end of the table
-     * @param {ExtrasApp.RemoteTree.TreeNode} node the node to create the row structure for
+     * @param {Extras.RemoteTree.TreeNode} node the node to create the row structure for
      * @param {Integer} depth the depth of this node, the root node has depth 1
      * 
      * @return an object containing three elements that were created in this method. The object
@@ -504,7 +504,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             if (parentNode) {
                 if (this._showLines && this._treeStructure.hasNodeNextSibling(parentNode) && this._imageSet.vertical) {
                     var verticalLineFillImage = { url: this._imageSet.vertical, repeat: "no-repeat", x: "50%", y: 0 };
-                    EchoAppRender.FillImage.render(verticalLineFillImage, rowHeaderElement);
+                    Echo.Sync.FillImage.render(verticalLineFillImage, rowHeaderElement);
                 }
                 parentNode = this._treeStructure.getNode(parentNode.getParentId());
             }
@@ -695,9 +695,9 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
             var background = this._getProperty("background", context, layout);
             var backgroundImage = this._getProperty("backgroundImage", context, layout);
             var border = this._getProperty("border", context, layout, true);
-            EchoAppRender.Color.renderClear(foreground, cellElement, "color");
-            EchoAppRender.Color.renderClear(background, cellElement, "backgroundColor");
-            EchoAppRender.FillImage.renderClear(backgroundImage, cellElement);
+            Echo.Sync.Color.renderClear(foreground, cellElement, "color");
+            Echo.Sync.Color.renderClear(background, cellElement, "backgroundColor");
+            Echo.Sync.FillImage.renderClear(backgroundImage, cellElement);
             if (visitedNodeCell) {
                 var insets;
                 if (columnLayout) {
@@ -705,15 +705,15 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
                 } else {
                     insets = this._defaultInsets;
                 }
-                EchoAppRender.Insets.render(insets, cellElement, "padding");
+                Echo.Sync.Insets.render(insets, cellElement, "padding");
             }
             ++index;
             
             var font = this.component.render(this._resolvePropertyName(effect, "font", true));
             if (font || !effect) {
-                EchoAppRender.Font.renderClear(null, cellElement);
+                Echo.Sync.Font.renderClear(null, cellElement);
                 if (font) {
-                    EchoAppRender.Font.renderClear(font, cellElement);
+                    Echo.Sync.Font.renderClear(font, cellElement);
                 }
             }
             
@@ -760,14 +760,14 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         }
         var cellE = context.rowElement.firstChild;
         while (cellE) {
-            EchoAppRender.Border.renderClear(null, cellE);
+            Echo.Sync.Border.renderClear(null, cellE);
             this._renderBorder(cellE, defaultBorder, true, false, override);
             this._renderBorder(cellE, effectBorder, false, true);
             cellE = cellE.nextSibling;
         }
         var compensation = this._effectBorderCompensation;
         if (effectBorder) {
-            var currentCompensation = EchoAppRender.Border.getPixelSize(effectBorder, "left");
+            var currentCompensation = Echo.Sync.Border.getPixelSize(effectBorder, "left");
             if (currentCompensation == 0) {
                 compensation = 0;
             } else {
@@ -825,7 +825,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
     /**
      * Sets the selection state for the given node.
      * 
-     * @param {ExtrasApp.RemoteTree.TreeNode} node the node to set the selection state for
+     * @param {Extras.RemoteTree.TreeNode} node the node to set the selection state for
      * @param {Boolean} selectionState the new selection state of node
      * @param {HTMLTableRowElement} rowElement (optional) the row element node is rendered to,
      *          if not provided this method will look it up automatically.
@@ -914,7 +914,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
     /**
      * Gets the row element the node is rendered to.
      * 
-     * @param {ExtrasApp.RemoteTree.TreeNode} node the node to get the row element for
+     * @param {Extras.RemoteTree.TreeNode} node the node to get the row element for
      * 
      * @return the row element
      * @type HTMLTableRowElement  
@@ -940,7 +940,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
     /**
      * Gets the visible row index of node. If node is not visible, -1 is returned.
      * 
-     * @param {ExtrasApp.RemoteTree.TreeNode} node the node to get the row index for
+     * @param {Extras.RemoteTree.TreeNode} node the node to get the row index for
      * 
      * @return the row index
      * @type Integer 
@@ -1001,24 +1001,24 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         var selectionRef = Core.method(this, this._selectionHandler);
         
         if (this._selectionEnabled) {
-            WebCore.EventProcessor.add(elements.trElement, "click", selectionRef, false);
-            WebCore.EventProcessor.Selection.disable(elements.trElement);
+            Core.Web.Event.add(elements.trElement, "click", selectionRef, false);
+            Core.Web.Event.Selection.disable(elements.trElement);
         }
         if (elements.expandoElement) {
-            WebCore.EventProcessor.add(elements.expandoElement, "click", expansionRef, false);
+            Core.Web.Event.add(elements.expandoElement, "click", expansionRef, false);
         }
-        WebCore.EventProcessor.add(elements.tdElement, "click", expansionRef, false);
+        Core.Web.Event.add(elements.tdElement, "click", expansionRef, false);
         
         if (this._selectionEnabled || this._rolloverEnabled) {
-            var mouseEnterLeaveSupport = WebCore.Environment.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED;
+            var mouseEnterLeaveSupport = Core.Web.Env.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED;
             var enterEvent = mouseEnterLeaveSupport ? "mouseenter" : "mouseover";
             var exitEvent = mouseEnterLeaveSupport ? "mouseleave" : "mouseout";
             var rolloverEnterRef = Core.method(this, this._processRolloverEnter);
             var rolloverExitRef = Core.method(this, this._processRolloverExit);
             
             if (this._rolloverEnabled) {
-                WebCore.EventProcessor.add(elements.trElement, enterEvent, rolloverEnterRef, false);
-                WebCore.EventProcessor.add(elements.trElement, exitEvent, rolloverExitRef, false);
+                Core.Web.Event.add(elements.trElement, enterEvent, rolloverEnterRef, false);
+                Core.Web.Event.add(elements.trElement, exitEvent, rolloverExitRef, false);
             }
         }
     },
@@ -1050,9 +1050,9 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         var trElement = this._getRowElementForNode(node);
         var rowIndex = this._getRowIndexForNode(node);
         
-        WebCore.DOM.preventEventDefault(e);
+        Core.Web.DOM.preventEventDefault(e);
         
-        var update = new ExtrasApp.RemoteTree.SelectionUpdate();
+        var update = new Extras.RemoteTree.SelectionUpdate();
         
         var specialKey = e.shiftKey || e.ctrlKey || e.metaKey || e.altKey;    
         if (!this.selectionModel.isSelectionEmpty() && (this.selectionModel.isSingleSelection() || !(specialKey))) {
@@ -1148,14 +1148,14 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         var it = this._elementIterator();
         var row;
         while ((row = it.nextRow())) {
-            WebCore.EventProcessor.removeAll(row);
+            Core.Web.Event.removeAll(row);
             var e = it.currentNodeElement();
             if (e) {
-                WebCore.EventProcessor.removeAll(e);
+                Core.Web.Event.removeAll(e);
             }
             e = it.currentExpandoElement();
             if (e) {
-                WebCore.EventProcessor.removeAll(e);
+                Core.Web.Event.removeAll(e);
             }
         }
         this._effectBorderRows = null;
@@ -1188,7 +1188,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
                 this._renderTreeStructureUpdate(treeStructureUpdate.newValue, update);
             }
             
-            if (Core.Arrays.containsAll(ExtrasRender.ComponentSync.RemoteTree._supportedPartialProperties, 
+            if (Core.Arrays.containsAll(Extras.Sync.RemoteTree._supportedPartialProperties, 
                     propertyNames, true)) {
                 var selection = update.getUpdatedProperty("selection");
                 if (selection && this._selectionEnabled) {
@@ -1203,7 +1203,7 @@ ExtrasRender.ComponentSync.RemoteTree = Core.extend(EchoRender.ComponentSync, {
         var element = this._element;
         var containerElement = element.parentNode;
         var treeStructure = this._treeStructure;
-        EchoRender.renderComponentDispose(update, update.parent);
+        Echo.Render.renderComponentDispose(update, update.parent);
         if (!fullStructure) {
             this._treeStructure = treeStructure;
         }

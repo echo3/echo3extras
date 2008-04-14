@@ -1,10 +1,10 @@
-ExtrasSerial.PropertyTranslator.RemoteTree = { 
+Extras.Serial.RemoteTree = { 
 };
 
-ExtrasSerial.PropertyTranslator.RemoteTree.TreeStructure = { 
+Extras.Serial.RemoteTree.TreeStructure = { 
 
     toProperty: function(client, propertyElement) {
-        var children = WebCore.DOM.getChildElementsByTagName(propertyElement, "e");
+        var children = Core.Web.DOM.getChildElementsByTagName(propertyElement, "e");
         
         var structures = [];
         
@@ -14,7 +14,7 @@ ExtrasSerial.PropertyTranslator.RemoteTree.TreeStructure = {
             var childElement = children[i];
             var id = childElement.getAttribute("i");
             var parentId = childElement.getAttribute("p");
-            var node = new ExtrasApp.RemoteTree.TreeNode(id, parentId);
+            var node = new Extras.RemoteTree.TreeNode(id, parentId);
             var expandedState = childElement.getAttribute("ex") == "1";
             var root = childElement.getAttribute("r") == "1";
             node.setExpanded(expandedState);
@@ -24,7 +24,7 @@ ExtrasSerial.PropertyTranslator.RemoteTree.TreeStructure = {
                 headerNode = node;
             } else {
                 if (root) {
-                    treeStructure = new ExtrasApp.RemoteTree.TreeStructure(node);
+                    treeStructure = new Extras.RemoteTree.TreeStructure(node);
                     if (headerNode) {
                         treeStructure.setHeaderNode(headerNode);
                         headerNode = null;
@@ -50,9 +50,9 @@ ExtrasSerial.PropertyTranslator.RemoteTree.TreeStructure = {
     }
 };
 
-EchoSerial.addPropertyTranslator("ExtrasSerial.TreeStructure", ExtrasSerial.PropertyTranslator.RemoteTree.TreeStructure);
+Echo.Serial.addPropertyTranslator("Extras.Serial.TreeStructure", Extras.Serial.RemoteTree.TreeStructure);
 
-ExtrasSerial.PropertyTranslator.RemoteTree.SelectionUpdate = {
+Extras.Serial.RemoteTree.SelectionUpdate = {
     
     toXml: function(client, propertyElement, propertyValue) {
         if (propertyValue.clear) {
@@ -67,5 +67,5 @@ ExtrasSerial.PropertyTranslator.RemoteTree.SelectionUpdate = {
     }
 };
 
-EchoSerial.addPropertyTranslator("ExtrasApp.RemoteTree.SelectionUpdate", 
-        ExtrasSerial.PropertyTranslator.RemoteTree.SelectionUpdate);
+Echo.Serial.addPropertyTranslator("Extras.RemoteTree.SelectionUpdate", 
+        Extras.Serial.RemoteTree.SelectionUpdate);

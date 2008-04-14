@@ -41,7 +41,7 @@ import nextapp.echo.webcontainer.service.JavaScriptService;
 public class CommonService {
 
     public static final Service INSTANCE = JavaScriptService.forResource(
-            "EchoExtras.Common", "nextapp/echo/extras/webcontainer/resource/Common.Extras.js");
+            "EchoExtras.Common", "nextapp/echo/extras/webcontainer/resource/Extras.js");
     
     static {
         WebContainerServlet.getServiceRegistry().add(INSTANCE);

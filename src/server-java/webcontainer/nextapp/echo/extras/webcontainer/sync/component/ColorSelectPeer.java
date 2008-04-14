@@ -76,7 +76,7 @@ public class ColorSelectPeer extends AbstractComponentSynchronizePeer {
      * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#getClientComponentType(boolean)
      */
     public String getClientComponentType(boolean shortType) {
-        return "ExtrasApp.ColorSelect";
+        return "Extras.ColorSelect";
     }
 
     /**

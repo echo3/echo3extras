@@ -1,7 +1,7 @@
 /**
  * Component rendering peer: CalendarSelect
  */
-ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync, {
+Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
 
     $static: {
     
@@ -62,7 +62,7 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
     },
 
     $load: function() {
-        EchoRender.registerPeer("ExtrasApp.CalendarSelect", this);
+        Echo.Render.registerPeer("Extras.CalendarSelect", this);
     },
     
     _element: null,
@@ -83,16 +83,16 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
         var firstDate = new Date(this._year, this._month, 1);
         this._firstDayOfMonth = firstDate.getDay();
         
-        this._daysInMonth = ExtrasRender.ComponentSync.CalendarSelect.getDaysInMonth(this._year, this._month);
+        this._daysInMonth = Extras.Sync.CalendarSelect.getDaysInMonth(this._year, this._month);
         if (this._month == 0) {
-            this._daysInPreviousMonth = ExtrasRender.ComponentSync.CalendarSelect.getDaysInMonth(this._year - 1, 11);
+            this._daysInPreviousMonth = Extras.Sync.CalendarSelect.getDaysInMonth(this._year - 1, 11);
         } else {
-            this._daysInPreviousMonth = ExtrasRender.ComponentSync.CalendarSelect.getDaysInMonth(this._year, this._month - 1);
+            this._daysInPreviousMonth = Extras.Sync.CalendarSelect.getDaysInMonth(this._year, this._month - 1);
         }
     },
     
     _processDateSelect: function(e) {
-        if (!this.client.verifyInput(this.component, EchoClient.FLAG_INPUT_PROPERTY)) {
+        if (!this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY)) {
             return;
         }
         if (e.target._cellIndex == null) {
@@ -131,7 +131,7 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
     },
     
     _processMonthSelect: function(e) {
-        if (!this.client.verifyInput(this.component, EchoClient.FLAG_INPUT_PROPERTY)) {
+        if (!this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY)) {
             this._monthSelect.selectedIndex = this._month;
             return;
         }
@@ -142,7 +142,7 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
     },
     
     _processYearChange: function(e) {
-        if (!this.client.verifyInput(this.component, EchoClient.FLAG_INPUT_PROPERTY)) {
+        if (!this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY)) {
             this._yearField.value = this._year;
             return;
         }
@@ -152,7 +152,7 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
     },
     
     _processYearDecrement: function(e) {
-        if (!this.client.verifyInput(this.component, EchoClient.FLAG_INPUT_PROPERTY)) {
+        if (!this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY)) {
             return;
         }
         --this._year;
@@ -162,7 +162,7 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
     },
 
     _processYearIncrement: function(e) {
-        if (!this.client.verifyInput(this.component, EchoClient.FLAG_INPUT_PROPERTY)) {
+        if (!this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY)) {
             retrun;
         }
         ++this._year;
@@ -173,7 +173,7 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
 
     renderAdd: function(update, parentElement) {
         // Load localization data.
-        this._msg = ExtrasRender.ComponentSync.CalendarSelect.resource.get(this.component.getRenderLocale());
+        this._msg = Extras.Sync.CalendarSelect.resource.get(this.component.getRenderLocale());
 
         var enabled = this.component.isRenderEnabled()
     
@@ -234,11 +234,11 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
         this._tableElement = document.createElement("table");
         this._tableElement.style.borderCollapse = "collapse";
         this._tableElement.style.margin = "1px";
-        EchoAppRender.Border.render(this.component.render("border", 
-                ExtrasRender.ComponentSync.CalendarSelect.DEFAULT_BORDER), this._tableElement);
-        EchoAppRender.Color.render(this.component.render("foreground",
-                ExtrasRender.ComponentSync.CalendarSelect.DEFAULT_FOREGROUND), this._tableElement); 
-        EchoAppRender.FillImage.render(this.component.render("backgroundImage"), this._tableElement); 
+        Echo.Sync.Border.render(this.component.render("border", 
+                Extras.Sync.CalendarSelect.DEFAULT_BORDER), this._tableElement);
+        Echo.Sync.Color.render(this.component.render("foreground",
+                Extras.Sync.CalendarSelect.DEFAULT_FOREGROUND), this._tableElement); 
+        Echo.Sync.FillImage.render(this.component.render("backgroundImage"), this._tableElement); 
         
         var tbodyElement = document.createElement("tbody");
         
@@ -279,11 +279,11 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
         parentElement.appendChild(this._element);
         
 
-        WebCore.EventProcessor.add(this._monthSelect, "change", Core.method(this, this._processMonthSelect), false);
-        WebCore.EventProcessor.add(this._yearField, "change", Core.method(this, this._processYearChange), false);
-        WebCore.EventProcessor.add(this._yearDecrementElement, "click", Core.method(this, this._processYearDecrement), false);
-        WebCore.EventProcessor.add(this._yearIncrementElement, "click", Core.method(this, this._processYearIncrement), false);
-        WebCore.EventProcessor.add(this._tableElement, "click", Core.method(this, this._processDateSelect), false);
+        Core.Web.Event.add(this._monthSelect, "change", Core.method(this, this._processMonthSelect), false);
+        Core.Web.Event.add(this._yearField, "change", Core.method(this, this._processYearChange), false);
+        Core.Web.Event.add(this._yearDecrementElement, "click", Core.method(this, this._processYearDecrement), false);
+        Core.Web.Event.add(this._yearIncrementElement, "click", Core.method(this, this._processYearIncrement), false);
+        Core.Web.Event.add(this._tableElement, "click", Core.method(this, this._processDateSelect), false);
 
         var date = this.component.get("date");
         if (!date) {
@@ -295,11 +295,11 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
     },
     
     renderDispose: function(update) {
-        WebCore.EventProcessor.removeAll(this._monthSelect);
-        WebCore.EventProcessor.removeAll(this._yearField);
-        WebCore.EventProcessor.removeAll(this._yearDecrementElement);
-        WebCore.EventProcessor.removeAll(this._yearIncrementElement);
-        WebCore.EventProcessor.removeAll(this._tableElement);
+        Core.Web.Event.removeAll(this._monthSelect);
+        Core.Web.Event.removeAll(this._yearField);
+        Core.Web.Event.removeAll(this._yearDecrementElement);
+        Core.Web.Event.removeAll(this._yearIncrementElement);
+        Core.Web.Event.removeAll(this._tableElement);
     
         this._dayTdElements = null;
         this._element = null;
@@ -310,7 +310,7 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
     renderUpdate: function(update) {
         var element = this._element;
         var containerElement = element.parentNode;
-        EchoRender.renderComponentDispose(update, update.parent);
+        Echo.Render.renderComponentDispose(update, update.parent);
         containerElement.removeChild(element);
         this.renderAdd(update, containerElement);
         return false;
@@ -334,13 +334,13 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
         var day = 1 - this._firstDayOfMonth;
         
         var adjacentMonthDateForeground = this.component.render("adjacentMonthDateForeground",
-                ExtrasRender.ComponentSync.CalendarSelect.DEFAULT_ADJACENT_MONTH_DATE_FOREGROUND);
+                Extras.Sync.CalendarSelect.DEFAULT_ADJACENT_MONTH_DATE_FOREGROUND);
         var foreground = this.component.render("foreground", 
-                ExtrasRender.ComponentSync.CalendarSelect.DEFAULT_FOREGROUND);
+                Extras.Sync.CalendarSelect.DEFAULT_FOREGROUND);
         var selectedForeground = this.component.render("selectedForeground", 
-                ExtrasRender.ComponentSync.CalendarSelect.DEFAULT_SELECTED_DATE_FOREGROUND);
+                Extras.Sync.CalendarSelect.DEFAULT_SELECTED_DATE_FOREGROUND);
         var selectedBackground = this.component.render("selectedBackground", 
-                ExtrasRender.ComponentSync.CalendarSelect.DEFAULT_SELECTED_DATE_BACKGROUND);
+                Extras.Sync.CalendarSelect.DEFAULT_SELECTED_DATE_BACKGROUND);
         
         for (var i = 0; i < 6; ++i) {
             for (var j = 0; j < 7; ++j) {
@@ -354,20 +354,20 @@ ExtrasRender.ComponentSync.CalendarSelect = Core.extend(EchoRender.ComponentSync
                 var styleText;
                 if (day < 1) {
                     renderedText = this._daysInPreviousMonth + day;
-                    EchoAppRender.Color.renderClear(adjacentMonthDateForeground, tdElement, "color");
-                    EchoAppRender.Color.renderClear(null, tdElement, "backgroundColor");
+                    Echo.Sync.Color.renderClear(adjacentMonthDateForeground, tdElement, "color");
+                    Echo.Sync.Color.renderClear(null, tdElement, "backgroundColor");
                 } else if (day > this._daysInMonth) {
                     renderedText = day - this._daysInMonth;
-                    EchoAppRender.Color.renderClear(adjacentMonthDateForeground, tdElement, "color");
-                    EchoAppRender.Color.renderClear(null, tdElement, "backgroundColor");
+                    Echo.Sync.Color.renderClear(adjacentMonthDateForeground, tdElement, "color");
+                    Echo.Sync.Color.renderClear(null, tdElement, "backgroundColor");
                 } else {
                     renderedText = day;
                     if (day == this._day) {
-                        EchoAppRender.Color.renderClear(selectedForeground, tdElement, "color");
-                        EchoAppRender.Color.renderClear(selectedBackground, tdElement, "backgroundColor");
+                        Echo.Sync.Color.renderClear(selectedForeground, tdElement, "color");
+                        Echo.Sync.Color.renderClear(selectedBackground, tdElement, "backgroundColor");
                     } else {
-                        EchoAppRender.Color.renderClear(foreground, tdElement, "color");
-                        EchoAppRender.Color.renderClear(null, tdElement, "backgroundColor");
+                        Echo.Sync.Color.renderClear(foreground, tdElement, "color");
+                        Echo.Sync.Color.renderClear(null, tdElement, "backgroundColor");
                     }
                 }
                 var textNode = document.createTextNode(renderedText);

@@ -1,4 +1,4 @@
-ExtrasRender.ComponentSync.RichTextArea.resource.set("de", {
+Extras.Sync.RichTextArea.resource.set("de", {
     "Menu.Edit":                        "Bearbeiten",
     "Menu.Undo":                        "R\u00fcckg\u00e4ngig",
     "Menu.Redo":                        "Wiederholen",

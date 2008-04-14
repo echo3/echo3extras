@@ -1,10 +1,10 @@
 /**
  * Component rendering peer: ToolTipContainer
  */
-ExtrasRender.ComponentSync.ToolTipContainer = Core.extend(EchoRender.ComponentSync, {
+Extras.Sync.ToolTipContainer = Core.extend(Echo.Render.ComponentSync, {
     
     $load: function() {
-        EchoRender.registerPeer("ExtrasApp.ToolTipContainer", this);
+        Echo.Render.registerPeer("Extras.ToolTipContainer", this);
     },
     
     $construct: function() {
@@ -33,7 +33,7 @@ ExtrasRender.ComponentSync.ToolTipContainer = Core.extend(EchoRender.ComponentSy
     renderUpdate: function(update) {
         var element = this._divElement;
         var containerElement = element.parentNode;
-        EchoRender.renderComponentDispose(update, update.parent);
+        Echo.Render.renderComponentDispose(update, update.parent);
         containerElement.removeChild(element);
         this.renderAdd(update, containerElement);
         return true;
@@ -43,7 +43,7 @@ ExtrasRender.ComponentSync.ToolTipContainer = Core.extend(EchoRender.ComponentSy
         this._divElement = null;
         
         if (this._applyDivElement) {
-            WebCore.EventProcessor.removeAll(this._applyDivElement);
+            Core.Web.Event.removeAll(this._applyDivElement);
             this._applyDivElement.id = "";
             this._applyDivElement = null;
         }
@@ -60,9 +60,9 @@ ExtrasRender.ComponentSync.ToolTipContainer = Core.extend(EchoRender.ComponentSy
         tooltipDivElement.style.position = "absolute";
         var width = this.component.render("width");
         if (width) {
-            tooltipDivElement.style.width = EchoAppRender.Extent.toCssValue(width);
+            tooltipDivElement.style.width = Echo.Sync.Extent.toCssValue(width);
         }
-        EchoRender.renderComponentAdd(update, this.component.getComponent(1), tooltipDivElement);
+        Echo.Render.renderComponentAdd(update, this.component.getComponent(1), tooltipDivElement);
         return tooltipDivElement;
     },
     
@@ -72,15 +72,15 @@ ExtrasRender.ComponentSync.ToolTipContainer = Core.extend(EchoRender.ComponentSy
         var applyDivElement = document.createElement("div");
         applyDivElement.id = applyToComponent.renderId;
         applyDivElement.style.cursor = "default";
-        EchoRender.renderComponentAdd(update, applyToComponent, applyDivElement);
+        Echo.Render.renderComponentAdd(update, applyToComponent, applyDivElement);
         
         if (this.component.getComponentCount() > 1) {
-            var mouseEnterLeaveSupport = WebCore.Environment.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED;
+            var mouseEnterLeaveSupport = Core.Web.Env.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED;
             var enterEvent = mouseEnterLeaveSupport ? "mouseenter" : "mouseover";
             var exitEvent = mouseEnterLeaveSupport ? "mouseleave" : "mouseout";
-            WebCore.EventProcessor.add(applyDivElement, enterEvent, Core.method(this, this._processRolloverEnter), true);
-            WebCore.EventProcessor.add(applyDivElement, exitEvent, Core.method(this, this._processRolloverExit), true);
-            WebCore.EventProcessor.add(applyDivElement, "mousemove", Core.method(this, this._processMove), true);
+            Core.Web.Event.add(applyDivElement, enterEvent, Core.method(this, this._processRolloverEnter), true);
+            Core.Web.Event.add(applyDivElement, exitEvent, Core.method(this, this._processRolloverExit), true);
+            Core.Web.Event.add(applyDivElement, "mousemove", Core.method(this, this._processMove), true);
         }
         
         return applyDivElement;

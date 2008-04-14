@@ -1,8 +1,8 @@
 /**
  * @class ColorSelect component.
- * @base EchoApp.Component
+ * @base Echo.Component
  */
-ExtrasApp.ColorSelect = Core.extend(EchoApp.Component, {
+Extras.ColorSelect = Core.extend(Echo.Component, {
     
     $static: {
         DEFAULT_VALUE_WIDTH: 150,
@@ -11,8 +11,8 @@ ExtrasApp.ColorSelect = Core.extend(EchoApp.Component, {
     },
     
     $load: function() {
-        EchoApp.ComponentFactory.registerType("ExtrasApp.ColorSelect", this);
+        Echo.ComponentFactory.registerType("Extras.ColorSelect", this);
     },
     
-    componentType: "ExtrasApp.ColorSelect"
+    componentType: "Extras.ColorSelect"
 });

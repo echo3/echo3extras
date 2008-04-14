@@ -1,12 +1,12 @@
 /**
  * @class ToolTipContainer component.
- * @base EchoApp.Component
+ * @base Echo.Component
  */
-ExtrasApp.ToolTipContainer = Core.extend(EchoApp.Component, {
+Extras.ToolTipContainer = Core.extend(Echo.Component, {
     
     $load: function() {
-        EchoApp.ComponentFactory.registerType("ExtrasApp.ToolTipContainer", this);
+        Echo.ComponentFactory.registerType("Extras.ToolTipContainer", this);
     },
     
-    componentType: "ExtrasApp.ToolTipContainer"
+    componentType: "Extras.ToolTipContainer"
 });

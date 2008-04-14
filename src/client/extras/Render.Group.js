@@ -1,7 +1,7 @@
 /**
  * Component rendering peer: Group
  */
-ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
+Extras.Sync.Group = Core.extend(Echo.Render.ComponentSync, {
 
     $static: {
     
@@ -22,7 +22,7 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
     },
 
     $load: function() {
-        EchoRender.registerPeer("ExtrasApp.Group", this);
+        Echo.Render.registerPeer("Extras.Group", this);
     },
 
     $construct: function() {
@@ -38,7 +38,7 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
      * @type {String}
      */
     _getImageUri: function(position) {
-        return this.client.getResourceUrl("Extras", ExtrasRender.ComponentSync.Group.DEFAULT_BORDER_IMAGES[position]);
+        return this.client.getResourceUrl("Extras", Extras.Sync.Group.DEFAULT_BORDER_IMAGES[position]);
     },
     
     getElement: function() {
@@ -50,7 +50,7 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
         
         this._groupDivElement = document.createElement("div");
         this._groupDivElement.id = this.component.renderId;
-        EchoAppRender.Color.render(this.component.render("foreground"), this._groupDivElement, "color");
+        Echo.Sync.Color.render(this.component.render("foreground"), this._groupDivElement, "color");
     
         var contentElement = this._renderContent();
         var borderParts = this._renderBorder(contentElement);
@@ -81,19 +81,19 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
         var borderParts = [];
         
         var borderInsets = this.component.render("borderInsets", 
-                ExtrasRender.ComponentSync.Group.DEFAULT_BORDER_INSETS);
-        var borderPixelInsets = EchoAppRender.Insets.toPixels(borderInsets);
+                Extras.Sync.Group.DEFAULT_BORDER_INSETS);
+        var borderPixelInsets = Echo.Sync.Insets.toPixels(borderInsets);
         var flags = this.component.render("ieAlphaRenderBorder") 
-                ? EchoAppRender.FillImage.FLAG_ENABLE_IE_PNG_ALPHA_FILTER : 0;
+                ? Echo.Sync.FillImage.FLAG_ENABLE_IE_PNG_ALPHA_FILTER : 0;
         
         var topRightElem = document.createElement("div");
         topRightElem.style.width = "100%";
-        EchoAppRender.FillImage.render(this._getBorderImage(2, "100%", "100%"), topRightElem, flags);
+        Echo.Sync.FillImage.render(this._getBorderImage(2, "100%", "100%"), topRightElem, flags);
         
         var topLeftElem = document.createElement("div");
         topLeftElem.style.paddingRight = borderPixelInsets.right + "px";
         topLeftElem.style.paddingLeft = borderPixelInsets.left + "px";
-        EchoAppRender.FillImage.render(this._getBorderImage(0, 0, "100%"), topLeftElem, flags);
+        Echo.Sync.FillImage.render(this._getBorderImage(0, 0, "100%"), topLeftElem, flags);
         topRightElem.appendChild(topLeftElem);
         
         var title = this.component.render("title");
@@ -110,41 +110,41 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
             var titlePosition = this.component.render("titlePosition");
             if (titlePosition) {
                 var topPosElem = document.createElement("td");
-                if (EchoAppRender.Extent.isPercent(titlePosition)) {
+                if (Echo.Sync.Extent.isPercent(titlePosition)) {
                     topPosElem.style.width = titlePosition.toString();
                 }
                 var topPosElemImg = document.createElement("img");
                 topPosElemImg.src = this.client.getResourceUrl("Echo", "resource/Transparent.gif");
-                if (EchoAppRender.Extent.isPercent(titlePosition)) {
+                if (Echo.Sync.Extent.isPercent(titlePosition)) {
                     topPosElemImg.style.width = titlePosition.toString();
                 }
                 topPosElemImg.style.height = "1px";
                 topPosElem.appendChild(topPosElemImg);
-                EchoAppRender.FillImage.render(
+                Echo.Sync.FillImage.render(
                         this._getRepeatingBorderImage(1, "repeat-x", 0, "100%"), topPosElem, flags);
                 topRowElem.appendChild(topPosElem);
             }
             
             var titleElem = document.createElement("td");
             titleElem.style.whiteSpace = "nowrap";
-            EchoAppRender.Font.render(this.component.render("titleFont"), titleElem);
-            EchoAppRender.Insets.render(this.component.render("titleInsets",
-                    ExtrasRender.ComponentSync.Group.DEFAULT_TITLE_INSETS), titleElem, "padding");
+            Echo.Sync.Font.render(this.component.render("titleFont"), titleElem);
+            Echo.Sync.Insets.render(this.component.render("titleInsets",
+                    Extras.Sync.Group.DEFAULT_TITLE_INSETS), titleElem, "padding");
             var titleImage = this.component.render("titleBackgroundImage");
             if (titleImage) {
-                EchoAppRender.FillImage.render({ url: titleImage, repeat: "repeat-x", x: 0, y: "100%" }, titleElem, flags);
+                Echo.Sync.FillImage.render({ url: titleImage, repeat: "repeat-x", x: 0, y: "100%" }, titleElem, flags);
             }
             titleElem.appendChild(document.createTextNode(title));
             topRowElem.appendChild(titleElem);
             
             var topFillElem = document.createElement("td");
-            if (titlePosition && EchoAppRender.Extent.isPercent(titlePosition)) {
+            if (titlePosition && Echo.Sync.Extent.isPercent(titlePosition)) {
                 topFillElem.style.width = (100 - parseInt(titlePosition)) + "%";
             } else {
                 topFillElem.style.width = "100%";
             }
             topFillElem.style.height = borderPixelInsets.top + "px";
-            EchoAppRender.FillImage.render(this._getRepeatingBorderImage(1, "repeat-x", 0, "100%"), 
+            Echo.Sync.FillImage.render(this._getRepeatingBorderImage(1, "repeat-x", 0, "100%"), 
                     topFillElem, flags);
             topRowElem.appendChild(topFillElem);
             
@@ -154,7 +154,7 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
             topElem.style.width = "100%";
             topElem.style.height = borderPixelInsets.top + "px";
             topElem.style.fontSize = "1px";
-            EchoAppRender.FillImage.render(this._getRepeatingBorderImage(1, "repeat-x", 0, "100%"), 
+            Echo.Sync.FillImage.render(this._getRepeatingBorderImage(1, "repeat-x", 0, "100%"), 
                     topElem, flags);
             topLeftElem.appendChild(topElem);
         }
@@ -163,13 +163,13 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
         
         var rightElem = document.createElement("div");
         rightElem.style.width = "100%";
-        EchoAppRender.FillImage.render(this._getRepeatingBorderImage(4, "repeat-y", "100%", 0), 
+        Echo.Sync.FillImage.render(this._getRepeatingBorderImage(4, "repeat-y", "100%", 0), 
                 rightElem, flags);
         
         var leftElem = document.createElement("div");
         leftElem.style.paddingRight = borderPixelInsets.right + "px";
         leftElem.style.paddingLeft = borderPixelInsets.left + "px";
-        EchoAppRender.FillImage.render(this._getRepeatingBorderImage(3, "repeat-y", 0, 0), 
+        Echo.Sync.FillImage.render(this._getRepeatingBorderImage(3, "repeat-y", 0, 0), 
                 leftElem, flags);
         leftElem.appendChild(contentElem);
         rightElem.appendChild(leftElem);
@@ -179,19 +179,19 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
         bottomRightElem.style.width = "100%";
         bottomRightElem.style.height = borderPixelInsets.bottom + "px";
         bottomRightElem.style.fontSize = "1px";
-        EchoAppRender.FillImage.render(this._getBorderImage(7, "100%", "100%"), bottomRightElem, flags);
+        Echo.Sync.FillImage.render(this._getBorderImage(7, "100%", "100%"), bottomRightElem, flags);
         
         var bottomLeftElem = document.createElement("div");
         bottomLeftElem.style.paddingRight = borderPixelInsets.right + "px";
         bottomLeftElem.style.paddingLeft = borderPixelInsets.left + "px";
-        EchoAppRender.FillImage.render(this._getBorderImage(5, 0, "100%"), bottomLeftElem, flags);
+        Echo.Sync.FillImage.render(this._getBorderImage(5, 0, "100%"), bottomLeftElem, flags);
         bottomRightElem.appendChild(bottomLeftElem);
         
         var bottomElem = document.createElement("div");
         bottomElem.style.width = "100%";
         bottomElem.style.height = borderPixelInsets.bottom + "px";
         bottomElem.style.fontSize = "1px";
-        EchoAppRender.FillImage.render(this._getRepeatingBorderImage(6, "repeat-x", 0, "100%"), 
+        Echo.Sync.FillImage.render(this._getRepeatingBorderImage(6, "repeat-x", 0, "100%"), 
                 bottomElem, flags);
         bottomLeftElem.appendChild(bottomElem);
         borderParts.push(bottomRightElem);
@@ -202,15 +202,15 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
     _renderContent: function(update) {
         var contentDivElement = document.createElement("div");
         
-        EchoAppRender.FillImage.render(this.component.render("backgroundImage"), contentDivElement);
-        EchoAppRender.Color.render(this.component.render("background"), contentDivElement, "backgroundColor")
-        EchoAppRender.Font.render(this.component.render("font"), contentDivElement);
-        EchoAppRender.Insets.render(this.component.render("insets"), contentDivElement, "padding");
+        Echo.Sync.FillImage.render(this.component.render("backgroundImage"), contentDivElement);
+        Echo.Sync.Color.render(this.component.render("background"), contentDivElement, "backgroundColor")
+        Echo.Sync.Font.render(this.component.render("font"), contentDivElement);
+        Echo.Sync.Insets.render(this.component.render("insets"), contentDivElement, "padding");
         
         var componentCount = this.component.getComponentCount();
         for (var i = 0; i < componentCount; i++) {
             var child = this.component.getComponent(i);
-            EchoRender.renderComponentAdd(update, child, contentDivElement);
+            Echo.Render.renderComponentAdd(update, child, contentDivElement);
         }
         
         return contentDivElement;
@@ -219,7 +219,7 @@ ExtrasRender.ComponentSync.Group = Core.extend(EchoRender.ComponentSync, {
     renderUpdate: function(update) {
         var element = this._groupDivElement;
         var containerElement = element.parentNode;
-        EchoRender.renderComponentDispose(update, update.parent);
+        Echo.Render.renderComponentDispose(update, update.parent);
         containerElement.removeChild(element);
         this.renderAdd(update, containerElement);
         return true;

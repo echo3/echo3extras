@@ -1,18 +1,18 @@
 /**
  * Component rendering peer: RichTextArea
  */
-ExtrasApp.RemoteRichTextArea = Core.extend(ExtrasApp.RichTextArea, {
+Extras.RemoteRichTextArea = Core.extend(Extras.RichTextArea, {
 
     $load: function() {
-        EchoApp.ComponentFactory.registerType("ExtrasApp.RemoteRichTextArea", this);
+        Echo.ComponentFactory.registerType("Extras.RemoteRichTextArea", this);
     },
     
-    componentType: "ExtrasApp.RemoteRichTextArea"
+    componentType: "Extras.RemoteRichTextArea"
 });
 
-ExtrasRender.ComponentSync.RemoteRichTextArea = Core.extend(ExtrasRender.ComponentSync.RichTextArea, {
+Extras.Sync.RemoteRichTextArea = Core.extend(Extras.Sync.RichTextArea, {
 
     $load: function() {
-        EchoRender.registerPeer("ExtrasApp.RemoteRichTextArea", this);
+        Echo.Render.registerPeer("Extras.RemoteRichTextArea", this);
     }
 });

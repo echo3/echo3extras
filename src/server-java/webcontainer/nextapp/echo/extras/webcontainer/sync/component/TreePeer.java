@@ -48,6 +48,7 @@ import nextapp.echo.app.util.Context;
 import nextapp.echo.extras.app.Tree;
 import nextapp.echo.extras.app.event.TreeExpansionEvent;
 import nextapp.echo.extras.app.event.TreeExpansionListener;
+import nextapp.echo.extras.app.serial.property.SerialPropertyPeerConstants;
 import nextapp.echo.extras.app.tree.TreeModel;
 import nextapp.echo.extras.app.tree.TreePath;
 import nextapp.echo.extras.app.tree.TreeSelectionModel;
@@ -283,7 +284,7 @@ extends AbstractComponentSynchronizePeer {
         throws SerialException {
             Tree tree = ((TreeStructure) propertyValue).tree;
             TreeStructureRenderer renderer = new TreeStructureRenderer(propertyElement, tree);
-            propertyElement.setAttribute("t", "ExtrasSerial.TreeStructure");
+            propertyElement.setAttribute("t", SerialPropertyPeerConstants.PROPERTY_TYPE_PREFIX + "TreeStructure");
             UserInstance userInstance = (UserInstance) context.get(UserInstance.class);
             TreeRenderState renderState = (TreeRenderState) userInstance.getRenderState(tree);
             if (renderState == null) {
@@ -504,7 +505,7 @@ extends AbstractComponentSynchronizePeer {
      * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#getClientComponentType(boolean)
      */
     public String getClientComponentType(boolean shortType) {
-        return "ExtrasApp.RemoteTree";
+        return "Extras.RemoteTree";
     }
     
     /**

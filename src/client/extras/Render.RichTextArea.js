@@ -1,7 +1,7 @@
 /**
  * Component rendering peer: RichTextArea
  */
-ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
+Extras.Sync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
 
     $static: {
         resource: new Core.ResourceBundle({
@@ -79,7 +79,7 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
     },
 
     $load: function() {
-        EchoRender.registerPeer("ExtrasApp.RichTextArea", this);
+        Echo.Render.registerPeer("Extras.RichTextArea", this);
     },
 
     $virtual: {
@@ -109,18 +109,18 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
     createComponent: function() {
         var controlsRow;
         
-        var contentPane = new EchoApp.ContentPane({
+        var contentPane = new Echo.ContentPane({
             children: [
                 // Menu SplitPane
-                new EchoApp.SplitPane({
-                    orientation: EchoApp.SplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM,
+                new Echo.SplitPane({
+                    orientation: Echo.SplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM,
                     separatorPosition: 26,
                     children: [
                         // Menu Bar
-                        new ExtrasApp.MenuBarPane({
+                        new Extras.MenuBarPane({
                             styleName: this.component.render("menuStyleName"),
                             layoutData: {
-                                overflow: EchoApp.SplitPane.OVERFLOW_HIDDEN
+                                overflow: Echo.SplitPane.OVERFLOW_HIDDEN
                             },
                             model: this._createMainMenuBarModel(),
                             events: {
@@ -128,19 +128,19 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
                             }
                         }),
                         // Main Layout Container
-                        new EchoApp.Column({
+                        new Echo.Column({
                             layoutData: {
-                                overflow: EchoApp.SplitPane.OVERFLOW_HIDDEN
+                                overflow: Echo.SplitPane.OVERFLOW_HIDDEN
                             },
                             children: [
                                 // Controls Row (control groups added later)
-                                controlsRow = new EchoApp.Row({
+                                controlsRow = new Echo.Row({
                                     styleName: this.component.render("toolbarRowStyleName"),
                                     cellSpacing: 10,
                                     insets: 2
                                 }),
                                 // Text Input Field
-                                this._richTextInput = new ExtrasRender.ComponentSync.RichTextArea.InputComponent()
+                                this._richTextInput = new Extras.Sync.RichTextArea.InputComponent()
                             ]
                         })
                     ]
@@ -149,7 +149,7 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
         });
         
         // Undo/Redo Tools
-        controlsRow.add(new EchoApp.Row({
+        controlsRow.add(new Echo.Row({
             children: [
                 this._createToolbarButton("<<<", this._icons.undo, this._msg["Menu.Undo"], this._processCommand, "undo"),
                 this._createToolbarButton(">>>", this._icons.redo, this._msg["Menu.Redo"], this._processCommand, "redo")
@@ -157,7 +157,7 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
         }));
         
         // Font Bold/Italic/Underline Tools
-        controlsRow.add(new EchoApp.Row({
+        controlsRow.add(new Echo.Row({
             children: [
                 this._createToolbarButton("B", this._icons.bold, this._msg["Menu.Bold"], this._processCommand, "bold"),
                 this._createToolbarButton("I", this._icons.italic, this._msg["Menu.Italic"], this._processCommand, "italic"),
@@ -167,7 +167,7 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
         }));
         
         //Super/Subscript Tools
-        controlsRow.add(new EchoApp.Row({
+        controlsRow.add(new Echo.Row({
             children: [
                 this._createToolbarButton("^", this._icons.superscript, this._msg["Menu.Superscript"], 
                         this._processCommand, "superscript"),
@@ -177,7 +177,7 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
         }));
         
         // Alignment Tools
-        controlsRow.add(new EchoApp.Row({
+        controlsRow.add(new Echo.Row({
             children: [
                 this._createToolbarButton("<-", this._icons.alignmentLeft, this._msg["Menu.Left"], 
                         this._processCommand, "justifyleft"),
@@ -191,7 +191,7 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
         }));
         
         // Color Tools
-        controlsRow.add(new EchoApp.Row({
+        controlsRow.add(new Echo.Row({
             children: [
                 this._createToolbarButton("FG", this._icons.foreground, this._msg["Menu.SetForeground"], 
                         this._processSetForegroundDialog),
@@ -201,7 +201,7 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
         }));
         
         // Insert Tools
-        controlsRow.add(new EchoApp.Row({
+        controlsRow.add(new Echo.Row({
             children: [
                 this._createToolbarButton("Bulleted List", this._icons.bulletedList, this._msg["Menu.BulletedList"], 
                         this._processCommand, "insertunorderedlist"),
@@ -255,69 +255,69 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
     },
     
     _createMainMenuBarModel: function() {
-        return new ExtrasApp.MenuModel(null, null, null, [
-            new ExtrasApp.MenuModel(null, this._msg["Menu.Edit"], null, [
-                new ExtrasApp.OptionModel("/undo", this._msg["Menu.Undo"], this._icons.undo),
-                new ExtrasApp.OptionModel("/redo", this._msg["Menu.Redo"], this._icons.redo),
-                new ExtrasApp.SeparatorModel(),
-                new ExtrasApp.OptionModel("cut", this._msg["Menu.Cut"], this._icons.cut),
-                new ExtrasApp.OptionModel("copy", this._msg["Menu.Copy"], this._icons.copy),
-                new ExtrasApp.OptionModel("paste", this._msg["Menu.Paste"], this._icons.paste),
-                new ExtrasApp.OptionModel("delete", this._msg["Menu.Delete"], this._icons["delete"]),
-                new ExtrasApp.SeparatorModel(),
-                new ExtrasApp.OptionModel("/selectall", this._msg["Menu.SelectAll"], this._icons.selectAll)
+        return new Extras.MenuModel(null, null, null, [
+            new Extras.MenuModel(null, this._msg["Menu.Edit"], null, [
+                new Extras.OptionModel("/undo", this._msg["Menu.Undo"], this._icons.undo),
+                new Extras.OptionModel("/redo", this._msg["Menu.Redo"], this._icons.redo),
+                new Extras.SeparatorModel(),
+                new Extras.OptionModel("cut", this._msg["Menu.Cut"], this._icons.cut),
+                new Extras.OptionModel("copy", this._msg["Menu.Copy"], this._icons.copy),
+                new Extras.OptionModel("paste", this._msg["Menu.Paste"], this._icons.paste),
+                new Extras.OptionModel("delete", this._msg["Menu.Delete"], this._icons["delete"]),
+                new Extras.SeparatorModel(),
+                new Extras.OptionModel("/selectall", this._msg["Menu.SelectAll"], this._icons.selectAll)
             ]),
-            new ExtrasApp.MenuModel(null, this._msg["Menu.Insert"], null, [
-                new ExtrasApp.OptionModel("/insertunorderedlist", this._msg["Menu.BulletedList"], this._icons.bulletedList),
-                new ExtrasApp.OptionModel("/insertorderedlist", this._msg["Menu.NumberedList"], this._icons.numberedList),
-                new ExtrasApp.SeparatorModel(),
-                new ExtrasApp.OptionModel("/inserthorizontalrule", this._msg["Menu.InsertHorizontalRule"],
+            new Extras.MenuModel(null, this._msg["Menu.Insert"], null, [
+                new Extras.OptionModel("/insertunorderedlist", this._msg["Menu.BulletedList"], this._icons.bulletedList),
+                new Extras.OptionModel("/insertorderedlist", this._msg["Menu.NumberedList"], this._icons.numberedList),
+                new Extras.SeparatorModel(),
+                new Extras.OptionModel("/inserthorizontalrule", this._msg["Menu.InsertHorizontalRule"],
                         this._icons.horizontalRule),
-                new ExtrasApp.OptionModel("insertimage", this._msg["Menu.InsertImage"], this._icons.image),
-                new ExtrasApp.OptionModel("inserthyperlink", this._msg["Menu.InsertHyperlink"], this._icons.hyperlink),
-                new ExtrasApp.SeparatorModel(),
-                new ExtrasApp.OptionModel("inserttable", this._msg["Menu.InsertTable"], this._icons.table)
+                new Extras.OptionModel("insertimage", this._msg["Menu.InsertImage"], this._icons.image),
+                new Extras.OptionModel("inserthyperlink", this._msg["Menu.InsertHyperlink"], this._icons.hyperlink),
+                new Extras.SeparatorModel(),
+                new Extras.OptionModel("inserttable", this._msg["Menu.InsertTable"], this._icons.table)
             ]),
-            new ExtrasApp.MenuModel(null, this._msg["Menu.Format"], null, [
-                new ExtrasApp.MenuModel(null, this._msg["Menu.TextStyle"], null, [
-                    new ExtrasApp.OptionModel("/removeformat",  this._msg["Menu.PlainText"], null),
-                    new ExtrasApp.SeparatorModel(),
-                    new ExtrasApp.OptionModel("/bold",  this._msg["Menu.Bold"], this._icons.bold),
-                    new ExtrasApp.OptionModel("/italic",  this._msg["Menu.Italic"], this._icons.italic),
-                    new ExtrasApp.OptionModel("/underline",  this._msg["Menu.Underline"], this._icons.underline),
-                    new ExtrasApp.OptionModel("/strikethrough",  this._msg["Menu.Strikethrough"], this._icons.strikethrough),
-                    new ExtrasApp.SeparatorModel(),
-                    new ExtrasApp.OptionModel("/superscript", this._msg["Menu.Superscript"], this._icons.superscript),
-                    new ExtrasApp.OptionModel("/subscript", this._msg["Menu.Subscript"], this._icons.subscript)
+            new Extras.MenuModel(null, this._msg["Menu.Format"], null, [
+                new Extras.MenuModel(null, this._msg["Menu.TextStyle"], null, [
+                    new Extras.OptionModel("/removeformat",  this._msg["Menu.PlainText"], null),
+                    new Extras.SeparatorModel(),
+                    new Extras.OptionModel("/bold",  this._msg["Menu.Bold"], this._icons.bold),
+                    new Extras.OptionModel("/italic",  this._msg["Menu.Italic"], this._icons.italic),
+                    new Extras.OptionModel("/underline",  this._msg["Menu.Underline"], this._icons.underline),
+                    new Extras.OptionModel("/strikethrough",  this._msg["Menu.Strikethrough"], this._icons.strikethrough),
+                    new Extras.SeparatorModel(),
+                    new Extras.OptionModel("/superscript", this._msg["Menu.Superscript"], this._icons.superscript),
+                    new Extras.OptionModel("/subscript", this._msg["Menu.Subscript"], this._icons.subscript)
                 ]),
-                new ExtrasApp.MenuModel(null, this._msg["Menu.Format"], null, [
-                    new ExtrasApp.OptionModel("/formatblock/<p>", this._msg["Menu.ParagraphStyle"], null),
-                    new ExtrasApp.OptionModel("/formatblock/<pre>", this._msg["Menu.Preformatted"], null),
-                    new ExtrasApp.OptionModel("/formatblock/<h1>", this._msg["Menu.Heading1"], null),
-                    new ExtrasApp.OptionModel("/formatblock/<h2>", this._msg["Menu.Heading2"], null),
-                    new ExtrasApp.OptionModel("/formatblock/<h3>", this._msg["Menu.Heading3"], null),
-                    new ExtrasApp.OptionModel("/formatblock/<h4>", this._msg["Menu.Heading4"], null),
-                    new ExtrasApp.OptionModel("/formatblock/<h5>", this._msg["Menu.Heading5"], null),
-                    new ExtrasApp.OptionModel("/formatblock/<h6>", this._msg["Menu.Heading6"], null)
+                new Extras.MenuModel(null, this._msg["Menu.Format"], null, [
+                    new Extras.OptionModel("/formatblock/<p>", this._msg["Menu.ParagraphStyle"], null),
+                    new Extras.OptionModel("/formatblock/<pre>", this._msg["Menu.Preformatted"], null),
+                    new Extras.OptionModel("/formatblock/<h1>", this._msg["Menu.Heading1"], null),
+                    new Extras.OptionModel("/formatblock/<h2>", this._msg["Menu.Heading2"], null),
+                    new Extras.OptionModel("/formatblock/<h3>", this._msg["Menu.Heading3"], null),
+                    new Extras.OptionModel("/formatblock/<h4>", this._msg["Menu.Heading4"], null),
+                    new Extras.OptionModel("/formatblock/<h5>", this._msg["Menu.Heading5"], null),
+                    new Extras.OptionModel("/formatblock/<h6>", this._msg["Menu.Heading6"], null)
                 ]),
-                new ExtrasApp.MenuModel(null, this._msg["Menu.Alignment"], null, [
-                    new ExtrasApp.OptionModel("/justifyleft",  this._msg["Menu.Left"], this._icons.alignmentLeft),
-                    new ExtrasApp.OptionModel("/justifycenter",  this._msg["Menu.Center"], this._icons.alignmentCenter),
-                    new ExtrasApp.OptionModel("/justifyright",  this._msg["Menu.Right"], this._icons.alignmentRight),
-                    new ExtrasApp.OptionModel("/justifyfull",  this._msg["Menu.Justified"], this._icons.alignmentJustify)
+                new Extras.MenuModel(null, this._msg["Menu.Alignment"], null, [
+                    new Extras.OptionModel("/justifyleft",  this._msg["Menu.Left"], this._icons.alignmentLeft),
+                    new Extras.OptionModel("/justifycenter",  this._msg["Menu.Center"], this._icons.alignmentCenter),
+                    new Extras.OptionModel("/justifyright",  this._msg["Menu.Right"], this._icons.alignmentRight),
+                    new Extras.OptionModel("/justifyfull",  this._msg["Menu.Justified"], this._icons.alignmentJustify)
                 ]),
-                new ExtrasApp.SeparatorModel(),
-                new ExtrasApp.OptionModel("/indent",  this._msg["Menu.Indent"], this._icons.indent),
-                new ExtrasApp.OptionModel("/outdent",  this._msg["Menu.Outdent"], this._icons.outdent),
-                new ExtrasApp.SeparatorModel(),
-                new ExtrasApp.OptionModel("foreground",  this._msg["Menu.SetForeground"], this._icons.foreground),
-                new ExtrasApp.OptionModel("background",  this._msg["Menu.SetBackground"], this._icons.background)
+                new Extras.SeparatorModel(),
+                new Extras.OptionModel("/indent",  this._msg["Menu.Indent"], this._icons.indent),
+                new Extras.OptionModel("/outdent",  this._msg["Menu.Outdent"], this._icons.outdent),
+                new Extras.SeparatorModel(),
+                new Extras.OptionModel("foreground",  this._msg["Menu.SetForeground"], this._icons.foreground),
+                new Extras.OptionModel("background",  this._msg["Menu.SetBackground"], this._icons.background)
             ])
         ]);
     },
     
     _createToolbarButton: function(text, icon, toolTipText, eventMethod, actionCommand) {
-        var button = new EchoApp.Button({
+        var button = new Echo.Button({
             actionCommand: actionCommand,
             styleName: this.component.render("toolbarButtonStyleName"),
             text: icon ? null : text,
@@ -371,7 +371,7 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
                 try {
                     this._richTextInput.peer.doCommand(e.modelId);
                 } catch (ex) {
-                    this.baseComponent.add(new ExtrasRender.ComponentSync.RichTextArea.MessageDialog(this.component,
+                    this.baseComponent.add(new Extras.Sync.RichTextArea.MessageDialog(this.component,
                             this._msg["Generic.Error"], this._msg["Error.ClipboardAccessDisabled"])); 
                 }
             }
@@ -382,7 +382,7 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
      * Event handler for color selection events from background ColorDialog.
      */
     _processSetBackground: function(e) {
-        if (WebCore.Environment.BROWSER_INTERNET_EXPLORER) {
+        if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
             this._richTextInput.peer.doCommand("backcolor", e.data);
         } else {
             this._richTextInput.peer.doCommand("hilitecolor", e.data);
@@ -393,7 +393,7 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
      * Event handler for user request (from menu/toolbar) to set background color.
      */
     _processSetBackgroundDialog: function(e) {
-        var colorDialog = new ExtrasRender.ComponentSync.RichTextArea.ColorDialog(this.component, true);
+        var colorDialog = new Extras.Sync.RichTextArea.ColorDialog(this.component, true);
         colorDialog.addListener("colorSelect", Core.method(this, this._processSetBackground));
         this.baseComponent.add(colorDialog);
     },
@@ -409,7 +409,7 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
      * Event handler for user request (from menu/toolbar) to set foreground color.
      */
     _processSetForegroundDialog: function(e) {
-        var colorDialog = new ExtrasRender.ComponentSync.RichTextArea.ColorDialog(this.component, false);
+        var colorDialog = new Extras.Sync.RichTextArea.ColorDialog(this.component, false);
         colorDialog.addListener("colorSelect", Core.method(this, this._processSetForeground));
         this.baseComponent.add(colorDialog);
     },
@@ -435,7 +435,7 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
      * Event handler for user request (from menu/toolbar) to insert a table.
      */
     _processInsertTableDialog: function(e) {
-        var tableDialog = new ExtrasRender.ComponentSync.RichTextArea.TableDialog(this.component);
+        var tableDialog = new Extras.Sync.RichTextArea.TableDialog(this.component);
         tableDialog.addListener("tableInsert", Core.method(this, this._processInsertTable));
         this.baseComponent.add(tableDialog);
     },
@@ -446,7 +446,7 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
     },
     
     _processInsertHyperlinkDialog: function(e) {
-        var hyperlinkDialog = new ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog(this.component);
+        var hyperlinkDialog = new Extras.Sync.RichTextArea.HyperlinkDialog(this.component);
         hyperlinkDialog.addListener("insertHyperlink", Core.method(this, this._processInsertHyperlink));
         this.baseComponent.add(hyperlinkDialog);
     },
@@ -456,13 +456,13 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
     },
     
     _processInsertImageDialog: function(e) {
-        var imageDialog = new ExtrasRender.ComponentSync.RichTextArea.ImageDialog(this.component);
+        var imageDialog = new Extras.Sync.RichTextArea.ImageDialog(this.component);
         imageDialog.addListener("insertImage", Core.method(this, this._processInsertImage));
         this.baseComponent.add(imageDialog);
     },
     
     renderAdd: function(update, parentElement) {
-        this._msg = ExtrasRender.ComponentSync.RichTextArea.resource.get(this.component.getRenderLocale());
+        this._msg = Extras.Sync.RichTextArea.resource.get(this.component.getRenderLocale());
 
         this._icons = this.getIcons();
         if (!this._icons) {
@@ -490,7 +490,7 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
     },
     
     renderDisplay: function() {
-        WebCore.VirtualPosition.redraw(this._mainDivElement);
+        Core.Web.VirtualPosition.redraw(this._mainDivElement);
         EchoArc.ComponentSync.prototype.renderDisplay.call(this);
     },
     
@@ -503,13 +503,13 @@ ExtrasRender.ComponentSync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
     
         var element = this._mainDivElement;
         var containerElement = element.parentNode;
-        EchoRender.renderComponentDispose(update, update.parent);
+        Echo.Render.renderComponentDispose(update, update.parent);
         containerElement.removeChild(element);
         this.renderAdd(update, containerElement);
     }
 });
 
-ExtrasRender.ComponentSync.RichTextArea.AbstractDialog = Core.extend(EchoApp.WindowPane, {
+Extras.Sync.RichTextArea.AbstractDialog = Core.extend(Echo.WindowPane, {
 
     $static: {
         TYPE_OK: 0,
@@ -523,7 +523,7 @@ ExtrasRender.ComponentSync.RichTextArea.AbstractDialog = Core.extend(EchoApp.Win
         var controlPaneRowStyleName = richTextArea.render("controlPaneRowStyleName");
         var controlPaneButtonStyleName = richTextArea.render("controlPaneButtonStyleName"); 
         
-        EchoApp.WindowPane.call(this, {
+        Echo.WindowPane.call(this, {
             styleName: richTextArea.render("windowPaneStyleName"),
             iconInsets: "6px 10px",
             width: 280,
@@ -533,13 +533,13 @@ ExtrasRender.ComponentSync.RichTextArea.AbstractDialog = Core.extend(EchoApp.Win
                 close: Core.method(this, this.processCancel)
             },
             children: [
-                new EchoApp.SplitPane({
+                new Echo.SplitPane({
                     styleName: controlPaneSplitPaneStyleName,
-                    style: controlPaneSplitPaneStyleName ? null : ExtrasRender.DEFAULT_CONTROL_PANE_SPLIT_PANE_STYLE,
+                    style: controlPaneSplitPaneStyleName ? null : Extras.Sync.DEFAULT_CONTROL_PANE_SPLIT_PANE_STYLE,
                     children: [
-                        this.controlsRow = new EchoApp.Row({
+                        this.controlsRow = new Echo.Row({
                             styleName: controlPaneRowStyleName,
-                            style: controlPaneRowStyleName ? null : ExtrasRender.DEFAULT_CONTROL_PANE_ROW_STYLE
+                            style: controlPaneRowStyleName ? null : Extras.Sync.DEFAULT_CONTROL_PANE_ROW_STYLE
                         }),
                         content
                     ]
@@ -547,9 +547,9 @@ ExtrasRender.ComponentSync.RichTextArea.AbstractDialog = Core.extend(EchoApp.Win
             ]
         });
         
-        this.controlsRow.add(new EchoApp.Button({
+        this.controlsRow.add(new Echo.Button({
             styleName: controlPaneButtonStyleName,
-            style: controlPaneButtonStyleName ? null : ExtrasRender.DEFAULT_CONTROL_PANE_BUTTON_STYLE,
+            style: controlPaneButtonStyleName ? null : Extras.Sync.DEFAULT_CONTROL_PANE_BUTTON_STYLE,
             text: richTextArea.peer._msg["Generic.Ok"],
             icon: richTextArea.peer._icons.ok,
             events: {
@@ -557,10 +557,10 @@ ExtrasRender.ComponentSync.RichTextArea.AbstractDialog = Core.extend(EchoApp.Win
             }
         }));
         
-        if (type == ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL) {
-            this.controlsRow.add(new EchoApp.Button({
+        if (type == Extras.Sync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL) {
+            this.controlsRow.add(new Echo.Button({
                 styleName: controlPaneButtonStyleName,
-                style: controlPaneButtonStyleName ? null : ExtrasRender.DEFAULT_CONTROL_PANE_BUTTON_STYLE,
+                style: controlPaneButtonStyleName ? null : Extras.Sync.DEFAULT_CONTROL_PANE_BUTTON_STYLE,
                 text: richTextArea.peer._msg["Generic.Cancel"],
                 icon: richTextArea.peer._icons.cancel,
                 events: {
@@ -586,12 +586,12 @@ ExtrasRender.ComponentSync.RichTextArea.AbstractDialog = Core.extend(EchoApp.Win
     }
 });
 
-ExtrasRender.ComponentSync.RichTextArea.ColorDialog = Core.extend(
-        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog, {
+Extras.Sync.RichTextArea.ColorDialog = Core.extend(
+        Extras.Sync.RichTextArea.AbstractDialog, {
 
     $construct: function(richTextArea, setBackground) {
-        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.call(this, richTextArea,
-                ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL, 
+        Extras.Sync.RichTextArea.AbstractDialog.call(this, richTextArea,
+                Extras.Sync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL, 
                 {
                     title: richTextArea.peer._msg[setBackground ? 
                             "ColorDialog.Title.Background" : "ColorDialog.Title.Foreground"],
@@ -599,14 +599,14 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog = Core.extend(
                     width: 280,
                     height: 320
                 },
-                new EchoApp.Column({
+                new Echo.Column({
                     insets: 10,
                     children: [
-                        new EchoApp.Label({
+                        new Echo.Label({
                             text: richTextArea.peer._msg[
                                     setBackground ? "ColorDialog.PromptBackground" : "ColorDialog.PromptForeground"]
                         }),
-                        this._colorSelect = new ExtrasApp.ColorSelect({
+                        this._colorSelect = new Extras.ColorSelect({
                             displayValue: true
                         })
                     ]
@@ -620,29 +620,29 @@ ExtrasRender.ComponentSync.RichTextArea.ColorDialog = Core.extend(
     }
 });
 
-ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog = Core.extend(
-        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog, {
+Extras.Sync.RichTextArea.HyperlinkDialog = Core.extend(
+        Extras.Sync.RichTextArea.AbstractDialog, {
 
     $construct: function(richTextArea) {
-        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.call(this, richTextArea,
-                ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL,
+        Extras.Sync.RichTextArea.AbstractDialog.call(this, richTextArea,
+                Extras.Sync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL,
                 {
                     title: richTextArea.peer._msg["HyperlinkDialog.Title"], 
                     icon: richTextArea.peer._icons.hyperlink
                 },
-                new EchoApp.Column({
+                new Echo.Column({
                     insets: 10,
                     children: [
-                        new EchoApp.Label({
+                        new Echo.Label({
                             text: richTextArea.peer._msg["HyperlinkDialog.PromptURL"]
                         }),
-                        this._urlField = new EchoApp.TextField({
+                        this._urlField = new Echo.TextField({
                             width: "100%"
                         }),
-                        new EchoApp.Label({
+                        new Echo.Label({
                             text: richTextArea.peer._msg["HyperlinkDialog.PromptDescription"]
                         }),
-                        this._descriptionField = new EchoApp.TextField({
+                        this._descriptionField = new Echo.TextField({
                             width: "100%"
                         })
                     ]
@@ -655,7 +655,7 @@ ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog = Core.extend(
             description: this._descriptionField.get("text")
         };
         if (!data.url) {
-            this.parent.add(new ExtrasRender.ComponentSync.RichTextArea.MessageDialog(this._richTextArea, 
+            this.parent.add(new Extras.Sync.RichTextArea.MessageDialog(this._richTextArea, 
                     this._richTextArea.peer._msg["HyperlinkDialog.ErrorDialogTitle"], 
                     this._richTextArea.peer._msg["HyperlinkDialog.ErrorDialog.URL"]));
             return;
@@ -665,23 +665,23 @@ ExtrasRender.ComponentSync.RichTextArea.HyperlinkDialog = Core.extend(
     }
 });
 
-ExtrasRender.ComponentSync.RichTextArea.ImageDialog = Core.extend(
-        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog, {
+Extras.Sync.RichTextArea.ImageDialog = Core.extend(
+        Extras.Sync.RichTextArea.AbstractDialog, {
 
     $construct: function(richTextArea) {
-        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.call(this, richTextArea,
-                ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL,
+        Extras.Sync.RichTextArea.AbstractDialog.call(this, richTextArea,
+                Extras.Sync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL,
                 {
                     title: richTextArea.peer._msg["ImageDialog.Title"], 
                     image: richTextArea.peer._icons.image
                 },
-                new EchoApp.Column({
+                new Echo.Column({
                     insets: 10,
                     children: [
-                        new EchoApp.Label({
+                        new Echo.Label({
                             text: richTextArea.peer._msg["ImageDialog.PromptURL"]
                         }),
-                        this._urlField = new EchoApp.TextField({
+                        this._urlField = new Echo.TextField({
                             width: "100%"
                         })
                     ]
@@ -693,7 +693,7 @@ ExtrasRender.ComponentSync.RichTextArea.ImageDialog = Core.extend(
             url: this._urlField.get("text")
         };
         if (!data.url) {
-            this.parent.add(new ExtrasRender.ComponentSync.RichTextArea.MessageDialog(this._richTextArea, 
+            this.parent.add(new Extras.Sync.RichTextArea.MessageDialog(this._richTextArea, 
                     this._richTextArea.peer._msg["ImageDialog.ErrorDialogTitle"], 
                     this._richTextArea.peer._msg["ImageDialog.ErrorDialog.URL"]));
             return;
@@ -703,7 +703,7 @@ ExtrasRender.ComponentSync.RichTextArea.ImageDialog = Core.extend(
     }
 });
 
-ExtrasRender.ComponentSync.RichTextArea.InputComponent = Core.extend(EchoApp.Component, {
+Extras.Sync.RichTextArea.InputComponent = Core.extend(Echo.Component, {
 
     /**
      * The containing RichTextArea component.
@@ -711,16 +711,16 @@ ExtrasRender.ComponentSync.RichTextArea.InputComponent = Core.extend(EchoApp.Com
     _richTextArea: null,
 
     $load: function() {
-        EchoApp.ComponentFactory.registerType("ExtrasApp.RichTextInput", this);
+        Echo.ComponentFactory.registerType("Extras.RichTextInput", this);
     },
     
-    componentType: "ExtrasApp.RichTextInput"
+    componentType: "Extras.RichTextInput"
 });
 
-ExtrasRender.ComponentSync.RichTextArea.InputPeer = Core.extend(EchoRender.ComponentSync, {
+Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
 
     $load: function() {
-        EchoRender.registerPeer("ExtrasApp.RichTextInput", this);
+        Echo.Render.registerPeer("Extras.RichTextInput", this);
     },
 
     /**
@@ -746,7 +746,7 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer = Core.extend(EchoRender.Compo
     },
     
     _insertHtml: function(html) {
-        if (WebCore.Environment.BROWSER_INTERNET_EXPLORER) {
+        if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
             if (!this._selectionRange) {
                 this._selectionRange = this._iframeElement.contentWindow.document.body.createTextRange();
             }
@@ -758,7 +758,7 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer = Core.extend(EchoRender.Compo
     },
     
     _loadRange: function() {
-        if (WebCore.Environment.BROWSER_INTERNET_EXPLORER) {
+        if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
             if (this._selectionRange) {
                 this._selectionRange.select();
             }
@@ -767,14 +767,14 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer = Core.extend(EchoRender.Compo
     
     _processKeyPress: function(e) {
         if (!this.client.verifyInput(this.component)) {
-            WebCore.DOM.preventEventDefault(e);
+            Core.Web.DOM.preventEventDefault(e);
             return;
         }
     },
     
     _processKeyUp: function(e) {
         if (!this.client.verifyInput(this.component)) {
-            WebCore.DOM.preventEventDefault(e);
+            Core.Web.DOM.preventEventDefault(e);
             return;
         }
     
@@ -784,14 +784,14 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer = Core.extend(EchoRender.Compo
     
     _processMouseDown: function(e) {
         if (!this.client.verifyInput(this.component)) {
-            WebCore.DOM.preventEventDefault(e);
+            Core.Web.DOM.preventEventDefault(e);
             return;
         }
     },
 
     _processMouseUp: function(e) {
         if (!this.client.verifyInput(this.component)) {
-            WebCore.DOM.preventEventDefault(e);
+            Core.Web.DOM.preventEventDefault(e);
             return;
         }
 
@@ -832,7 +832,7 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer = Core.extend(EchoRender.Compo
         contentDocument.open();
         contentDocument.write("<html><body>" + (text == null ? "" : text) + "</body></html>");
         contentDocument.close();
-        if (WebCore.Environment.BROWSER_MOZILLA && !WebCore.Environment.BROWSER_FIREFOX) {
+        if (Core.Web.Env.BROWSER_MOZILLA && !Core.Web.Env.BROWSER_FIREFOX) {
             // workaround for Mozilla (not Firefox)
             var setDesignModeOn = function() {
                 contentDocument.designMode = "on";
@@ -841,19 +841,19 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer = Core.extend(EchoRender.Compo
         } else {
             contentDocument.designMode = "on";
         }
-        WebCore.EventProcessor.add(this._iframeElement.contentWindow.document, "keypress", 
+        Core.Web.Event.add(this._iframeElement.contentWindow.document, "keypress", 
                 Core.method(this, this._processKeyPress), false);
-        WebCore.EventProcessor.add(this._iframeElement.contentWindow.document, "keyup", 
+        Core.Web.Event.add(this._iframeElement.contentWindow.document, "keyup", 
                 Core.method(this, this._processKeyUp), false);
-        WebCore.EventProcessor.add(this._iframeElement.contentWindow.document, "mousedown", 
+        Core.Web.Event.add(this._iframeElement.contentWindow.document, "mousedown", 
                 Core.method(this, this._processMouseDown), false);
-        WebCore.EventProcessor.add(this._iframeElement.contentWindow.document, "mouseup", 
+        Core.Web.Event.add(this._iframeElement.contentWindow.document, "mouseup", 
                 Core.method(this, this._processMouseUp), false);
         this._contentDocumentRendered = true;
     },
     
     renderDispose: function(update) {
-        WebCore.EventProcessor.removeAll(this._iframeElement.contentWindow.document);
+        Core.Web.Event.removeAll(this._iframeElement.contentWindow.document);
         this._mainDivElement = null;
         this._iframeElement = null;
         this._contentDocumentRendered = false;
@@ -866,7 +866,7 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer = Core.extend(EchoRender.Compo
         }
         
         var rtaMainDivElement = this.component._richTextArea.peer._mainDivElement;
-        var bounds = new WebCore.Measure.Bounds(rtaMainDivElement.parentNode);
+        var bounds = new Core.Web.Measure.Bounds(rtaMainDivElement.parentNode);
         
         if (bounds.height) {
             var calculatedHeight = (bounds.height < this._trimHeight + 100 ? 100 : bounds.height - this._trimHeight) + "px";
@@ -888,22 +888,22 @@ ExtrasRender.ComponentSync.RichTextArea.InputPeer = Core.extend(EchoRender.Compo
     },
     
     _storeRange: function() {
-        if (WebCore.Environment.BROWSER_INTERNET_EXPLORER) {
+        if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
             this._selectionRange = this._iframeElement.contentWindow.document.selection.createRange();
         }
     }
 });
 
-ExtrasRender.ComponentSync.RichTextArea.MessageDialog = Core.extend(
-        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog, {
+Extras.Sync.RichTextArea.MessageDialog = Core.extend(
+        Extras.Sync.RichTextArea.AbstractDialog, {
     
     $construct: function(richTextArea, title, message) {
-        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.call(this, richTextArea,
-                ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.TYPE_OK,
+        Extras.Sync.RichTextArea.AbstractDialog.call(this, richTextArea,
+                Extras.Sync.RichTextArea.AbstractDialog.TYPE_OK,
                 {
                     title: title
                 },
-                new EchoApp.Label({
+                new Echo.Label({
                     text: message,
                     layoutData: {
                         insets: 30 
@@ -912,36 +912,36 @@ ExtrasRender.ComponentSync.RichTextArea.MessageDialog = Core.extend(
     }
 });
 
-ExtrasRender.ComponentSync.RichTextArea.TableDialog = Core.extend(
-        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog, {
+Extras.Sync.RichTextArea.TableDialog = Core.extend(
+        Extras.Sync.RichTextArea.AbstractDialog, {
 
     $construct: function(richTextArea) {
-        ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.call(this, richTextArea,
-                ExtrasRender.ComponentSync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL,
+        Extras.Sync.RichTextArea.AbstractDialog.call(this, richTextArea,
+                Extras.Sync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL,
                 {
                     title: richTextArea.peer._msg["TableDialog.Title"], 
                     icon: richTextArea.peer._icons.table
                 },
-                new EchoApp.Grid({
+                new Echo.Grid({
                     insets: 10,
                     children: [
-                        new EchoApp.Label({
+                        new Echo.Label({
                             text: richTextArea.peer._msg["TableDialog.PromptRows"],
                             layoutData: {
                                 alignment: "trailing"
                             }
                         }),
-                        this._rowsField = new EchoApp.TextField({
+                        this._rowsField = new Echo.TextField({
                             text: "2",
                             width: 100   
                         }),
-                        new EchoApp.Label({
+                        new Echo.Label({
                             text: richTextArea.peer._msg["TableDialog.PromptColumns"],
                             layoutData: {
                                 alignment: "trailing"
                             }
                         }),
-                        this._columnsField = new EchoApp.TextField({
+                        this._columnsField = new Echo.TextField({
                             text: "3",
                             width: 100
                         })
@@ -955,13 +955,13 @@ ExtrasRender.ComponentSync.RichTextArea.TableDialog = Core.extend(
             columns: parseInt(this._columnsField.get("text"))
         };
         if (isNaN(data.rows) || data.rows < 1 || data.rows > 50) {
-            this.parent.add(new ExtrasRender.ComponentSync.RichTextArea.MessageDialog(this._richTextArea, 
+            this.parent.add(new Extras.Sync.RichTextArea.MessageDialog(this._richTextArea, 
                     this._richTextArea.peer._msg["TableDialog.ErrorDialogTitle"], 
                     this._richTextArea.peer._msg["TableDialog.ErrorDialog.Rows"]));
             return;
         }
         if (isNaN(data.columns) || data.columns < 1 || data.columns > 50) {
-            this.parent.add(new ExtrasRender.ComponentSync.RichTextArea.MessageDialog(this._richTextArea, 
+            this.parent.add(new Extras.Sync.RichTextArea.MessageDialog(this._richTextArea, 
                     this._richTextArea.peer._msg["TableDialog.ErrorDialogTitle"], 
                     this._richTextArea.peer._msg["TableDialog.ErrorDialog.Columns"]));
             return;

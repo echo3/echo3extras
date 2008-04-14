@@ -1,43 +1,43 @@
 /**
  * @class 
  * ContextMenu component.
- * @base EchoApp.Component
+ * @base Echo.Component
  */
-ExtrasApp.ContextMenu = Core.extend(EchoApp.Component, {
+Extras.ContextMenu = Core.extend(Echo.Component, {
 
     $load: function() {
-        EchoApp.ComponentFactory.registerType("ExtrasApp.ContextMenu", this);
+        Echo.ComponentFactory.registerType("Extras.ContextMenu", this);
     },
 
-    componentType: "ExtrasApp.ContextMenu"
+    componentType: "Extras.ContextMenu"
 });
 
 /**
  * @class
  * DropDownMenu component.
- * @base EchoApp.Component
+ * @base Echo.Component
  */
-ExtrasApp.DropDownMenu = Core.extend(EchoApp.Component, {
+Extras.DropDownMenu = Core.extend(Echo.Component, {
 
     $load: function() {
-        EchoApp.ComponentFactory.registerType("ExtrasApp.DropDownMenu", this);
+        Echo.ComponentFactory.registerType("Extras.DropDownMenu", this);
     },
 
-    componentType: "ExtrasApp.DropDownMenu"
+    componentType: "Extras.DropDownMenu"
 });
 
 /**
  * @class 
  * MenuBarPane component.
- * @base EchoApp.Component
+ * @base Echo.Component
  */
-ExtrasApp.MenuBarPane = Core.extend(EchoApp.Component, {
+Extras.MenuBarPane = Core.extend(Echo.Component, {
 
     $load: function() {
-        EchoApp.ComponentFactory.registerType("ExtrasApp.MenuBarPane", this);
+        Echo.ComponentFactory.registerType("Extras.MenuBarPane", this);
     },
 
-    componentType: "ExtrasApp.MenuBarPane"
+    componentType: "Extras.MenuBarPane"
 });
 
 /**
@@ -49,11 +49,11 @@ ExtrasApp.MenuBarPane = Core.extend(EchoApp.Component, {
  * @param icon {String} the icon of the menu model which will appear in its parent menu
  *        when this menu is used as a submenu
  */
-ExtrasApp.MenuModel = Core.extend({
+Extras.MenuModel = Core.extend({
     
     $construct: function(modelId, text, icon, items) {
         this.modelId = modelId;
-        this.id = ExtrasApp.uniqueId++;
+        this.id = Extras.uniqueId++;
         this.parent = null;
         this.text = text;
         this.icon = icon;
@@ -83,7 +83,7 @@ ExtrasApp.MenuModel = Core.extend({
             }
         }
         for (i = 0; i < this.items.length; ++i) {
-            if (this.items[i] instanceof ExtrasApp.MenuModel) {
+            if (this.items[i] instanceof Extras.MenuModel) {
                 var itemModel = this.items[i].getItem(id);
                 if (itemModel) {
                     return itemModel;
@@ -118,11 +118,11 @@ ExtrasApp.MenuModel = Core.extend({
     }
 });
 
-ExtrasApp.OptionModel = Core.extend({
+Extras.OptionModel = Core.extend({
     
     $construct: function(modelId, text, icon) {
         this.modelId = modelId;
-        this.id = ExtrasApp.uniqueId++;
+        this.id = Extras.uniqueId++;
         this.parent = null;
         this.text = text;
         this.icon = icon;
@@ -153,32 +153,32 @@ ExtrasApp.OptionModel = Core.extend({
     }
 });
 
-ExtrasApp.ToggleOptionModel = Core.extend(ExtrasApp.OptionModel, {
+Extras.ToggleOptionModel = Core.extend(Extras.OptionModel, {
 
     $construct: function(modelId, text, selected) {
-        ExtrasApp.OptionModel.call(this, modelId, text, null);
+        Extras.OptionModel.call(this, modelId, text, null);
         this.selected = selected;
     }
 });
 
-ExtrasApp.RadioOptionModel = Core.extend(ExtrasApp.ToggleOptionModel, {
+Extras.RadioOptionModel = Core.extend(Extras.ToggleOptionModel, {
 
     $construct: function(modelId, text, selected) {
-        ExtrasApp.ToggleOptionModel.call(this, modelId, text, selected);
+        Extras.ToggleOptionModel.call(this, modelId, text, selected);
     }
 });
 
 /**
  * A representation of a menu separator.
  */
-ExtrasApp.SeparatorModel = Core.extend({
+Extras.SeparatorModel = Core.extend({
 
     $construct: function() {
         this.parent = null;
     }
 });
 
-ExtrasApp.MenuStateModel = Core.extend({
+Extras.MenuStateModel = Core.extend({
 
     $construct: function() {
         this._disabledItems = [];

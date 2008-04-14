@@ -1,18 +1,18 @@
 /**
  * @class AccordionPane component.
- * @base EchoApp.Component
+ * @base Echo.Component
  */
-ExtrasApp.AccordionPane = Core.extend(EchoApp.Component, {
+Extras.AccordionPane = Core.extend(Echo.Component, {
     
     $static: {
         DEFAULT_ANIMATION_TIME: 350
     },
     
     $load: function() {
-        EchoApp.ComponentFactory.registerType("ExtrasApp.AccordionPane", this);
+        Echo.ComponentFactory.registerType("Extras.AccordionPane", this);
     },
     
-    componentType: "ExtrasApp.AccordionPane",
+    componentType: "Extras.AccordionPane",
     pane: true
 });
 

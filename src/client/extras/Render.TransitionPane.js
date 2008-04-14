@@ -1,10 +1,10 @@
 /**
  * Synchronization peer for TransitionPane.
  */
-ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync, {
+Extras.Sync.TransitionPane = Core.extend(Echo.Render.ComponentSync, {
 
     $load: function() {
-        EchoRender.registerPeer("ExtrasApp.TransitionPane", this);
+        Echo.Render.registerPeer("Extras.TransitionPane", this);
     },
 
     element: null,
@@ -42,14 +42,14 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
     _loadTransition: function() {
         this.type = this.component.render("type");
         switch (this.type) {
-        case ExtrasApp.TransitionPane.TYPE_FADE:
-            this._transitionClass = ExtrasRender.ComponentSync.TransitionPane.FadeOpacityTransition;
+        case Extras.TransitionPane.TYPE_FADE:
+            this._transitionClass = Extras.Sync.TransitionPane.FadeOpacityTransition;
             break;
-        case ExtrasApp.TransitionPane.TYPE_CAMERA_PAN_DOWN:
-        case ExtrasApp.TransitionPane.TYPE_CAMERA_PAN_LEFT:
-        case ExtrasApp.TransitionPane.TYPE_CAMERA_PAN_RIGHT:
-        case ExtrasApp.TransitionPane.TYPE_CAMERA_PAN_UP:
-            this._transitionClass = ExtrasRender.ComponentSync.TransitionPane.CameraPanTransition;
+        case Extras.TransitionPane.TYPE_CAMERA_PAN_DOWN:
+        case Extras.TransitionPane.TYPE_CAMERA_PAN_LEFT:
+        case Extras.TransitionPane.TYPE_CAMERA_PAN_RIGHT:
+        case Extras.TransitionPane.TYPE_CAMERA_PAN_UP:
+            this._transitionClass = Extras.Sync.TransitionPane.CameraPanTransition;
             break;
 
         default:
@@ -91,7 +91,7 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
         this.childDivElement = document.createElement("div");
         this.childDivElement.style.cssText = "position:absolute;top:0;left:0;width:100%;height:100%;";
         
-        EchoRender.renderComponentAdd(update, this.component.children[0], this.childDivElement);
+        Echo.Render.renderComponentAdd(update, this.component.children[0], this.childDivElement);
         
         if (this._initialContentLoaded) {
             this._hideContent();
@@ -136,7 +136,7 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
         if (fullRender) {
             var element = this.element;
             var containerElement = element.parentNode;
-            EchoRender.renderComponentDispose(update, update.parent);
+            Echo.Render.renderComponentDispose(update, update.parent);
             containerElement.removeChild(element);
             this.renderAdd(update, containerElement);
         } else {
@@ -165,8 +165,8 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
     _transitionStart: function() {
         this._transition = new this._transitionClass(this);
         this._duration = this.component.render("duration", this._transition.duration);
-        this._runnable = new ExtrasRender.ComponentSync.TransitionPane.Runnable(this);
-        WebCore.Scheduler.add(this._runnable); 
+        this._runnable = new Extras.Sync.TransitionPane.Runnable(this);
+        Core.Web.Scheduler.add(this._runnable); 
     },
     
     /**
@@ -176,7 +176,7 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
     _transitionFinish: function() {
         // Remove runnable task from scheduler.
         if (this._runnable) {
-            WebCore.Scheduler.remove(this._runnable);
+            Core.Web.Scheduler.remove(this._runnable);
             this._runnable = null;
         }
         
@@ -192,7 +192,7 @@ ExtrasRender.ComponentSync.TransitionPane = Core.extend(EchoRender.ComponentSync
     }
 });
 
-ExtrasRender.ComponentSync.TransitionPane.Runnable = Core.extend(WebCore.Scheduler.Runnable, {
+Extras.Sync.TransitionPane.Runnable = Core.extend(Core.Web.Scheduler.Runnable, {
 
     transitionPane: null,
 
@@ -232,7 +232,7 @@ ExtrasRender.ComponentSync.TransitionPane.Runnable = Core.extend(WebCore.Schedul
 /**
  * Abstract base class for transition implementations.
  */
-ExtrasRender.ComponentSync.TransitionPane.Transition = Core.extend({
+Extras.Sync.TransitionPane.Transition = Core.extend({
 
     transitionPane: null,
 
@@ -279,8 +279,8 @@ ExtrasRender.ComponentSync.TransitionPane.Transition = Core.extend({
     }
 });
 
-ExtrasRender.ComponentSync.TransitionPane.CameraPanTransition = Core.extend(
-        ExtrasRender.ComponentSync.TransitionPane.Transition, {
+Extras.Sync.TransitionPane.CameraPanTransition = Core.extend(
+        Extras.Sync.TransitionPane.Transition, {
         
     _newChildOnScreen: false,
     
@@ -295,9 +295,9 @@ ExtrasRender.ComponentSync.TransitionPane.CameraPanTransition = Core.extend(
     },
     
     start: function() {
-        var bounds = new WebCore.Measure.Bounds(this.transitionPane.element);
-        this._travel = (this.transitionPane.type == ExtrasApp.TransitionPane.TYPE_CAMERA_PAN_DOWN 
-                || this.transitionPane.type == ExtrasApp.TransitionPane.TYPE_CAMERA_PAN_UP)
+        var bounds = new Core.Web.Measure.Bounds(this.transitionPane.element);
+        this._travel = (this.transitionPane.type == Extras.TransitionPane.TYPE_CAMERA_PAN_DOWN 
+                || this.transitionPane.type == Extras.TransitionPane.TYPE_CAMERA_PAN_UP)
                 ? bounds.height : bounds.width;
         if (this.transitionPane.oldChildDivElement) {
             this.transitionPane.oldChildDivElement.style.zIndex = 1;
@@ -306,7 +306,7 @@ ExtrasRender.ComponentSync.TransitionPane.CameraPanTransition = Core.extend(
     
     step: function(progress) {
         switch (this.transitionPane.type) {
-        case ExtrasApp.TransitionPane.TYPE_CAMERA_PAN_DOWN:
+        case Extras.TransitionPane.TYPE_CAMERA_PAN_DOWN:
             if (this.transitionPane.childDivElement) {
                 this.transitionPane.childDivElement.style.top = ((1 - progress) * this._travel) + "px";
             }
@@ -314,7 +314,7 @@ ExtrasRender.ComponentSync.TransitionPane.CameraPanTransition = Core.extend(
                 this.transitionPane.oldChildDivElement.style.top = (0 - (progress * this._travel)) + "px";
             }
             break;
-        case ExtrasApp.TransitionPane.TYPE_CAMERA_PAN_UP:
+        case Extras.TransitionPane.TYPE_CAMERA_PAN_UP:
             if (this.transitionPane.childDivElement) {
                 this.transitionPane.childDivElement.style.top = (0 - ((1 - progress) * this._travel)) + "px";
             }
@@ -322,7 +322,7 @@ ExtrasRender.ComponentSync.TransitionPane.CameraPanTransition = Core.extend(
                 this.transitionPane.oldChildDivElement.style.top = (progress * this._travel) + "px";
             }
             break;
-        case ExtrasApp.TransitionPane.TYPE_CAMERA_PAN_RIGHT:
+        case Extras.TransitionPane.TYPE_CAMERA_PAN_RIGHT:
             if (this.transitionPane.childDivElement) {
                 this.transitionPane.childDivElement.style.left = ((1 - progress) * this._travel) + "px";
             }
@@ -347,15 +347,15 @@ ExtrasRender.ComponentSync.TransitionPane.CameraPanTransition = Core.extend(
     }
 });
 
-ExtrasRender.ComponentSync.TransitionPane.FadeOpacityTransition = Core.extend(
-        ExtrasRender.ComponentSync.TransitionPane.Transition, {
+Extras.Sync.TransitionPane.FadeOpacityTransition = Core.extend(
+        Extras.Sync.TransitionPane.Transition, {
     
     duration: 1000,
     
     finish: function() {
         if (this.transitionPane.childDivElement) {
             this.transitionPane.childDivElement.style.zIndex = 0;
-            if (WebCore.Environment.PROPRIETARY_IE_OPACITY_FILTER_REQUIRED) {
+            if (Core.Web.Env.PROPRIETARY_IE_OPACITY_FILTER_REQUIRED) {
                 this.transitionPane.childDivElement.style.filter = "";
             } else {
                 this.transitionPane.childDivElement.style.opacity = 1;
@@ -365,7 +365,7 @@ ExtrasRender.ComponentSync.TransitionPane.FadeOpacityTransition = Core.extend(
     
     start: function() {
         if (this.transitionPane.childDivElement) {
-            if (WebCore.Environment.PROPRIETARY_IE_OPACITY_FILTER_REQUIRED) {
+            if (Core.Web.Env.PROPRIETARY_IE_OPACITY_FILTER_REQUIRED) {
                 this.transitionPane.childDivElement.style.filter = "alpha(opacity=0)";
             } else {
                 this.transitionPane.childDivElement.style.opacity = 0;
@@ -376,14 +376,14 @@ ExtrasRender.ComponentSync.TransitionPane.FadeOpacityTransition = Core.extend(
     
     step: function(progress) {
         if (this.transitionPane.childDivElement) {
-            if (WebCore.Environment.PROPRIETARY_IE_OPACITY_FILTER_REQUIRED) {
+            if (Core.Web.Env.PROPRIETARY_IE_OPACITY_FILTER_REQUIRED) {
                 var percent = parseInt(progress * 100);
                 this.transitionPane.childDivElement.style.filter = "alpha(opacity=" + percent + ")";
             } else {
                 this.transitionPane.childDivElement.style.opacity = progress;
             }
         } else if (this.transitionPane.oldChildDivElement) {
-            if (WebCore.Environment.PROPRIETARY_IE_OPACITY_FILTER_REQUIRED) {
+            if (Core.Web.Env.PROPRIETARY_IE_OPACITY_FILTER_REQUIRED) {
                 var percent = parseInt((1 - progress) * 100);
                 this.transitionPane.oldChildDivElement.style.filter = "alpha(opacity=" + percent + ")";
             } else {

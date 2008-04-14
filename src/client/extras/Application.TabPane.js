@@ -3,9 +3,9 @@
  * 
  * @constructor
  * @class TabPane component.
- * @base EchoApp.Component
+ * @base Echo.Component
  */
-ExtrasApp.TabPane = Core.extend(EchoApp.Component, {
+Extras.TabPane = Core.extend(Echo.Component, {
 
     $static: {
     
@@ -64,10 +64,10 @@ ExtrasApp.TabPane = Core.extend(EchoApp.Component, {
     },
 
     $load: function() {
-        EchoApp.ComponentFactory.registerType("ExtrasApp.TabPane", this);
+        Echo.ComponentFactory.registerType("Extras.TabPane", this);
     },
 
-    componentType: "ExtrasApp.TabPane",
+    componentType: "Extras.TabPane",
     pane: true
 });
 

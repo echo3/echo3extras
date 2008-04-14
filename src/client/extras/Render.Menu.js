@@ -1,7 +1,7 @@
 /**
  * Abstract base class for menu rendering peers.
  */
-ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
+Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
     
     $static: {
         _defaultForeground: "#000000",
@@ -57,9 +57,9 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
             this.active = true;
             this.addMask();
             
-            WebCore.DOM.focusElement(this.element);
-            WebCore.EventProcessor.add(this.element, 
-                    WebCore.Environment.QUIRK_IE_KEY_DOWN_EVENT_REPEAT ? "keydown" : "keypress",
+            Core.Web.DOM.focusElement(this.element);
+            Core.Web.Event.add(this.element, 
+                    Core.Web.Env.QUIRK_IE_KEY_DOWN_EVENT_REPEAT ? "keydown" : "keypress",
                     this._processKeyPressRef, true);
             
             return true;
@@ -69,10 +69,10 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
             if (this.stateModel && !this.stateModel.isEnabled(itemModel.modelId)) {
                 return;
             }
-            if (itemModel instanceof ExtrasApp.OptionModel) {
+            if (itemModel instanceof Extras.OptionModel) {
                 this.deactivate();
                 this.processAction(itemModel);
-            } else if (itemModel instanceof ExtrasApp.MenuModel) {
+            } else if (itemModel instanceof Extras.MenuModel) {
                 this._openMenu(itemModel);
             }
         },
@@ -102,8 +102,8 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
         }
         this.maskDeployed = true;
         
-        WebCore.EventProcessor.add(document.body, "click", this._processMaskClickRef, false);
-        WebCore.EventProcessor.add(document.body, "contextmenu", this._processMaskClickRef, false);
+        Core.Web.Event.add(document.body, "click", this._processMaskClickRef, false);
+        Core.Web.Event.add(document.body, "contextmenu", this._processMaskClickRef, false);
     },
     
     closeAll: function() {
@@ -126,8 +126,8 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
         }
         this.active = false;
 
-        WebCore.EventProcessor.remove(this.element, 
-                WebCore.Environment.QUIRK_IE_KEY_DOWN_EVENT_REPEAT ? "keydown" : "keypress",
+        Core.Web.Event.remove(this.element, 
+                Core.Web.Env.QUIRK_IE_KEY_DOWN_EVENT_REPEAT ? "keydown" : "keypress",
                 this._processKeyPressRef, true);
         
         this.closeAll();
@@ -148,7 +148,7 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
             return;
         }
         
-        var subMenu = new ExtrasRender.ComponentSync.Menu.RenderedMenu(this, menuModel);
+        var subMenu = new Extras.Sync.Menu.RenderedMenu(this, menuModel);
         subMenu.create();
 
         var parentMenu = null;
@@ -181,8 +181,8 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
             return;
         }
         this.maskDeployed = false;
-        WebCore.EventProcessor.remove(document.body, "click", this._processMaskClickRef, false);
-        WebCore.EventProcessor.remove(document.body, "contextmenu", this._processMaskClickRef, false);
+        Core.Web.Event.remove(document.body, "click", this._processMaskClickRef, false);
+        Core.Web.Event.remove(document.body, "contextmenu", this._processMaskClickRef, false);
     },
     
     renderAdd: function(update, parentElement) {
@@ -202,14 +202,14 @@ ExtrasRender.ComponentSync.Menu = Core.extend(EchoRender.ComponentSync, {
     renderUpdate: function(update) {
         var element = this.element;
         var containerElement = element.parentNode;
-        EchoRender.renderComponentDispose(update, update.parent);
+        Echo.Render.renderComponentDispose(update, update.parent);
         containerElement.removeChild(element);
         this.renderAdd(update, containerElement);
         return false;
     }
 });
 
-ExtrasRender.ComponentSync.Menu.RenderedMenu = Core.extend({
+Extras.Sync.Menu.RenderedMenu = Core.extend({
 
     $static: {
         defaultIconTextMargin: 5,
@@ -242,19 +242,19 @@ ExtrasRender.ComponentSync.Menu.RenderedMenu = Core.extend({
         this.element.style.top = y + "px";
 
         var animationTime = this.component.render("animationTime", 0);
-        if (!animationTime || WebCore.Environment.NOT_SUPPORTED_CSS_OPACITY) {
+        if (!animationTime || Core.Web.Env.NOT_SUPPORTED_CSS_OPACITY) {
             document.body.appendChild(this.element);
         } else {
             this.element.style.opacity = 0;
-            var fadeRunnable = new ExtrasRender.FadeRunnable(this.element, true, 1, animationTime);
-            WebCore.Scheduler.add(fadeRunnable);
+            var fadeRunnable = new Extras.Sync.FadeRunnable(this.element, true, 1, animationTime);
+            Core.Web.Scheduler.add(fadeRunnable);
             document.body.appendChild(this.element);
         }
 
-        WebCore.EventProcessor.add(this.element, "click", Core.method(this, this._processClick), false);
-        WebCore.EventProcessor.add(this.element, "mouseover", Core.method(this, this._processItemEnter), false);
-        WebCore.EventProcessor.add(this.element, "mouseout", Core.method(this, this._processItemExit), false);
-        WebCore.EventProcessor.Selection.disable(this.element);
+        Core.Web.Event.add(this.element, "click", Core.method(this, this._processClick), false);
+        Core.Web.Event.add(this.element, "mouseover", Core.method(this, this._processItemEnter), false);
+        Core.Web.Event.add(this.element, "mouseout", Core.method(this, this._processItemExit), false);
+        Core.Web.Event.Selection.disable(this.element);
     },
 
     close: function() {
@@ -267,26 +267,26 @@ ExtrasRender.ComponentSync.Menu.RenderedMenu = Core.extend({
     create: function() {
         this.element = document.createElement("div");
         this.element.style.position = "absolute";
-        this.element.style.zIndex = ExtrasRender.ComponentSync.Menu.MAX_Z_INDEX;
+        this.element.style.zIndex = Extras.Sync.Menu.MAX_Z_INDEX;
 
-        var opacity = (WebCore.Environment.NOT_SUPPORTED_CSS_OPACITY ? 100 : this.component.render("menuOpacity", 100)) / 100;
+        var opacity = (Core.Web.Env.NOT_SUPPORTED_CSS_OPACITY ? 100 : this.component.render("menuOpacity", 100)) / 100;
 
         var menuContentDivElement = document.createElement("div");
         menuContentDivElement.style.cssText = "position:relative;z-index:10;";
         this.element.appendChild(menuContentDivElement);
 
-        EchoAppRender.Insets.render(ExtrasRender.ComponentSync.Menu.RenderedMenu.defaultMenuInsets, 
+        Echo.Sync.Insets.render(Extras.Sync.Menu.RenderedMenu.defaultMenuInsets, 
                 menuContentDivElement, "padding");
-        EchoAppRender.Border.render(this.component.render("menuBorder", ExtrasRender.ComponentSync.Menu._defaultBorder),
+        Echo.Sync.Border.render(this.component.render("menuBorder", Extras.Sync.Menu._defaultBorder),
                 menuContentDivElement);
         var foreground;
         var menuForeground = this.component.render("menuForeground");
         if (menuForeground) {
             foreground = menuForeground;
         } else {
-            foreground = this.component.render("foreground", ExtrasRender.ComponentSync.Menu._defaultForeground);
+            foreground = this.component.render("foreground", Extras.Sync.Menu._defaultForeground);
         }
-        EchoAppRender.Color.render(foreground, menuContentDivElement, "color");
+        Echo.Sync.Color.render(foreground, menuContentDivElement, "color");
 
         // Apply menu font if it is set, or apply default font 
         // if it is set and the menu font is NOT set.
@@ -295,7 +295,7 @@ ExtrasRender.ComponentSync.Menu.RenderedMenu = Core.extend({
             font = this.component.render("font");
         }
         if (font) {
-            EchoAppRender.Font.render(font, menuContentDivElement);
+            Echo.Sync.Font.render(font, menuContentDivElement);
         }
 
         var backgroundDivElement;
@@ -313,9 +313,9 @@ ExtrasRender.ComponentSync.Menu.RenderedMenu = Core.extend({
         if (menuBackground) {
             background = menuBackground;
         } else {
-            background = this.component.render("background", ExtrasRender.ComponentSync.Menu._defaultBackground);
+            background = this.component.render("background", Extras.Sync.Menu._defaultBackground);
         }
-        EchoAppRender.Color.render(background, backgroundDivElement, "backgroundColor");
+        Echo.Sync.Color.render(background, backgroundDivElement, "backgroundColor");
 
         // Apply menu background image if it is set, or apply default background 
         // image if it is set and the menu background is NOT set.
@@ -327,7 +327,7 @@ ExtrasRender.ComponentSync.Menu.RenderedMenu = Core.extend({
             backgroundImage = this.component.render("backgroundImage");
         }
         if (backgroundImage) {
-            EchoAppRender.FillImage.render(backgroundImage, backgroundDivElement, null); 
+            Echo.Sync.FillImage.render(backgroundImage, backgroundDivElement, null); 
         }
 
         var menuTableElement = document.createElement("table");
@@ -343,7 +343,7 @@ ExtrasRender.ComponentSync.Menu.RenderedMenu = Core.extend({
         var hasIcons = false;
         for (var i = 0; i < items.length; ++i) {
             var item = items[i];
-            if (item.icon || item instanceof ExtrasApp.ToggleOptionModel) {
+            if (item.icon || item instanceof Extras.ToggleOptionModel) {
                 hasIcons = true;
                 break;
             }
@@ -351,17 +351,17 @@ ExtrasRender.ComponentSync.Menu.RenderedMenu = Core.extend({
         var textPadding, iconPadding;
 
         if (hasIcons) {
-            var pixelInsets = EchoAppRender.Insets.toPixels(ExtrasRender.ComponentSync.Menu.RenderedMenu.defaultMenuItemInsets);
+            var pixelInsets = Echo.Sync.Insets.toPixels(Extras.Sync.Menu.RenderedMenu.defaultMenuItemInsets);
             iconPadding = "0px 0px 0px " + pixelInsets.left + "px";
             textPadding = pixelInsets.top + "px " + pixelInsets.right + "px " + 
                     pixelInsets.bottom + "px " + pixelInsets.left + "px";
         } else {
-            textPadding = ExtrasRender.ComponentSync.Menu.RenderedMenu.defaultMenuItemInsets;
+            textPadding = Extras.Sync.Menu.RenderedMenu.defaultMenuItemInsets;
         }
 
         for (var i = 0; i < items.length; ++i) {
             var item = items[i];
-            if (item instanceof ExtrasApp.OptionModel || item instanceof ExtrasApp.MenuModel) {
+            if (item instanceof Extras.OptionModel || item instanceof Extras.MenuModel) {
                 var menuItemTrElement = document.createElement("tr");
                 this.itemElements[item.id] = menuItemTrElement;
                 menuItemTrElement.style.cursor = "pointer";
@@ -369,11 +369,11 @@ ExtrasRender.ComponentSync.Menu.RenderedMenu = Core.extend({
 
                 if (hasIcons) {
                     var menuItemIconTdElement = document.createElement("td");
-                    EchoAppRender.Insets.render(iconPadding, menuItemIconTdElement, "padding");
-                    if (item instanceof ExtrasApp.ToggleOptionModel) {
+                    Echo.Sync.Insets.render(iconPadding, menuItemIconTdElement, "padding");
+                    if (item instanceof Extras.ToggleOptionModel) {
                         var iconIdentifier;
                         var selected = this.stateModel && this.stateModel.isSelected(item.modelId);
-                        if (item instanceof ExtrasApp.RadioOptionModel) {
+                        if (item instanceof Extras.RadioOptionModel) {
                             iconIdentifier = selected ? "image/menu/RadioOn.gif" : "image/menu/RadioOff.gif";
                         } else {
                             iconIdentifier = selected ? "image/menu/ToggleOn.gif" : "image/menu/ToggleOff.gif";
@@ -383,26 +383,26 @@ ExtrasRender.ComponentSync.Menu.RenderedMenu = Core.extend({
                         menuItemIconTdElement.appendChild(imgElement);
                     } else if (item.icon) {
                         var imgElement = document.createElement("img");
-                        EchoAppRender.ImageReference.renderImg(item.icon, imgElement);
+                        Echo.Sync.ImageReference.renderImg(item.icon, imgElement);
                         menuItemIconTdElement.appendChild(imgElement);
                     }
                     menuItemTrElement.appendChild(menuItemIconTdElement);
                 }
 
                 var menuItemContentTdElement = document.createElement("td");
-                EchoAppRender.Insets.render(textPadding, menuItemContentTdElement, "padding");
+                Echo.Sync.Insets.render(textPadding, menuItemContentTdElement, "padding");
                 var lineWrap = this.component.render("lineWrap");
                 if (lineWrap != null && !lineWrap) {
                     menuItemContentTdElement.style.whiteSpace = "nowrap";
                 }
                 if (this.stateModel && !this.stateModel.isEnabled(item.modelId)) {
-                    EchoAppRender.Color.render(this.component.render("disabledForeground", 
-                            ExtrasRender.ComponentSync.Menu._defaultDisabledForeground), menuItemContentTdElement, "color");
+                    Echo.Sync.Color.render(this.component.render("disabledForeground", 
+                            Extras.Sync.Menu._defaultDisabledForeground), menuItemContentTdElement, "color");
                 }
                 menuItemContentTdElement.appendChild(document.createTextNode(item.text));
                 menuItemTrElement.appendChild(menuItemContentTdElement);
 
-                if (item instanceof ExtrasApp.MenuModel) {
+                if (item instanceof Extras.MenuModel) {
                     // Submenus have adjacent column containing 'expand' icons.
                     var menuItemArrowTdElement = document.createElement("td");
                     menuItemArrowTdElement.style.textAlign = "right";
@@ -417,7 +417,7 @@ ExtrasRender.ComponentSync.Menu.RenderedMenu = Core.extend({
                     // Menu items fill both columns.
                     menuItemContentTdElement.colSpan = 2;
                 }
-            } else if (item instanceof ExtrasApp.SeparatorModel) {
+            } else if (item instanceof Extras.SeparatorModel) {
                 var menuItemTrElement = document.createElement("tr");
                 menuTbodyElement.appendChild(menuItemTrElement);
                 var menuItemContentTdElement = document.createElement("td");
@@ -430,7 +430,7 @@ ExtrasRender.ComponentSync.Menu.RenderedMenu = Core.extend({
             }
         }
 
-        var bounds = new WebCore.Measure.Bounds(this.element);
+        var bounds = new Core.Web.Measure.Bounds(this.element);
         this.width = bounds.width;
         this.height = bounds.height;
     },
@@ -474,14 +474,14 @@ ExtrasRender.ComponentSync.Menu.RenderedMenu = Core.extend({
     getSubMenuPosition: function(menuModel, width, height) {
         var menuElement = this.itemElements[menuModel.id];
         
-        var itemBounds = new WebCore.Measure.Bounds(menuElement);
-        var menuBounds = new WebCore.Measure.Bounds(this.element);
+        var itemBounds = new Core.Web.Measure.Bounds(menuElement);
+        var menuBounds = new Core.Web.Measure.Bounds(this.element);
         
         return { x: menuBounds.left + menuBounds.width, y: itemBounds.top };
     },
     
     _processClick: function(e) {
-        WebCore.DOM.preventEventDefault(e);
+        Core.Web.DOM.preventEventDefault(e);
         var itemModel = this._getItemModel(e.target);
         if (itemModel) {
             this._setActiveItem(itemModel, true);
@@ -497,7 +497,7 @@ ExtrasRender.ComponentSync.Menu.RenderedMenu = Core.extend({
     },
     
     _processRollover: function(e, state) {
-        if (!this.client.verifyInput(this.component) || WebCore.dragInProgress) {
+        if (!this.client.verifyInput(this.component) || Core.Web.dragInProgress) {
             return;
         }
         
@@ -525,7 +525,7 @@ ExtrasRender.ComponentSync.Menu.RenderedMenu = Core.extend({
             this._activeItem = null;
         }
 
-        if (itemModel instanceof ExtrasApp.MenuModel) {
+        if (itemModel instanceof Extras.MenuModel) {
             this.menuSync.activateItem(itemModel);
         } else {
             if (execute) {
@@ -546,11 +546,11 @@ ExtrasRender.ComponentSync.Menu.RenderedMenu = Core.extend({
     _setItemHighlight: function(itemModel, state) {
         var element = this.itemElements[itemModel.id];
         if (state) {
-            EchoAppRender.FillImage.render(this.component.render("selectionBackgroundImage"), element);
-            EchoAppRender.Color.render(this.component.render("selectionBackground", 
-                    ExtrasRender.ComponentSync.Menu._defaultSelectionBackground), element, "backgroundColor");
-            EchoAppRender.Color.render(this.component.render("selectionForeground", 
-                    ExtrasRender.ComponentSync.Menu._defaultSelectionForeground), element, "color");
+            Echo.Sync.FillImage.render(this.component.render("selectionBackgroundImage"), element);
+            Echo.Sync.Color.render(this.component.render("selectionBackground", 
+                    Extras.Sync.Menu._defaultSelectionBackground), element, "backgroundColor");
+            Echo.Sync.Color.render(this.component.render("selectionForeground", 
+                    Extras.Sync.Menu._defaultSelectionForeground), element, "color");
         } else {
             element.style.backgroundImage = "";
             element.style.backgroundColor = "";
@@ -562,10 +562,10 @@ ExtrasRender.ComponentSync.Menu.RenderedMenu = Core.extend({
 /**
  * Component rendering peer: ContextMenu
  */
-ExtrasRender.ComponentSync.ContextMenu = Core.extend(ExtrasRender.ComponentSync.Menu, {
+Extras.Sync.ContextMenu = Core.extend(Extras.Sync.Menu, {
 
     $load: function() {
-        EchoRender.registerPeer("ExtrasApp.ContextMenu", this);
+        Echo.Render.registerPeer("Extras.ContextMenu", this);
     },
     
     _mouseX: null,
@@ -576,11 +576,11 @@ ExtrasRender.ComponentSync.ContextMenu = Core.extend(ExtrasRender.ComponentSync.
     },
 
     _processContextClick: function(e) {
-        if (!this.client.verifyInput(this.component, EchoClient.FLAG_INPUT_PROPERTY) || WebCore.dragInProgress) {
+        if (!this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY) || Core.Web.dragInProgress) {
             return;
         }
     
-        WebCore.DOM.preventEventDefault(e);
+        Core.Web.DOM.preventEventDefault(e);
         
         this._mouseX = e.pageX || (e.clientX + (document.documentElement.scrollLeft || document.body.scrollLeft));
         this._mouseY = e.pageY || (e.clientY + (document.documentElement.scrollTop || document.body.scrollTop));
@@ -590,19 +590,19 @@ ExtrasRender.ComponentSync.ContextMenu = Core.extend(ExtrasRender.ComponentSync.
     },
 
     renderDispose: function(update) {
-        WebCore.EventProcessor.removeAll(this.element);
-        ExtrasRender.ComponentSync.Menu.prototype.renderDispose.call(this, update);
+        Core.Web.Event.removeAll(this.element);
+        Extras.Sync.Menu.prototype.renderDispose.call(this, update);
     },
     
     renderMain: function(update) {
         var contextMenuDivElement = document.createElement("div");
         contextMenuDivElement.id = this.component.renderId;
         
-        WebCore.EventProcessor.add(contextMenuDivElement, "contextmenu", Core.method(this, this._processContextClick), false);
+        Core.Web.Event.add(contextMenuDivElement, "contextmenu", Core.method(this, this._processContextClick), false);
         
         var componentCount = this.component.getComponentCount();
         if (componentCount > 0) {
-            EchoRender.renderComponentAdd(update, this.component.getComponent(0), contextMenuDivElement);
+            Echo.Render.renderComponentAdd(update, this.component.getComponent(0), contextMenuDivElement);
         }
         
         return contextMenuDivElement;
@@ -613,11 +613,11 @@ ExtrasRender.ComponentSync.ContextMenu = Core.extend(ExtrasRender.ComponentSync.
             // partial update
             var removedChildren = update.getRemovedChildren();
             if (removedChildren) {
-                WebCore.DOM.removeNode(this.element.firstChild);
+                Core.Web.DOM.removeNode(this.element.firstChild);
             }
             var addedChildren = update.getAddedChildren();
             if (addedChildren) {
-                EchoRender.renderComponentAdd(update, addedChildren[0], this.element);
+                Echo.Render.renderComponentAdd(update, addedChildren[0], this.element);
             }
             var modelUpdate = update.getUpdatedProperty("model");
             var stateModelUpdate = update.getUpdatedProperty("stateModel");
@@ -639,7 +639,7 @@ ExtrasRender.ComponentSync.ContextMenu = Core.extend(ExtrasRender.ComponentSync.
             return false;
         }
         // full update
-        ExtrasRender.ComponentSync.Menu.prototype.renderUpdate.call(this, update);
+        Extras.Sync.Menu.prototype.renderUpdate.call(this, update);
         return true;
     }
 });
@@ -648,10 +648,10 @@ ExtrasRender.ComponentSync.ContextMenu = Core.extend(ExtrasRender.ComponentSync.
 /**
  * Component rendering peer: DropDownMenu
  */
-ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync.Menu, {
+Extras.Sync.DropDownMenu = Core.extend(Extras.Sync.Menu, {
 
     $load: function() {
-        EchoRender.registerPeer("ExtrasApp.DropDownMenu", this);
+        Echo.Render.registerPeer("Extras.DropDownMenu", this);
     },
     
     _containerDivElement: null,
@@ -659,7 +659,7 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
     _selectedItem: null,
 
     getSubMenuPosition: function(menuModel, width, height) {
-        var bounds = new WebCore.Measure.Bounds(this.element);
+        var bounds = new Core.Web.Measure.Bounds(this.element);
         var x = bounds.left
         var y = bounds.top + bounds.height;
 
@@ -681,28 +681,28 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
         }
         var path = itemModel.getItemPositionPath().join(".");
         this.component.set("selection", path);
-        ExtrasRender.ComponentSync.Menu.prototype.processAction.call(this, itemModel);
+        Extras.Sync.Menu.prototype.processAction.call(this, itemModel);
     },
 
     _processClick: function(e) {
-        if (!this.client.verifyInput(this.component) || WebCore.dragInProgress) {
+        if (!this.client.verifyInput(this.component) || Core.Web.dragInProgress) {
             return;
         }
         
-        WebCore.DOM.preventEventDefault(e);
+        Core.Web.DOM.preventEventDefault(e);
     
         this.activate();
         this.activateItem(this.menuModel);
     },
     
     renderDisplay: function() {
-        WebCore.VirtualPosition.redraw(this._containerDivElement);
+        Core.Web.VirtualPosition.redraw(this._containerDivElement);
     },
     
     renderDispose: function(update) {
-        WebCore.EventProcessor.removeAll(this.element);
+        Core.Web.Event.removeAll(this.element);
         this._containerDivElement = null;
-        ExtrasRender.ComponentSync.Menu.prototype.renderDispose.call(this, update);
+        Extras.Sync.Menu.prototype.renderDispose.call(this, update);
     },
     
     renderMain: function() {
@@ -721,13 +721,13 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
         if (height) {
             dropDownDivElement.style.height = height.toString();
         }
-        EchoAppRender.Color.renderFB(this.component, dropDownDivElement);
+        Echo.Sync.Color.renderFB(this.component, dropDownDivElement);
         
         var relativeContainerDivElement = document.createElement("div");
         relativeContainerDivElement.style.position = "relative";
         relativeContainerDivElement.style.height = "100%";
         //FIXME this was commented out...by whom, why?
-        //EchoAppRender.Insets.render(this.component.render("insets"), relativeContainerDivElement, "padding");
+        //Echo.Sync.Insets.render(this.component.render("insets"), relativeContainerDivElement, "padding");
         relativeContainerDivElement.appendChild(document.createTextNode("\u00a0"));
         
         var expandIcon = this.component.render("expandIcon", this.client.getResourceUrl("Extras", "image/menu/ArrowDown.gif"));
@@ -739,36 +739,36 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
         expandElement.style.top = "0px";
         expandElement.style.right = "0px";
         var imgElement = document.createElement("img");
-        EchoAppRender.ImageReference.renderImg(expandIcon, imgElement);
+        Echo.Sync.ImageReference.renderImg(expandIcon, imgElement);
         expandElement.appendChild(imgElement);
         relativeContainerDivElement.appendChild(expandElement);
         
         this._containerDivElement = document.createElement("div");
         this._containerDivElement.style.cssText = "position:absolute;top:0;left:0;right:" +
-                EchoAppRender.Extent.toCssValue(expandIconWidth) + ";";
+                Echo.Sync.Extent.toCssValue(expandIconWidth) + ";";
         var insets = this.component.render("insets");
         if (insets) {
-            EchoAppRender.Insets.render(insets, this._containerDivElement, "padding");
+            Echo.Sync.Insets.render(insets, this._containerDivElement, "padding");
             if (height) {
-                var insetsPx = EchoAppRender.Insets.toPixels(insets);
-                var compensatedHeight = Math.max(0, EchoAppRender.Extent.toPixels(height) - insetsPx.top - insetsPx.top);
+                var insetsPx = Echo.Sync.Insets.toPixels(insets);
+                var compensatedHeight = Math.max(0, Echo.Sync.Extent.toPixels(height) - insetsPx.top - insetsPx.top);
                 this._containerDivElement.style.height = compensatedHeight + "px";
             }
         } else {
             this._containerDivElement.style.height = "100%";
         }
-        EchoAppRender.FillImage.render(this.component.render("backgroundImage"), this._containerDivElement); 
+        Echo.Sync.FillImage.render(this.component.render("backgroundImage"), this._containerDivElement); 
         
         this._selectionSpanElement = document.createElement("div");
         this._selectionSpanElement.style.cssText = "width:100%;height:100%;overflow:hidden;white-space:nowrap;";
-        EchoAppRender.Font.render(this.component.render("font"), this._selectionSpanElement, null);
+        Echo.Sync.Font.render(this.component.render("font"), this._selectionSpanElement, null);
         this._containerDivElement.appendChild(this._selectionSpanElement);
         
         relativeContainerDivElement.appendChild(this._containerDivElement);
         dropDownDivElement.appendChild(relativeContainerDivElement);
     
-        WebCore.EventProcessor.add(dropDownDivElement, "click", Core.method(this, this._processClick), false);
-        WebCore.EventProcessor.Selection.disable(dropDownDivElement);
+        Core.Web.Event.add(dropDownDivElement, "click", Core.method(this, this._processClick), false);
+        Core.Web.Event.Selection.disable(dropDownDivElement);
     
         if (this.component.render("selectionEnabled")) {
             var selection = this.component.render("selection");
@@ -806,7 +806,7 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
                 var trElement = document.createElement("tr");
                 var tdElement = document.createElement("td");
                 var imgElement = document.createElement("img");
-                EchoAppRender.ImageReference.renderImg(itemModel.icon, imgElement);
+                Echo.Sync.ImageReference.renderImg(itemModel.icon, imgElement);
                 tdElement.appendChild(imgElement);
                 trElement.appendChild(tdElement);
                 tdElement = document.createElement("td");
@@ -825,7 +825,7 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
         } else if (itemModel.icon) {
             // Render Icon Only
             var imgElement = document.createElement("img");
-            EchoAppRender.ImageReference.renderImg(itemModel.icon, imgElement);
+            Echo.Sync.ImageReference.renderImg(itemModel.icon, imgElement);
             this._selectionSpanElement.appendChild(imgElement);
         }
     }
@@ -834,26 +834,26 @@ ExtrasRender.ComponentSync.DropDownMenu = Core.extend(ExtrasRender.ComponentSync
 /**
  * Component rendering peer: MenuBarPane
  */
-ExtrasRender.ComponentSync.MenuBarPane = Core.extend(ExtrasRender.ComponentSync.Menu, {
+Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
 
     $static: {
         _defaultItemInsets: "0px 12px"
     },
     
     $load: function() {
-       EchoRender.registerPeer("ExtrasApp.MenuBarPane", this);
+       Echo.Render.registerPeer("Extras.MenuBarPane", this);
     },
     
     _activeItem: null,
     itemElements: null,
     
     $construct: function() {
-        ExtrasRender.ComponentSync.Menu.call(this);
+        Extras.Sync.Menu.call(this);
         this.itemElements = {};
     },
     
     activate: function() {
-        if (ExtrasRender.ComponentSync.Menu.prototype.activate.call(this)) {
+        if (Extras.Sync.Menu.prototype.activate.call(this)) {
             this.addMenu(this);
         }
     },
@@ -907,8 +907,8 @@ ExtrasRender.ComponentSync.MenuBarPane = Core.extend(ExtrasRender.ComponentSync.
             throw new Error("Invalid menu: " + menuModel);
         }
         
-        var containerBounds = new WebCore.Measure.Bounds(this.element);
-        var itemBounds = new WebCore.Measure.Bounds(itemElement);
+        var containerBounds = new Core.Web.Measure.Bounds(this.element);
+        var itemBounds = new Core.Web.Measure.Bounds(itemElement);
 
         var x = itemBounds.left
         var y = containerBounds.top + containerBounds.height;
@@ -930,7 +930,7 @@ ExtrasRender.ComponentSync.MenuBarPane = Core.extend(ExtrasRender.ComponentSync.
             return;
         }
         
-        WebCore.DOM.preventEventDefault(e);
+        Core.Web.DOM.preventEventDefault(e);
 
         var itemModel = this._getItemModel(e.target);
         if (itemModel) {
@@ -942,7 +942,7 @@ ExtrasRender.ComponentSync.MenuBarPane = Core.extend(ExtrasRender.ComponentSync.
     },
     
     _processRollover: function(e, state) {
-        if (!this.client.verifyInput(this.component) || WebCore.dragInProgress) {
+        if (!this.client.verifyInput(this.component) || Core.Web.dragInProgress) {
             return;
         }
         
@@ -974,12 +974,12 @@ ExtrasRender.ComponentSync.MenuBarPane = Core.extend(ExtrasRender.ComponentSync.
     },
     
     renderDisplay: function() {
-        WebCore.VirtualPosition.redraw(this.element);
+        Core.Web.VirtualPosition.redraw(this.element);
     },
 
     renderDispose: function(update) {
-        WebCore.EventProcessor.removeAll(this.element);
-        ExtrasRender.ComponentSync.Menu.prototype.renderDispose.call(this, update);
+        Core.Web.Event.removeAll(this.element);
+        Extras.Sync.Menu.prototype.renderDispose.call(this, update);
     },
     
     renderMain: function(update) {
@@ -991,12 +991,12 @@ ExtrasRender.ComponentSync.MenuBarPane = Core.extend(ExtrasRender.ComponentSync.
         menuBarDivElement.style.top = "0px";
         menuBarDivElement.style.bottom = "0px";
         
-        EchoAppRender.Color.renderFB(this.component, menuBarDivElement);
-        var border = this.component.render("border", ExtrasRender.ComponentSync.Menu._defaultBorder);
-        EchoAppRender.Border.render(border, menuBarDivElement, "borderTop");
-        EchoAppRender.Border.render(border, menuBarDivElement, "borderBottom");
-        EchoAppRender.FillImage.render(this.component.render("backgroundImage"), menuBarDivElement); 
-        EchoAppRender.Font.render(this.component.render("font"), menuBarDivElement, null);
+        Echo.Sync.Color.renderFB(this.component, menuBarDivElement);
+        var border = this.component.render("border", Extras.Sync.Menu._defaultBorder);
+        Echo.Sync.Border.render(border, menuBarDivElement, "borderTop");
+        Echo.Sync.Border.render(border, menuBarDivElement, "borderBottom");
+        Echo.Sync.FillImage.render(this.component.render("backgroundImage"), menuBarDivElement); 
+        Echo.Sync.Font.render(this.component.render("font"), menuBarDivElement, null);
         
         // This 100% high "inner div" element ensures the table will actually render to 100% height on all browsers.
         // IE7 has a peculiar issue here otherwise.
@@ -1020,7 +1020,7 @@ ExtrasRender.ComponentSync.MenuBarPane = Core.extend(ExtrasRender.ComponentSync.
             var items = this.menuModel.items;
             for (var i = 0; i < items.length; ++i) {
                 var item = items[i];
-                if (item instanceof ExtrasApp.OptionModel || item instanceof ExtrasApp.MenuModel) {
+                if (item instanceof Extras.OptionModel || item instanceof Extras.MenuModel) {
                     var menuBarItemTdElement = document.createElement("td");
                     this.itemElements[item.id] = menuBarItemTdElement;
                     menuBarItemTdElement.style.padding = "0px";
@@ -1028,7 +1028,7 @@ ExtrasRender.ComponentSync.MenuBarPane = Core.extend(ExtrasRender.ComponentSync.
                     menuBarItemTdElement.style.cursor = "pointer";
                     menuBarTrElement.appendChild(menuBarItemTdElement);
                     var menuBarItemDivElement = document.createElement("div");
-                    EchoAppRender.Insets.render(ExtrasRender.ComponentSync.MenuBarPane._defaultItemInsets, 
+                    Echo.Sync.Insets.render(Extras.Sync.MenuBarPane._defaultItemInsets, 
                             menuBarItemDivElement, "padding");
                     menuBarItemTdElement.appendChild(menuBarItemDivElement);
                     var textNode = document.createTextNode(item.text);
@@ -1037,10 +1037,10 @@ ExtrasRender.ComponentSync.MenuBarPane = Core.extend(ExtrasRender.ComponentSync.
             }
         }
         
-        WebCore.EventProcessor.add(menuBarDivElement, "click", Core.method(this, this._processClick), false);
-        WebCore.EventProcessor.add(menuBarDivElement, "mouseover", Core.method(this, this._processItemEnter), false);
-        WebCore.EventProcessor.add(menuBarDivElement, "mouseout", Core.method(this, this._processItemExit), false);
-        WebCore.EventProcessor.Selection.disable(menuBarDivElement);
+        Core.Web.Event.add(menuBarDivElement, "click", Core.method(this, this._processClick), false);
+        Core.Web.Event.add(menuBarDivElement, "mouseover", Core.method(this, this._processItemEnter), false);
+        Core.Web.Event.add(menuBarDivElement, "mouseout", Core.method(this, this._processItemExit), false);
+        Core.Web.Event.Selection.disable(menuBarDivElement);
     
         return menuBarDivElement;
     },
@@ -1066,11 +1066,11 @@ ExtrasRender.ComponentSync.MenuBarPane = Core.extend(ExtrasRender.ComponentSync.
     _setItemHighlight: function(itemModel, state) {
         var element = this.itemElements[itemModel.id];
         if (state) {
-            EchoAppRender.FillImage.render(this.component.render("selectionBackgroundImage"), element);
-            EchoAppRender.Color.render(this.component.render("selectionBackground", 
-                    ExtrasRender.ComponentSync.Menu._defaultSelectionBackground), element, "backgroundColor");
-            EchoAppRender.Color.render(this.component.render("selectionForeground", 
-                    ExtrasRender.ComponentSync.Menu._defaultSelectionForeground), element, "color");
+            Echo.Sync.FillImage.render(this.component.render("selectionBackgroundImage"), element);
+            Echo.Sync.Color.render(this.component.render("selectionBackground", 
+                    Extras.Sync.Menu._defaultSelectionBackground), element, "backgroundColor");
+            Echo.Sync.Color.render(this.component.render("selectionForeground", 
+                    Extras.Sync.Menu._defaultSelectionForeground), element, "color");
         } else {
             element.style.backgroundImage = "";
             element.style.backgroundColor = "";

@@ -1,4 +1,7 @@
-ExtrasApp = { 
+/**
+ * @namespace
+ */
+Extras = { 
 
     /**
      * Maintains a unique id for the ExtrasApp namespace.
@@ -8,19 +11,21 @@ ExtrasApp = {
     uniqueId: 0
 };
 
-ExtrasSerial = { 
+/**
+ * @namespace
+ */
+Extras.Serial = { 
     
     /**
      * Contains the prefix for properties specific to Echo Extras.
      */
-    PROPERTY_TYPE_PREFIX: "ExtrasSerial.",
-    
-    PropertyTranslator: { }
+    PROPERTY_TYPE_PREFIX: "Extras.Serial."
 };
 
-ExtrasRender = { 
-
-    ComponentSync: { },
+/**
+ * @namespace
+ */
+Extras.Sync = { 
 
     configureStyle: function(component, styleName, defaultStyle) {
         if (styleName) {
@@ -31,7 +36,7 @@ ExtrasRender = {
     },
     
     DEFAULT_CONTROL_PANE_SPLIT_PANE_STYLE: {
-        orientation: EchoApp.SplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP,
+        orientation: Echo.SplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP,
         separatorColor: "#dfdfef",
         separatorHeight: 1,
         separatorPosition: 30
@@ -41,7 +46,7 @@ ExtrasRender = {
         insets: "2px 10px",
         cellSpacing: 3,
         layoutData: {
-            overflow: EchoApp.SplitPane.OVERFLOW_HIDDEN,
+            overflow: Echo.SplitPane.OVERFLOW_HIDDEN,
             background: "#cfcfdf"
         }
     },
@@ -55,7 +60,7 @@ ExtrasRender = {
     }
 };
 
-ExtrasRender.FadeRunnable = Core.extend(WebCore.Scheduler.Runnable, {
+Extras.Sync.FadeRunnable = Core.extend(Core.Web.Scheduler.Runnable, {
 
     timeInterval: 10,
     repeat: true,
@@ -88,8 +93,7 @@ ExtrasRender.FadeRunnable = Core.extend(WebCore.Scheduler.Runnable, {
                     this._element.parentNode.removeChild(this._element);
                 }
             }
-            WebCore.Scheduler.remove(this);
+            Core.Web.Scheduler.remove(this);
         }
     }
 });
-

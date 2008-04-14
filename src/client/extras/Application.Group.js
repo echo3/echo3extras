@@ -1,12 +1,12 @@
 /**
  * @class Group component.
- * @base EchoApp.Component
+ * @base Echo.Component
  */
-ExtrasApp.ColorSelect = Core.extend(EchoApp.Component, {
+Extras.ColorSelect = Core.extend(Echo.Component, {
     
     $load: function() {
-        EchoApp.ComponentFactory.registerType("ExtrasApp.Group", this);
+        Echo.ComponentFactory.registerType("Extras.Group", this);
     },
     
-    componentType: "ExtrasApp.Group"
+    componentType: "Extras.Group"
 });

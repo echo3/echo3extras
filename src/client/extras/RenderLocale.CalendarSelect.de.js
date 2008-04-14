@@ -1,4 +1,4 @@
-ExtrasRender.ComponentSync.CalendarSelect.resource.set("de", {
+Extras.Sync.CalendarSelect.resource.set("de", {
     "DayOfWeek.0":      "Sonntag",
     "DayOfWeek.1":      "Montag",
     "DayOfWeek.2":      "Dienstag",

@@ -77,7 +77,7 @@ extends AbstractComponentSynchronizePeer {
      * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#getClientComponentType(boolean)
      */
     public String getClientComponentType(boolean shortType) {
-        return "ExtrasApp.CalendarSelect";
+        return "Extras.CalendarSelect";
     }
 
     /**

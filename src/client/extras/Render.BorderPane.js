@@ -1,10 +1,10 @@
 /**
  * Component rendering peer: BorderPane
  */
-ExtrasRender.ComponentSync.BorderPane = Core.extend(EchoRender.ComponentSync, {
+Extras.Sync.BorderPane = Core.extend(Echo.Render.ComponentSync, {
 
     $load: function() {
-        EchoRender.registerPeer("ExtrasApp.BorderPane", this);
+        Echo.Render.registerPeer("Extras.BorderPane", this);
     },
 
     $construct: function() {
@@ -30,10 +30,10 @@ ExtrasRender.ComponentSync.BorderPane = Core.extend(EchoRender.ComponentSync, {
     },
     
     _renderBorder: function() {
-        var border = this.component.render("border", ExtrasApp.BorderPane.DEFAULT_BORDER);
-        var borderInsets = EchoAppRender.Insets.toPixels(border.borderInsets);
+        var border = this.component.render("border", Extras.BorderPane.DEFAULT_BORDER);
+        var borderInsets = Echo.Sync.Insets.toPixels(border.borderInsets);
         var flags = this.component.render("ieAlphaRenderBorder") 
-                ? EchoAppRender.FillImage.FLAG_ENABLE_IE_PNG_ALPHA_FILTER : 0;
+                ? Echo.Sync.FillImage.FLAG_ENABLE_IE_PNG_ALPHA_FILTER : 0;
         var cornerElement;
         
         // Render top row
@@ -113,10 +113,10 @@ ExtrasRender.ComponentSync.BorderPane = Core.extend(EchoRender.ComponentSync, {
         }
         
         if (border.color) {
-            EchoAppRender.Color.render(border.color, borderDivElement, "backgroundColor");
+            Echo.Sync.Color.render(border.color, borderDivElement, "backgroundColor");
         }
         if (border[position]) {
-            EchoAppRender.FillImage.render(border[position], borderDivElement, flags);
+            Echo.Sync.FillImage.render(border[position], borderDivElement, flags);
         }
         
         return borderDivElement;
@@ -128,11 +128,11 @@ ExtrasRender.ComponentSync.BorderPane = Core.extend(EchoRender.ComponentSync, {
         this._contentDivElement.style.zIndex = 2;
         this._contentDivElement.style.overflow = "auto";
         
-        EchoAppRender.Color.renderFB(this.component, this._contentDivElement);
-        EchoAppRender.Font.render(this.component.render("font"), this._contentDivElement);
+        Echo.Sync.Color.renderFB(this.component, this._contentDivElement);
+        Echo.Sync.Font.render(this.component.render("font"), this._contentDivElement);
     
-        var border = this.component.render("border", ExtrasApp.BorderPane.DEFAULT_BORDER);
-        var contentInsets = EchoAppRender.Insets.toPixels(border.contentInsets);
+        var border = this.component.render("border", Extras.BorderPane.DEFAULT_BORDER);
+        var contentInsets = Echo.Sync.Insets.toPixels(border.contentInsets);
     
         this._contentDivElement.style.top = contentInsets.top + "px";
         this._contentDivElement.style.left = contentInsets.left + "px";
@@ -144,9 +144,9 @@ ExtrasRender.ComponentSync.BorderPane = Core.extend(EchoRender.ComponentSync, {
             var child = this.component.getComponent(0);
             var insets = child.pane ? null : this.component.render("insets");
             if (insets) {
-                EchoAppRender.Insets.render(insets, this._contentDivElement, "padding");
+                Echo.Sync.Insets.render(insets, this._contentDivElement, "padding");
             }
-            EchoRender.renderComponentAdd(update, child, this._contentDivElement);
+            Echo.Render.renderComponentAdd(update, child, this._contentDivElement);
         } else if (componentCount > 1) {
             throw new Error("Too many children: " + componentCount);
         }
@@ -155,26 +155,26 @@ ExtrasRender.ComponentSync.BorderPane = Core.extend(EchoRender.ComponentSync, {
     },
     
     renderDisplay: function() {
-        WebCore.VirtualPosition.redraw(this._contentDivElement);
-        WebCore.VirtualPosition.redraw(this._element);
+        Core.Web.VirtualPosition.redraw(this._contentDivElement);
+        Core.Web.VirtualPosition.redraw(this._element);
         if (this._borderTopElement) {
-            WebCore.VirtualPosition.redraw(this._borderTopElement);
+            Core.Web.VirtualPosition.redraw(this._borderTopElement);
         }
         if (this._borderLeftElement) {
-            WebCore.VirtualPosition.redraw(this._borderLeftElement);
+            Core.Web.VirtualPosition.redraw(this._borderLeftElement);
         }
         if (this._borderRightElement) {
-            WebCore.VirtualPosition.redraw(this._borderRightElement);
+            Core.Web.VirtualPosition.redraw(this._borderRightElement);
         }
         if (this._borderBottomElement) {
-            WebCore.VirtualPosition.redraw(this._borderBottomElement);
+            Core.Web.VirtualPosition.redraw(this._borderBottomElement);
         }
     },
     
     renderUpdate: function(update) {
         var element = this._element;
         var containerElement = element.parentNode;
-        EchoRender.renderComponentDispose(update, update.parent);
+        Echo.Render.renderComponentDispose(update, update.parent);
         containerElement.removeChild(element);
         this.renderAdd(update, containerElement);
         return true;

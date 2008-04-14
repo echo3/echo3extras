@@ -3,9 +3,9 @@
  * 
  * @constructor
  * @class TransitionPane component.
- * @base EchoApp.Component
+ * @base Echo.Component
  */
-ExtrasApp.TransitionPane = Core.extend(EchoApp.Component, {
+Extras.TransitionPane = Core.extend(Echo.Component, {
 
     $static: {
     
@@ -86,9 +86,9 @@ ExtrasApp.TransitionPane = Core.extend(EchoApp.Component, {
     },
 
     $load: function() {
-        EchoApp.ComponentFactory.registerType("ExtrasApp.TransitionPane", this);
+        Echo.ComponentFactory.registerType("Extras.TransitionPane", this);
     },
     
-    componentType: "ExtrasApp.TransitionPane",
+    componentType: "Extras.TransitionPane",
     pane: true
 });

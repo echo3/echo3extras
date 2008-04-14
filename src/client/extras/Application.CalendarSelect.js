@@ -2,13 +2,13 @@
  * CalendarSelect component.
  *
  * @class TransitionPane component.
- * @base EchoApp.Component
+ * @base Echo.Component
  */
-ExtrasApp.CalendarSelect = Core.extend(EchoApp.Component, {
+Extras.CalendarSelect = Core.extend(Echo.Component, {
 
     $load: function() {
-        EchoApp.ComponentFactory.registerType("ExtrasApp.CalendarSelect", this);
+        Echo.ComponentFactory.registerType("Extras.CalendarSelect", this);
     },
     
-    componentType: "ExtrasApp.CalendarSelect"
+    componentType: "Extras.CalendarSelect"
 });

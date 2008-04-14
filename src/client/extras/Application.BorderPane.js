@@ -1,17 +1,17 @@
 /**
  * @class BorderPane component.
- * @base EchoApp.Component
+ * @base Echo.Component
  */
-ExtrasApp.BorderPane = Core.extend(EchoApp.Component, {
+Extras.BorderPane = Core.extend(Echo.Component, {
     
     $static: {
         DEFAULT_BORDER: { color: "#00007f", contentInsets: 20, borderInsets: 3 }
     },
     
     $load: function() {
-        EchoApp.ComponentFactory.registerType("ExtrasApp.BorderPane", this);
+        Echo.ComponentFactory.registerType("Extras.BorderPane", this);
     },
     
-    componentType: "ExtrasApp.BorderPane",
+    componentType: "Extras.BorderPane",
     pane: true
 });

@@ -39,7 +39,7 @@ public class SerialPropertyPeerConstants {
     /**
      * Contains the prefix for properties specific to Echo Extras.
      */
-    public static final String PROPERTY_TYPE_PREFIX = "ExtrasSerial.";
+    public static final String PROPERTY_TYPE_PREFIX = "Extras.Serial.";
     
     private SerialPropertyPeerConstants() {
     }
