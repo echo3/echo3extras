@@ -1,6 +1,5 @@
 /**
- * @class BorderPane component.
- * @base Echo.Component
+ * BorderPane component.
  */
 Extras.BorderPane = Core.extend(Echo.Component, {
     

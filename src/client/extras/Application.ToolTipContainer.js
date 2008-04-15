@@ -1,6 +1,5 @@
 /**
- * @class ToolTipContainer component.
- * @base Echo.Component
+ * ToolTipContainer component.
  */
 Extras.ToolTipContainer = Core.extend(Echo.Component, {
     

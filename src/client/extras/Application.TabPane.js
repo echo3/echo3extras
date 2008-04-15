@@ -1,9 +1,5 @@
 /**
- * Creates a new TabPane.
- * 
- * @constructor
- * @class TabPane component.
- * @base Echo.Component
+ * TabPane component.
  */
 Extras.TabPane = Core.extend(Echo.Component, {
 

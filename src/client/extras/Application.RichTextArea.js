@@ -1,6 +1,5 @@
 /**
- * @class RichTextArea component.
- * @base Echo.Component
+ * RichTextArea component.
  */
 Extras.RichTextArea = Core.extend(Echo.Component, {
 
