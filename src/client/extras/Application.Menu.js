@@ -1,7 +1,5 @@
 /**
- * @class 
  * ContextMenu component.
- * @base Echo.Component
  */
 Extras.ContextMenu = Core.extend(Echo.Component, {
 
@@ -13,9 +11,7 @@ Extras.ContextMenu = Core.extend(Echo.Component, {
 });
 
 /**
- * @class
  * DropDownMenu component.
- * @base Echo.Component
  */
 Extras.DropDownMenu = Core.extend(Echo.Component, {
 
@@ -27,9 +23,28 @@ Extras.DropDownMenu = Core.extend(Echo.Component, {
 });
 
 /**
- * @class 
  * MenuBarPane component.
- * @base Echo.Component
+ *
+ * @sp {Number} animationTime the animation time (in milliseconds).  A value of zero indicates animation is disabled.
+ * @sp {#FillImage} backgroundImage the background image that will be displayed in the menu bar.  This image will also be used in
+ *     pull-down menus  unless a value is specified for the <code>menuBackgroundImage</code> property.
+ * @sp  {#Border}border the border that will be displayed around the menu bar.   This border will also be used around
+ *     pull-down menus unless a value is specified for the <code>menuBorder</code> property.
+ * @sp {#Color} disabledBackground the background color used to render disabled menu items.
+ * @sp {#FillImage} disabledBackgroundImage the background image used to render disabled menu items.
+ * @sp {#Color} disabledForeground the foreground color used to render disabled menu items.
+ * @sp {#Color} menuBackground the background color that will be displayed in pull-down menus.
+ * @sp {#FillImage} menuBackgroundImage the background image that will be displayed in pull-down menus
+ * @sp {#Border} menuBorder the border that will be displayed around pull-down menus.
+ * @sp {#Color} menuForeground the foreground color that will be displayed in pull-down menus.
+ * @sp {#ImageReference} menuExpandIcon the icon used to expand pull-down menus.
+ * @sp {Number} menuOpacity the opacity setting (percent) that will be used for the background
+ *     color/image displayed in pulldown menus.  Valid values are between
+ *     1 and 100.  Some clients may not support this setting and will
+ *     always render menus with 100% opacity.
+ * @sp {#Color} selectionBackground the background color used to highlight the currently selected menu item.
+ * @sp {#FillImage} selectionBackgroundImage the background image used to highlight the currently selected menu item.
+ * @sp {#Color} selectionForeground the foreground color used to highlight the currently selected menu item.
  */
 Extras.MenuBarPane = Core.extend(Echo.Component, {
 
@@ -42,15 +57,43 @@ Extras.MenuBarPane = Core.extend(Echo.Component, {
 
 /**
  * Representation of a menu that may contain submenus, options, and separators.
- *
- * @param modelId {String} the id of the menu model
- * @param text {String} the title of the menu model which will appear in its parent menu
- *        when this menu is used as a submenu
- * @param icon {String} the icon of the menu model which will appear in its parent menu
- *        when this menu is used as a submenu
  */
 Extras.MenuModel = Core.extend({
     
+    /**
+     * The id of the menu model.
+     * @type String
+     */
+    modelId: null,
+    
+    /**
+     * The menu title.
+     * @type String
+     */
+    text: null,
+    
+    /**
+     * The menu icon.
+     * @type #ImageReference
+     */
+    icon: null,
+    
+    /**
+     * The child menu items.
+     * @type Array
+     */
+    items: null,
+    
+    /**
+     * Creates a new menu model
+     *
+     * @param {String} modelId the id of the menu model
+     * @param {String} text the title of the menu model which will appear in its parent menu
+     *        when this menu is used as a submenu
+     * @param {String} icon the icon of the menu model which will appear in its parent menu
+     *        when this menu is used as a submenu
+     * @param {Array} items the child menu items (optional)
+     */
     $construct: function(modelId, text, icon, items) {
         this.modelId = modelId;
         this.id = Extras.uniqueId++;
@@ -75,7 +118,7 @@ Extras.MenuModel = Core.extend({
         item.parent = this;
     },
     
-    getItem: function(id) {
+    findItem: function(id) {
         var i;
         for (i = 0; i < this.items.length; ++i) {
             if (this.items[i].id == id) {
@@ -84,7 +127,7 @@ Extras.MenuModel = Core.extend({
         }
         for (i = 0; i < this.items.length; ++i) {
             if (this.items[i] instanceof Extras.MenuModel) {
-                var itemModel = this.items[i].getItem(id);
+                var itemModel = this.items[i].findItem(id);
                 if (itemModel) {
                     return itemModel;
                 }
@@ -133,7 +176,7 @@ Extras.OptionModel = Core.extend({
      * positions.
      * 
      * @return the array of positions.
-     * @type {Array}
+     * @type Array
      */
     getItemPositionPath: function() {
         var path = [];

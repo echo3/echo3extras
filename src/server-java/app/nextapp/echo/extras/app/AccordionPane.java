@@ -72,7 +72,7 @@ implements Pane, PaneContainer {
 
     /**
      * Default constructor.
-     */
+     */ 
     public AccordionPane() {
         super();
     }

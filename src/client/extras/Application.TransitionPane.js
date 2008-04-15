@@ -1,9 +1,5 @@
 /**
- * Creates a new TransitionPane.
- * 
- * @constructor
- * @class TransitionPane component.
- * @base Echo.Component
+ * TransitionPane component.
  */
 Extras.TransitionPane = Core.extend(Echo.Component, {
 

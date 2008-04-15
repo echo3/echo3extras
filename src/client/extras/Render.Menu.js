@@ -467,7 +467,7 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
         if (itemModelId == null) {
             return null;
         } else {
-            return this.menuModel.getItem(itemModelId);
+            return this.menuModel.findItem(itemModelId);
         }
     },
     
@@ -897,7 +897,7 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
         if (itemModelId == null) {
             return null;
         } else {
-            return this.menuModel.getItem(itemModelId);
+            return this.menuModel.findItem(itemModelId);
         }
     },
     
