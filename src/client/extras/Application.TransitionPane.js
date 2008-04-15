@@ -13,7 +13,7 @@
  *      <li><code>TYPE_CAMERA_PAN_DOWN</code></li>
  *      <li><code>TYPE_FADE</code></li>
  *     </ul>
- * @sp {Number} duration the transition duration, in milliseconds.
+ * @sp {Number} duration the transition duration, in milliseconds
  */
 Extras.TransitionPane = Core.extend(Echo.Component, {
 

@@ -1,8 +1,8 @@
 /**
  * AccordionPane component.
  *
- * @sp {Number} animationTime the duration (in milliseconds) for which the animation transition effect should be rendered.
- *     A value of zero indicates an instantaneous transition.
+ * @sp {Number} animationTime the duration (in milliseconds) for which the animation transition effect should be rendered
+ *     A value of zero indicates an instantaneous transition
  * @sp {#Color} tabBackground the tab background color
  * @sp {#Color} tabBackground the tab background color
  * @sp {#FillImage} tabBackgroundImage the tab backgruond image

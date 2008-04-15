@@ -1,8 +1,8 @@
 /**
  * BorderPane component.
  *
- * @sp {#FillImageBorder} border the border with which to surround the content.
- * @sp {#Insets} insets the inset margin between border and content.
+ * @sp {#FillImageBorder} border the border with which to surround the content
+ * @sp {#Insets} insets the inset margin between border and content
  */
 Extras.BorderPane = Core.extend(Echo.Component, {
     
