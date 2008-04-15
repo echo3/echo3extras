@@ -1,5 +1,19 @@
 /**
  * TransitionPane component.
+ * A container pane which displays a single child pane or component, rendering
+ * an animated transition effect when its content is changed (when the child
+ * is removed and a new one is added).
+ *
+ * @sp type the transition type, one of the following values:
+ *     <ul>
+ *      <li><code>TYPE_IMMEDIATE_REPLACE</code></li>
+ *      <li><code>TYPE_CAMERA_PAN_LEFT</code></li>
+ *      <li><code>TYPE_CAMERA_PAN_RIGHT</code></li>
+ *      <li><code>TYPE_CAMERA_PAN_UP</code></li>
+ *      <li><code>TYPE_CAMERA_PAN_DOWN</code></li>
+ *      <li><code>TYPE_FADE</code></li>
+ *     </ul>
+ * @sp {Number} duration the transition duration, in milliseconds.
  */
 Extras.TransitionPane = Core.extend(Echo.Component, {
 
@@ -52,28 +66,6 @@ Extras.TransitionPane = Core.extend(Echo.Component, {
          * New content enters from the bottom of the screen. 
          */
         TYPE_CAMERA_PAN_DOWN: 4,
-        
-        /**
-         * A horizontal blind effect with a black background.
-         * Top of blinds rotate inward.
-         */
-        TYPE_BLIND_BLACK_IN: 5,
-        
-        /**
-         * A horizontal blind effect with a black background.
-         * Top of blinds rotate outward.
-         */
-        TYPE_BLIND_BLACK_OUT: 6,
-        
-        /**
-         * Fades to black, fades in new content.
-         */
-        TYPE_FADE_TO_BLACK: 7,
-        
-        /**
-         * Fades to white, fades in new content.
-         */
-        TYPE_FADE_TO_WHITE: 8,
         
         /**
          * Fades to new content over old content.
