@@ -34,7 +34,7 @@ import nextapp.echo.app.Component;
 /**
  * Applies a tooltip represented by a Component to another Component. This code
  * was previously available in the echo2contrib project.
- * <p>
+ * This component may have one or two children.
  * When the first child component is hovered, the second component will show up
  * as a tooltip. If only one component is present, no tooltip will be shown.
  * 
