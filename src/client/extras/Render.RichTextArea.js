@@ -279,8 +279,8 @@ Extras.Sync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
                 new Extras.OptionModel("inserttable", this._msg["Menu.InsertTable"], this._icons.table)
             ]),
             new Extras.MenuModel(null, this._msg["Menu.Format"], null, [
-                new Extras.MenuModel(null, this._msg["Menu.TextStyle"], null, [
-                    new Extras.OptionModel("/removeformat",  this._msg["Menu.PlainText"], null),
+                new Extras.MenuModel(null, this._msg["Menu.TextStyle"], this._icons.textStyle, [
+                    new Extras.OptionModel("/removeformat",  this._msg["Menu.PlainText"], this._icons.plainText),
                     new Extras.SeparatorModel(),
                     new Extras.OptionModel("/bold",  this._msg["Menu.Bold"], this._icons.bold),
                     new Extras.OptionModel("/italic",  this._msg["Menu.Italic"], this._icons.italic),
@@ -290,17 +290,17 @@ Extras.Sync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
                     new Extras.OptionModel("/superscript", this._msg["Menu.Superscript"], this._icons.superscript),
                     new Extras.OptionModel("/subscript", this._msg["Menu.Subscript"], this._icons.subscript)
                 ]),
-                new Extras.MenuModel(null, this._msg["Menu.Format"], null, [
-                    new Extras.OptionModel("/formatblock/<p>", this._msg["Menu.ParagraphStyle"], null),
-                    new Extras.OptionModel("/formatblock/<pre>", this._msg["Menu.Preformatted"], null),
-                    new Extras.OptionModel("/formatblock/<h1>", this._msg["Menu.Heading1"], null),
-                    new Extras.OptionModel("/formatblock/<h2>", this._msg["Menu.Heading2"], null),
-                    new Extras.OptionModel("/formatblock/<h3>", this._msg["Menu.Heading3"], null),
-                    new Extras.OptionModel("/formatblock/<h4>", this._msg["Menu.Heading4"], null),
-                    new Extras.OptionModel("/formatblock/<h5>", this._msg["Menu.Heading5"], null),
-                    new Extras.OptionModel("/formatblock/<h6>", this._msg["Menu.Heading6"], null)
+                new Extras.MenuModel(null, this._msg["Menu.ParagraphStyle"], this._icons.paragraphStyle, [
+                    new Extras.OptionModel("/formatblock/<p>", this._msg["Menu.Normal"], this._icons.styleNormal),
+                    new Extras.OptionModel("/formatblock/<pre>", this._msg["Menu.Preformatted"], this._icons.stylePreformatted),
+                    new Extras.OptionModel("/formatblock/<h1>", this._msg["Menu.Heading1"], this._icons.styleH1),
+                    new Extras.OptionModel("/formatblock/<h2>", this._msg["Menu.Heading2"], this._icons.styleH2),
+                    new Extras.OptionModel("/formatblock/<h3>", this._msg["Menu.Heading3"], this._icons.styleH3),
+                    new Extras.OptionModel("/formatblock/<h4>", this._msg["Menu.Heading4"], this._icons.styleH4),
+                    new Extras.OptionModel("/formatblock/<h5>", this._msg["Menu.Heading5"], this._icons.styleH5),
+                    new Extras.OptionModel("/formatblock/<h6>", this._msg["Menu.Heading6"], this._icons.styleH6)
                 ]),
-                new Extras.MenuModel(null, this._msg["Menu.Alignment"], null, [
+                new Extras.MenuModel(null, this._msg["Menu.Alignment"], this._icons.alignment, [
                     new Extras.OptionModel("/justifyleft",  this._msg["Menu.Left"], this._icons.alignmentLeft),
                     new Extras.OptionModel("/justifycenter",  this._msg["Menu.Center"], this._icons.alignmentCenter),
                     new Extras.OptionModel("/justifyright",  this._msg["Menu.Right"], this._icons.alignmentRight),
