@@ -57,9 +57,9 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     },
     
     /**
-     * @param state {Boolean} whether the tab is active or inactive
+     * @param {Boolean} state whether the tab is active or inactive
      * @return the tab height in pixels
-     * @type {Number}
+     * @type Number
      */
     _calculateTabHeight: function(state) {
         if (state) {
@@ -142,12 +142,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
             this._tabCloseIcons.fallbackDefaultIcon = this.client.getResourceUrl("Extras", "image/tabpane/Close.gif");
             this._tabCloseIcons.rolloverIcon = this.component.render("tabRolloverCloseIcon");
         }
-        // Create Main Element
-        this._element = document.createElement("div");
-        this._element.id = this.component.renderId;
-        this._element.style.position = "absolute";
-        this._element.style.overflow = "hidden";
-    
+
         // Render Border Insets
         var pixelInsets = Echo.Sync.Insets.toPixels(this._insets);
         if (this._borderType == Extras.TabPane.BORDER_TYPE_SURROUND) {
@@ -159,36 +154,29 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         } else {
             pixelInsets.left = pixelInsets.right = pixelInsets.bottom = 0;
         }
-        this._element.style.top = pixelInsets.top + "px";
-        this._element.style.right = pixelInsets.right + "px";
-        this._element.style.bottom = pixelInsets.bottom + "px";
-        this._element.style.left = pixelInsets.left + "px";
-        
+
+        var borderSize = Echo.Sync.Border.getPixelSize(this._tabActiveBorder);
+
+        // Create Main Element
+        this._element = document.createElement("div");
+        this._element.id = this.component.renderId;
+        this._element.style.cssText = "position:absolute;overflow:hidden;top:" + pixelInsets.top + "px;right:" + pixelInsets.right
+                + "px;bottom:" + pixelInsets.bottom + ";left:" + pixelInsets.left + "px;"; 
+                        
         // Render Header Container
         var headerContainerDivElement = document.createElement("div");
-        headerContainerDivElement.style.overflow = "hidden";
-        headerContainerDivElement.style.zIndex = 1;
-        headerContainerDivElement.style.position = "absolute";
-        headerContainerDivElement.style.width = "100%";
+        headerContainerDivElement.style.cssText = "position:absolute;overflow:hidden;z-index:1;width:100%;"
+                + (this._tabPosition == Extras.TabPane.TAB_POSITION_BOTTOM ? "bottom" : "top") + ":0;"
+                + "left:" + this._tabInsetPx + "px;right:" + this._tabInsetPx + "px;"
+                + "height:" + (this._tabHeightPx + borderSize) + "px;";
         
-        if (this._tabPosition == Extras.TabPane.TAB_POSITION_BOTTOM) {
-            headerContainerDivElement.style.bottom = "0px";
-        } else {
-            headerContainerDivElement.style.top = "0px";
-        }
-        headerContainerDivElement.style.left = this._tabInsetPx + "px";
-        headerContainerDivElement.style.right = this._tabInsetPx + "px";
-        
-        var borderSize = Echo.Sync.Border.getPixelSize(this._tabActiveBorder);
-        headerContainerDivElement.style.height = (this._tabHeightPx + borderSize) + "px";
         Echo.Sync.Font.render(this.component.render("font"), headerContainerDivElement);
         Echo.Sync.FillImage.render(this.component.render("tabBackgroundImage"), headerContainerDivElement);
     
         var headerTableElement = document.createElement("table");
-        headerTableElement.style.borderWidth = "0px";
+        headerTableElement.style.cssText = "border-width:0;padding:0;";
         headerTableElement.cellPadding = "0px";
         headerTableElement.cellSpacing = "0px";
-        headerTableElement.style.padding = "0px";
         
         var headerTbodyElement = document.createElement("tbody");
         headerTableElement.appendChild(headerTbodyElement);
@@ -318,7 +306,6 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
             }
         }
     
-        // FIXME lazy rendering
         if (fullRender) {
             var element = this._element;
             var containerElement = element.parentNode;
