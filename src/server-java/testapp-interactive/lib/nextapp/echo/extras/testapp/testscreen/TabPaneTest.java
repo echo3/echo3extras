@@ -90,21 +90,71 @@ public class TabPaneTest extends AbstractTest {
         
         // Add/Remove Tabs
 
-        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add Label (No LayoutData)", new ActionListener() {
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add Label (0)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                tabPane.add(new Label("Generic Label"));
+                tabPane.add(createTestTab(), 0);
             }
         });
 
-        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add Label", new ActionListener() {
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add Label (1)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Label label = new Label("Tab Pane Child " + tabNumber);
-                label.setBackground(StyleUtil.randomBrightColor());
-                TabPaneLayoutData layoutData = new TabPaneLayoutData();
-                layoutData.setTitle("Label #" + tabNumber);
-                label.setLayoutData(layoutData);
-                tabPane.add(label);
-                ++tabNumber;
+                if (tabPane.getComponentCount() < 1) {
+                    return;
+                }
+                tabPane.add(createTestTab(), 1);
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add Label (2)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (tabPane.getComponentCount() < 2) {
+                    return;
+                }
+                tabPane.add(createTestTab(), 2);
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add Label (End)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.add(createTestTab());
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Remove Label (0)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (tabPane.getComponentCount() > 0) {
+                    tabPane.remove(0);
+                }
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Remove Label (1)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (tabPane.getComponentCount() > 1) {
+                    tabPane.remove(1);
+                }
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Remove Label (2)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (tabPane.getComponentCount() > 2) {
+                    tabPane.remove(2);
+                }
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Remove Label (End)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (tabPane.getComponentCount() > 0) {
+                    tabPane.remove(tabPane.getComponentCount() - 1);
+                }
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add Label (No LayoutData)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.add(new Label("Generic Label"));
             }
         });
 
@@ -118,13 +168,6 @@ public class TabPaneTest extends AbstractTest {
                 tabPane.add(label);
                 ++tabNumber;
                 tabPane.setActiveTabIndex(tabPane.visibleIndexOf(label));
-            }
-        });
-
-        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add Label", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Label label = createTestTab();
-                tabPane.add(label);
             }
         });
 
@@ -156,29 +199,6 @@ public class TabPaneTest extends AbstractTest {
                 tabPane.add(label);
                 tabPane.remove(label);
                 tabPane.add(label);
-            }
-        });
-
-        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add Label (index 0)", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Label label = new Label("Tab Pane Child " + tabNumber);
-                label.setBackground(StyleUtil.randomBrightColor());
-                TabPaneLayoutData layoutData = new TabPaneLayoutData();
-                layoutData.setTitle("Inserted Label #" + tabNumber);
-                label.setLayoutData(layoutData);
-                tabPane.add(label, 0);
-                ++tabNumber;
-            }
-        });
-        
-        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add Label (index 2)", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (tabPane.getComponentCount() < 2) {
-                    // Do nothing
-                    return;
-                }
-                Label label = createTestTab();
-                tabPane.add(label, 2);
             }
         });
         
