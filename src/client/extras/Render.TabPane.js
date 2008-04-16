@@ -27,18 +27,48 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         Echo.Render.registerPeer("Extras.TabPane", this);
     },
     
+    /**
+     * Primary DIV element.
+     * @type Element
+     */
     _div: null,
-    _activeTabId: null,
-    _tabs: null,
+
+    /**
+     * DIV element which contains content.  All child components are rendered within this DIV,
+     * only one is allowed to be visibly displayed at a given time.
+     * @type Element
+     */    
     _contentContainerDiv: null,
+    
+    /**
+     * TR element containing tab headers.
+     * @type Element
+     */
     _headerContainerTr: null,
+    
+    /**
+     * The renderId of the active tab.
+     * @type String
+     */
+    _activeTabId: null,
+    
+    /**
+     * Array containing <code>Extras.Sync.TabPane.Tab</code> objects represented the displayed tabs.
+     * Each index of this array matches the corresponding child component index.
+     * @type Array 
+     */
+    _tabs: null,
     
     $construct: function() {
         this._tabs = [];
     },
     
     /**
-     * Adds a tab.
+     * Adds a tab and renders it.
+     *
+     * @param {Echo.Update.ComponentUpdate} update the component update 
+     * @param {Extras.Sync.TabPane.Tab} tab the tab to be added 
+     * @param index the index at which the tab should be added
      */
     _addTab: function(update, tab, index) {
         if (index == null || index == this._tabs.length) {
@@ -69,6 +99,15 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         }
     },
 
+    /**
+     * Determines the renderId of the active tab child component.
+     * This method first queries the component's <code>activeTab</code> property, 
+     * and if it is not set, the id is determined by finding the child component at the 
+     * index specified by the component's <code>activeTabIndex</code> property.
+     *
+     * @return the active tab renderId
+     * @type String
+     */
     _getActiveTabId: function() {
         var activeTabId = this.component.get("activeTab")
         if (!activeTabId) {
@@ -83,8 +122,9 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     /**
      * Retrieves the tab instance with the specified tab id.
      * 
-     * @param tabId the tab id
+     * @param tabId the tab render id
      * @return the tab, or null if no tab is present with the specified id
+     * @type Extras.Sync.TabPane.Tab
      */
     _getTabById: function(tabId) {
         for (var i = 0; i < this._tabs.length; ++i) {
@@ -99,7 +139,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     /**
      * Removes a specific tab.
      *
-     * @param tab the tab to remove
+     * @param {Extras.Sync.TabPane.Tab} tab the tab to remove
      */
     _removeTab: function(tab) {
         var tabIndex = Core.Arrays.indexOf(this._tabs, tab);
@@ -260,6 +300,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     
     renderUpdate: function(update) {
         var fullRender = false;
+        
         if (update.hasUpdatedLayoutDataChildren()) {
             // Layout data children updated: must full render.
             fullRender = true;
@@ -272,11 +313,15 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
             }
         }
         if (!fullRender) {
+            var activeTabRemoved = false;
             var removedChildren = update.getRemovedChildren();
             if (removedChildren) {
                 // Remove children.
                 for (var i = 0; i < removedChildren.length; ++i) {
                     var tab = this._getTabById(removedChildren[i].renderId);
+                    if (tab._childComponent.renderId == this._activeTabId) {
+                        activeTabRemoved = true;
+                    }
                     this._removeTab(tab);
                 }
             }
@@ -292,13 +337,18 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
                 // partial update
                 var activeTabUpdate = update.getUpdatedProperty("activeTab");
                 if (activeTabUpdate) {
+                    activeTabRemoved = false;
                     this._selectTab(activeTabUpdate.newValue);
                 } else {
                     var activeTabIndexUpdate = update.getUpdatedProperty("activeTabIndex");
                     if (activeTabIndexUpdate && activeTabIndexUpdate.newValue < this.component.children.length) {
+                        activeTabRemoved = false;
                         this._selectTab(this.component.children[activeTabIndexUpdate.newValue].renderId);
                     }
                 }
+            }
+            if ((activeTabRemoved || this._activeTabId == null) && this.component.children.length > 0) {
+                this._selectTab(this.component.children[0].renderId);
             }
         }
     
@@ -438,14 +488,6 @@ Extras.Sync.TabPane.Tab = Core.extend({
             return;
         }
         return { url: image, repeat: "no-repeat", x: "100%", y: 0 };
-    },
-    
-    _hasLeftImage: function() {
-        return this._getLeftImage(true) != null || this._getLeftImage(false) != null;
-    },
-    
-    _hasRightImage: function() {
-        return this._getRightImage(true) != null || this._getRightImage(false) != null;
     },
     
     _highlight: function(state) {
@@ -633,14 +675,14 @@ Extras.Sync.TabPane.Tab = Core.extend({
         var tabTbody = document.createElement("tbody");
         var tabTr = document.createElement("tr");
         
-        // left
-        if (this._hasLeftImage()) {
+        // Render TD element to contain left border image if required.
+        if (this._getLeftImage(true) != null || this._getLeftImage(false) != null) {
             this._leftTd = document.createElement("td");
             this._leftTd.appendChild(document.createTextNode("\u00a0"));
             tabTr.appendChild(this._leftTd);
         }
         
-        // center
+        // Render tab
         var centerTd = document.createElement("td");
         Echo.Sync.Insets.render(Extras.Sync.TabPane._defaultTabInsets, centerTd, "padding");
         
@@ -681,8 +723,8 @@ Extras.Sync.TabPane.Tab = Core.extend({
         tabTr.appendChild(centerTd);
         this._centerTd = centerTd;
     
-        // right
-        if (this._hasRightImage()) {
+        // Render TD element to contain right border image if required.
+        if (this._getRightImage(true) != null || this._getRightImage(false) != null) {
             this._rightTd = document.createElement("td");
             this._rightTd.appendChild(document.createTextNode("\u00a0"));
             tabTr.appendChild(this._rightTd);
