@@ -122,16 +122,12 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         this._activeTabId = this._getActiveTabId();
         this._borderType = this.component.render("borderType", Extras.Sync.TabPane._defaultBorderType);
         this._insets = this.component.render("insets", Extras.Sync.TabPane._defaultInsets);
-        this._tabActiveBorder = this.component.render("tabActiveBorder", 
-                Extras.Sync.TabPane._defaultTabActiveBorder);
+        this._tabActiveBorder = this.component.render("tabActiveBorder", Extras.Sync.TabPane._defaultTabActiveBorder);
         this._tabActiveHeightIncreasePx = Echo.Sync.Extent.toPixels(this.component.render("tabActiveHeightIncrease", 
                 Extras.Sync.TabPane._defaultTabActiveHeightIncrease));
-        this._tabInactiveBorder = this.component.render("tabInactiveBorder", 
-                Extras.Sync.TabPane._defaultTabInactiveBorder);
-        this._tabHeightPx = Echo.Sync.Extent.toPixels(this.component.render("tabHeight",
-                Extras.Sync.TabPane._defaultTabHeight));
-        this._tabInsetPx = Echo.Sync.Extent.toPixels(this.component.render("tabInset",
-                 Extras.Sync.TabPane._defaultTabInset));
+        this._tabInactiveBorder = this.component.render("tabInactiveBorder", Extras.Sync.TabPane._defaultTabInactiveBorder);
+        this._tabHeightPx = Echo.Sync.Extent.toPixels(this.component.render("tabHeight", Extras.Sync.TabPane._defaultTabHeight));
+        this._tabInsetPx = Echo.Sync.Extent.toPixels(this.component.render("tabInset",Extras.Sync.TabPane._defaultTabInset));
         this._tabPosition = this.component.render("tabPosition", Extras.Sync.TabPane._defaultTabPosition);
         this._tabSpacing = this.component.render("tabSpacing", Extras.Sync.TabPane._defaultTabSpacing);
         this._tabCloseEnabled = this.component.render("tabCloseEnabled", false);
@@ -161,7 +157,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         this._div = document.createElement("div");
         this._div.id = this.component.renderId;
         this._div.style.cssText = "position:absolute;overflow:hidden;top:" + pixelInsets.top + "px;right:" + pixelInsets.right
-                + "px;bottom:" + pixelInsets.bottom + ";left:" + pixelInsets.left + "px;"; 
+                + "px;bottom:" + pixelInsets.bottom + "px;left:" + pixelInsets.left + "px;"; 
                         
         // Render Header Container
         var headerContainerDiv = document.createElement("div");
