@@ -751,7 +751,7 @@ Extras.Sync.DropDownMenu = Core.extend(Extras.Sync.Menu, {
             Echo.Sync.Insets.render(insets, this._containerDivElement, "padding");
             if (height) {
                 var insetsPx = Echo.Sync.Insets.toPixels(insets);
-                var compensatedHeight = Math.max(0, Echo.Sync.Extent.toPixels(height) - insetsPx.top - insetsPx.top);
+                var compensatedHeight = Math.max(0, Echo.Sync.Extent.toPixels(height) - insetsPx.top - insetsPx.bottom);
                 this._containerDivElement.style.height = compensatedHeight + "px";
             }
         } else {
