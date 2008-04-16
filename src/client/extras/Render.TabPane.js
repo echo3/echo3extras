@@ -175,8 +175,8 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     
         var headerTable = document.createElement("table");
         headerTable.style.cssText = "border-width:0;padding:0;";
-        headerTable.cellPadding = "0px";
-        headerTable.cellSpacing = "0px";
+        headerTable.cellPadding = "0";
+        headerTable.cellSpacing = "0";
         
         var headerTbody = document.createElement("tbody");
         headerTable.appendChild(headerTbody);
@@ -195,17 +195,17 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         Echo.Sync.Color.renderFB(this.component, this._contentContainerDiv);
         
         if (this._tabPosition == Extras.TabPane.TAB_POSITION_BOTTOM) {
-            this._contentContainerDiv.style.top = "0px";
+            this._contentContainerDiv.style.top = "0";
             this._contentContainerDiv.style.bottom = this._tabHeightPx + "px";
         } else {
             this._contentContainerDiv.style.top = this._tabHeightPx + "px";
-            this._contentContainerDiv.style.bottom = "0px";
+            this._contentContainerDiv.style.bottom = "0";
         }
-        this._contentContainerDiv.style.left = "0px";
-        this._contentContainerDiv.style.right = "0px";
+        this._contentContainerDiv.style.left = "0";
+        this._contentContainerDiv.style.right = "0";
         
         if (this._borderType == Extras.TabPane.BORDER_TYPE_NONE) {
-            this._contentContainerDiv.style.border = "0px none";
+            this._contentContainerDiv.style.border = "0 none";
         } else if (this._borderType == Extras.TabPane.BORDER_TYPE_SURROUND) {
             Echo.Sync.Border.render(this._tabActiveBorder, this._contentContainerDiv);
         } else if (this._borderType == Extras.TabPane.BORDER_TYPE_PARALLEL_TO_TABS) {
@@ -484,12 +484,12 @@ Extras.Sync.TabPane.Tab = Core.extend({
         
         var borderSize = Echo.Sync.Border.getPixelSize(this._parent._tabActiveBorder);
         if (this._parent._tabPosition == Extras.TabPane.TAB_POSITION_BOTTOM) {
-            headerContentTable.style.marginTop = state ? "0px" : borderSize + "px";
-            headerContentTable.style.marginBottom = state ? "0px" : this._parent._tabActiveHeightIncreasePx + "px";
+            headerContentTable.style.marginTop = state ? "0" : borderSize + "px";
+            headerContentTable.style.marginBottom = state ? "0" : this._parent._tabActiveHeightIncreasePx + "px";
             Echo.Sync.Border.render(border, headerContentTable, "borderBottom");
         } else {
-            headerContentTable.style.marginBottom = state ? "0px" : borderSize + "px";
-            headerContentTable.style.marginTop = state ? "0px" : this._parent._tabActiveHeightIncreasePx + "px";
+            headerContentTable.style.marginBottom = state ? "0" : borderSize + "px";
+            headerContentTable.style.marginTop = state ? "0" : this._parent._tabActiveHeightIncreasePx + "px";
             Echo.Sync.Border.render(border, headerContentTable, "borderTop");
         }
         Echo.Sync.Border.render(border, headerContentTable, "borderLeft");
@@ -521,8 +521,8 @@ Extras.Sync.TabPane.Tab = Core.extend({
         
         // show/hide content
         if (Core.Web.Env.BROWSER_MOZILLA && !Core.Web.Env.BROWSER_FIREFOX) {
-            contentDiv.style.right = state ? "0px" : "100%";
-            contentDiv.style.bottom = state ? "0px" : "100%";
+            contentDiv.style.right = state ? "0" : "100%";
+            contentDiv.style.bottom = state ? "0" : "100%";
         } else {
             contentDiv.style.display = state ? "block" : "none";
         }
@@ -593,20 +593,19 @@ Extras.Sync.TabPane.Tab = Core.extend({
     
     _renderContent: function(update) {
         var div = document.createElement("div");
-        div.style.position = "absolute";
-        div.style.top = "0px";
+        div.style.cssText = "position:absolute;top:0;left:0;overflow:auto;";
+
         // hide content
         if (Core.Web.Env.BROWSER_MOZILLA && !Core.Web.Env.BROWSER_FIREFOX) {
+            //FIXME doc or remove (and why no display=none?)
             div.style.right = "100%";
             div.style.bottom = "100%";
         } else {
             div.style.display = "none";
-            div.style.right = "0px";
-            div.style.bottom = "0px";
+            div.style.right = "0";
+            div.style.bottom = "0";
         }
-        div.style.left = "0px";
         Echo.Sync.Insets.render(this._getContentInsets(), div, "padding");
-        div.style.overflow = "auto";
         
         Echo.Render.renderComponentAdd(update, this._childComponent, div);
         
@@ -621,14 +620,14 @@ Extras.Sync.TabPane.Tab = Core.extend({
         var layoutData = this._childComponent.render("layoutData");
         
         var headerTd = document.createElement("td");
-        headerTd.style.borderWidth = "0px";
-        headerTd.style.padding = "0px";
+        headerTd.style.borderWidth = "0";
+        headerTd.style.padding = "0";
         headerTd.vAlign = this._parent._tabPosition == Extras.TabPane.TAB_POSITION_BOTTOM ? "top" : "bottom";
         
         var tabTable = document.createElement("table");
-        tabTable.cellPadding = "0px";
-        tabTable.cellSpacing = "0px";
-        tabTable.style.padding = "0px";
+        tabTable.cellPadding = "0";
+        tabTable.cellSpacing = "0";
+        tabTable.style.padding = "0";
         tabTable.style.marginRight = this._parent._tabSpacing.toString();
         var width = this._parent.component.render("tabWidth");
         if (width) {
@@ -655,9 +654,9 @@ Extras.Sync.TabPane.Tab = Core.extend({
         if (icon || closeIcon) {
             // Render Text and Icon(s)
             var table = document.createElement("table");
-            table.style.padding = "0px";
-            table.cellPadding = "0px";
-            table.cellSpacing = "0px";
+            table.style.padding = "0";
+            table.cellPadding = "0";
+            table.cellSpacing = "0";
             var tbody = document.createElement("tbody");
             var tr = document.createElement("tr");
             if (icon) {
