@@ -418,7 +418,8 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
                     menuItemContentTdElement.colSpan = 2;
                 }
             } else if (item instanceof Extras.SeparatorModel) {
-                if (i == 0 || i == items.length - 1 || items[i - 1] instanceof Extras.SeparatorModel) {
+                if (i == 0 || i == items.length - 1 || items[i - 1] instanceof Extras.SeparatorModel
+                       ||  items[i + 1] instanceof Extras.SeparatorModel) {
                     // Ignore separators at zero position.
                     continue;
                 }
