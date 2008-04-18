@@ -140,7 +140,7 @@ Extras.Sync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
                 orientation: Echo.SplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM,
                 separatorPosition: 26,
                 children: [
-                    this._createMenu(),
+                    this._createMenu()
                 ]
             });
             cursor.add(menuSplitPane);
