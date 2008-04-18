@@ -9,6 +9,7 @@
  * @sp {String} toolbarButtonStyleName style name for main toolbar buttons
  * @sp {String} windowPaneStyleName style name for dialog <code>WindowPane</code>
  * @sp {Object} icons associative array mapping icon names to images
+ * @sp {Object} features associative array describing which features should be enabled.
  */
 Extras.RichTextArea = Core.extend(Echo.Component, {
 
@@ -16,6 +17,10 @@ Extras.RichTextArea = Core.extend(Echo.Component, {
         Echo.ComponentFactory.registerType("Extras.RichTextArea", this);
     },
 
-    componentType: "Extras.RichTextArea"
+    componentType: "Extras.RichTextArea",
+    
+    doAction: function() {
+        this.fireEvent({source: this, type: "action"});
+    }
 });
 

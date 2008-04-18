@@ -900,6 +900,10 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
             Core.Web.DOM.preventEventDefault(e);
             return;
         }
+
+        if (e.keyCode == 13) {
+            this.component._richTextArea.doAction();
+        }
     },
     
     _processKeyUp: function(e) {
