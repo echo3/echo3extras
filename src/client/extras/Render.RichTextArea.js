@@ -956,6 +956,20 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
     },
     
     _renderContentDocument: function() {
+        // Ensure element is on-screen before rendering content/enabling design mode.
+        var element = this._iframeElement;
+        while (element != document.body) {
+            if (element == null) {
+                // Not added to parent.
+                return;
+            }
+            if (element.style.display == "none") {
+                // Not rendered.
+                return;
+            }
+            element = element.parentNode;
+        }
+    
         var text = this.component._richTextArea.get("text");
         
         var contentDocument = this._iframeElement.contentWindow.document;
