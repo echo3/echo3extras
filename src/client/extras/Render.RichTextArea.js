@@ -4,6 +4,29 @@
 Extras.Sync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
 
     $static: {
+    
+        defaultFeatures: {
+            menu: true,
+            toolbar: true,
+            undo: true,
+            clipboard: true,
+            alignment: true,
+            foreground: true,
+            background: true,
+            list: true,
+            table: true,
+            image: true,
+            horizontalRule: true,
+            hyperlink: true,
+            subscript: true,
+            bold: true,
+            italic: true,
+            underline: true,
+            strikethrough: true,
+            paragraphStyle: true,
+            indent: true
+        },
+    
         resource: new Core.ResourceBundle({
             "ColorDialog.Title.Foreground":     "Text Color",
             "ColorDialog.Title.Background":     "Highlight Color",
@@ -107,118 +130,39 @@ Extras.Sync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
     _paneRender: false,
 
     createComponent: function() {
-        var controlsRow;
+        var features = this.component.render("features", Extras.Sync.RichTextArea.defaultFeatures);
+
+        var contentPane = new Echo.ContentPane();
+        var cursor = contentPane;
+
+        if (features.menu) {
+            var menuSplitPane = new Echo.SplitPane({
+                orientation: Echo.SplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM,
+                separatorPosition: 26,
+                children: [
+                    this._createMenu(),
+                ]
+            });
+            cursor.add(menuSplitPane);
+            cursor = menuSplitPane;
+        }
         
-        var contentPane = new Echo.ContentPane({
-            children: [
-                // Menu SplitPane
-                new Echo.SplitPane({
-                    orientation: Echo.SplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM,
-                    separatorPosition: 26,
-                    children: [
-                        // Menu Bar
-                        new Extras.MenuBarPane({
-                            styleName: this.component.render("menuStyleName"),
-                            layoutData: {
-                                overflow: Echo.SplitPane.OVERFLOW_HIDDEN
-                            },
-                            model: this._createMainMenuBarModel(),
-                            events: {
-                                action: Core.method(this, this._processMenuAction)
-                            }
-                        }),
-                        // Main Layout Container
-                        new Echo.Column({
-                            layoutData: {
-                                overflow: Echo.SplitPane.OVERFLOW_HIDDEN
-                            },
-                            children: [
-                                // Controls Row (control groups added later)
-                                controlsRow = new Echo.Row({
-                                    styleName: this.component.render("toolbarRowStyleName"),
-                                    cellSpacing: 10,
-                                    insets: 2
-                                }),
-                                // Text Input Field
-                                this._richTextInput = new Extras.Sync.RichTextArea.InputComponent()
-                            ]
-                        })
-                    ]
-                })
-            ]
-        });
+        if (features.toolbar) {
+            var toolbarContainer = new Echo.Column({
+                layoutData: {
+                    overflow: Echo.SplitPane.OVERFLOW_HIDDEN
+                },
+                children: [
+                    this._createToolbar()
+                ]
+            })
+            cursor.add(toolbarContainer);
+            cursor = toolbarContainer;
+        }
         
-        // Undo/Redo Tools
-        controlsRow.add(new Echo.Row({
-            children: [
-                this._createToolbarButton("<<<", this._icons.undo, this._msg["Menu.Undo"], this._processCommand, "undo"),
-                this._createToolbarButton(">>>", this._icons.redo, this._msg["Menu.Redo"], this._processCommand, "redo")
-            ]
-        }));
-        
-        // Font Bold/Italic/Underline Tools
-        controlsRow.add(new Echo.Row({
-            children: [
-                this._createToolbarButton("B", this._icons.bold, this._msg["Menu.Bold"], this._processCommand, "bold"),
-                this._createToolbarButton("I", this._icons.italic, this._msg["Menu.Italic"], this._processCommand, "italic"),
-                this._createToolbarButton("U", this._icons.underline, this._msg["Menu.Underline"], 
-                        this._processCommand, "underline")
-            ]
-        }));
-        
-        //Super/Subscript Tools
-        controlsRow.add(new Echo.Row({
-            children: [
-                this._createToolbarButton("^", this._icons.superscript, this._msg["Menu.Superscript"], 
-                        this._processCommand, "superscript"),
-                this._createToolbarButton("v", this._icons.subscript,this._msg["Menu.Subscript"], 
-                        this._processCommand, "subscript")
-            ]
-        }));
-        
-        // Alignment Tools
-        controlsRow.add(new Echo.Row({
-            children: [
-                this._createToolbarButton("<-", this._icons.alignmentLeft, this._msg["Menu.Left"], 
-                        this._processCommand, "justifyleft"),
-                this._createToolbarButton("-|-", this._icons.alignmentCenter, this._msg["Menu.Center"], 
-                        this._processCommand, "justifycenter"),
-                this._createToolbarButton("->", this._icons.alignmentRight, this._msg["Menu.Right"], 
-                        this._processCommand, "justifyright"),
-                this._createToolbarButton("||", this._icons.alignmentJustify, this._msg["Menu.Justified"], 
-                        this._processCommand, "justifyfull")
-            ]
-        }));
-        
-        // Color Tools
-        controlsRow.add(new Echo.Row({
-            children: [
-                this._createToolbarButton("FG", this._icons.foreground, this._msg["Menu.SetForeground"], 
-                        this._processSetForegroundDialog),
-                this._createToolbarButton("BG", this._icons.background, this._msg["Menu.SetBackground"], 
-                        this._processSetBackgroundDialog)
-            ]
-        }));
-        
-        // Insert Tools
-        controlsRow.add(new Echo.Row({
-            children: [
-                this._createToolbarButton("Bulleted List", this._icons.bulletedList, this._msg["Menu.BulletedList"], 
-                        this._processCommand, "insertunorderedlist"),
-                this._createToolbarButton("Numbered List", this._icons.numberedList, this._msg["Menu.NumberedList"], 
-                        this._processCommand, "insertorderedlist"),
-                this._createToolbarButton("Horizontal Rule", this._icons.horizontalRule, this._msg["Menu.InsertHorizontalRule"], 
-                        this._processCommand, "inserthorizontalrule"),
-                this._createToolbarButton("Image", this._icons.image, this._msg["Menu.InsertImage"], 
-                        this._processInsertImageDialog),
-                this._createToolbarButton("Hyperlink", this._icons.hyperlink, this._msg["Menu.InsertHyperlink"], 
-                        this._processInsertHyperlinkDialog),
-                this._createToolbarButton("Table", this._icons.table, this._msg["Menu.InsertTable"], 
-                        this._processInsertTableDialog)
-            ]
-        }));
-    
+        this._richTextInput = new Extras.Sync.RichTextArea.InputComponent()
         this._richTextInput._richTextArea = this.component;
+        cursor.add(this._richTextInput);
         
         return contentPane;
     },
@@ -255,42 +199,65 @@ Extras.Sync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
     },
     
     _createMainMenuBarModel: function() {
-        return new Extras.MenuModel(null, null, null, [
-            new Extras.MenuModel(null, this._msg["Menu.Edit"], null, [
-                new Extras.OptionModel("/undo", this._msg["Menu.Undo"], this._icons.undo),
-                new Extras.OptionModel("/redo", this._msg["Menu.Redo"], this._icons.redo),
-                new Extras.SeparatorModel(),
-                new Extras.OptionModel("cut", this._msg["Menu.Cut"], this._icons.cut),
-                new Extras.OptionModel("copy", this._msg["Menu.Copy"], this._icons.copy),
-                new Extras.OptionModel("paste", this._msg["Menu.Paste"], this._icons.paste),
-                new Extras.OptionModel("delete", this._msg["Menu.Delete"], this._icons["delete"]),
-                new Extras.SeparatorModel(),
-                new Extras.OptionModel("/selectall", this._msg["Menu.SelectAll"], this._icons.selectAll)
-            ]),
-            new Extras.MenuModel(null, this._msg["Menu.Insert"], null, [
-                new Extras.OptionModel("/insertunorderedlist", this._msg["Menu.BulletedList"], this._icons.bulletedList),
-                new Extras.OptionModel("/insertorderedlist", this._msg["Menu.NumberedList"], this._icons.numberedList),
-                new Extras.SeparatorModel(),
-                new Extras.OptionModel("/inserthorizontalrule", this._msg["Menu.InsertHorizontalRule"],
-                        this._icons.horizontalRule),
-                new Extras.OptionModel("insertimage", this._msg["Menu.InsertImage"], this._icons.image),
-                new Extras.OptionModel("inserthyperlink", this._msg["Menu.InsertHyperlink"], this._icons.hyperlink),
-                new Extras.SeparatorModel(),
-                new Extras.OptionModel("inserttable", this._msg["Menu.InsertTable"], this._icons.table)
-            ]),
-            new Extras.MenuModel(null, this._msg["Menu.Format"], null, [
-                new Extras.MenuModel(null, this._msg["Menu.TextStyle"], this._icons.textStyle, [
-                    new Extras.OptionModel("/removeformat",  this._msg["Menu.PlainText"], this._icons.plainText),
-                    new Extras.SeparatorModel(),
-                    new Extras.OptionModel("/bold",  this._msg["Menu.Bold"], this._icons.bold),
-                    new Extras.OptionModel("/italic",  this._msg["Menu.Italic"], this._icons.italic),
-                    new Extras.OptionModel("/underline",  this._msg["Menu.Underline"], this._icons.underline),
-                    new Extras.OptionModel("/strikethrough",  this._msg["Menu.Strikethrough"], this._icons.strikethrough),
-                    new Extras.SeparatorModel(),
-                    new Extras.OptionModel("/superscript", this._msg["Menu.Superscript"], this._icons.superscript),
-                    new Extras.OptionModel("/subscript", this._msg["Menu.Subscript"], this._icons.subscript)
-                ]),
-                new Extras.MenuModel(null, this._msg["Menu.ParagraphStyle"], this._icons.paragraphStyle, [
+        var features = this.component.render("features", Extras.Sync.RichTextArea.defaultFeatures);
+        var menu = new Extras.MenuModel(null, null, null);
+        
+        if (features.undo || features.clipboard) {
+            var editMenu = new Extras.MenuModel(null, this._msg["Menu.Edit"], null);
+            if (features.undo) {
+                editMenu.addItem(new Extras.OptionModel("/undo", this._msg["Menu.Undo"], this._icons.undo));
+                editMenu.addItem(new Extras.OptionModel("/redo", this._msg["Menu.Redo"], this._icons.redo));
+            }
+            if (features.undo && features.clipboard) {
+                editMenu.addItem(new Extras.SeparatorModel());
+            }
+            if (features.clipboard) {
+                editMenu.addItem(new Extras.OptionModel("cut", this._msg["Menu.Cut"], this._icons.cut));
+                editMenu.addItem(new Extras.OptionModel("copy", this._msg["Menu.Copy"], this._icons.copy));
+                editMenu.addItem(new Extras.OptionModel("paste", this._msg["Menu.Paste"], this._icons.paste));
+                editMenu.addItem(new Extras.OptionModel("delete", this._msg["Menu.Delete"], this._icons["delete"]));
+                editMenu.addItem(new Extras.SeparatorModel());
+                editMenu.addItem(new Extras.OptionModel("/selectall", this._msg["Menu.SelectAll"], this._icons.selectAll));
+            }
+            menu.addItem(editMenu);
+        }
+        
+        if (features.list || features.horizontalRule || features.image || features.hyperlink || features.table) {
+            var insertMenu = new Extras.MenuModel(null, this._msg["Menu.Insert"], null);
+            if (features.list) {
+                insertMenu.addItem(new Extras.OptionModel("/insertunorderedlist", this._msg["Menu.BulletedList"],
+                        this._icons.bulletedList));
+                insertMenu.addItem(new Extras.OptionModel("/insertorderedlist", this._msg["Menu.NumberedList"],
+                        this._icons.numberedList));
+            }
+            insertMenu.addItem(new Extras.SeparatorModel);
+            if (features.horizontalRule) {
+                insertMenu.addItem(new Extras.OptionModel("/inserthorizontalrule", this._msg["Menu.InsertHorizontalRule"],
+                        this._icons.horizontalRule));
+            }
+            if (features.image) {
+                insertMenu.addItem(new Extras.OptionModel("insertimage", this._msg["Menu.InsertImage"], this._icons.image));
+            }
+            if (features.hyperlink) {
+                insertMenu.addItem(new Extras.OptionModel("inserthyperlink", this._msg["Menu.InsertHyperlink"],
+                        this._icons.hyperlink));
+            }
+            insertMenu.addItem(new Extras.SeparatorModel);
+            if (features.table) {
+                insertMenu.addItem(new Extras.OptionModel("inserttable", this._msg["Menu.InsertTable"], this._icons.table));
+            }
+            menu.addItem(insertMenu);
+        }
+        
+        if (features.bold || features.italic || features.underline || features.strikeThrough 
+                || features.subscript || features.paragraphStyle || features.alignment || features.indent 
+                || features.foreground || features.background) {
+            var formatMenu =  new Extras.MenuModel(null, this._msg["Menu.Format"], null);
+            if (features.bold || features.italic || features.underline || features.strikeThrough 
+                    || features.subscript) {
+            }
+            if (features.paragraphStyle) {
+                formatMenu.addItem(new Extras.MenuModel(null, this._msg["Menu.ParagraphStyle"], this._icons.paragraphStyle, [
                     new Extras.OptionModel("/formatblock/<p>", this._msg["Menu.Normal"], this._icons.styleNormal),
                     new Extras.OptionModel("/formatblock/<pre>", this._msg["Menu.Preformatted"], this._icons.stylePreformatted),
                     new Extras.OptionModel("/formatblock/<h1>", this._msg["Menu.Heading1"], this._icons.styleH1),
@@ -299,21 +266,184 @@ Extras.Sync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
                     new Extras.OptionModel("/formatblock/<h4>", this._msg["Menu.Heading4"], this._icons.styleH4),
                     new Extras.OptionModel("/formatblock/<h5>", this._msg["Menu.Heading5"], this._icons.styleH5),
                     new Extras.OptionModel("/formatblock/<h6>", this._msg["Menu.Heading6"], this._icons.styleH6)
-                ]),
-                new Extras.MenuModel(null, this._msg["Menu.Alignment"], this._icons.alignment, [
+                ]));
+            }
+            if (features.bold || features.italic || freatures.underline || features.strikeThrough || features.subscript) {
+                var textMenu = new Extras.MenuModel(null, this._msg["Menu.TextStyle"], this._icons.textStyle);
+                textMenu.addItem(new Extras.OptionModel("/removeformat",  this._msg["Menu.PlainText"], this._icons.plainText));
+                textMenu.addItem(new Extras.SeparatorModel());
+                if (features.bold) {
+                    textMenu.addItem(new Extras.OptionModel("/bold",  this._msg["Menu.Bold"], this._icons.bold));
+                }
+                if (features.italic) {
+                    textMenu.addItem(new Extras.OptionModel("/italic",  this._msg["Menu.Italic"], this._icons.italic));
+                }
+                if (features.underline) {
+                    textMenu.addItem(new Extras.OptionModel("/underline",  this._msg["Menu.Underline"], this._icons.underline));
+                }
+                if (features.strikethrough) {
+                    textMenu.addItem(new Extras.OptionModel("/strikethrough",  this._msg["Menu.Strikethrough"],
+                            this._icons.strikethrough));
+                }
+                textMenu.addItem(new Extras.SeparatorModel());
+                if (features.subscript) {
+                    textMenu.addItem(new Extras.OptionModel("/superscript", this._msg["Menu.Superscript"], 
+                            this._icons.superscript));
+                    textMenu.addItem(new Extras.OptionModel("/subscript", this._msg["Menu.Subscript"], this._icons.subscript));
+                }
+                formatMenu.addItem(textMenu);
+            }
+            if (features.alignment) {
+                formatMenu.addItem(new Extras.MenuModel(null, this._msg["Menu.Alignment"], this._icons.alignment, [
                     new Extras.OptionModel("/justifyleft",  this._msg["Menu.Left"], this._icons.alignmentLeft),
                     new Extras.OptionModel("/justifycenter",  this._msg["Menu.Center"], this._icons.alignmentCenter),
                     new Extras.OptionModel("/justifyright",  this._msg["Menu.Right"], this._icons.alignmentRight),
                     new Extras.OptionModel("/justifyfull",  this._msg["Menu.Justified"], this._icons.alignmentJustify)
-                ]),
-                new Extras.SeparatorModel(),
-                new Extras.OptionModel("/indent",  this._msg["Menu.Indent"], this._icons.indent),
-                new Extras.OptionModel("/outdent",  this._msg["Menu.Outdent"], this._icons.outdent),
-                new Extras.SeparatorModel(),
-                new Extras.OptionModel("foreground",  this._msg["Menu.SetForeground"], this._icons.foreground),
-                new Extras.OptionModel("background",  this._msg["Menu.SetBackground"], this._icons.background)
-            ])
-        ]);
+                ]));
+            }
+            formatMenu.addItem(new Extras.SeparatorModel());
+            if (features.indent) {
+                formatMenu.addItem(new Extras.OptionModel("/indent",  this._msg["Menu.Indent"], this._icons.indent));
+                formatMenu.addItem(new Extras.OptionModel("/outdent",  this._msg["Menu.Outdent"], this._icons.outdent));
+            }
+            formatMenu.addItem(new Extras.SeparatorModel());
+            if (features.foreground || features.background) {
+                if (features.foreground) {
+                    formatMenu.addItem(new Extras.OptionModel("foreground",  this._msg["Menu.SetForeground"], 
+                            this._icons.foreground));
+                }
+                if (features.background) {
+                    formatMenu.addItem(new Extras.OptionModel("background",  this._msg["Menu.SetBackground"], 
+                            this._icons.background));
+                }
+            }
+            menu.addItem(formatMenu);
+        }
+        
+        return menu;
+    },
+    
+    _createMenu: function() {
+        // Menu Bar
+        return new Extras.MenuBarPane({
+            styleName: this.component.render("menuStyleName"),
+            layoutData: {
+                overflow: Echo.SplitPane.OVERFLOW_HIDDEN
+            },
+            model: this._createMainMenuBarModel(),
+            events: {
+                action: Core.method(this, this._processMenuAction)
+            }
+        });
+    },
+    
+    _createToolbar: function() {
+        var features = this.component.render("features", Extras.Sync.RichTextArea.defaultFeatures);
+
+        var controlsRow = new Echo.Row({
+            styleName: this.component.render("toolbarRowStyleName"),
+            cellSpacing: 10,
+            insets: 2
+        });
+
+        // Undo/Redo Tools
+        if (features.undo) {
+            controlsRow.add(new Echo.Row({
+                children: [
+                    this._createToolbarButton("<<<", this._icons.undo, this._msg["Menu.Undo"], this._processCommand, "undo"),
+                    this._createToolbarButton(">>>", this._icons.redo, this._msg["Menu.Redo"], this._processCommand, "redo")
+                ]
+            }));
+        }
+        
+        // Font Bold/Italic/Underline Tools
+        if (features.bold || features.italic || features.underline) {
+            var row = new Echo.Row();
+            if (features.bold) {
+                row.add(this._createToolbarButton("B", this._icons.bold, this._msg["Menu.Bold"], this._processCommand, "bold"));
+            }
+            if (features.italic) {
+                row.add(this._createToolbarButton("I", this._icons.italic, this._msg["Menu.Italic"], 
+                        this._processCommand, "italic"));
+            }
+            if (features.underline) {
+                row.add(this._createToolbarButton("U", this._icons.underline, this._msg["Menu.Underline"], 
+                        this._processCommand, "underline"));
+            }
+            controlsRow.add(row);
+        }
+        
+        //Super/Subscript Tools
+        if (features.subscript) {
+            controlsRow.add(new Echo.Row({
+                children: [
+                    this._createToolbarButton("^", this._icons.superscript, this._msg["Menu.Superscript"], 
+                            this._processCommand, "superscript"),
+                    this._createToolbarButton("v", this._icons.subscript,this._msg["Menu.Subscript"], 
+                            this._processCommand, "subscript")
+                ]
+            }));
+        }
+        
+        // Alignment Tools
+        if (features.alignment) {
+            controlsRow.add(new Echo.Row({
+                children: [
+                    this._createToolbarButton("<-", this._icons.alignmentLeft, this._msg["Menu.Left"], 
+                            this._processCommand, "justifyleft"),
+                    this._createToolbarButton("-|-", this._icons.alignmentCenter, this._msg["Menu.Center"], 
+                            this._processCommand, "justifycenter"),
+                    this._createToolbarButton("->", this._icons.alignmentRight, this._msg["Menu.Right"], 
+                            this._processCommand, "justifyright"),
+                    this._createToolbarButton("||", this._icons.alignmentJustify, this._msg["Menu.Justified"], 
+                            this._processCommand, "justifyfull")
+                ]
+            }));
+        }
+        
+        // Color Tools
+        if (features.foreground || features.background) {
+            var row = new Echo.Row();
+            if (features.foreground) {
+                row.add(this._createToolbarButton("FG", this._icons.foreground, this._msg["Menu.SetForeground"], 
+                        this._processSetForegroundDialog));
+            }
+            if (features.background) {
+                row.add(this._createToolbarButton("BG", this._icons.background, this._msg["Menu.SetBackground"], 
+                        this._processSetBackgroundDialog));
+            }
+            controlsRow.add(row);
+        }
+        
+        // Insert Tools
+        if (features.list || features.horizontalRule || features.image || features.hyperlink || features.table) {
+            var row = new Echo.Row();
+            if (features.list) {
+                row.add(this._createToolbarButton("Bulleted List", this._icons.bulletedList, this._msg["Menu.BulletedList"], 
+                        this._processCommand, "insertunorderedlist"));
+                row.add(this._createToolbarButton("Numbered List", this._icons.numberedList, this._msg["Menu.NumberedList"], 
+                        this._processCommand, "insertorderedlist"));
+            }
+            if (features.horizontalRule) {
+                row.add(this._createToolbarButton("Horizontal Rule", this._icons.horizontalRule,
+                        this._msg["Menu.InsertHorizontalRule"],  this._processCommand, "inserthorizontalrule"));
+            }
+            if (features.image) {
+                row.add(this._createToolbarButton("Image", this._icons.image, this._msg["Menu.InsertImage"], 
+                        this._processInsertImageDialog));
+            }
+            if (features.hyperlink) {
+                row.add(this._createToolbarButton("Hyperlink", this._icons.hyperlink, this._msg["Menu.InsertHyperlink"], 
+                        this._processInsertHyperlinkDialog));
+            }
+            if (features.table) {
+                row.add(this._createToolbarButton("Table", this._icons.table, this._msg["Menu.InsertTable"], 
+                        this._processInsertTableDialog));
+            }
+            controlsRow.add(row);
+        }
+        
+        return controlsRow;
     },
     
     _createToolbarButton: function(text, icon, toolTipText, eventMethod, actionCommand) {
