@@ -100,6 +100,8 @@ Extras.Sync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
             "TableDialog.ErrorDialog.Rows":     "The entered rows value is not valid.  Please specify a number between 1 and 50."
         })
     },
+    
+    _processDialogCloseRef: null,
 
     $load: function() {
         Echo.Render.registerPeer("Extras.RichTextArea", this);
@@ -128,6 +130,10 @@ Extras.Sync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
      * horizontal and vertical space.
      */
     _paneRender: false,
+    
+    $construct: function() {
+        this._processDialogCloseRef = Core.method(this, this._processDialogClose);
+    },
 
     createComponent: function() {
         var features = this.component.render("features", Extras.Sync.RichTextArea.defaultFeatures);
@@ -468,6 +474,41 @@ Extras.Sync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
         this._richTextInput.peer.doCommand(e.actionCommand);
     },
     
+    _openDialog: function(dialogWindow) {
+        // Activate overlay pane (if required).
+        var contentPane;
+        if (this._overlayPane == null) {
+            this._overlayPane = new Extras.Sync.RichTextArea.OverlayPane();
+            contentPane = new Echo.ContentPane();
+            this._overlayPane.add(contentPane);
+            this.baseComponent.add(this._overlayPane);
+        } else {
+            contentPane = this._overlayPane.children[0];
+        }
+        
+        // Add dialog to overlay pane.
+        contentPane.add(dialogWindow);
+
+        // Add parent-change listener to dialog so that overlay pane can be
+        // deactivated when necessary.
+        dialogWindow.addListener("parent", this._processDialogCloseRef);
+    },
+    
+    _processDialogClose: function(e) {
+        if (e.newValue != null) {
+            return;
+        }
+        
+        // Deactivate overlay pane if it has no content.
+        if (this._overlayPane.children[0].children.length == 0) {
+            this.baseComponent.remove(this._overlayPane);
+            this._overlayPane = null;
+        }
+        
+        // Remove dialog parent-change listener.
+        e.source.removeListener("parent", this._processDialogCloseRef);
+    },
+    
     _processMenuAction: function(e) {
         if (e.modelId.charAt(0) == '/') {
             var separatorIndex = e.modelId.indexOf("/", 1);
@@ -501,7 +542,7 @@ Extras.Sync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
                 try {
                     this._richTextInput.peer.doCommand(e.modelId);
                 } catch (ex) {
-                    this.baseComponent.add(new Extras.Sync.RichTextArea.MessageDialog(this.component,
+                    this._openDialog(new Extras.Sync.RichTextArea.MessageDialog(this.component,
                             this._msg["Generic.Error"], this._msg["Error.ClipboardAccessDisabled"])); 
                 }
             }
@@ -525,7 +566,7 @@ Extras.Sync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
     _processSetBackgroundDialog: function(e) {
         var colorDialog = new Extras.Sync.RichTextArea.ColorDialog(this.component, true);
         colorDialog.addListener("colorSelect", Core.method(this, this._processSetBackground));
-        this.baseComponent.add(colorDialog);
+        this._openDialog(colorDialog);
     },
     
     /**
@@ -541,7 +582,7 @@ Extras.Sync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
     _processSetForegroundDialog: function(e) {
         var colorDialog = new Extras.Sync.RichTextArea.ColorDialog(this.component, false);
         colorDialog.addListener("colorSelect", Core.method(this, this._processSetForeground));
-        this.baseComponent.add(colorDialog);
+        this._openDialog(colorDialog);
     },
     
     /**
@@ -567,7 +608,7 @@ Extras.Sync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
     _processInsertTableDialog: function(e) {
         var tableDialog = new Extras.Sync.RichTextArea.TableDialog(this.component);
         tableDialog.addListener("tableInsert", Core.method(this, this._processInsertTable));
-        this.baseComponent.add(tableDialog);
+        this._openDialog(tableDialog);
     },
     
     _processInsertHyperlink: function(e) {
@@ -578,7 +619,7 @@ Extras.Sync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
     _processInsertHyperlinkDialog: function(e) {
         var hyperlinkDialog = new Extras.Sync.RichTextArea.HyperlinkDialog(this.component);
         hyperlinkDialog.addListener("insertHyperlink", Core.method(this, this._processInsertHyperlink));
-        this.baseComponent.add(hyperlinkDialog);
+        this._openDialog(hyperlinkDialog);
     },
     
     _processInsertImage: function(e) {
@@ -588,7 +629,7 @@ Extras.Sync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
     _processInsertImageDialog: function(e) {
         var imageDialog = new Extras.Sync.RichTextArea.ImageDialog(this.component);
         imageDialog.addListener("insertImage", Core.method(this, this._processInsertImage));
-        this.baseComponent.add(imageDialog);
+        this._openDialog(imageDialog);
     },
     
     renderAdd: function(update, parentElement) {
@@ -716,8 +757,7 @@ Extras.Sync.RichTextArea.AbstractDialog = Core.extend(Echo.WindowPane, {
     }
 });
 
-Extras.Sync.RichTextArea.ColorDialog = Core.extend(
-        Extras.Sync.RichTextArea.AbstractDialog, {
+Extras.Sync.RichTextArea.ColorDialog = Core.extend(Extras.Sync.RichTextArea.AbstractDialog, {
 
     $construct: function(richTextArea, setBackground) {
         Extras.Sync.RichTextArea.AbstractDialog.call(this, richTextArea,
@@ -750,8 +790,7 @@ Extras.Sync.RichTextArea.ColorDialog = Core.extend(
     }
 });
 
-Extras.Sync.RichTextArea.HyperlinkDialog = Core.extend(
-        Extras.Sync.RichTextArea.AbstractDialog, {
+Extras.Sync.RichTextArea.HyperlinkDialog = Core.extend(Extras.Sync.RichTextArea.AbstractDialog, {
 
     $construct: function(richTextArea) {
         Extras.Sync.RichTextArea.AbstractDialog.call(this, richTextArea,
@@ -795,8 +834,7 @@ Extras.Sync.RichTextArea.HyperlinkDialog = Core.extend(
     }
 });
 
-Extras.Sync.RichTextArea.ImageDialog = Core.extend(
-        Extras.Sync.RichTextArea.AbstractDialog, {
+Extras.Sync.RichTextArea.ImageDialog = Core.extend(Extras.Sync.RichTextArea.AbstractDialog, {
 
     $construct: function(richTextArea) {
         Extras.Sync.RichTextArea.AbstractDialog.call(this, richTextArea,
@@ -830,6 +868,55 @@ Extras.Sync.RichTextArea.ImageDialog = Core.extend(
         }
         this.parent.remove(this);
         this.fireEvent({type: "insertImage", source: this, data: data});
+    }
+});
+
+/**
+ * Pane which renders its content over the body of the application.  
+ * This component breaks out of the element-based component hierarchy.
+ */
+Extras.Sync.RichTextArea.OverlayPane = Core.extend(Echo.Component, {
+
+    $load: function() {
+        Echo.ComponentFactory.registerType("Extras.RichTextOverlayPane", this);
+    },
+    
+    componentType: "Extras.RichTextOverlayPane",
+    floatingPane: true,
+    pane: true
+});
+
+Extras.Sync.RichTextArea.OverlayPanePeer = Core.extend(Echo.Render.ComponentSync, {
+
+    _bodyDiv: null,
+
+    $load: function() {
+        Echo.Render.registerPeer("Extras.RichTextOverlayPane", this);
+    },
+
+    renderAdd: function(update, parentElement) {
+        this._bodyDiv = document.createElement("div");
+        this._bodyDiv.style.cssText = "position:absolute;top:0;right:0;bottom:0;left:0;";
+        if (this.component.children.length == 1) {
+            Echo.Render.renderComponentAdd(update, this.component.children[0], this._bodyDiv);
+        } else if (this.component.children.length > 1) {
+            throw new Error("Too many children added to OverlayPane.");
+        }
+       
+        document.body.appendChild(this._bodyDiv);
+    },
+    
+    renderDispose: function(update) {
+        if (this._bodyDiv && this._bodyDiv.parentNode) {
+            this._bodyDiv.parentNode.removeChild(this._bodyDiv);
+        }
+    },
+    
+    renderUpdate: function(update) {
+        Echo.Render.renderComponentDispose(update, update.parent);
+        containerElement.removeChild(element);
+        this.renderAdd(update, null);
+        return false;
     }
 });
 
