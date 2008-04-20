@@ -128,7 +128,6 @@ Extras.Sync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
         if (features.menu) {
             var menuSplitPane = new Echo.SplitPane({
                 orientation: Echo.SplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM,
-                separatorPosition: 26,
                 children: [
                     this._createMenu()
                 ]
@@ -334,6 +333,7 @@ Extras.Sync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
         return new Extras.MenuBarPane({
             styleName: this.component.render("menuStyleName"),
             layoutData: {
+                minimumSize: 26,
                 overflow: Echo.SplitPane.OVERFLOW_HIDDEN
             },
             model: this._createMainMenuBarModel(),
