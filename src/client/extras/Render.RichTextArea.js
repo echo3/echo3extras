@@ -1029,15 +1029,12 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         this._iframeElement.style.backgroundColor = "white";
         this._iframeElement.style.color = "black";
         this._iframeElement.style.width = this.width ? this.width : "100%";
-        
+
         this._paneRender = this.component._richTextArea.peer._paneRender;
-        
-        if (this._paneRender) {
-        //FIXME testing hack
-            this._iframeElement.style.height = "400px";
-        } else {
+        if (!this._paneRender) {
             this._iframeElement.style.height = this.height ? this.height : "200px";
         }
+
         this._iframeElement.style.border = "0px none";
         this._iframeElement.frameBorder = "0";
     
@@ -1064,8 +1061,23 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         var text = this.component._richTextArea.get("text");
         
         var contentDocument = this._iframeElement.contentWindow.document;
+        
+        var bodyStyleAttribute = "";
+        var foreground = this.component._richTextArea.render("foreground");
+        var background = this.component._richTextArea.render("background");
+        if (foreground || background) {
+            if (foreground) {
+                bodyStyleAttribute += "color:" + foreground + ";"
+            }
+            if (background) {
+                bodyStyleAttribute += "background-color:" + background + ";"
+            }
+        }
+        
         contentDocument.open();
-        contentDocument.write("<html><body>" + (text == null ? "" : text) + "</body></html>");
+        contentDocument.write("<html><body"
+                + (bodyStyleAttribute ? (" style=\"" + bodyStyleAttribute + "\"") : "")
+                + ">" + (text == null ? "" : text) + "</body></html>");
         contentDocument.close();
         if (Core.Web.Env.BROWSER_MOZILLA && !Core.Web.Env.BROWSER_FIREFOX) {
             // workaround for Mozilla (not Firefox)
