@@ -6,25 +6,9 @@ Extras.Sync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
     $static: {
     
         defaultFeatures: {
-            menu: true,
-            toolbar: true,
-            undo: true,
-            clipboard: true,
-            alignment: true,
-            foreground: true,
-            background: true,
-            list: true,
-            table: true,
-            image: true,
-            horizontalRule: true,
-            hyperlink: true,
-            subscript: true,
-            bold: true,
-            italic: true,
-            underline: true,
-            strikethrough: true,
-            paragraphStyle: true,
-            indent: true
+            menu: true, toolbar: true, undo: true, clipboard: true, alignment: true, foreground: true, background: true,
+            list: true, table: true, image: true, horizontalRule: true, hyperlink: true, subscript: true, 
+            bold: true, italic: true, underline: true, strikethrough: true, paragraphStyle: true, indent: true
         },
     
         resource: new Core.ResourceBundle({
@@ -173,6 +157,10 @@ Extras.Sync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
         return contentPane;
     },
     
+    /**
+     * Returns default icon set map object.
+     * @type object
+     */
     _getDefaultIcons: function() {
         return { 
             alignmentCenter: this.client.getResourceUrl("Extras", "image/richtext/AlignCenter.gif"),
@@ -204,6 +192,12 @@ Extras.Sync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
         };
     },
     
+    /**
+     * Creates the model for the menu bar based on enable feature set.
+     *
+     * @return the menu model
+     * @type Extras.MenuModel
+     */
     _createMainMenuBarModel: function() {
         var features = this.component.render("features", Extras.Sync.RichTextArea.defaultFeatures);
         var menu = new Extras.MenuModel(null, null, null);
@@ -329,6 +323,12 @@ Extras.Sync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
         return menu;
     },
     
+    /**
+     * Creates main menu bar component.
+     *
+     * @return the main menu bar
+     * @type Extras.MenuBarPane
+     */
     _createMenu: function() {
         // Menu Bar
         return new Extras.MenuBarPane({
@@ -343,6 +343,12 @@ Extras.Sync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
         });
     },
     
+    /**
+     * Creates tool bar component.
+     * 
+     * @return the toolbar
+     * @type Echo.Component
+     */
     _createToolbar: function() {
         var features = this.component.render("features", Extras.Sync.RichTextArea.defaultFeatures);
 
