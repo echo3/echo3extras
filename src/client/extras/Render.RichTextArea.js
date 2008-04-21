@@ -1027,7 +1027,8 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
     renderAdd: function(update, parentElement) {
         // Create IFRAME container DIV element.
         this._mainDivElement = document.createElement("div");
-        this._mainDivElement.style.border = "1px inset";
+        Echo.Sync.Border.render(this.component._richTextArea.render("border", Extras.RichTextArea.DEFAULT_BORDER),
+                this._mainDivElement);
         
         // Create IFRAME element.
         this._iframeElement = document.createElement("iframe");
