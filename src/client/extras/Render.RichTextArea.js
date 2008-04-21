@@ -115,11 +115,15 @@ Extras.Sync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
      */
     _paneRender: false,
     
+    _trimHeight: null,
+    
     $construct: function() {
         this._processDialogCloseRef = Core.method(this, this._processDialogClose);
     },
 
     createComponent: function() {
+        this._trimHeight = 2;
+    
         var features = this.component.render("features", Extras.Sync.RichTextArea.defaultFeatures);
 
         var contentPane = new Echo.ContentPane();
@@ -329,7 +333,7 @@ Extras.Sync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
      * @type Extras.MenuBarPane
      */
     _createMenu: function() {
-        // Menu Bar
+        this._trimHeight += 26;
         return new Extras.MenuBarPane({
             styleName: this.component.render("menuStyleName"),
             layoutData: {
@@ -350,6 +354,7 @@ Extras.Sync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
      * @type Echo.Component
      */
     _createToolbar: function() {
+        this._trimHeight += 24;
         var features = this.component.render("features", Extras.Sync.RichTextArea.defaultFeatures);
 
         var controlsRow = new Echo.Row({
@@ -952,12 +957,6 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
      */
     _paneRender: false,
     
-    //FIXME.  Calculate (rather than hardcode) trimHeight value.
-    /**
-     * Height of trim for RichTextArea, i.e., menu bar, toolbars, etc.
-     */
-    _trimHeight: 60,
-    
     _renderedHtml: null,
 
     $construct: function() { },
@@ -1122,7 +1121,8 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         var bounds = new Core.Web.Measure.Bounds(rtaMainDivElement.parentNode);
         
         if (bounds.height) {
-            var calculatedHeight = (bounds.height < this._trimHeight + 100 ? 100 : bounds.height - this._trimHeight) + "px";
+            var trimHeight = this.component._richTextArea.peer._trimHeight;
+            var calculatedHeight = (bounds.height < trimHeight + 100 ? 100 : bounds.height - trimHeight) + "px";
             if (this._iframeElement.style.height != calculatedHeight) {
                 this._iframeElement.style.height = calculatedHeight; 
             }
