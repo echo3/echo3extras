@@ -2,6 +2,7 @@
  * RichTextArea component.
  *
  * @cp {String} text the content of the text area
+ * @sp {#Border} border the border surrounding the text entry area
  * @sp {String} menuStyleName style name for menu bar
  * @sp {String} controlPaneStyleName style name for control panes used in dialogs
  * @sp {String} controlPaneRowStyleName style name for control pane row used in dialogs
@@ -27,3 +28,4 @@ Extras.RichTextArea = Core.extend(Echo.Component, {
         this.fireEvent({source: this, type: "action"});
     }
 });
+

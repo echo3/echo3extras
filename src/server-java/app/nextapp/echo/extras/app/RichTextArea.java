@@ -29,6 +29,7 @@
 
 package nextapp.echo.extras.app;
 
+import nextapp.echo.app.Border;
 import nextapp.echo.app.Component;
 import nextapp.echo.app.event.DocumentEvent;
 import nextapp.echo.app.event.DocumentListener;
@@ -84,6 +85,7 @@ public class RichTextArea extends Component {
 
     public static final String DOCUMENT_CHANGED_PROPERTY = "document";
 
+    public static final String PROPERTY_BORDER = "border";
     public static final String PROPERTY_CONTROL_PANE_BUTTON_STYLE_NAME = "controlPaneButtonStyleName";
     public static final String PROPERTY_CONTROL_PANE_ROW_STYLE_NAME = "controlPaneRowStyleName";
 
@@ -130,6 +132,15 @@ public class RichTextArea extends Component {
         setDocument(document);
     }
 
+    /**
+     * Returns the border surrounding the text entry area.
+     * 
+     * @return the border
+     */
+    public Border getBorder() {
+        return (Border) getProperty(PROPERTY_BORDER);
+    }
+    
     public String getControlPaneButtonStyleName() {
         return (String) getProperty(PROPERTY_CONTROL_PANE_BUTTON_STYLE_NAME);
     }
@@ -188,6 +199,15 @@ public class RichTextArea extends Component {
         }
     }
     
+    /**
+     * Sets the border displayed around the text entry area.
+     * 
+     * @param newValue the new border
+     */
+    public void setBorder(Border newValue) {
+        setProperty(PROPERTY_BORDER, newValue);
+    }
+
     public void setControlPaneButtonStyleName(String newValue) {
         setProperty(PROPERTY_CONTROL_PANE_BUTTON_STYLE_NAME, newValue);
     }
