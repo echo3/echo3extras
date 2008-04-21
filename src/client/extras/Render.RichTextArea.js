@@ -680,9 +680,8 @@ Extras.Sync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
     
     renderUpdate: function(update) {
         if (update.isUpdatedPropertySetIn({text: true })) {
-            if (update.getUpdatedProperty("text").newValue == this._richTextInput.peer._renderedHtml) {
-                return;
-            }
+            this._richTextInput.peer._loadData();
+            return;
         }
     
         var element = this._mainDivElement;
@@ -979,6 +978,18 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         } else {
             this.doCommand("inserthtml", html);
         }
+    },
+    
+    _loadData: function() {
+        var html = this.component._richTextArea.get("text", "");
+        if (html == this._renderedHtml) {
+            // No update necessary.
+            return; 
+        }
+    
+        var contentDocument = this._iframeElement.contentWindow.document;
+        contentDocument.body.innerHTML = html;
+        this._renderedHtml = html;
     },
     
     _loadRange: function() {
