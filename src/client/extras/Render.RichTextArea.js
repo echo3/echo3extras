@@ -981,7 +981,10 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
     },
     
     _loadData: function() {
-        var html = this.component._richTextArea.get("text", "");
+        var html = this.component._richTextArea.get("text");
+        if (html == null) {
+            html = "";
+        }
         if (html == this._renderedHtml) {
             // No update necessary.
             return; 
