@@ -10,7 +10,7 @@ Extras.Sync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
             list: true, table: true, image: true, horizontalRule: true, hyperlink: true, subscript: true, 
             bold: true, italic: true, underline: true, strikethrough: true, paragraphStyle: true, indent: true
         },
-    
+
         resource: new Core.ResourceBundle({
             "ColorDialog.Title.Foreground":     "Text Color",
             "ColorDialog.Title.Background":     "Highlight Color",
@@ -117,8 +117,18 @@ Extras.Sync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
     
     _trimHeight: null,
     
+    _reinitRunnable: null,
+    
     $construct: function() {
         this._processDialogCloseRef = Core.method(this, this._processDialogClose);
+        if (Core.Web.Env.BROWSER_MOZILLA) {
+            this._reinitRunnable = new Core.Web.Scheduler.MethodRunnable( 
+                    Core.method(this, function() {
+                        if (this._richTextInput && this._richTextInput.peer) {
+                            this._richTextInput.peer._reinitListeners();    
+                        }
+                    }), 1000, true);    
+        }
     },
 
     createComponent: function() {
@@ -665,10 +675,17 @@ Extras.Sync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
             this._mainDivElement.style.height = "300px";
         }
         
+        if (this._reinitRunnable) {
+            Core.Web.Scheduler.add(this._reinitRunnable);
+        }
+        
         parentElement.appendChild(this._mainDivElement);
     },
     
     renderDispose: function(update) {
+        if (this._reinitRunnable) {
+            Core.Web.Scheduler.remove(this._reinitRunnable);
+        }
         EchoArc.ComponentSync.prototype.renderDispose.call(this, update);
         this._mainDivElement = null;
     },
@@ -1038,6 +1055,18 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         }
 
         this._storeRange();
+    },
+    
+    _reinitListeners: function() {
+        Core.Web.Event.removeAll(this._iframeElement.contentWindow.document);
+        Core.Web.Event.add(this._iframeElement.contentWindow.document, "keypress", 
+                Core.method(this, this._processKeyPress), false);
+        Core.Web.Event.add(this._iframeElement.contentWindow.document, "keyup", 
+                Core.method(this, this._processKeyUp), false);
+        Core.Web.Event.add(this._iframeElement.contentWindow.document, "mousedown", 
+                Core.method(this, this._processMouseDown), false);
+        Core.Web.Event.add(this._iframeElement.contentWindow.document, "mouseup", 
+                Core.method(this, this._processMouseUp), false);
     },
     
     renderAdd: function(update, parentElement) {
