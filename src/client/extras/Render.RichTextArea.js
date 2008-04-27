@@ -127,7 +127,7 @@ Extras.Sync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
                         if (this._richTextInput && this._richTextInput.peer) {
                             this._richTextInput.peer._reinitListeners();    
                         }
-                    }), 1000, true);    
+                    }), 3000, true);    
         }
     },
 
@@ -1000,13 +1000,13 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
     _loadData: function() {
         var html = this.component._richTextArea.get("text");
         if (html == null) {
-            html = "";
+            html = "<br/>";
         }
         if (html == this._renderedHtml) {
             // No update necessary.
-            return; 
+            return;
         }
-    
+
         var contentDocument = this._iframeElement.contentWindow.document;
         contentDocument.body.innerHTML = html;
         this._renderedHtml = html;
@@ -1027,6 +1027,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         }
 
         if (e.keyCode == 13) {
+            this._storeData();
             this.component._richTextArea.doAction();
         }
     },
