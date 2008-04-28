@@ -786,6 +786,24 @@ Extras.Sync.RichTextArea.AbstractDialog = Core.extend(Echo.WindowPane, {
     }
 });
 
+Extras.Sync.RichTextArea.Html = {
+
+    //FIXME Verify no illegal tags are present or correct.
+    //FIXME Verify no unclosed tags are present or correct.
+    //FIXME Verify no illegal characters are present or correct.
+    //FIXME Provide option to only remove the one trailing BR we add by default.
+    
+    _CLEAN_LEADING_TRAILING: /^(?:\s*<\s*[Bb][Rr]\s*\/?\s*>\s*)*(.*?)(?:\s*<\s*[Bb][Rr]\s*\/?\s*>\s*)*$/,
+    
+    /**
+     * Cleans HTML input/output.
+     */
+    clean: function(html) {
+        var parts = this._CLEAN_LEADING_TRAILING.exec(html);
+        return parts[1];
+    }
+};
+
 Extras.Sync.RichTextArea.ColorDialog = Core.extend(Extras.Sync.RichTextArea.AbstractDialog, {
 
     $construct: function(richTextArea, setBackground) {
@@ -1183,8 +1201,9 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
     _storeData: function() {
         var contentDocument = this._iframeElement.contentWindow.document;
         var html = contentDocument.body.innerHTML;
-        this._renderedHtml = html;
-        this.component._richTextArea.set("text", html);
+        var cleanHtml = Extras.Sync.RichTextArea.Html.clean(html);
+        this._renderedHtml = cleanHtml;
+        this.component._richTextArea.set("text", cleanHtml);
     },
     
     _storeRange: function() {
