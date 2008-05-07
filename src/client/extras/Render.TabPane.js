@@ -197,7 +197,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         this._div = document.createElement("div");
         this._div.id = this.component.renderId;
         this._div.style.cssText = "position:absolute;overflow:hidden;top:" + pixelInsets.top + "px;right:" + pixelInsets.right
-                + "px;bottom:" + pixelInsets.bottom + "px;left:" + pixelInsets.left + "px;"; 
+                + "px;bottom:" + pixelInsets.bottom + "px;left:" + pixelInsets.left + "px;";
                         
         // Render Header Container
         var headerContainerDiv = document.createElement("div");
@@ -584,13 +584,13 @@ Extras.Sync.TabPane.Tab = Core.extend({
                 return;
             }
             this._parent.component.fireEvent({type: "tabClose", source: this._parent.component, 
-                    data: this._childComponent.renderId});
+                    tab: this._childComponent, data: this._childComponent.renderId});
         } else {
             // tab clicked
             this._parent._selectTab(this._childComponent.renderId);
             this._parent._setActiveTabId(this._childComponent.renderId);
             this._parent.component.fireEvent({type: "tabSelect", source: this._parent.component, 
-                    data: this._childComponent.renderId});
+                    tab: this._childComponent, data: this._childComponent.renderId});
         }
     },
     
@@ -687,6 +687,7 @@ Extras.Sync.TabPane.Tab = Core.extend({
         
         // Render tab
         var centerTd = document.createElement("td");
+        centerTd.style.verticalAlign = "top";
         Echo.Sync.Insets.render(Extras.Sync.TabPane._defaultTabInsets, centerTd, "padding");
         
         var icon = layoutData ? layoutData.icon : null;
