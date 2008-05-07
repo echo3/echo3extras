@@ -319,6 +319,9 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
                 // Remove children.
                 for (var i = 0; i < removedChildren.length; ++i) {
                     var tab = this._getTabById(removedChildren[i].renderId);
+                    if (!tab) {
+                        continue;
+                    }
                     if (tab._childComponent.renderId == this._activeTabId) {
                         activeTabRemoved = true;
                     }
