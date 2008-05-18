@@ -189,6 +189,8 @@ Extras.Sync.TransitionPane = Core.extend(Echo.Render.ComponentSync, {
         
         // Remove content which was transitioned from.
         this._removeOldContent();
+        
+        Echo.Render.updateFocus(this.client);
     }
 });
 
