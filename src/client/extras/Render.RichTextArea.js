@@ -800,6 +800,10 @@ Extras.Sync.RichTextArea.Html = {
      */
     clean: function(html) {
         var parts = this._CLEAN_LEADING_TRAILING.exec(html);
+        if (parts == null) {
+            // No match found, return input.
+            return html;
+        }
         return parts[1];
     }
 };
