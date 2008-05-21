@@ -793,18 +793,22 @@ Extras.Sync.RichTextArea.Html = {
     //FIXME Verify no illegal characters are present or correct.
     //FIXME Provide option to only remove the one trailing BR we add by default.
     
-    _CLEAN_LEADING_TRAILING: /^(?:\s*<\s*[Bb][Rr]\s*\/?\s*>\s*)*(.*?)(?:\s*<\s*[Bb][Rr]\s*\/?\s*>\s*)*$/,
+    _P_BLOCK_FIND: /<p\b[^>]*>(.*?)<\/p>/ig,
+    _P_STANDALONE_FIND: /<p\/?>/ig,
+    _LEADING_WHITESPACE: /^(\s|<br\/?>|&nbsp;)+/i,
+    _TRAILING_WHITESPACE: /(\s|<br\/?>|&nbsp;)+$/i,
     
     /**
      * Cleans HTML input/output.
      */
     clean: function(html) {
-        var parts = this._CLEAN_LEADING_TRAILING.exec(html);
-        if (parts == null) {
-            // No match found, return input.
-            return html;
-        }
-        return parts[1];
+        Core.Debug.consoleWrite(" in: " + html);
+        html = html.replace(Extras.Sync.RichTextArea.Html._P_BLOCK_FIND, "$1<br/>");
+        html = html.replace(Extras.Sync.RichTextArea.Html._P_STANDALONE_FIND, "<br/>");
+        html = html.replace(Extras.Sync.RichTextArea.Html._LEADING_WHITESPACE, "");
+        html = html.replace(Extras.Sync.RichTextArea.Html._TRAILING_WHITESPACE, "");
+        Core.Debug.consoleWrite("out: " + html);
+        return html;
     }
 };
 
@@ -997,6 +1001,8 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
      */
     _paneRender: false,
     
+    _fireAction: false,
+    
     _renderedHtml: null,
 
     $construct: function() { },
@@ -1022,7 +1028,8 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
     _loadData: function() {
         var html = this.component._richTextArea.get("text");
         if (html == null) {
-            html = "<br/>";
+            // Mozilla and Opera has issues with cursor appearing in proper location when text area is devoid of content.
+            html = (Core.Web.Env.BROWSER_MOZILLA || Core.Web.Env.BROWSER_OPERA) ? "<br/>" : "";
         }
         if (html == this._renderedHtml) {
             // No update necessary.
@@ -1049,8 +1056,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         }
 
         if (e.keyCode == 13) {
-            this._storeData();
-            this.component._richTextArea.doAction();
+            this._fireAction = true;
         }
     },
     
@@ -1062,6 +1068,11 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
     
         this._storeData();
         this._storeRange();
+        
+        if (this._fireAction) {
+            this._fireAction = false;
+            this.component._richTextArea.doAction();
+        }
     },
     
     _processMouseDown: function(e) {
@@ -1100,8 +1111,6 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         
         // Create IFRAME element.
         this._iframeElement = document.createElement("iframe");
-        this._iframeElement.style.backgroundColor = "white";
-        this._iframeElement.style.color = "black";
         this._iframeElement.style.width = this.width ? this.width : "100%";
 
         this._paneRender = this.component._richTextArea.peer._paneRender;
