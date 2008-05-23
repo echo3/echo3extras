@@ -190,7 +190,11 @@ Extras.Sync.TransitionPane = Core.extend(Echo.Render.ComponentSync, {
         // Remove content which was transitioned from.
         this._removeOldContent();
         
-        Echo.Render.updateFocus(this.client);
+        // Refocus current focused component if it is within TransitionPane.
+        var focusedComponent = this.component.application.getFocusedComponent();
+        if (focusedComponent != null && this.component.isAncestorOf(focusedComponent)) {
+            Echo.Render.updateFocus(this.client);
+        }
     }
 });
 
