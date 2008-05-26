@@ -7,6 +7,7 @@ Extras.Sync.TransitionPane = Core.extend(Echo.Render.ComponentSync, {
         Echo.Render.registerPeer("Extras.TransitionPane", this);
     },
 
+    _containerDiv: null,
     element: null,
     type: null,
     _duration: null,
@@ -78,9 +79,14 @@ Extras.Sync.TransitionPane = Core.extend(Echo.Render.ComponentSync, {
     },
 
     renderAdd: function(update, parentElement) {
+        this._containerDiv = document.createElement("div");
+        this._containerDiv.style.cssText = "position:absolute;overflow:auto;top:0;left:0;width:100%;height:100%;";
+        
         this.element = document.createElement("div");
         this.element.style.cssText = "position:absolute;overflow:hidden;top:0;left:0;width:100%;height:100%;";
-        parentElement.appendChild(this.element);
+        this._containerDiv.appendChild(this.element);
+        
+        parentElement.appendChild(this._containerDiv);
         if (this.component.children.length > 0) {
             this._renderAddChild(update);
         }
@@ -107,17 +113,12 @@ Extras.Sync.TransitionPane = Core.extend(Echo.Render.ComponentSync, {
         this.element.appendChild(this.childDivElement);
     },
     
-    renderDisplay: function() {
-        
-    },
-    
-    i : 0,
-    
     renderDispose: function(update) {
         this._initialContentLoaded = false;
         this._transitionFinish();
         this._childDivElement = null;
         this.element = null;
+        this._containerDiv = null;
     },
 
     renderUpdate: function(update) {
@@ -134,7 +135,7 @@ Extras.Sync.TransitionPane = Core.extend(Echo.Render.ComponentSync, {
         }
 
         if (fullRender) {
-            var element = this.element;
+            var element = this._containerDiv;
             var containerElement = element.parentNode;
             Echo.Render.renderComponentDispose(update, update.parent);
             containerElement.removeChild(element);
