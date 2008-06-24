@@ -48,7 +48,7 @@ public class ToolTipContainerPeer extends AbstractComponentSynchronizePeer {
 
     private static final Service TOOLTIP_CONTAINER_SERVICE = JavaScriptService.forResources("EchoExtras.ToolTipContainer",
             new String[] {  "nextapp/echo/extras/webcontainer/resource/Application.ToolTipContainer.js",  
-                            "nextapp/echo/extras/webcontainer/resource/Render.ToolTipContainer.js"});
+                            "nextapp/echo/extras/webcontainer/resource/Sync.ToolTipContainer.js"});
     
     static {
         WebContainerServlet.getServiceRegistry().add(TOOLTIP_CONTAINER_SERVICE);

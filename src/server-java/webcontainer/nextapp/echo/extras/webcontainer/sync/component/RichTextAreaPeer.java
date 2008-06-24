@@ -67,7 +67,7 @@ public class RichTextAreaPeer extends AbstractComponentSynchronizePeer {
     
     private static final Service RICH_TEXT_AREA_SERVICE = JavaScriptService.forResources("EchoExtras.RichTextArea",
             new String[] { RESOURCE_DIR + "Application.RichTextArea.js",
-                           RESOURCE_DIR + "Render.RichTextArea.js",
+                           RESOURCE_DIR + "Sync.RichTextArea.js",
                            RESOURCE_DIR + "RemoteClient.RichTextArea.js" });
     
     private static final Map LOCALE_SERVICES = new HashMap();
@@ -107,7 +107,7 @@ public class RichTextAreaPeer extends AbstractComponentSynchronizePeer {
     
     private static void addLocaleService(Locale locale, String localeCode) {
         Service service = JavaScriptService.forResource("EchoExtras.RichTextArea." + localeCode, 
-                RESOURCE_DIR + "RenderLocale.RichTextArea." + localeCode + ".js");
+                RESOURCE_DIR + "SyncLocale.RichTextArea." + localeCode + ".js");
         WebContainerServlet.getServiceRegistry().add(service);
         LOCALE_SERVICES.put(locale, service);
     }

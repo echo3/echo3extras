@@ -52,7 +52,7 @@ extends AbstractComponentSynchronizePeer {
     
     private static final Service CALENDAR_SELECT_SERVICE = JavaScriptService.forResources("EchoExtras.CalendarSelect",
             new String[] { "nextapp/echo/extras/webcontainer/resource/Application.CalendarSelect.js",  
-                           "nextapp/echo/extras/webcontainer/resource/Render.CalendarSelect.js" });
+                           "nextapp/echo/extras/webcontainer/resource/Sync.CalendarSelect.js" });
     
     private static final Map LOCALE_SERVICES = new HashMap();
     
@@ -63,7 +63,7 @@ extends AbstractComponentSynchronizePeer {
     
     private static void addLocaleService(Locale locale, String localeCode) {
         Service service = JavaScriptService.forResource("EchoExtras.CalendarSelect." + localeCode, 
-                RESOURCE_DIR + "RenderLocale.CalendarSelect." + localeCode + ".js");
+                RESOURCE_DIR + "SyncLocale.CalendarSelect." + localeCode + ".js");
         WebContainerServlet.getServiceRegistry().add(service);
         LOCALE_SERVICES.put(locale, service);
     }

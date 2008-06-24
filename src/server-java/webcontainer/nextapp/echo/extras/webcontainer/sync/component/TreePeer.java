@@ -458,7 +458,7 @@ extends AbstractComponentSynchronizePeer {
     private static final Service TREE_SERVICE = JavaScriptService.forResources("EchoExtras.RemoteTree",  
             new String[]{ "nextapp/echo/extras/webcontainer/resource/Application.RemoteTree.js",
                     "nextapp/echo/extras/webcontainer/resource/Serial.RemoteTree.js",
-                    "nextapp/echo/extras/webcontainer/resource/Render.RemoteTree.js" });
+                    "nextapp/echo/extras/webcontainer/resource/Sync.RemoteTree.js" });
 
     static {
         WebContainerServlet.getServiceRegistry().add(TREE_SERVICE);

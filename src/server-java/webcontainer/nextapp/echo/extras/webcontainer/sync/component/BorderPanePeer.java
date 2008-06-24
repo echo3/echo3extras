@@ -48,7 +48,7 @@ public class BorderPanePeer extends AbstractComponentSynchronizePeer {
 
     private static final Service BORDER_PANE_SERVICE = JavaScriptService.forResources("EchoExtras.BorderPane",
             new String[] {  "nextapp/echo/extras/webcontainer/resource/Application.BorderPane.js",  
-                            "nextapp/echo/extras/webcontainer/resource/Render.BorderPane.js"});
+                            "nextapp/echo/extras/webcontainer/resource/Sync.BorderPane.js"});
     
     static {
         WebContainerServlet.getServiceRegistry().add(BORDER_PANE_SERVICE);

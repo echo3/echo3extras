@@ -1,7 +1,7 @@
 /**
  * Component rendering peer: RichTextArea
  */
-Extras.Sync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
+Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
 
     $static: {
     
@@ -686,13 +686,13 @@ Extras.Sync.RichTextArea = Core.extend(EchoArc.ComponentSync, {
         if (this._reinitRunnable) {
             Core.Web.Scheduler.remove(this._reinitRunnable);
         }
-        EchoArc.ComponentSync.prototype.renderDispose.call(this, update);
+        Echo.Arc.ComponentSync.prototype.renderDispose.call(this, update);
         this._mainDivElement = null;
     },
     
     renderDisplay: function() {
         Core.Web.VirtualPosition.redraw(this._mainDivElement);
-        EchoArc.ComponentSync.prototype.renderDisplay.call(this);
+        Echo.Arc.ComponentSync.prototype.renderDisplay.call(this);
     },
     
     renderUpdate: function(update) {

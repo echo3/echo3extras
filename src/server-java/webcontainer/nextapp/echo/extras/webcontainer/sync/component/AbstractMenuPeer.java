@@ -134,7 +134,7 @@ abstract class AbstractMenuPeer extends AbstractComponentSynchronizePeer {
     private static final Service MENU_SERVICE = JavaScriptService.forResources("EchoExtras.Menu", 
             new String[] {  "nextapp/echo/extras/webcontainer/resource/Application.Menu.js",  
                             "nextapp/echo/extras/webcontainer/resource/Serial.Menu.js",
-                            "nextapp/echo/extras/webcontainer/resource/Render.Menu.js"});
+                            "nextapp/echo/extras/webcontainer/resource/Sync.Menu.js"});
     
     static {
         WebContainerServlet.getServiceRegistry().add(MENU_SERVICE);

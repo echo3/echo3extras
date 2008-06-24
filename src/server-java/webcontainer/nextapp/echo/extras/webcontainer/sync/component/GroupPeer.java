@@ -51,7 +51,7 @@ public class GroupPeer extends AbstractComponentSynchronizePeer {
     
     private static final Service GROUP_SERVICE = JavaScriptService.forResources("EchoExtras.Group", 
             new String[]{"nextapp/echo/extras/webcontainer/resource/Application.Group.js",
-            "nextapp/echo/extras/webcontainer/resource/Render.Group.js"});
+            "nextapp/echo/extras/webcontainer/resource/Sync.Group.js"});
     
     static {
         CommonResources.install();

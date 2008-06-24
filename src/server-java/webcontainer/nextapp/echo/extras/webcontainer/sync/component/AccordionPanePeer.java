@@ -57,7 +57,7 @@ public class AccordionPanePeer extends AbstractComponentSynchronizePeer implemen
 
     private static final Service ACCORDION_PANE_SERVICE = JavaScriptService.forResources("EchoExtras.AccordionPane",
             new String[] {  "nextapp/echo/extras/webcontainer/resource/Application.AccordionPane.js",  
-                            "nextapp/echo/extras/webcontainer/resource/Render.AccordionPane.js"});
+                            "nextapp/echo/extras/webcontainer/resource/Sync.AccordionPane.js"});
     
     private static final String PROPERTY_ACTIVE_TAB = "activeTab";
 
