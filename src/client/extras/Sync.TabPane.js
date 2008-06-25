@@ -434,8 +434,8 @@ Extras.Sync.TabPane.Tab = Core.extend({
         Core.Web.Event.Selection.disable(this._headerTd);
         
         if (this._tabCloseEnabled) {
-            Core.Web.Event.add(this._headerTd, "mouseover", 
-                    Core.method(this, this._processEnter), false);
+            Core.Web.Event.add(this._headerTd, "mouseover", Core.method(this, this._processEnter), false);
+            Core.Web.Event.add(this._headerTd, "mouseout", Core.method(this, this._processExit), false);
         }
     },
     
@@ -600,8 +600,12 @@ Extras.Sync.TabPane.Tab = Core.extend({
         }
         
         var rollover = Core.Web.DOM.isAncestorOf(this._closeImageTd, e.target);
-        
         this._closeImageTd.firstChild.src = Echo.Sync.ImageReference.getUrl(this._getCloseImage(rollover));
+    },
+    
+    _processExit: function(e) {
+        var rollover = Core.Web.DOM.isAncestorOf(this._closeImageTd, e.target);
+        this._closeImageTd.firstChild.src = Echo.Sync.ImageReference.getUrl(this._getCloseImage(false));
     },
     
     _render: function(update) {
