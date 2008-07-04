@@ -266,6 +266,7 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
 
     create: function() {
         this.element = document.createElement("div");
+    	this.element.id = this.component.renderId + ":submenu_" + this.menuModel.id;
         this.element.style.position = "absolute";
         this.element.style.zIndex = Extras.Sync.Menu.MAX_Z_INDEX;
 
