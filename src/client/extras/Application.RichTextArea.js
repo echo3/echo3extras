@@ -23,6 +23,7 @@ Extras.RichTextArea = Core.extend(Echo.Component, {
     },
 
     componentType: "Extras.RichTextArea",
+    focusable: true,
     
     doAction: function() {
         this.fireEvent({source: this, type: "action"});

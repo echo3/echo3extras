@@ -112,6 +112,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
             hyperlinkDialog.addListener("insertHyperlink", Core.method(this, function(e) {
                 this._richTextInput.peer._insertHtml("<a href=\"" + e.data.url + "\">"
                         + (e.data.description ? e.data.description : e.data.url) + "</a>");
+                this.focusDocument();
             }));
             this._openDialog(hyperlinkDialog);
         },
@@ -123,6 +124,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
             var imageDialog = new Extras.Sync.RichTextArea.ImageDialog(this.component);
             imageDialog.addListener("insertImage", Core.method(this, function(e) {
                 this._richTextInput.peer._insertHtml("<img src=\"" + e.data.url + "\">");
+                this.focusDocument();
             }));
             this._openDialog(imageDialog);
         },
@@ -134,6 +136,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
             var tableDialog = new Extras.Sync.RichTextArea.TableDialog(this.component);
             tableDialog.addListener("tableInsert", Core.method(this, function(e) {
                 this.insertTable(e.data.columns, e.data.rows);
+                this.focusDocument();
             }));
             this._openDialog(tableDialog);
         },
@@ -145,10 +148,13 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
             var colorDialog = new Extras.Sync.RichTextArea.ColorDialog(this.component, true);
             colorDialog.addListener("colorSelect", Core.method(this, function(e) {
                 if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
-                    this.execCommand("backcolor", e.data);
+                    Core.Web.Scheduler.run(Core.method(this, function() {
+                        this.execCommand("backcolor", e.data);
+                    }));
                 } else {
                     this.execCommand("hilitecolor", e.data);
                 }
+                this.focusDocument();
             }));
             this._openDialog(colorDialog);
         },
@@ -160,6 +166,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
             var colorDialog = new Extras.Sync.RichTextArea.ColorDialog(this.component, false);
             colorDialog.addListener("colorSelect", Core.method(this, function(e) {
                 this.execCommand("forecolor", e.data);
+                this.focusDocument();
             }));
             this._openDialog(colorDialog);
         }
@@ -190,7 +197,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
                         if (this._richTextInput && this._richTextInput.peer) {
                             this._richTextInput.peer._reinitListeners();    
                         }
-                    }), 3000, true);    
+                    }), 3000, true);
         }
     },
     
@@ -560,6 +567,10 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         this._richTextInput.peer.execCommand(commandName, value);
     },
     
+    focusDocument: function() {
+        this._richTextInput.peer.focusDocument();
+    },
+    
     getDomainElement: function() { 
         return this._mainDivElement;
     },
@@ -587,7 +598,8 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
     },
     
     _processCommand: function(e) {
-        this._richTextInput.peer.execCommand(e.actionCommand);
+        this.execCommand(e.actionCommand);
+        this.focusDocument();
     },
     
     _openDialog: function(dialogWindow) {
@@ -822,12 +834,10 @@ Extras.Sync.RichTextArea.Html = {
      * Cleans HTML input/output.
      */
     clean: function(html) {
-        Core.Debug.consoleWrite(" in: " + html);
         html = html.replace(Extras.Sync.RichTextArea.Html._P_BLOCK_FIND, "$1<br/>");
         html = html.replace(Extras.Sync.RichTextArea.Html._P_STANDALONE_FIND, "<br/>");
         html = html.replace(Extras.Sync.RichTextArea.Html._LEADING_WHITESPACE, "");
         html = html.replace(Extras.Sync.RichTextArea.Html._TRAILING_WHITESPACE, "");
-        Core.Debug.consoleWrite("out: " + html);
         return html;
     }
 };
@@ -1010,7 +1020,8 @@ Extras.Sync.RichTextArea.InputComponent = Core.extend(Echo.Component, {
         Echo.ComponentFactory.registerType("Extras.RichTextInput", this);
     },
     
-    componentType: "Extras.RichTextInput"
+    componentType: "Extras.RichTextInput",
+    focusable: true
 });
 
 Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
@@ -1035,6 +1046,10 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         this._loadRange();
         this._iframeElement.contentWindow.document.execCommand(commandName, false, value);
         this._storeData();
+    },
+    
+    focusDocument: function() {
+        this.component.application.setFocusedComponent(this.component);
     },
     
     _insertHtml: function(html) {
@@ -1199,7 +1214,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         }
         
         contentDocument.open();
-        contentDocument.write("<html><body width=\"100%\" height=\"100%\""
+        contentDocument.write("<html><body tabindex=\"0\" width=\"100%\" height=\"100%\""
                 + (bodyStyleAttribute ? (" style=\"" + bodyStyleAttribute + "\"") : "")
                 + ">" + (text == null ? "" : text) + "</body></html>");
         contentDocument.close();
@@ -1247,6 +1262,10 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
                 this._iframeElement.style.height = calculatedHeight; 
             }
         }
+    },
+
+    renderFocus: function() {
+        Core.Web.DOM.focusElement(this._iframeElement.contentWindow);
     },
     
     renderUpdate: function(update) {
