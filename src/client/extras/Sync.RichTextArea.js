@@ -1313,6 +1313,17 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
 
     renderFocus: function() {
         Core.Web.DOM.focusElement(this._iframeElement.contentWindow);
+        if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
+            // Force full screen redraw to avoid IE bug where screen mysteriously goes blank in IE.
+            Core.Web.Scheduler.run(Core.method(this, function() {
+                var value = document.documentElement.style.display;
+                if (!value) {
+                    value = "";
+                }
+                document.documentElement.style.display = "none";
+                document.documentElement.style.display = value;
+            }));
+        }
     },
     
     renderUpdate: function(update) {
