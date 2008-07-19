@@ -1,6 +1,13 @@
 /**
  * RichTextArea component.
  *
+ * Security warning: HTML input provided by this component should be considered potentially malicious.
+ * Directly rendering the HTML entered by one user to other users of a multi-user application without
+ * first "cleaning" it could be disastrous to the other users.  For example, a user could potentially embed
+ * JavaScript code in URLs that would execute in the other users' browsers.  Any cleaning operations must
+ * be perfomed on the client that will render such HTML (not the client sending it) or on a central trusted 
+ * server.
+ *
  * @cp {String} text the content of the text area
  * @sp {#Border} border the border surrounding the text entry area
  * @sp {String} menuStyleName style name for menu bar

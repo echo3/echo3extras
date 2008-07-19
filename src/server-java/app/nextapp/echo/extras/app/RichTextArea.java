@@ -38,6 +38,11 @@ import nextapp.echo.app.text.StringDocument;
 
 /**
  * Rich text editing component.
+ * 
+ * Security warning: HTML input provided by this component should be considered potentially malicious.
+ * Directly rendering the HTML entered by one user to other users of a multi-user application without
+ * first "cleaning" it could be disastrous to the other users.  For example, a user could potentially embed
+ * JavaScript code in URLs that would execute in the other users' browsers.
  */
 public class RichTextArea extends Component {
 
@@ -173,6 +178,8 @@ public class RichTextArea extends Component {
     /**
      * Returns the text contained in the <code>Document</code> model of
      * this rich text area.
+     * Note that this HTML is not "cleaned" in any way, and could potentially
+     * contain malicious code.
      * 
      * @return the text contained in the document
      */
