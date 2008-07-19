@@ -844,6 +844,21 @@ Extras.Sync.RichTextArea.Html = {
 
 Extras.Sync.RichTextArea.ColorDialog = Core.extend(Extras.Sync.RichTextArea.AbstractDialog, {
 
+    $static: {
+        COLORS: [ 
+                "#fce94f", "#edd400", "#c4a000",
+                "#fcaf3e", "#f57900", "#e8b86e",
+                "#e9b96e", "#c17d11", "#8f5902",
+                "#8ae234", "#73d216", "#4e9a06",
+                "#729fcf", "#3465a4", "#204a87",
+                "#ad7fa8", "#75507b", "#5c3566",
+                "#ef2929", "#cc0000", "#a40000",
+                "#eeeeec", "#d3d7cf", "#babdb6",
+                "#888a85", "#555753", "#2e3436",
+                "#ffffff", "#7f7f7f", "#000000"
+        ]
+    },
+    
     $construct: function(richTextArea, setBackground) {
         Extras.Sync.RichTextArea.AbstractDialog.call(this, richTextArea,
                 Extras.Sync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL, 
@@ -851,21 +866,52 @@ Extras.Sync.RichTextArea.ColorDialog = Core.extend(Extras.Sync.RichTextArea.Abst
                     title: richTextArea.peer._msg[setBackground ? 
                             "ColorDialog.Title.Background" : "ColorDialog.Title.Foreground"],
                     icon: setBackground ? richTextArea.peer._icons.background : richTextArea.peer._icons.foreground,
-                    width: 280,
+                    width: 400, //280
                     height: 320
                 },
-                new Echo.Column({
-                    insets: 10,
+                new Echo.Row({
+                    cellSpacing: 20,
                     children: [
-                        new Echo.Label({
-                            text: richTextArea.peer._msg[
-                                    setBackground ? "ColorDialog.PromptBackground" : "ColorDialog.PromptForeground"]
+                        new Echo.Column({
+                            insets: 10,
+                            children: [
+                                new Echo.Label({
+                                    text: richTextArea.peer._msg[
+                                            setBackground ? "ColorDialog.PromptBackground" : "ColorDialog.PromptForeground"]
+                                }),
+                                this._colorSelect = new Extras.ColorSelect({
+                                    displayValue: true
+                                })
+                            ]
                         }),
-                        this._colorSelect = new Extras.ColorSelect({
-                            displayValue: true
+                        new Echo.Grid({
+                            insets: 2,
+                            size: 3,
+                            children: this._createSwatches()
                         })
                     ]
                 }));
+    },
+    
+    _createSwatches: function() {
+        var children = [];
+        var COLORS = Extras.Sync.RichTextArea.ColorDialog.COLORS;
+        var actionListener = Core.method(this, function(e) {
+            this._colorSelect.set("color", e.actionCommand);
+        });
+        for (var i = 0; i < COLORS.length; ++i) {
+            children.push(new Echo.Button({
+                height: 16,
+                width: 32,
+                background: COLORS[i],
+                border: "1px outset " + COLORS[i],
+                actionCommand: COLORS[i],
+                events: {
+                    action: actionListener
+                }
+            }));
+        }
+        return children;
     },
     
     processOk: function(e) {
@@ -1062,6 +1108,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         } else {
             this.execCommand("inserthtml", html);
         }
+        this.focusDocument();
     },
     
     _loadData: function() {
