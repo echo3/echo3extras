@@ -866,7 +866,7 @@ Extras.Sync.RichTextArea.ColorDialog = Core.extend(Extras.Sync.RichTextArea.Abst
                     title: richTextArea.peer._msg[setBackground ? 
                             "ColorDialog.Title.Background" : "ColorDialog.Title.Foreground"],
                     icon: setBackground ? richTextArea.peer._icons.background : richTextArea.peer._icons.foreground,
-                    width: 400, //280
+                    width: 400,
                     height: 320
                 },
                 new Echo.Row({
