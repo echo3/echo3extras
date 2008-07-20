@@ -760,6 +760,7 @@ Extras.Sync.RichTextArea.AbstractDialog = Core.extend(Echo.WindowPane, {
             iconInsets: "6px 10px",
             width: 280,
             height: 200,
+            modal: true,
             resizable: false,
             events: {
                 close: Core.method(this, this.processCancel)
@@ -1085,8 +1086,12 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
     _fireAction: false,
     
     _renderedHtml: null,
+    
+    _processPropertyRef: null,
 
-    $construct: function() { },
+    $construct: function() { 
+        this._processPropertyRef = Core.method(this, this._processProperty);
+    },
     
     execCommand: function(commandName, value) {
         this._loadRange();
@@ -1135,6 +1140,12 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         }
     },
     
+    _processProperty: function(e) {
+        if (e.propertyName == "text") {
+            this._loadData();
+        }
+    },
+    
     _processKeyPress: function(e) {
         if (!this.client.verifyInput(this.component)) {
             Core.Web.DOM.preventEventDefault(e);
@@ -1142,10 +1153,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         }
 
         if (e.keyCode == 13) {
-            // Fire event in new execution context. 
-            Core.Web.Scheduler.run(Core.method(this, function() {
-                this._fireAction = true;
-            }));
+            this._fireAction = true;
         }
     },
     
@@ -1193,6 +1201,8 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
     },
     
     renderAdd: function(update, parentElement) {
+        this.component._richTextArea.addListener("property", this._processPropertyRef);
+        
         // Create IFRAME container DIV element.
         this._mainDivElement = document.createElement("div");
         Echo.Sync.Border.render(this.component._richTextArea.render("border", Extras.RichTextArea.DEFAULT_BORDER),
@@ -1287,6 +1297,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
     },
     
     renderDispose: function(update) {
+        this.component._richTextArea.removeListener("property", this._processPropertyRef);
         Core.Web.Event.removeAll(this._iframeElement.contentWindow.document);
         this._mainDivElement = null;
         this._iframeElement = null;
