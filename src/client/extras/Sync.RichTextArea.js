@@ -1170,18 +1170,6 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         this._storeRange();
     },
     
-    _reinitListeners: function() {
-        Core.Web.Event.removeAll(this._iframeElement.contentWindow.document);
-        Core.Web.Event.add(this._iframeElement.contentWindow.document, "keypress", 
-                Core.method(this, this._processKeyPress), false);
-        Core.Web.Event.add(this._iframeElement.contentWindow.document, "keyup", 
-                Core.method(this, this._processKeyUp), false);
-        Core.Web.Event.add(this._iframeElement.contentWindow.document, "mousedown", 
-                Core.method(this, this._processMouseDown), false);
-        Core.Web.Event.add(this._iframeElement.contentWindow.document, "mouseup", 
-                Core.method(this, this._processMouseUp), false);
-    },
-    
     renderAdd: function(update, parentElement) {
         this.component._richTextArea.addListener("property", this._processPropertyRef);
         
