@@ -185,20 +185,9 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
     
     _trimHeight: null,
     
-    _reinitRunnable: null,
-    
     $construct: function() {
         this._processComponentInsertHtmlRef = Core.method(this, this._processComponentInsertHtml);
         this._processDialogCloseRef = Core.method(this, this._processDialogClose);
-        
-        if (Core.Web.Env.BROWSER_MOZILLA) {
-            this._reinitRunnable = new Core.Web.Scheduler.MethodRunnable( 
-                    Core.method(this, function() {
-                        if (this._richTextInput && this._richTextInput.peer) {
-                            this._richTextInput.peer._reinitListeners();    
-                        }
-                    }), 3000, true);
-        }
     },
     
     _addComponentListeners: function() {
@@ -706,18 +695,11 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
             this._mainDivElement.style.height = "300px";
         }
         
-        if (this._reinitRunnable) {
-            Core.Web.Scheduler.add(this._reinitRunnable);
-        }
-        
         parentElement.appendChild(this._mainDivElement);
     },
     
     renderDispose: function(update) {
         this._removeComponentListeners();
-        if (this._reinitRunnable) {
-            Core.Web.Scheduler.remove(this._reinitRunnable);
-        }
         Echo.Arc.ComponentSync.prototype.renderDispose.call(this, update);
         this._mainDivElement = null;
     },
