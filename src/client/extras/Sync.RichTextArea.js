@@ -16,8 +16,8 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
             "ColorDialog.Title.Background":     "Highlight Color",
             "ColorDialog.PromptForeground":     "Foreground:",
             "ColorDialog.PromptBackground":     "Background:",
-            "Error.ClipboardAccessDisabled":    "This browser has clipboard access disabled. "
-                                                + "Use keyboard shortcuts or change your security settings.",
+            "Error.ClipboardAccessDisabled":    "This browser has clipboard access disabled. " + 
+                                                "Use keyboard shortcuts or change your security settings.",
             "Generic.Cancel":                   "Cancel",
             "Generic.Error":                    "Error",
             "Generic.Ok":                       "Ok",
@@ -26,13 +26,11 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
             "HyperlinkDialog.PromptDescription":
                                                 "Description Text:",
             "HyperlinkDialog.ErrorDialogTitle": "Cannot Insert Hyperlink",
-            "HyperlinkDialog.ErrorDialog.URL":  
-                                                "The URL entered is not valid.",
+            "HyperlinkDialog.ErrorDialog.URL":  "The URL entered is not valid.",
             "ImageDialog.Title":                "Insert Image",
             "ImageDialog.PromptURL":            "URL:",
             "ImageDialog.ErrorDialogTitle":     "Cannot Insert Image",
-            "ImageDialog.ErrorDialog.URL":  
-                                                "The URL entered is not valid.",
+            "ImageDialog.ErrorDialog.URL":      "The URL entered is not valid.",
             "Menu.Edit":                        "Edit",
             "Menu.Undo":                        "Undo",
             "Menu.Redo":                        "Redo",
@@ -79,8 +77,8 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
             "TableDialog.PromptRows":           "Rows:",
             "TableDialog.PromptColumns":        "Columns:",
             "TableDialog.ErrorDialogTitle":     "Cannot Insert Table",
-            "TableDialog.ErrorDialog.Columns":  "The entered columns value is not valid.  "
-                                                + "Please specify a number between 1 and 50.",
+            "TableDialog.ErrorDialog.Columns":  "The entered columns value is not valid.  " +
+                                                "Please specify a number between 1 and 50.",
             "TableDialog.ErrorDialog.Rows":     "The entered rows value is not valid.  Please specify a number between 1 and 50."
         })
     },
@@ -1112,6 +1110,8 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         var contentDocument = this._iframeElement.contentWindow.document;
         contentDocument.body.innerHTML = html;
         this._renderedHtml = html;
+        //FIXME always grabbing focus, this may be undesired...necessary to maintain focus though.
+        this.renderFocus();
     },
     
     _loadRange: function() {
@@ -1293,6 +1293,10 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
     },
 
     renderFocus: function() {
+        if (Core.Web.Env.BROWSER_SAFARI) {
+            // Focus window first to avoid issue where Safari issue with updating content and then focusing.
+            window.focus();
+        }
         Core.Web.DOM.focusElement(this._iframeElement.contentWindow);
         if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
             // Force full screen redraw to avoid IE bug where screen mysteriously goes blank in IE.
