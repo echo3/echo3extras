@@ -147,13 +147,13 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
             var width = this.component.renderIndex("columnWidth", i); 
             if (width != null) {
                 if (Echo.Sync.Extent.isPercent(width)) {
-                    colElement.width = width.value + (renderRelative ? "*" : "%");
+                    colElement.width = parseFloat(width) + (renderRelative ? "*" : "%");
                 } else {
                     var columnPixels = Echo.Sync.Extent.toPixels(width, true);
                     if (columnPixelAdjustment) {
-                        colElement.width = columnPixels - columnPixelAdjustment;
+                        colElement.width = columnPixels - columnPixelAdjustment + "px";
                     } else {
-                        colElement.width = columnPixels;
+                        colElement.width = columnPixels + "px";
                     }
                 }
             }
