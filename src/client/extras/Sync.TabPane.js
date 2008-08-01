@@ -575,8 +575,8 @@ Extras.Sync.TabPane.Tab = Core.extend({
     },
     
     _processClick: function(e) {
-        if (!this._parent.component.isActive()) {
-            return;
+        if (!this._parent.client.verifyInput(this._parent.component)) {
+            return true;
         }
         if (this._closeImageTd && Core.Web.DOM.isAncestorOf(this._closeImageTd, e.target)) {
             // close icon clicked
@@ -595,8 +595,8 @@ Extras.Sync.TabPane.Tab = Core.extend({
     },
     
     _processEnter: function(e) {
-        if (!this._parent.component.isActive()) {
-            return;
+        if (!this._parent.client.verifyInput(this._parent.component)) {
+            return true;
         }
         
         var rollover = Core.Web.DOM.isAncestorOf(this._closeImageTd, e.target);
