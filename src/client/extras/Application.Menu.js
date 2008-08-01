@@ -10,14 +10,26 @@
  * @sp {#Color} selectionBackground the background color used to highlight the currently selected menu item
  * @sp {#FillImage} selectionBackgroundImage the background image used to highlight the currently selected menu item
  * @sp {#Color} selectionForeground the foreground color used to highlight the currently selected menu item
+ * @sp {Number} activationMode a flag indicating how the context menu may be activated, one or more of the following
+ *     values ORed together:
+ *     <ul>
+ *      <li><code>ACTIVATION_MODE_CLICK</code>: actiate menu when contents are clicked.</li>
+ *      <li><code>ACTIVATION_MODE_CONTEXT_CLICK</code>: (the default) actiate menu when contents are context-clicked.</li>
+ *     </ul>
  */
 Extras.ContextMenu = Core.extend(Echo.Component, {
+
+    $static: {
+        ACTIVATION_MODE_CLICK: 1,
+        ACTIVATION_MODE_CONTEXT_CLICK: 2
+    },
 
     $load: function() {
         Echo.ComponentFactory.registerType("Extras.ContextMenu", this);
     },
 
-    componentType: "Extras.ContextMenu"
+    componentType: "Extras.ContextMenu",
+    modalSupport: true
 });
 
 /**
@@ -58,7 +70,8 @@ Extras.DropDownMenu = Core.extend(Echo.Component, {
         Echo.ComponentFactory.registerType("Extras.DropDownMenu", this);
     },
 
-    componentType: "Extras.DropDownMenu"
+    componentType: "Extras.DropDownMenu",
+    modalSupport: true
 });
 
 /**
@@ -91,7 +104,8 @@ Extras.MenuBarPane = Core.extend(Echo.Component, {
         Echo.ComponentFactory.registerType("Extras.MenuBarPane", this);
     },
 
-    componentType: "Extras.MenuBarPane"
+    componentType: "Extras.MenuBarPane",
+    modalSupport: true
 });
 
 /**

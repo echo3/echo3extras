@@ -54,6 +54,7 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
             if (this.active) {
                 return false;
             }
+            this.component.set("modal", true);
             this.active = true;
             this.addMask();
             
@@ -121,6 +122,7 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
     },
     
     deactivate: function() {
+        this.component.set("modal", false);
         if (!this.active) {
             return;
         }
@@ -200,6 +202,10 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
     },
     
     renderUpdate: function(update) {
+        if (update.isUpdatedPropertySetIn({modal: true})) {
+            // Do not re-render on update to modal state.
+            return;
+        }
         var element = this.element;
         var containerElement = element.parentNode;
         Echo.Render.renderComponentDispose(update, update.parent);
@@ -266,7 +272,6 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
 
     create: function() {
         this.element = document.createElement("div");
-    	this.element.id = this.component.renderId + ":submenu_" + this.menuModel.id;
         this.element.style.position = "absolute";
         this.element.style.zIndex = Extras.Sync.Menu.MAX_Z_INDEX;
 
@@ -504,7 +509,7 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
     
     _processRollover: function(e, state) {
         if (!this.client.verifyInput(this.component) || Core.Web.dragInProgress) {
-            return;
+            return true;
         }
         
         var element = this._getItemElement(e.target);
@@ -583,7 +588,7 @@ Extras.Sync.ContextMenu = Core.extend(Extras.Sync.Menu, {
 
     _processContextClick: function(e) {
         if (!this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY) || Core.Web.dragInProgress) {
-            return;
+            return true;
         }
     
         Core.Web.DOM.preventEventDefault(e);
@@ -604,7 +609,13 @@ Extras.Sync.ContextMenu = Core.extend(Extras.Sync.Menu, {
         var contextMenuDivElement = document.createElement("div");
         contextMenuDivElement.id = this.component.renderId;
         
-        Core.Web.Event.add(contextMenuDivElement, "contextmenu", Core.method(this, this._processContextClick), false);
+        var activationMode = this.component.render("activationMode", Extras.ContextMenu.ACTIVATION_MODE_CONTEXT_CLICK);
+        if (activationMode & Extras.ContextMenu.ACTIVATION_MODE_CLICK) {
+            Core.Web.Event.add(contextMenuDivElement, "click", Core.method(this, this._processContextClick), false);
+        }
+        if (activationMode & Extras.ContextMenu.ACTIVATION_MODE_CONTEXT_CLICK) {
+            Core.Web.Event.add(contextMenuDivElement, "contextmenu", Core.method(this, this._processContextClick), false);
+        }
         
         var componentCount = this.component.getComponentCount();
         if (componentCount > 0) {
@@ -692,7 +703,7 @@ Extras.Sync.DropDownMenu = Core.extend(Extras.Sync.Menu, {
 
     _processClick: function(e) {
         if (!this.client.verifyInput(this.component) || Core.Web.dragInProgress) {
-            return;
+            return true;
         }
         
         Core.Web.DOM.preventEventDefault(e);
@@ -933,7 +944,7 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
     
     _processClick: function(e) {
         if (!this.client.verifyInput(this.component)) {
-            return;
+            return true;
         }
         
         Core.Web.DOM.preventEventDefault(e);
@@ -949,7 +960,7 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
     
     _processRollover: function(e, state) {
         if (!this.client.verifyInput(this.component) || Core.Web.dragInProgress) {
-            return;
+            return true;
         }
         
         var element = this._getItemElement(e.target);
