@@ -47,6 +47,10 @@ import nextapp.echo.extras.app.menu.MenuStateModel;
  */
 public class ContextMenu extends AbstractMenuComponent {
     
+    public static final int ACTIVATION_MODE_CLICK = 1;
+    public static final int ACTIVATION_MODE_CONTEXT_CLICK = 2;
+    
+    public static final String PROPERTY_ACTIVATION_MODE = "activationMode";
     public static final String PROPERTY_BACKGROUND_IMAGE = "backgroundImage";
     public static final String PROPERTY_BORDER = "border";
     public static final String PROPERTY_DISABLED_BACKGROUND = "disabledBackground";
@@ -97,6 +101,20 @@ public class ContextMenu extends AbstractMenuComponent {
         }
     }
 
+    /**
+     * Returns the activation mode of the context menu.
+     * 
+     * @return the activation mode of the context menu, one of the following values:
+     *         <ul>
+     *          <li><code>ACTIVATION_MODE_CONTEXT_CLICK</code></li> - context menu activates on context click (the default)</li>
+     *          <li><code>ACTIVATION_MODE_CLICK</code></li> - context menu activates on primary click
+     *         </ul>
+     */
+    public int getActivationMode() {
+        Integer mode = (Integer) getProperty(PROPERTY_ACTIVATION_MODE);
+        return mode == null ? ACTIVATION_MODE_CONTEXT_CLICK : mode.intValue();
+    }
+    
     /**
      * @return the Component which the context menu is being applied to.
      */
@@ -201,6 +219,19 @@ public class ContextMenu extends AbstractMenuComponent {
         if (applyTo != null) {
             add(applyTo);
         }
+    }
+    
+    /**
+     * Sets the activation mode of the context menu.
+     * 
+     * @param newValue the new activation mode of the context menu, one of the following values:
+     *        <ul>
+     *         <li><code>ACTIVATION_MODE_CONTEXT_CLICK</code></li> - context menu activates on context click (the default)</li>
+     *         <li><code>ACTIVATION_MODE_CLICK</code></li> - context menu activates on primary click
+     *        </ul>
+     */
+    public void setActivationMode(int newValue) {
+        setProperty(PROPERTY_ACTIVATION_MODE, Integer.valueOf(newValue));
     }
     
     /**

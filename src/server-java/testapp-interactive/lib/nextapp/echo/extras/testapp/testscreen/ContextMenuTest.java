@@ -89,6 +89,17 @@ public class ContextMenuTest extends AbstractTest {
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "selectionBackground");
         addFillImagePropertyTests(TestControlPane.CATEGORY_PROPERTIES, "selectionBackgroundImage", TEST_FILL_IMAGES);
         
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Activation Mode = Context", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                menu.setActivationMode(ContextMenu.ACTIVATION_MODE_CONTEXT_CLICK);
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Activation Mode = Primary", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                menu.setActivationMode(ContextMenu.ACTIVATION_MODE_CLICK);
+            }
+        });
+        
         addStandardIntegrationTests();
     }
     

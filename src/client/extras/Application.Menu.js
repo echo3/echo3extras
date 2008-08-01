@@ -13,7 +13,7 @@
  * @sp {Number} activationMode a flag indicating how the context menu may be activated, one or more of the following
  *     values ORed together:
  *     <ul>
- *      <li><code>ACTIVATION_MODE_CLICK</code>: actiate menu when contents are clicked.</li>
+ *      <li><code>ACTIVATION_MODE_CLICK</code>: activate menu when contents are clicked.</li>
  *      <li><code>ACTIVATION_MODE_CONTEXT_CLICK</code>: (the default) actiate menu when contents are context-clicked.</li>
  *     </ul>
  */
