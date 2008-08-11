@@ -810,6 +810,8 @@ Extras.Sync.RichTextArea.Html = {
     _P_STANDALONE_FIND: /<p\/?>/ig,
     _LEADING_WHITESPACE: /^(\s|<br\/?>|&nbsp;)+/i,
     _TRAILING_WHITESPACE: /(\s|<br\/?>|&nbsp;)+$/i,
+    _MSIE_INVALID_FONT_COLOR_REPL: /(<font .*?color\=)(#[0-9a-fA-F]{3,6})(.*?>)/ig,
+    _MSIE_INVALID_FONT_BACKGROUND_REPL: /(<font .*?)(background-color)/ig,
     
     /**
      * Cleans HTML input/output.
@@ -819,6 +821,10 @@ Extras.Sync.RichTextArea.Html = {
         html = html.replace(Extras.Sync.RichTextArea.Html._P_STANDALONE_FIND, "<br/>");
         html = html.replace(Extras.Sync.RichTextArea.Html._LEADING_WHITESPACE, "");
         html = html.replace(Extras.Sync.RichTextArea.Html._TRAILING_WHITESPACE, "");
+        if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
+            html = html.replace(Extras.Sync.RichTextArea.Html._MSIE_INVALID_FONT_COLOR_REPL, "$1\"$2\"$3");
+            html = html.replace(Extras.Sync.RichTextArea.Html._MSIE_INVALID_FONT_BACKGROUND_REPL, "$1background-color");
+        }
         return html;
     }
 };
