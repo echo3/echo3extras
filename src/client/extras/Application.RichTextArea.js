@@ -18,6 +18,7 @@
  * @sp {String} windowPaneStyleName style name for dialog <code>WindowPane</code>
  * @sp {Object} icons associative array mapping icon names to images
  * @sp {Object} features associative array describing which features should be enabled.
+ * @event action An event fired when the enter/return key is pressed while the text area is focused.
  */
 Extras.RichTextArea = Core.extend(Echo.Component, {
 
