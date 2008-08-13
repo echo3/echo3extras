@@ -231,7 +231,7 @@ public class ContextMenu extends AbstractMenuComponent {
      *        </ul>
      */
     public void setActivationMode(int newValue) {
-        setProperty(PROPERTY_ACTIVATION_MODE, Integer.valueOf(newValue));
+        setProperty(PROPERTY_ACTIVATION_MODE, new Integer(newValue));
     }
     
     /**
