@@ -511,7 +511,7 @@ public class Tree extends Component {
         Object value = path.getLastPathComponent();
         int childCount = model.getChildCount(value);
         for (int i = 0; i < childCount; ++i) {
-            expandAll(path.pathByAddingChild(model.getChild(value, i)));
+            collapseAll(path.pathByAddingChild(model.getChild(value, i)));
         }
     }
 
