@@ -43,6 +43,7 @@
  * @sp {#ImageReference} tabCloseIcon the tab close icon
  * @sp {#ImageReference} tabDisabledCloseIcon the tab close icon for tabs that may not be closed
  * @sp {#ImageReference} tabRolloverCloseIcon the tab close rollover effect icon
+ * @event tabClose
  */
 Extras.TabPane = Core.extend(Echo.Component, {
 
@@ -107,6 +108,10 @@ Extras.TabPane = Core.extend(Echo.Component, {
     },
 
     componentType: "Extras.TabPane",
-    pane: true
+    pane: true,
+    
+    doTabClose: function(child) {
+        this.fireEvent({ type: "tabClose", source: this, tab: child, data: child.renderId });
+    }
 });
 
