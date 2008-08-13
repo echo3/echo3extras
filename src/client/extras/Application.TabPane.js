@@ -43,8 +43,8 @@
  * @sp {#ImageReference} tabCloseIcon the tab close icon
  * @sp {#ImageReference} tabDisabledCloseIcon the tab close icon for tabs that may not be closed
  * @sp {#ImageReference} tabRolloverCloseIcon the tab close rollover effect icon
- * @event tabClose
- * @event tabSelect
+ * @event tabClose An event fired when the user requests to close a tab.
+ * @event tabSelect An event fired when the user selects a tab. 
  */
 Extras.TabPane = Core.extend(Echo.Component, {
 
