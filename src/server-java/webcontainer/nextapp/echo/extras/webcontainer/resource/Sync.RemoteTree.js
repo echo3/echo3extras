@@ -47,7 +47,7 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
     },
     
     renderAdd: function(update, parentElement) {
-        this._lineStyle = this.component.render("lineStyle", 2);
+        this._lineStyle = this.component.render("lineStyle", Extras.Sync.RemoteTree.LINE_STYLE_DOTTED);
         this._imageSet = { };
         for (var x in Extras.Sync.RemoteTree.TREE_IMAGES[this._lineStyle]) {
             this._imageSet[x] = this.client.getResourceUrl("Extras", 
@@ -93,6 +93,14 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
         var tbodyElement = document.createElement("tbody");
         tableElement.appendChild(tbodyElement);
         this._tbodyElement = tbodyElement;
+        
+        //-- element needed for FF-specific hack, see _doExpansion function
+        this._buggerTBody = document.createElement("tbody");
+        this._buggerTBody.style.display = "none";
+		this._buggerRow = document.createElement("tr");
+        this._buggerTBody.appendChild(this._buggerRow);
+        tableElement.appendChild(this._buggerTBody);
+        //--
         
         if (!this._treeStructure) {
             this._treeStructure = this.component.get("treeStructure")[0];
@@ -1041,6 +1049,18 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
             // no other peers will be called, so update may be null
             this._renderNode(null, node);
         }
+        
+        // Hack to make sure FF renders the whole table after expanding / collapsing a node
+        if (Core.Web.Env.BROWSER_FIREFOX && Core.Web.Env.BROWSER_MAJOR_VERSION == 3 && Core.Web.Env.BROWSER_MINOR_VERSION == 0) {
+			var elem = this._buggerTBody;
+	        var oldDisplay = elem.style.display;
+	        elem.style.display = "";
+	        setTimeout(function() {
+		        elem.style.display = oldDisplay;
+	        }, 0);
+        }
+        // hack ends here
+        
         var rowIndex = this._getRowIndexForNode(node);
         this.component.set("expansion", rowIndex);
         return true;
@@ -1131,7 +1151,6 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
         if (!this.component.isActive()) {
             return;
         }
-//        debugger;
         this._setRolloverState(e.registeredTarget, true);
     },
     
