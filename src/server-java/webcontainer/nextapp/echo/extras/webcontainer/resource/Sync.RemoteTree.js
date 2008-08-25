@@ -1239,12 +1239,12 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
             var updateRootNode = struct.getRootNode();
             var node = this._treeStructure.getNode(updateRootNode.getId());
             if (node) {
-                this._treeStructure.addChildNodes(updateRootNode);
+                this._treeStructure.addOrUpdateChildNodes(updateRootNode);
                 node.setExpanded(updateRootNode.isExpanded());
             } else {
                 node = this._treeStructure.getNode(updateRootNode.getParentId());
                 node.setExpanded(true);
-                this._treeStructure.addNode(updateRootNode);
+                this._treeStructure.addOrUpdateNode(updateRootNode);
             }
             this._renderNode(update, node);
         }

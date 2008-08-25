@@ -54,14 +54,40 @@ Extras.RemoteTree.TreeStructure = Core.extend({
      * @param {Extras.RemoteTree.TreeNode} node the node to add
      */
     addNode: function(node) {
-        this._idNodeMap[node.getId()] = node;
+        this._addNodeInternal(node);
+        if (node.getParentId()) {
+            this.addChildNodes(node);
+        }
+    },
+    
+    _addNodeInternal: function(node) {
+    	this._idNodeMap[node.getId()] = node;
         if (node.getParentId()) {
             var parentNode = this.getNode(node.getParentId());
             if (parentNode) {
                 parentNode.addChildNode(node);
             }
-            this.addChildNodes(node);
         }
+    },
+    
+    /**
+     * Adds node to this structure, or updates it if it is already a part of this structure. 
+     * If node has a parent id, the node will be added to the node with the parent id. 
+     * Any child nodes will be added (or updated) as well.
+     * 
+     * @see #addNode
+     * @see Extras.RemoteTree.TreeNode#updateTo
+     * 
+     * @param {Extras.RemoteTree.TreeNode} node the node to add (or update)
+     */
+    addOrUpdateNode: function(node) {
+    	var oldNode = this.getNode(node.getId());
+    	if (oldNode) {
+    		oldNode.updateTo(node);
+    	} else {
+    		this._addNodeInternal(node);
+    	}
+    	this.addOrUpdateChildNodes(node);
     },
     
     /**
@@ -76,6 +102,23 @@ Extras.RemoteTree.TreeStructure = Core.extend({
         for (var i = 0; i < childCount; ++i) {
             var childNode = node.getChildNode(i);
             this.addNode(childNode);
+        }
+    },
+    
+    /**
+     * Adds all child nodes of node to this structure, or updates them if they are already
+     * part of this structure.
+     * 
+     * @see #addOrUpdateNode
+     * @see Extras.RemoteTree.TreeNode#updateTo
+     * 
+     * @param {Extras.RemoteTree.TreeNode} node the node to add (or update) the child nodes from
+     */
+    addOrUpdateChildNodes: function(node) {
+        var childCount = node.getChildNodeCount();
+        for (var i = 0; i < childCount; ++i) {
+            var childNode = node.getChildNode(i);
+            this.addOrUpdateNode(childNode);
         }
     },
     
@@ -360,6 +403,18 @@ Extras.RemoteTree.TreeNode = Core.extend({
         return this.indexOf(node) != -1;
     },
     
+    /**
+     * Updates the properties of this node to resemble that of the given node. 
+     * Only the 'expaned' and 'leaf' properties (i.e. the properties that do 
+     * not affect the structure) are updated by this method.
+     * 
+     * @param {Extras.RemoteTree.TreeNode} node the node to update this node to
+     */
+    updateTo: function(node) {
+    	this._expanded = node._expanded;
+    	this._leaf = node._leaf;
+    },
+   
     /**
      * Adds node as a child node to this node, if an equal node already exists
      * in the child array, the original child node is replaced with the specified one.
