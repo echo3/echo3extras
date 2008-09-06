@@ -367,28 +367,32 @@ public class Tree extends Component {
     private TreeColumnModelListener columnModelListener = new TreeColumnModelListener() {
 
         /**
-         * @see nextapp.echo.extras.app.event.TreeColumnModelListener#columnAdded(nextapp.echo.extras.app.event.TreeColumnModelEvent)
+         * @see nextapp.echo.extras.app.event.TreeColumnModelListener#columnAdded(
+         *      nextapp.echo.extras.app.event.TreeColumnModelEvent)
          */
         public void columnAdded(TreeColumnModelEvent e) {
             invalidate();
         }
 
         /**
-         * @see nextapp.echo.extras.app.event.TreeColumnModelListener#columnMoved(nextapp.echo.extras.app.event.TreeColumnModelEvent)
+         * @see nextapp.echo.extras.app.event.TreeColumnModelListener#columnMoved(
+         *      nextapp.echo.extras.app.event.TreeColumnModelEvent)
          */
         public void columnMoved(TreeColumnModelEvent e) {
             invalidate();
         }
 
         /**
-         * @see nextapp.echo.extras.app.event.TreeColumnModelListener#columnRemoved(nextapp.echo.extras.app.event.TreeColumnModelEvent)
+         * @see nextapp.echo.extras.app.event.TreeColumnModelListener#columnRemoved(
+         *      nextapp.echo.extras.app.event.TreeColumnModelEvent)
          */
         public void columnRemoved(TreeColumnModelEvent e) {
             invalidate();
         }
         
         /**
-         * @see nextapp.echo.extras.app.event.TreeColumnModelListener#columnResized(nextapp.echo.extras.app.event.TreeColumnModelEvent)
+         * @see nextapp.echo.extras.app.event.TreeColumnModelListener#columnResized(
+         *      nextapp.echo.extras.app.event.TreeColumnModelEvent)
          */
         public void columnResized(TreeColumnModelEvent e) {
             firePropertyChange(COLUMN_WIDTH_CHANGED_PROPERTY, null, null);
