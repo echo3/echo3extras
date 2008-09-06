@@ -58,6 +58,7 @@ import nextapp.echo.extras.app.event.TreeExpansionEvent;
 import nextapp.echo.extras.app.event.TreeExpansionListener;
 import nextapp.echo.extras.app.event.TreeModelEvent;
 import nextapp.echo.extras.app.event.TreeModelListener;
+import nextapp.echo.extras.app.tree.AbstractTreeModel;
 import nextapp.echo.extras.app.tree.DefaultTreeCellRenderer;
 import nextapp.echo.extras.app.tree.DefaultTreeColumnModel;
 import nextapp.echo.extras.app.tree.DefaultTreeSelectionModel;
@@ -424,13 +425,42 @@ public class Tree extends Component {
     private boolean autoCreateColumnsFromModel;
     private boolean suppressChangeNotifications = false;
 
-// FIXME enable this ctor when a default tree model implementation is available. 
-//    /**
-//     * Constructs a new <code>Tree</code> with a default tree model.
-//     */
-//    public Tree() {
-//        this(new DefaultTreeModel(new DefaultMutableTreeNode("root")));
-//    }
+    /**
+     * Constructs a new <code>Tree</code> with a default tree model.
+     */
+    public Tree() {
+        
+        this(new AbstractTreeModel() {
+        
+            public boolean isLeaf(Object object) {
+                return true;
+            }
+        
+            public Object getValueAt(Object node, int column) {
+                return node;
+            }
+        
+            public Object getRoot() {
+                return "";
+            }
+        
+            public int getIndexOfChild(Object parent, Object child) {
+                return 0;
+            }
+        
+            public int getColumnCount() {
+                return 1;
+            }
+        
+            public int getChildCount(Object parent) {
+                return 0;
+            }
+        
+            public Object getChild(Object parent, int index) {
+                return null;
+            }
+        });
+    }
     
     /**
      * Constructs a new <code>Tree</code> with the specified model.
