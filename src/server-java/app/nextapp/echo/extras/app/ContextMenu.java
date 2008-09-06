@@ -62,8 +62,17 @@ public class ContextMenu extends AbstractMenuComponent {
     public static final String PROPERTY_SELECTION_FOREGROUND = "selectionForeground";
     
     /**
+     * Creates a new <code>ContextMenu</code>  with an empty
+     * <code>DefaultMenuModel</code> as its model and a
+     * <code>DefaultMenuStateModel</code> to provide state information.
+     */
+    public ContextMenu() {
+        this(null, null, null);
+    }
+    
+    /**
      * Creates a new <code>ContextMenu</code> with an empty
-     * <code>DefaultMenuModel</code> as its model and a.
+     * <code>DefaultMenuModel</code> as its model and a
      * <code>DefaultMenuStateModel</code> to provide state information.
      * 
      * @param applyTo the component to apply the context menu to

@@ -64,6 +64,13 @@ public class Group extends Component {
     public static final String PROPERTY_TITLE_POSITION = "titlePosition";
     
     /**
+     * Default constructor.
+     */
+    public Group() {
+        super();
+    }
+    
+    /**
      * Returns the background image.
      * 
      * @return the background image.

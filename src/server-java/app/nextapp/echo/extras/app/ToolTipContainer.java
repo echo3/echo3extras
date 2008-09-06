@@ -37,10 +37,15 @@ import nextapp.echo.app.Component;
  * This component may have one or two children.
  * When the first child component is hovered, the second component will show up
  * as a tooltip. If only one component is present, no tooltip will be shown.
- * 
- * @author unascribed
  */
 public class ToolTipContainer extends Component {
+    
+    /**
+     * Default constructor.
+     */
+    public ToolTipContainer() {
+        super();
+    }
     
     /**
      * @see nextapp.echo.app.Component#isValidChild(nextapp.echo.app.Component)
