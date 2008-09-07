@@ -285,7 +285,7 @@ implements Pane, PaneContainer {
      *         </ul>
      */
     public int getBorderType() {
-        Integer value = (Integer) getProperty(PROPERTY_BORDER_TYPE);
+        Integer value = (Integer) get(PROPERTY_BORDER_TYPE);
         if (value == null) {
             return BORDER_TYPE_ADJACENT_TO_TABS;
         } else {
@@ -300,7 +300,7 @@ implements Pane, PaneContainer {
      * @return the default content inset margin
      */
     public Insets getDefaultContentInsets() {
-        return (Insets) getProperty(PROPERTY_DEFAULT_CONTENT_INSETS);
+        return (Insets) get(PROPERTY_DEFAULT_CONTENT_INSETS);
     }
     
     /**
@@ -313,7 +313,7 @@ implements Pane, PaneContainer {
      * @return the margin size 
      */
     public Extent getTabIconTextMargin() {
-        return (Extent) getProperty(PROPERTY_TAB_ICON_TEXT_MARGIN);
+        return (Extent) get(PROPERTY_TAB_ICON_TEXT_MARGIN);
     }
     
     /**
@@ -326,7 +326,7 @@ implements Pane, PaneContainer {
      * @return the insets
      */
     public Insets getInsets() {
-        return (Insets) getProperty(PROPERTY_INSETS);
+        return (Insets) get(PROPERTY_INSETS);
     }
     
     /**
@@ -335,7 +335,7 @@ implements Pane, PaneContainer {
      * @return the active tab left image
      */
     public ImageReference getTabActiveLeftImage() {
-        return (ImageReference) getProperty(PROPERTY_TAB_ACTIVE_LEFT_IMAGE);
+        return (ImageReference) get(PROPERTY_TAB_ACTIVE_LEFT_IMAGE);
     }
     
     /**
@@ -344,7 +344,7 @@ implements Pane, PaneContainer {
      * @return the active tab right image
      */
     public ImageReference getTabActiveRightImage() {
-        return (ImageReference) getProperty(PROPERTY_TAB_ACTIVE_RIGHT_IMAGE);
+        return (ImageReference) get(PROPERTY_TAB_ACTIVE_RIGHT_IMAGE);
     }
     
     /**
@@ -353,7 +353,7 @@ implements Pane, PaneContainer {
      * @return the active tab background
      */
     public Color getTabActiveBackground() {
-        return (Color) getProperty(PROPERTY_TAB_ACTIVE_BACKGROUND);
+        return (Color) get(PROPERTY_TAB_ACTIVE_BACKGROUND);
     }
     
     /**
@@ -362,7 +362,7 @@ implements Pane, PaneContainer {
      * @return the active tab background image
      */
     public FillImage getTabActiveBackgroundImage() {
-        return (FillImage) getProperty(PROPERTY_TAB_ACTIVE_BACKGROUND_IMAGE);
+        return (FillImage) get(PROPERTY_TAB_ACTIVE_BACKGROUND_IMAGE);
     }
     
     /**
@@ -372,7 +372,7 @@ implements Pane, PaneContainer {
      * @return the border
      */
     public Border getTabActiveBorder() {
-        return (Border) getProperty(PROPERTY_TAB_ACTIVE_BORDER);
+        return (Border) get(PROPERTY_TAB_ACTIVE_BORDER);
     }
 
     
@@ -386,7 +386,7 @@ implements Pane, PaneContainer {
      *         </ul>
      */
     public int getTabDefaultCloseOperation() {
-        Integer defaultCloseOperationValue = (Integer) getProperty(PROPERTY_TAB_DEFAULT_CLOSE_OPERATION);
+        Integer defaultCloseOperationValue = (Integer) get(PROPERTY_TAB_DEFAULT_CLOSE_OPERATION);
         return defaultCloseOperationValue == null ? TAB_DISPOSE_ON_CLOSE : defaultCloseOperationValue.intValue();
     }
 
@@ -396,7 +396,7 @@ implements Pane, PaneContainer {
      * @return the active tab font
      */
     public Font getTabActiveFont() {
-        return (Font) getProperty(PROPERTY_TAB_ACTIVE_FONT);
+        return (Font) get(PROPERTY_TAB_ACTIVE_FONT);
     }
     
     /**
@@ -405,7 +405,7 @@ implements Pane, PaneContainer {
      * @return the active tab foreground
      */
     public Color getTabActiveForeground() {
-        return (Color) getProperty(PROPERTY_TAB_ACTIVE_FOREGROUND);
+        return (Color) get(PROPERTY_TAB_ACTIVE_FOREGROUND);
     }
     
     /**
@@ -414,7 +414,7 @@ implements Pane, PaneContainer {
      * @return the background image
      */
     public FillImage getTabBackgroundImage() {
-        return (FillImage) getProperty(PROPERTY_TAB_BACKGROUND_IMAGE);
+        return (FillImage) get(PROPERTY_TAB_BACKGROUND_IMAGE);
     }
 
     /**
@@ -424,7 +424,7 @@ implements Pane, PaneContainer {
      * @return the tab height
      */
     public Extent getTabHeight() {
-        return (Extent) getProperty(PROPERTY_TAB_HEIGHT);
+        return (Extent) get(PROPERTY_TAB_HEIGHT);
     }
     
     /**
@@ -434,7 +434,7 @@ implements Pane, PaneContainer {
      * @return the active tab height increase
      */
     public Extent getTabActiveHeightIncrease() {
-        return (Extent) getProperty(PROPERTY_TAB_ACTIVE_HEIGHT_INCREASE);
+        return (Extent) get(PROPERTY_TAB_ACTIVE_HEIGHT_INCREASE);
     }
     
     /**
@@ -443,7 +443,7 @@ implements Pane, PaneContainer {
      * @return the inactive tab left image
      */
     public ImageReference getTabInactiveLeftImage() {
-        return (ImageReference) getProperty(PROPERTY_TAB_INACTIVE_LEFT_IMAGE);
+        return (ImageReference) get(PROPERTY_TAB_INACTIVE_LEFT_IMAGE);
     }
     
     /**
@@ -452,7 +452,7 @@ implements Pane, PaneContainer {
      * @return the inactive tab right image
      */
     public ImageReference getTabInactiveRightImage() {
-        return (ImageReference) getProperty(PROPERTY_TAB_INACTIVE_RIGHT_IMAGE);
+        return (ImageReference) get(PROPERTY_TAB_INACTIVE_RIGHT_IMAGE);
     }
     
     /**
@@ -461,7 +461,7 @@ implements Pane, PaneContainer {
      * @return the inactive tab background
      */
     public Color getTabInactiveBackground() {
-        return (Color) getProperty(PROPERTY_TAB_INACTIVE_BACKGROUND);
+        return (Color) get(PROPERTY_TAB_INACTIVE_BACKGROUND);
     }
     
     /**
@@ -470,7 +470,7 @@ implements Pane, PaneContainer {
      * @return the inactive tab background image
      */
     public FillImage getTabInactiveBackgroundImage() {
-        return (FillImage) getProperty(PROPERTY_TAB_INACTIVE_BACKGROUND_IMAGE);
+        return (FillImage) get(PROPERTY_TAB_INACTIVE_BACKGROUND_IMAGE);
     }
 
     /**
@@ -479,7 +479,7 @@ implements Pane, PaneContainer {
      * @return the border
      */
     public Border getTabInactiveBorder() {
-        return (Border) getProperty(PROPERTY_TAB_INACTIVE_BORDER);
+        return (Border) get(PROPERTY_TAB_INACTIVE_BORDER);
     }
     
     /**
@@ -488,7 +488,7 @@ implements Pane, PaneContainer {
      * @return the inactive tab font
      */
     public Font getTabInactiveFont() {
-        return (Font) getProperty(PROPERTY_TAB_INACTIVE_FONT);
+        return (Font) get(PROPERTY_TAB_INACTIVE_FONT);
     }
     
     /**
@@ -497,7 +497,7 @@ implements Pane, PaneContainer {
      * @return the inactive tab foreground
      */
     public Color getTabInactiveForeground() {
-        return (Color) getProperty(PROPERTY_TAB_INACTIVE_FOREGROUND);
+        return (Color) get(PROPERTY_TAB_INACTIVE_FOREGROUND);
     }
     
     /**
@@ -507,7 +507,7 @@ implements Pane, PaneContainer {
      * @return the tab inset
      */
     public Extent getTabInset() {
-        return (Extent) getProperty(PROPERTY_TAB_INSET);
+        return (Extent) get(PROPERTY_TAB_INSET);
     }
     
     /**
@@ -521,7 +521,7 @@ implements Pane, PaneContainer {
      *         </ul>
      */
     public int getTabPosition() {
-        Integer tabPosition = (Integer) getProperty(PROPERTY_TAB_POSITION);
+        Integer tabPosition = (Integer) get(PROPERTY_TAB_POSITION);
         return tabPosition == null ? TAB_POSITION_TOP : tabPosition.intValue();
     }
     
@@ -531,7 +531,7 @@ implements Pane, PaneContainer {
      * @return the tab spacing
      */
     public Extent getTabSpacing() {
-        return (Extent) getProperty(PROPERTY_TAB_SPACING);
+        return (Extent) get(PROPERTY_TAB_SPACING);
     }
     
     /**
@@ -540,7 +540,7 @@ implements Pane, PaneContainer {
      * @return the tab width
      */
     public Extent getTabWidth() {
-        return (Extent) getProperty(PROPERTY_TAB_WIDTH);
+        return (Extent) get(PROPERTY_TAB_WIDTH);
     }
     
     /**
@@ -549,7 +549,7 @@ implements Pane, PaneContainer {
      * @return the tab alignment.
      */
     public Alignment getTabAlignment() {
-        return (Alignment) getProperty(PROPERTY_TAB_ALIGNMENT);
+        return (Alignment) get(PROPERTY_TAB_ALIGNMENT);
     }
     
     /**
@@ -605,7 +605,7 @@ implements Pane, PaneContainer {
      *        </ul>
      */
     public void setBorderType(int newValue) {
-        setProperty(PROPERTY_BORDER_TYPE, new Integer(newValue));
+        set(PROPERTY_BORDER_TYPE, new Integer(newValue));
     }
 
     /**
@@ -615,7 +615,7 @@ implements Pane, PaneContainer {
      * @param newValue the new default content inset margin
      */
     public void setDefaultContentInsets(Insets newValue) {
-        setProperty(PROPERTY_DEFAULT_CONTENT_INSETS, newValue);
+        set(PROPERTY_DEFAULT_CONTENT_INSETS, newValue);
     }
 
     /**
@@ -628,7 +628,7 @@ implements Pane, PaneContainer {
      * @param newValue the margin size 
      */
     public void setTabIconTextMargin(Extent newValue) {
-        setProperty(PROPERTY_TAB_ICON_TEXT_MARGIN, newValue);
+        set(PROPERTY_TAB_ICON_TEXT_MARGIN, newValue);
     }
 
     /**
@@ -641,7 +641,7 @@ implements Pane, PaneContainer {
      * @param newValue the new inset
      */
     public void setInsets(Insets newValue) {
-        setProperty(PROPERTY_INSETS, newValue);
+        set(PROPERTY_INSETS, newValue);
     }
     
     /**
@@ -651,7 +651,7 @@ implements Pane, PaneContainer {
      * @param newValue the active tab left image
      */
     public void setTabActiveLeftImage(ImageReference newValue) {
-        setProperty(PROPERTY_TAB_ACTIVE_LEFT_IMAGE, newValue);
+        set(PROPERTY_TAB_ACTIVE_LEFT_IMAGE, newValue);
     }
     
     /**
@@ -661,7 +661,7 @@ implements Pane, PaneContainer {
      * @param newValue the active tab right image
      */
     public void setTabActiveRightImage(ImageReference newValue) {
-        setProperty(PROPERTY_TAB_ACTIVE_RIGHT_IMAGE, newValue);
+        set(PROPERTY_TAB_ACTIVE_RIGHT_IMAGE, newValue);
     }
     
     /**
@@ -670,7 +670,7 @@ implements Pane, PaneContainer {
      * @param newValue the new active tab background
      */
     public void setTabActiveBackground(Color newValue) {
-        setProperty(PROPERTY_TAB_ACTIVE_BACKGROUND, newValue);
+        set(PROPERTY_TAB_ACTIVE_BACKGROUND, newValue);
     }
     
     /**
@@ -679,7 +679,7 @@ implements Pane, PaneContainer {
      * @param newValue the new active tab background image
      */
     public void setTabActiveBackgroundImage(FillImage newValue) {
-        setProperty(PROPERTY_TAB_ACTIVE_BACKGROUND_IMAGE, newValue);
+        set(PROPERTY_TAB_ACTIVE_BACKGROUND_IMAGE, newValue);
     }
     
     /**
@@ -689,7 +689,7 @@ implements Pane, PaneContainer {
      * @param newValue the new border
      */
     public void setTabActiveBorder(Border newValue) {
-        setProperty(PROPERTY_TAB_ACTIVE_BORDER, newValue);
+        set(PROPERTY_TAB_ACTIVE_BORDER, newValue);
     }
     
     /**
@@ -698,7 +698,7 @@ implements Pane, PaneContainer {
      * @param newValue the new active tab font
      */
     public void setTabActiveFont(Font newValue) {
-        setProperty(PROPERTY_TAB_ACTIVE_FONT, newValue);
+        set(PROPERTY_TAB_ACTIVE_FONT, newValue);
     }
     
     /**
@@ -707,7 +707,7 @@ implements Pane, PaneContainer {
      * @param newValue the new active tab foreground
      */
     public void setTabActiveForeground(Color newValue) {
-        setProperty(PROPERTY_TAB_ACTIVE_FOREGROUND, newValue);
+        set(PROPERTY_TAB_ACTIVE_FOREGROUND, newValue);
     }
     
     /**
@@ -716,7 +716,7 @@ implements Pane, PaneContainer {
      * @param newValue the background image
      */
     public void setTabBackgroundImage(FillImage newValue) {
-       setProperty(PROPERTY_TAB_BACKGROUND_IMAGE, newValue);
+       set(PROPERTY_TAB_BACKGROUND_IMAGE, newValue);
     }
     
     /**
@@ -730,7 +730,7 @@ implements Pane, PaneContainer {
      *        </ul>
      */
     public void setTabDefaultCloseOperation(int newValue) {
-        setProperty(PROPERTY_TAB_DEFAULT_CLOSE_OPERATION, new Integer(newValue));
+        set(PROPERTY_TAB_DEFAULT_CLOSE_OPERATION, new Integer(newValue));
     }
 
     /**
@@ -740,7 +740,7 @@ implements Pane, PaneContainer {
      * @param newValue the new tab height
      */
     public void setTabHeight(Extent newValue) {
-        setProperty(PROPERTY_TAB_HEIGHT, newValue);
+        set(PROPERTY_TAB_HEIGHT, newValue);
     }
     
     /**
@@ -750,7 +750,7 @@ implements Pane, PaneContainer {
      * @param newValue the new active tab height increase
      */
     public void setTabActiveHeightIncrease(Extent newValue) {
-        setProperty(PROPERTY_TAB_ACTIVE_HEIGHT_INCREASE, newValue);
+        set(PROPERTY_TAB_ACTIVE_HEIGHT_INCREASE, newValue);
     }
     
     /**
@@ -760,7 +760,7 @@ implements Pane, PaneContainer {
      * @param newValue the inactive tab left image
      */
     public void setTabInactiveLeftImage(ImageReference newValue) {
-        setProperty(PROPERTY_TAB_INACTIVE_LEFT_IMAGE, newValue);
+        set(PROPERTY_TAB_INACTIVE_LEFT_IMAGE, newValue);
     }
     
     /**
@@ -770,7 +770,7 @@ implements Pane, PaneContainer {
      * @param newValue the inactive tab right image
      */
     public void setTabInactiveRightImage(ImageReference newValue) {
-        setProperty(PROPERTY_TAB_INACTIVE_RIGHT_IMAGE, newValue);
+        set(PROPERTY_TAB_INACTIVE_RIGHT_IMAGE, newValue);
     }
     
     /**
@@ -779,7 +779,7 @@ implements Pane, PaneContainer {
      * @param newValue the new inactive tab background
      */
     public void setTabInactiveBackground(Color newValue) {
-        setProperty(PROPERTY_TAB_INACTIVE_BACKGROUND, newValue);
+        set(PROPERTY_TAB_INACTIVE_BACKGROUND, newValue);
     }
     
     /**
@@ -788,7 +788,7 @@ implements Pane, PaneContainer {
      * @param newValue the new inactive tab background image
      */
     public void setTabInactiveBackgroundImage(FillImage newValue) {
-        setProperty(PROPERTY_TAB_INACTIVE_BACKGROUND_IMAGE, newValue);
+        set(PROPERTY_TAB_INACTIVE_BACKGROUND_IMAGE, newValue);
     }
     
     /**
@@ -798,7 +798,7 @@ implements Pane, PaneContainer {
      * @param newValue the new border
      */
     public void setTabInactiveBorder(Border newValue) {
-        setProperty(PROPERTY_TAB_INACTIVE_BORDER, newValue);
+        set(PROPERTY_TAB_INACTIVE_BORDER, newValue);
     }
     
     /**
@@ -807,7 +807,7 @@ implements Pane, PaneContainer {
      * @param newValue the new inactive tab font
      */
     public void setTabInactiveFont(Font newValue) {
-        setProperty(PROPERTY_TAB_INACTIVE_FONT, newValue);
+        set(PROPERTY_TAB_INACTIVE_FONT, newValue);
     }
     
     /**
@@ -816,7 +816,7 @@ implements Pane, PaneContainer {
      * @param newValue the new inactive tab foreground
      */
     public void setTabInactiveForeground(Color newValue) {
-        setProperty(PROPERTY_TAB_INACTIVE_FOREGROUND, newValue);
+        set(PROPERTY_TAB_INACTIVE_FOREGROUND, newValue);
     }
     
     /**
@@ -826,7 +826,7 @@ implements Pane, PaneContainer {
      * @param newValue the new tab inset
      */
     public void setTabInset(Extent newValue) {
-        setProperty(PROPERTY_TAB_INSET, newValue);
+        set(PROPERTY_TAB_INSET, newValue);
     }
     
     /**
@@ -840,7 +840,7 @@ implements Pane, PaneContainer {
      *        </ul>
      */
     public void setTabPosition(int newValue) {
-        setProperty(PROPERTY_TAB_POSITION, new Integer(newValue));
+        set(PROPERTY_TAB_POSITION, new Integer(newValue));
     }
     
     /**
@@ -849,7 +849,7 @@ implements Pane, PaneContainer {
      * @param newValue the new tab spacing
      */
     public void setTabSpacing(Extent newValue) {
-        setProperty(PROPERTY_TAB_SPACING, newValue);
+        set(PROPERTY_TAB_SPACING, newValue);
     }
     
     /**
@@ -858,7 +858,7 @@ implements Pane, PaneContainer {
      * @param newValue the new tab width
      */
     public void setTabWidth(Extent newValue) {
-        setProperty(PROPERTY_TAB_WIDTH, newValue);
+        set(PROPERTY_TAB_WIDTH, newValue);
     }
     
     /**
@@ -867,7 +867,7 @@ implements Pane, PaneContainer {
      * @param newValue the new tab alignment
      */
     public void setTabAlignment(Alignment newValue) {
-        setProperty(PROPERTY_TAB_ALIGNMENT, newValue);
+        set(PROPERTY_TAB_ALIGNMENT, newValue);
     }
     
     /**
@@ -878,7 +878,7 @@ implements Pane, PaneContainer {
      * @return true if tab close is enabled
      */
     public boolean isTabCloseEnabled() {
-        Boolean value = (Boolean) getProperty(PROPERTY_TAB_CLOSE_ENABLED);
+        Boolean value = (Boolean) get(PROPERTY_TAB_CLOSE_ENABLED);
         return value == null ? false : value.booleanValue();
     }
     
@@ -888,7 +888,7 @@ implements Pane, PaneContainer {
      * @return true if close icon rollover effects are enabled
      */
     public boolean isTabCloseIconRolloverEnabled() {
-        Boolean value = (Boolean) getProperty(PROPERTY_TAB_CLOSE_ICON_ROLLOVER_ENABLED);
+        Boolean value = (Boolean) get(PROPERTY_TAB_CLOSE_ICON_ROLLOVER_ENABLED);
         return value == null ? false : value.booleanValue();
     }
 
@@ -898,7 +898,7 @@ implements Pane, PaneContainer {
      * @return the icon
      */
     public ImageReference getTabCloseIcon() {
-        return (ImageReference) getProperty(PROPERTY_TAB_CLOSE_ICON);
+        return (ImageReference) get(PROPERTY_TAB_CLOSE_ICON);
     }
 
     /**
@@ -907,7 +907,7 @@ implements Pane, PaneContainer {
      * @return the icon
      */
     public ImageReference getTabDisabledCloseIcon() {
-        return (ImageReference) getProperty(PROPERTY_TAB_DISABLED_CLOSE_ICON);
+        return (ImageReference) get(PROPERTY_TAB_DISABLED_CLOSE_ICON);
     }
 
     /**
@@ -917,7 +917,7 @@ implements Pane, PaneContainer {
      * @return the icon
      */
     public ImageReference getTabRolloverCloseIcon() {
-        return (ImageReference) getProperty(PROPERTY_TAB_ROLLOVER_CLOSE_ICON);
+        return (ImageReference) get(PROPERTY_TAB_ROLLOVER_CLOSE_ICON);
     }
 
     /**
@@ -928,7 +928,7 @@ implements Pane, PaneContainer {
      * @param newValue the new state
      */
     public void setTabCloseEnabled(boolean newValue) {
-        setProperty(PROPERTY_TAB_CLOSE_ENABLED, new Boolean(newValue));
+        set(PROPERTY_TAB_CLOSE_ENABLED, new Boolean(newValue));
     }
     
     /**
@@ -937,7 +937,7 @@ implements Pane, PaneContainer {
      * @param newValue true if close icon rollover effects should be enabled
      */
     public void setTabCloseIconRolloverEnabled(boolean newValue) {
-        setProperty(PROPERTY_TAB_CLOSE_ICON_ROLLOVER_ENABLED, new Boolean(newValue));
+        set(PROPERTY_TAB_CLOSE_ICON_ROLLOVER_ENABLED, new Boolean(newValue));
     }
 
     /**
@@ -946,7 +946,7 @@ implements Pane, PaneContainer {
      * @param newValue the new icon
      */
     public void setTabCloseIcon(ImageReference newValue) {
-        setProperty(PROPERTY_TAB_CLOSE_ICON, newValue);
+        set(PROPERTY_TAB_CLOSE_ICON, newValue);
     }
 
     /**
@@ -955,7 +955,7 @@ implements Pane, PaneContainer {
      * @param newValue the new icon
      */
     public void setTabDisabledCloseIcon(ImageReference newValue) {
-        setProperty(PROPERTY_TAB_DISABLED_CLOSE_ICON, newValue);
+        set(PROPERTY_TAB_DISABLED_CLOSE_ICON, newValue);
     }
 
     /**
@@ -965,7 +965,7 @@ implements Pane, PaneContainer {
      * @param newValue the new icon
      */
     public void setTabRolloverCloseIcon(ImageReference newValue) {
-        setProperty(PROPERTY_TAB_ROLLOVER_CLOSE_ICON, newValue);
+        set(PROPERTY_TAB_ROLLOVER_CLOSE_ICON, newValue);
     }
 
     /**

@@ -156,7 +156,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @return the selection text.
      */
     public String getSelectionText() {
-        return (String) getProperty(PROPERTY_SELECTION_TEXT);
+        return (String) get(PROPERTY_SELECTION_TEXT);
     }
 
     /**
@@ -168,7 +168,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @return the default background image
      */
     public FillImage getBackgroundImage() {
-        return (FillImage) getProperty(PROPERTY_BACKGROUND_IMAGE);
+        return (FillImage) get(PROPERTY_BACKGROUND_IMAGE);
     }
     
     /**
@@ -179,7 +179,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @return the default border
      */
     public Border getBorder() {
-        return (Border) getProperty(PROPERTY_BORDER);
+        return (Border) get(PROPERTY_BORDER);
     }
 
     /**
@@ -188,7 +188,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @return the disabled background
      */
     public Color getDisabledBackground() {
-        return (Color) getProperty(PROPERTY_DISABLED_BACKGROUND);
+        return (Color) get(PROPERTY_DISABLED_BACKGROUND);
     }
     
     /**
@@ -197,7 +197,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @return the disabled background image
      */
     public FillImage getDisabledBackgroundImage() {
-        return (FillImage) getProperty(PROPERTY_DISABLED_BACKGROUND_IMAGE);
+        return (FillImage) get(PROPERTY_DISABLED_BACKGROUND_IMAGE);
     }
     
     /**
@@ -206,7 +206,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @return the disabled expand icon
      */
     public ImageReference getDisabledExpandIcon() {
-        return (ImageReference) getProperty(PROPERTY_DISABLED_EXPAND_ICON);
+        return (ImageReference) get(PROPERTY_DISABLED_EXPAND_ICON);
     }
     
     /**
@@ -215,7 +215,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @return the disabled foreground
      */
     public Color getDisabledForeground() {
-        return (Color) getProperty(PROPERTY_DISABLED_FOREGROUND);
+        return (Color) get(PROPERTY_DISABLED_FOREGROUND);
     }
     
     /**
@@ -224,7 +224,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @return the expand icon
      */
     public ImageReference getExpandIcon() {
-        return (ImageReference) getProperty(PROPERTY_EXPAND_ICON);
+        return (ImageReference) get(PROPERTY_EXPAND_ICON);
     }
     
     /**
@@ -233,7 +233,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @return the width of the expand icon
      */
     public Extent getExpandIconWidth() {
-        return (Extent) getProperty(PROPERTY_EXPAND_ICON_WIDTH);
+        return (Extent) get(PROPERTY_EXPAND_ICON_WIDTH);
     }
     
     /**
@@ -242,7 +242,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @return the height
      */
     public Extent getHeight() {
-        return (Extent) getProperty(PROPERTY_HEIGHT);
+        return (Extent) get(PROPERTY_HEIGHT);
     }
     
     /**
@@ -251,7 +251,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @return the height
      */
     public Extent getMenuHeight() {
-        return (Extent) getProperty(PROPERTY_MENU_HEIGHT);
+        return (Extent) get(PROPERTY_MENU_HEIGHT);
     }
     
     /**
@@ -260,7 +260,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @return the width
      */
     public Extent getMenuWidth() {
-        return (Extent) getProperty(PROPERTY_MENU_WIDTH);
+        return (Extent) get(PROPERTY_MENU_WIDTH);
     }
     
     /**
@@ -270,7 +270,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @see #setInsets
      */
     public Insets getInsets() {
-        return (Insets) getProperty(PROPERTY_INSETS);
+        return (Insets) get(PROPERTY_INSETS);
     }
     
     /**
@@ -282,7 +282,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @return the menu background
      */
     public Color getMenuBackground() {
-        return (Color) getProperty(PROPERTY_MENU_BACKGROUND);
+        return (Color) get(PROPERTY_MENU_BACKGROUND);
     }
     
     /**
@@ -294,7 +294,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @return the menu background image
      */
     public FillImage getMenuBackgroundImage() {
-        return (FillImage) getProperty(PROPERTY_MENU_BACKGROUND_IMAGE);
+        return (FillImage) get(PROPERTY_MENU_BACKGROUND_IMAGE);
     }
     
     /**
@@ -306,7 +306,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @return the menu border
      */
     public Border getMenuBorder() {
-        return (Border) getProperty(PROPERTY_MENU_BORDER);
+        return (Border) get(PROPERTY_MENU_BORDER);
     }
     
     /**
@@ -315,7 +315,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @return the menu expand icon
      */
     public ImageReference getMenuExpandIcon() {
-        return (ImageReference) getProperty(PROPERTY_MENU_EXPAND_ICON);
+        return (ImageReference) get(PROPERTY_MENU_EXPAND_ICON);
     }
     
     /**
@@ -327,7 +327,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @return the menu foreground
      */
     public Color getMenuForeground() {
-        return (Color) getProperty(PROPERTY_MENU_FOREGROUND);
+        return (Color) get(PROPERTY_MENU_FOREGROUND);
     }
     
     /**
@@ -336,7 +336,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @return the menu font
      */
     public Font getMenuFont() {
-        return (Font) getProperty(PROPERTY_MENU_FONT);
+        return (Font) get(PROPERTY_MENU_FONT);
     }
     
     /**
@@ -346,7 +346,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @return the selection background
      */
     public Color getSelectionBackground() {
-        return (Color) getProperty(PROPERTY_SELECTION_BACKGROUND);
+        return (Color) get(PROPERTY_SELECTION_BACKGROUND);
     }
     
     /**
@@ -356,7 +356,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @return the selection background image
      */
     public FillImage getSelectionBackgroundImage() {
-        return (FillImage) getProperty(PROPERTY_SELECTION_BACKGROUND_IMAGE);
+        return (FillImage) get(PROPERTY_SELECTION_BACKGROUND_IMAGE);
     }
     
     /**
@@ -366,7 +366,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @return the selection foreground
      */
     public Color getSelectionForeground() {
-        return (Color) getProperty(PROPERTY_SELECTION_FOREGROUND);
+        return (Color) get(PROPERTY_SELECTION_FOREGROUND);
     }
     
     /**
@@ -375,7 +375,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @return the width
      */
     public Extent getWidth() {
-        return (Extent) getProperty(PROPERTY_WIDTH);
+        return (Extent) get(PROPERTY_WIDTH);
     }
     
     /**
@@ -385,7 +385,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @return the line wrap state
      */
     public boolean isLineWrap() {
-        Boolean value = (Boolean) getProperty(PROPERTY_LINE_WRAP);
+        Boolean value = (Boolean) get(PROPERTY_LINE_WRAP);
         return value == null ? true : value.booleanValue();
     }
 
@@ -398,7 +398,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @param newValue the new default background image
      */
     public void setBackgroundImage(FillImage newValue) {
-        setProperty(PROPERTY_BACKGROUND_IMAGE, newValue);
+        set(PROPERTY_BACKGROUND_IMAGE, newValue);
     }
     /**
      * Sets the border that will be displayed around the 
@@ -408,7 +408,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @param newValue the new default border
      */
     public void setBorder(Border newValue) {
-        setProperty(PROPERTY_BORDER, newValue);
+        set(PROPERTY_BORDER, newValue);
     }
     
     /**
@@ -417,7 +417,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @param newValue the new disabled background
      */
     public void setDisabledBackground(Color newValue) {
-        setProperty(PROPERTY_DISABLED_BACKGROUND, newValue);
+        set(PROPERTY_DISABLED_BACKGROUND, newValue);
     }
     
     /**
@@ -426,7 +426,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @param newValue the new disabled background image
      */
     public void setDisabledBackgroundImage(FillImage newValue) {
-        setProperty(PROPERTY_DISABLED_BACKGROUND_IMAGE, newValue);
+        set(PROPERTY_DISABLED_BACKGROUND_IMAGE, newValue);
     }
     
     /**
@@ -435,7 +435,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @param newValue the new disabled expand icon
      */
     public void setDisabledExpandIcon(ImageReference newValue) {
-        setProperty(PROPERTY_DISABLED_EXPAND_ICON, newValue);
+        set(PROPERTY_DISABLED_EXPAND_ICON, newValue);
     }
     
     /**
@@ -444,7 +444,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @param newValue the new disabled foreground
      */
     public void setDisabledForeground(Color newValue) {
-        setProperty(PROPERTY_DISABLED_FOREGROUND, newValue);
+        set(PROPERTY_DISABLED_FOREGROUND, newValue);
     }
     
     /**
@@ -453,7 +453,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @param newValue the new expand icon
      */
     public void setExpandIcon(ImageReference newValue) {
-        setProperty(PROPERTY_EXPAND_ICON, newValue);
+        set(PROPERTY_EXPAND_ICON, newValue);
     }
     
     /**
@@ -468,7 +468,7 @@ public class DropDownMenu extends AbstractMenuComponent {
         if (newValue != null && newValue.getValue() < 0) {
             throw new IllegalArgumentException("Extent value may not be negative.");
         }
-        setProperty(PROPERTY_EXPAND_ICON_WIDTH, newValue);
+        set(PROPERTY_EXPAND_ICON_WIDTH, newValue);
     }
     
     /**
@@ -477,7 +477,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @param newValue the new height
      */
     public void setHeight(Extent newValue) {
-        setProperty(PROPERTY_HEIGHT, newValue);
+        set(PROPERTY_HEIGHT, newValue);
     }
     
     /**
@@ -487,7 +487,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @param newValue the new line wrap state
      */
     public void setLineWrap(boolean newValue) {
-        setProperty(PROPERTY_LINE_WRAP, new Boolean(newValue));
+        set(PROPERTY_LINE_WRAP, new Boolean(newValue));
     }
     
     /**
@@ -496,7 +496,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @param newValue the new height
      */
     public void setMenuHeight(Extent newValue) {
-        setProperty(PROPERTY_MENU_HEIGHT, newValue);
+        set(PROPERTY_MENU_HEIGHT, newValue);
     }
     
     /**
@@ -505,7 +505,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @param newValue the new width
      */
     public void setMenuWidth(Extent newValue) {
-        setProperty(PROPERTY_MENU_WIDTH, newValue);
+        set(PROPERTY_MENU_WIDTH, newValue);
     }
     
     /**
@@ -516,7 +516,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @param newValue the new height
      */
     public void setInsets(Insets newValue) {
-        setProperty(PROPERTY_INSETS, newValue);
+        set(PROPERTY_INSETS, newValue);
     }
     
     /**
@@ -528,7 +528,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @param newValue the new menu background
      */
     public void setMenuBackground(Color newValue) {
-        setProperty(PROPERTY_MENU_BACKGROUND, newValue);
+        set(PROPERTY_MENU_BACKGROUND, newValue);
     }
     
     /**
@@ -540,7 +540,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @param newValue the new menu background image
      */
     public void setMenuBackgroundImage(FillImage newValue) {
-        setProperty(PROPERTY_MENU_BACKGROUND_IMAGE, newValue);
+        set(PROPERTY_MENU_BACKGROUND_IMAGE, newValue);
     }
     
     /**
@@ -552,7 +552,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @param newValue the new menu border
      */
     public void setMenuBorder(Border newValue) {
-        setProperty(PROPERTY_MENU_BORDER, newValue);
+        set(PROPERTY_MENU_BORDER, newValue);
     }
     
     /**
@@ -561,7 +561,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @param newValue the new menu expand icon
      */
     public void setMenuExpandIcon(ImageReference newValue) {
-        setProperty(PROPERTY_MENU_EXPAND_ICON, newValue);
+        set(PROPERTY_MENU_EXPAND_ICON, newValue);
     }
     
     /**
@@ -573,7 +573,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @param newValue the new menu foreground
      */
     public void setMenuForeground(Color newValue) {
-        setProperty(PROPERTY_MENU_FOREGROUND, newValue);
+        set(PROPERTY_MENU_FOREGROUND, newValue);
     }
     
     /**
@@ -582,7 +582,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @param newValue the new menu font
      */
     public void setMenuFont(Font newValue) {
-        setProperty(PROPERTY_MENU_FONT, newValue);
+        set(PROPERTY_MENU_FONT, newValue);
     }
     
     /**
@@ -592,7 +592,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @param newValue the new selection background
      */
     public void setSelectionBackground(Color newValue) {
-        setProperty(PROPERTY_SELECTION_BACKGROUND, newValue);
+        set(PROPERTY_SELECTION_BACKGROUND, newValue);
     }
     
     /**
@@ -602,7 +602,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @param newValue the new selection background image
      */
     public void setSelectionBackgroundImage(FillImage newValue) {
-        setProperty(PROPERTY_SELECTION_BACKGROUND_IMAGE, newValue);
+        set(PROPERTY_SELECTION_BACKGROUND_IMAGE, newValue);
     }
     
     /**
@@ -612,7 +612,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @param newValue the new selection foreground
      */
     public void setSelectionForeground(Color newValue) {
-        setProperty(PROPERTY_SELECTION_FOREGROUND, newValue);
+        set(PROPERTY_SELECTION_FOREGROUND, newValue);
     }
     
     /**
@@ -638,7 +638,7 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @param newValue the new selection text
      */
     public void setSelectionText(String newValue) {
-        setProperty(PROPERTY_SELECTION_TEXT, newValue);
+        set(PROPERTY_SELECTION_TEXT, newValue);
     }
     
     /**
@@ -647,6 +647,6 @@ public class DropDownMenu extends AbstractMenuComponent {
      * @param newValue the new width
      */
     public void setWidth(Extent newValue) {
-        setProperty(PROPERTY_WIDTH, newValue);
+        set(PROPERTY_WIDTH, newValue);
     }
 }

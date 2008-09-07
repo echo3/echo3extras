@@ -134,7 +134,7 @@ public class TransitionPaneTest extends AbstractTest {
         // Properties
         testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Trans = Null", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                transitionPane.setProperty(TransitionPane.PROPERTY_TYPE, null);
+                transitionPane.set(TransitionPane.PROPERTY_TYPE, null);
             }
         });
         testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Trans = Immediate", new ActionListener() {
@@ -191,7 +191,7 @@ public class TransitionPaneTest extends AbstractTest {
         testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES,
                 TransitionPane.PROPERTY_DURATION + ": null", new ActionListener(){
             public void actionPerformed(ActionEvent arg0) {
-                transitionPane.setProperty(TransitionPane.PROPERTY_DURATION, null);
+                transitionPane.set(TransitionPane.PROPERTY_DURATION, null);
             }
         });
         addIntegerPropertyTests(TestControlPane.CATEGORY_PROPERTIES, TransitionPane.PROPERTY_DURATION,

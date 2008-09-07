@@ -76,7 +76,7 @@ public class Group extends Component {
      * @return the background image.
      */
     public FillImage getBackgroundImage() {
-        return (FillImage) getProperty(PROPERTY_BACKGROUND_IMAGE);
+        return (FillImage) get(PROPERTY_BACKGROUND_IMAGE);
     }
 
     /**
@@ -86,7 +86,7 @@ public class Group extends Component {
      * @return the border image
      */
     public ImageReference getBorderImage(int position) {
-        return (ImageReference) getIndexedProperty(PROPERTY_BORDER_IMAGE, position);
+        return (ImageReference) getIndex(PROPERTY_BORDER_IMAGE, position);
     }
     
     /**
@@ -96,7 +96,7 @@ public class Group extends Component {
      * @return the border inset
      */
     public Insets getBorderInsets() {
-        return (Insets) getProperty(PROPERTY_BORDER_INSETS);
+        return (Insets) get(PROPERTY_BORDER_INSETS);
     }
     
     /**
@@ -105,7 +105,7 @@ public class Group extends Component {
      * @return the inset margin
      */
     public Insets getInsets() {
-        return (Insets) getProperty(PROPERTY_INSETS);
+        return (Insets) get(PROPERTY_INSETS);
     }
     
     /**
@@ -114,7 +114,7 @@ public class Group extends Component {
      * @return the title.
      */
     public String getTitle() {
-        return (String) getProperty(PROPERTY_TITLE);
+        return (String) get(PROPERTY_TITLE);
     }
     
     /**
@@ -123,7 +123,7 @@ public class Group extends Component {
      * @return the title background image.
      */
     public ImageReference getTitleBackgroundImage() {
-        return (ImageReference) getProperty(PROPERTY_TITLE_BACKGROUND_IMAGE);
+        return (ImageReference) get(PROPERTY_TITLE_BACKGROUND_IMAGE);
     }
     
     /**
@@ -132,7 +132,7 @@ public class Group extends Component {
      * @return the title font.
      */
     public Font getTitleFont() {
-        return (Font) getProperty(PROPERTY_TITLE_FONT);
+        return (Font) get(PROPERTY_TITLE_FONT);
     }
     
     /**
@@ -141,7 +141,7 @@ public class Group extends Component {
      * @return the title insets.
      */
     public Insets getTitleInsets() {
-        return (Insets) getProperty(PROPERTY_TITLE_INSETS);
+        return (Insets) get(PROPERTY_TITLE_INSETS);
     }
     
     /**
@@ -150,7 +150,7 @@ public class Group extends Component {
      * @return the title position.
      */
     public Extent getTitlePosition() {
-        return (Extent) getProperty(PROPERTY_TITLE_POSITION);
+        return (Extent) get(PROPERTY_TITLE_POSITION);
     }
     
     /**
@@ -159,7 +159,7 @@ public class Group extends Component {
      * @param backgroundImage the background image
      */
     public void setBackgroundImage(FillImage backgroundImage) {
-        setProperty(PROPERTY_BACKGROUND_IMAGE, backgroundImage);
+        set(PROPERTY_BACKGROUND_IMAGE, backgroundImage);
     }
     
     /**
@@ -168,7 +168,7 @@ public class Group extends Component {
      * @param newValue the new border
      */
     public void setBorderImage(int position, ImageReference newValue) {
-        setIndexedProperty(PROPERTY_BORDER_IMAGE, position, newValue);
+        setIndex(PROPERTY_BORDER_IMAGE, position, newValue);
     }
     
     /**
@@ -180,7 +180,7 @@ public class Group extends Component {
      * @param borderInsets the new border inset
      */
     public void setBorderInsets(Insets borderInsets) {
-       setProperty(PROPERTY_BORDER_INSETS, borderInsets);
+       set(PROPERTY_BORDER_INSETS, borderInsets);
     }
     
     /**
@@ -189,7 +189,7 @@ public class Group extends Component {
      * @param newValue the new inset margin
      */
     public void setInsets(Insets newValue) {
-        setProperty(PROPERTY_INSETS, newValue);
+        set(PROPERTY_INSETS, newValue);
     }
     
     /**
@@ -198,7 +198,7 @@ public class Group extends Component {
      * @param title the title
      */
     public void setTitle(String title) {
-        setProperty(PROPERTY_TITLE, title);
+        set(PROPERTY_TITLE, title);
     }
     
     /**
@@ -207,7 +207,7 @@ public class Group extends Component {
      * @param titleBackgroundImage the background image
      */
     public void setTitleBackgroundImage(ImageReference titleBackgroundImage) {
-        setProperty(PROPERTY_TITLE_BACKGROUND_IMAGE, titleBackgroundImage);
+        set(PROPERTY_TITLE_BACKGROUND_IMAGE, titleBackgroundImage);
     }
     
     /**
@@ -216,7 +216,7 @@ public class Group extends Component {
      * @param titleFont the title font
      */
     public void setTitleFont(Font titleFont) {
-        setProperty(PROPERTY_TITLE_FONT, titleFont);
+        set(PROPERTY_TITLE_FONT, titleFont);
     }
     
     /**
@@ -225,7 +225,7 @@ public class Group extends Component {
      * @param titleInsets the title insets
      */
     public void setTitleInsets(Insets titleInsets) {
-        setProperty(PROPERTY_TITLE_INSETS, titleInsets);
+        set(PROPERTY_TITLE_INSETS, titleInsets);
     }
     
     /**
@@ -234,6 +234,6 @@ public class Group extends Component {
      * @param titlePosition the title position
      */
     public void setTitlePosition(Extent titlePosition) {
-        setProperty(PROPERTY_TITLE_POSITION, titlePosition);
+        set(PROPERTY_TITLE_POSITION, titlePosition);
     }
 }

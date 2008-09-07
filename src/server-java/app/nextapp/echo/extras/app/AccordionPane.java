@@ -92,7 +92,7 @@ implements Pane, PaneContainer {
      * @return the animation time
      */
     public int getAnimationTime() {
-        Integer animationTime = (Integer) getProperty(PROPERTY_ANIMATION_TIME);
+        Integer animationTime = (Integer) get(PROPERTY_ANIMATION_TIME);
         return animationTime == null ? DEFAULT_ANIMATION_TIME : animationTime.intValue(); 
     }
     
@@ -103,7 +103,7 @@ implements Pane, PaneContainer {
      * @return the default content inset margin
      */
     public Insets getDefaultContentInsets() {
-        return (Insets) getProperty(PROPERTY_DEFAULT_CONTENT_INSETS);
+        return (Insets) get(PROPERTY_DEFAULT_CONTENT_INSETS);
     }
     
     /**
@@ -112,7 +112,7 @@ implements Pane, PaneContainer {
      * @return the tab background color
      */
     public Color getTabBackground() {
-        return (Color) getProperty(PROPERTY_TAB_BACKGROUND);
+        return (Color) get(PROPERTY_TAB_BACKGROUND);
     }
     
     /**
@@ -121,7 +121,7 @@ implements Pane, PaneContainer {
      * @return the tab background image
      */
     public FillImage getTabBackgroundImage() {
-        return (FillImage) getProperty(PROPERTY_TAB_BACKGROUND_IMAGE);
+        return (FillImage) get(PROPERTY_TAB_BACKGROUND_IMAGE);
     }
     
     /**
@@ -130,7 +130,7 @@ implements Pane, PaneContainer {
      * @return the tab border
      */
     public Border getTabBorder() {
-        return (Border) getProperty(PROPERTY_TAB_BORDER);
+        return (Border) get(PROPERTY_TAB_BORDER);
     }
     
     /**
@@ -139,7 +139,7 @@ implements Pane, PaneContainer {
      * @return the tab foreground color
      */
     public Color getTabForeground() {
-        return (Color) getProperty(PROPERTY_TAB_FOREGROUND);
+        return (Color) get(PROPERTY_TAB_FOREGROUND);
     }
     
     /**
@@ -148,7 +148,7 @@ implements Pane, PaneContainer {
      * @return the tab inset margin
      */
     public Insets getTabInsets() {
-        return (Insets) getProperty(PROPERTY_TAB_INSETS);
+        return (Insets) get(PROPERTY_TAB_INSETS);
     }
     
     /**
@@ -157,7 +157,7 @@ implements Pane, PaneContainer {
      * @return the tab rollover background color
      */
     public Color getTabRolloverBackground() {
-        return (Color) getProperty(PROPERTY_TAB_ROLLOVER_BACKGROUND);
+        return (Color) get(PROPERTY_TAB_ROLLOVER_BACKGROUND);
     }
     
     /**
@@ -166,7 +166,7 @@ implements Pane, PaneContainer {
      * @return the tab rollover background image
      */
     public FillImage getTabRolloverBackgroundImage() {
-        return (FillImage) getProperty(PROPERTY_TAB_ROLLOVER_BACKGROUND_IMAGE);
+        return (FillImage) get(PROPERTY_TAB_ROLLOVER_BACKGROUND_IMAGE);
     }
     
     /**
@@ -175,7 +175,7 @@ implements Pane, PaneContainer {
      * @return the tab rollover border
      */
     public Border getTabRolloverBorder() {
-        return (Border) getProperty(PROPERTY_TAB_ROLLOVER_BORDER);
+        return (Border) get(PROPERTY_TAB_ROLLOVER_BORDER);
     }
     
     /**
@@ -185,7 +185,7 @@ implements Pane, PaneContainer {
      * @return true if rollover effects should be enabled.
      */
     public boolean isTabRolloverEnabled() {
-        Boolean value = (Boolean) getProperty(PROPERTY_TAB_ROLLOVER_ENABLED);
+        Boolean value = (Boolean) get(PROPERTY_TAB_ROLLOVER_ENABLED);
         return value == null ? true : value.booleanValue();
     }
     
@@ -195,7 +195,7 @@ implements Pane, PaneContainer {
      * @return the tab rollover foreground color
      */
     public Color getTabRolloverForeground() {
-        return (Color) getProperty(PROPERTY_TAB_ROLLOVER_FOREGROUND);
+        return (Color) get(PROPERTY_TAB_ROLLOVER_FOREGROUND);
     }
     
     /**
@@ -237,7 +237,7 @@ implements Pane, PaneContainer {
      * @param newValue the new animation time
      */
     public void setAnimationTime(int newValue) {
-        setProperty(PROPERTY_ANIMATION_TIME, new Integer(newValue));
+        set(PROPERTY_ANIMATION_TIME, new Integer(newValue));
     }
     
     /**
@@ -247,7 +247,7 @@ implements Pane, PaneContainer {
      * @param newValue the new default content inset margin
      */
     public void setDefaultContentInsets(Insets newValue) {
-        setProperty(PROPERTY_DEFAULT_CONTENT_INSETS, newValue);
+        set(PROPERTY_DEFAULT_CONTENT_INSETS, newValue);
     }
     
     /**
@@ -256,7 +256,7 @@ implements Pane, PaneContainer {
      * @param newValue the new tab background color
      */
     public void setTabBackground(Color newValue) {
-        setProperty(PROPERTY_TAB_BACKGROUND, newValue);
+        set(PROPERTY_TAB_BACKGROUND, newValue);
     }
     
     /**
@@ -265,7 +265,7 @@ implements Pane, PaneContainer {
      * @param newValue the new tab background image
      */
     public void setTabBackgroundImage(FillImage newValue) {
-        setProperty(PROPERTY_TAB_BACKGROUND_IMAGE, newValue);
+        set(PROPERTY_TAB_BACKGROUND_IMAGE, newValue);
     }
     
     /**
@@ -274,7 +274,7 @@ implements Pane, PaneContainer {
      * @param newValue the new tab border
      */
     public void setTabBorder(Border newValue) {
-        setProperty(PROPERTY_TAB_BORDER, newValue);
+        set(PROPERTY_TAB_BORDER, newValue);
     }
     
     /**
@@ -283,7 +283,7 @@ implements Pane, PaneContainer {
      * @param newValue the new tab foreground color
      */
     public void setTabForeground(Color newValue) {
-        setProperty(PROPERTY_TAB_FOREGROUND, newValue);
+        set(PROPERTY_TAB_FOREGROUND, newValue);
     }
 
     /**
@@ -292,7 +292,7 @@ implements Pane, PaneContainer {
      * @param newValue the new tab inset margin
      */
     public void setTabInsets(Insets newValue) {
-        setProperty(PROPERTY_TAB_INSETS, newValue);
+        set(PROPERTY_TAB_INSETS, newValue);
     }
 
     /**
@@ -301,7 +301,7 @@ implements Pane, PaneContainer {
      * @param newValue the new tab rollover background color
      */
     public void setTabRolloverBackground(Color newValue) {
-        setProperty(PROPERTY_TAB_ROLLOVER_BACKGROUND, newValue);
+        set(PROPERTY_TAB_ROLLOVER_BACKGROUND, newValue);
     }
     
     /**
@@ -310,7 +310,7 @@ implements Pane, PaneContainer {
      * @param newValue the new tab rollover background image
      */
     public void setTabRolloverBackgroundImage(FillImage newValue) {
-        setProperty(PROPERTY_TAB_ROLLOVER_BACKGROUND_IMAGE, newValue);
+        set(PROPERTY_TAB_ROLLOVER_BACKGROUND_IMAGE, newValue);
     }
     
     /**
@@ -319,7 +319,7 @@ implements Pane, PaneContainer {
      * @param newValue the new tab rollover border
      */
     public void setTabRolloverBorder(Border newValue) {
-        setProperty(PROPERTY_TAB_ROLLOVER_BORDER, newValue);
+        set(PROPERTY_TAB_ROLLOVER_BORDER, newValue);
     }
     
     /**
@@ -328,7 +328,7 @@ implements Pane, PaneContainer {
      * @param newValue thew new rollover effect state
      */
     public void setTabRolloverEnabled(boolean newValue) {
-        setProperty(PROPERTY_TAB_ROLLOVER_ENABLED, new Boolean(newValue));
+        set(PROPERTY_TAB_ROLLOVER_ENABLED, new Boolean(newValue));
     }
     
     /**
@@ -337,6 +337,6 @@ implements Pane, PaneContainer {
      * @param newValue the new tab rollover foreground color
      */
     public void setTabRolloverForeground(Color newValue) {
-        setProperty(PROPERTY_TAB_ROLLOVER_FOREGROUND, newValue);
+        set(PROPERTY_TAB_ROLLOVER_FOREGROUND, newValue);
     }
 }

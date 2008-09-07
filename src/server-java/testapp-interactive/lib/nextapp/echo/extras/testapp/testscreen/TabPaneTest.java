@@ -443,19 +443,19 @@ public class TabPaneTest extends AbstractTest {
         
         testControlsPane.addButton("Lazy Render Tests", "LazyRenderEnabled = false", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                tabPane.setProperty(TabPanePeer.PROPERTY_LAZY_RENDER_ENABLED, Boolean.FALSE);
+                tabPane.set(TabPanePeer.PROPERTY_LAZY_RENDER_ENABLED, Boolean.FALSE);
             }
         });
         
         testControlsPane.addButton("Lazy Render Tests", "LazyRenderEnabled = true", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                tabPane.setProperty(TabPanePeer.PROPERTY_LAZY_RENDER_ENABLED, Boolean.TRUE);
+                tabPane.set(TabPanePeer.PROPERTY_LAZY_RENDER_ENABLED, Boolean.TRUE);
             }
         });
         
         testControlsPane.addButton("Lazy Render Tests", "LazyRenderEnabled = default (true)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                tabPane.setProperty(TabPanePeer.PROPERTY_LAZY_RENDER_ENABLED, null);
+                tabPane.set(TabPanePeer.PROPERTY_LAZY_RENDER_ENABLED, null);
             }
         });
     }

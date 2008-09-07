@@ -75,7 +75,7 @@ public class CalendarSelect extends Component {
      * @return the foreground 
      */
     public Color getAdjacentMonthDateForeground() {
-        return (Color) getProperty(PROPERTY_ADJACENT_MONTH_DATE_FOREGROUND);
+        return (Color) get(PROPERTY_ADJACENT_MONTH_DATE_FOREGROUND);
     }
     
     /**
@@ -84,7 +84,7 @@ public class CalendarSelect extends Component {
      * @return the background image
      */
     public FillImage getBackgroundImage() {
-        return (FillImage) getProperty(PROPERTY_BACKGROUND_IMAGE);
+        return (FillImage) get(PROPERTY_BACKGROUND_IMAGE);
     }
     
     /**
@@ -93,7 +93,7 @@ public class CalendarSelect extends Component {
      * @return the border
      */
     public Border getBorder() {
-        return (Border) getProperty(PROPERTY_BORDER);
+        return (Border) get(PROPERTY_BORDER);
     }
     
     /**
@@ -111,7 +111,7 @@ public class CalendarSelect extends Component {
      * @return the background 
      */
     public Color getSelectedDateBackground() {
-        return (Color) getProperty(PROPERTY_SELECTED_DATE_BACKGROUND);
+        return (Color) get(PROPERTY_SELECTED_DATE_BACKGROUND);
     }
     
     /**
@@ -120,7 +120,7 @@ public class CalendarSelect extends Component {
      * @return the background image
      */
     public FillImage getSelectedDateBackgroundImage() {
-        return (FillImage) getProperty(PROPERTY_SELECTED_DATE_BACKGROUND_IMAGE);
+        return (FillImage) get(PROPERTY_SELECTED_DATE_BACKGROUND_IMAGE);
     }
     
     /**
@@ -129,7 +129,7 @@ public class CalendarSelect extends Component {
      * @return the foreground 
      */
     public Color getSelectedDateForeground() {
-        return (Color) getProperty(PROPERTY_SELECTED_DATE_FOREGROUND);
+        return (Color) get(PROPERTY_SELECTED_DATE_FOREGROUND);
     }
     
     /**
@@ -147,7 +147,7 @@ public class CalendarSelect extends Component {
      * @param newValue the new background image
      */
     public void setBackgroundImage(FillImage newValue) {
-        setProperty(PROPERTY_BACKGROUND_IMAGE, newValue);
+        set(PROPERTY_BACKGROUND_IMAGE, newValue);
     }
     
     /**
@@ -156,7 +156,7 @@ public class CalendarSelect extends Component {
      * @param newValue the new border
      */
     public void setBorder(Border newValue) {
-        setProperty(PROPERTY_BORDER, newValue);
+        set(PROPERTY_BORDER, newValue);
     }
     
     /**
@@ -176,7 +176,7 @@ public class CalendarSelect extends Component {
      * @param newValue the new foreground
      */
     public void setAdjacentMonthDateForeground(Color newValue) {
-        setProperty(PROPERTY_SELECTED_DATE_FOREGROUND, newValue);
+        set(PROPERTY_SELECTED_DATE_FOREGROUND, newValue);
     }
 
     /**
@@ -185,7 +185,7 @@ public class CalendarSelect extends Component {
      * @param newValue the new background
      */
     public void setSelectedDateBackground(Color newValue) {
-        setProperty(PROPERTY_SELECTED_DATE_BACKGROUND, newValue);
+        set(PROPERTY_SELECTED_DATE_BACKGROUND, newValue);
     }
 
     /**
@@ -194,7 +194,7 @@ public class CalendarSelect extends Component {
      * @param newValue the new background image
      */
     public void setSelectedDateBackgroundImage(FillImage newValue) {
-        setProperty(PROPERTY_SELECTED_DATE_BACKGROUND_IMAGE, newValue);
+        set(PROPERTY_SELECTED_DATE_BACKGROUND_IMAGE, newValue);
     }
     
     /**
@@ -203,7 +203,7 @@ public class CalendarSelect extends Component {
      * @param newValue the new foreground
      */
     public void setSelectedDateForeground(Color newValue) {
-        setProperty(PROPERTY_SELECTED_DATE_FOREGROUND, newValue);
+        set(PROPERTY_SELECTED_DATE_FOREGROUND, newValue);
     }
 
 }

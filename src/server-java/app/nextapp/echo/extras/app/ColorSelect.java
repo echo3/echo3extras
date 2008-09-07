@@ -86,7 +86,7 @@ public class ColorSelect extends Component {
      * @return the width
      */
     public Extent getHueWidth() {
-        return (Extent) getProperty(PROPERTY_HUE_WIDTH);
+        return (Extent) get(PROPERTY_HUE_WIDTH);
     }
     
     /**
@@ -98,7 +98,7 @@ public class ColorSelect extends Component {
      * @return the height
      */
     public Extent getSaturationHeight() {
-        return (Extent) getProperty(PROPERTY_SATURATION_HEIGHT);
+        return (Extent) get(PROPERTY_SATURATION_HEIGHT);
     }
     
     /**
@@ -110,7 +110,7 @@ public class ColorSelect extends Component {
      * @return the width
      */
     public Extent getValueWidth() {
-        return (Extent) getProperty(PROPERTY_VALUE_WIDTH);
+        return (Extent) get(PROPERTY_VALUE_WIDTH);
     }
     
     /**
@@ -120,7 +120,7 @@ public class ColorSelect extends Component {
      *   @return true if the hex-triplet value should be displayed
      */
     public boolean isDisplayValue() {
-        Boolean value = (Boolean) getProperty(PROPERTY_DISPLAY_VALUE);
+        Boolean value = (Boolean) get(PROPERTY_DISPLAY_VALUE);
         return value == null ? true : value.booleanValue();
     }
     
@@ -154,7 +154,7 @@ public class ColorSelect extends Component {
      * @param newValue true if the hex-triplet value should be displayed
      */
     public void setDisplayValue(boolean newValue) {
-        setProperty(PROPERTY_DISPLAY_VALUE, new Boolean(newValue));
+        set(PROPERTY_DISPLAY_VALUE, new Boolean(newValue));
     }
     
     /**
@@ -167,7 +167,7 @@ public class ColorSelect extends Component {
      * @param newValue the new width
      */
     public void setHueWidth(Extent newValue) {
-        setProperty(PROPERTY_HUE_WIDTH, newValue);
+        set(PROPERTY_HUE_WIDTH, newValue);
     }
     
     /**
@@ -179,7 +179,7 @@ public class ColorSelect extends Component {
      * @param newValue the new height
      */
     public void setSaturationHeight(Extent newValue) {
-        setProperty(PROPERTY_SATURATION_HEIGHT, newValue);
+        set(PROPERTY_SATURATION_HEIGHT, newValue);
     }
     
     /**
@@ -191,6 +191,6 @@ public class ColorSelect extends Component {
      * @param newValue the new width
      */
     public void setValueWidth(Extent newValue) {
-        setProperty(PROPERTY_VALUE_WIDTH, newValue);
+        set(PROPERTY_VALUE_WIDTH, newValue);
     }
 }

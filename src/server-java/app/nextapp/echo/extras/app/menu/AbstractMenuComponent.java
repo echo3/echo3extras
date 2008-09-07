@@ -95,7 +95,7 @@ public abstract class AbstractMenuComponent extends Component {
      * @return the animation time
      */
     public int getAnimationTime() {
-        Integer animationTime = (Integer) getProperty(PROPERTY_ANIMATION_TIME);
+        Integer animationTime = (Integer) get(PROPERTY_ANIMATION_TIME);
         return animationTime == null ? DEFAULT_ANIMATION_TIME : animationTime.intValue(); 
     }
     
@@ -219,7 +219,7 @@ public abstract class AbstractMenuComponent extends Component {
      * @param newValue the new animation time
      */
     public void setAnimationTime(int newValue) {
-        setProperty(PROPERTY_ANIMATION_TIME, new Integer(newValue));
+        set(PROPERTY_ANIMATION_TIME, new Integer(newValue));
     }
 
     /**

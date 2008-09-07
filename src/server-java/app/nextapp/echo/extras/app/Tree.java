@@ -628,7 +628,7 @@ public class Tree extends Component {
      * @return the action command
      */
     public String getActionCommand() {
-        return (String) getProperty(PROPERTY_ACTION_COMMAND);
+        return (String) get(PROPERTY_ACTION_COMMAND);
     }
     
     /**
@@ -637,7 +637,7 @@ public class Tree extends Component {
      * @return the border
      */
     public Border getBorder() {
-        return (Border) getProperty(PROPERTY_BORDER);
+        return (Border) get(PROPERTY_BORDER);
     }
     
     /**
@@ -691,7 +691,7 @@ public class Tree extends Component {
      * @return the default cell insets
      */
     public Insets getInsets() {
-        return (Insets) getProperty(PROPERTY_INSETS);
+        return (Insets) get(PROPERTY_INSETS);
     }
 
     /**
@@ -763,7 +763,7 @@ public class Tree extends Component {
      * @param newValue the new action command
      */
     public void setActionCommand(String newValue) {
-        setProperty(PROPERTY_ACTION_COMMAND, newValue);
+        set(PROPERTY_ACTION_COMMAND, newValue);
     }
     
     /**
@@ -772,7 +772,7 @@ public class Tree extends Component {
      * @param newValue the new border
      */
     public void setBorder(Border newValue) {
-        setProperty(PROPERTY_BORDER, newValue);
+        set(PROPERTY_BORDER, newValue);
     }
 
     /**
@@ -890,7 +890,7 @@ public class Tree extends Component {
      */
     public void setHeaderVisible(boolean newValue) {
         invalidate();
-        setProperty(PROPERTY_HEADER_VISIBLE, Boolean.valueOf(newValue));
+        set(PROPERTY_HEADER_VISIBLE, Boolean.valueOf(newValue));
     }
     
     /**
@@ -899,7 +899,7 @@ public class Tree extends Component {
      * @param newValue the new default cell insets
      */
     public void setInsets(Insets newValue) {
-        setProperty(PROPERTY_INSETS, newValue);
+        set(PROPERTY_INSETS, newValue);
     }
 
     /**
@@ -968,7 +968,7 @@ public class Tree extends Component {
      * @return the header visibility state
      */
     public boolean isHeaderVisible() {
-        Boolean value = (Boolean)getProperty(PROPERTY_HEADER_VISIBLE);
+        Boolean value = (Boolean)get(PROPERTY_HEADER_VISIBLE);
         return value == null ? false : value.booleanValue();
     }
     
@@ -979,7 +979,7 @@ public class Tree extends Component {
      * @see #setRolloverEnabled(boolean)
      */
     public boolean isRolloverEnabled() {
-        Boolean value = (Boolean) getProperty(PROPERTY_ROLLOVER_ENABLED);
+        Boolean value = (Boolean) get(PROPERTY_ROLLOVER_ENABLED);
         return value == null ? false : value.booleanValue();
     }
     
@@ -990,7 +990,7 @@ public class Tree extends Component {
      * @see #setRootVisible(boolean)
      */
     public boolean isRootVisible() {
-        Boolean value = (Boolean) getProperty(PROPERTY_ROOT_VISIBLE);
+        Boolean value = (Boolean) get(PROPERTY_ROOT_VISIBLE);
         return value == null ? true : value.booleanValue();
     }
     
@@ -1001,7 +1001,7 @@ public class Tree extends Component {
      * @see #setSelectionEnabled(boolean)
      */
     public boolean isSelectionEnabled() {
-        Boolean value = (Boolean) getProperty(PROPERTY_SELECTION_ENABLED);
+        Boolean value = (Boolean) get(PROPERTY_SELECTION_ENABLED);
         return value == null ? false : value.booleanValue();
     }
     
@@ -1012,7 +1012,7 @@ public class Tree extends Component {
      * @see #setShowsRootHandle(boolean)
      */
     public boolean isShowsRootHandle() {
-        Boolean value = (Boolean) getProperty(PROPERTY_SHOWS_ROOT_HANDLE);
+        Boolean value = (Boolean) get(PROPERTY_SHOWS_ROOT_HANDLE);
         return value == null ? false : value.booleanValue();
     }
 
@@ -1051,7 +1051,7 @@ public class Tree extends Component {
      * @return the color
      */
     public Color getRolloverBackground() {
-        return (Color) getProperty(PROPERTY_ROLLOVER_BACKGROUND);
+        return (Color) get(PROPERTY_ROLLOVER_BACKGROUND);
     }
 
     /**
@@ -1061,7 +1061,7 @@ public class Tree extends Component {
      * @return the background image
      */
     public FillImage getRolloverBackgroundImage() {
-        return (FillImage) getProperty(PROPERTY_ROLLOVER_BACKGROUND_IMAGE);
+        return (FillImage) get(PROPERTY_ROLLOVER_BACKGROUND_IMAGE);
     }
 
     /**
@@ -1071,7 +1071,7 @@ public class Tree extends Component {
      * @return the font
      */
     public Border getRolloverBorder() {
-        return (Border) getProperty(PROPERTY_ROLLOVER_BORDER);
+        return (Border) get(PROPERTY_ROLLOVER_BORDER);
     }
     
     /**
@@ -1081,7 +1081,7 @@ public class Tree extends Component {
      * @return the font
      */
     public Font getRolloverFont() {
-        return (Font) getProperty(PROPERTY_ROLLOVER_FONT);
+        return (Font) get(PROPERTY_ROLLOVER_FONT);
     }
 
     /**
@@ -1091,7 +1091,7 @@ public class Tree extends Component {
      * @return the color
      */
     public Color getRolloverForeground() {
-        return (Color) getProperty(PROPERTY_ROLLOVER_FOREGROUND);
+        return (Color) get(PROPERTY_ROLLOVER_FOREGROUND);
     }
 
     /**
@@ -1100,7 +1100,7 @@ public class Tree extends Component {
      * @return the background color
      */
     public Color getSelectionBackground() {
-        return (Color) getProperty(PROPERTY_SELECTION_BACKGROUND);
+        return (Color) get(PROPERTY_SELECTION_BACKGROUND);
     }
 
     /**
@@ -1109,7 +1109,7 @@ public class Tree extends Component {
      * @return the background image
      */
     public FillImage getSelectionBackgroundImage() {
-        return (FillImage) getProperty(PROPERTY_SELECTION_BACKGROUND_IMAGE);
+        return (FillImage) get(PROPERTY_SELECTION_BACKGROUND_IMAGE);
     }
     
     /**
@@ -1118,7 +1118,7 @@ public class Tree extends Component {
      * @return the border
      */
     public Border getSelectionBorder() {
-        return (Border) getProperty(PROPERTY_SELECTION_BORDER);
+        return (Border) get(PROPERTY_SELECTION_BORDER);
     }
     
     /**
@@ -1127,7 +1127,7 @@ public class Tree extends Component {
      * @return the font
      */
     public Font getSelectionFont() {
-        return (Font) getProperty(PROPERTY_SELECTION_FONT);
+        return (Font) get(PROPERTY_SELECTION_FONT);
     }
     
     /**
@@ -1136,7 +1136,7 @@ public class Tree extends Component {
      * @return the foreground color
      */
     public Color getSelectionForeground() {
-        return (Color) getProperty(PROPERTY_SELECTION_FOREGROUND);
+        return (Color) get(PROPERTY_SELECTION_FOREGROUND);
     }
     
     /**
@@ -1156,7 +1156,7 @@ public class Tree extends Component {
      * @return the width
      */
     public Extent getWidth() {
-        return (Extent) getProperty(PROPERTY_WIDTH);
+        return (Extent) get(PROPERTY_WIDTH);
     }
 
     /**
@@ -1207,7 +1207,7 @@ public class Tree extends Component {
      *         </ul>
      */
     public int getLineStyle() {
-        Integer oLineStyle = (Integer) getProperty(PROPERTY_LINE_STYLE);
+        Integer oLineStyle = (Integer) get(PROPERTY_LINE_STYLE);
         if (oLineStyle == null) {
             return LINE_STYLE_DOTTED;
         }
@@ -1220,7 +1220,7 @@ public class Tree extends Component {
      * @return the icon
      */
     public ImageReference getNodeClosedIcon() {
-        return (ImageReference) getProperty(PROPERTY_NODE_CLOSED_ICON);
+        return (ImageReference) get(PROPERTY_NODE_CLOSED_ICON);
     }
     
     /**
@@ -1229,7 +1229,7 @@ public class Tree extends Component {
      * @return the icon
      */
     public ImageReference getNodeClosedBottomIcon() {
-        return (ImageReference) getProperty(PROPERTY_NODE_CLOSED_BOTTOM_ICON);
+        return (ImageReference) get(PROPERTY_NODE_CLOSED_BOTTOM_ICON);
     }
     
     /**
@@ -1238,7 +1238,7 @@ public class Tree extends Component {
      * @return the icon
      */
     public ImageReference getNodeOpenIcon() {
-        return (ImageReference) getProperty(PROPERTY_NODE_OPEN_ICON);
+        return (ImageReference) get(PROPERTY_NODE_OPEN_ICON);
     }
     
     /**
@@ -1247,7 +1247,7 @@ public class Tree extends Component {
      * @return the icon
      */
     public ImageReference getNodeOpenBottomIcon() {
-        return (ImageReference) getProperty(PROPERTY_NODE_OPEN_BOTTOM_ICON);
+        return (ImageReference) get(PROPERTY_NODE_OPEN_BOTTOM_ICON);
     }
 
     /**
@@ -1317,7 +1317,7 @@ public class Tree extends Component {
      *        </ul>
      */
     public void setLineStyle(int newValue) {
-        setProperty(PROPERTY_LINE_STYLE, new Integer(newValue));
+        set(PROPERTY_LINE_STYLE, new Integer(newValue));
     }
     
     /**
@@ -1326,7 +1326,7 @@ public class Tree extends Component {
      * @param newValue the icon
      */
     public void setNodeClosedIcon(ImageReference newValue) {
-        setProperty(PROPERTY_NODE_CLOSED_ICON, newValue);
+        set(PROPERTY_NODE_CLOSED_ICON, newValue);
     }
     
     /**
@@ -1335,7 +1335,7 @@ public class Tree extends Component {
      * @param newValue the icon
      */
     public void setNodeClosedBottomIcon(ImageReference newValue) {
-        setProperty(PROPERTY_NODE_CLOSED_BOTTOM_ICON, newValue);
+        set(PROPERTY_NODE_CLOSED_BOTTOM_ICON, newValue);
     }
     
     /**
@@ -1344,7 +1344,7 @@ public class Tree extends Component {
      * @param newValue the icon
      */
     public void setNodeOpenIcon(ImageReference newValue) {
-        setProperty(PROPERTY_NODE_OPEN_ICON, newValue);
+        set(PROPERTY_NODE_OPEN_ICON, newValue);
     }
     
     /**
@@ -1353,7 +1353,7 @@ public class Tree extends Component {
      * @param newValue the icon
      */
     public void setNodeOpenBottomIcon(ImageReference newValue) {
-        setProperty(PROPERTY_NODE_OPEN_BOTTOM_ICON, newValue);
+        set(PROPERTY_NODE_OPEN_BOTTOM_ICON, newValue);
     }
 
     /**
@@ -1363,7 +1363,7 @@ public class Tree extends Component {
      * @param newValue the new <code>Color</code>
      */
     public void setRolloverBackground(Color newValue) {
-        setProperty(PROPERTY_ROLLOVER_BACKGROUND, newValue);
+        set(PROPERTY_ROLLOVER_BACKGROUND, newValue);
     }
 
     /**
@@ -1373,7 +1373,7 @@ public class Tree extends Component {
      * @param newValue the new background image
      */
     public void setRolloverBackgroundImage(FillImage newValue) {
-        setProperty(PROPERTY_ROLLOVER_BACKGROUND_IMAGE, newValue);
+        set(PROPERTY_ROLLOVER_BACKGROUND_IMAGE, newValue);
     }
     
     /**
@@ -1383,7 +1383,7 @@ public class Tree extends Component {
      * @param newValue the new background image
      */
     public void setRolloverBorder(Border newValue) {
-        setProperty(PROPERTY_ROLLOVER_BORDER, newValue);
+        set(PROPERTY_ROLLOVER_BORDER, newValue);
     }
 
     /**
@@ -1394,7 +1394,7 @@ public class Tree extends Component {
      * @param newValue true if rollover effects should be enabled
      */
     public void setRolloverEnabled(boolean newValue) {
-        setProperty(PROPERTY_ROLLOVER_ENABLED, new Boolean(newValue));
+        set(PROPERTY_ROLLOVER_ENABLED, new Boolean(newValue));
     }
 
     /**
@@ -1404,7 +1404,7 @@ public class Tree extends Component {
      * @param newValue the new <code>Font</code>
      */
     public void setRolloverFont(Font newValue) {
-        setProperty(PROPERTY_ROLLOVER_FONT, newValue);
+        set(PROPERTY_ROLLOVER_FONT, newValue);
     }
 
     /**
@@ -1414,7 +1414,7 @@ public class Tree extends Component {
      * @param newValue the new <code>Color</code>
      */
     public void setRolloverForeground(Color newValue) {
-        setProperty(PROPERTY_ROLLOVER_FOREGROUND, newValue);
+        set(PROPERTY_ROLLOVER_FOREGROUND, newValue);
     }
     
     /**
@@ -1426,7 +1426,7 @@ public class Tree extends Component {
      * @see #isRootVisible()                
      */
     public void setRootVisible(boolean newValue) {
-        setProperty(PROPERTY_ROOT_VISIBLE, Boolean.valueOf(newValue));
+        set(PROPERTY_ROOT_VISIBLE, Boolean.valueOf(newValue));
     }
 
     /**
@@ -1453,7 +1453,7 @@ public class Tree extends Component {
      * @param newValue the new background color
      */
     public void setSelectionBackground(Color newValue) {
-        setProperty(PROPERTY_SELECTION_BACKGROUND, newValue);
+        set(PROPERTY_SELECTION_BACKGROUND, newValue);
     }
     
     /**
@@ -1462,7 +1462,7 @@ public class Tree extends Component {
      * @param newValue the new background image
      */
     public void setSelectionBackgroundImage(FillImage newValue) {
-        setProperty(PROPERTY_SELECTION_BACKGROUND_IMAGE, newValue);
+        set(PROPERTY_SELECTION_BACKGROUND_IMAGE, newValue);
     }
     
     /**
@@ -1471,7 +1471,7 @@ public class Tree extends Component {
      * @param newValue the new border
      */
     public void setSelectionBorder(Border newValue) {
-        setProperty(PROPERTY_SELECTION_BORDER, newValue);
+        set(PROPERTY_SELECTION_BORDER, newValue);
     }
     
     /**
@@ -1480,7 +1480,7 @@ public class Tree extends Component {
      * @param newValue true to enable selection
      */
     public void setSelectionEnabled(boolean newValue) {
-        setProperty(PROPERTY_SELECTION_ENABLED, Boolean.valueOf(newValue));
+        set(PROPERTY_SELECTION_ENABLED, Boolean.valueOf(newValue));
     }
 
     /**
@@ -1489,7 +1489,7 @@ public class Tree extends Component {
      * @param newValue the new foreground color
      */
     public void setSelectionForeground(Color newValue) {
-        setProperty(PROPERTY_SELECTION_FOREGROUND, newValue);
+        set(PROPERTY_SELECTION_FOREGROUND, newValue);
     }
     
     /**
@@ -1498,7 +1498,7 @@ public class Tree extends Component {
      * @param newValue the new font
      */
     public void setSelectionFont(Font newValue) {
-        setProperty(PROPERTY_SELECTION_FONT, newValue);
+        set(PROPERTY_SELECTION_FONT, newValue);
     }
     
     /**
@@ -1529,7 +1529,7 @@ public class Tree extends Component {
      * @see #isShowsRootHandle()
      */
     public void setShowsRootHandle(boolean newValue) {
-        setProperty(PROPERTY_SHOWS_ROOT_HANDLE, Boolean.valueOf(newValue));
+        set(PROPERTY_SHOWS_ROOT_HANDLE, Boolean.valueOf(newValue));
     }
     
     /**
@@ -1540,7 +1540,7 @@ public class Tree extends Component {
      * @param newValue the new width
      */
     public void setWidth(Extent newValue) {
-        setProperty(PROPERTY_WIDTH, newValue);
+        set(PROPERTY_WIDTH, newValue);
     }
 
     /**

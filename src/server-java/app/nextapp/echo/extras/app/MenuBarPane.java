@@ -105,7 +105,7 @@ implements Pane {
      * @return the default background image
      */
     public FillImage getBackgroundImage() {
-        return (FillImage) getProperty(PROPERTY_BACKGROUND_IMAGE);
+        return (FillImage) get(PROPERTY_BACKGROUND_IMAGE);
     }
     
     /**
@@ -116,7 +116,7 @@ implements Pane {
      * @return the default border
      */
     public Border getBorder() {
-        return (Border) getProperty(PROPERTY_BORDER);
+        return (Border) get(PROPERTY_BORDER);
     }
 
     /**
@@ -125,7 +125,7 @@ implements Pane {
      * @return the disabled background
      */
     public Color getDisabledBackground() {
-        return (Color) getProperty(PROPERTY_DISABLED_BACKGROUND);
+        return (Color) get(PROPERTY_DISABLED_BACKGROUND);
     }
     
     /**
@@ -134,7 +134,7 @@ implements Pane {
      * @return the disabled background image
      */
     public FillImage getDisabledBackgroundImage() {
-        return (FillImage) getProperty(PROPERTY_DISABLED_BACKGROUND_IMAGE);
+        return (FillImage) get(PROPERTY_DISABLED_BACKGROUND_IMAGE);
     }
     
     /**
@@ -143,7 +143,7 @@ implements Pane {
      * @return the disabled foreground
      */
     public Color getDisabledForeground() {
-        return (Color) getProperty(PROPERTY_DISABLED_FOREGROUND);
+        return (Color) get(PROPERTY_DISABLED_FOREGROUND);
     }
     
     /**
@@ -155,7 +155,7 @@ implements Pane {
      * @return the menu background
      */
     public Color getMenuBackground() {
-        return (Color) getProperty(PROPERTY_MENU_BACKGROUND);
+        return (Color) get(PROPERTY_MENU_BACKGROUND);
     }
     
     /**
@@ -167,7 +167,7 @@ implements Pane {
      * @return the menu background image
      */
     public FillImage getMenuBackgroundImage() {
-        return (FillImage) getProperty(PROPERTY_MENU_BACKGROUND_IMAGE);
+        return (FillImage) get(PROPERTY_MENU_BACKGROUND_IMAGE);
     }
     
     /**
@@ -179,7 +179,7 @@ implements Pane {
      * @return the menu border
      */
     public Border getMenuBorder() {
-        return (Border) getProperty(PROPERTY_MENU_BORDER);
+        return (Border) get(PROPERTY_MENU_BORDER);
     }
     
     /**
@@ -188,7 +188,7 @@ implements Pane {
      * @return the menu expand icon
      */
     public ImageReference getMenuExpandIcon() {
-        return (ImageReference) getProperty(PROPERTY_MENU_EXPAND_ICON);
+        return (ImageReference) get(PROPERTY_MENU_EXPAND_ICON);
     }
     
     /**
@@ -200,7 +200,7 @@ implements Pane {
      * @return the menu foreground
      */
     public Color getMenuForeground() {
-        return (Color) getProperty(PROPERTY_MENU_FOREGROUND);
+        return (Color) get(PROPERTY_MENU_FOREGROUND);
     }
     
     /**
@@ -212,7 +212,7 @@ implements Pane {
      * @return the opacity setting
      */
     public int getMenuOpacity() {
-        Integer opacity = (Integer) getProperty(PROPERTY_MENU_OPACITY);
+        Integer opacity = (Integer) get(PROPERTY_MENU_OPACITY);
         return opacity == null ? 100 : opacity.intValue();
     }
     
@@ -223,7 +223,7 @@ implements Pane {
      * @return the selection background
      */
     public Color getSelectionBackground() {
-        return (Color) getProperty(PROPERTY_SELECTION_BACKGROUND);
+        return (Color) get(PROPERTY_SELECTION_BACKGROUND);
     }
     
     /**
@@ -233,7 +233,7 @@ implements Pane {
      * @return the selection background image
      */
     public FillImage getSelectionBackgroundImage() {
-        return (FillImage) getProperty(PROPERTY_SELECTION_BACKGROUND_IMAGE);
+        return (FillImage) get(PROPERTY_SELECTION_BACKGROUND_IMAGE);
     }
     
     /**
@@ -243,7 +243,7 @@ implements Pane {
      * @return the selection foreground
      */
     public Color getSelectionForeground() {
-        return (Color) getProperty(PROPERTY_SELECTION_FOREGROUND);
+        return (Color) get(PROPERTY_SELECTION_FOREGROUND);
     }
 
     /**
@@ -266,7 +266,7 @@ implements Pane {
      * @param newValue the new default background image
      */
     public void setBackgroundImage(FillImage newValue) {
-        setProperty(PROPERTY_BACKGROUND_IMAGE, newValue);
+        set(PROPERTY_BACKGROUND_IMAGE, newValue);
     }
     
     /**
@@ -277,7 +277,7 @@ implements Pane {
      * @param newValue the new default border
      */
     public void setBorder(Border newValue) {
-        setProperty(PROPERTY_BORDER, newValue);
+        set(PROPERTY_BORDER, newValue);
     }
     
     /**
@@ -286,7 +286,7 @@ implements Pane {
      * @param newValue the new disabled background
      */
     public void setDisabledBackground(Color newValue) {
-        setProperty(PROPERTY_DISABLED_BACKGROUND, newValue);
+        set(PROPERTY_DISABLED_BACKGROUND, newValue);
     }
     
     /**
@@ -295,7 +295,7 @@ implements Pane {
      * @param newValue the new disabled background image
      */
     public void setDisabledBackgroundImage(FillImage newValue) {
-        setProperty(PROPERTY_DISABLED_BACKGROUND_IMAGE, newValue);
+        set(PROPERTY_DISABLED_BACKGROUND_IMAGE, newValue);
     }
     
     /**
@@ -304,7 +304,7 @@ implements Pane {
      * @param newValue the new disabled foreground
      */
     public void setDisabledForeground(Color newValue) {
-        setProperty(PROPERTY_DISABLED_FOREGROUND, newValue);
+        set(PROPERTY_DISABLED_FOREGROUND, newValue);
     }
     
     /**
@@ -316,7 +316,7 @@ implements Pane {
      * @param newValue the new menu background
      */
     public void setMenuBackground(Color newValue) {
-        setProperty(PROPERTY_MENU_BACKGROUND, newValue);
+        set(PROPERTY_MENU_BACKGROUND, newValue);
     }
     
     /**
@@ -328,7 +328,7 @@ implements Pane {
      * @param newValue the new menu background image
      */
     public void setMenuBackgroundImage(FillImage newValue) {
-        setProperty(PROPERTY_MENU_BACKGROUND_IMAGE, newValue);
+        set(PROPERTY_MENU_BACKGROUND_IMAGE, newValue);
     }
     
     /**
@@ -340,7 +340,7 @@ implements Pane {
      * @param newValue the new menu border
      */
     public void setMenuBorder(Border newValue) {
-        setProperty(PROPERTY_MENU_BORDER, newValue);
+        set(PROPERTY_MENU_BORDER, newValue);
     }
     
     /**
@@ -349,7 +349,7 @@ implements Pane {
      * @param newValue the new menu expand icon
      */
     public void setMenuExpandIcon(ImageReference newValue) {
-        setProperty(PROPERTY_MENU_EXPAND_ICON, newValue);
+        set(PROPERTY_MENU_EXPAND_ICON, newValue);
     }
 
     /**
@@ -361,7 +361,7 @@ implements Pane {
      * @param newValue the new menu foreground
      */
     public void setMenuForeground(Color newValue) {
-        setProperty(PROPERTY_MENU_FOREGROUND, newValue);
+        set(PROPERTY_MENU_FOREGROUND, newValue);
     }
     
     /**
@@ -373,7 +373,7 @@ implements Pane {
      * @param newValue the new opacity setting
      */
     public void setMenuOpacity(int newValue) {
-        setProperty(PROPERTY_MENU_OPACITY, new Integer(newValue));
+        set(PROPERTY_MENU_OPACITY, new Integer(newValue));
     }
     
     /**
@@ -383,7 +383,7 @@ implements Pane {
      * @param newValue the new selection background
      */
     public void setSelectionBackground(Color newValue) {
-        setProperty(PROPERTY_SELECTION_BACKGROUND, newValue);
+        set(PROPERTY_SELECTION_BACKGROUND, newValue);
     }
     
     /**
@@ -393,7 +393,7 @@ implements Pane {
      * @param newValue the new selection background image
      */
     public void setSelectionBackgroundImage(FillImage newValue) {
-        setProperty(PROPERTY_SELECTION_BACKGROUND_IMAGE, newValue);
+        set(PROPERTY_SELECTION_BACKGROUND_IMAGE, newValue);
     }
     
     /**
@@ -403,6 +403,6 @@ implements Pane {
      * @param newValue the new selection foreground
      */
     public void setSelectionForeground(Color newValue) {
-        setProperty(PROPERTY_SELECTION_FOREGROUND, newValue);
+        set(PROPERTY_SELECTION_FOREGROUND, newValue);
     }
 }

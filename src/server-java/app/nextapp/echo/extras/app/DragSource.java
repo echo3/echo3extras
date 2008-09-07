@@ -155,7 +155,7 @@ public class DragSource extends Component {
      * @return the tool tip text
      */
     public String getToolTipText(String newValue) {
-        return (String) getProperty(PROPERTY_TOOL_TIP_TEXT);
+        return (String) get(PROPERTY_TOOL_TIP_TEXT);
     }
     
     /**
@@ -202,6 +202,6 @@ public class DragSource extends Component {
      * @param newValue the new tool tip text
      */
     public void setToolTipText(String newValue) {
-        setProperty(PROPERTY_TOOL_TIP_TEXT, newValue);
+        set(PROPERTY_TOOL_TIP_TEXT, newValue);
     }
 }

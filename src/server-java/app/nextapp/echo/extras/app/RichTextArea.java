@@ -143,19 +143,19 @@ public class RichTextArea extends Component {
      * @return the border
      */
     public Border getBorder() {
-        return (Border) getProperty(PROPERTY_BORDER);
+        return (Border) get(PROPERTY_BORDER);
     }
     
     public String getControlPaneButtonStyleName() {
-        return (String) getProperty(PROPERTY_CONTROL_PANE_BUTTON_STYLE_NAME);
+        return (String) get(PROPERTY_CONTROL_PANE_BUTTON_STYLE_NAME);
     }
     
     public String getControlPaneRowStyleName() {
-        return (String) getProperty(PROPERTY_CONTROL_PANE_ROW_STYLE_NAME);
+        return (String) get(PROPERTY_CONTROL_PANE_ROW_STYLE_NAME);
     }
     
     public String getControlPaneSplitPaneStyleName() {
-        return (String) getProperty(PROPERTY_CONTROL_PANE_SPLIT_PANE_STYLE_NAME);
+        return (String) get(PROPERTY_CONTROL_PANE_SPLIT_PANE_STYLE_NAME);
     }
     
     /**
@@ -168,11 +168,11 @@ public class RichTextArea extends Component {
     }
     
     public IconSet getIcons() {
-        return (IconSet) getProperty(PROPERTY_ICONS);
+        return (IconSet) get(PROPERTY_ICONS);
     }
     
     public String getMenuStyleName() {
-        return (String) getProperty(PROPERTY_MENU_STYLE_NAME);
+        return (String) get(PROPERTY_MENU_STYLE_NAME);
     }
     
     /**
@@ -188,11 +188,11 @@ public class RichTextArea extends Component {
     }
     
     public String getToolbarButtonStyleName() {
-        return (String) getProperty(PROPERTY_TOOLBAR_BUTTON_STYLE_NAME);
+        return (String) get(PROPERTY_TOOLBAR_BUTTON_STYLE_NAME);
     }
     
     public String getWindowPaneStyleName() {
-        return (String) getProperty(PROPERTY_WINDOW_PANE_STYLE_NAME);
+        return (String) get(PROPERTY_WINDOW_PANE_STYLE_NAME);
     }
     
     /**
@@ -212,19 +212,19 @@ public class RichTextArea extends Component {
      * @param newValue the new border
      */
     public void setBorder(Border newValue) {
-        setProperty(PROPERTY_BORDER, newValue);
+        set(PROPERTY_BORDER, newValue);
     }
 
     public void setControlPaneButtonStyleName(String newValue) {
-        setProperty(PROPERTY_CONTROL_PANE_BUTTON_STYLE_NAME, newValue);
+        set(PROPERTY_CONTROL_PANE_BUTTON_STYLE_NAME, newValue);
     }
 
     public void setControlPaneRowStyleName(String newValue) {
-        setProperty(PROPERTY_CONTROL_PANE_ROW_STYLE_NAME, newValue);
+        set(PROPERTY_CONTROL_PANE_ROW_STYLE_NAME, newValue);
     }
     
     public void setControlPaneSplitPaneStyleName(String newValue) {
-        setProperty(PROPERTY_CONTROL_PANE_SPLIT_PANE_STYLE_NAME, newValue);
+        set(PROPERTY_CONTROL_PANE_SPLIT_PANE_STYLE_NAME, newValue);
     }
     
     /**
@@ -245,11 +245,11 @@ public class RichTextArea extends Component {
     }
     
     public void setIcons(IconSet newValue) {
-        setProperty(PROPERTY_ICONS, newValue);
+        set(PROPERTY_ICONS, newValue);
     }
     
     public void setMenuStyleName(String newValue) {
-        setProperty(PROPERTY_MENU_STYLE_NAME, newValue);
+        set(PROPERTY_MENU_STYLE_NAME, newValue);
     }
     
     /**
@@ -262,10 +262,10 @@ public class RichTextArea extends Component {
     }
     
     public void setToolbarButtonStyleName(String newValue) {
-        setProperty(PROPERTY_TOOLBAR_BUTTON_STYLE_NAME, newValue);
+        set(PROPERTY_TOOLBAR_BUTTON_STYLE_NAME, newValue);
     }
 
     public void setWindowPaneStyleName(String newValue) {
-        setProperty(PROPERTY_WINDOW_PANE_STYLE_NAME, newValue);
+        set(PROPERTY_WINDOW_PANE_STYLE_NAME, newValue);
     }
 }

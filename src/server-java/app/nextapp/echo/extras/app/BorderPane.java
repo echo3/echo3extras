@@ -51,7 +51,7 @@ implements Pane, PaneContainer {
      * @return the border
      */
     public FillImageBorder getBorder() {
-        return (FillImageBorder) getProperty(PROPERTY_BORDER);
+        return (FillImageBorder) get(PROPERTY_BORDER);
     }
     /**
      * Returns the inset margin.
@@ -59,7 +59,7 @@ implements Pane, PaneContainer {
      * @return the inset margin
      */
     public Insets getInsets() {
-        return (Insets) getProperty(PROPERTY_INSETS);
+        return (Insets) get(PROPERTY_INSETS);
     }
     
     /**
@@ -68,7 +68,7 @@ implements Pane, PaneContainer {
      * @param newValue the new border
      */
     public void setBorder(FillImageBorder newValue) {
-        setProperty(PROPERTY_BORDER, newValue);
+        set(PROPERTY_BORDER, newValue);
     }
     
     /**
@@ -77,7 +77,7 @@ implements Pane, PaneContainer {
      * @param newValue the new inset margin
      */
     public void setInsets(Insets newValue) {
-        setProperty(PROPERTY_INSETS, newValue);
+        set(PROPERTY_INSETS, newValue);
     }
     
     /**

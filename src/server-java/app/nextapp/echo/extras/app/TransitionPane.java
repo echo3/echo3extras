@@ -124,7 +124,7 @@ implements Pane, PaneContainer {
      * @return the transition duration
      */
     public int getDuration() {
-        Integer duration = (Integer) getProperty(PROPERTY_DURATION);
+        Integer duration = (Integer) get(PROPERTY_DURATION);
         return duration == null ? DEFAULT_DURATION : duration.intValue();
     }
     
@@ -134,7 +134,7 @@ implements Pane, PaneContainer {
      * @return the transition type
      */
     public int getType() {
-        Integer type = (Integer) getProperty(PROPERTY_TYPE);
+        Integer type = (Integer) get(PROPERTY_TYPE);
         return type == null ? TYPE_IMMEDIATE_REPLACE : type.intValue();
     }
     
@@ -165,7 +165,7 @@ implements Pane, PaneContainer {
      * @param newValue the new transition duration
      */
     public void setDuration(int newValue) {
-        setProperty(PROPERTY_DURATION, new Integer(newValue));
+        set(PROPERTY_DURATION, new Integer(newValue));
     }
     
     /**
@@ -174,6 +174,6 @@ implements Pane, PaneContainer {
      * @param newValue the new transition type 
      */
     public void setType(int newValue) {
-        setProperty(PROPERTY_TYPE, new Integer(newValue));
+        set(PROPERTY_TYPE, new Integer(newValue));
     }
 }

@@ -49,7 +49,7 @@ public class GroupTest extends AbstractTest {
         super("Group", Styles.ICON_16_GROUP);
         final Group group = new Group();
         group.setTitle("GroupTitle");
-        group.setProperty("ieAlphaRenderBorder", Boolean.TRUE);
+        group.set("ieAlphaRenderBorder", Boolean.TRUE);
         
         add(group);
         setTestComponent(this, group);
