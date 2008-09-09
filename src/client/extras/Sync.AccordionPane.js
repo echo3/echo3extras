@@ -21,21 +21,26 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
     },
     
     _animationTime: 0,
+    _div: null,
+    _activeTabId: null,
+    _rotation: null,
+    _animationEnabled: true,
+    _animationSleepInterval: 1,
+    _tabs: null,
     
     $construct: function() {
-        this._paneDivElement = null;
-        this._activeTabId = null;
         this._tabs = [];
-        this._rotation = null;
-        this._animationEnabled = true;
-        this._animationSleepInterval = 1;
     },
     
     renderAdd: function(update, parentElement) {
         this._animationTime = this.component.render("animationTime", Extras.AccordionPane.DEFAULT_ANIMATION_TIME);
         this._activeTabId = this.component.get("activeTab");
         
-        this._paneDivElement = this._render();
+        this._div = document.createElement("div");
+        this._div.id = this.component.renderId;
+        this._div.style.cssText = "position:absolute;overflow:hidden;width:100%;height:100%;";
+        Echo.Sync.Color.renderFB(this.component, this._div);
+        Echo.Sync.Font.render(this.component.render("font"), this._div);
         
         var componentCount = this.component.getComponentCount();
         for (var i = 0; i < componentCount; ++i) {
@@ -43,13 +48,13 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
             var tab = new Extras.Sync.AccordionPane.Tab(child, this);
             this._tabs.push(tab);
             tab._render(this.client, update);
-            this._paneDivElement.appendChild(tab._tabDivElement);
-            this._paneDivElement.appendChild(tab._contentDivElement);
+            this._div.appendChild(tab._tabDivElement);
+            this._div.appendChild(tab._contentDivElement);
         }
         
         this._redrawTabs();
         
-        parentElement.appendChild(this._paneDivElement);
+        parentElement.appendChild(this._div);
     },
     
     renderDisplay: function() {
@@ -75,7 +80,7 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
         }
 
         if (fullRender) {
-            var element = this._paneDivElement;
+            var element = this._div;
             var containerElement = element.parentNode;
             Echo.Render.renderComponentDispose(update, update.parent);
             containerElement.removeChild(element);
@@ -94,20 +99,8 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
             this._tabs[i]._dispose();
         }
         this._tabs = [];
-        this._paneDivElement.id = "";
-        this._paneDivElement = null;
-    },
-    
-    _render: function() {
-        var paneDivElement = document.createElement("div");
-        paneDivElement.id = this.component.renderId;
-        paneDivElement.style.position = "absolute";
-        paneDivElement.style.overflow = "hidden";
-        paneDivElement.style.width = "100%";
-        paneDivElement.style.height = "100%";
-        Echo.Sync.Color.renderFB(this.component, paneDivElement);
-        Echo.Sync.Font.render(this.component.render("font"), paneDivElement);
-        return paneDivElement;
+        this._div.id = "";
+        this._div = null;
     },
     
     /**
