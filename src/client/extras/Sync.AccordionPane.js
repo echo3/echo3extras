@@ -1,4 +1,3 @@
-// FIXME Update animation to use Core.Web.Scheduler.
 // FIXME handle enabled/disabled state
 
 /**
@@ -99,7 +98,6 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
             this._tabs[i]._dispose();
         }
         this._tabs = [];
-        this._div.id = "";
         this._div = null;
     },
     
@@ -408,33 +406,13 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
  * @param newTab the new tab to display
  */
 Extras.Sync.AccordionPane.Rotation = Core.extend({
-
-    $static: {
-    
-        /**
-         * Contains mappings from AccordionPane render ids to Rotation objects.
-         * 
-         * @type {Object}
-         */
-        _idToRotation: {},
-
-        /**
-         * Static method invoked by window.setTimeout which invokes appropriate Rotation instance method.
-         *
-         * @param renderId the render id of the Rotation's AccordionPane to step
-         */
-        _animationStep: function(renderId) {
-            var rotation = Extras.Sync.AccordionPane.Rotation._idToRotation[renderId];
-            if (rotation) {
-                rotation._animationStep();
-            }
-        }
-    },
-    
     $construct: function(parent, oldTab, newTab) {
         this._parent = parent;
         this._oldTab = oldTab;
         this._newTab = newTab;
+        
+        this._animationRunnable = new Core.Web.Scheduler.MethodRunnable(Core.method(this, this._animationStep), 
+                parent._animationSleepInterval, false);
         
         this._oldTabContentInsets = Echo.Sync.Insets.toPixels(this._oldTab._getContentInsets());
         this._newTabContentInsets = Echo.Sync.Insets.toPixels(this._newTab._getContentInsets());
@@ -587,10 +565,7 @@ Extras.Sync.AccordionPane.Rotation = Core.extend({
             ++this._animationStepIndex;
         
             // Continue Rotation.
-            var renderId = this._parent.component.renderId;
-            Extras.Sync.AccordionPane.Rotation._idToRotation[renderId] = this;
-            window.setTimeout("Extras.Sync.AccordionPane.Rotation._animationStep(\"" + renderId + "\")", 
-                    this._parent._animationSleepInterval);
+            Core.Web.Scheduler.add(this._animationRunnable);
         } else {
             // Complete Rotation.
             this._overflowRestore();
@@ -624,7 +599,6 @@ Extras.Sync.AccordionPane.Rotation = Core.extend({
     
     _dispose: function() {
         var renderId = this._parent.component.renderId;
-        delete Extras.Sync.AccordionPane.Rotation._idToRotation[renderId];
         this._parent._rotation = null;
         this._parent = null;
         this._oldTab = null;
