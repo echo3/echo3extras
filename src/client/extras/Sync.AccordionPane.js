@@ -1,5 +1,3 @@
-// FIXME handle enabled/disabled state
-
 /**
  * Component rendering peer: AccordionPane
  */
@@ -338,7 +336,7 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
     },
     
     _processClick: function(e) {
-        if (!this._parent.component.isActive()) {
+        if (!this._parent.client.verifyInput(this._parent.component)) {
             return;
         }
         this._parent._selectTab(this._childComponent.renderId);
@@ -346,14 +344,14 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
     },
     
     _processEnter: function(e) {
-        if (!this._parent.component.isActive()) {
+        if (!this._parent.client.verifyInput(this._parent.component)) {
             return;
         }
         this._highlight(true);
     },
     
     _processExit: function(e) {
-        if (!this._parent.component.isActive()) {
+        if (!this._parent.client.verifyInput(this._parent.component)) {
             return;
         }
         this._highlight(false);
