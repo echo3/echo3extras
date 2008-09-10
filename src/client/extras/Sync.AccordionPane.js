@@ -362,23 +362,15 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
     _render: function(client, update) {
         this._tabDiv = document.createElement("div");
         this._tabDiv.id = this._parent.component.renderId + "_tab_" + this._childComponent.renderId;
-        this._tabDiv.style.cursor = "pointer";
+        this._tabDiv.style.cssText = "cursor:pointer;position:absolute;left:0;right:0;overflow:hidden;";
         this._tabDiv.style.height = Extras.Sync.AccordionPane._defaultTabHeight;
         Echo.Sync.Insets.render(this._parent._getTabInsets(), this._tabDiv, "padding");
-        this._tabDiv.style.position = "absolute";
-        this._tabDiv.style.left = "0px";
-        this._tabDiv.style.right = "0px";
-        this._tabDiv.style.overflow = "hidden";
         this._tabDiv.appendChild(document.createTextNode(this._getTitle()));
     
         this._contentDiv = document.createElement("div");
         this._contentDiv.id = this._parent.component.renderId + "_content_" + this._childComponent.renderId;
-        this._contentDiv.style.display = "none";
-        this._contentDiv.style.position = "absolute";
-        this._contentDiv.style.left = "0px";
-        this._contentDiv.style.right = "0px";
+        this._contentDiv.style.cssText = "display:none;position:absolute;left:0;right:0;overflow:auto;";
         Echo.Sync.Insets.render(this._getContentInsets(), this._contentDiv, "padding");
-        this._contentDiv.style.overflow = "auto";
     
         Echo.Render.renderComponentAdd(update, this._childComponent, this._contentDiv);
         
@@ -499,7 +491,6 @@ Extras.Sync.AccordionPane.Rotation = Core.extend({
             var stepPosition = Math.round(stepFactor * this._animationDistance);
     
             if (this._directionDown) {
-    
                 // Move each moving tab to next step position.
                 for (var i = 0; i < this._rotatingTabs.length; ++i) {
                     var newPosition = stepPosition + this._startTopPosition 
