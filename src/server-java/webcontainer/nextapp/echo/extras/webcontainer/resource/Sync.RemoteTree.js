@@ -395,11 +395,11 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
     _renderExpandoElement: function(node, expandoElement) {
         if (node.isLeaf()) {
             var joinIcon = this._getJoinIcon(node);
-            var joinFillImage = { url: joinIcon, repeat: "no-repeat", x: "50%", y: 0 };
+            var joinFillImage = { url: joinIcon.url ? joinIcon.url : joinIcon, repeat: "no-repeat", x: "50%", y: 0 };
             Echo.Sync.FillImage.render(joinFillImage, expandoElement);
         } else {
             var toggleIcon = this._getToggleIcon(node);
-            var toggleFillImage = { url: toggleIcon, repeat: "no-repeat", x: "50%", y: 0 };
+            var toggleFillImage = { url: toggleIcon.url ? toggleIcon.url : toggleIcon, repeat: "no-repeat", x: "50%", y: 0 };
             Echo.Sync.FillImage.render(toggleFillImage, expandoElement);
         }
     },
