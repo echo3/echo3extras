@@ -411,6 +411,7 @@ Extras.Sync.AccordionPane.Rotation = Core.extend({
     _oldTab: null,
     _newTab: null,
     _animationRunnable: null,
+    _animationStepIndex: 0,
     
     $construct: function(parent, oldTab, newTab) {
         this._parent = parent;
@@ -429,8 +430,6 @@ Extras.Sync.AccordionPane.Rotation = Core.extend({
         this._tabHeight = this._parent._calculateTabHeight();
         
         this._rotatingTabs = [];
-        
-        this._animationStepIndex = 0;
         
         this._oldTabIndex = Core.Arrays.indexOf(this._parent._tabs, this._oldTab);
         this._newTabIndex = Core.Arrays.indexOf(this._parent._tabs, this._newTab);
@@ -483,7 +482,6 @@ Extras.Sync.AccordionPane.Rotation = Core.extend({
             this._animationDistance = this._endBottomPosition - this._startBottomPosition;
         }
 
-        this._overflowUpdate();
         this._animationStep();
     },
     
@@ -574,33 +572,14 @@ Extras.Sync.AccordionPane.Rotation = Core.extend({
             Core.Web.Scheduler.add(this._animationRunnable);
         } else {
             // Complete Rotation.
-            this._overflowRestore();
             var parent = this._parent;
             this._dispose();
             parent._redrawTabs();
         }
     },
-    
-    _overflowUpdate: function() {
-        if (this._oldTab._contentDivElement.style.overflow) {
-            this._oldContentOverflow = this._oldTab._contentDivElement.style.overflow; 
-        }
-        if (this._newTab._contentDivElement.style.overflow) {
-            this._newContentOverflow = this._newTab._contentDivElement.style.overflow; 
-        }
-    
-        this._oldTab._contentDivElement.style.overflow = "hidden";
-        this._newTab._contentDivElement.style.overflow = "hidden";
-    },
-    
-    _overflowRestore: function() {
-        this._oldTab._contentDivElement.style.overflow = this._oldContentOverflow ? this._oldContentOverflow : ""; 
-        this._newTab._contentDivElement.style.overflow = this._newContentOverflow ? this._newContentOverflow : "";
-    },
-    
+
     _cancel: function() {
         Core.Web.Scheduler.remove(this._animationRunnable);
-        this._overflowRestore();
         this._dispose();
     },
     
