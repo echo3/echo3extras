@@ -254,54 +254,22 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
 
 Extras.Sync.AccordionPane.Tab = Core.extend({
     
+    _rendered: false,
+    _tabDivElement: null,
+    _parent: null,
+    _contentDivElement: null,
+    _childComponent: null,
+    
     $construct: function(childComponent, parent) {
         this._childComponent = childComponent;
         this._parent = parent;
-        this._rendered = false;
-        this._tabDivElement = null;
-        this._contentDivElement = null;
-    },
-    
-    _render: function(client, update) {
-        this._tabDivElement = document.createElement("div");
-        this._tabDivElement.id = this._parent.component.renderId + "_tab_" + this._childComponent.renderId;
-        this._tabDivElement.style.cursor = "pointer";
-        this._tabDivElement.style.height = Extras.Sync.AccordionPane._defaultTabHeight;
-        Echo.Sync.Insets.render(this._parent._getTabInsets(), this._tabDivElement, "padding");
-        this._tabDivElement.style.position = "absolute";
-        this._tabDivElement.style.left = "0px";
-        this._tabDivElement.style.right = "0px";
-        this._tabDivElement.style.overflow = "hidden";
-        this._tabDivElement.appendChild(document.createTextNode(this._getTitle()));
-    
-        this._contentDivElement = document.createElement("div");
-        this._contentDivElement.id = this._parent.component.renderId + "_content_" + this._childComponent.renderId;
-        this._contentDivElement.style.display = "none";
-        this._contentDivElement.style.position = "absolute";
-        this._contentDivElement.style.left = "0px";
-        this._contentDivElement.style.right = "0px";
-        Echo.Sync.Insets.render(this._getContentInsets(), this._contentDivElement, "padding");
-        this._contentDivElement.style.overflow = "auto";
-    
-        Echo.Render.renderComponentAdd(update, this._childComponent, this._contentDivElement);
-        
-        this._highlight(false);
-        this._addEventListeners();
-    },
-    
-    _renderDisplay: function() {
-        Core.Web.VirtualPosition.redraw(this._tabDivElement);
-        Core.Web.VirtualPosition.redraw(this._contentDivElement);
     },
     
     _dispose: function() {
         Core.Web.Event.removeAll(this._tabDivElement);
-        
         this._parent = null;
         this._childComponent = null;
-        this._tabDivElement.id = "";
         this._tabDivElement = null;
-        this._contentDivElement.id = "";
         this._contentDivElement = null;
     },
     
@@ -389,6 +357,38 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
             return;
         }
         this._highlight(false);
+    },
+    
+    _render: function(client, update) {
+        this._tabDivElement = document.createElement("div");
+        this._tabDivElement.id = this._parent.component.renderId + "_tab_" + this._childComponent.renderId;
+        this._tabDivElement.style.cursor = "pointer";
+        this._tabDivElement.style.height = Extras.Sync.AccordionPane._defaultTabHeight;
+        Echo.Sync.Insets.render(this._parent._getTabInsets(), this._tabDivElement, "padding");
+        this._tabDivElement.style.position = "absolute";
+        this._tabDivElement.style.left = "0px";
+        this._tabDivElement.style.right = "0px";
+        this._tabDivElement.style.overflow = "hidden";
+        this._tabDivElement.appendChild(document.createTextNode(this._getTitle()));
+    
+        this._contentDivElement = document.createElement("div");
+        this._contentDivElement.id = this._parent.component.renderId + "_content_" + this._childComponent.renderId;
+        this._contentDivElement.style.display = "none";
+        this._contentDivElement.style.position = "absolute";
+        this._contentDivElement.style.left = "0px";
+        this._contentDivElement.style.right = "0px";
+        Echo.Sync.Insets.render(this._getContentInsets(), this._contentDivElement, "padding");
+        this._contentDivElement.style.overflow = "auto";
+    
+        Echo.Render.renderComponentAdd(update, this._childComponent, this._contentDivElement);
+        
+        this._highlight(false);
+        this._addEventListeners();
+    },
+    
+    _renderDisplay: function() {
+        Core.Web.VirtualPosition.redraw(this._tabDivElement);
+        Core.Web.VirtualPosition.redraw(this._contentDivElement);
     }
 });
 
@@ -406,6 +406,12 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
  * @param newTab the new tab to display
  */
 Extras.Sync.AccordionPane.Rotation = Core.extend({
+    
+    _parent: null,
+    _oldTab: null,
+    _newTab: null,
+    _animationRunnable: null,
+    
     $construct: function(parent, oldTab, newTab) {
         this._parent = parent;
         this._oldTab = oldTab;
@@ -593,11 +599,13 @@ Extras.Sync.AccordionPane.Rotation = Core.extend({
     },
     
     _cancel: function() {
+        Core.Web.Scheduler.remove(this._animationRunnable);
         this._overflowRestore();
         this._dispose();
     },
     
     _dispose: function() {
+        Core.Web.Scheduler.remove
         var renderId = this._parent.component.renderId;
         this._parent._rotation = null;
         this._parent = null;
