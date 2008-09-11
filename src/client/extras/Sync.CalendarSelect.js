@@ -65,10 +65,10 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         Echo.Render.registerPeer("Extras.CalendarSelect", this);
     },
     
-    _element: null,
+    _div: null,
     _monthSelect: null,
     _yearField: null,
-    _dayTdElements: null,
+    _dayTds: null,
     
     _year: null,
     _month: null,
@@ -177,39 +177,39 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
 
         var enabled = this.component.isRenderEnabled()
     
-        var i, j, tdElement, trElement;
+        var i, j, td, tr;
         var dayOfWeekNameAbbreviationLength = parseInt(this.component.render("dayOfWeekNameAbbreviationLength", 2));
         var firstDayOfWeek = this._msg["FirstDayOfWeek"];
         if (!firstDayOfWeek) {
             firstDayOfWeek = 0;
         }
     
-        this._element = document.createElement("div");
-        this._element.style.whiteSpace = "nowrap";
+        this._div = document.createElement("div");
+        this._div.style.whiteSpace = "nowrap";
         
         this._monthSelect = document.createElement("select");
         for (var i = 0; i < 12; ++i) {
-            var optionElement = document.createElement("option");
-            optionElement.appendChild(document.createTextNode(this._msg["Month." + i]));
-            this._monthSelect.appendChild(optionElement);
+            var option = document.createElement("option");
+            option.appendChild(document.createTextNode(this._msg["Month." + i]));
+            this._monthSelect.appendChild(option);
         }
         if (!enabled) {
             this._monthSelect.disabled = true;
         }
-        this._element.appendChild(this._monthSelect);
+        this._div.appendChild(this._monthSelect);
         
-        this._element.appendChild(document.createTextNode(" "));
+        this._div.appendChild(document.createTextNode(" "));
         
-        this._yearDecrementElement = document.createElement("span");
-        this._yearDecrementElement.style.cursor = "pointer";
+        this._yearDecSpan = document.createElement("span");
+        this._yearDecSpan.style.cursor = "pointer";
         if (this._icons.decrement) {
-            var imgElement = document.createElement("img");
-            imgElement.src = this._icons.decrement;
-            this._yearDecrementElement.appendChild(imgElement);
+            var img = document.createElement("img");
+            img.src = this._icons.decrement;
+            this._yearDecSpan.appendChild(img);
         } else {
-            this._yearDecrementElement.appendChild(document.createTextNode("<"));
+            this._yearDecSpan.appendChild(document.createTextNode("<"));
         }
-        this._element.appendChild(this._yearDecrementElement);
+        this._div.appendChild(this._yearDecSpan);
         
         this._yearField = document.createElement("input");
         this._yearField.type = "text";
@@ -218,72 +218,72 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         if (!enabled) {
             this._yearField.readOnly = true;
         }
-        this._element.appendChild(this._yearField);
+        this._div.appendChild(this._yearField);
 
-        this._yearIncrementElement = document.createElement("span");
-        this._yearIncrementElement.style.cursor = "pointer";
+        this._yearIncSpan = document.createElement("span");
+        this._yearIncSpan.style.cursor = "pointer";
         if (this._icons.increment) {
-            var imgElement = document.createElement("img");
-            imgElement.src = this._icons.increment;
-            this._yearIncrementElement.appendChild(imgElement);
+            var img = document.createElement("img");
+            img.src = this._icons.increment;
+            this._yearIncSpan.appendChild(img);
         } else {
-            this._yearIncrementElement.appendChild(document.createTextNode(">"));
+            this._yearIncSpan.appendChild(document.createTextNode(">"));
         }
-        this._element.appendChild(this._yearIncrementElement);
+        this._div.appendChild(this._yearIncSpan);
         
-        this._tableElement = document.createElement("table");
-        this._tableElement.style.borderCollapse = "collapse";
-        this._tableElement.style.margin = "1px";
+        this._table = document.createElement("table");
+        this._table.style.borderCollapse = "collapse";
+        this._table.style.margin = "1px";
         Echo.Sync.Border.render(this.component.render("border", 
-                Extras.Sync.CalendarSelect.DEFAULT_BORDER), this._tableElement);
+                Extras.Sync.CalendarSelect.DEFAULT_BORDER), this._table);
         Echo.Sync.Color.render(this.component.render("foreground",
-                Extras.Sync.CalendarSelect.DEFAULT_FOREGROUND), this._tableElement); 
-        Echo.Sync.FillImage.render(this.component.render("backgroundImage"), this._tableElement); 
+                Extras.Sync.CalendarSelect.DEFAULT_FOREGROUND), this._table); 
+        Echo.Sync.FillImage.render(this.component.render("backgroundImage"), this._table); 
         
-        var tbodyElement = document.createElement("tbody");
+        var tbody = document.createElement("tbody");
         
-        trElement = document.createElement("tr");
+        tr = document.createElement("tr");
         for (j = 0; j < 7; ++j) {
-            tdElement = document.createElement("td");
+            td = document.createElement("td");
             var dayOfWeekName = this._msg["DayOfWeek." + ((firstDayOfWeek + j) % 7)];
             if (dayOfWeekNameAbbreviationLength > 0) {
                 dayOfWeekName = dayOfWeekName.substring(0, dayOfWeekNameAbbreviationLength);
             }
-            tdElement.appendChild(document.createTextNode(dayOfWeekName));
-            trElement.appendChild(tdElement);
+            td.appendChild(document.createTextNode(dayOfWeekName));
+            tr.appendChild(td);
         }
-        tbodyElement.appendChild(trElement);
+        tbody.appendChild(tr);
         
-        this._dayTdElements = [];
+        this._dayTds = [];
         
-        var prototypeTdElement = document.createElement("td");
-        prototypeTdElement.style.cursor = "pointer";
-        prototypeTdElement.style.textAlign = "right";
-        prototypeTdElement.style.borderWidth = "0";
-        prototypeTdElement.style.padding = "0px 5px";
+        var prototypeTd = document.createElement("td");
+        prototypeTd.style.cursor = "pointer";
+        prototypeTd.style.textAlign = "right";
+        prototypeTd.style.borderWidth = "0";
+        prototypeTd.style.padding = "0px 5px";
         
         for (i = 0; i < 6; ++i) {
-            this._dayTdElements[i] = [];
-            trElement = document.createElement("tr");
+            this._dayTds[i] = [];
+            tr = document.createElement("tr");
             for (j = 0; j < 7; ++j) {
-                this._dayTdElements[i][j] = prototypeTdElement.cloneNode(false);
-                this._dayTdElements[i][j]._cellIndex = i * 7 + j;
-                trElement.appendChild(this._dayTdElements[i][j]);
+                this._dayTds[i][j] = prototypeTd.cloneNode(false);
+                this._dayTds[i][j]._cellIndex = i * 7 + j;
+                tr.appendChild(this._dayTds[i][j]);
             }
-            tbodyElement.appendChild(trElement);
+            tbody.appendChild(tr);
         }
         
-        this._tableElement.appendChild(tbodyElement);
-        this._element.appendChild(this._tableElement);
+        this._table.appendChild(tbody);
+        this._div.appendChild(this._table);
         
-        parentElement.appendChild(this._element);
+        parentElement.appendChild(this._div);
         
 
         Core.Web.Event.add(this._monthSelect, "change", Core.method(this, this._processMonthSelect), false);
         Core.Web.Event.add(this._yearField, "change", Core.method(this, this._processYearChange), false);
-        Core.Web.Event.add(this._yearDecrementElement, "click", Core.method(this, this._processYearDecrement), false);
-        Core.Web.Event.add(this._yearIncrementElement, "click", Core.method(this, this._processYearIncrement), false);
-        Core.Web.Event.add(this._tableElement, "click", Core.method(this, this._processDateSelect), false);
+        Core.Web.Event.add(this._yearDecSpan, "click", Core.method(this, this._processYearDecrement), false);
+        Core.Web.Event.add(this._yearIncSpan, "click", Core.method(this, this._processYearIncrement), false);
+        Core.Web.Event.add(this._table, "click", Core.method(this, this._processDateSelect), false);
 
         var date = this.component.get("date");
         if (!date) {
@@ -297,18 +297,18 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
     renderDispose: function(update) {
         Core.Web.Event.removeAll(this._monthSelect);
         Core.Web.Event.removeAll(this._yearField);
-        Core.Web.Event.removeAll(this._yearDecrementElement);
-        Core.Web.Event.removeAll(this._yearIncrementElement);
-        Core.Web.Event.removeAll(this._tableElement);
+        Core.Web.Event.removeAll(this._yearDecSpan);
+        Core.Web.Event.removeAll(this._yearIncSpan);
+        Core.Web.Event.removeAll(this._table);
     
-        this._dayTdElements = null;
-        this._element = null;
+        this._dayTds = null;
+        this._div = null;
         this._monthSelect = null;
         this._yearField = null;
     },
     
     renderUpdate: function(update) {
-        var element = this._element;
+        var element = this._div;
         var containerElement = element.parentNode;
         Echo.Render.renderComponentDispose(update, update.parent);
         containerElement.removeChild(element);
@@ -344,34 +344,34 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         
         for (var i = 0; i < 6; ++i) {
             for (var j = 0; j < 7; ++j) {
-                var tdElement = this._dayTdElements[i][j];
+                var td = this._dayTds[i][j];
                 
-                while (tdElement.hasChildNodes()) {
-                    tdElement.removeChild(tdElement.firstChild);
+                while (td.hasChildNodes()) {
+                    td.removeChild(td.firstChild);
                 }
                 
                 var renderedText;
                 var styleText;
                 if (day < 1) {
                     renderedText = this._daysInPreviousMonth + day;
-                    Echo.Sync.Color.renderClear(adjacentMonthDateForeground, tdElement, "color");
-                    Echo.Sync.Color.renderClear(null, tdElement, "backgroundColor");
+                    Echo.Sync.Color.renderClear(adjacentMonthDateForeground, td, "color");
+                    Echo.Sync.Color.renderClear(null, td, "backgroundColor");
                 } else if (day > this._daysInMonth) {
                     renderedText = day - this._daysInMonth;
-                    Echo.Sync.Color.renderClear(adjacentMonthDateForeground, tdElement, "color");
-                    Echo.Sync.Color.renderClear(null, tdElement, "backgroundColor");
+                    Echo.Sync.Color.renderClear(adjacentMonthDateForeground, td, "color");
+                    Echo.Sync.Color.renderClear(null, td, "backgroundColor");
                 } else {
                     renderedText = day;
                     if (day == this._day) {
-                        Echo.Sync.Color.renderClear(selectedForeground, tdElement, "color");
-                        Echo.Sync.Color.renderClear(selectedBackground, tdElement, "backgroundColor");
+                        Echo.Sync.Color.renderClear(selectedForeground, td, "color");
+                        Echo.Sync.Color.renderClear(selectedBackground, td, "backgroundColor");
                     } else {
-                        Echo.Sync.Color.renderClear(foreground, tdElement, "color");
-                        Echo.Sync.Color.renderClear(null, tdElement, "backgroundColor");
+                        Echo.Sync.Color.renderClear(foreground, td, "color");
+                        Echo.Sync.Color.renderClear(null, td, "backgroundColor");
                     }
                 }
                 var textNode = document.createTextNode(renderedText);
-                tdElement.appendChild(textNode);
+                td.appendChild(textNode);
                 ++day;
             }
         }
