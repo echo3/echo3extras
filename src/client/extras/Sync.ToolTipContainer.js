@@ -8,30 +8,31 @@ Extras.Sync.ToolTipContainer = Core.extend(Echo.Render.ComponentSync, {
     },
     
     $construct: function() {
-        this._divElement = null;
-        this._applyDivElement = null;
-        this._tooltipDivElement = null;
+        this._div = null;
+        this._applyDiv = null;
+        this._toolTipDiv = null;
     },
     
     renderAdd: function(update, parentElement) {
-        this._divElement = document.createElement("div");
+        this._div = document.createElement("div");
+        this._div.id = this.component.renderId;
         var componentCount = this.component.getComponentCount();
         
         if (componentCount > 0) {
-            this._applyDivElement = this._createApplyTo(update);
-            this._divElement.appendChild(this._applyDivElement);
+            this._applyDiv = this._createApplyTo(update);
+            this._div.appendChild(this._applyDiv);
         }
         
         if (componentCount > 1) {
-            this._tooltipDivElement = this._createToolTip(update);
-            document.body.appendChild(this._tooltipDivElement);
+            this._toolTipDiv = this._createToolTip(update);
+            document.body.appendChild(this._toolTipDiv);
         }
         
-        parentElement.appendChild(this._divElement);
+        parentElement.appendChild(this._div);
     },
     
     renderUpdate: function(update) {
-        var element = this._divElement;
+        var element = this._div;
         var containerElement = element.parentNode;
         Echo.Render.renderComponentDispose(update, update.parent);
         containerElement.removeChild(element);
@@ -40,59 +41,57 @@ Extras.Sync.ToolTipContainer = Core.extend(Echo.Render.ComponentSync, {
     },
     
     renderDispose: function(update) {
-        this._divElement = null;
+        this._div = null;
         
-        if (this._applyDivElement) {
-            Core.Web.Event.removeAll(this._applyDivElement);
-            this._applyDivElement.id = "";
-            this._applyDivElement = null;
+        if (this._applyDiv) {
+            Core.Web.Event.removeAll(this._applyDiv);
+            this._applyDiv = null;
         }
         
-        if (this._tooltipDivElement && this._tooltipDivElement.parentNode) {
-            this._tooltipDivElement.parentNode.removeChild(this._tooltipDivElement);
+        if (this._toolTipDiv && this._toolTipDiv.parentNode) {
+            this._toolTipDiv.parentNode.removeChild(this._toolTipDiv);
         }
-        this._tooltipDivElement = null;
+        this._toolTipDiv = null;
     },
     
     _createToolTip: function(update) {
-        var tooltipDivElement = document.createElement("div");
-        tooltipDivElement.style.zIndex = 32767;
-        tooltipDivElement.style.visibility = "hidden";
-        tooltipDivElement.style.position = "absolute";
+        var div = document.createElement("div");
+        div.style.zIndex = 32767;
+        div.style.visibility = "hidden";
+        div.style.position = "absolute";
         var width = this.component.render("width");
         if (width) {
-            tooltipDivElement.style.width = Echo.Sync.Extent.toCssValue(width);
+            div.style.width = Echo.Sync.Extent.toCssValue(width);
         }
-        Echo.Render.renderComponentAdd(update, this.component.getComponent(1), tooltipDivElement);
-        return tooltipDivElement;
+        Echo.Render.renderComponentAdd(update, this.component.getComponent(1), div);
+        return div;
     },
     
     _createApplyTo: function(update) {
         var applyToComponent = this.component.getComponent(0);
         
-        var applyDivElement = document.createElement("div");
-        applyDivElement.id = applyToComponent.renderId;
-        applyDivElement.style.cursor = "default";
-        Echo.Render.renderComponentAdd(update, applyToComponent, applyDivElement);
+        var div = document.createElement("div");
+        div.style.cursor = "default";
+        Echo.Render.renderComponentAdd(update, applyToComponent, div);
         
         if (this.component.getComponentCount() > 1) {
             var mouseEnterLeaveSupport = Core.Web.Env.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED;
             var enterEvent = mouseEnterLeaveSupport ? "mouseenter" : "mouseover";
             var exitEvent = mouseEnterLeaveSupport ? "mouseleave" : "mouseout";
-            Core.Web.Event.add(applyDivElement, enterEvent, Core.method(this, this._processRolloverEnter), true);
-            Core.Web.Event.add(applyDivElement, exitEvent, Core.method(this, this._processRolloverExit), true);
-            Core.Web.Event.add(applyDivElement, "mousemove", Core.method(this, this._processMove), true);
+            Core.Web.Event.add(div, enterEvent, Core.method(this, this._processRolloverEnter), true);
+            Core.Web.Event.add(div, exitEvent, Core.method(this, this._processRolloverExit), true);
+            Core.Web.Event.add(div, "mousemove", Core.method(this, this._processMove), true);
         }
         
-        return applyDivElement;
+        return div;
     },
     
     _positionToolTip: function(e) {
         var x = e.pageX || (e.clientX + (document.documentElement.scrollLeft || document.body.scrollLeft));
         var y = e.pageY || (e.clientY + (document.documentElement.scrollTop || document.body.scrollTop));
         
-        this._tooltipDivElement.style.left = (x + 10) + "px";
-        this._tooltipDivElement.style.top = (y + 10) + "px";
+        this._toolTipDiv.style.left = (x + 10) + "px";
+        this._toolTipDiv.style.top = (y + 10) + "px";
     },
     
     _processMove: function(e) {
@@ -108,7 +107,7 @@ Extras.Sync.ToolTipContainer = Core.extend(Echo.Render.ComponentSync, {
             return;
         }
         this._positionToolTip(e);
-        this._tooltipDivElement.style.visibility = "visible";
+        this._toolTipDiv.style.visibility = "visible";
         return true;
     },
     
@@ -116,7 +115,7 @@ Extras.Sync.ToolTipContainer = Core.extend(Echo.Render.ComponentSync, {
         if (!this.component.isActive()) {
             return;
         }
-        this._tooltipDivElement.style.visibility = "hidden";
+        this._toolTipDiv.style.visibility = "hidden";
         return true;
     }
 });
