@@ -171,9 +171,10 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
                 this._tabs[i]._containerDiv.style.top = (tabHeight * (i + 1)) + "px";
                 var bottomPx = tabHeight * (this._tabs.length - i - 1);
                 this._tabs[i]._containerDiv.style.bottom = bottomPx + "px";
-                this._tabs[i]._contentDiv.style.height = "";
                 this._tabs[i]._contentDiv.style.top = 0;
                 this._tabs[i]._contentDiv.style.bottom = 0;
+                this._tabs[i]._contentDiv.style.height = "";
+                Core.Web.VirtualPosition.redraw(this._tabs[i]._contentDiv);
             } else {
                 this._tabs[i]._containerDiv.style.display = "none";
             }
