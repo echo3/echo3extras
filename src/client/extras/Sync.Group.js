@@ -26,7 +26,7 @@ Extras.Sync.Group = Core.extend(Echo.Render.ComponentSync, {
     },
 
     $construct: function() {
-        this._groupDivElement = null;
+        this._div = null;
         this._borderImages = null;
     },
     
@@ -41,24 +41,20 @@ Extras.Sync.Group = Core.extend(Echo.Render.ComponentSync, {
         return this.client.getResourceUrl("Extras", Extras.Sync.Group.DEFAULT_BORDER_IMAGES[position]);
     },
     
-    getElement: function() {
-        return this._groupDivElement;
-    },
-    
     renderAdd: function(update, parentElement) {
         this._borderImages = this.component.render("borderImage");
         
-        this._groupDivElement = document.createElement("div");
-        this._groupDivElement.id = this.component.renderId;
-        Echo.Sync.Color.render(this.component.render("foreground"), this._groupDivElement, "color");
+        this._div = document.createElement("div");
+        this._div.id = this.component.renderId;
+        Echo.Sync.Color.render(this.component.render("foreground"), this._div, "color");
     
-        var contentElement = this._renderContent();
-        var borderParts = this._renderBorder(contentElement);
+        var content = this._renderContent();
+        var borderParts = this._renderBorder(content);
         for (var i = 0; i < borderParts.length; i++) {
-            this._groupDivElement.appendChild(borderParts[i]);
+            this._div.appendChild(borderParts[i]);
         }
         
-        parentElement.appendChild(this._groupDivElement);
+        parentElement.appendChild(this._div);
     },
     
     _getRepeatingBorderImage: function(position, repeat, x, y) {
@@ -86,15 +82,15 @@ Extras.Sync.Group = Core.extend(Echo.Render.ComponentSync, {
         var flags = this.component.render("ieAlphaRenderBorder") 
                 ? Echo.Sync.FillImage.FLAG_ENABLE_IE_PNG_ALPHA_FILTER : 0;
         
-        var topRightElem = document.createElement("div");
-        topRightElem.style.width = "100%";
-        Echo.Sync.FillImage.render(this._getBorderImage(2, "100%", "100%"), topRightElem, flags);
+        var topRight = document.createElement("div");
+        topRight.style.width = "100%";
+        Echo.Sync.FillImage.render(this._getBorderImage(2, "100%", "100%"), topRight, flags);
         
-        var topLeftElem = document.createElement("div");
-        topLeftElem.style.paddingRight = borderPixelInsets.right + "px";
-        topLeftElem.style.paddingLeft = borderPixelInsets.left + "px";
-        Echo.Sync.FillImage.render(this._getBorderImage(0, 0, "100%"), topLeftElem, flags);
-        topRightElem.appendChild(topLeftElem);
+        var topLeft = document.createElement("div");
+        topLeft.style.paddingRight = borderPixelInsets.right + "px";
+        topLeft.style.paddingLeft = borderPixelInsets.left + "px";
+        Echo.Sync.FillImage.render(this._getBorderImage(0, 0, "100%"), topLeft, flags);
+        topRight.appendChild(topLeft);
         
         var title = this.component.render("title");
         if (title) {
@@ -148,7 +144,7 @@ Extras.Sync.Group = Core.extend(Echo.Render.ComponentSync, {
                     topFillElem, flags);
             topRowElem.appendChild(topFillElem);
             
-            topLeftElem.appendChild(topTableElem);
+            topLeft.appendChild(topTableElem);
         } else {
             var topElem = document.createElement("div");
             topElem.style.width = "100%";
@@ -156,10 +152,10 @@ Extras.Sync.Group = Core.extend(Echo.Render.ComponentSync, {
             topElem.style.fontSize = "1px";
             Echo.Sync.FillImage.render(this._getRepeatingBorderImage(1, "repeat-x", 0, "100%"), 
                     topElem, flags);
-            topLeftElem.appendChild(topElem);
+            topLeft.appendChild(topElem);
         }
         
-        borderParts.push(topRightElem);
+        borderParts.push(topRight);
         
         var rightElem = document.createElement("div");
         rightElem.style.width = "100%";
@@ -175,17 +171,17 @@ Extras.Sync.Group = Core.extend(Echo.Render.ComponentSync, {
         rightElem.appendChild(leftElem);
         borderParts.push(rightElem);
         
-        var bottomRightElem = document.createElement("div");
-        bottomRightElem.style.width = "100%";
-        bottomRightElem.style.height = borderPixelInsets.bottom + "px";
-        bottomRightElem.style.fontSize = "1px";
-        Echo.Sync.FillImage.render(this._getBorderImage(7, "100%", "100%"), bottomRightElem, flags);
+        var bottomRight = document.createElement("div");
+        bottomRight.style.width = "100%";
+        bottomRight.style.height = borderPixelInsets.bottom + "px";
+        bottomRight.style.fontSize = "1px";
+        Echo.Sync.FillImage.render(this._getBorderImage(7, "100%", "100%"), bottomRight, flags);
         
-        var bottomLeftElem = document.createElement("div");
-        bottomLeftElem.style.paddingRight = borderPixelInsets.right + "px";
-        bottomLeftElem.style.paddingLeft = borderPixelInsets.left + "px";
-        Echo.Sync.FillImage.render(this._getBorderImage(5, 0, "100%"), bottomLeftElem, flags);
-        bottomRightElem.appendChild(bottomLeftElem);
+        var bottomLeft = document.createElement("div");
+        bottomLeft.style.paddingRight = borderPixelInsets.right + "px";
+        bottomLeft.style.paddingLeft = borderPixelInsets.left + "px";
+        Echo.Sync.FillImage.render(this._getBorderImage(5, 0, "100%"), bottomLeft, flags);
+        bottomRight.appendChild(bottomLeft);
         
         var bottomElem = document.createElement("div");
         bottomElem.style.width = "100%";
@@ -193,31 +189,31 @@ Extras.Sync.Group = Core.extend(Echo.Render.ComponentSync, {
         bottomElem.style.fontSize = "1px";
         Echo.Sync.FillImage.render(this._getRepeatingBorderImage(6, "repeat-x", 0, "100%"), 
                 bottomElem, flags);
-        bottomLeftElem.appendChild(bottomElem);
-        borderParts.push(bottomRightElem);
+        bottomLeft.appendChild(bottomElem);
+        borderParts.push(bottomRight);
         
         return borderParts;
     },
     
     _renderContent: function(update) {
-        var contentDivElement = document.createElement("div");
+        var div = document.createElement("div");
         
-        Echo.Sync.FillImage.render(this.component.render("backgroundImage"), contentDivElement);
-        Echo.Sync.Color.render(this.component.render("background"), contentDivElement, "backgroundColor")
-        Echo.Sync.Font.render(this.component.render("font"), contentDivElement);
-        Echo.Sync.Insets.render(this.component.render("insets"), contentDivElement, "padding");
+        Echo.Sync.FillImage.render(this.component.render("backgroundImage"), div);
+        Echo.Sync.Color.render(this.component.render("background"), div, "backgroundColor")
+        Echo.Sync.Font.render(this.component.render("font"), div);
+        Echo.Sync.Insets.render(this.component.render("insets"), div, "padding");
         
         var componentCount = this.component.getComponentCount();
         for (var i = 0; i < componentCount; i++) {
             var child = this.component.getComponent(i);
-            Echo.Render.renderComponentAdd(update, child, contentDivElement);
+            Echo.Render.renderComponentAdd(update, child, div);
         }
         
-        return contentDivElement;
+        return div;
     },
     
     renderUpdate: function(update) {
-        var element = this._groupDivElement;
+        var element = this._div;
         var containerElement = element.parentNode;
         Echo.Render.renderComponentDispose(update, update.parent);
         containerElement.removeChild(element);
@@ -227,7 +223,6 @@ Extras.Sync.Group = Core.extend(Echo.Render.ComponentSync, {
     
     renderDispose: function(update) {
         this._borderImages = null;
-        this._groupDivElement.id = "";
-        this._groupDivElement = null;
+        this._div = null;
     }
 });
