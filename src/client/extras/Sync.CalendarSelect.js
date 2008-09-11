@@ -185,6 +185,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         }
     
         this._div = document.createElement("div");
+        this._div.id = this.component.renderId;
         this._div.style.whiteSpace = "nowrap";
         
         this._monthSelect = document.createElement("select");
