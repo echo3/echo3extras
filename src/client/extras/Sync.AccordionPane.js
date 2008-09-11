@@ -513,6 +513,8 @@ Extras.Sync.AccordionPane.Rotation = Core.extend({
                 var newTabInsets = Echo.Sync.Insets.toPixels(this._newTab._getContentInsets());
                 var oldContentHeight = regionContentHeight - oldTabInsets.top - oldTabInsets.bottom;
                 var newContentHeight = regionContentHeight - newTabInsets.top - newTabInsets.bottom;
+                oldContentHeight = oldContentHeight > 0 ? oldContentHeight : 0;
+                newContentHeight = newContentHeight > 0 ? newContentHeight : 0;
                 
                 if (this._parent._resetOverflowForAnimation) {
                     this._oldTab._contentDiv.style.overflow = "hidden";
