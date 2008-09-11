@@ -178,6 +178,8 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
                 this._tabs[i]._containerDiv.style.display = "none";
             }
         }
+        
+        Echo.Render.renderComponentDisplay(this.component);
     },
     
     /**
