@@ -559,7 +559,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
     },
     
     getDomainElement: function() { 
-        return this._mainDivElement;
+        return this._mainDiv;
     },
     
     insertHtml: function(html) {
@@ -683,27 +683,28 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         
         this._paneRender = this.component.parent.pane;
         
-        this._mainDivElement = document.createElement("div");
+        this._mainDiv = document.createElement("div");
+        this._mainDiv.id = this.component.renderId;
 
         if (this._paneRender) {
-            this._mainDivElement.style.cssText = "position:absolute;top:0px;left:0px;right:0px;bottom:0px;";
+            this._mainDiv.style.cssText = "position:absolute;top:0px;left:0px;right:0px;bottom:0px;";
         } else {
-            this._mainDivElement.style.position = "relative";
+            this._mainDiv.style.position = "relative";
             // FIXME. set height of component based on height setting.
-            this._mainDivElement.style.height = "300px";
+            this._mainDiv.style.height = "300px";
         }
         
-        parentElement.appendChild(this._mainDivElement);
+        parentElement.appendChild(this._mainDiv);
     },
     
     renderDispose: function(update) {
         this._removeComponentListeners();
         Echo.Arc.ComponentSync.prototype.renderDispose.call(this, update);
-        this._mainDivElement = null;
+        this._mainDiv = null;
     },
     
     renderDisplay: function() {
-        Core.Web.VirtualPosition.redraw(this._mainDivElement);
+        Core.Web.VirtualPosition.redraw(this._mainDiv);
         Echo.Arc.ComponentSync.prototype.renderDisplay.call(this);
     },
     
@@ -713,7 +714,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
             return;
         }
     
-        var element = this._mainDivElement;
+        var element = this._mainDiv;
         var containerElement = element.parentNode;
         Echo.Render.renderComponentDispose(update, update.parent);
         containerElement.removeChild(element);
@@ -1081,7 +1082,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
     
     execCommand: function(commandName, value) {
         this._loadRange();
-        this._iframeElement.contentWindow.document.execCommand(commandName, false, value);
+        this._iframe.contentWindow.document.execCommand(commandName, false, value);
         this._storeData();
     },
     
@@ -1092,7 +1093,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
     _insertHtml: function(html) {
         if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
             if (!this._selectionRange) {
-                this._selectionRange = this._iframeElement.contentWindow.document.body.createTextRange();
+                this._selectionRange = this._iframe.contentWindow.document.body.createTextRange();
             }
             this._selectionRange.select();
             this._selectionRange.pasteHTML(html);
@@ -1113,7 +1114,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
             return;
         }
 
-        var contentDocument = this._iframeElement.contentWindow.document;
+        var contentDocument = this._iframe.contentWindow.document;
         contentDocument.body.innerHTML = html;
         this._renderedHtml = html;
         //FIXME always grabbing focus, this may be undesired...necessary to maintain focus though.
@@ -1180,30 +1181,29 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         this.component._richTextArea.addListener("property", this._processPropertyRef);
         
         // Create IFRAME container DIV element.
-        this._mainDivElement = document.createElement("div");
-        Echo.Sync.Border.render(this.component._richTextArea.render("border", Extras.RichTextArea.DEFAULT_BORDER),
-                this._mainDivElement);
+        this._mainDiv = document.createElement("div");
+        Echo.Sync.Border.render(this.component._richTextArea.render("border", Extras.RichTextArea.DEFAULT_BORDER), this._mainDiv);
         
         // Create IFRAME element.
-        this._iframeElement = document.createElement("iframe");
-        this._iframeElement.style.width = this.width ? this.width : "100%";
+        this._iframe = document.createElement("iframe");
+        this._iframe.style.width = this.width ? this.width : "100%";
 
         this._paneRender = this.component._richTextArea.peer._paneRender;
         if (!this._paneRender) {
-            this._iframeElement.style.height = this.height ? this.height : "200px";
+            this._iframe.style.height = this.height ? this.height : "200px";
         }
 
-        this._iframeElement.style.border = "0px none";
-        this._iframeElement.frameBorder = "0";
+        this._iframe.style.border = "0px none";
+        this._iframe.frameBorder = "0";
     
-        this._mainDivElement.appendChild(this._iframeElement);
+        this._mainDiv.appendChild(this._iframe);
     
-        parentElement.appendChild(this._mainDivElement);
+        parentElement.appendChild(this._mainDiv);
     },
     
     _renderContentDocument: function() {
         // Ensure element is on-screen before rendering content/enabling design mode.
-        var element = this._iframeElement;
+        var element = this._iframe;
         while (element != document.body) {
             if (element == null) {
                 // Not added to parent.
@@ -1218,7 +1218,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         
         var text = this.component._richTextArea.get("text");
         
-        var contentDocument = this._iframeElement.contentWindow.document;
+        var contentDocument = this._iframe.contentWindow.document;
         
         var bodyStyleAttribute = "height:100%;width:100%;margin:0px;padding:0px;";
         
@@ -1261,22 +1261,22 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
             contentDocument.designMode = "on";
         }
         
-        Core.Web.Event.add(this._iframeElement.contentWindow.document, "keypress", 
+        Core.Web.Event.add(this._iframe.contentWindow.document, "keypress", 
                 Core.method(this, this._processKeyPress), false);
-        Core.Web.Event.add(this._iframeElement.contentWindow.document, "keyup", 
+        Core.Web.Event.add(this._iframe.contentWindow.document, "keyup", 
                 Core.method(this, this._processKeyUp), false);
-        Core.Web.Event.add(this._iframeElement.contentWindow.document, "mousedown", 
+        Core.Web.Event.add(this._iframe.contentWindow.document, "mousedown", 
                 Core.method(this, this._processMouseDown), false);
-        Core.Web.Event.add(this._iframeElement.contentWindow.document, "mouseup", 
+        Core.Web.Event.add(this._iframe.contentWindow.document, "mouseup", 
                 Core.method(this, this._processMouseUp), false);
         this._contentDocumentRendered = true;
     },
     
     renderDispose: function(update) {
         this.component._richTextArea.removeListener("property", this._processPropertyRef);
-        Core.Web.Event.removeAll(this._iframeElement.contentWindow.document);
-        this._mainDivElement = null;
-        this._iframeElement = null;
+        Core.Web.Event.removeAll(this._iframe.contentWindow.document);
+        this._mainDiv = null;
+        this._iframe = null;
         this._contentDocumentRendered = false;
         this._selectionRange = null;
     },
@@ -1286,14 +1286,14 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
             this._renderContentDocument();
         }
 
-        var rtaMainDivElement = this.component._richTextArea.peer._mainDivElement;
+        var rtaMainDivElement = this.component._richTextArea.peer._mainDiv;
         var bounds = new Core.Web.Measure.Bounds(rtaMainDivElement.parentNode);
         
         if (bounds.height) {
             var trimHeight = this.component._richTextArea.peer._trimHeight;
             var calculatedHeight = (bounds.height < trimHeight + 100 ? 100 : bounds.height - trimHeight) + "px";
-            if (this._iframeElement.style.height != calculatedHeight) {
-                this._iframeElement.style.height = calculatedHeight; 
+            if (this._iframe.style.height != calculatedHeight) {
+                this._iframe.style.height = calculatedHeight; 
             }
         }
     },
@@ -1303,7 +1303,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
             // Focus window first to avoid issue where Safari issue with updating content and then focusing.
             window.focus();
         }
-        Core.Web.DOM.focusElement(this._iframeElement.contentWindow);
+        Core.Web.DOM.focusElement(this._iframe.contentWindow);
         if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
             // Force full screen redraw to avoid IE bug where screen mysteriously goes blank in IE.
             Core.Web.Scheduler.run(Core.method(this, function() {
@@ -1322,7 +1322,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
     },
     
     _storeData: function() {
-        var contentDocument = this._iframeElement.contentWindow.document;
+        var contentDocument = this._iframe.contentWindow.document;
         var html = contentDocument.body.innerHTML;
         var cleanHtml = Extras.Sync.RichTextArea.Html.clean(html);
         this._renderedHtml = cleanHtml;
@@ -1331,7 +1331,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
     
     _storeRange: function() {
         if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
-            this._selectionRange = this._iframeElement.contentWindow.document.selection.createRange();
+            this._selectionRange = this._iframe.contentWindow.document.selection.createRange();
         }
     }
 });
