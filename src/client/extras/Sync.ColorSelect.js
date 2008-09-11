@@ -32,36 +32,12 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
             var q = v * (1 - s * f);
             var t = v * (1 - s * (1 - f));
             switch (i) {
-            case 0:
-                r = v;
-                g = t;
-                b = p;
-                break;
-            case 1:
-                r = q;
-                g = v;
-                b = p;
-                break;
-            case 2:
-                r = p;
-                g = v;
-                b = t;
-                break;
-            case 3:
-                r = p;
-                g = q;
-                b = v;
-                break;
-            case 4:
-                r = t;
-                g = p;
-                b = v;
-                break;
-            default:
-                r = v;
-                g = p;
-                b = q;
-                break;
+            case 0:  r = v; g = t; b = p; break;
+            case 1:  r = q; g = v; b = p; break;
+            case 2:  r = p; g = v; b = t; break;
+            case 3:  r = p; g = q; b = v; break;
+            case 4:  r = t; g = p; b = v; break;
+            default: r = v; g = p; b = q; break;
             }
         }
         return new Extras.Sync.ColorSelect.RGB(Math.round(r * 255), Math.round(g * 255), Math.round(b * 255));
@@ -135,21 +111,15 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         
         // Create main container div element, relatively positioned.
         this._div = document.createElement("div");
-        this._div.style.position = "relative";
-        this._div.style.left = "0px";
-        this._div.style.top = "0px";
+        this._div.style.cssText = "position:relative;left:0;top:0;overflow:hidden;";
         this._div.style.width = (this._valueWidth + this._hueWidth + 29) + "px";
         this._div.style.height = (this._saturationHeight + 36) +"px";
-        this._div.style.overflow = "hidden";
         
         // Create saturation / value selector.
         this._svDiv = document.createElement("div");
-        this._svDiv.style.position = "absolute";
-        this._svDiv.style.left = "7px";
-        this._svDiv.style.top = "7px";
+        this._svDiv.style.cssText = "position:absolute;left:7px;top:7px;background-color:#ff0000";
         this._svDiv.style.width = this._valueWidth + "px";
         this._svDiv.style.height = this._saturationHeight + "px";
-        this._svDiv.style.backgroundColor = "#ff0000";
         this._div.appendChild(this._svDiv);
         
         if (svGradientImageSrc) {
@@ -167,92 +137,68 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         
         // Create container for value selecion bar.
         this._vLineDiv = document.createElement("div");
-        this._vLineDiv.style.position = "absolute";
-        this._vLineDiv.style.left = "2px";
-        this._vLineDiv.style.top = "0px";
-        this._vLineDiv.style.width = "11px";
+        this._vLineDiv.style.cssText = "position:absolute;left:2px;top:0;width:11px;overflow:hidden;";
         this._vLineDiv.style.height = (this._saturationHeight + 14) + "px";
-        this._vLineDiv.style.overflow = "hidden";
         this._div.appendChild(this._vLineDiv);
     
         // Create value selection bar top arrow.
         if (arrowDownImageSrc) {
             var vLineTopImg = document.createElement("img");
             vLineTopImg.src = arrowDownImageSrc;
-            vLineTopImg.style.position = "absolute";
-            vLineTopImg.style.left = "0px";
-            vLineTopImg.style.top = "0px";
+            vLineTopImg.style.cssText = "position:absolute;left:0;top:0;";
             this._vLineDiv.appendChild(vLineTopImg);
         }
         
         // Create value selection bar line.
         var vLineBarDiv = document.createElement("div");
-        vLineBarDiv.style.position = "absolute";
-        vLineBarDiv.style.top = "7px";
-        vLineBarDiv.style.left = "5px";
+        vLineBarDiv.style.cssText = "position:absolute;top:7px;left:5px;width:1px;background-color:#000000;";
         vLineBarDiv.style.height = this._saturationHeight + "px";
-        vLineBarDiv.style.width = "1px";
-        vLineBarDiv.style.backgroundColor = "#000000";
         this._vLineDiv.appendChild(vLineBarDiv);
     
         // Create value selection bar bottom arrow.
         if (arrowUpImageSrc) {
             var vLineBottomImg = document.createElement("img");
             vLineBottomImg.src = arrowUpImageSrc;
-            vLineBottomImg.style.position = "absolute";
-            vLineBottomImg.style.left = "0px";
+            vLineBottomImg.style.cssText = "position:absolute;left:0;";
             vLineBottomImg.style.top = (this._saturationHeight + 7) + "px";
             this._vLineDiv.appendChild(vLineBottomImg);
         }
         
         // Create saturation selection bar container.
         this._sLineDiv = document.createElement("div");
-        this._sLineDiv.style.position = "absolute";
-        this._sLineDiv.style.left = "0px";
+        this._sLineDiv.style.cssText = "position:absolute;left:0;height:11px;overflow:hidden;";
         this._sLineDiv.style.top = (this._saturationHeight + 2) + "px";
-        this._sLineDiv.style.height = "11px";
         this._sLineDiv.style.width = (this._valueWidth + 14) + "px";
-        this._sLineDiv.style.overflow = "hidden";
         this._div.appendChild(this._sLineDiv);
         
         // Create saturation selection bar left arrow.
         if (arrowRightImageSrc) {
             var sLineLeftImg = document.createElement("img");
             sLineLeftImg.src = arrowRightImageSrc;
-            sLineLeftImg.style.position = "absolute";
-            sLineLeftImg.style.left = "0px";
-            sLineLeftImg.style.top = "0px";
+            sLineLeftImg.style.cssText = "position:absolute;left:0;top:0;";
             this._sLineDiv.appendChild(sLineLeftImg);
         }
         
         // Create saturation selection bar line.
         var sLineBarDiv = document.createElement("div");
-        sLineBarDiv.style.position = "absolute";
-        sLineBarDiv.style.left = "0px";
-        sLineBarDiv.style.left = "7px";
-        sLineBarDiv.style.top = "5px";
+        sLineBarDiv.style.cssText 
+                = "position:absolute;left:7px;top:5px;height:1px;font-size:1px;border-top:1px #000000 solid;line-height:0;";
         sLineBarDiv.style.width = this._valueWidth + "px";
-        sLineBarDiv.style.height = "1px";
-        sLineBarDiv.style.fontSize = "1px";
-        sLineBarDiv.style.borderTop = "1px #000000 solid";
-        sLineBarDiv.style.lineHeight = "0";
         this._sLineDiv.appendChild(sLineBarDiv);
     
         // Create saturation selection bar right arrow.
         if (arrowLeftImageSrc) {
             var sLineRightImg = document.createElement("img");
             sLineRightImg.src = arrowLeftImageSrc;
-            sLineRightImg.style.position = "absolute";
+            sLineRightImg.style.cssText = "position:absolute;top:0;";
             sLineRightImg.style.left = this._valueWidth + 7 + "px";
-            sLineRightImg.style.top = "0px";
             this._sLineDiv.appendChild(sLineRightImg);
         }
         
         // Create hue selector.
         var hDiv = document.createElement("div");
-        hDiv.style.position = "absolute";
+        hDiv.style.cssText = "position:absolute;top:7px;";
         hDiv.style.left = (this._valueWidth + 22) + "px";
-        hDiv.style.top = "7px";
         hDiv.style.width = this._hueWidth + "px";
         hDiv.style.height = this._saturationHeight + "px";
         this._div.appendChild(hDiv);
@@ -260,92 +206,64 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         if (hGradientImageSrc) {
             var hGradientImg = document.createElement("img");
             hGradientImg.src = hGradientImageSrc;
-            hGradientImg.style.position = "absolute";
-            hGradientImg.style.left = "0px";
-            hGradientImg.style.top = "0px";
+            hGradientImg.style.cssText = "position:absolute;left:0;top:0;";
             hGradientImg.style.width = this._hueWidth + "px";
             hGradientImg.style.height = this._saturationHeight + "px";
             hDiv.appendChild(hGradientImg);
         }
         
         this._hLineDiv = document.createElement("div");
-        this._hLineDiv.style.position = "absolute";
+        this._hLineDiv.style.cssText = "position:absolute;height:11px;overflow:hidden;";
         this._hLineDiv.style.left = (this._valueWidth + 15) + "px";
         this._hLineDiv.style.top = (this._saturationHeight + 2) + "px";
-        this._hLineDiv.style.height = "11px";
         this._hLineDiv.style.width = (this._hueWidth + 14) + "px";
-        this._hLineDiv.style.overflow = "hidden";
         this._div.appendChild(this._hLineDiv);
         
         if (arrowRightImageSrc) {
             var hLineLeftImg = document.createElement("img");
             hLineLeftImg.src = arrowRightImageSrc;
-            hLineLeftImg.style.position = "absolute";
-            hLineLeftImg.style.left = "0px";
-            hLineLeftImg.style.top = "0px";
+            hLineLeftImg.style.cssText = "position:absolute;left:0;top:0;";
             this._hLineDiv.appendChild(hLineLeftImg);
         }
     
         if (arrowLeftImageSrc) {
             var hLineRightImg = document.createElement("img");
             hLineRightImg.src = arrowLeftImageSrc;
-            hLineRightImg.style.position = "absolute";
+            hLineRightImg.style.cssText = "position:absolute;top:0;";
             hLineRightImg.style.left = (this._hueWidth + 7) + "px";
-            hLineRightImg.style.top = "0px";
             this._hLineDiv.appendChild(hLineRightImg);
         }
         
         var hLineBarDiv = document.createElement("div");
-        hLineBarDiv.style.position = "absolute";
-        hLineBarDiv.style.left = "0px";
-        hLineBarDiv.style.left = "7px";
-        hLineBarDiv.style.top = "5px";
+        hLineBarDiv.style.cssText 
+                = "position:absolute;left:7px;top:5px;height:1px;font-size:1px;border-top:1px #000000 solid;line-height:0;";
         hLineBarDiv.style.width = this._hueWidth + "px";
-        hLineBarDiv.style.height = "1px";
-        hLineBarDiv.style.fontSize = "1px";
-        hLineBarDiv.style.borderTop = "1px #000000 solid";
-        hLineBarDiv.style.lineHeight = "0";
         this._hLineDiv.appendChild(hLineBarDiv);
         
         this._colorDiv = document.createElement("div");
-        this._colorDiv.style.position = "absolute";
-        this._colorDiv.style.left = "7px";
+        this._colorDiv.style.cssText = "position:absolute;left:7px;height:18px;color:#ffffff;background-color:#000000;"
+                + "border:1px #000000 outset;font-family:monospace;text-align:center;";
         this._colorDiv.style.top = (this._saturationHeight + 16) + "px";
         this._colorDiv.style.width = (this._valueWidth + this._hueWidth + 13) + "px";
-        this._colorDiv.style.height = "18px";
-        this._colorDiv.style.color = "#ffffff";
-        this._colorDiv.style.backgroundColor = "#000000";
-        this._colorDiv.style.borderColor = "#000000";
-        this._colorDiv.style.borderStyle = "outset";
-        this._colorDiv.style.borderWidth = "1px";
-        this._colorDiv.style.fontFamily = "monospace";
-        this._colorDiv.style.textAlign = "center";
         if (this.component.render("displayValue")) {
             this._colorDiv.appendChild(document.createTextNode("#000000"));
         }
         this._div.appendChild(this._colorDiv);
         
         this._svListenerDiv = document.createElement("div");
-        this._svListenerDiv.style.position = "absolute";
-        this._svListenerDiv.style.zIndex = "1";
-        this._svListenerDiv.style.left = "0px";
-        this._svListenerDiv.style.top = "0px";
+        this._svListenerDiv.style.cssText = "position:absolute;z-index:1;left:0;top:0;cursor:crosshair;";
         this._svListenerDiv.style.width = (this._valueWidth + 14) + "px";
         this._svListenerDiv.style.height = (this._saturationHeight + 14) + "px";
-        this._svListenerDiv.style.cursor = "crosshair";
         this._svListenerDiv.style.backgroundImage = "url(" +
                 this.client.getResourceUrl("Echo", "resource/Transparent.gif") + ")";
         this._div.appendChild(this._svListenerDiv);
         
         this._hListenerDiv = document.createElement("div");
         this._hListenerDiv.id = this.elementId + "_hlistener";
-        this._hListenerDiv.style.position = "absolute";
-        this._hListenerDiv.style.zIndex = "1";
+        this._hListenerDiv.style.cssText = "position:absolute;z-index:1;top:0;cursor:crosshair;";
         this._hListenerDiv.style.left = (this._valueWidth + 15) + "px";
-        this._hListenerDiv.style.top = "0px";
         this._hListenerDiv.style.width = (this._hueWidth + 14) + "px";
         this._hListenerDiv.style.height = (this._saturationHeight + 16) + "px";
-        this._hListenerDiv.style.cursor = "crosshair";
         this._hListenerDiv.style.backgroundImage = "url(" +
                 this.client.getResourceUrl("Echo", "resource/Transparent.gif") + ")";
         this._div.appendChild(this._hListenerDiv);
