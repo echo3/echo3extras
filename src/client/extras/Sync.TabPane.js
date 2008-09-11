@@ -706,7 +706,7 @@ Extras.Sync.TabPane.Tab = Core.extend({
             var tbody = document.createElement("tbody");
             var tr = document.createElement("tr");
             if (icon) {
-                tr.appendChild(this._renderIconElement(icon));
+                tr.appendChild(this._renderIcon(icon));
             }
             var textTd = document.createElement("td");
             textTd.style.whiteSpace = "nowrap";
@@ -745,7 +745,7 @@ Extras.Sync.TabPane.Tab = Core.extend({
         return headerTd;
     },
     
-    _renderIconElement: function(icon) {
+    _renderIcon: function(icon) {
         var td = document.createElement("td");
         Echo.Sync.Alignment.render(this._parent.component.render("tabAlignment", 
                 Extras.Sync.TabPane._defaultTabAlignment), td, true, this._parent.component);
