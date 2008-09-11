@@ -46,7 +46,7 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
             this._tabs.push(tab);
             tab._render(this.client, update);
             this._div.appendChild(tab._tabDiv);
-            this._div.appendChild(tab._contentDiv);
+            this._div.appendChild(tab._containerDiv);
         }
         
         this._redrawTabs();
@@ -129,7 +129,7 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
         this._tabs.splice(tabIndex, 1);
     
         tab._tabDiv.parentNode.removeChild(tab._tabDiv);
-        tab._contentDiv.parentNode.removeChild(tab._contentDiv);
+        tab._containerDiv.parentNode.removeChild(tab._containerDiv);
         tab._dispose();
     },
     
@@ -153,28 +153,27 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
         var selectionPassed = false;
         var tabHeight = this._calculateTabHeight();
         for (var i = 0; i < this._tabs.length; ++i) {
-            var tab = this._tabs[i];
-            var tabDiv = tab._tabDiv;
-            var contentDiv = tab._contentDiv;
-            
             if (selectionPassed) {
-                tabDiv.style.top = "";
-                tabDiv.style.bottom = (tabHeight * (this._tabs.length - i - 1)) + "px";
+                this._tabs[i]._tabDiv.style.top = "";
+                this._tabs[i]._tabDiv.style.bottom = (tabHeight * (this._tabs.length - i - 1)) + "px";
             } else {
-                tabDiv.style.bottom = "";
-                tabDiv.style.top = (tabHeight * i) + "px";
+                this._tabs[i]._tabDiv.style.bottom = "";
+                this._tabs[i]._tabDiv.style.top = (tabHeight * i) + "px";
             }
     
-            contentDiv.style.height = "";
+            this._tabs[i]._containerDiv.style.height = "";
             
-            if (this._activeTabId == tab._childComponent.renderId) {
+            if (this._activeTabId == this._tabs[i]._childComponent.renderId) {
                 selectionPassed = true;
-                contentDiv.style.display = "block";
-                contentDiv.style.top = (tabHeight * (i + 1)) + "px";
+                this._tabs[i]._containerDiv.style.display = "block";
+                this._tabs[i]._containerDiv.style.top = (tabHeight * (i + 1)) + "px";
                 var bottomPx = tabHeight * (this._tabs.length - i - 1);
-                contentDiv.style.bottom = bottomPx + "px";
+                this._tabs[i]._containerDiv.style.bottom = bottomPx + "px";
+                this._tabs[i]._contentDiv.style.height = "";
+                this._tabs[i]._contentDiv.style.top = 0;
+                this._tabs[i]._contentDiv.style.bottom = 0;
             } else {
-                contentDiv.style.display = "none";
+                this._tabs[i]._containerDiv.style.display = "none";
             }
         }
     },
@@ -255,7 +254,7 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
     _rendered: false,
     _tabDiv: null,
     _parent: null,
-    _contentDiv: null,
+    _containerDiv: null,
     _childComponent: null,
     
     $construct: function(childComponent, parent) {
@@ -268,7 +267,7 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
         this._parent = null;
         this._childComponent = null;
         this._tabDiv = null;
-        this._contentDiv = null;
+        this._containerDiv = null;
     },
     
     _highlight: function(state) {
@@ -360,17 +359,21 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
     _render: function(client, update) {
         this._tabDiv = document.createElement("div");
         this._tabDiv.id = this._parent.component.renderId + "_tab_" + this._childComponent.renderId;
-        this._tabDiv.style.cssText = "cursor:pointer;position:absolute;left:0;right:0;overflow:hidden;";
+        this._tabDiv.style.cssText = "z-index:1;cursor:pointer;position:absolute;left:0;right:0;overflow:hidden;";
         this._tabDiv.style.height = Extras.Sync.AccordionPane._defaultTabHeight;
         Echo.Sync.Insets.render(this._parent._getTabInsets(), this._tabDiv, "padding");
         this._tabDiv.appendChild(document.createTextNode(this._getTitle()));
     
+        this._containerDiv = document.createElement("div");
+        this._containerDiv.style.cssText = "display:none;position:absolute;left:0;right:0;overflow:hidden;";
+        
         this._contentDiv = document.createElement("div");
-        this._contentDiv.id = this._parent.component.renderId + "_content_" + this._childComponent.renderId;
-        this._contentDiv.style.cssText = "display:none;position:absolute;left:0;right:0;overflow:auto;";
+        this._contentDiv.style.cssText = "z-index:10;position:absolute;left:0;right:0;overflow:auto;";
         Echo.Sync.Insets.render(this._getContentInsets(), this._contentDiv, "padding");
-    
+        
         Echo.Render.renderComponentAdd(update, this._childComponent, this._contentDiv);
+        
+        this._containerDiv.appendChild(this._contentDiv);
         
         this._highlight(false);
         this._addEventListeners();
@@ -378,6 +381,7 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
     
     _renderDisplay: function() {
         Core.Web.VirtualPosition.redraw(this._tabDiv);
+        Core.Web.VirtualPosition.redraw(this._containerDiv);
         Core.Web.VirtualPosition.redraw(this._contentDiv);
     }
 });
@@ -410,9 +414,6 @@ Extras.Sync.AccordionPane.Rotation = Core.extend({
         
         this._animationRunnable = new Core.Web.Scheduler.MethodRunnable(Core.method(this, this._animationStep), 
                 parent._animationSleepInterval, false);
-        
-        this._oldTabContentInsets = Echo.Sync.Insets.toPixels(this._oldTab._getContentInsets());
-        this._newTabContentInsets = Echo.Sync.Insets.toPixels(this._newTab._getContentInsets());
         
         this._animationStartTime = new Date().getTime();
         this._animationEndTime = this._animationStartTime + this._parent._animationTime;
@@ -487,6 +488,32 @@ Extras.Sync.AccordionPane.Rotation = Core.extend({
             
             var stepFactor = (currentTime - this._animationStartTime) / this._parent._animationTime;
             var stepPosition = Math.round(stepFactor * this._animationDistance);
+            
+            // On first frame, display new tab content.
+            if (this._animationStepIndex == 0) {
+                this._newTab._containerDiv.style.height = "";
+                if (this._directionDown) {
+                    this._oldTab._containerDiv.style.bottom = "";
+                    this._newTab._containerDiv.style.top = (this._numberOfTabsAbove * this._tabHeight) + "px";
+                } else {
+                    this._newTab._containerDiv.style.top = "";
+                    this._newTab._containerDiv.style.bottom = (this._numberOfTabsBelow * this._tabHeight) + "px";
+                }
+                this._newTab._containerDiv.style.display = "block";
+                
+                // Set size of tab content to be equivalent to available space.
+                var regionContentHeight = this._parent._div.offsetHeight - 
+                        (this._parent._tabs.length * this._parent._calculateTabHeight());
+                var oldTabInsets = Echo.Sync.Insets.toPixels(this._oldTab._getContentInsets());
+                var newTabInsets = Echo.Sync.Insets.toPixels(this._newTab._getContentInsets());
+                var oldContentHeight = regionContentHeight - oldTabInsets.top - oldTabInsets.bottom;
+                var newContentHeight = regionContentHeight - newTabInsets.top - newTabInsets.bottom;
+                
+                this._oldTab._contentDiv.style.bottom = "";
+                this._newTab._contentDiv.style.bottom = "";
+                this._oldTab._contentDiv.style.height = oldContentHeight + "px";
+                this._newTab._contentDiv.style.height = newContentHeight + "px";
+            }
     
             if (this._directionDown) {
                 // Move each moving tab to next step position.
@@ -497,30 +524,23 @@ Extras.Sync.AccordionPane.Rotation = Core.extend({
                 }
                 
                 // Adjust height of expanding new tab content to fill expanding space.
-                var newContentHeight = stepPosition - this._oldTabContentInsets.top - this._oldTabContentInsets.bottom;
-                if (newContentHeight < 0) {
-                    newContentHeight = 0;
+                var newContainerHeight = stepPosition;
+                if (newContainerHeight < 0) {
+                    newContainerHeight = 0;
                 }
-                this._newTab._contentDiv.style.height = newContentHeight + "px";
-                
-                // On first frame, display new tab content.
-                if (this._animationStepIndex == 0) {
-                    this._oldTab._contentDiv.style.bottom = "";
-                    this._newTab._contentDiv.style.display = "block";
-                    this._newTab._contentDiv.style.top = (this._numberOfTabsAbove * this._tabHeight) + "px";
-                }
+                this._newTab._containerDiv.style.height = newContainerHeight + "px";
                 
                 // Move top of old content downward.
                 var oldTop = stepPosition + this._startTopPosition + (this._rotatingTabs.length * this._tabHeight);
-                this._oldTab._contentDiv.style.top = oldTop + "px";
+                this._oldTab._containerDiv.style.top = oldTop + "px";
                 
                 // Reduce height of contracting old tab content to fit within contracting space.
-                var oldContentHeight = this._regionHeight - oldTop - ((this._numberOfTabsBelow - 1) * this._tabHeight) 
-                        - this._oldTabContentInsets.top - this._oldTabContentInsets.bottom;
-                if (oldContentHeight < 0) {
-                    oldContentHeight = 0;
+                var oldContainerHeight = this._regionHeight - oldTop 
+                        - ((this._numberOfTabsBelow - this._rotatingTabs.length) * this._tabHeight);
+                if (oldContainerHeight < 0) {
+                    oldContainerHeight = 0;
                 }
-                this._oldTab._contentDiv.style.height = oldContentHeight + "px";
+                this._oldTab._containerDiv.style.height = oldContainerHeight + "px";
             } else {
                 // Move each moving tab to next step position.
                 for (var i = 0; i < this._rotatingTabs.length; ++i) {
@@ -529,34 +549,24 @@ Extras.Sync.AccordionPane.Rotation = Core.extend({
                     this._rotatingTabs[i]._tabDiv.style.bottom = newPosition + "px";
                 }
                 
-                // On first frame, display new tab content.
-                if (this._animationStepIndex == 0) {
-                    this._oldTab._contentDiv.style.bottom = "";
-                    this._newTab._contentDiv.style.top = "";
-                    this._newTab._contentDiv.style.bottom = (this._numberOfTabsBelow * this._tabHeight) + "px";
-                    this._newTab._contentDiv.style.height = "0px";
-                    this._newTab._contentDiv.style.display = "block";
-                }
-                
                 // Reduce height of contracting old tab content to fit within contracting space.
-                var oldContentHeight = this._regionHeight - stepPosition 
-                        - ((this._numberOfTabsAbove + this._numberOfTabsBelow + 1) * this._tabHeight)
-                        - this._oldTabContentInsets.top - this._oldTabContentInsets.bottom;
-                if (oldContentHeight < 0) {
-                    oldContentHeight = 0;
+                var oldContainerHeight = this._regionHeight - stepPosition 
+                        - ((this._numberOfTabsAbove + this._numberOfTabsBelow + 1) * this._tabHeight);
+                if (oldContainerHeight < 0) {
+                    oldContainerHeight = 0;
                 }
-                this._oldTab._contentDiv.style.height = oldContentHeight + "px";
+                this._oldTab._containerDiv.style.height = oldContainerHeight + "px";
                 
                 // Increase height of expanding tab content to fit within expanding space.
-                var newContentHeight = stepPosition - this._newTabContentInsets.top - this._newTabContentInsets.bottom;
-                if (newContentHeight < 0) {
-                    newContentHeight = 0;
+                var newContainerHeight = stepPosition;
+                if (newContainerHeight < 0) {
+                    newContainerHeight = 0;
                 };
-                this._newTab._contentDiv.style.height = newContentHeight + "px";
+                this._newTab._containerDiv.style.height = newContainerHeight + "px";
             }
-            
+
             ++this._animationStepIndex;
-        
+            
             // Continue Rotation.
             Core.Web.Scheduler.add(this._animationRunnable);
         } else {
