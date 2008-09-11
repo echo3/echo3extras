@@ -8,25 +8,16 @@ Extras.Sync.BorderPane = Core.extend(Echo.Render.ComponentSync, {
     },
 
     $construct: function() {
-        this._element = null;
+        this._div = null;
     },
     
     renderAdd: function(update, parentElement) {
-        this._element = document.createElement("div");
-    
-        this._element.style.padding = "0px";
-        this._element.style.zIndex = 1;
-        this._element.style.overflow = "hidden";
-        this._element.style.position = "absolute";
-        this._element.style.left = "0px";
-        this._element.style.top = "0px";
-        this._element.style.width = "100%";
-        this._element.style.height = "100%";
-        
+        this._div = document.createElement("div");
+        this._div.id = this.component.renderId;
+        this._div.style.cssText = "padding:0;z-index:1;overflow:hidden;position:absolute;left:0;top:0;width:100%;height:100%;";
         this._renderBorder();
         this._renderContent(update);
-        
-        parentElement.appendChild(this._element);
+        parentElement.appendChild(this._div);
     },
     
     _renderBorder: function() {
@@ -34,145 +25,142 @@ Extras.Sync.BorderPane = Core.extend(Echo.Render.ComponentSync, {
         var borderInsets = Echo.Sync.Insets.toPixels(border.borderInsets);
         var flags = this.component.render("ieAlphaRenderBorder") 
                 ? Echo.Sync.FillImage.FLAG_ENABLE_IE_PNG_ALPHA_FILTER : 0;
-        var cornerElement;
+        var corner;
         
         // Render top row
         if (borderInsets.top > 0) {
             // Render top left corner
             if (borderInsets.left > 0) {
-                cornerElement = this._renderBorderPart(border, "topLeft", flags, 
+                corner = this._renderBorderPart(border, "topLeft", flags, 
                         borderInsets.left, borderInsets.top, 0, null, null, 0);
-                this._element.appendChild(cornerElement);
+                this._div.appendChild(corner);
             }
             // Render top side
-            this._borderTopElement = this._renderBorderPart(border, "top", flags, 
+            this._top = this._renderBorderPart(border, "top", flags, 
                     null, borderInsets.top, 0, borderInsets.right, null, borderInsets.left);
-            this._element.appendChild(this._borderTopElement);
+            this._div.appendChild(this._top);
             // Render top right corner
             if (borderInsets.right > 0) {
-                cornerElement = this._renderBorderPart(border, "topRight", flags, 
+                corner = this._renderBorderPart(border, "topRight", flags, 
                         borderInsets.right, borderInsets.top, 0, 0, null, null);
-                this._element.appendChild(cornerElement);
+                this._div.appendChild(corner);
             }
         }
         // Render left side
         if (borderInsets.left > 0) {
-            this._borderLeftElement = this._renderBorderPart(border, "left", flags, 
+            this._left = this._renderBorderPart(border, "left", flags, 
                     borderInsets.left, null, borderInsets.top, null, borderInsets.bottom, 0);
-            this._element.appendChild(this._borderLeftElement);
+            this._div.appendChild(this._left);
         }
         // Render right side
         if (borderInsets.right > 0) {
-            this._borderRightElement = this._renderBorderPart(border, "right", flags, 
+            this._right = this._renderBorderPart(border, "right", flags, 
                     borderInsets.right, null, borderInsets.top, 0, borderInsets.bottom, null);
-            this._element.appendChild(this._borderRightElement);
+            this._div.appendChild(this._right);
         }
         // Render bottom row
         if (borderInsets.bottom > 0) {
             // Render bottom left corner
             if (borderInsets.left > 0) {
-                cornerElement = this._renderBorderPart(border, "bottomLeft", flags, 
+                corner = this._renderBorderPart(border, "bottomLeft", flags, 
                         borderInsets.left, borderInsets.bottom, null, null, 0, 0);
-                this._element.appendChild(cornerElement);
+                this._div.appendChild(corner);
             }
             // Render bottom side
-            this._borderBottomElement = this._renderBorderPart(border, "bottom", flags, 
+            this._bottom = this._renderBorderPart(border, "bottom", flags, 
                     null, borderInsets.bottom, null, borderInsets.right, 0, borderInsets.left);
-            this._element.appendChild(this._borderBottomElement);
+            this._div.appendChild(this._bottom);
             // Render bottom right corner
             if (borderInsets.right > 0) {
-                cornerElement = this._renderBorderPart(border, "bottomRight", flags, 
+                corner = this._renderBorderPart(border, "bottomRight", flags, 
                         borderInsets.right, borderInsets.bottom, null, 0, 0, null);
-                this._element.appendChild(cornerElement);
+                this._div.appendChild(corner);
             }
         }
     },
     
     _renderBorderPart: function(border, position, flags, width, height, top, right, bottom, left) {
-        var borderDivElement = document.createElement("div");
+        var div = document.createElement("div");
+        div.style.cssText = "font-size:1px;position:absolute;";
         
-        borderDivElement.style.fontSize = "1px";
-        borderDivElement.style.position = "absolute";
         if (width != null) {
-            borderDivElement.style.width = width + "px";
+            div.style.width = width + "px";
         }
         if (height != null) {
-            borderDivElement.style.height = height + "px";
+            div.style.height = height + "px";
         }
         if (top != null) {
-            borderDivElement.style.top = top + "px";
+            div.style.top = top + "px";
         }
         if (right != null) {
-            borderDivElement.style.right = right + "px";
+            div.style.right = right + "px";
         }
         if (bottom != null) {
-            borderDivElement.style.bottom = bottom + "px";
+            div.style.bottom = bottom + "px";
         }
         if (left != null) {
-            borderDivElement.style.left = left + "px";
+            div.style.left = left + "px";
         }
         
         if (border.color) {
-            Echo.Sync.Color.render(border.color, borderDivElement, "backgroundColor");
+            Echo.Sync.Color.render(border.color, div, "backgroundColor");
         }
         if (border[position]) {
-            Echo.Sync.FillImage.render(border[position], borderDivElement, flags);
+            Echo.Sync.FillImage.render(border[position], div, flags);
         }
         
-        return borderDivElement;
+        return div;
     },
     
     _renderContent: function(update) {
-        this._contentDivElement = document.createElement("div");
-        this._contentDivElement.style.position = "absolute";
-        this._contentDivElement.style.zIndex = 2;
-        this._contentDivElement.style.overflow = "auto";
+        this._content = document.createElement("div");
+        this._content.style.cssText = "position:absolute;z-index:2;overflow:auto;";
         
-        Echo.Sync.Color.renderFB(this.component, this._contentDivElement);
-        Echo.Sync.Font.render(this.component.render("font"), this._contentDivElement);
+        Echo.Sync.Color.renderFB(this.component, this._content);
+        Echo.Sync.Font.render(this.component.render("font"), this._content);
     
         var border = this.component.render("border", Extras.BorderPane.DEFAULT_BORDER);
         var contentInsets = Echo.Sync.Insets.toPixels(border.contentInsets);
     
-        this._contentDivElement.style.top = contentInsets.top + "px";
-        this._contentDivElement.style.left = contentInsets.left + "px";
-        this._contentDivElement.style.right = contentInsets.right + "px";
-        this._contentDivElement.style.bottom = contentInsets.bottom + "px";
+        this._content.style.top = contentInsets.top + "px";
+        this._content.style.left = contentInsets.left + "px";
+        this._content.style.right = contentInsets.right + "px";
+        this._content.style.bottom = contentInsets.bottom + "px";
         
         var componentCount = this.component.getComponentCount();
         if (componentCount == 1) {
             var child = this.component.getComponent(0);
             var insets = child.pane ? null : this.component.render("insets");
             if (insets) {
-                Echo.Sync.Insets.render(insets, this._contentDivElement, "padding");
+                Echo.Sync.Insets.render(insets, this._content, "padding");
             }
-            Echo.Render.renderComponentAdd(update, child, this._contentDivElement);
+            Echo.Render.renderComponentAdd(update, child, this._content);
         } else if (componentCount > 1) {
             throw new Error("Too many children: " + componentCount);
         }
         
-        this._element.appendChild(this._contentDivElement);
+        this._div.appendChild(this._content);
     },
     
     renderDisplay: function() {
-        Core.Web.VirtualPosition.redraw(this._contentDivElement);
-        Core.Web.VirtualPosition.redraw(this._element);
-        if (this._borderTopElement) {
-            Core.Web.VirtualPosition.redraw(this._borderTopElement);
+        Core.Web.VirtualPosition.redraw(this._content);
+        Core.Web.VirtualPosition.redraw(this._div);
+        if (this._top) {
+            Core.Web.VirtualPosition.redraw(this._top);
         }
-        if (this._borderLeftElement) {
-            Core.Web.VirtualPosition.redraw(this._borderLeftElement);
+        if (this._left) {
+            Core.Web.VirtualPosition.redraw(this._left);
         }
-        if (this._borderRightElement) {
-            Core.Web.VirtualPosition.redraw(this._borderRightElement);
+        if (this._right) {
+            Core.Web.VirtualPosition.redraw(this._right);
         }
-        if (this._borderBottomElement) {
-            Core.Web.VirtualPosition.redraw(this._borderBottomElement);
+        if (this._bottom) {
+            Core.Web.VirtualPosition.redraw(this._bottom);
         }
     },
     
     renderUpdate: function(update) {
-        var element = this._element;
+        var element = this._div;
         var containerElement = element.parentNode;
         Echo.Render.renderComponentDispose(update, update.parent);
         containerElement.removeChild(element);
@@ -181,11 +169,11 @@ Extras.Sync.BorderPane = Core.extend(Echo.Render.ComponentSync, {
     },
     
     renderDispose: function(update) {
-        this._contentDivElement = null;
-        this._element = null;
-        this._borderLeftElement = null;
-        this._borderRightElement = null;
-        this._borderTopElement = null;
-        this._borderBottomElement = null;
+        this._content = null;
+        this._div = null;
+        this._left = null;
+        this._right = null;
+        this._top = null;
+        this._bottom = null;
     }
 });
