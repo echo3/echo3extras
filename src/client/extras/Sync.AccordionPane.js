@@ -24,9 +24,11 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
     _animationEnabled: true,
     _animationSleepInterval: 1,
     _tabs: null,
+    _resetOverflowForAnimation: false,
     
     $construct: function() {
         this._tabs = [];
+        this._resetOverflowForAnimation = Core.Web.Env.BROWSER_MOZILLA || Core.Web.Env.BROWSER_INTERNET_EXPLORER;
     },
     
     renderAdd: function(update, parentElement) {
@@ -509,6 +511,11 @@ Extras.Sync.AccordionPane.Rotation = Core.extend({
                 var oldContentHeight = regionContentHeight - oldTabInsets.top - oldTabInsets.bottom;
                 var newContentHeight = regionContentHeight - newTabInsets.top - newTabInsets.bottom;
                 
+                if (this._parent._resetOverflowForAnimation) {
+                    this._oldTab._contentDiv.style.overflow = "hidden";
+                    this._newTab._contentDiv.style.overflow = "hidden";
+                }
+                
                 this._oldTab._contentDiv.style.bottom = "";
                 this._newTab._contentDiv.style.bottom = "";
                 this._oldTab._contentDiv.style.height = oldContentHeight + "px";
@@ -583,7 +590,10 @@ Extras.Sync.AccordionPane.Rotation = Core.extend({
     },
     
     _dispose: function() {
-        Core.Web.Scheduler.remove
+        if (this._parent._resetOverflowForAnimation) {
+            this._oldTab._contentDiv.style.overflow = "auto";
+            this._newTab._contentDiv.style.overflow = "auto";
+        }
         var renderId = this._parent.component.renderId;
         this._parent._rotation = null;
         this._parent = null;
