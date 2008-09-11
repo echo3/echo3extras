@@ -350,11 +350,11 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
     
     _updateDisplayedColor: function() {
         var baseColor;
-    //    if (this.enabled) {
+        if (this.component.isRenderEnabled()) {
             baseColor = this._hsvToRgb(this._h, 1, 1);
-    //    } else {
-    //        baseColor = ExtrasColorSelect.hsvToRgb(this.h, 0.3, 0.7);
-    //    }
+        } else {
+            baseColor = this._hsvToRgb(this._h, 0.3, 0.7);
+        }
         this._svDiv.style.backgroundColor = baseColor.toHexTriplet();
     
         var renderColor = this._hsvToRgb(this._h, this._s, this._v);
