@@ -35,7 +35,7 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
         
         this._div = document.createElement("div");
         this._div.id = this.component.renderId;
-        this._div.style.cssText = "position:absolute;overflow:hidden;width:100%;height:100%;";
+        this._div.style.cssText = "position:absolute;width:100%;height:100%;";
         Echo.Sync.Color.renderFB(this.component, this._div);
         Echo.Sync.Font.render(this.component.render("font"), this._div);
         
@@ -359,7 +359,7 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
     _render: function(client, update) {
         this._tabDiv = document.createElement("div");
         this._tabDiv.id = this._parent.component.renderId + "_tab_" + this._childComponent.renderId;
-        this._tabDiv.style.cssText = "z-index:1;cursor:pointer;position:absolute;left:0;right:0;overflow:hidden;";
+        this._tabDiv.style.cssText = "cursor:pointer;position:absolute;left:0;right:0;overflow:hidden;";
         this._tabDiv.style.height = Extras.Sync.AccordionPane._defaultTabHeight;
         Echo.Sync.Insets.render(this._parent._getTabInsets(), this._tabDiv, "padding");
         this._tabDiv.appendChild(document.createTextNode(this._getTitle()));
@@ -368,7 +368,7 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
         this._containerDiv.style.cssText = "display:none;position:absolute;left:0;right:0;overflow:hidden;";
         
         this._contentDiv = document.createElement("div");
-        this._contentDiv.style.cssText = "z-index:10;position:absolute;left:0;right:0;overflow:auto;";
+        this._contentDiv.style.cssText = "position:absolute;left:0;right:0;overflow:auto;";
         Echo.Sync.Insets.render(this._getContentInsets(), this._contentDiv, "padding");
         
         Echo.Render.renderComponentAdd(update, this._childComponent, this._contentDiv);
