@@ -277,14 +277,14 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
 
         var opacity = (Core.Web.Env.NOT_SUPPORTED_CSS_OPACITY ? 100 : this.component.render("menuOpacity", 100)) / 100;
 
-        var menuContentDivElement = document.createElement("div");
-        menuContentDivElement.style.cssText = "position:relative;z-index:10;";
-        this.element.appendChild(menuContentDivElement);
+        var menuContentDiv = document.createElement("div");
+        menuContentDiv.style.cssText = "position:relative;z-index:10;";
+        this.element.appendChild(menuContentDiv);
 
         Echo.Sync.Insets.render(Extras.Sync.Menu.RenderedMenu.defaultMenuInsets, 
-                menuContentDivElement, "padding");
+                menuContentDiv, "padding");
         Echo.Sync.Border.render(this.component.render("menuBorder", Extras.Sync.Menu._defaultBorder),
-                menuContentDivElement);
+                menuContentDiv);
         var foreground;
         var menuForeground = this.component.render("menuForeground");
         if (menuForeground) {
@@ -292,7 +292,7 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
         } else {
             foreground = this.component.render("foreground", Extras.Sync.Menu._defaultForeground);
         }
-        Echo.Sync.Color.render(foreground, menuContentDivElement, "color");
+        Echo.Sync.Color.render(foreground, menuContentDiv, "color");
 
         // Apply menu font if it is set, or apply default font 
         // if it is set and the menu font is NOT set.
@@ -301,17 +301,17 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
             font = this.component.render("font");
         }
         if (font) {
-            Echo.Sync.Font.render(font, menuContentDivElement);
+            Echo.Sync.Font.render(font, menuContentDiv);
         }
 
-        var backgroundDivElement;
+        var backgroundDiv;
         if (opacity < 1) {
-            backgroundDivElement = document.createElement("div");
-            backgroundDivElement.style.cssText = "position:absolute;z-index:1;width:100%;height:100%;top:0;bottom:0;";
-            backgroundDivElement.style.opacity = opacity;
-            this.element.appendChild(backgroundDivElement);
+            backgroundDiv = document.createElement("div");
+            backgroundDiv.style.cssText = "position:absolute;z-index:1;width:100%;height:100%;top:0;bottom:0;";
+            backgroundDiv.style.opacity = opacity;
+            this.element.appendChild(backgroundDiv);
         } else {
-            backgroundDivElement = this.element;
+            backgroundDiv = this.element;
         }
 
         var background;
@@ -321,7 +321,7 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
         } else {
             background = this.component.render("background", Extras.Sync.Menu._defaultBackground);
         }
-        Echo.Sync.Color.render(background, backgroundDivElement, "backgroundColor");
+        Echo.Sync.Color.render(background, backgroundDiv, "backgroundColor");
 
         // Apply menu background image if it is set, or apply default background 
         // image if it is set and the menu background is NOT set.
@@ -333,15 +333,15 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
             backgroundImage = this.component.render("backgroundImage");
         }
         if (backgroundImage) {
-            Echo.Sync.FillImage.render(backgroundImage, backgroundDivElement, null); 
+            Echo.Sync.FillImage.render(backgroundImage, backgroundDiv, null); 
         }
 
-        var menuTableElement = document.createElement("table");
-        menuTableElement.style.borderCollapse = "collapse";
-        menuContentDivElement.appendChild(menuTableElement);
+        var menuTable = document.createElement("table");
+        menuTable.style.borderCollapse = "collapse";
+        menuContentDiv.appendChild(menuTable);
 
-        var menuTbodyElement = document.createElement("tbody");
-        menuTableElement.appendChild(menuTbodyElement);
+        var menuTbody = document.createElement("tbody");
+        menuTable.appendChild(menuTbody);
 
         var items = this.menuModel.items;
 
@@ -368,14 +368,14 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
         for (var i = 0; i < items.length; ++i) {
             var item = items[i];
             if (item instanceof Extras.OptionModel || item instanceof Extras.MenuModel) {
-                var menuItemTrElement = document.createElement("tr");
-                this.itemElements[item.id] = menuItemTrElement;
-                menuItemTrElement.style.cursor = "pointer";
-                menuTbodyElement.appendChild(menuItemTrElement);
+                var menuItemTr = document.createElement("tr");
+                this.itemElements[item.id] = menuItemTr;
+                menuItemTr.style.cursor = "pointer";
+                menuTbody.appendChild(menuItemTr);
 
                 if (hasIcons) {
-                    var menuItemIconTdElement = document.createElement("td");
-                    Echo.Sync.Insets.render(iconPadding, menuItemIconTdElement, "padding");
+                    var menuItemIconTd = document.createElement("td");
+                    Echo.Sync.Insets.render(iconPadding, menuItemIconTd, "padding");
                     if (item instanceof Extras.ToggleOptionModel) {
                         var iconIdentifier;
                         var selected = this.stateModel && this.stateModel.isSelected(item.modelId);
@@ -384,44 +384,44 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
                         } else {
                             iconIdentifier = selected ? "image/menu/ToggleOn.gif" : "image/menu/ToggleOff.gif";
                         }
-                        var imgElement = document.createElement("img");
-                        imgElement.src = this.client.getResourceUrl("Extras", iconIdentifier);
-                        menuItemIconTdElement.appendChild(imgElement);
+                        var img = document.createElement("img");
+                        img.src = this.client.getResourceUrl("Extras", iconIdentifier);
+                        menuItemIconTd.appendChild(img);
                     } else if (item.icon) {
-                        var imgElement = document.createElement("img");
-                        Echo.Sync.ImageReference.renderImg(item.icon, imgElement);
-                        menuItemIconTdElement.appendChild(imgElement);
+                        var img = document.createElement("img");
+                        Echo.Sync.ImageReference.renderImg(item.icon, img);
+                        menuItemIconTd.appendChild(img);
                     }
-                    menuItemTrElement.appendChild(menuItemIconTdElement);
+                    menuItemTr.appendChild(menuItemIconTd);
                 }
 
-                var menuItemContentTdElement = document.createElement("td");
-                Echo.Sync.Insets.render(textPadding, menuItemContentTdElement, "padding");
+                var menuItemContentTd = document.createElement("td");
+                Echo.Sync.Insets.render(textPadding, menuItemContentTd, "padding");
                 var lineWrap = this.component.render("lineWrap");
                 if (lineWrap != null && !lineWrap) {
-                    menuItemContentTdElement.style.whiteSpace = "nowrap";
+                    menuItemContentTd.style.whiteSpace = "nowrap";
                 }
                 if (this.stateModel && !this.stateModel.isEnabled(item.modelId)) {
                     Echo.Sync.Color.render(this.component.render("disabledForeground", 
-                            Extras.Sync.Menu._defaultDisabledForeground), menuItemContentTdElement, "color");
+                            Extras.Sync.Menu._defaultDisabledForeground), menuItemContentTd, "color");
                 }
-                menuItemContentTdElement.appendChild(document.createTextNode(item.text));
-                menuItemTrElement.appendChild(menuItemContentTdElement);
+                menuItemContentTd.appendChild(document.createTextNode(item.text));
+                menuItemTr.appendChild(menuItemContentTd);
 
                 if (item instanceof Extras.MenuModel) {
                     // Submenus have adjacent column containing 'expand' icons.
-                    var menuItemArrowTdElement = document.createElement("td");
-                    menuItemArrowTdElement.style.textAlign = "right";
-                    var imgElement = document.createElement("img");
+                    var menuItemArrowTd = document.createElement("td");
+                    menuItemArrowTd.style.textAlign = "right";
+                    var img = document.createElement("img");
                     var expandImage = this.component.render("menuExpandIcon", 
                             this.client.getResourceUrl("Extras", "image/menu/ArrowRight.gif"));
-                    imgElement.setAttribute("src", expandImage.url ? expandImage.url : expandImage);
-                    imgElement.setAttribute("alt", "");
-                    menuItemArrowTdElement.appendChild(imgElement);
-                    menuItemTrElement.appendChild(menuItemArrowTdElement);
+                    img.setAttribute("src", expandImage.url ? expandImage.url : expandImage);
+                    img.setAttribute("alt", "");
+                    menuItemArrowTd.appendChild(img);
+                    menuItemTr.appendChild(menuItemArrowTd);
                 } else {
                     // Menu items fill both columns.
-                    menuItemContentTdElement.colSpan = 2;
+                    menuItemContentTd.colSpan = 2;
                 }
             } else if (item instanceof Extras.SeparatorModel) {
                 if (i == 0 || i == items.length - 1 || items[i - 1] instanceof Extras.SeparatorModel
@@ -429,15 +429,15 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
                     // Ignore separators at zero position.
                     continue;
                 }
-                var menuItemTrElement = document.createElement("tr");
-                menuTbodyElement.appendChild(menuItemTrElement);
-                var menuItemContentTdElement = document.createElement("td");
-                menuItemContentTdElement.colSpan = hasIcons ? 3 : 2;
-                menuItemContentTdElement.style.padding = "3px 0px";
-                var hrDivElement = document.createElement("div");
-                hrDivElement.style.cssText = "border-top:1px solid #a7a7a7;height:0;font-size:1px;line-height:0";
-                menuItemContentTdElement.appendChild(hrDivElement);
-                menuItemTrElement.appendChild(menuItemContentTdElement);
+                var menuItemTr = document.createElement("tr");
+                menuTbody.appendChild(menuItemTr);
+                var menuItemContentTd = document.createElement("td");
+                menuItemContentTd.colSpan = hasIcons ? 3 : 2;
+                menuItemContentTd.style.padding = "3px 0px";
+                var hrDiv = document.createElement("div");
+                hrDiv.style.cssText = "border-top:1px solid #a7a7a7;height:0;font-size:1px;line-height:0";
+                menuItemContentTd.appendChild(hrDiv);
+                menuItemTr.appendChild(menuItemContentTd);
             }
         }
 
@@ -606,23 +606,23 @@ Extras.Sync.ContextMenu = Core.extend(Extras.Sync.Menu, {
     },
     
     renderMain: function(update) {
-        var contextMenuDivElement = document.createElement("div");
-        contextMenuDivElement.id = this.component.renderId;
+        var contextMenuDiv = document.createElement("div");
+        contextMenuDiv.id = this.component.renderId;
         
         var activationMode = this.component.render("activationMode", Extras.ContextMenu.ACTIVATION_MODE_CONTEXT_CLICK);
         if (activationMode & Extras.ContextMenu.ACTIVATION_MODE_CLICK) {
-            Core.Web.Event.add(contextMenuDivElement, "click", Core.method(this, this._processContextClick), false);
+            Core.Web.Event.add(contextMenuDiv, "click", Core.method(this, this._processContextClick), false);
         }
         if (activationMode & Extras.ContextMenu.ACTIVATION_MODE_CONTEXT_CLICK) {
-            Core.Web.Event.add(contextMenuDivElement, "contextmenu", Core.method(this, this._processContextClick), false);
+            Core.Web.Event.add(contextMenuDiv, "contextmenu", Core.method(this, this._processContextClick), false);
         }
         
         var componentCount = this.component.getComponentCount();
         if (componentCount > 0) {
-            Echo.Render.renderComponentAdd(update, this.component.getComponent(0), contextMenuDivElement);
+            Echo.Render.renderComponentAdd(update, this.component.getComponent(0), contextMenuDiv);
         }
         
-        return contextMenuDivElement;
+        return contextMenuDiv;
     },
     
     renderUpdate: function(update) {
@@ -671,8 +671,8 @@ Extras.Sync.DropDownMenu = Core.extend(Extras.Sync.Menu, {
         Echo.Render.registerPeer("Extras.DropDownMenu", this);
     },
     
-    _containerDivElement: null,
-    _selectionSpanElement: null,
+    _containerDiv: null,
+    _selectionSpan: null,
     _selectedItem: null,
 
     getSubMenuPosition: function(menuModel, width, height) {
@@ -713,39 +713,39 @@ Extras.Sync.DropDownMenu = Core.extend(Extras.Sync.Menu, {
     },
     
     renderDisplay: function() {
-        Core.Web.VirtualPosition.redraw(this._containerDivElement);
+        Core.Web.VirtualPosition.redraw(this._containerDiv);
     },
     
     renderDispose: function(update) {
         Core.Web.Event.removeAll(this.element);
-        this._containerDivElement = null;
+        this._containerDiv = null;
         Extras.Sync.Menu.prototype.renderDispose.call(this, update);
     },
     
     renderMain: function() {
-        var dropDownDivElement = document.createElement("div");
-        dropDownDivElement.id = this.component.renderId;
-        dropDownDivElement.style.cursor = "pointer";
-        dropDownDivElement.style.overflow = "hidden";
+        var dropDownDiv = document.createElement("div");
+        dropDownDiv.id = this.component.renderId;
+        dropDownDiv.style.cursor = "pointer";
+        dropDownDiv.style.overflow = "hidden";
         var width = this.component.render("width");
         if (width) {
-            dropDownDivElement.style.width = width.toString();
+            dropDownDiv.style.width = width.toString();
         } else {
             // if the width is not set, IE won't fire click events.
-            dropDownDivElement.style.width = "100%";
+            dropDownDiv.style.width = "100%";
         }
         var height = this.component.render("height");
         if (height) {
-            dropDownDivElement.style.height = height.toString();
+            dropDownDiv.style.height = height.toString();
         }
-        Echo.Sync.Color.renderFB(this.component, dropDownDivElement);
+        Echo.Sync.Color.renderFB(this.component, dropDownDiv);
         
-        var relativeContainerDivElement = document.createElement("div");
-        relativeContainerDivElement.style.position = "relative";
-        relativeContainerDivElement.style.height = "100%";
+        var relativeContainerDiv = document.createElement("div");
+        relativeContainerDiv.style.position = "relative";
+        relativeContainerDiv.style.height = "100%";
         //FIXME this was commented out...by whom, why?
-        //Echo.Sync.Insets.render(this.component.render("insets"), relativeContainerDivElement, "padding");
-        relativeContainerDivElement.appendChild(document.createTextNode("\u00a0"));
+        //Echo.Sync.Insets.render(this.component.render("insets"), relativeContainerDiv, "padding");
+        relativeContainerDiv.appendChild(document.createTextNode("\u00a0"));
         
         var expandIcon = this.component.render("expandIcon", this.client.getResourceUrl("Extras", "image/menu/ArrowDown.gif"));
         var expandIconWidth = this.component.render("expandIconWidth", 10);
@@ -755,37 +755,37 @@ Extras.Sync.DropDownMenu = Core.extend(Extras.Sync.Menu, {
         expandElement.style.height = "100%";
         expandElement.style.top = "0px";
         expandElement.style.right = "0px";
-        var imgElement = document.createElement("img");
-        Echo.Sync.ImageReference.renderImg(expandIcon, imgElement);
-        expandElement.appendChild(imgElement);
-        relativeContainerDivElement.appendChild(expandElement);
+        var img = document.createElement("img");
+        Echo.Sync.ImageReference.renderImg(expandIcon, img);
+        expandElement.appendChild(img);
+        relativeContainerDiv.appendChild(expandElement);
         
-        this._containerDivElement = document.createElement("div");
-        this._containerDivElement.style.cssText = "position:absolute;top:0;left:0;right:" +
+        this._containerDiv = document.createElement("div");
+        this._containerDiv.style.cssText = "position:absolute;top:0;left:0;right:" +
                 Echo.Sync.Extent.toCssValue(expandIconWidth) + ";";
         var insets = this.component.render("insets");
         if (insets) {
-            Echo.Sync.Insets.render(insets, this._containerDivElement, "padding");
+            Echo.Sync.Insets.render(insets, this._containerDiv, "padding");
             if (height) {
                 var insetsPx = Echo.Sync.Insets.toPixels(insets);
                 var compensatedHeight = Math.max(0, Echo.Sync.Extent.toPixels(height) - insetsPx.top - insetsPx.bottom);
-                this._containerDivElement.style.height = compensatedHeight + "px";
+                this._containerDiv.style.height = compensatedHeight + "px";
             }
         } else {
-            this._containerDivElement.style.height = "100%";
+            this._containerDiv.style.height = "100%";
         }
-        Echo.Sync.FillImage.render(this.component.render("backgroundImage"), this._containerDivElement); 
+        Echo.Sync.FillImage.render(this.component.render("backgroundImage"), this._containerDiv); 
         
-        this._selectionSpanElement = document.createElement("div");
-        this._selectionSpanElement.style.cssText = "width:100%;height:100%;overflow:hidden;white-space:nowrap;";
-        Echo.Sync.Font.render(this.component.render("font"), this._selectionSpanElement, null);
-        this._containerDivElement.appendChild(this._selectionSpanElement);
+        this._selectionSpan = document.createElement("div");
+        this._selectionSpan.style.cssText = "width:100%;height:100%;overflow:hidden;white-space:nowrap;";
+        Echo.Sync.Font.render(this.component.render("font"), this._selectionSpan, null);
+        this._containerDiv.appendChild(this._selectionSpan);
         
-        relativeContainerDivElement.appendChild(this._containerDivElement);
-        dropDownDivElement.appendChild(relativeContainerDivElement);
+        relativeContainerDiv.appendChild(this._containerDiv);
+        dropDownDiv.appendChild(relativeContainerDiv);
     
-        Core.Web.Event.add(dropDownDivElement, "click", Core.method(this, this._processClick), false);
-        Core.Web.Event.Selection.disable(dropDownDivElement);
+        Core.Web.Event.add(dropDownDiv, "click", Core.method(this, this._processClick), false);
+        Core.Web.Event.Selection.disable(dropDownDiv);
     
         if (this.component.render("selectionEnabled")) {
             var selection = this.component.render("selection");
@@ -796,11 +796,11 @@ Extras.Sync.DropDownMenu = Core.extend(Extras.Sync.Menu, {
         if (!this._selectedItem) {
             var selectionText = this.component.render("selectionText");
             if (selectionText) {
-                this._selectionSpanElement.appendChild(document.createTextNode(selectionText));
+                this._selectionSpan.appendChild(document.createTextNode(selectionText));
             }
         }
     
-        return dropDownDivElement;
+        return dropDownDiv;
     },
 
     /**
@@ -811,39 +811,39 @@ Extras.Sync.DropDownMenu = Core.extend(Extras.Sync.Menu, {
     _setSelection: function(itemModel) {
         this._selectedItem = itemModel;
         
-        for (var i = this._selectionSpanElement.childNodes.length - 1; i >= 0; --i) {
-            this._selectionSpanElement.removeChild(this._selectionSpanElement.childNodes[i]);
+        for (var i = this._selectionSpan.childNodes.length - 1; i >= 0; --i) {
+            this._selectionSpan.removeChild(this._selectionSpan.childNodes[i]);
         }
 
         if (itemModel.text) {
             if (itemModel.icon) {
                 // Render Text and Icon
-                var tableElement = document.createElement("table");
-                var tbodyElement = document.createElement("tbody");
-                var trElement = document.createElement("tr");
-                var tdElement = document.createElement("td");
-                var imgElement = document.createElement("img");
-                Echo.Sync.ImageReference.renderImg(itemModel.icon, imgElement);
-                tdElement.appendChild(imgElement);
-                trElement.appendChild(tdElement);
-                tdElement = document.createElement("td");
-                tdElement.style.width = "3px";
-                trElement.appendChild(tdElement);
-                tdElement = document.createElement("td");
-                tdElement.appendChild(document.createTextNode(itemModel.text));
-                trElement.appendChild(tdElement);
-                tbodyElement.appendChild(trElement);
-                tableElement.appendChild(tbodyElement);
-                this._selectionSpanElement.appendChild(tableElement);
+                var table = document.createElement("table");
+                var tbody = document.createElement("tbody");
+                var tr = document.createElement("tr");
+                var td = document.createElement("td");
+                var img = document.createElement("img");
+                Echo.Sync.ImageReference.renderImg(itemModel.icon, img);
+                td.appendChild(img);
+                tr.appendChild(td);
+                td = document.createElement("td");
+                td.style.width = "3px";
+                tr.appendChild(td);
+                td = document.createElement("td");
+                td.appendChild(document.createTextNode(itemModel.text));
+                tr.appendChild(td);
+                tbody.appendChild(tr);
+                table.appendChild(tbody);
+                this._selectionSpan.appendChild(table);
             } else {
                 // Render Text Only
-                this._selectionSpanElement.appendChild(document.createTextNode(itemModel.text));
+                this._selectionSpan.appendChild(document.createTextNode(itemModel.text));
             }
         } else if (itemModel.icon) {
             // Render Icon Only
-            var imgElement = document.createElement("img");
-            Echo.Sync.ImageReference.renderImg(itemModel.icon, imgElement);
-            this._selectionSpanElement.appendChild(imgElement);
+            var img = document.createElement("img");
+            Echo.Sync.ImageReference.renderImg(itemModel.icon, img);
+            this._selectionSpan.appendChild(img);
         }
     }
 });    
@@ -1000,66 +1000,66 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
     },
     
     renderMain: function(update) {
-        var menuBarDivElement = document.createElement("div");
-        menuBarDivElement.id = this.component.renderId;
-        menuBarDivElement.style.position = "absolute";
-        menuBarDivElement.style.left = "0px";
-        menuBarDivElement.style.right = "0px";
-        menuBarDivElement.style.top = "0px";
-        menuBarDivElement.style.bottom = "0px";
+        var menuBarDiv = document.createElement("div");
+        menuBarDiv.id = this.component.renderId;
+        menuBarDiv.style.position = "absolute";
+        menuBarDiv.style.left = "0px";
+        menuBarDiv.style.right = "0px";
+        menuBarDiv.style.top = "0px";
+        menuBarDiv.style.bottom = "0px";
         
-        Echo.Sync.Color.renderFB(this.component, menuBarDivElement);
+        Echo.Sync.Color.renderFB(this.component, menuBarDiv);
         var border = this.component.render("border", Extras.Sync.Menu._defaultBorder);
-        Echo.Sync.Border.render(border, menuBarDivElement, "borderTop");
-        Echo.Sync.Border.render(border, menuBarDivElement, "borderBottom");
-        Echo.Sync.FillImage.render(this.component.render("backgroundImage"), menuBarDivElement); 
-        Echo.Sync.Font.render(this.component.render("font"), menuBarDivElement, null);
+        Echo.Sync.Border.render(border, menuBarDiv, "borderTop");
+        Echo.Sync.Border.render(border, menuBarDiv, "borderBottom");
+        Echo.Sync.FillImage.render(this.component.render("backgroundImage"), menuBarDiv); 
+        Echo.Sync.Font.render(this.component.render("font"), menuBarDiv, null);
         
         // This 100% high "inner div" element ensures the table will actually render to 100% height on all browsers.
         // IE7 has a peculiar issue here otherwise.
-        var menuBarInnerDivElement = document.createElement("div");
-        menuBarInnerDivElement.style.position = "absolute";
-        menuBarInnerDivElement.style.height = "100%";
-        menuBarDivElement.appendChild(menuBarInnerDivElement);
+        var menuBarInnerDiv = document.createElement("div");
+        menuBarInnerDiv.style.position = "absolute";
+        menuBarInnerDiv.style.height = "100%";
+        menuBarDiv.appendChild(menuBarInnerDiv);
         
-        var menuBarTableElement = document.createElement("table");
-        menuBarTableElement.style.height = "100%";
-        menuBarTableElement.style.borderCollapse = "collapse";
-        menuBarInnerDivElement.appendChild(menuBarTableElement);
+        var menuBarTable = document.createElement("table");
+        menuBarTable.style.height = "100%";
+        menuBarTable.style.borderCollapse = "collapse";
+        menuBarInnerDiv.appendChild(menuBarTable);
         
-        var menuBarTbodyElement = document.createElement("tbody");
-        menuBarTableElement.appendChild(menuBarTbodyElement);
+        var menuBarTbody = document.createElement("tbody");
+        menuBarTable.appendChild(menuBarTbody);
         
-        var menuBarTrElement = document.createElement("tr");
-        menuBarTbodyElement.appendChild(menuBarTrElement);
+        var menuBarTr = document.createElement("tr");
+        menuBarTbody.appendChild(menuBarTr);
         
         if (this.menuModel != null) {
             var items = this.menuModel.items;
             for (var i = 0; i < items.length; ++i) {
                 var item = items[i];
                 if (item instanceof Extras.OptionModel || item instanceof Extras.MenuModel) {
-                    var menuBarItemTdElement = document.createElement("td");
-                    this.itemElements[item.id] = menuBarItemTdElement;
-                    menuBarItemTdElement.style.padding = "0px";
-                    menuBarItemTdElement.style.height = "100%";
-                    menuBarItemTdElement.style.cursor = "pointer";
-                    menuBarTrElement.appendChild(menuBarItemTdElement);
-                    var menuBarItemDivElement = document.createElement("div");
+                    var menuBarItemTd = document.createElement("td");
+                    this.itemElements[item.id] = menuBarItemTd;
+                    menuBarItemTd.style.padding = "0px";
+                    menuBarItemTd.style.height = "100%";
+                    menuBarItemTd.style.cursor = "pointer";
+                    menuBarTr.appendChild(menuBarItemTd);
+                    var menuBarItemDiv = document.createElement("div");
                     Echo.Sync.Insets.render(Extras.Sync.MenuBarPane._defaultItemInsets, 
-                            menuBarItemDivElement, "padding");
-                    menuBarItemTdElement.appendChild(menuBarItemDivElement);
+                            menuBarItemDiv, "padding");
+                    menuBarItemTd.appendChild(menuBarItemDiv);
                     var textNode = document.createTextNode(item.text);
-                    menuBarItemDivElement.appendChild(textNode);
+                    menuBarItemDiv.appendChild(textNode);
                 }
             }
         }
         
-        Core.Web.Event.add(menuBarDivElement, "click", Core.method(this, this._processClick), false);
-        Core.Web.Event.add(menuBarDivElement, "mouseover", Core.method(this, this._processItemEnter), false);
-        Core.Web.Event.add(menuBarDivElement, "mouseout", Core.method(this, this._processItemExit), false);
-        Core.Web.Event.Selection.disable(menuBarDivElement);
+        Core.Web.Event.add(menuBarDiv, "click", Core.method(this, this._processClick), false);
+        Core.Web.Event.add(menuBarDiv, "mouseover", Core.method(this, this._processItemEnter), false);
+        Core.Web.Event.add(menuBarDiv, "mouseout", Core.method(this, this._processItemExit), false);
+        Core.Web.Event.Selection.disable(menuBarDiv);
     
-        return menuBarDivElement;
+        return menuBarDiv;
     },
     
     _setActiveItem: function(itemModel) {
