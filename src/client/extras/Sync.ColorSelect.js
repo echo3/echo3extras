@@ -111,6 +111,7 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         
         // Create main container div element, relatively positioned.
         this._div = document.createElement("div");
+        this._div.id = this.component.renderId;
         this._div.style.cssText = "position:relative;left:0;top:0;overflow:hidden;";
         this._div.style.width = (this._valueWidth + this._hueWidth + 29) + "px";
         this._div.style.height = (this._saturationHeight + 36) +"px";
@@ -259,7 +260,6 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         this._div.appendChild(this._svListenerDiv);
         
         this._hListenerDiv = document.createElement("div");
-        this._hListenerDiv.id = this.elementId + "_hlistener";
         this._hListenerDiv.style.cssText = "position:absolute;z-index:1;top:0;cursor:crosshair;";
         this._hListenerDiv.style.left = (this._valueWidth + 15) + "px";
         this._hListenerDiv.style.width = (this._hueWidth + 14) + "px";
