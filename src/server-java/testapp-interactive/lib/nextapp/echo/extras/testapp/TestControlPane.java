@@ -32,7 +32,6 @@ package nextapp.echo.extras.testapp;
 import nextapp.echo.app.Button;
 import nextapp.echo.app.Column;
 import nextapp.echo.app.Component;
-import nextapp.echo.app.Extent;
 import nextapp.echo.app.ImageReference;
 import nextapp.echo.app.Label;
 import nextapp.echo.app.SplitPane;
@@ -50,7 +49,7 @@ public class TestControlPane extends SplitPane {
     private AccordionPane controlGroupsAccordion;
     
     public TestControlPane(String testTitle, ImageReference testIcon) {
-        super(SplitPane.ORIENTATION_VERTICAL, new Extent(40));
+        super(SplitPane.ORIENTATION_VERTICAL, true);
 
         Label titleLabel = new Label(testTitle, testIcon);
         titleLabel.setStyleName("TitleLabel2");

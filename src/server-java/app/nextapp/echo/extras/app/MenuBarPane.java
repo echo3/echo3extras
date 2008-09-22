@@ -34,6 +34,7 @@ import nextapp.echo.app.Color;
 import nextapp.echo.app.Component;
 import nextapp.echo.app.FillImage;
 import nextapp.echo.app.ImageReference;
+import nextapp.echo.app.Insets;
 import nextapp.echo.app.Pane;
 import nextapp.echo.app.PaneContainer;
 import nextapp.echo.extras.app.menu.AbstractMenuComponent;
@@ -54,6 +55,7 @@ implements Pane {
     public static final String PROPERTY_DISABLED_BACKGROUND = "disabledBackground";
     public static final String PROPERTY_DISABLED_BACKGROUND_IMAGE = "disabledBackgroundImage";
     public static final String PROPERTY_DISABLED_FOREGROUND = "disabledForeground";
+    public static final String PROPERTY_INSETS = "insets";
     public static final String PROPERTY_MENU_BACKGROUND = "menuBackground";
     public static final String PROPERTY_MENU_BACKGROUND_IMAGE = "menuBackgroundImage";
     public static final String PROPERTY_MENU_BORDER = "menuBorder";
@@ -118,7 +120,7 @@ implements Pane {
     public Border getBorder() {
         return (Border) get(PROPERTY_BORDER);
     }
-
+    
     /**
      * Returns the background color used to render disabled menu items.
      * 
@@ -146,6 +148,16 @@ implements Pane {
         return (Color) get(PROPERTY_DISABLED_FOREGROUND);
     }
     
+    /**
+     * Returns the inset margin around the menu bar.
+     * This property is ignored unless the container is sizing itself to the menu bar.
+     * 
+     * @return the inset margin around the menu bar
+     */
+    public Insets getInsets() {
+        return (Insets) get(PROPERTY_INSETS);
+    }
+
     /**
      * Returns the background color that will be displayed in pull-down
      * menus.  Use this property only if a color different from
@@ -305,6 +317,16 @@ implements Pane {
      */
     public void setDisabledForeground(Color newValue) {
         set(PROPERTY_DISABLED_FOREGROUND, newValue);
+    }
+    
+    /**
+     * Returns the inset margin around the menu bar.
+     * This property is ignored unless the container is sizing itself to the menu bar.
+     * 
+     * @return the inset margin around the menu bar
+     */
+    public void setInsets(Insets newValue) {
+        set(PROPERTY_INSETS, newValue);
     }
     
     /**

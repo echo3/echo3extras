@@ -16,7 +16,7 @@
   <p n="insets" t="Insets">3px 20px</p>
  </s>
  <s n="TestPane" t="nextapp.echo.app.SplitPane">
-  <p n="separatorPosition" t="Extent">40px</p>
+  <p n="autoPositioned" t="b">true</p>
   <p n="separatorHeight" t="Extent">1px</p>
   <p n="separatorColor" t="Color">#1d1d1d</p>
  </s>
@@ -168,12 +168,12 @@
   <p n="rolloverForeground" t="Color">#6f0f0f</p>
  </s>
  <s n="ControlPane.Container.Top" t="nextapp.echo.app.SplitPane">
-  <p n="separatorPosition">32px</p>
+  <p n="autoPositioned">true</p>
   <p n="orientation">nextapp.echo.app.SplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM</p>
  </s>
  <s n="ControlPane.Container.Bottom" t="nextapp.echo.app.SplitPane">
   <p n="orientation">nextapp.echo.app.SplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP</p>
-  <p n="separatorPosition">32px</p>
+  <p n="autoPositioned">true</p>
  </s>
  <s n="ControlPane" t="nextapp.echo.app.Row">
   <p n="insets" t="Insets">2px 10px</p>

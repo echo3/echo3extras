@@ -33,7 +33,6 @@ import java.util.Locale;
 
 import nextapp.echo.app.Component;
 import nextapp.echo.app.ContentPane;
-import nextapp.echo.app.Extent;
 import nextapp.echo.app.FillImage;
 import nextapp.echo.app.Insets;
 import nextapp.echo.app.Label;
@@ -204,8 +203,7 @@ public TestPane() {
     titleLabel.setStyleName("TitleLabel");
     titleVerticalPane.add(titleLabel);
 
-    menuVerticalPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL,
-            new Extent(26));
+    menuVerticalPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL);
     titleVerticalPane.add(menuVerticalPane);
 
     MenuStateModel stateModel = new AbstractMenuStateModel() {

@@ -862,6 +862,8 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
     },
     
     _activeItem: null,
+    _menuBarTable: null,
+    _menuBarBorderHeight: null,
     itemElements: null,
     
     $construct: function() {
@@ -916,6 +918,12 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
         } else {
             return this.menuModel.findItem(itemModelId);
         }
+    },
+    
+    getPreferredSize: function() {
+        this._menuBarTable.style.height = "";
+        var insets = Echo.Sync.Insets.toPixels(this.component.render("insets", Extras.MenuBarPane.DEFAULT_INSETS));
+        return { height: new Core.Web.Measure.Bounds(this.element).height + insets.top + insets.bottom };
     },
     
     getSubMenuPosition: function(menuModel, width, height) {
@@ -992,9 +1000,13 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
     
     renderDisplay: function() {
         Core.Web.VirtualPosition.redraw(this.element);
+        var bounds = new Core.Web.Measure.Bounds(this.element.parentNode);
+        
+        this._menuBarTable.style.height = (bounds.height - this._menuBarBorderHeight) + "px";
     },
 
     renderDispose: function(update) {
+        this._menuBarTable = null;
         Core.Web.Event.removeAll(this.element);
         Extras.Sync.Menu.prototype.renderDispose.call(this, update);
     },
@@ -1002,33 +1014,22 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
     renderMain: function(update) {
         var menuBarDiv = document.createElement("div");
         menuBarDiv.id = this.component.renderId;
-        menuBarDiv.style.position = "absolute";
-        menuBarDiv.style.left = "0px";
-        menuBarDiv.style.right = "0px";
-        menuBarDiv.style.top = "0px";
-        menuBarDiv.style.bottom = "0px";
         
         Echo.Sync.Color.renderFB(this.component, menuBarDiv);
         var border = this.component.render("border", Extras.Sync.Menu._defaultBorder);
+        this._menuBarBorderHeight = Echo.Sync.Border.getPixelSize(border, "top") 
+                + Echo.Sync.Border.getPixelSize(border, "bottom"); 
         Echo.Sync.Border.render(border, menuBarDiv, "borderTop");
         Echo.Sync.Border.render(border, menuBarDiv, "borderBottom");
         Echo.Sync.FillImage.render(this.component.render("backgroundImage"), menuBarDiv); 
         Echo.Sync.Font.render(this.component.render("font"), menuBarDiv, null);
         
-        // This 100% high "inner div" element ensures the table will actually render to 100% height on all browsers.
-        // IE7 has a peculiar issue here otherwise.
-        var menuBarInnerDiv = document.createElement("div");
-        menuBarInnerDiv.style.position = "absolute";
-        menuBarInnerDiv.style.height = "100%";
-        menuBarDiv.appendChild(menuBarInnerDiv);
-        
-        var menuBarTable = document.createElement("table");
-        menuBarTable.style.height = "100%";
-        menuBarTable.style.borderCollapse = "collapse";
-        menuBarInnerDiv.appendChild(menuBarTable);
+        this._menuBarTable = document.createElement("table");
+        this._menuBarTable.style.borderCollapse = "collapse";
+        menuBarDiv.appendChild(this._menuBarTable);
         
         var menuBarTbody = document.createElement("tbody");
-        menuBarTable.appendChild(menuBarTbody);
+        this._menuBarTable.appendChild(menuBarTbody);
         
         var menuBarTr = document.createElement("tr");
         menuBarTbody.appendChild(menuBarTr);
@@ -1041,7 +1042,6 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
                     var menuBarItemTd = document.createElement("td");
                     this.itemElements[item.id] = menuBarItemTd;
                     menuBarItemTd.style.padding = "0px";
-                    menuBarItemTd.style.height = "100%";
                     menuBarItemTd.style.cursor = "pointer";
                     menuBarTr.appendChild(menuBarItemTd);
                     var menuBarItemDiv = document.createElement("div");

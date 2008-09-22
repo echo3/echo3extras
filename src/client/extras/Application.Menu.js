@@ -103,6 +103,10 @@ Extras.MenuBarPane = Core.extend(Echo.Component, {
     $load: function() {
         Echo.ComponentFactory.registerType("Extras.MenuBarPane", this);
     },
+    
+    $static: {
+        DEFAULT_INSETS: "3px 0px"
+    },
 
     componentType: "Extras.MenuBarPane",
     modalSupport: true
