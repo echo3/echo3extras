@@ -55,230 +55,230 @@ import nextapp.echo.extras.app.menu.SeparatorModel;
  */
 public class TestPane extends ContentPane {
 
-private ActionListener commandActionListener = new ActionListener() {
-
-    /**
-     * @see nextapp.echo.app.event.ActionListener#actionPerformed(nextapp.echo.app.event.ActionEvent)
-     */
-    public void actionPerformed(ActionEvent e) {
-        try {
-            if (e.getActionCommand() == null) {
-                InteractiveApp.getApp().displayWelcomePane();
-            } else if (e.getActionCommand().startsWith("Launch_")) {
-                String screenClassName = "nextapp.echo.extras.testapp.testscreen."
-                        + e.getActionCommand().substring("Launch ".length());
-                Class screenClass = Class.forName(screenClassName);
-                Component content = (Component) screenClass.newInstance();
-                if (menuVerticalPane.getComponentCount() > 1) {
-                    menuVerticalPane.remove(1);
+    private ActionListener commandActionListener = new ActionListener() {
+    
+        /**
+         * @see nextapp.echo.app.event.ActionListener#actionPerformed(nextapp.echo.app.event.ActionEvent)
+         */
+        public void actionPerformed(ActionEvent e) {
+            try {
+                if (e.getActionCommand() == null) {
+                    InteractiveApp.getApp().displayWelcomePane();
+                } else if (e.getActionCommand().startsWith("Launch_")) {
+                    String screenClassName = "nextapp.echo.extras.testapp.testscreen."
+                            + e.getActionCommand().substring("Launch ".length());
+                    Class screenClass = Class.forName(screenClassName);
+                    Component content = (Component) screenClass.newInstance();
+                    if (menuVerticalPane.getComponentCount() > 1) {
+                        menuVerticalPane.remove(1);
+                    }
+                    menuVerticalPane.add(content);
+                } else if (e.getActionCommand().equals("OpenModalDialog")) {
+                    WindowPane modalWindow = new WindowPane();
+                    modalWindow.setStyleName("Default");
+                    modalWindow.setInsets(new Insets(10, 5));
+                    modalWindow.setTitle("Blocking Modal WindowPane");
+                    modalWindow.setModal(true);
+                    modalWindow
+                            .add(new Label(
+                                    "Verify this modal WindowPane blocks input to all components."));
+                    InteractiveApp.getApp().getDefaultWindow().getContent().add(
+                            modalWindow);
+                } else if (e.getActionCommand().equals("OpenConsole")) {
+                    InteractiveApp.getApp().consoleWrite(null);
+                } else if (e.getActionCommand().startsWith("Locale_")) {
+                    String language = e.getActionCommand().substring(
+                            "Locale_".length());
+                    if ("Default".equals(language)) {
+                        InteractiveApp.getApp().setLocale(Locale.getDefault());
+                    } else {
+                        InteractiveApp.getApp().setLocale(new Locale(language));
+                    }
+                } else if (e.getActionCommand().equals("Reset")) {
+                    InteractiveApp.getApp().displayTestPane();
+                } else if (e.getActionCommand().equals("Exit")) {
+                    InteractiveApp.getApp().displayWelcomePane();
                 }
-                menuVerticalPane.add(content);
-            } else if (e.getActionCommand().equals("OpenModalDialog")) {
-                WindowPane modalWindow = new WindowPane();
-                modalWindow.setStyleName("Default");
-                modalWindow.setInsets(new Insets(10, 5));
-                modalWindow.setTitle("Blocking Modal WindowPane");
-                modalWindow.setModal(true);
-                modalWindow
-                        .add(new Label(
-                                "Verify this modal WindowPane blocks input to all components."));
-                InteractiveApp.getApp().getDefaultWindow().getContent().add(
-                        modalWindow);
-            } else if (e.getActionCommand().equals("OpenConsole")) {
-                InteractiveApp.getApp().consoleWrite(null);
-            } else if (e.getActionCommand().startsWith("Locale_")) {
-                String language = e.getActionCommand().substring(
-                        "Locale_".length());
-                if ("Default".equals(language)) {
-                    InteractiveApp.getApp().setLocale(Locale.getDefault());
-                } else {
-                    InteractiveApp.getApp().setLocale(new Locale(language));
-                }
-            } else if (e.getActionCommand().equals("Reset")) {
-                InteractiveApp.getApp().displayTestPane();
-            } else if (e.getActionCommand().equals("Exit")) {
-                InteractiveApp.getApp().displayWelcomePane();
-            }
-        } catch (ClassNotFoundException ex) {
-            add(new MessageDialog("Cannot Load Test", ex.toString(),
-                    Styles.ICON_64_ERROR, MessageDialog.CONTROLS_OK));
-        } catch (InstantiationException ex) {
-            throw new RuntimeException(ex.toString());
-        } catch (IllegalAccessException ex) {
-            throw new RuntimeException(ex.toString());
-        }
-    }
-};
-
-private SplitPane menuVerticalPane;
-
-public TestPane() {
-    super();
-
-    setBackgroundImage(Styles.FILL_IMAGE_EXTRAS_BACKGROUND);
-
-    DefaultMenuModel menuBarMenu = new DefaultMenuModel();
-
-    DefaultMenuModel testsMenu = new DefaultMenuModel(null, "Test");
-    testsMenu.addItem(new DefaultOptionModel("Launch_AccordionPaneTest",
-            "Accordion Pane", Styles.ICON_16_ACCORDION_PANE));
-    testsMenu.addItem(new DefaultOptionModel("Launch_BorderPaneTest",
-            "Border Pane", Styles.ICON_16_BORDER_PANE));
-    testsMenu.addItem(new DefaultOptionModel("Launch_ContextMenuTest",
-            "Context Menu", Styles.ICON_16_CONTEXT_MENU));
-    testsMenu.addItem(new DefaultOptionModel("Launch_CalendarSelectTest",
-            "Calendar Select", Styles.ICON_16_CALENDAR_SELECT));
-    testsMenu.addItem(new DefaultOptionModel("Launch_ColorSelectTest",
-            "Color Select", Styles.ICON_16_COLOR_SELECT));
-    testsMenu.addItem(new DefaultOptionModel("Launch_DragSourceTest",
-            "Drag and Drop", Styles.ICON_16_DRAG_SOURCE));
-    testsMenu.addItem(new DefaultOptionModel("Launch_DropDownMenuTest",
-            "Drop Down Menu", Styles.ICON_16_DROP_DOWN_MENU));
-    testsMenu.addItem(new DefaultOptionModel("Launch_GroupTest", "Group",
-            Styles.ICON_16_GROUP));
-    testsMenu.addItem(new DefaultOptionModel("Launch_MenuBarPaneTest",
-            "Menu Bar Pane", Styles.ICON_16_MENU_BAR_PANE));
-    testsMenu.addItem(new DefaultOptionModel("Launch_RichTextAreaTest",
-            "Rich Text Area", Styles.ICON_16_RICH_TEXT_AREA));
-    testsMenu.addItem(new DefaultOptionModel("Launch_TabPaneTest", "Tab Pane",
-            Styles.ICON_16_TAB_PANE));
-    testsMenu.addItem(new DefaultOptionModel("Launch_ToolTipContainerTest", "Tooltip Container",
-            Styles.ICON_16_TOOL_TIP_CONTAINER));
-    testsMenu.addItem(new DefaultOptionModel("Launch_TransitionPaneTest",
-            "Transition Pane", Styles.ICON_16_TRANSITION_PANE));
-    testsMenu.addItem(new DefaultOptionModel("Launch_TreeTest", "Tree",
-            Styles.ICON_16_TREE));
-    testsMenu.addItem(new SeparatorModel());
-    testsMenu.addItem(new DefaultOptionModel("Reset", "Reset", null));
-    testsMenu.addItem(new DefaultOptionModel("Exit", "Exit", null));
-    menuBarMenu.addItem(testsMenu);
-
-    DefaultMenuModel backgroundsMenu = new DefaultMenuModel("Backgrounds",
-            "Backgrounds");
-    backgroundsMenu.addItem(new DefaultRadioOptionModel("BackgroundDefault",
-            "Backgrounds", "Default"));
-    backgroundsMenu.addItem(new DefaultRadioOptionModel("BackgroundPewter",
-            "Backgrounds", "Pewter"));
-    backgroundsMenu.addItem(new DefaultRadioOptionModel("BackgroundSilver",
-            "Backgrounds", "Silver"));
-    backgroundsMenu.addItem(new DefaultRadioOptionModel("BackgroundBlue",
-            "Backgrounds", "Blue"));
-
-    DefaultMenuModel localesMenu = new DefaultMenuModel("Locales", "Locales");
-    localesMenu.addItem(new DefaultRadioOptionModel("Locale_da", "Locales",
-            "Danish"));
-    localesMenu.addItem(new DefaultRadioOptionModel("Locale_en", "Locales",
-            "English"));
-    localesMenu.addItem(new DefaultRadioOptionModel("Locale_fr", "Locales",
-            "French"));
-    localesMenu.addItem(new DefaultRadioOptionModel("Locale_de", "Locales",
-            "German"));
-    localesMenu.addItem(new DefaultRadioOptionModel("Locale_el", "Locales",
-            "Greek"));
-    localesMenu.addItem(new DefaultRadioOptionModel("Locale_it", "Locales",
-            "Italian"));
-    localesMenu.addItem(new DefaultRadioOptionModel("Locale_es", "Locales",
-            "Spanish"));
-    localesMenu.addItem(new DefaultRadioOptionModel("Locale_1337", "Locales",
-            "1337 (Test)"));
-
-    DefaultMenuModel optionsMenu = new DefaultMenuModel(null, "Options");
-    optionsMenu.addItem(new DefaultOptionModel("OpenConsole", "Open Console",
-            null));
-    optionsMenu.addItem(new DefaultOptionModel("OpenModalDialog",
-            "Open Model Dialog", null));
-    optionsMenu.addItem(new SeparatorModel());
-    optionsMenu.addItem(localesMenu);
-    optionsMenu.addItem(new SeparatorModel());
-    optionsMenu.addItem(new DefaultToggleOptionModel("ShowBackground",
-            "Show Background"));
-    optionsMenu.addItem(backgroundsMenu);
-    menuBarMenu.addItem(optionsMenu);
-
-    SplitPane titleVerticalPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL);
-    titleVerticalPane.setStyleName("TestPane");
-    add(titleVerticalPane);
-
-    Label titleLabel = new Label("NextApp Echo3 Extras Test Application");
-    titleLabel.setStyleName("TitleLabel");
-    titleVerticalPane.add(titleLabel);
-
-    menuVerticalPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL);
-    titleVerticalPane.add(menuVerticalPane);
-
-    MenuStateModel stateModel = new AbstractMenuStateModel() {
-
-        boolean showBackground = true;
-        FillImage background = Styles.FILL_IMAGE_EXTRAS_BACKGROUND;
-
-        public void setSelected(String id, boolean selected) {
-            if ("ShowBackground".equals(id)) {
-                showBackground = selected;
-                setBackgroundImage(showBackground ? background : null);
-            } else if (selected && "BackgroundDefault".equals(id)) {
-                background = Styles.FILL_IMAGE_EXTRAS_BACKGROUND;
-                if (showBackground) {
-                    setBackgroundImage(background);
-                }
-            } else if (selected && "BackgroundPewter".equals(id)) {
-                background = Styles.FILL_IMAGE_PEWTER_LINE;
-                if (showBackground) {
-                    setBackgroundImage(background);
-                }
-            } else if (selected && "BackgroundSilver".equals(id)) {
-                background = Styles.FILL_IMAGE_SILVER_LINE;
-                if (showBackground) {
-                    setBackgroundImage(background);
-                }
-            } else if (selected && "BackgroundBlue".equals(id)) {
-                background = Styles.FILL_IMAGE_LIGHT_BLUE_LINE;
-                if (showBackground) {
-                    setBackgroundImage(background);
-                }
-            }
-            fireStateChanged();
-        }
-
-        public void setEnabled(String id, boolean enabled) {
-        }
-
-        public boolean isSelected(String id) {
-            if ("ShowBackground".equals(id)) {
-                return showBackground;
-            } else if ("BackgroundDefault".equals(id)) {
-                return Styles.FILL_IMAGE_EXTRAS_BACKGROUND.equals(background);
-            } else if ("BackgroundPewter".equals(id)) {
-                return Styles.FILL_IMAGE_PEWTER_LINE.equals(background);
-            } else if ("BackgroundSilver".equals(id)) {
-                return Styles.FILL_IMAGE_SILVER_LINE.equals(background);
-            } else if ("BackgroundBlue".equals(id)) {
-                return Styles.FILL_IMAGE_LIGHT_BLUE_LINE.equals(background);
-            } else if (id.startsWith("Locale_")) {
-                String language = id.substring("Locale_".length());
-                if ("Default".equals(language)) {
-                    return Locale.getDefault().equals(
-                            InteractiveApp.getApp().getLocale());
-                } else {
-                    return language.equals(InteractiveApp.getApp().getLocale()
-                            .getLanguage());
-                }
-            } else {
-                return false;
-            }
-        }
-
-        public boolean isEnabled(String id) {
-            if ("Backgrounds".equals(id)) {
-                return showBackground;
-            } else {
-                return true;
+            } catch (ClassNotFoundException ex) {
+                add(new MessageDialog("Cannot Load Test", ex.toString(),
+                        Styles.ICON_64_ERROR, MessageDialog.CONTROLS_OK));
+            } catch (InstantiationException ex) {
+                throw new RuntimeException(ex.toString());
+            } catch (IllegalAccessException ex) {
+                throw new RuntimeException(ex.toString());
             }
         }
     };
-
-    MenuBarPane menu = new MenuBarPane(menuBarMenu, stateModel);
-    menu.setStyleName("Default");
-    menu.addActionListener(commandActionListener);
-    menuVerticalPane.add(menu);
-}
+    
+    private SplitPane menuVerticalPane;
+    
+    public TestPane() {
+        super();
+    
+        setBackgroundImage(Styles.FILL_IMAGE_EXTRAS_BACKGROUND);
+    
+        DefaultMenuModel menuBarMenu = new DefaultMenuModel();
+    
+        DefaultMenuModel testsMenu = new DefaultMenuModel(null, "Test");
+        testsMenu.addItem(new DefaultOptionModel("Launch_AccordionPaneTest",
+                "Accordion Pane", Styles.ICON_16_ACCORDION_PANE));
+        testsMenu.addItem(new DefaultOptionModel("Launch_BorderPaneTest",
+                "Border Pane", Styles.ICON_16_BORDER_PANE));
+        testsMenu.addItem(new DefaultOptionModel("Launch_ContextMenuTest",
+                "Context Menu", Styles.ICON_16_CONTEXT_MENU));
+        testsMenu.addItem(new DefaultOptionModel("Launch_CalendarSelectTest",
+                "Calendar Select", Styles.ICON_16_CALENDAR_SELECT));
+        testsMenu.addItem(new DefaultOptionModel("Launch_ColorSelectTest",
+                "Color Select", Styles.ICON_16_COLOR_SELECT));
+        testsMenu.addItem(new DefaultOptionModel("Launch_DragSourceTest",
+                "Drag and Drop", Styles.ICON_16_DRAG_SOURCE));
+        testsMenu.addItem(new DefaultOptionModel("Launch_DropDownMenuTest",
+                "Drop Down Menu", Styles.ICON_16_DROP_DOWN_MENU));
+        testsMenu.addItem(new DefaultOptionModel("Launch_GroupTest", "Group",
+                Styles.ICON_16_GROUP));
+        testsMenu.addItem(new DefaultOptionModel("Launch_MenuBarPaneTest",
+                "Menu Bar Pane", Styles.ICON_16_MENU_BAR_PANE));
+        testsMenu.addItem(new DefaultOptionModel("Launch_RichTextAreaTest",
+                "Rich Text Area", Styles.ICON_16_RICH_TEXT_AREA));
+        testsMenu.addItem(new DefaultOptionModel("Launch_TabPaneTest", "Tab Pane",
+                Styles.ICON_16_TAB_PANE));
+        testsMenu.addItem(new DefaultOptionModel("Launch_ToolTipContainerTest", "Tooltip Container",
+                Styles.ICON_16_TOOL_TIP_CONTAINER));
+        testsMenu.addItem(new DefaultOptionModel("Launch_TransitionPaneTest",
+                "Transition Pane", Styles.ICON_16_TRANSITION_PANE));
+        testsMenu.addItem(new DefaultOptionModel("Launch_TreeTest", "Tree",
+                Styles.ICON_16_TREE));
+        testsMenu.addItem(new SeparatorModel());
+        testsMenu.addItem(new DefaultOptionModel("Reset", "Reset", null));
+        testsMenu.addItem(new DefaultOptionModel("Exit", "Exit", null));
+        menuBarMenu.addItem(testsMenu);
+    
+        DefaultMenuModel backgroundsMenu = new DefaultMenuModel("Backgrounds",
+                "Backgrounds");
+        backgroundsMenu.addItem(new DefaultRadioOptionModel("BackgroundDefault",
+                "Backgrounds", "Default"));
+        backgroundsMenu.addItem(new DefaultRadioOptionModel("BackgroundPewter",
+                "Backgrounds", "Pewter"));
+        backgroundsMenu.addItem(new DefaultRadioOptionModel("BackgroundSilver",
+                "Backgrounds", "Silver"));
+        backgroundsMenu.addItem(new DefaultRadioOptionModel("BackgroundBlue",
+                "Backgrounds", "Blue"));
+    
+        DefaultMenuModel localesMenu = new DefaultMenuModel("Locales", "Locales");
+        localesMenu.addItem(new DefaultRadioOptionModel("Locale_da", "Locales",
+                "Danish"));
+        localesMenu.addItem(new DefaultRadioOptionModel("Locale_en", "Locales",
+                "English"));
+        localesMenu.addItem(new DefaultRadioOptionModel("Locale_fr", "Locales",
+                "French"));
+        localesMenu.addItem(new DefaultRadioOptionModel("Locale_de", "Locales",
+                "German"));
+        localesMenu.addItem(new DefaultRadioOptionModel("Locale_el", "Locales",
+                "Greek"));
+        localesMenu.addItem(new DefaultRadioOptionModel("Locale_it", "Locales",
+                "Italian"));
+        localesMenu.addItem(new DefaultRadioOptionModel("Locale_es", "Locales",
+                "Spanish"));
+        localesMenu.addItem(new DefaultRadioOptionModel("Locale_1337", "Locales",
+                "1337 (Test)"));
+    
+        DefaultMenuModel optionsMenu = new DefaultMenuModel(null, "Options");
+        optionsMenu.addItem(new DefaultOptionModel("OpenConsole", "Open Console",
+                null));
+        optionsMenu.addItem(new DefaultOptionModel("OpenModalDialog",
+                "Open Model Dialog", null));
+        optionsMenu.addItem(new SeparatorModel());
+        optionsMenu.addItem(localesMenu);
+        optionsMenu.addItem(new SeparatorModel());
+        optionsMenu.addItem(new DefaultToggleOptionModel("ShowBackground",
+                "Show Background"));
+        optionsMenu.addItem(backgroundsMenu);
+        menuBarMenu.addItem(optionsMenu);
+    
+        SplitPane titleVerticalPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL);
+        titleVerticalPane.setStyleName("TestPane");
+        add(titleVerticalPane);
+    
+        Label titleLabel = new Label("NextApp Echo3 Extras Test Application");
+        titleLabel.setStyleName("TitleLabel");
+        titleVerticalPane.add(titleLabel);
+    
+        menuVerticalPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL, true);
+        titleVerticalPane.add(menuVerticalPane);
+    
+        MenuStateModel stateModel = new AbstractMenuStateModel() {
+    
+            boolean showBackground = true;
+            FillImage background = Styles.FILL_IMAGE_EXTRAS_BACKGROUND;
+    
+            public void setSelected(String id, boolean selected) {
+                if ("ShowBackground".equals(id)) {
+                    showBackground = selected;
+                    setBackgroundImage(showBackground ? background : null);
+                } else if (selected && "BackgroundDefault".equals(id)) {
+                    background = Styles.FILL_IMAGE_EXTRAS_BACKGROUND;
+                    if (showBackground) {
+                        setBackgroundImage(background);
+                    }
+                } else if (selected && "BackgroundPewter".equals(id)) {
+                    background = Styles.FILL_IMAGE_PEWTER_LINE;
+                    if (showBackground) {
+                        setBackgroundImage(background);
+                    }
+                } else if (selected && "BackgroundSilver".equals(id)) {
+                    background = Styles.FILL_IMAGE_SILVER_LINE;
+                    if (showBackground) {
+                        setBackgroundImage(background);
+                    }
+                } else if (selected && "BackgroundBlue".equals(id)) {
+                    background = Styles.FILL_IMAGE_LIGHT_BLUE_LINE;
+                    if (showBackground) {
+                        setBackgroundImage(background);
+                    }
+                }
+                fireStateChanged();
+            }
+    
+            public void setEnabled(String id, boolean enabled) {
+            }
+    
+            public boolean isSelected(String id) {
+                if ("ShowBackground".equals(id)) {
+                    return showBackground;
+                } else if ("BackgroundDefault".equals(id)) {
+                    return Styles.FILL_IMAGE_EXTRAS_BACKGROUND.equals(background);
+                } else if ("BackgroundPewter".equals(id)) {
+                    return Styles.FILL_IMAGE_PEWTER_LINE.equals(background);
+                } else if ("BackgroundSilver".equals(id)) {
+                    return Styles.FILL_IMAGE_SILVER_LINE.equals(background);
+                } else if ("BackgroundBlue".equals(id)) {
+                    return Styles.FILL_IMAGE_LIGHT_BLUE_LINE.equals(background);
+                } else if (id.startsWith("Locale_")) {
+                    String language = id.substring("Locale_".length());
+                    if ("Default".equals(language)) {
+                        return Locale.getDefault().equals(
+                                InteractiveApp.getApp().getLocale());
+                    } else {
+                        return language.equals(InteractiveApp.getApp().getLocale()
+                                .getLanguage());
+                    }
+                } else {
+                    return false;
+                }
+            }
+    
+            public boolean isEnabled(String id) {
+                if ("Backgrounds".equals(id)) {
+                    return showBackground;
+                } else {
+                    return true;
+                }
+            }
+        };
+    
+        MenuBarPane menu = new MenuBarPane(menuBarMenu, stateModel);
+        menu.setStyleName("Default");
+        menu.addActionListener(commandActionListener);
+        menuVerticalPane.add(menu);
+    }
 }
