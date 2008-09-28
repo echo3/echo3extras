@@ -205,6 +205,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         if (features.menu) {
             var menuSplitPane = new Echo.SplitPane({
                 orientation: Echo.SplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM,
+                autoPositioned: true,
                 children: [
                     this._createMenu()
                 ]
