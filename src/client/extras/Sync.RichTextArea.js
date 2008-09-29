@@ -181,8 +181,6 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
      */
     _paneRender: false,
     
-    _trimHeight: null,
-    
     $construct: function() {
         this._processComponentInsertHtmlRef = Core.method(this, this._processComponentInsertHtml);
         this._processDialogCloseRef = Core.method(this, this._processDialogClose);
@@ -193,10 +191,6 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
     },
 
     createComponent: function() {
-        var borderSize = Echo.Sync.Border.getPixelSize(this.component.render("border", Extras.RichTextArea.DEFAULT_BORDER), "top")
-                + Echo.Sync.Border.getPixelSize(this.component.render("border", Extras.RichTextArea.DEFAULT_BORDER), "bottom");
-        this._trimHeight = borderSize;
-    
         var features = this.component.render("features", Extras.Sync.RichTextArea.defaultFeatures);
 
         var contentPane = new Echo.ContentPane();
@@ -215,10 +209,9 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         }
         
         if (features.toolbar) {
-            var toolbarContainer = new Echo.Column({
-                layoutData: {
-                    overflow: Echo.SplitPane.OVERFLOW_HIDDEN
-                },
+            var toolbarContainer = new Echo.SplitPane({
+                orientation: Echo.SplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM,
+                autoPositioned: true,
                 children: [
                     this._createToolbar()
                 ]
@@ -227,7 +220,11 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
             cursor = toolbarContainer;
         }
         
-        this._richTextInput = new Extras.Sync.RichTextArea.InputComponent()
+        this._richTextInput = new Extras.Sync.RichTextArea.InputComponent({
+            layoutData: {
+                overflow: Echo.SplitPane.OVERFLOW_HIDDEN
+            }
+        });
         this._richTextInput._richTextArea = this.component;
         cursor.add(this._richTextInput);
         
@@ -407,13 +404,8 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
      * @type Extras.MenuBarPane
      */
     _createMenu: function() {
-        this._trimHeight += 26;
         return new Extras.MenuBarPane({
             styleName: this.component.render("menuStyleName"),
-            layoutData: {
-                minimumSize: 26,
-                overflow: Echo.SplitPane.OVERFLOW_HIDDEN
-            },
             model: this._createMainMenuBarModel(),
             events: {
                 action: Core.method(this, this._processMenuAction)
@@ -428,10 +420,12 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
      * @type Echo.Component
      */
     _createToolbar: function() {
-        this._trimHeight += 24;
         var features = this.component.render("features", Extras.Sync.RichTextArea.defaultFeatures);
 
         var controlsRow = new Echo.Row({
+            layoutData: {
+                overflow: Echo.SplitPane.OVERFLOW_HIDDEN
+            },
             styleName: this.component.render("toolbarRowStyleName"),
             cellSpacing: 10,
             insets: 2
@@ -740,8 +734,8 @@ Extras.Sync.RichTextArea.AbstractDialog = Core.extend(Echo.WindowPane, {
         Echo.WindowPane.call(this, {
             styleName: richTextArea.render("windowPaneStyleName"),
             iconInsets: "6px 10px",
-            width: 280,
-            height: 200,
+            contentWidth: "25em",
+            contentHeight: "16em",
             modal: true,
             resizable: false,
             events: {
@@ -749,6 +743,8 @@ Extras.Sync.RichTextArea.AbstractDialog = Core.extend(Echo.WindowPane, {
             },
             children: [
                 new Echo.SplitPane({
+                    orientation: Echo.SplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP,
+                    autoPositioned: true,
                     styleName: controlPaneSplitPaneStyleName,
                     style: controlPaneSplitPaneStyleName ? null : Extras.Sync.DEFAULT_CONTROL_PANE_SPLIT_PANE_STYLE,
                     children: [
@@ -855,14 +851,14 @@ Extras.Sync.RichTextArea.ColorDialog = Core.extend(Extras.Sync.RichTextArea.Abst
                     title: richTextArea.peer._msg[setBackground ? 
                             "ColorDialog.Title.Background" : "ColorDialog.Title.Foreground"],
                     icon: setBackground ? richTextArea.peer._icons.background : richTextArea.peer._icons.foreground,
-                    width: 400,
-                    height: 320
+                    contentWidth: "32em",
+                    contentHeight: "22em"
                 },
                 new Echo.Row({
-                    cellSpacing: 20,
+                    cellSpacing: "1em",
+                    insets: "1em",
                     children: [
                         new Echo.Column({
-                            insets: 10,
                             children: [
                                 new Echo.Label({
                                     text: richTextArea.peer._msg[
@@ -890,8 +886,8 @@ Extras.Sync.RichTextArea.ColorDialog = Core.extend(Extras.Sync.RichTextArea.Abst
         });
         for (var i = 0; i < COLORS.length; ++i) {
             children.push(new Echo.Button({
-                height: 16,
-                width: 32,
+                height: "1em",
+                width: "3em",
                 background: COLORS[i],
                 border: "1px outset " + COLORS[i],
                 actionCommand: COLORS[i],
@@ -1287,12 +1283,13 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
             this._renderContentDocument();
         }
 
-        var rtaMainDivElement = this.component._richTextArea.peer._mainDiv;
-        var bounds = new Core.Web.Measure.Bounds(rtaMainDivElement.parentNode);
+        var bounds = new Core.Web.Measure.Bounds(this._mainDiv.parentNode);
         
         if (bounds.height) {
-            var trimHeight = this.component._richTextArea.peer._trimHeight;
-            var calculatedHeight = (bounds.height < trimHeight + 100 ? 100 : bounds.height - trimHeight) + "px";
+            var border = this.component._richTextArea.render("border", Extras.RichTextArea.DEFAULT_BORDER);
+            var borderSize = Echo.Sync.Border.getPixelSize(border, "top") + Echo.Sync.Border.getPixelSize(border, "bottom");
+    
+            var calculatedHeight = (bounds.height < 100 ? 100 : bounds.height - borderSize) + "px";
             if (this._iframe.style.height != calculatedHeight) {
                 this._iframe.style.height = calculatedHeight; 
             }
