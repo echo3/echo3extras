@@ -101,6 +101,7 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
                 this.component.render("saturationHeight", Extras.ColorSelect.DEFAULT_SATURATION_HEIGHT), false);
         this._hueWidth = Echo.Sync.Extent.toPixels(
                 this.component.render("hueWidth", Extras.ColorSelect.DEFAULT_HUE_WIDTH), true);
+        var displayHeight = Core.Web.Measure.extentToPixels(1, "em", false);
     
         var svGradientImageSrc = this.client.getResourceUrl("Extras", "image/colorselect/ColorSelectSVGradient.png");
         var hGradientImageSrc = this.client.getResourceUrl("Extras", "image/colorselect/ColorSelectHGradient.png");
@@ -114,7 +115,7 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         this._div.id = this.component.renderId;
         this._div.style.cssText = "position:relative;left:0;top:0;overflow:hidden;";
         this._div.style.width = (this._valueWidth + this._hueWidth + 29) + "px";
-        this._div.style.height = (this._saturationHeight + 36) +"px";
+        this._div.style.height = (this._saturationHeight + 18 + displayHeight) +"px";
         
         // Create saturation / value selector.
         this._svDiv = document.createElement("div");
@@ -242,8 +243,9 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         this._hLineDiv.appendChild(hLineBarDiv);
         
         this._colorDiv = document.createElement("div");
-        this._colorDiv.style.cssText = "position:absolute;left:7px;height:18px;color:#ffffff;background-color:#000000;"
+        this._colorDiv.style.cssText = "position:absolute;left:7px;color:#ffffff;background-color:#000000;text-align:center;vertical-align:middle;overflow:hidden;"
                 + "border:1px #000000 outset;font-family:monospace;text-align:center;";
+        this._colorDiv.style.height = displayHeight + "px";
         this._colorDiv.style.top = (this._saturationHeight + 16) + "px";
         this._colorDiv.style.width = (this._valueWidth + this._hueWidth + 13) + "px";
         if (this.component.render("displayValue")) {
