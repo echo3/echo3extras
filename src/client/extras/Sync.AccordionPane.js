@@ -8,7 +8,6 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
         _defaultTabBackground: "#cfcfcf",
         _defaultTabBorder: "1px outset #cfcfcf",
         _defaultTabForeground: "#000000",
-        _defaultTabHeight: "20px",
         _defaultTabInsets: "2px 5px",
         _defaultTabContentInsets: this._paneInsets
     },
@@ -51,12 +50,13 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
             this._div.appendChild(tab._containerDiv);
         }
         
-        this._redrawTabs();
-        
         parentElement.appendChild(this._div);
     },
     
     renderDisplay: function() {
+        if (!this._rotation) {
+            this._redrawTabs(false);
+        }
         for (var i = 0; i < this._tabs.length; ++i) {
             this._tabs[i]._renderDisplay();
         }
@@ -117,7 +117,7 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
         if (oldTabId != null && this._animationEnabled) {
             this._rotateTabs(oldTabId, tabId);
         } else {
-            this._redrawTabs();
+            this._redrawTabs(true);
         }
     },
     
@@ -139,7 +139,7 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
      * Redraws tabs in the appropriate positions, exposing the content of the 
      * selected tab.
      */
-    _redrawTabs: function() {
+    _redrawTabs: function(notifyComponentUpdate) {
         if (this._rotation) {
             this._rotation._cancel();
         }
@@ -178,7 +178,9 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
             }
         }
         
-        Echo.Render.renderComponentDisplay(this.component);
+        if (notifyComponentUpdate) {
+            Echo.Render.renderComponentDisplay(this.component);
+        }
     },
     
     /**
@@ -189,19 +191,19 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
      */
     _rotateTabs: function(oldTabId, newTabId) {
         if (this._animationTime < 1) {
-            this._redrawTabs();
+            this._redrawTabs(true);
             return;
         }
         var oldTab = this._getTabById(oldTabId);
         if (oldTab == null) {
             // Old tab has been removed.
-            this._redrawTabs();
+            this._redrawTabs(true);
             return;
         }
         if (this._rotation) {
             // Rotation was already in progress, cancel
             this._rotation._cancel();
-            this._redrawTabs();
+            this._redrawTabs(true);
         } else {
             // Start new rotation.
             var newTab = this._getTabById(newTabId);
@@ -246,30 +248,20 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
      * @param endIndex the end index, exclusive
      */
     getTabHeight: function(beginIndex, endIndex) {
-        var tabHeight = this._calculateTabHeight();
-        if (endIndex == null) {
-            return tabHeight;
-        } else if (endIndex < beginIndex) {
+        if (endIndex == null || endIndex < beginIndex) {
             throw new Error("Invalid indices: begin=" + beginIndex + ",end=" + endIndex);
         } else {
-            return tabHeight * (endIndex - beginIndex);
+            var tabHeight = 0;
+            for (var i = beginIndex; i < endIndex; ++i) {
+                tabHeight += this._tabs[i]._tabDiv.offsetHeight;
+            }
+            return tabHeight;
         }
     },
     
     _getTabInsets: function() {
         var insets = this.component.render("tabInsets");
         return insets ? insets : Extras.Sync.AccordionPane._defaultTabInsets;
-    },
-    
-    /**
-     * @return the tab height in pixels
-     * @type {Number}
-     */
-    _calculateTabHeight: function() {
-        var height = Echo.Sync.Extent.toPixels(Extras.Sync.AccordionPane._defaultTabHeight);
-        var insets = Echo.Sync.Insets.toPixels(this._getTabInsets());
-        var border = this._getTabBorder();
-        return height + insets.top + insets.bottom + Echo.Sync.Border.getPixelSize(border) * 2;
     }
 });
 
@@ -384,7 +376,6 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
         this._tabDiv = document.createElement("div");
         this._tabDiv.id = this._parent.component.renderId + "_tab_" + this._childComponent.renderId;
         this._tabDiv.style.cssText = "cursor:pointer;position:absolute;left:0;right:0;overflow:hidden;";
-        this._tabDiv.style.height = Extras.Sync.AccordionPane._defaultTabHeight;
         Echo.Sync.Insets.render(this._parent._getTabInsets(), this._tabDiv, "padding");
         this._tabDiv.appendChild(document.createTextNode(this._getTitle()));
     
@@ -548,7 +539,7 @@ Extras.Sync.AccordionPane.Rotation = Core.extend({
                 
                 // Move top of old content downward.
                 var oldTop = stepPosition + this._startTopPosition 
-                        + this._parent.getTabHeight(this._newTabIndex, this._oldTabIndex);
+                        + this._parent.getTabHeight(this._newTabIndex + 1, this._oldTabIndex + 1);
                 this._oldTab._containerDiv.style.top = oldTop + "px";
                 
                 // Reduce height of contracting old tab content to fit within contracting space.
@@ -588,7 +579,7 @@ Extras.Sync.AccordionPane.Rotation = Core.extend({
             // Complete Rotation.
             var parent = this._parent;
             this._dispose();
-            parent._redrawTabs();
+            parent._redrawTabs(true);
         }
     },
 
