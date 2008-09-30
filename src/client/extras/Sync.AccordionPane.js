@@ -444,23 +444,11 @@ Extras.Sync.AccordionPane.Rotation = Core.extend({
         
         this._tabHeight = this._parent._calculateTabHeight();
         
-        this._rotatingTabs = [];
-        
         this._oldTabIndex = Core.Arrays.indexOf(this._parent._tabs, this._oldTab);
         this._newTabIndex = Core.Arrays.indexOf(this._parent._tabs, this._newTab);
         this._directionDown = this._newTabIndex < this._oldTabIndex;
         
-        if (this._directionDown) {
-            // Tabs are sliding down (a tab on the top has been selected).
-            for (var i = this._oldTabIndex; i > this._newTabIndex; --i) {
-                this._rotatingTabs.push(this._parent._tabs[i]);
-            }
-        } else {
-            // Tabs are sliding up (a tab on the bottom has been selected).
-            for (var i = this._oldTabIndex + 1; i <= this._newTabIndex; ++i) {
-                this._rotatingTabs.push(this._parent._tabs[i]);
-            }
-        }
+        this._rotatingTabCount = Math.abs(this._newTabIndex - this._oldTabIndex);
         
         this._regionHeight = this._newTab._tabDiv.parentNode.offsetHeight;
         
@@ -527,7 +515,7 @@ Extras.Sync.AccordionPane.Rotation = Core.extend({
                 this._newTab._containerDiv.style.display = "block";
                 
                 // Set size of tab content to be equivalent to available space.
-                var regionContentHeight = this._parent._div.offsetHeight - (this._parent._tabs.length * this._tabHeight);
+                var regionContentHeight = this._parent._div.offsetHeight - this._parent.getTabHeight(0, this._parent._tabs.length);
                 var oldTabInsets = Echo.Sync.Insets.toPixels(this._oldTab._getContentInsets());
                 var newTabInsets = Echo.Sync.Insets.toPixels(this._newTab._getContentInsets());
                 var oldContentHeight = regionContentHeight - oldTabInsets.top - oldTabInsets.bottom;
@@ -548,10 +536,9 @@ Extras.Sync.AccordionPane.Rotation = Core.extend({
     
             if (this._directionDown) {
                 // Move each moving tab to next step position.
-                for (var i = 0; i < this._rotatingTabs.length; ++i) {
-                    var newPosition = stepPosition + this._startTopPosition 
-                            + (this._tabHeight * (this._rotatingTabs.length - i - 1));
-                    this._rotatingTabs[i]._tabDiv.style.top = newPosition + "px";
+                for (var i = this._oldTabIndex; i > this._newTabIndex; --i) {
+                    this._parent._tabs[i]._tabDiv.style.top = (stepPosition + this._startTopPosition 
+                            + this._parent.getTabHeight(this._newTabIndex + 1, i)) + "px";
                 }
                 
                 // Adjust height of expanding new tab content to fill expanding space.
@@ -562,22 +549,21 @@ Extras.Sync.AccordionPane.Rotation = Core.extend({
                 this._newTab._containerDiv.style.height = newContainerHeight + "px";
                 
                 // Move top of old content downward.
-                var oldTop = stepPosition + this._startTopPosition + (this._rotatingTabs.length * this._tabHeight);
+                var oldTop = stepPosition + this._startTopPosition + (this._rotatingTabCount * this._tabHeight);
                 this._oldTab._containerDiv.style.top = oldTop + "px";
                 
                 // Reduce height of contracting old tab content to fit within contracting space.
                 var oldContainerHeight = this._regionHeight - oldTop 
-                        - ((this._numberOfTabsBelow - this._rotatingTabs.length) * this._tabHeight);
+                        - ((this._numberOfTabsBelow - this._rotatingTabCount) * this._tabHeight);
                 if (oldContainerHeight < 0) {
                     oldContainerHeight = 0;
                 }
                 this._oldTab._containerDiv.style.height = oldContainerHeight + "px";
             } else {
                 // Move each moving tab to next step position.
-                for (var i = 0; i < this._rotatingTabs.length; ++i) {
-                    var newPosition = stepPosition + this._startBottomPosition 
-                            + (this._tabHeight * (this._rotatingTabs.length - i - 1));
-                    this._rotatingTabs[i]._tabDiv.style.bottom = newPosition + "px";
+                for (var i = this._oldTabIndex + 1; i <= this._newTabIndex; ++i) {
+                    this._parent._tabs[i]._tabDiv.style.bottom = (stepPosition + this._startBottomPosition 
+                            + this._parent.getTabHeight(i + 1, this._newTabIndex + 1)) + "px";
                 }
                 
                 // Reduce height of contracting old tab content to fit within contracting space.
@@ -623,6 +609,5 @@ Extras.Sync.AccordionPane.Rotation = Core.extend({
         this._parent = null;
         this._oldTab = null;
         this._newTab = null;
-        this._rotatingTabs = null;
     }
 });
