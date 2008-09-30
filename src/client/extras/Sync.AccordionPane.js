@@ -442,8 +442,6 @@ Extras.Sync.AccordionPane.Rotation = Core.extend({
         this._animationStartTime = new Date().getTime();
         this._animationEndTime = this._animationStartTime + this._parent._animationTime;
         
-        this._tabHeight = this._parent._calculateTabHeight();
-        
         this._oldTabIndex = Core.Arrays.indexOf(this._parent._tabs, this._oldTab);
         this._newTabIndex = Core.Arrays.indexOf(this._parent._tabs, this._newTab);
         this._directionDown = this._newTabIndex < this._oldTabIndex;
@@ -549,12 +547,12 @@ Extras.Sync.AccordionPane.Rotation = Core.extend({
                 this._newTab._containerDiv.style.height = newContainerHeight + "px";
                 
                 // Move top of old content downward.
-                var oldTop = stepPosition + this._startTopPosition + (this._rotatingTabCount * this._tabHeight);
+                var oldTop = stepPosition + this._startTopPosition 
+                        + this._parent.getTabHeight(this._newTabIndex, this._oldTabIndex);
                 this._oldTab._containerDiv.style.top = oldTop + "px";
                 
                 // Reduce height of contracting old tab content to fit within contracting space.
-                var oldContainerHeight = this._regionHeight - oldTop 
-                        - ((this._numberOfTabsBelow - this._rotatingTabCount) * this._tabHeight);
+                var oldContainerHeight = this._regionHeight - this._parent.getTabHeight(this._newTabIndex, this._oldTabIndex);
                 if (oldContainerHeight < 0) {
                     oldContainerHeight = 0;
                 }
@@ -568,7 +566,7 @@ Extras.Sync.AccordionPane.Rotation = Core.extend({
                 
                 // Reduce height of contracting old tab content to fit within contracting space.
                 var oldContainerHeight = this._regionHeight - stepPosition 
-                        - ((this._numberOfTabsAbove + this._numberOfTabsBelow + 1) * this._tabHeight);
+                        - this._parent.getTabHeight(this._oldTabIndex, this._newTabIndex); 
                 if (oldContainerHeight < 0) {
                     oldContainerHeight = 0;
                 }
