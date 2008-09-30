@@ -153,7 +153,6 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
         }
         
         var selectionPassed = false;
-        var tabHeight = this._calculateTabHeight();
         for (var i = 0; i < this._tabs.length; ++i) {
             if (selectionPassed) {
                 this._tabs[i]._tabDiv.style.top = "";
@@ -473,10 +472,10 @@ Extras.Sync.AccordionPane.Rotation = Core.extend({
             this._numberOfTabsBelow = this._parent._tabs.length - 1 - this._newTabIndex;
             
             // Initial top position of topmost moving tab.
-            this._startTopPosition = this._tabHeight * this._numberOfTabsAbove;
+            this._startTopPosition = this._parent.getTabHeight(0, this._newTabIndex + 1);
             
             // Final top position of topmost moving tab.
-            this._endTopPosition = this._regionHeight - this._tabHeight * (this._numberOfTabsBelow);
+            this._endTopPosition = this._regionHeight - this._parent.getTabHeight(this._newTabIndex + 1, this._parent._tabs.length);
             
             // Number of pixels across which animation will occur.
             this._animationDistance = this._endTopPosition - this._startTopPosition;
@@ -489,10 +488,10 @@ Extras.Sync.AccordionPane.Rotation = Core.extend({
             this._numberOfTabsBelow = this._parent._tabs.length - 1 - this._newTabIndex;
     
             // Initial bottom position of bottommost moving tab.
-            this._startBottomPosition = this._tabHeight * this._numberOfTabsBelow;
+            this._startBottomPosition = this._parent.getTabHeight(this._newTabIndex + 1, this._parent._tabs.length);
     
             // Final bottom position of bottommost moving tab.
-            this._endBottomPosition = this._regionHeight - this._tabHeight * (this._numberOfTabsAbove + 1);
+            this._endBottomPosition = this._regionHeight - this._parent.getTabHeight(0, this._newTabIndex + 1);
             
             // Number of pixels across which animation will occur.
             this._animationDistance = this._endBottomPosition - this._startBottomPosition;
@@ -519,16 +518,16 @@ Extras.Sync.AccordionPane.Rotation = Core.extend({
                 this._newTab._containerDiv.style.height = "";
                 if (this._directionDown) {
                     this._oldTab._containerDiv.style.bottom = "";
-                    this._newTab._containerDiv.style.top = (this._numberOfTabsAbove * this._tabHeight) + "px";
+                    this._newTab._containerDiv.style.top = this._parent.getTabHeight(0, this._newTabIndex + 1) + "px";
                 } else {
                     this._newTab._containerDiv.style.top = "";
-                    this._newTab._containerDiv.style.bottom = (this._numberOfTabsBelow * this._tabHeight) + "px";
+                    this._newTab._containerDiv.style.bottom 
+                            = this._parent.getTabHeight(this._newTabIndex + 1, this._parent._tabs.length) + "px";
                 }
                 this._newTab._containerDiv.style.display = "block";
                 
                 // Set size of tab content to be equivalent to available space.
-                var regionContentHeight = this._parent._div.offsetHeight - 
-                        (this._parent._tabs.length * this._parent._calculateTabHeight());
+                var regionContentHeight = this._parent._div.offsetHeight - (this._parent._tabs.length * this._tabHeight);
                 var oldTabInsets = Echo.Sync.Insets.toPixels(this._oldTab._getContentInsets());
                 var newTabInsets = Echo.Sync.Insets.toPixels(this._newTab._getContentInsets());
                 var oldContentHeight = regionContentHeight - oldTabInsets.top - oldTabInsets.bottom;
