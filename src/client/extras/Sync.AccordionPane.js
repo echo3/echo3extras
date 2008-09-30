@@ -157,10 +157,10 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
         for (var i = 0; i < this._tabs.length; ++i) {
             if (selectionPassed) {
                 this._tabs[i]._tabDiv.style.top = "";
-                this._tabs[i]._tabDiv.style.bottom = (tabHeight * (this._tabs.length - i - 1)) + "px";
+                this._tabs[i]._tabDiv.style.bottom = this.getTabHeight(i + 1, this._tabs.length ) + "px";
             } else {
                 this._tabs[i]._tabDiv.style.bottom = "";
-                this._tabs[i]._tabDiv.style.top = (tabHeight * i) + "px";
+                this._tabs[i]._tabDiv.style.top = this.getTabHeight(0, i) + "px";
             }
     
             this._tabs[i]._containerDiv.style.height = "";
@@ -168,9 +168,8 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
             if (this._activeTabId == this._tabs[i]._childComponent.renderId) {
                 selectionPassed = true;
                 this._tabs[i]._containerDiv.style.display = "block";
-                this._tabs[i]._containerDiv.style.top = (tabHeight * (i + 1)) + "px";
-                var bottomPx = tabHeight * (this._tabs.length - i - 1);
-                this._tabs[i]._containerDiv.style.bottom = bottomPx + "px";
+                this._tabs[i]._containerDiv.style.top = this.getTabHeight(0, i + 1) + "px";
+                this._tabs[i]._containerDiv.style.bottom = this.getTabHeight(i + 1, this._tabs.length) + "px";
                 this._tabs[i]._contentDiv.style.top = 0;
                 this._tabs[i]._contentDiv.style.bottom = 0;
                 this._tabs[i]._contentDiv.style.height = "";
@@ -235,6 +234,27 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
     _getTabBorder: function() {
         var border = this.component.render("tabBorder");
         return border ? border : Extras.Sync.AccordionPane._defaultTabBorder;
+    },
+    
+    /**
+     * Determines the height of one or more tabs.
+     *
+     * If only beginIndex is specified, the height of the tab at index beginIndex will be returned.
+     * Note that if endIndex is specified, the tab at index endIndex will NOT be included in the calculation,
+     * that is, to measure the height of tabs 2, 3, and 4, it is necessary specify beginIndex as 2 and endIndex as 5 (not 4).
+     *
+     * @param beginIndex the begin index, inclusive
+     * @param endIndex the end index, exclusive
+     */
+    getTabHeight: function(beginIndex, endIndex) {
+        var tabHeight = this._calculateTabHeight();
+        if (endIndex == null) {
+            return tabHeight;
+        } else if (endIndex < beginIndex) {
+            throw new Error("Invalid indices: begin=" + beginIndex + ",end=" + endIndex);
+        } else {
+            return tabHeight * (endIndex - beginIndex);
+        }
     },
     
     _getTabInsets: function() {
