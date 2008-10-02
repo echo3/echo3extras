@@ -203,6 +203,15 @@ public class RichTextAreaTest extends AbstractTest {
                 InteractiveApp.getApp().getDefaultWindow().getContent().add(windowPane);
             }
         });
+        testControlsPane.addButton(TestControlPane.CATEGORY_INTEGRATION, "Add Modal RTA WidndowPane", new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                WindowPane windowPane = new WindowPane("Modal Rich Text Area", new Extent(600), new Extent(600));
+                windowPane.setModal(true);
+                windowPane.setStyleName("Default");
+                windowPane.add(createStyledRTA());
+                InteractiveApp.getApp().getDefaultWindow().getContent().add(windowPane);
+            }
+        });
         testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Locale Null", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 richTextArea.setLocale(null);
