@@ -60,23 +60,17 @@ public class RichTextAreaTest extends AbstractTest {
         mainContent = new ContentPane();
         add(mainContent);
 
-        richTextArea = new RichTextArea();
-        richTextArea.setMenuStyleName("Default");
-        richTextArea.setToolbarButtonStyleName("RichTextAreaToolbarButton");
-        richTextArea.setWindowPaneStyleName("Default");
-        richTextArea.setControlPaneSplitPaneStyleName("ControlPane.Container.Bottom");
-        richTextArea.setControlPaneRowStyleName("ControlPane");
-        richTextArea.setControlPaneButtonStyleName("ControlPane.Button");
+        richTextArea = createStyledRTA();
         mainContent.add(richTextArea);
         
-        setTestComponent(this, richTextArea);
+        setTestComponent(mainContent, richTextArea);
         
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "foreground");
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "background");
         
-         addBorderPropertyTests(TestControlPane.CATEGORY_PROPERTIES, RichTextArea.PROPERTY_BORDER);
+        addBorderPropertyTests(TestControlPane.CATEGORY_PROPERTIES, RichTextArea.PROPERTY_BORDER);
 
-         testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Text: null", new ActionListener(){
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Text: null", new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 richTextArea.setText(null);
             }
@@ -205,7 +199,7 @@ public class RichTextAreaTest extends AbstractTest {
             public void actionPerformed(ActionEvent e) {
                 WindowPane windowPane = new WindowPane("Rich Text Area", new Extent(600), new Extent(600));
                 windowPane.setStyleName("Default");
-                windowPane.add(new RichTextArea());
+                windowPane.add(createStyledRTA());
                 InteractiveApp.getApp().getDefaultWindow().getContent().add(windowPane);
             }
         });
@@ -229,5 +223,16 @@ public class RichTextAreaTest extends AbstractTest {
                 richTextArea.setLocale(Locale.GERMANY);
             }
         });
+    }
+    
+    private RichTextArea createStyledRTA() {
+        RichTextArea rta = new RichTextArea();
+        rta.setMenuStyleName("Default");
+        rta.setToolbarButtonStyleName("RichTextAreaToolbarButton");
+        rta.setWindowPaneStyleName("Default");
+        rta.setControlPaneSplitPaneStyleName("ControlPane.Container.Bottom");
+        rta.setControlPaneRowStyleName("ControlPane");
+        rta.setControlPaneButtonStyleName("ControlPane.Button");
+        return rta;
     }
 }
