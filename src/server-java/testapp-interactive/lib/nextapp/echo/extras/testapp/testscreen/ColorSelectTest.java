@@ -94,7 +94,7 @@ public class ColorSelectTest extends AbstractTest {
         testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Add ColorSelect WindowPane (with Scrolling)", 
                 new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                WindowPane windowPane = new WindowPane("Color Select Test", new Extent(250), new Extent(270));
+                WindowPane windowPane = new WindowPane("Color Select Test", new Extent(400), new Extent(400));
                 windowPane.setPositionX(new Extent((int) (Math.random() * 500)));
                 windowPane.setPositionY(new Extent((int) (Math.random() * 300) + 140));
                 windowPane.setStyleName("Default");
