@@ -30,8 +30,10 @@
 package nextapp.echo.extras.testapp.testscreen;
 
 import nextapp.echo.app.Color;
+import nextapp.echo.app.Column;
 import nextapp.echo.app.Extent;
 import nextapp.echo.app.Insets;
+import nextapp.echo.app.Label;
 import nextapp.echo.app.WindowPane;
 import nextapp.echo.app.event.ActionEvent;
 import nextapp.echo.app.event.ActionListener;
@@ -85,6 +87,33 @@ public class ColorSelectTest extends AbstractTest {
                 windowPane.setStyleName("Default");
                 windowPane.setInsets(new Insets(10, 5));
                 windowPane.add(new ColorSelect(StyleUtil.randomColor()));
+                InteractiveApp.getApp().getDefaultWindow().getContent().add(windowPane);
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Add ColorSelect WindowPane (with Scrolling)", 
+                new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                WindowPane windowPane = new WindowPane("Color Select Test", new Extent(250), new Extent(270));
+                windowPane.setPositionX(new Extent((int) (Math.random() * 500)));
+                windowPane.setPositionY(new Extent((int) (Math.random() * 300) + 140));
+                windowPane.setStyleName("Default");
+                windowPane.setInsets(new Insets(10, 5));
+                
+                Column column = new Column();
+                column.setCellSpacing(new Extent(20));
+                windowPane.add(column);
+                
+                column.add(new Label("Verify ColorSelect properly tracks mouse click coordinates."));
+                column.add(new Label("Verify ColorSelect properly tracks mouse click coordinates."));
+                column.add(new Label("Verify ColorSelect properly tracks mouse click coordinates."));
+                
+                column.add(new ColorSelect(StyleUtil.randomColor()));
+
+                column.add(new Label("Verify ColorSelect properly tracks mouse click coordinates."));
+                column.add(new Label("Verify ColorSelect properly tracks mouse click coordinates."));
+                column.add(new Label("Verify ColorSelect properly tracks mouse click coordinates."));
+                
                 InteractiveApp.getApp().getDefaultWindow().getContent().add(windowPane);
             }
         });
