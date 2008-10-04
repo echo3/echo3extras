@@ -58,7 +58,6 @@ import nextapp.echo.extras.testapp.TestControlPane;
  */
 public class MenuBarPaneTest extends AbstractTest {
     
-    private static final Extent DEFAULT_MENU_HEIGHT = new Extent(26);
     private static final FillImage[] TEST_FILL_IMAGES = new FillImage[] { null, 
             Styles.FILL_IMAGE_SHADOW_BACKGROUND_DARK_BLUE, Styles.FILL_IMAGE_SHADOW_BACKGROUND_LIGHT_BLUE,
             Styles.FILL_IMAGE_PEWTER_LINE, Styles.FILL_IMAGE_LIGHT_BLUE_LINE,
@@ -67,9 +66,8 @@ public class MenuBarPaneTest extends AbstractTest {
     public MenuBarPaneTest() {
         super("MenuBarPane", Styles.ICON_16_MENU_BAR_PANE);
         
-        SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL, DEFAULT_MENU_HEIGHT);
+        SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL, true);
         splitPane.setStyleName("DefaultResizable");
-        splitPane.setSeparatorPosition(new Extent(50));
         add(splitPane);
         
         final MenuBarPane menu = new MenuBarPane(createMenuModel());
@@ -110,7 +108,7 @@ public class MenuBarPaneTest extends AbstractTest {
                 WindowPane windowPane = new WindowPane();
                 windowPane.setTitle("Menu Test Window");
                 windowPane.setStyleName("Default");
-                SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM, DEFAULT_MENU_HEIGHT);
+                SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM, true);
                 windowPane.add(splitPane);
                 MenuBarPane menu = new MenuBarPane(createMenuModel());
                 menu.setStateModel(createMenuStateModel());
@@ -132,6 +130,10 @@ public class MenuBarPaneTest extends AbstractTest {
     
     private MenuModel createMenuModel() {
         DefaultMenuModel menuModel = new DefaultMenuModel();
+
+        DefaultMenuModel iconMenuModel = new DefaultMenuModel(null, null, Styles.ICON_16_MENU_BAR_PANE);
+        iconMenuModel.addItem(new DefaultOptionModel("about", "About", null));
+        menuModel.addItem(iconMenuModel);
         
         DefaultMenuModel fileMenuModel = new DefaultMenuModel(null, "File");
         fileMenuModel.addItem(new DefaultOptionModel("new", "New", null));
@@ -190,6 +192,11 @@ public class MenuBarPaneTest extends AbstractTest {
         optionsMenuModel.addItem(new DefaultRadioOptionModel("bar1", "barmode", "Bar Mode 1"));
         optionsMenuModel.addItem(new DefaultRadioOptionModel("bar2", "barmode", "Bar Mode 2"));
         menuModel.addItem(optionsMenuModel);
+        
+        DefaultMenuModel secondIconMenuModel = new DefaultMenuModel(null, "Icon", Styles.ICON_16_COLOR_SELECT);
+        menuModel.addItem(secondIconMenuModel);
+        
+        
         return menuModel;
     }
 

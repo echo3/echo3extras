@@ -1045,11 +1045,27 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
                     menuBarItemTd.style.cursor = "pointer";
                     menuBarTr.appendChild(menuBarItemTd);
                     var menuBarItemDiv = document.createElement("div");
+                    menuBarItemDiv.style.whiteSpace = "nowrap";
                     Echo.Sync.Insets.render(Extras.Sync.MenuBarPane._defaultItemInsets, 
                             menuBarItemDiv, "padding");
                     menuBarItemTd.appendChild(menuBarItemDiv);
-                    var textNode = document.createTextNode(item.text);
-                    menuBarItemDiv.appendChild(textNode);
+                    if (item.icon) {
+                        // FIXME no load listeners being set on images for auto-resizing yet.
+                        var img = document.createElement("img");
+                        img.style.verticalAlign = "middle";
+                        img.src = item.icon;
+                        menuBarItemDiv.appendChild(img);
+                        if (item.text) {
+                            // FIXME Does not handle RTL.
+                            img.style.paddingRight = "1ex";
+                        }
+                    }
+                    if (item.text) {
+                        var textSpan = document.createElement("span");
+                        textSpan.style.verticalAlign = "middle";
+                        textSpan.appendChild(document.createTextNode(item.text));
+                        menuBarItemDiv.appendChild(textSpan);
+                    }
                 }
             }
         }
