@@ -214,6 +214,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         
         this._yearField = document.createElement("input");
         this._yearField.type = "text";
+        this._yearField.style.textAlign = "center";
         this._yearField.maxLength = 4;
         this._yearField.size = 5;
         if (!enabled) {
