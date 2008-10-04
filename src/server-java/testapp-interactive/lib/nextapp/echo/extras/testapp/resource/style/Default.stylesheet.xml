@@ -171,13 +171,13 @@
   </p>
  </s>
  <s n="ControlPane" t="nextapp.echo.app.Row">
-  <p n="insets" t="Insets">2px 10px</p>
+  <p n="insets" t="Insets">0px 9px</p>
   <p n="cellSpacing" t="Extent">3px</p>
   <p n="layoutData" t="nextapp.echo.app.layout.SplitPaneLayoutData">
    <p n="overflow" t="i">OVERFLOW_HIDDEN</p>
    <p n="background" t="Color">#cfcfdf</p>
    <p n="backgroundImage" t="FillImage">
-    <fi t="r">
+    <fi t="r" y="50%">
      <i r="/nextapp/echo/extras/testapp/resource/image/ControlPaneFill.png"/>
     </fi>
    </p>
