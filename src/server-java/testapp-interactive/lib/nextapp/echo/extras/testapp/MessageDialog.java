@@ -107,8 +107,7 @@ public class MessageDialog extends WindowPane {
         setMinimumWidth(new Extent(400, Extent.PX));
         setStyleName("Default");
         setModal(true);
-        SplitPane splitPane1 = new SplitPane();
-        splitPane1.setStyleName("ControlPane.Container.Bottom");
+        SplitPane splitPane1 = new SplitPane(SplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP, true);
         add(splitPane1);
         controlsRow = new Row();
         controlsRow.setStyleName("ControlPane");
@@ -120,8 +119,7 @@ public class MessageDialog extends WindowPane {
         iconLabel = new Label();
         iconLabel.setVisible(false);
         RowLayoutData iconLabelLayoutData = new RowLayoutData();
-        iconLabelLayoutData.setAlignment(new Alignment(Alignment.DEFAULT,
-                Alignment.TOP));
+        iconLabelLayoutData.setAlignment(new Alignment(Alignment.DEFAULT, Alignment.TOP));
         iconLabel.setLayoutData(iconLabelLayoutData);
         row1.add(iconLabel);
         contentLabel = new Label();
