@@ -76,7 +76,6 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
     
     _msg: null,
     
-    // FIXME temporary
     _icons: { },
     
     _calculateCalendarInformation: function() {
@@ -175,9 +174,9 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         // Load localization data.
         this._msg = Extras.Sync.CalendarSelect.resource.get(this.component.getRenderLocale());
 
-        var enabled = this.component.isRenderEnabled()
-    
-        var i, j, td, tr;
+        var enabled = this.component.isRenderEnabled();
+        
+        var i, j, td, tr, img;
         var dayOfWeekNameAbbreviationLength = parseInt(this.component.render("dayOfWeekNameAbbreviationLength", 2));
         var firstDayOfWeek = this._msg["FirstDayOfWeek"];
         if (!firstDayOfWeek) {
@@ -203,13 +202,11 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         
         this._yearDecSpan = document.createElement("span");
         this._yearDecSpan.style.cursor = "pointer";
-        if (this._icons.decrement) {
-            var img = document.createElement("img");
-            img.src = this._icons.decrement;
-            this._yearDecSpan.appendChild(img);
-        } else {
-            this._yearDecSpan.appendChild(document.createTextNode("<"));
-        }
+        img = document.createElement("img");
+        img.src = this._icons.decrement ? this._icons.decrement
+                : this.client.getResourceUrl("Extras", "image/calendar/Decrement.gif");
+        img.alt = "-";
+        this._yearDecSpan.appendChild(img);
         this._div.appendChild(this._yearDecSpan);
         
         this._yearField = document.createElement("input");
@@ -224,13 +221,11 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
 
         this._yearIncSpan = document.createElement("span");
         this._yearIncSpan.style.cursor = "pointer";
-        if (this._icons.increment) {
-            var img = document.createElement("img");
-            img.src = this._icons.increment;
-            this._yearIncSpan.appendChild(img);
-        } else {
-            this._yearIncSpan.appendChild(document.createTextNode(">"));
-        }
+        img = document.createElement("img");
+        img.src = this._icons.increment ? this._icons.increment
+                : this.client.getResourceUrl("Extras", "image/calendar/Increment.gif");
+        img.alt = "+";
+        this._yearIncSpan.appendChild(img);
         this._div.appendChild(this._yearIncSpan);
         
         this._table = document.createElement("table");
