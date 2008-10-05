@@ -1094,9 +1094,12 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
     
     _forceIERedraw: function() {
         if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
-            if (this._redrawScheduled) {
+            if (this._redrawScheduled || this.component._richTextArea.peer.client.domainElement.offsetHeight != 0) {
+                // Do not schedule redraw if one is already scheduled, or if height of domain element is nonzero
+                // (the domain element having a height of 0 is indicative of the IE7's blanking bug having occurred).
                 return;
             }
+            
             this._redrawScheduled = true;
             
             // Force full screen redraw to avoid IE bug where screen mysteriously goes blank in IE.
