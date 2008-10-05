@@ -323,7 +323,7 @@ implements Pane {
      * Returns the inset margin around the menu bar.
      * This property is ignored unless the container is sizing itself to the menu bar.
      * 
-     * @return the inset margin around the menu bar
+     * @param newValue the inset margin around the menu bar
      */
     public void setInsets(Insets newValue) {
         set(PROPERTY_INSETS, newValue);
