@@ -700,7 +700,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
     },
     
     renderDisplay: function() {
-Core.Debug.consoleWrite("RDouter");        
+        Core.Debug.consoleWrite("RDouter");        
         Core.Web.VirtualPosition.redraw(this._mainDiv);
         Echo.Arc.ComponentSync.prototype.renderDisplay.call(this);
     },
@@ -1309,7 +1309,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
     },
     
     renderDisplay: function() {
-Core.Debug.consoleWrite("RDinner");        
+        Core.Debug.consoleWrite("RDinner");        
         if (!this._contentDocumentRendered) {
             this._renderContentDocument();
         }
