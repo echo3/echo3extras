@@ -1084,10 +1084,33 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         this._loadRange();
         this._iframe.contentWindow.document.execCommand(commandName, false, value);
         this._storeData();
+        this._forceIERedraw();
     },
     
     focusDocument: function() {
         this.component.application.setFocusedComponent(this.component);
+        this._forceIERedraw();
+    },
+    
+    _forceIERedraw: function() {
+        if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
+            if (this._redrawScheduled) {
+                return;
+            }
+            this._redrawScheduled = true;
+            
+            // Force full screen redraw to avoid IE bug where screen mysteriously goes blank in IE.
+            Core.Web.Scheduler.run(Core.method(this, function() {
+                Core.Debug.consoleWrite("FORCE REDRAW");
+                this._redrawScheduled = false;
+                var displayState = document.documentElement.style.display;
+                if (!displayState) {
+                    displayState = "";
+                }
+                document.documentElement.style.display = "none";
+                document.documentElement.style.display = displayState;
+            }));
+        }
     },
     
     _insertHtml: function(html) {
@@ -1101,6 +1124,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
             this.execCommand("inserthtml", html);
         }
         this.focusDocument();
+        this._forceIERedraw();
     },
     
     _loadData: function() {
@@ -1306,17 +1330,7 @@ Core.Debug.consoleWrite("RDinner");
             window.focus();
         }
         Core.Web.DOM.focusElement(this._iframe.contentWindow);
-        if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
-            // Force full screen redraw to avoid IE bug where screen mysteriously goes blank in IE.
-            Core.Web.Scheduler.run(Core.method(this, function() {
-                var value = document.documentElement.style.display;
-                if (!value) {
-                    value = "";
-                }
-                document.documentElement.style.display = "none";
-                document.documentElement.style.display = value;
-            }));
-        }
+        this._forceIERedraw();
     },
     
     renderUpdate: function(update) {
