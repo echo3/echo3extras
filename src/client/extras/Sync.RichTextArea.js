@@ -701,7 +701,6 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
     },
     
     renderDisplay: function() {
-        Core.Debug.consoleWrite("RDouter");        
         Core.Web.VirtualPosition.redraw(this._mainDiv);
         Echo.Arc.ComponentSync.prototype.renderDisplay.call(this);
     },
@@ -1107,7 +1106,6 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
             
             // Force full screen redraw to avoid IE bug where screen mysteriously goes blank in IE.
             Core.Web.Scheduler.run(Core.method(this, function() {
-                Core.Debug.consoleWrite("FORCE REDRAW");
                 this._redrawScheduled = false;
                 var displayState = document.documentElement.style.display;
                 if (!displayState) {
@@ -1312,7 +1310,6 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
     },
     
     renderDisplay: function() {
-        Core.Debug.consoleWrite("RDinner");        
         if (!this._contentDocumentRendered) {
             this._renderContentDocument();
         }
