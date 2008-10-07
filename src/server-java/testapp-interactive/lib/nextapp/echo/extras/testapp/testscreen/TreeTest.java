@@ -54,6 +54,7 @@ import nextapp.echo.extras.app.tree.TreePath;
 import nextapp.echo.extras.app.tree.TreeSelectionModel;
 import nextapp.echo.extras.testapp.AbstractTest;
 import nextapp.echo.extras.testapp.InteractiveApp;
+import nextapp.echo.extras.testapp.MessageDialog;
 import nextapp.echo.extras.testapp.StyleUtil;
 import nextapp.echo.extras.testapp.Styles;
 import nextapp.echo.extras.testapp.TestControlPane;
@@ -88,6 +89,37 @@ public class TreeTest extends AbstractTest {
 //        
 //        return new DefaultTreeModel(root);
 //    }
+    
+    static class EndlessOneNodeTreeModel extends AbstractTreeModel {
+    
+        public Object getChild(Object parent, int index) {
+            return new Integer(((Integer)parent).intValue() + 1);
+        }
+
+        public int getChildCount(Object parent) {
+            return 1;
+        }
+
+        public int getColumnCount() {
+            return 1;
+        }
+
+        public int getIndexOfChild(Object parent, Object child) {
+            return 0;
+        }
+
+        public Object getRoot() {
+            return new Integer(0);
+        }
+
+        public Object getValueAt(Object node, int column) {
+            return node;
+        }
+
+        public boolean isLeaf(Object object) {
+            return false;
+        }
+    }
     
     private static TreeModel generateSimpleTreeTableModel() {
         return new AbstractTreeModel() {
@@ -164,40 +196,6 @@ public class TreeTest extends AbstractTest {
                 int objectValue = ((Integer) object).intValue();
                 return objectValue == 0;
             }
-        };
-    }
-    
-    private static final TreeModel generateEndlessOneNodeTreeModel() {
-        return new AbstractTreeModel() {
-
-            public Object getChild(Object parent, int index) {
-                return new Integer(((Integer)parent).intValue() + 1);
-            }
-
-            public int getChildCount(Object parent) {
-                return 1;
-            }
-
-            public int getColumnCount() {
-                return 1;
-            }
-
-            public int getIndexOfChild(Object parent, Object child) {
-                return 0;
-            }
-
-            public Object getRoot() {
-                return new Integer(0);
-            }
-
-            public Object getValueAt(Object node, int column) {
-                return node;
-            }
-
-            public boolean isLeaf(Object object) {
-                return false;
-            }
-            
         };
     }
     
@@ -386,14 +384,21 @@ public class TreeTest extends AbstractTest {
         
         testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Tree model (always one child)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                tree.setModel(generateEndlessOneNodeTreeModel());
+                tree.setModel(new EndlessOneNodeTreeModel());
                 tree.setHeaderVisible(false);
             }
         });
         
         testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Expand all nodes", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                tree.expandAll();
+                if (tree.getModel() instanceof EndlessOneNodeTreeModel) {
+                    getApplicationInstance().getDefaultWindow().getContent().add(
+                            new MessageDialog("I'm afraid I can't do that Dave.", 
+                                    "Expanding all nodes of an endless tree model will certainly result in an infinite loop.", 
+                                    MessageDialog.CONTROLS_OK));
+                } else {
+                    tree.expandAll();
+                }
             }
         });
         
