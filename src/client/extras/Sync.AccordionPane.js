@@ -287,7 +287,8 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
     },
     
     _highlight: function(state) {
-        var tabDiv = this._tabDiv;
+        var tabDiv = this._tabDiv,
+            border;
         if (state) {
             var background = this._parent.component.render("tabRolloverBackground");
             if (!background) {
@@ -305,7 +306,7 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
             if (foreground) {
                 Echo.Sync.Color.render(foreground, tabDiv, "color");
             }
-            var border = this._parent.component.render("tabRolloverBorder");
+            border = this._parent.component.render("tabRolloverBorder");
             if (!border) {
                 var borderData = Echo.Sync.Border.parse(this._parent._getTabBorder());
                 border = Echo.Sync.Border.compose(borderData.size, borderData.style,
@@ -314,7 +315,7 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
             Echo.Sync.Border.render(border, tabDiv, "borderTop");
             Echo.Sync.Border.render(border, tabDiv, "borderBottom");
         } else {
-            var border = this._parent._getTabBorder();
+            border = this._parent._getTabBorder();
             Echo.Sync.Border.render(border, tabDiv, "borderTop");
             Echo.Sync.Border.render(border, tabDiv, "borderBottom");
             Echo.Sync.Color.render(this._parent._getTabBackground(), tabDiv, "backgroundColor");
@@ -482,7 +483,10 @@ Extras.Sync.AccordionPane.Rotation = Core.extend({
      * Queues subsequent frame of animation via Window.setTimeout() call to self.
      */
     _animationStep: function() {
-        var currentTime = new Date().getTime();
+        var currentTime = new Date().getTime(),
+            i,
+            oldContainerHeight,
+            newContainerHeight;
         
         if (currentTime < this._animationEndTime) {
             // Number of pixels (from 0) to step current current frame.
@@ -491,15 +495,15 @@ Extras.Sync.AccordionPane.Rotation = Core.extend({
             var stepPosition = Math.round(stepFactor * this._animationDistance);
             
             // On first frame, display new tab content.
-            if (this._animationStepIndex == 0) {
+            if (this._animationStepIndex === 0) {
                 this._newTab._containerDiv.style.height = "";
                 if (this._directionDown) {
                     this._oldTab._containerDiv.style.bottom = "";
                     this._newTab._containerDiv.style.top = this._parent.getTabHeight(0, this._newTabIndex + 1) + "px";
                 } else {
                     this._newTab._containerDiv.style.top = "";
-                    this._newTab._containerDiv.style.bottom 
-                            = this._parent.getTabHeight(this._newTabIndex + 1, this._parent._tabs.length) + "px";
+                    this._newTab._containerDiv.style.bottom = 
+                            this._parent.getTabHeight(this._newTabIndex + 1, this._parent._tabs.length) + "px";
                 }
                 this._newTab._containerDiv.style.display = "block";
                 
@@ -525,49 +529,49 @@ Extras.Sync.AccordionPane.Rotation = Core.extend({
     
             if (this._directionDown) {
                 // Move each moving tab to next step position.
-                for (var i = this._oldTabIndex; i > this._newTabIndex; --i) {
-                    this._parent._tabs[i]._tabDiv.style.top = (stepPosition + this._startTopPosition 
-                            + this._parent.getTabHeight(this._newTabIndex + 1, i)) + "px";
+                for (i = this._oldTabIndex; i > this._newTabIndex; --i) {
+                    this._parent._tabs[i]._tabDiv.style.top = (stepPosition + this._startTopPosition + 
+                            this._parent.getTabHeight(this._newTabIndex + 1, i)) + "px";
                 }
                 
                 // Adjust height of expanding new tab content to fill expanding space.
-                var newContainerHeight = stepPosition;
+                newContainerHeight = stepPosition;
                 if (newContainerHeight < 0) {
                     newContainerHeight = 0;
                 }
                 this._newTab._containerDiv.style.height = newContainerHeight + "px";
                 
                 // Move top of old content downward.
-                var oldTop = stepPosition + this._startTopPosition 
-                        + this._parent.getTabHeight(this._newTabIndex + 1, this._oldTabIndex + 1);
+                var oldTop = stepPosition + this._startTopPosition + 
+                        this._parent.getTabHeight(this._newTabIndex + 1, this._oldTabIndex + 1);
                 this._oldTab._containerDiv.style.top = oldTop + "px";
                 
                 // Reduce height of contracting old tab content to fit within contracting space.
-                var oldContainerHeight = this._regionHeight - this._parent.getTabHeight(this._newTabIndex, this._oldTabIndex);
+                oldContainerHeight = this._regionHeight - this._parent.getTabHeight(this._newTabIndex, this._oldTabIndex);
                 if (oldContainerHeight < 0) {
                     oldContainerHeight = 0;
                 }
                 this._oldTab._containerDiv.style.height = oldContainerHeight + "px";
             } else {
                 // Move each moving tab to next step position.
-                for (var i = this._oldTabIndex + 1; i <= this._newTabIndex; ++i) {
-                    this._parent._tabs[i]._tabDiv.style.bottom = (stepPosition + this._startBottomPosition 
-                            + this._parent.getTabHeight(i + 1, this._newTabIndex + 1)) + "px";
+                for (i = this._oldTabIndex + 1; i <= this._newTabIndex; ++i) {
+                    this._parent._tabs[i]._tabDiv.style.bottom = (stepPosition + this._startBottomPosition + 
+                            this._parent.getTabHeight(i + 1, this._newTabIndex + 1)) + "px";
                 }
                 
                 // Reduce height of contracting old tab content to fit within contracting space.
-                var oldContainerHeight = this._regionHeight - stepPosition 
-                        - this._parent.getTabHeight(this._oldTabIndex, this._newTabIndex); 
+                oldContainerHeight = this._regionHeight - stepPosition - 
+                        this._parent.getTabHeight(this._oldTabIndex, this._newTabIndex); 
                 if (oldContainerHeight < 0) {
                     oldContainerHeight = 0;
                 }
                 this._oldTab._containerDiv.style.height = oldContainerHeight + "px";
                 
                 // Increase height of expanding tab content to fit within expanding space.
-                var newContainerHeight = stepPosition;
+                newContainerHeight = stepPosition;
                 if (newContainerHeight < 0) {
                     newContainerHeight = 0;
-                };
+                }
                 this._newTab._containerDiv.style.height = newContainerHeight + "px";
             }
 
