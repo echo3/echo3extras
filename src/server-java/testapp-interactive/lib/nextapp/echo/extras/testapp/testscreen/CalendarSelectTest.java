@@ -63,7 +63,7 @@ public class CalendarSelectTest extends AbstractTest {
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, CalendarSelect.PROPERTY_BACKGROUND);
         addFillImagePropertyTests(TestControlPane.CATEGORY_PROPERTIES, CalendarSelect.PROPERTY_BACKGROUND_IMAGE, 
                 StyleUtil.TEST_FILL_IMAGES);
-        addFontPropertyTests(TestControlPane.CATEGORY_PROPERTIES, CalendarSelect.PROPERTY_FOREGROUND);
+        addFontPropertyTests(TestControlPane.CATEGORY_PROPERTIES, CalendarSelect.PROPERTY_FONT);
         addBorderPropertyTests(TestControlPane.CATEGORY_PROPERTIES, CalendarSelect.PROPERTY_BORDER);
 
         testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Query Date", new ActionListener() {
