@@ -1009,8 +1009,8 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
     renderDisplay: function() {
         Core.Web.VirtualPosition.redraw(this.element);
         var bounds = new Core.Web.Measure.Bounds(this.element.parentNode);
-        
-        this._menuBarTable.style.height = (bounds.height - this._menuBarBorderHeight) + "px";
+        var height = bounds.height - this._menuBarBorderHeight;
+        this._menuBarTable.style.height = height <= 0 ? "" : height + "px";
     },
 
     renderDispose: function(update) {
