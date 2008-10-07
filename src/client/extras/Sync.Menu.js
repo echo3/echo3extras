@@ -84,8 +84,7 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
         },
         
         processKeyPress: function(e) {
-            switch (e.keyCode) {
-            case 27:
+            if (e.keyCode == 27) {
                 this.deactivate();
                 return false;
             }
@@ -271,10 +270,17 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
     },
 
     create: function() {
+        var i,
+            item,
+            img,
+            menuItemContentTd,
+            menuItemIconTd,
+            menuItemTr;
+
         this.element = document.createElement("div");
         this.element.style.position = "absolute";
         this.element.style.zIndex = Extras.Sync.Menu.MAX_Z_INDEX;
-
+        
         var opacity = (Core.Web.Env.NOT_SUPPORTED_CSS_OPACITY ? 100 : this.component.render("menuOpacity", 100)) / 100;
 
         var menuContentDiv = document.createElement("div");
@@ -347,8 +353,8 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
 
         // Determine if any icons are present.
         var hasIcons = false;
-        for (var i = 0; i < items.length; ++i) {
-            var item = items[i];
+        for (i = 0; i < items.length; ++i) {
+            item = items[i];
             if (item.icon || item instanceof Extras.ToggleOptionModel) {
                 hasIcons = true;
                 break;
@@ -365,16 +371,16 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
             textPadding = Extras.Sync.Menu.RenderedMenu.defaultMenuItemInsets;
         }
 
-        for (var i = 0; i < items.length; ++i) {
-            var item = items[i];
+        for (i = 0; i < items.length; ++i) {
+            item = items[i];
             if (item instanceof Extras.OptionModel || item instanceof Extras.MenuModel) {
-                var menuItemTr = document.createElement("tr");
+                menuItemTr = document.createElement("tr");
                 this.itemElements[item.id] = menuItemTr;
                 menuItemTr.style.cursor = "pointer";
                 menuTbody.appendChild(menuItemTr);
 
                 if (hasIcons) {
-                    var menuItemIconTd = document.createElement("td");
+                    menuItemIconTd = document.createElement("td");
                     Echo.Sync.Insets.render(iconPadding, menuItemIconTd, "padding");
                     if (item instanceof Extras.ToggleOptionModel) {
                         var iconIdentifier;
@@ -384,18 +390,18 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
                         } else {
                             iconIdentifier = selected ? "image/menu/ToggleOn.gif" : "image/menu/ToggleOff.gif";
                         }
-                        var img = document.createElement("img");
+                        img = document.createElement("img");
                         img.src = this.client.getResourceUrl("Extras", iconIdentifier);
                         menuItemIconTd.appendChild(img);
                     } else if (item.icon) {
-                        var img = document.createElement("img");
+                        img = document.createElement("img");
                         Echo.Sync.ImageReference.renderImg(item.icon, img);
                         menuItemIconTd.appendChild(img);
                     }
                     menuItemTr.appendChild(menuItemIconTd);
                 }
 
-                var menuItemContentTd = document.createElement("td");
+                menuItemContentTd = document.createElement("td");
                 Echo.Sync.Insets.render(textPadding, menuItemContentTd, "padding");
                 var lineWrap = this.component.render("lineWrap");
                 if (lineWrap != null && !lineWrap) {
@@ -412,7 +418,7 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
                     // Submenus have adjacent column containing 'expand' icons.
                     var menuItemArrowTd = document.createElement("td");
                     menuItemArrowTd.style.textAlign = "right";
-                    var img = document.createElement("img");
+                    img = document.createElement("img");
                     var expandImage = this.component.render("menuExpandIcon", 
                             this.client.getResourceUrl("Extras", "image/menu/ArrowRight.gif"));
                     img.setAttribute("src", expandImage.url ? expandImage.url : expandImage);
@@ -424,14 +430,14 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
                     menuItemContentTd.colSpan = 2;
                 }
             } else if (item instanceof Extras.SeparatorModel) {
-                if (i == 0 || i == items.length - 1 || items[i - 1] instanceof Extras.SeparatorModel
-                       ||  items[i + 1] instanceof Extras.SeparatorModel) {
+                if (i === 0 || i === items.length - 1 || items[i - 1] instanceof Extras.SeparatorModel ||
+                        items[i + 1] instanceof Extras.SeparatorModel) {
                     // Ignore separators at zero position.
                     continue;
                 }
-                var menuItemTr = document.createElement("tr");
+                menuItemTr = document.createElement("tr");
                 menuTbody.appendChild(menuItemTr);
-                var menuItemContentTd = document.createElement("td");
+                menuItemContentTd = document.createElement("td");
                 menuItemContentTd.colSpan = hasIcons ? 3 : 2;
                 menuItemContentTd.style.padding = "3px 0px";
                 var hrDiv = document.createElement("div");
@@ -677,7 +683,7 @@ Extras.Sync.DropDownMenu = Core.extend(Extras.Sync.Menu, {
 
     getSubMenuPosition: function(menuModel, width, height) {
         var bounds = new Core.Web.Measure.Bounds(this.element);
-        var x = bounds.left
+        var x = bounds.left;
         var y = bounds.top + bounds.height;
 
         var availableWidth = document.body.offsetWidth;
@@ -809,6 +815,8 @@ Extras.Sync.DropDownMenu = Core.extend(Extras.Sync.Menu, {
      * @param itemModel the model to select
      */
     _setSelection: function(itemModel) {
+        var img;
+        
         this._selectedItem = itemModel;
         
         for (var i = this._selectionSpan.childNodes.length - 1; i >= 0; --i) {
@@ -822,7 +830,7 @@ Extras.Sync.DropDownMenu = Core.extend(Extras.Sync.Menu, {
                 var tbody = document.createElement("tbody");
                 var tr = document.createElement("tr");
                 var td = document.createElement("td");
-                var img = document.createElement("img");
+                img = document.createElement("img");
                 Echo.Sync.ImageReference.renderImg(itemModel.icon, img);
                 td.appendChild(img);
                 tr.appendChild(td);
@@ -841,7 +849,7 @@ Extras.Sync.DropDownMenu = Core.extend(Extras.Sync.Menu, {
             }
         } else if (itemModel.icon) {
             // Render Icon Only
-            var img = document.createElement("img");
+            img = document.createElement("img");
             Echo.Sync.ImageReference.renderImg(itemModel.icon, img);
             this._selectionSpan.appendChild(img);
         }
@@ -935,7 +943,7 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
         var containerBounds = new Core.Web.Measure.Bounds(this.element);
         var itemBounds = new Core.Web.Measure.Bounds(itemElement);
 
-        var x = itemBounds.left
+        var x = itemBounds.left;
         var y = containerBounds.top + containerBounds.height;
 
         var availableWidth = document.body.offsetWidth;
@@ -1017,8 +1025,7 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
         
         Echo.Sync.Color.renderFB(this.component, menuBarDiv);
         var border = this.component.render("border", Extras.Sync.Menu._defaultBorder);
-        this._menuBarBorderHeight = Echo.Sync.Border.getPixelSize(border, "top") 
-                + Echo.Sync.Border.getPixelSize(border, "bottom"); 
+        this._menuBarBorderHeight = Echo.Sync.Border.getPixelSize(border, "top") + Echo.Sync.Border.getPixelSize(border, "bottom"); 
         Echo.Sync.Border.render(border, menuBarDiv, "borderTop");
         Echo.Sync.Border.render(border, menuBarDiv, "borderBottom");
         Echo.Sync.FillImage.render(this.component.render("backgroundImage"), menuBarDiv); 
