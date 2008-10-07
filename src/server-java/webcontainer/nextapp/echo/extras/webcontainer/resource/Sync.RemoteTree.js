@@ -624,7 +624,7 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
             effectOrder: [],
             
             /**
-             * Returns the defualt effect (the first effect of which the state is enabled)
+             * Returns the default effect (the first effect of which the state is enabled)
              */
             getDefaultEffect: function() {
                 for (var i = 0; i < this.effectOrder.length; i++) {
@@ -637,7 +637,7 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
             },
             
             /**
-             * Gets the effect that should be applied afther the given effect 
+             * Gets the effect that should be applied after the given effect 
              */
             getEffect: function(effect) {
                 var index;
