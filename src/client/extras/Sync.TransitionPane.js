@@ -306,9 +306,8 @@ Extras.Sync.TransitionPane.CameraPanTransition = Core.extend(
     
     start: function() {
         var bounds = new Core.Web.Measure.Bounds(this.transitionPane.contentDiv);
-        this._travel = (this.transitionPane.type == Extras.TransitionPane.TYPE_CAMERA_PAN_DOWN 
-                || this.transitionPane.type == Extras.TransitionPane.TYPE_CAMERA_PAN_UP)
-                ? bounds.height : bounds.width;
+        this._travel = (this.transitionPane.type == Extras.TransitionPane.TYPE_CAMERA_PAN_DOWN || 
+                this.transitionPane.type == Extras.TransitionPane.TYPE_CAMERA_PAN_UP) ? bounds.height : bounds.width;
         if (this.transitionPane.oldChildDiv) {
             this.transitionPane.oldChildDiv.style.zIndex = 1;
         }
@@ -385,16 +384,17 @@ Extras.Sync.TransitionPane.FadeOpacityTransition = Core.extend(
     },
     
     step: function(progress) {
+        var percent;
         if (this.transitionPane.childDiv) {
             if (Core.Web.Env.PROPRIETARY_IE_OPACITY_FILTER_REQUIRED) {
-                var percent = parseInt(progress * 100);
+                percent = Math.floor(progress * 100);
                 this.transitionPane.childDiv.style.filter = "alpha(opacity=" + percent + ")";
             } else {
                 this.transitionPane.childDiv.style.opacity = progress;
             }
         } else if (this.transitionPane.oldChildDiv) {
             if (Core.Web.Env.PROPRIETARY_IE_OPACITY_FILTER_REQUIRED) {
-                var percent = parseInt((1 - progress) * 100);
+                percent = Math.floor((1 - progress) * 100);
                 this.transitionPane.oldChildDiv.style.filter = "alpha(opacity=" + percent + ")";
             } else {
                 this.transitionPane.oldChildDiv.style.opacity = 1 - progress;
