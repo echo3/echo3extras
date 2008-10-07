@@ -23,8 +23,7 @@ Extras.Sync.BorderPane = Core.extend(Echo.Render.ComponentSync, {
     _renderBorder: function() {
         var border = this.component.render("border", Extras.BorderPane.DEFAULT_BORDER);
         var borderInsets = Echo.Sync.Insets.toPixels(border.borderInsets);
-        var flags = this.component.render("ieAlphaRenderBorder") 
-                ? Echo.Sync.FillImage.FLAG_ENABLE_IE_PNG_ALPHA_FILTER : 0;
+        var flags = this.component.render("ieAlphaRenderBorder") ? Echo.Sync.FillImage.FLAG_ENABLE_IE_PNG_ALPHA_FILTER : 0;
         var corner;
         
         // Render top row
