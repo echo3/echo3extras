@@ -782,7 +782,7 @@ Extras.TreeSelectionModel = Core.extend({
      * @type Boolean
      */
     isSelectionEmpty: function() {
-        return this._selectionState.length == 0;
+        return this._selectionState.length === 0;
     },
     
     /**

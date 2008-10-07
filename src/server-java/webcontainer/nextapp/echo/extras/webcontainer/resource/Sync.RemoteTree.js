@@ -61,7 +61,7 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
         this._rolloverEnabled = this.component.render("rolloverEnabled");
         this._selectionEnabled = this.component.render("selectionEnabled");
         if (this._selectionEnabled) {
-            this.selectionModel = new Extras.TreeSelectionModel(parseInt(this.component.get("selectionMode")));
+            this.selectionModel = new Extras.TreeSelectionModel(parseInt(this.component.get("selectionMode"), 10));
         }
         
         this._defaultInsets = this.component.render("insets");
@@ -72,7 +72,7 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
         
         var width = this.component.render("width");
         if (width && Core.Web.Env.QUIRK_IE_TABLE_PERCENT_WIDTH_SCROLLBAR_ERROR && Echo.Sync.Extent.isPercent(width)) {
-            this._renderPercentWidthByMeasure = parseInt(width);
+            this._renderPercentWidthByMeasure = parseInt(width, 10);
             width = null;
         }
         
@@ -273,7 +273,7 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
                     if (e.tagName.toLowerCase() == "td") {
                         ++count;
                     }
-                } while (count < 2)
+                } while (count < 2);
                 return e;
             }
         };
@@ -480,6 +480,8 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
      * @type Object
      */
     _renderNodeRowStructure: function(insertBefore, node, depth) {
+        var img;
+        
         var isHeader = node == this._treeStructure.getHeaderNode();
         var trElement = document.createElement("tr");
         trElement.id = this.component.renderId + "_tr_" + node.getId();
@@ -503,7 +505,7 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
             rowHeaderElement.id = "tree_" + node.getId() + "_" + c;
             rowHeaderElement.style.padding = "0px";
             rowHeaderElement.style.width = "19px";
-            var img = document.createElement("img");
+            img = document.createElement("img");
             img.src = this.client.getResourceUrl("Extras", "image/tree/Transparent.gif");
             img.style.width = "19px";
 //            img.style.height = "10px";
@@ -527,7 +529,7 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
             expandoElement.style.padding = "0";
             expandoElement.style.width = "19px";
             expandoElement.style.textAlign = "center";
-            var img = document.createElement("img");
+            img = document.createElement("img");
             img.src = this.client.getResourceUrl("Extras", "image/tree/Transparent.gif");
             img.style.width = "19px";
 //            img.style.height = "10px";
@@ -616,10 +618,9 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
      * @param {Boolean} state the effect state, true if the effect should be rendered, false if not
      */
     _createRowStyleContext: function(rowElement, effect, state) {
-        var rowElement = rowElement;
         var context = {
             rowElement: rowElement,
-            effects: new Object(),
+            effects: {},
             effectOrder: [],
             
             /**
@@ -776,7 +777,7 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
         var compensation = this._effectBorderCompensation;
         if (effectBorder) {
             var currentCompensation = Echo.Sync.Border.getPixelSize(effectBorder, "left");
-            if (currentCompensation == 0) {
+            if (currentCompensation === 0) {
                 compensation = 0;
             } else {
                 compensation -= currentCompensation;
@@ -872,7 +873,7 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
             this._clearSelected();
         }
         for (var i = 0; i < selectedIds.length; i++) {
-            if (selectedIds[i] == "") {
+            if (selectedIds[i] === "") {
                 continue;
             }
             var node = this._treeStructure.getNode(selectedIds[i]);
@@ -1051,7 +1052,7 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
         }
         
         // Hack to make sure FF renders the whole table after expanding / collapsing a node
-        if (Core.Web.Env.BROWSER_FIREFOX && Core.Web.Env.BROWSER_MAJOR_VERSION == 3 && Core.Web.Env.BROWSER_MINOR_VERSION == 0) {
+        if (Core.Web.Env.BROWSER_FIREFOX && Core.Web.Env.BROWSER_MAJOR_VERSION == 3 && Core.Web.Env.BROWSER_MINOR_VERSION === 0) {
 			var elem = this._buggerTBody;
 	        var oldDisplay = elem.style.display;
 	        elem.style.display = "";
@@ -1104,7 +1105,7 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
                 update.addSelection(i++);
                 do {
                     trElement = trElement.nextSibling;
-                } while (trElement && trElement.style.display == "none")
+                } while (trElement && trElement.style.display == "none");
             }
         } else {
             this.lastSelectedNode = node;
@@ -1189,7 +1190,7 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
         // remove properties that are only changed on the client
         Core.Arrays.remove(propertyNames, "expansion");
         Core.Arrays.remove(propertyNames, "selectionUpdate");
-        if (propertyNames.length == 0 && !update.getRemovedChildren()) {
+        if (propertyNames.length === 0 && !update.getRemovedChildren()) {
             return false;
         }
         // end of the hack
@@ -1201,7 +1202,6 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
             // removal of children indicates that the tree was invalidated, 
             // and thus all components are re-rendered, and the tree structure we have at the client 
             // is no longer valid.
-            var treeStructureUpdate = update.getUpdatedProperty("treeStructure");
             if (treeStructureUpdate && treeStructureUpdate.newValue) {
                 // tree structure updates are always partial, even when there are other updates we can't handle
                 this._renderTreeStructureUpdate(treeStructureUpdate.newValue, update);
