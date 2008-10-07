@@ -3,9 +3,9 @@ Extras.Sync.RichTextArea.resource.set("de", {
     "ColorDialog.Title.Background" : "Hintergrundfarbe",
     "ColorDialog.PromptForeground" : "Textfarbe:",
     "ColorDialog.PromptBackground" : "Hintergrundfarbe:",
-    "Error.ClipboardAccessDisabled" : "Der Zugriff auf die Zwischenablage ist in diesem Browser deaktiviert. "
-            + "Bitte benutzen Sie die entsprechenden Tastenkombinationen oder \u00e4ndern Sie die "
-            + "Sicherheitseinstellungen des Browsers.",
+    "Error.ClipboardAccessDisabled" : "Der Zugriff auf die Zwischenablage ist in diesem Browser deaktiviert. " +
+            "Bitte benutzen Sie die entsprechenden Tastenkombinationen oder \u00e4ndern Sie die " +
+            "Sicherheitseinstellungen des Browsers.",
     "Generic.Cancel" : "Abbrechen",
     "Generic.Error" : "Fehler",
     "Generic.Ok" : "Ok",
@@ -64,8 +64,8 @@ Extras.Sync.RichTextArea.resource.set("de", {
     "TableDialog.PromptRows" : "Zeilen:",
     "TableDialog.PromptColumns" : "Spalten:",
     "TableDialog.ErrorDialogTitle" : "Tabelle konnte nicht eingef\u00fcgt werden",
-    "TableDialog.ErrorDialog.Columns" : "Die Anzahl der Spalten ist nicht g\u00fcltig. "
-            + "Bitte geben Sie eine Zahl zwischen 1 und 50 ein.",
-    "TableDialog.ErrorDialog.Rows" : "Die Anzahl der Zeilen ist nicht g\u00fcltig. "
-            + "Bitte geben Sie eine Zahl zwischen 1 und 50 ein."
+    "TableDialog.ErrorDialog.Columns" : "Die Anzahl der Spalten ist nicht g\u00fcltig. " +
+            "Bitte geben Sie eine Zahl zwischen 1 und 50 ein.",
+    "TableDialog.ErrorDialog.Rows" : "Die Anzahl der Zeilen ist nicht g\u00fcltig. " +
+            "Bitte geben Sie eine Zahl zwischen 1 und 50 ein."
 });

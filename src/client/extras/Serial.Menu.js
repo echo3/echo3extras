@@ -10,7 +10,7 @@ Extras.Serial.ItemModel = {
     
     toProperty: function(client, propertyElement) {
         var type = propertyElement.getAttribute("t");
-        if (type.indexOf(Extras.Serial.PROPERTY_TYPE_PREFIX) == 0) {
+        if (type.indexOf(Extras.Serial.PROPERTY_TYPE_PREFIX) === 0) {
             type = type.substring(Extras.Serial.PROPERTY_TYPE_PREFIX.length);
         }
         var translator = Extras.Serial[type];
