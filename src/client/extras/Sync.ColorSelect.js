@@ -22,7 +22,7 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         
     _hsvToRgb: function(h, s, v) {
         var r, g, b;
-        if (s == 0) {
+        if (s === 0) {
             r = g = b = v;
         } else {
             h /= 60;
@@ -126,8 +126,8 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         
         if (svGradientImageSrc) {
             if (Core.Web.Env.PROPRIETARY_IE_PNG_ALPHA_FILTER_REQUIRED) {
-                this._svDiv.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader("
-                        + "src='" + svGradientImageSrc + "', sizingMethod='scale');";
+                this._svDiv.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(" +
+                        "src='" + svGradientImageSrc + "', sizingMethod='scale');";
             } else {
                 var svGradientImg = document.createElement("img");
                 svGradientImg.src = svGradientImageSrc;
@@ -183,8 +183,8 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         
         // Create saturation selection bar line.
         var sLineBarDiv = document.createElement("div");
-        sLineBarDiv.style.cssText 
-                = "position:absolute;left:7px;top:5px;height:1px;font-size:1px;border-top:1px #000000 solid;line-height:0;";
+        sLineBarDiv.style.cssText = 
+                "position:absolute;left:7px;top:5px;height:1px;font-size:1px;border-top:1px #000000 solid;line-height:0;";
         sLineBarDiv.style.width = this._valueWidth + "px";
         this._sLineDiv.appendChild(sLineBarDiv);
     
@@ -237,14 +237,15 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         }
         
         var hLineBarDiv = document.createElement("div");
-        hLineBarDiv.style.cssText 
-                = "position:absolute;left:7px;top:5px;height:1px;font-size:1px;border-top:1px #000000 solid;line-height:0;";
+        hLineBarDiv.style.cssText =
+                "position:absolute;left:7px;top:5px;height:1px;font-size:1px;border-top:1px #000000 solid;line-height:0;";
         hLineBarDiv.style.width = this._hueWidth + "px";
         this._hLineDiv.appendChild(hLineBarDiv);
         
         this._colorDiv = document.createElement("div");
-        this._colorDiv.style.cssText = "position:absolute;left:7px;color:#ffffff;background-color:#000000;text-align:center;vertical-align:middle;overflow:hidden;"
-                + "border:1px #000000 outset;font-family:monospace;text-align:center;";
+        this._colorDiv.style.cssText = 
+                "position:absolute;left:7px;color:#ffffff;background-color:#000000;text-align:center;vertical-align:middle;" +
+                "overflow:hidden;border:1px #000000 outset;font-family:monospace;text-align:center;";
         this._colorDiv.style.height = displayHeight + "px";
         this._colorDiv.style.top = (this._saturationHeight + 16) + "px";
         this._colorDiv.style.width = (this._valueWidth + this._hueWidth + 13) + "px";
@@ -308,8 +309,8 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         if (color) {
             // Remove leading #.
             color = color.substring(1); 
-            r = (parseInt(parseInt(color, 16) / 0x10000)) / 255;
-            g = (parseInt(parseInt(color, 16) / 0x100) % 0x100) / 255;
+            r = Math.floor(parseInt(color, 16) / 0x10000) / 255;
+            g = (Math.floor(parseInt(color, 16) / 0x100) % 0x100) / 255;
             b = (parseInt(color, 16) % 0x100) / 255;
         } else {
             r = g = b = 0;
@@ -320,7 +321,7 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         this._v = max;
         
         var delta = max - min;
-        if (max == 0 || delta == 0) {
+        if (max === 0 || delta === 0) {
             this._s = 0;
         } else {
             this._s = delta / max;
@@ -369,7 +370,7 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
             this._colorDiv.childNodes[0].nodeValue = renderHexTriplet;
         }
         
-        var sLineTop = parseInt((1 - this._s) * this._saturationHeight) + 2;
+        var sLineTop = Math.floor((1 - this._s) * this._saturationHeight) + 2;
         if (sLineTop < 2) {
              sLineTop = 2;
         } else if (sLineTop > this._saturationHeight + 2) {
@@ -377,7 +378,7 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         }
         this._sLineDiv.style.top = sLineTop + "px";
         
-        var vLineLeft = parseInt(this._v * this._valueWidth) + 2;
+        var vLineLeft = Math.floor(this._v * this._valueWidth) + 2;
         if (vLineLeft < 2) {
             vLineLeft = 2;
         } else if (vLineLeft > this._valueWidth + 2) {
@@ -385,7 +386,7 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         }
         this._vLineDiv.style.left = vLineLeft + "px";
         
-        var hLineTop = parseInt((360 - this._h) / 360 * this._saturationHeight) + 2;
+        var hLineTop = Math.floor((360 - this._h) / 360 * this._saturationHeight) + 2;
         if (hLineTop < 2) {
             hLineTop = 2;
         } else if (hLineTop > this._saturationHeight + 2) {
@@ -404,7 +405,7 @@ Extras.Sync.ColorSelect.RGB = Core.extend({
     },
     
     _clean: function(value) {
-        value = value ? parseInt(value) : 0;
+        value = value ? parseInt(value, 10) : 0;
         if (value < 0) {
             return 0;
         } else if (value > 255) {
