@@ -79,8 +79,8 @@ Extras.Sync.Group = Core.extend(Echo.Render.ComponentSync, {
         var borderInsets = this.component.render("borderInsets", 
                 Extras.Sync.Group.DEFAULT_BORDER_INSETS);
         var borderPixelInsets = Echo.Sync.Insets.toPixels(borderInsets);
-        var flags = this.component.render("ieAlphaRenderBorder") 
-                ? Echo.Sync.FillImage.FLAG_ENABLE_IE_PNG_ALPHA_FILTER : 0;
+        var flags = this.component.render("ieAlphaRenderBorder") ? 
+                Echo.Sync.FillImage.FLAG_ENABLE_IE_PNG_ALPHA_FILTER : 0;
         
         var topRight = document.createElement("div");
         topRight.style.width = "100%";
@@ -135,7 +135,7 @@ Extras.Sync.Group = Core.extend(Echo.Render.ComponentSync, {
             
             var topFillElem = document.createElement("td");
             if (titlePosition && Echo.Sync.Extent.isPercent(titlePosition)) {
-                topFillElem.style.width = (100 - parseInt(titlePosition)) + "%";
+                topFillElem.style.width = (100 - parseInt(titlePosition, 10)) + "%";
             } else {
                 topFillElem.style.width = "100%";
             }
@@ -199,7 +199,7 @@ Extras.Sync.Group = Core.extend(Echo.Render.ComponentSync, {
         var div = document.createElement("div");
         
         Echo.Sync.FillImage.render(this.component.render("backgroundImage"), div);
-        Echo.Sync.Color.render(this.component.render("background"), div, "backgroundColor")
+        Echo.Sync.Color.render(this.component.render("background"), div, "backgroundColor");
         Echo.Sync.Font.render(this.component.render("font"), div);
         Echo.Sync.Insets.render(this.component.render("insets"), div, "padding");
         
