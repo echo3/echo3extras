@@ -108,8 +108,8 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         processInsertHyperlink: function(e) {
             var hyperlinkDialog = new Extras.Sync.RichTextArea.HyperlinkDialog(this.component);
             hyperlinkDialog.addListener("insertHyperlink", Core.method(this, function(e) {
-                this._richTextInput.peer._insertHtml("<a href=\"" + e.data.url + "\">"
-                        + (e.data.description ? e.data.description : e.data.url) + "</a>");
+                this._richTextInput.peer._insertHtml("<a href=\"" + e.data.url + "\">" +
+                        (e.data.description ? e.data.description : e.data.url) + "</a>");
                 this.focusDocument();
             }));
             this._openDialog(hyperlinkDialog);
@@ -215,7 +215,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
                 children: [
                     this._createToolbar()
                 ]
-            })
+            });
             cursor.add(toolbarContainer);
             cursor = toolbarContainer;
         }
@@ -304,7 +304,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
                 insertMenu.addItem(new Extras.OptionModel("/insertorderedlist", this._msg["Menu.NumberedList"],
                         this._icons.numberedList));
             }
-            insertMenu.addItem(new Extras.SeparatorModel);
+            insertMenu.addItem(new Extras.SeparatorModel());
             if (features.horizontalRule) {
                 insertMenu.addItem(new Extras.OptionModel("/inserthorizontalrule", this._msg["Menu.InsertHorizontalRule"],
                         this._icons.horizontalRule));
@@ -316,19 +316,19 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
                 insertMenu.addItem(new Extras.OptionModel("inserthyperlink", this._msg["Menu.InsertHyperlink"],
                         this._icons.hyperlink));
             }
-            insertMenu.addItem(new Extras.SeparatorModel);
+            insertMenu.addItem(new Extras.SeparatorModel());
             if (features.table) {
                 insertMenu.addItem(new Extras.OptionModel("inserttable", this._msg["Menu.InsertTable"], this._icons.table));
             }
             menu.addItem(insertMenu);
         }
         
-        if (features.bold || features.italic || features.underline || features.strikeThrough 
-                || features.subscript || features.paragraphStyle || features.alignment || features.indent 
-                || features.foreground || features.background) {
+        if (features.bold || features.italic || features.underline || features.strikeThrough || 
+                features.subscript || features.paragraphStyle || features.alignment || features.indent || 
+                features.foreground || features.background) {
             var formatMenu =  new Extras.MenuModel(null, this._msg["Menu.Format"], null);
-            if (features.bold || features.italic || features.underline || features.strikeThrough 
-                    || features.subscript) {
+            if (features.bold || features.italic || features.underline || features.strikeThrough || 
+                    features.subscript) {
             }
             if (features.paragraphStyle) {
                 formatMenu.addItem(new Extras.MenuModel(null, this._msg["Menu.ParagraphStyle"], this._icons.paragraphStyle, [
@@ -342,7 +342,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
                     new Extras.OptionModel("/formatblock/<h6>", this._msg["Menu.Heading6"], this._icons.styleH6)
                 ]));
             }
-            if (features.bold || features.italic || freatures.underline || features.strikeThrough || features.subscript) {
+            if (features.bold || features.italic || features.underline || features.strikeThrough || features.subscript) {
                 var textMenu = new Extras.MenuModel(null, this._msg["Menu.TextStyle"], this._icons.textStyle);
                 textMenu.addItem(new Extras.OptionModel("/removeformat",  this._msg["Menu.PlainText"], this._icons.plainText));
                 textMenu.addItem(new Extras.SeparatorModel());
@@ -420,8 +420,8 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
      * @type Echo.Component
      */
     _createToolbar: function() {
+        var row;
         var features = this.component.render("features", Extras.Sync.RichTextArea.defaultFeatures);
-
         var controlsRow = new Echo.Row({
             layoutData: {
                 overflow: Echo.SplitPane.OVERFLOW_HIDDEN
@@ -443,7 +443,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         
         // Font Bold/Italic/Underline Tools
         if (features.bold || features.italic || features.underline) {
-            var row = new Echo.Row();
+            row = new Echo.Row();
             if (features.bold) {
                 row.add(this._createToolbarButton("B", this._icons.bold, this._msg["Menu.Bold"], this._processCommand, "bold"));
             }
@@ -488,7 +488,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         
         // Color Tools
         if (features.foreground || features.background) {
-            var row = new Echo.Row();
+            row = new Echo.Row();
             if (features.foreground) {
                 row.add(this._createToolbarButton("FG", this._icons.foreground, this._msg["Menu.SetForeground"], 
                         this.processSetForeground));
@@ -502,7 +502,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         
         // Insert Tools
         if (features.list || features.horizontalRule || features.image || features.hyperlink || features.table) {
-            var row = new Echo.Row();
+            row = new Echo.Row();
             if (features.list) {
                 row.add(this._createToolbarButton("Bulleted List", this._icons.bulletedList, this._msg["Menu.BulletedList"], 
                         this._processCommand, "insertunorderedlist"));
@@ -566,13 +566,14 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
     },
     
     insertTable: function(columns, rows) {
-        var rowHtml = "";
-        for (var i = 0; i < columns; ++i) {
+        var rowHtml = "",
+            i;
+        for (i = 0; i < columns; ++i) {
             rowHtml += "<td></td>";
         }
         rowHtml = "<tr>" + rowHtml + "</tr>";
         var tableHtml = "<table width=\"100%\" border=\"1\" cellspacing=\"0\" cellpadding=\"1\"><tbody>";
-        for (var i = 0; i < rows; ++i) {
+        for (i = 0; i < rows; ++i) {
             tableHtml += rowHtml;
         }
         tableHtml += "</tbody></table>";
@@ -615,7 +616,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         }
         
         // Deactivate overlay pane if it has no content.
-        if (this._overlayPane.children[0].children.length == 0) {
+        if (this._overlayPane.children[0].children.length === 0) {
             this.baseComponent.remove(this._overlayPane);
             this._overlayPane = null;
         }
@@ -1036,10 +1037,12 @@ Extras.Sync.RichTextArea.OverlayPanePeer = Core.extend(Echo.Render.ComponentSync
     },
     
     renderUpdate: function(update) {
+        var element = this._div;
+        var containerElement = element.parentNode;
         Echo.Render.renderComponentDispose(update, update.parent);
         containerElement.removeChild(element);
-        this.renderAdd(update, null);
-        return false;
+        this.renderAdd(update, containerElement);
+        return true;
     }
 });
 
@@ -1094,7 +1097,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
     
     _forceIERedraw: function() {
         if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
-            if (this._redrawScheduled || this.component._richTextArea.peer.client.domainElement.offsetHeight != 0) {
+            if (this._redrawScheduled || this.component._richTextArea.peer.client.domainElement.offsetHeight !== 0) {
                 // Do not schedule redraw if one is already scheduled, or if height of domain element is nonzero
                 // (the domain element having a height of 0 is indicative of the IE7's blanking bug having occurred).
                 return;
@@ -1251,12 +1254,12 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         
         var foreground = this.component._richTextArea.render("foreground");
         if (foreground) {
-            bodyStyleAttribute += "color:" + foreground + ";"
+            bodyStyleAttribute += "color:" + foreground + ";";
         }
 
         var background = this.component._richTextArea.render("background");
         if (background) {
-            bodyStyleAttribute += "background-color:" + background + ";"
+            bodyStyleAttribute += "background-color:" + background + ";";
         }
 
         var backgroundImage = this.component._richTextArea.render("backgroundImage");
@@ -1274,9 +1277,9 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         }
         
         contentDocument.open();
-        contentDocument.write("<html><body tabindex=\"0\" width=\"100%\" height=\"100%\""
-                + (bodyStyleAttribute ? (" style=\"" + bodyStyleAttribute + "\"") : "")
-                + ">" + (text == null ? "" : text) + "</body></html>");
+        contentDocument.write("<html><body tabindex=\"0\" width=\"100%\" height=\"100%\"" +
+                (bodyStyleAttribute ? (" style=\"" + bodyStyleAttribute + "\"") : "") +
+                ">" + (text == null ? "" : text) + "</body></html>");
         contentDocument.close();
         if (Core.Web.Env.BROWSER_MOZILLA && !Core.Web.Env.BROWSER_FIREFOX) {
             // workaround for Mozilla (not Firefox)
@@ -1412,8 +1415,8 @@ Extras.Sync.RichTextArea.TableDialog = Core.extend(
     
     processOk: function(e) {
         var data = {
-            rows: parseInt(this._rowsField.get("text")),
-            columns: parseInt(this._columnsField.get("text"))
+            rows: parseInt(this._rowsField.get("text"), 10),
+            columns: parseInt(this._columnsField.get("text"), 10)
         };
         if (isNaN(data.rows) || data.rows < 1 || data.rows > 50) {
             this.parent.add(new Extras.Sync.RichTextArea.MessageDialog(this._richTextArea, 
