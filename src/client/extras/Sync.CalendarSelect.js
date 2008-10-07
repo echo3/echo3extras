@@ -83,7 +83,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         this._firstDayOfMonth = firstDate.getDay();
         
         this._daysInMonth = Extras.Sync.CalendarSelect.getDaysInMonth(this._year, this._month);
-        if (this._month == 0) {
+        if (this._month === 0) {
             this._daysInPreviousMonth = Extras.Sync.CalendarSelect.getDaysInMonth(this._year - 1, 11);
         } else {
             this._daysInPreviousMonth = Extras.Sync.CalendarSelect.getDaysInMonth(this._year, this._month - 1);
@@ -101,7 +101,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         
         var selectedDay, selectedMonth, selectedYear;
         if (cellIndex < this._firstDayOfMonth) {
-            if (this._month == 0) {
+            if (this._month === 0) {
                 selectedMonth = 11;
                 selectedYear = this._year - 1;
             } else {
@@ -145,7 +145,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
             this._yearField.value = this._year;
             return;
         }
-        this._year = parseInt(this._yearField.value);
+        this._year = parseInt(this._yearField.value, 10);
         this._updateCalendarDisplay();
         this._storeValue();
     },
@@ -162,7 +162,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
 
     _processYearIncrement: function(e) {
         if (!this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY)) {
-            retrun;
+            return;
         }
         ++this._year;
         this._yearField.value = this._year;
@@ -177,7 +177,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         var enabled = this.component.isRenderEnabled();
         
         var i, j, td, tr, img;
-        var dayOfWeekNameAbbreviationLength = parseInt(this.component.render("dayOfWeekNameAbbreviationLength", 2));
+        var dayOfWeekNameAbbreviationLength = parseInt(this.component.render("dayOfWeekNameAbbreviationLength", 2), 10);
         var firstDayOfWeek = this._msg["FirstDayOfWeek"];
         if (!firstDayOfWeek) {
             firstDayOfWeek = 0;
@@ -188,7 +188,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         this._div.style.whiteSpace = "nowrap";
         
         this._monthSelect = document.createElement("select");
-        for (var i = 0; i < 12; ++i) {
+        for (i = 0; i < 12; ++i) {
             var option = document.createElement("option");
             option.appendChild(document.createTextNode(this._msg["Month." + i]));
             this._monthSelect.appendChild(option);
@@ -203,8 +203,8 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         this._yearDecSpan = document.createElement("span");
         this._yearDecSpan.style.cursor = "pointer";
         img = document.createElement("img");
-        img.src = this._icons.decrement ? this._icons.decrement
-                : this.client.getResourceUrl("Extras", "image/calendar/Decrement.gif");
+        img.src = this._icons.decrement ? this._icons.decrement :
+                this.client.getResourceUrl("Extras", "image/calendar/Decrement.gif");
         img.alt = "-";
         this._yearDecSpan.appendChild(img);
         this._div.appendChild(this._yearDecSpan);
@@ -222,8 +222,8 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         this._yearIncSpan = document.createElement("span");
         this._yearIncSpan.style.cursor = "pointer";
         img = document.createElement("img");
-        img.src = this._icons.increment ? this._icons.increment
-                : this.client.getResourceUrl("Extras", "image/calendar/Increment.gif");
+        img.src = this._icons.increment ? this._icons.increment :
+                this.client.getResourceUrl("Extras", "image/calendar/Increment.gif");
         img.alt = "+";
         this._yearIncSpan.appendChild(img);
         this._div.appendChild(this._yearIncSpan);
