@@ -109,7 +109,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
      * @type String
      */
     _getActiveTabId: function() {
-        var activeTabId = this.component.get("activeTab")
+        var activeTabId = this.component.get("activeTab");
         if (!activeTabId) {
             var activeTabIndex = this.component.get("activeTabIndex");
             if (activeTabIndex != null && activeTabIndex < this.component.children.length) {
@@ -196,15 +196,15 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         // Create Main Element
         this._div = document.createElement("div");
         this._div.id = this.component.renderId;
-        this._div.style.cssText = "position:absolute;overflow:hidden;top:" + pixelInsets.top + "px;right:" + pixelInsets.right
-                + "px;bottom:" + pixelInsets.bottom + "px;left:" + pixelInsets.left + "px;";
+        this._div.style.cssText = "position:absolute;overflow:hidden;top:" + pixelInsets.top + "px;right:" + pixelInsets.right +
+                "px;bottom:" + pixelInsets.bottom + "px;left:" + pixelInsets.left + "px;";
                         
         // Render Header Container
         var headerContainerDiv = document.createElement("div");
-        headerContainerDiv.style.cssText = "position:absolute;overflow:hidden;z-index:1;width:100%;"
-                + (this._tabPosition == Extras.TabPane.TAB_POSITION_BOTTOM ? "bottom" : "top") + ":0;"
-                + "left:" + this._tabInsetPx + "px;right:" + this._tabInsetPx + "px;"
-                + "height:" + (this._tabHeightPx + borderSize) + "px;";
+        headerContainerDiv.style.cssText = "position:absolute;overflow:hidden;z-index:1;width:100%;" +
+                (this._tabPosition == Extras.TabPane.TAB_POSITION_BOTTOM ? "bottom" : "top") + ":0;" +
+                "left:" + this._tabInsetPx + "px;right:" + this._tabInsetPx + "px;" +
+                "height:" + (this._tabHeightPx + borderSize) + "px;";
         
         Echo.Sync.Font.render(this.component.render("font"), headerContainerDiv);
         Echo.Sync.FillImage.render(this.component.render("tabBackgroundImage"), headerContainerDiv);
@@ -245,12 +245,12 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         } else if (this._borderType == Extras.TabPane.BORDER_TYPE_SURROUND) {
             Echo.Sync.Border.render(this._tabActiveBorder, this._contentContainerDiv);
         } else if (this._borderType == Extras.TabPane.BORDER_TYPE_PARALLEL_TO_TABS) {
-            Echo.Sync.Border.render(this._tabActiveBorder, this._contentContainerDiv, "borderTop")
-            Echo.Sync.Border.render(this._tabActiveBorder, this._contentContainerDiv, "borderBottom")
+            Echo.Sync.Border.render(this._tabActiveBorder, this._contentContainerDiv, "borderTop");
+            Echo.Sync.Border.render(this._tabActiveBorder, this._contentContainerDiv, "borderBottom");
         } else if (this._tabPosition == Extras.TabPane.TAB_POSITION_BOTTOM) {
-            Echo.Sync.Border.render(this._tabActiveBorder, this._contentContainerDiv, "borderBottom")
+            Echo.Sync.Border.render(this._tabActiveBorder, this._contentContainerDiv, "borderBottom");
         } else {
-            Echo.Sync.Border.render(this._tabActiveBorder, this._contentContainerDiv, "borderTop")
+            Echo.Sync.Border.render(this._tabActiveBorder, this._contentContainerDiv, "borderTop");
         }
         
         this._div.appendChild(this._contentContainerDiv);
@@ -299,7 +299,9 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     },
     
     renderUpdate: function(update) {
-        var fullRender = false;
+        var fullRender = false,
+            tab,
+            i;
         
         if (update.hasUpdatedLayoutDataChildren()) {
             // Layout data children updated: must full render.
@@ -317,8 +319,8 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
             var removedChildren = update.getRemovedChildren();
             if (removedChildren) {
                 // Remove children.
-                for (var i = 0; i < removedChildren.length; ++i) {
-                    var tab = this._getTabById(removedChildren[i].renderId);
+                for (i = 0; i < removedChildren.length; ++i) {
+                    tab = this._getTabById(removedChildren[i].renderId);
                     if (!tab) {
                         continue;
                     }
@@ -331,8 +333,8 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
             var addedChildren = update.getAddedChildren();
             if (addedChildren) {
                 // Add children.
-                for (var i = 0; i < addedChildren.length; ++i) {
-                    var tab = new Extras.Sync.TabPane.Tab(addedChildren[i], this);
+                for (i = 0; i < addedChildren.length; ++i) {
+                    tab = new Extras.Sync.TabPane.Tab(addedChildren[i], this);
                     this._addTab(update, tab, this.component.indexOf(addedChildren[i]));
                 }
             }
@@ -374,14 +376,15 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         if (tabId == this._activeTabId) {
             return;
         }
+        var tab;
         if (this._activeTabId) {
-            var tab = this._getTabById(this._activeTabId);
+            tab = this._getTabById(this._activeTabId);
             if (tab) {
                 tab._highlight(false);
             }
         }
         
-        var tab = this._getTabById(tabId);
+        tab = this._getTabById(tabId);
         if (tab) {
             this._activeTabId = tabId;
             tab._highlight(true);
