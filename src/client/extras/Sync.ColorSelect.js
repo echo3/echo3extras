@@ -279,6 +279,8 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
     },
     
     renderDispose: function(update) { 
+        Core.Web.Event.removeAll(this._svListenerDiv);
+        Core.Web.Event.removeAll(this._hListenerDiv);
         this._div = null;
         this._svDiv = null;
         this._svListenerDiv = null;
