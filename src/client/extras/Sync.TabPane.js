@@ -580,7 +580,7 @@ Extras.Sync.TabPane.Tab = Core.extend({
     },
     
     _processClick: function(e) {
-        if (!this._parent.client.verifyInput(this._parent.component)) {
+        if (!this._parent || !this._parent.client || !this._parent.client.verifyInput(this._parent.component)) {
             return true;
         }
         if (this._closeImageTd && Core.Web.DOM.isAncestorOf(this._closeImageTd, e.target)) {
@@ -598,7 +598,7 @@ Extras.Sync.TabPane.Tab = Core.extend({
     },
     
     _processEnter: function(e) {
-        if (!this._parent.client.verifyInput(this._parent.component)) {
+        if (!this._parent || !this._parent.client || !this._parent.client.verifyInput(this._parent.component)) {
             return true;
         }
         
