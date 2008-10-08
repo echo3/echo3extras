@@ -101,7 +101,7 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
                 this.component.render("saturationHeight", Extras.ColorSelect.DEFAULT_SATURATION_HEIGHT), false);
         this._hueWidth = Echo.Sync.Extent.toPixels(
                 this.component.render("hueWidth", Extras.ColorSelect.DEFAULT_HUE_WIDTH), true);
-        var displayHeight = Core.Web.Measure.extentToPixels(1, "em", false);
+        var displayHeight = Core.Web.Measure.extentToPixels("1em", false);
     
         var svGradientImageSrc = this.client.getResourceUrl("Extras", "image/colorselect/ColorSelectSVGradient.png");
         var hGradientImageSrc = this.client.getResourceUrl("Extras", "image/colorselect/ColorSelectHGradient.png");
