@@ -1125,7 +1125,7 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
     },
     
     _expansionHandler: function(e) {
-        if (!this.component.isActive()) {
+        if (!this.client || !this.client.verifyInput(this.component)) {
             return;
         }
         var node = this._getNodeFromElement(e.registeredTarget);
@@ -1139,7 +1139,7 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
     },
     
     _selectionHandler: function(e) {
-        if (!this.component.isActive()) {
+        if (!this.client || !this.client.verifyInput(this.component)) {
             return;
         }
         var node = this._getNodeFromElement(e.registeredTarget);
@@ -1149,14 +1149,14 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
     },
     
     _processRolloverEnter: function(e) {
-        if (!this.component.isActive()) {
+        if (!this.client || !this.client.verifyInput(this.component) || Core.Web.dragInProgress) {
             return;
         }
         this._setRolloverState(e.registeredTarget, true);
     },
     
     _processRolloverExit: function(e) {
-        if (!this.component.isActive()) {
+        if (!this.client || !this.client.verifyInput(this.component)) {
             return;
         }
         this._setRolloverState(e.registeredTarget, false);
