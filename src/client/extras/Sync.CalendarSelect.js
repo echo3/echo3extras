@@ -235,7 +235,9 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         Echo.Sync.Border.render(this.component.render("border", 
                 Extras.Sync.CalendarSelect.DEFAULT_BORDER), this._table);
         Echo.Sync.Color.render(this.component.render("foreground",
-                Extras.Sync.CalendarSelect.DEFAULT_FOREGROUND), this._table); 
+                Extras.Sync.CalendarSelect.DEFAULT_FOREGROUND), this._table, "color"); 
+        Echo.Sync.Color.render(this.component.render("background",
+                Extras.Sync.CalendarSelect.DEFAULT_BACKGROUND), this._table, "backgroundColor"); 
         Echo.Sync.FillImage.render(this.component.render("backgroundImage"), this._table); 
         
         var tbody = document.createElement("tbody");
@@ -364,7 +366,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
                         Echo.Sync.Color.renderClear(selectedForeground, td, "color");
                         Echo.Sync.Color.renderClear(selectedBackground, td, "backgroundColor");
                     } else {
-                        Echo.Sync.Color.renderClear(foreground, td, "color");
+                        Echo.Sync.Color.renderClear(null, td, "color");
                         Echo.Sync.Color.renderClear(null, td, "backgroundColor");
                     }
                 }
