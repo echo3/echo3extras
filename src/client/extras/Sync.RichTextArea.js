@@ -1164,7 +1164,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
     },
     
     _processKeyPress: function(e) {
-        if (!this.client.verifyInput(this.component)) {
+        if (!this.client || !this.client.verifyInput(this.component)) {
             Core.Web.DOM.preventEventDefault(e);
             return;
         }
@@ -1175,7 +1175,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
     },
     
     _processKeyUp: function(e) {
-        if (!this.client.verifyInput(this.component)) {
+        if (!this.client || !this.client.verifyInput(this.component)) {
             Core.Web.DOM.preventEventDefault(e);
             return;
         }
@@ -1190,14 +1190,14 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
     },
     
     _processMouseDown: function(e) {
-        if (!this.client.verifyInput(this.component)) {
+        if (!this.client || !this.client.verifyInput(this.component)) {
             Core.Web.DOM.preventEventDefault(e);
             return;
         }
     },
 
     _processMouseUp: function(e) {
-        if (!this.client.verifyInput(this.component)) {
+        if (!this.client || !this.client.verifyInput(this.component)) {
             Core.Web.DOM.preventEventDefault(e);
             return;
         }
