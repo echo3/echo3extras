@@ -263,6 +263,7 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
     },
 
     close: function() {
+        Core.Web.Event.removeAll(this.element);
         document.body.removeChild(this.element);
         this.element = null;
         this.itemElements = null;
