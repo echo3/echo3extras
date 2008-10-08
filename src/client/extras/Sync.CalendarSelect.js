@@ -91,7 +91,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
     },
     
     _processDateSelect: function(e) {
-        if (!this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY)) {
+        if (!this.client || !this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY)) {
             return;
         }
         if (e.target._cellIndex == null) {
@@ -130,7 +130,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
     },
     
     _processMonthSelect: function(e) {
-        if (!this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY)) {
+        if (!this.client || !this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY)) {
             this._monthSelect.selectedIndex = this._month;
             return;
         }
@@ -141,7 +141,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
     },
     
     _processYearChange: function(e) {
-        if (!this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY)) {
+        if (!this.client || !this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY)) {
             this._yearField.value = this._year;
             return;
         }
@@ -151,7 +151,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
     },
     
     _processYearDecrement: function(e) {
-        if (!this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY)) {
+        if (!this.client || !this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY)) {
             return;
         }
         --this._year;
@@ -161,7 +161,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
     },
 
     _processYearIncrement: function(e) {
-        if (!this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY)) {
+        if (!this.client || !this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY)) {
             return;
         }
         ++this._year;
