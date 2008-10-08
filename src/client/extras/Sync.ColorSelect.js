@@ -44,7 +44,7 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
     },
     
     _processHMouseDown: function(e) {
-        if (!this.client.verifyInput(this.component) || Core.Web.dragInProgress) {
+        if (!this.client || !this.client.verifyInput(this.component) || Core.Web.dragInProgress) {
             return;
         }
         Core.Web.Event.add(this._hListenerDiv, "mousemove", this._processHMouseMoveRef, false);
@@ -69,7 +69,7 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
     },
     
     _processSVMouseDown: function(e) {
-        if (!this.client.verifyInput(this.component) || Core.Web.dragInProgress) {
+        if (!this.client || !this.client.verifyInput(this.component) || Core.Web.dragInProgress) {
             return;
         }
         Core.Web.Event.add(this._svListenerDiv, "mousemove", this._processSVMouseMoveRef, false);

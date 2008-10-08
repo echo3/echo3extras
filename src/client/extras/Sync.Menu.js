@@ -515,7 +515,7 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
     },
     
     _processRollover: function(e, state) {
-        if (!this.client.verifyInput(this.component) || Core.Web.dragInProgress) {
+        if (!this.client || !this.client.verifyInput(this.component) || Core.Web.dragInProgress) {
             return true;
         }
         
@@ -594,7 +594,7 @@ Extras.Sync.ContextMenu = Core.extend(Extras.Sync.Menu, {
     },
 
     _processContextClick: function(e) {
-        if (!this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY) || Core.Web.dragInProgress) {
+        if (!this.client || !this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY) || Core.Web.dragInProgress) {
             return true;
         }
     
@@ -709,7 +709,7 @@ Extras.Sync.DropDownMenu = Core.extend(Extras.Sync.Menu, {
     },
 
     _processClick: function(e) {
-        if (!this.client.verifyInput(this.component) || Core.Web.dragInProgress) {
+        if (!this.client || !this.client.verifyInput(this.component) || Core.Web.dragInProgress) {
             return true;
         }
         
@@ -960,7 +960,7 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
     },
     
     _processClick: function(e) {
-        if (!this.client.verifyInput(this.component)) {
+        if (!this.client || !this.client.verifyInput(this.component)) {
             return true;
         }
         
@@ -976,7 +976,7 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
     },
     
     _processRollover: function(e, state) {
-        if (!this.client.verifyInput(this.component) || Core.Web.dragInProgress) {
+        if (!this.client || !this.client.verifyInput(this.component) || Core.Web.dragInProgress) {
             return true;
         }
         
