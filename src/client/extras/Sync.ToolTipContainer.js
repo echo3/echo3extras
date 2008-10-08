@@ -95,7 +95,7 @@ Extras.Sync.ToolTipContainer = Core.extend(Echo.Render.ComponentSync, {
     },
     
     _processMove: function(e) {
-        if (!this.component.isActive()) {
+        if (!this.client || !this.client.verifyInput(this.component) || Core.Web.dragInProgress) {
             return;
         }
         this._positionToolTip(e);
@@ -103,7 +103,7 @@ Extras.Sync.ToolTipContainer = Core.extend(Echo.Render.ComponentSync, {
     },
     
     _processRolloverEnter: function(e) {
-        if (!this.component.isActive()) {
+        if (!this.client || !this.client.verifyInput(this.component) || Core.Web.dragInProgress) {
             return;
         }
         this._positionToolTip(e);
@@ -112,7 +112,7 @@ Extras.Sync.ToolTipContainer = Core.extend(Echo.Render.ComponentSync, {
     },
     
     _processRolloverExit: function(e) {
-        if (!this.component.isActive()) {
+        if (!this.client || !this.client.verifyInput(this.component)) {
             return;
         }
         this._toolTipDiv.style.visibility = "hidden";
