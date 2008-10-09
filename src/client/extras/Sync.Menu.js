@@ -941,7 +941,7 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
             throw new Error("Invalid menu: " + menuModel);
         }
         
-        var containerBounds = new Core.Web.Measure.Bounds(this.element.parentNode);
+        var containerBounds = new Core.Web.Measure.Bounds(this.element);
         var itemBounds = new Core.Web.Measure.Bounds(itemElement);
 
         var x = itemBounds.left;
