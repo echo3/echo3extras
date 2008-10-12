@@ -21,7 +21,6 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
     _activeTabId: null,
     _rotation: null,
     _animationEnabled: true,
-    _animationSleepInterval: 1,
     _tabs: null,
     _resetOverflowForAnimation: false,
     
@@ -91,7 +90,7 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
 
     renderDispose: function(update) {
         if (this._rotation) {
-            this._rotation._dispose();
+            this._rotation.abort();
         }
         this._activeTabId = null;
         for (var i = 0; i < this._tabs.length; i++) {
@@ -141,7 +140,7 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
      */
     _redrawTabs: function(notifyComponentUpdate) {
         if (this._rotation) {
-            this._rotation._cancel();
+            this._rotation.abort();
         }
         
         if (this._activeTabId == null || this._getTabById(this._activeTabId) == null) {
@@ -202,12 +201,14 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
         }
         if (this._rotation) {
             // Rotation was already in progress, cancel
-            this._rotation._cancel();
+            this._rotation.abort();
             this._redrawTabs(true);
         } else {
             // Start new rotation.
             var newTab = this._getTabById(newTabId);
             this._rotation = new Extras.Sync.AccordionPane.Rotation(this, oldTab, newTab);
+            this._rotation.runTime = this._animationTime;
+            this._rotation.start();
         }
     },
     
@@ -415,24 +416,16 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
  * @param oldTab the old (current) tab
  * @param newTab the new tab to display
  */
-Extras.Sync.AccordionPane.Rotation = Core.extend({
+Extras.Sync.AccordionPane.Rotation = Core.extend(Extras.Sync.Animation, {
     
     _parent: null,
     _oldTab: null,
     _newTab: null,
-    _animationRunnable: null,
-    _animationStepIndex: 0,
     
     $construct: function(parent, oldTab, newTab) {
         this._parent = parent;
         this._oldTab = oldTab;
         this._newTab = newTab;
-        
-        this._animationRunnable = new Core.Web.Scheduler.MethodRunnable(Core.method(this, this._animationStep), 
-                parent._animationSleepInterval, false);
-        
-        this._animationStartTime = new Date().getTime();
-        this._animationEndTime = this._animationStartTime + this._parent._animationTime;
         
         this._oldTabIndex = Core.Arrays.indexOf(this._parent._tabs, this._oldTab);
         this._newTabIndex = Core.Arrays.indexOf(this._parent._tabs, this._newTab);
@@ -474,133 +467,116 @@ Extras.Sync.AccordionPane.Rotation = Core.extend({
             // Number of pixels across which animation will occur.
             this._animationDistance = this._endBottomPosition - this._startBottomPosition;
         }
-
-        this._animationStep();
     },
     
+    init: function() {
+        this._newTab._containerDiv.style.height = "";
+        if (this._directionDown) {
+            this._oldTab._containerDiv.style.bottom = "";
+            this._newTab._containerDiv.style.top = this._parent.getTabHeight(0, this._newTabIndex + 1) + "px";
+        } else {
+            this._newTab._containerDiv.style.top = "";
+            this._newTab._containerDiv.style.bottom = 
+                    this._parent.getTabHeight(this._newTabIndex + 1, this._parent._tabs.length) + "px";
+        }
+        this._newTab._containerDiv.style.display = "block";
+
+        // Set size of tab content to be equivalent to available space.
+        var regionContentHeight = this._parent._div.offsetHeight - this._parent.getTabHeight(0, this._parent._tabs.length);
+        var oldTabInsets = Echo.Sync.Insets.toPixels(this._oldTab._getContentInsets());
+        var newTabInsets = Echo.Sync.Insets.toPixels(this._newTab._getContentInsets());
+        var oldContentHeight = regionContentHeight - oldTabInsets.top - oldTabInsets.bottom;
+        var newContentHeight = regionContentHeight - newTabInsets.top - newTabInsets.bottom;
+        oldContentHeight = oldContentHeight > 0 ? oldContentHeight : 0;
+        newContentHeight = newContentHeight > 0 ? newContentHeight : 0;
+
+        if (this._parent._resetOverflowForAnimation) {
+            this._oldTab._contentDiv.style.overflow = "hidden";
+            this._newTab._contentDiv.style.overflow = "hidden";
+        }
+
+        this._oldTab._contentDiv.style.bottom = "";
+        this._newTab._contentDiv.style.bottom = "";
+        this._oldTab._contentDiv.style.height = oldContentHeight + "px";
+        this._newTab._contentDiv.style.height = newContentHeight + "px";
+    },
+
     /**
      * Renders the next step of the rotation animation.
      * Queues subsequent frame of animation via Window.setTimeout() call to self.
      */
-    _animationStep: function() {
-        var currentTime = new Date().getTime(),
-            i,
+    step: function(progress) {
+        var i,
             oldContainerHeight,
             newContainerHeight;
-        
-        if (currentTime < this._animationEndTime) {
-            // Number of pixels (from 0) to step current current frame.
-            
-            var stepFactor = (currentTime - this._animationStartTime) / this._parent._animationTime;
-            var stepPosition = Math.round(stepFactor * this._animationDistance);
-            
-            // On first frame, display new tab content.
-            if (this._animationStepIndex === 0) {
-                this._newTab._containerDiv.style.height = "";
-                if (this._directionDown) {
-                    this._oldTab._containerDiv.style.bottom = "";
-                    this._newTab._containerDiv.style.top = this._parent.getTabHeight(0, this._newTabIndex + 1) + "px";
-                } else {
-                    this._newTab._containerDiv.style.top = "";
-                    this._newTab._containerDiv.style.bottom = 
-                            this._parent.getTabHeight(this._newTabIndex + 1, this._parent._tabs.length) + "px";
-                }
-                this._newTab._containerDiv.style.display = "block";
-                
-                // Set size of tab content to be equivalent to available space.
-                var regionContentHeight = this._parent._div.offsetHeight - this._parent.getTabHeight(0, this._parent._tabs.length);
-                var oldTabInsets = Echo.Sync.Insets.toPixels(this._oldTab._getContentInsets());
-                var newTabInsets = Echo.Sync.Insets.toPixels(this._newTab._getContentInsets());
-                var oldContentHeight = regionContentHeight - oldTabInsets.top - oldTabInsets.bottom;
-                var newContentHeight = regionContentHeight - newTabInsets.top - newTabInsets.bottom;
-                oldContentHeight = oldContentHeight > 0 ? oldContentHeight : 0;
-                newContentHeight = newContentHeight > 0 ? newContentHeight : 0;
-                
-                if (this._parent._resetOverflowForAnimation) {
-                    this._oldTab._contentDiv.style.overflow = "hidden";
-                    this._newTab._contentDiv.style.overflow = "hidden";
-                }
-                
-                this._oldTab._contentDiv.style.bottom = "";
-                this._newTab._contentDiv.style.bottom = "";
-                this._oldTab._contentDiv.style.height = oldContentHeight + "px";
-                this._newTab._contentDiv.style.height = newContentHeight + "px";
-            }
-    
-            if (this._directionDown) {
-                // Move each moving tab to next step position.
-                for (i = this._oldTabIndex; i > this._newTabIndex; --i) {
-                    this._parent._tabs[i]._tabDiv.style.top = (stepPosition + this._startTopPosition + 
-                            this._parent.getTabHeight(this._newTabIndex + 1, i)) + "px";
-                }
-                
-                // Adjust height of expanding new tab content to fill expanding space.
-                newContainerHeight = stepPosition;
-                if (newContainerHeight < 0) {
-                    newContainerHeight = 0;
-                }
-                this._newTab._containerDiv.style.height = newContainerHeight + "px";
-                
-                // Move top of old content downward.
-                var oldTop = stepPosition + this._startTopPosition + 
-                        this._parent.getTabHeight(this._newTabIndex + 1, this._oldTabIndex + 1);
-                this._oldTab._containerDiv.style.top = oldTop + "px";
-                
-                // Reduce height of contracting old tab content to fit within contracting space.
-                oldContainerHeight = this._regionHeight - this._parent.getTabHeight(this._newTabIndex, this._oldTabIndex);
-                if (oldContainerHeight < 0) {
-                    oldContainerHeight = 0;
-                }
-                this._oldTab._containerDiv.style.height = oldContainerHeight + "px";
-            } else {
-                // Move each moving tab to next step position.
-                for (i = this._oldTabIndex + 1; i <= this._newTabIndex; ++i) {
-                    this._parent._tabs[i]._tabDiv.style.bottom = (stepPosition + this._startBottomPosition + 
-                            this._parent.getTabHeight(i + 1, this._newTabIndex + 1)) + "px";
-                }
-                
-                // Reduce height of contracting old tab content to fit within contracting space.
-                oldContainerHeight = this._regionHeight - stepPosition - 
-                        this._parent.getTabHeight(this._oldTabIndex, this._newTabIndex); 
-                if (oldContainerHeight < 0) {
-                    oldContainerHeight = 0;
-                }
-                this._oldTab._containerDiv.style.height = oldContainerHeight + "px";
-                
-                // Increase height of expanding tab content to fit within expanding space.
-                newContainerHeight = stepPosition;
-                if (newContainerHeight < 0) {
-                    newContainerHeight = 0;
-                }
-                this._newTab._containerDiv.style.height = newContainerHeight + "px";
+
+        var stepPosition = Math.round(progress * this._animationDistance);
+
+        if (this._directionDown) {
+            // Move each moving tab to next step position.
+            for (i = this._oldTabIndex; i > this._newTabIndex; --i) {
+                this._parent._tabs[i]._tabDiv.style.top = (stepPosition + this._startTopPosition + 
+                        this._parent.getTabHeight(this._newTabIndex + 1, i)) + "px";
             }
 
-            ++this._animationStepIndex;
-            
-            // Continue Rotation.
-            Core.Web.Scheduler.add(this._animationRunnable);
+            // Adjust height of expanding new tab content to fill expanding space.
+            newContainerHeight = stepPosition;
+            if (newContainerHeight < 0) {
+                newContainerHeight = 0;
+            }
+            this._newTab._containerDiv.style.height = newContainerHeight + "px";
+
+            // Move top of old content downward.
+            var oldTop = stepPosition + this._startTopPosition + 
+                    this._parent.getTabHeight(this._newTabIndex + 1, this._oldTabIndex + 1);
+            this._oldTab._containerDiv.style.top = oldTop + "px";
+
+            // Reduce height of contracting old tab content to fit within contracting space.
+            oldContainerHeight = this._regionHeight - this._parent.getTabHeight(this._newTabIndex, this._oldTabIndex);
+            if (oldContainerHeight < 0) {
+                oldContainerHeight = 0;
+            }
+            this._oldTab._containerDiv.style.height = oldContainerHeight + "px";
         } else {
-            // Complete Rotation.
-            var parent = this._parent;
-            this._dispose();
-            parent._redrawTabs(true);
+            // Move each moving tab to next step position.
+            for (i = this._oldTabIndex + 1; i <= this._newTabIndex; ++i) {
+                this._parent._tabs[i]._tabDiv.style.bottom = (stepPosition + this._startBottomPosition + 
+                        this._parent.getTabHeight(i + 1, this._newTabIndex + 1)) + "px";
+            }
+
+            // Reduce height of contracting old tab content to fit within contracting space.
+            oldContainerHeight = this._regionHeight - stepPosition - 
+                    this._parent.getTabHeight(this._oldTabIndex, this._newTabIndex); 
+            if (oldContainerHeight < 0) {
+                oldContainerHeight = 0;
+            }
+            this._oldTab._containerDiv.style.height = oldContainerHeight + "px";
+
+            // Increase height of expanding tab content to fit within expanding space.
+            newContainerHeight = stepPosition;
+            if (newContainerHeight < 0) {
+                newContainerHeight = 0;
+            }
+            this._newTab._containerDiv.style.height = newContainerHeight + "px";
         }
     },
-
-    _cancel: function() {
-        Core.Web.Scheduler.remove(this._animationRunnable);
-        this._dispose();
-    },
     
-    _dispose: function() {
+    complete: function() {
+        this._parent._rotation = null;
+
+        // Complete Rotation.
+        var parent = this._parent;
+        
         if (this._parent._resetOverflowForAnimation) {
             this._oldTab._contentDiv.style.overflow = "auto";
             this._newTab._contentDiv.style.overflow = "auto";
         }
+
         var renderId = this._parent.component.renderId;
-        this._parent._rotation = null;
         this._parent = null;
         this._oldTab = null;
         this._newTab = null;
+        
+        parent._redrawTabs(true);
     }
 });

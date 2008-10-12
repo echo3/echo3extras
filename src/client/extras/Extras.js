@@ -60,6 +60,69 @@ Extras.Sync = {
     }
 };
 
+Extras.Sync.Animation = Core.extend({
+
+    runTime: 0,
+    stepIndex: 0,
+    sleepInterval: 1,
+    startTime: null,
+    endTime: null,
+    
+    _runnable: null,
+
+    $abstract: {
+    
+        /**
+         * Initializes the animation.  This method will always be invoked internally, it should not be manually invoked.
+         */
+        init: function() { },
+        
+        /**
+         * Initializes the animation.  This method will always be invoked internally, it should not be manually invoked.
+         */
+        complete: function(abort) { },
+        
+        /**
+         * Initializes the animation.  This method will always be invoked internally, it should not be manually invoked.
+         */
+        step: function(progress) { }
+    },
+    
+    _doStep: function() {
+        var currentTime = new Date().getTime();
+        if (currentTime < this.endTime) {
+            if (this.stepIndex == 0) {
+                this.init();
+            } else {
+                this.step((currentTime - this.startTime) / this.runTime);
+            }
+            ++this.stepIndex;
+            Core.Web.Scheduler.add(this._runnable);
+        } else {
+            this.complete(false);
+        }
+    },
+    
+    /**
+     * Aborts an in-progress animation.  The <code>complete()</code> method will be invoked.
+     */
+    abort: function() {
+        Core.Web.Scheduler.remove(this._runnable);
+        this.complete(true);
+    },
+
+    /**
+     * Starts the animation.
+     */
+    start: function() {
+        this._runnable = new Core.Web.Scheduler.MethodRunnable(Core.method(this, this._doStep), 
+                parent._sleepInterval, false);
+        this.startTime = new Date().getTime();
+        this.endTime = this.startTime + this.runTime;
+        Core.Web.Scheduler.add(this._runnable);
+    }
+});
+
 Extras.Sync.FadeRunnable = Core.extend(Core.Web.Scheduler.Runnable, {
 
     timeInterval: 10,
