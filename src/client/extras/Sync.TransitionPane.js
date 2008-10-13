@@ -26,7 +26,7 @@ Extras.Sync.TransitionPane = Core.extend(Echo.Render.ComponentSync, {
     childDiv: null,
     
     /**
-     * Flag indicating whether initial content has been loaded (no transition effect is ued on the first load).
+     * Flag indicating whether initial content has been loaded (no transition effect is used on the first load).
      */
     _initialContentLoaded: false,
 
@@ -36,7 +36,7 @@ Extras.Sync.TransitionPane = Core.extend(Echo.Render.ComponentSync, {
     doImmediateTransition: function() {
         this._removeOldContent();
         if (this.childDiv) {
-            this._showContent();
+            this.showContent();
         }
     },
 
@@ -65,14 +65,14 @@ Extras.Sync.TransitionPane = Core.extend(Echo.Render.ComponentSync, {
             this.oldChildDiv = null;
         }
     },
-    
+
     _hideContent: function() {
         if (this.childDiv) {
             this.childDiv.style.visibility = "hidden";
         }
     },
     
-    _showContent: function() {
+    showContent: function() {
         if (this.childDiv) {
             this.childDiv.style.visibility = "visible";
         }
@@ -116,7 +116,9 @@ Extras.Sync.TransitionPane = Core.extend(Echo.Render.ComponentSync, {
     
     renderDispose: function(update) {
         this._initialContentLoaded = false;
-        this._transitionFinish();
+        if (this._transition) {
+            this._transition.abort();
+        }
         this._childDiv = null;
         this.contentDiv = null;
         this._containerDiv = null;
@@ -142,7 +144,9 @@ Extras.Sync.TransitionPane = Core.extend(Echo.Render.ComponentSync, {
             containerElement.removeChild(contentDiv);
             this.renderAdd(update, containerElement);
         } else {
-            this._transitionFinish();
+            if (this._transition) {
+                this._transition.abort();
+            }
         
             var removedChildren = update.getRemovedChildren();
             if (removedChildren) {
@@ -166,27 +170,15 @@ Extras.Sync.TransitionPane = Core.extend(Echo.Render.ComponentSync, {
     
     _transitionStart: function() {
         this._transition = new this._transitionClass(this);
-        this._duration = this.component.render("duration", this._transition.duration);
-        this._runnable = new Extras.Sync.TransitionPane.Runnable(this);
-        Core.Web.Scheduler.add(this._runnable); 
+        this._transition.duration = this.component.render("duration", this._transition.duration);
+        this._transition.start(Core.method(this, this._transitionFinish));
     },
     
-    /**
-     * Finishes the transition.  This method is invoked by the runnable when the transition is completed,
-     * or by the synchronization peer itself if a second transition is required before the first transition has completed.
-     */
-    _transitionFinish: function() {
-        // Remove runnable task from scheduler.
-        if (this._runnable) {
-            Core.Web.Scheduler.remove(this._runnable);
-            this._runnable = null;
-        }
-        
-        // Inform transition to finish immediately.
+    _transitionFinish: function(abort) {
+        // Abort current transition, if necessary.
         if (this._transition) {
-            this._transition.finish();
-            this._showContent();
             this._transition = null;
+            this.showContent();
         }
         
         // Remove content which was transitioned from.
@@ -202,87 +194,29 @@ Extras.Sync.TransitionPane = Core.extend(Echo.Render.ComponentSync, {
     }
 });
 
-Extras.Sync.TransitionPane.Runnable = Core.extend(Core.Web.Scheduler.Runnable, {
-
-    transitionPane: null,
-
-    timeInterval: null,
-    
-    _startTime: null,
-    
-    _endTime: null,
-    
-    repeat: true,
-    
-    _initialized: false,
-    
-    $construct: function(transitionPane) {
-        this.transitionPane = transitionPane;
-        this.timeInterval = transitionPane._transition.stepInterval;
-    },
-    
-    run: function() {
-        if (!this.initialized) {
-            this._startTime = new Date().getTime();
-            this._endTime = this._startTime + this.transitionPane._duration;
-            this.transitionPane._transition.start();
-            this.initialized = true;
-        } else {
-            var time = new Date().getTime();
-            if (time < this._endTime) {
-                var progress = (time - this._startTime) / this.transitionPane._duration;
-                this.transitionPane._transition.step(progress);
-            } else {
-                this.transitionPane._transitionFinish();
-            }
-        }
-    }
-}); 
-
 /**
  * Abstract base class for transition implementations.
  */
-Extras.Sync.TransitionPane.Transition = Core.extend({
+Extras.Sync.TransitionPane.Transition = Core.extend(Extras.Sync.Animation, {
 
     transitionPane: null,
 
-    $virtual: {
-    
-        /**
-         * Duration of the transition, in milliseconds.
-         * This value should be overridden when a custom duration time is desired.
-         * This value will automatically be overridden if the TransitionPane component
-         * has its "duration" property set.
-         * @type Number
-         */
-        duration: 350,
-        
-        /**
-         * Interval at which transition steps should be invoked, in milliseconds.
-         * @type Number
-         */
-        stepInterval: 10
-    },
+    /**
+     * Duration of the transition, in milliseconds.
+     * This value should be overridden when a custom duration time is desired.
+     * This value will automatically be overridden if the TransitionPane component
+     * has its "duration" property set.
+     * @type Number
+     */
+    runTime: 350,
 
-    $abstract: {
+    /**
+     * Interval at which transition steps should be invoked, in milliseconds.
+     * @type Number
+     */
+    sleepInterval: 10,
     
-        /**
-         * Finishes the transition.
-         */
-        finish: function() { },
-        
-        /**
-         * Starts the transition.
-         */
-        start: function() { },
-        
-        /**
-         * Renders a step of the transition.
-         * 
-         * @param {Number} value between 0 and 1 indicating the progress of the transition which should be displayed.
-         */
-        step: function(progress) { }
-    },
+    $abstract: { },
 
     $construct: function(transitionPane) {
         this.transitionPane = transitionPane;
@@ -296,7 +230,7 @@ Extras.Sync.TransitionPane.CameraPanTransition = Core.extend(
     
     _travel: null,
 
-    finish: function() {
+    complete: function(abort) {
         if (this.transitionPane.childDiv) {
             this.transitionPane.childDiv.style.zIndex = 0;
             this.transitionPane.childDiv.style.top = "0px";
@@ -304,7 +238,7 @@ Extras.Sync.TransitionPane.CameraPanTransition = Core.extend(
         }
     },
     
-    start: function() {
+    init: function() {
         var bounds = new Core.Web.Measure.Bounds(this.transitionPane.contentDiv);
         this._travel = (this.transitionPane.type == Extras.TransitionPane.TYPE_CAMERA_PAN_DOWN || 
                 this.transitionPane.type == Extras.TransitionPane.TYPE_CAMERA_PAN_UP) ? bounds.height : bounds.width;
@@ -349,7 +283,7 @@ Extras.Sync.TransitionPane.CameraPanTransition = Core.extend(
             break;
         }
         if (!this._newChildOnScreen && this.transitionPane.childDiv) {
-            this.transitionPane._showContent();
+            this.transitionPane.showContent();
             this.transitionPane.childDiv.style.zIndex = 2;
             this._newChildOnScreen = true;
         }
@@ -359,9 +293,9 @@ Extras.Sync.TransitionPane.CameraPanTransition = Core.extend(
 Extras.Sync.TransitionPane.FadeOpacityTransition = Core.extend(
         Extras.Sync.TransitionPane.Transition, {
     
-    duration: 1000,
+    runTime: 1000,
     
-    finish: function() {
+    complete: function(abort) {
         if (this.transitionPane.childDiv) {
             this.transitionPane.childDiv.style.zIndex = 0;
             if (Core.Web.Env.PROPRIETARY_IE_OPACITY_FILTER_REQUIRED) {
@@ -372,7 +306,7 @@ Extras.Sync.TransitionPane.FadeOpacityTransition = Core.extend(
         }
     },
     
-    start: function() {
+    init: function() {
         if (this.transitionPane.childDiv) {
             if (Core.Web.Env.PROPRIETARY_IE_OPACITY_FILTER_REQUIRED) {
                 this.transitionPane.childDiv.style.filter = "alpha(opacity=0)";
@@ -380,7 +314,7 @@ Extras.Sync.TransitionPane.FadeOpacityTransition = Core.extend(
                 this.transitionPane.childDiv.style.opacity = 0;
             }
         }
-        this.transitionPane._showContent();
+        this.transitionPane.showContent();
     },
     
     step: function(progress) {

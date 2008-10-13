@@ -62,13 +62,17 @@ Extras.Sync = {
 
 Extras.Sync.Animation = Core.extend({
 
-    runTime: 0,
     stepIndex: 0,
-    sleepInterval: 1,
     startTime: null,
     endTime: null,
     
+    _listenerList: null,
     _runnable: null,
+    
+    $virtual: {
+        runTime: 0,
+        sleepInterval: 1
+    },
 
     $abstract: {
     
@@ -100,6 +104,9 @@ Extras.Sync.Animation = Core.extend({
             Core.Web.Scheduler.add(this._runnable);
         } else {
             this.complete(false);
+            if (this._completeMethod) {
+                this._completeMethod(false);
+            }
         }
     },
     
@@ -109,16 +116,19 @@ Extras.Sync.Animation = Core.extend({
     abort: function() {
         Core.Web.Scheduler.remove(this._runnable);
         this.complete(true);
+        if (this._completeMethod) {
+            this._completeMethod(true);
+        }
     },
-
+    
     /**
      * Starts the animation.
      */
-    start: function() {
-        this._runnable = new Core.Web.Scheduler.MethodRunnable(Core.method(this, this._doStep), 
-                parent._sleepInterval, false);
+    start: function(completeMethod) {
+        this._runnable = new Core.Web.Scheduler.MethodRunnable(Core.method(this, this._doStep),  parent._sleepInterval, false);
         this.startTime = new Date().getTime();
         this.endTime = this.startTime + this.runTime;
+        this._completeMethod = completeMethod;
         Core.Web.Scheduler.add(this._runnable);
     }
 });
