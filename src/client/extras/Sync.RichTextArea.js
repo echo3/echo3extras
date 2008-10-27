@@ -1230,40 +1230,34 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
             element = element.parentNode;
         }
         
-        var text = this.component._richTextArea.get("text");
-        
-        var contentDocument = this._iframe.contentWindow.document;
-        
-        var bodyStyleAttribute = "height:100%;width:100%;margin:0px;padding:0px;";
-        
+        var style = "height:100%;width:100%;margin:0px;padding:0px;";
         var foreground = this.component._richTextArea.render("foreground");
         if (foreground) {
-            bodyStyleAttribute += "color:" + foreground + ";";
+            style += "color:" + foreground + ";";
         }
-
         var background = this.component._richTextArea.render("background");
         if (background) {
-            bodyStyleAttribute += "background-color:" + background + ";";
+            style += "background-color:" + background + ";";
         }
-
         var backgroundImage = this.component._richTextArea.render("backgroundImage");
         if (backgroundImage) {
-            bodyStyleAttribute += "background-attachment: fixed;";
-            bodyStyleAttribute += "background-image:url(" + Echo.Sync.FillImage.getUrl(backgroundImage) + ");";
+            style += "background-attachment: fixed;";
+            style += "background-image:url(" + Echo.Sync.FillImage.getUrl(backgroundImage) + ");";
             var backgroundRepeat = Echo.Sync.FillImage.getRepeat(backgroundImage);
             if (backgroundRepeat) {
-                bodyStyleAttribute += "background-repeat:" + backgroundRepeat + ";";
+                style += "background-repeat:" + backgroundRepeat + ";";
             }
             var backgroundPosition = Echo.Sync.FillImage.getPosition(backgroundImage);
             if (backgroundPosition) {
-                bodyStyleAttribute += "background-position:" + backgroundPosition + ";";
+                style += "background-position:" + backgroundPosition + ";";
             }
         }
         
+        var text = this.component._richTextArea.get("text");
+        var contentDocument = this._iframe.contentWindow.document;
         contentDocument.open();
         contentDocument.write("<html><body tabindex=\"0\" width=\"100%\" height=\"100%\"" +
-                (bodyStyleAttribute ? (" style=\"" + bodyStyleAttribute + "\"") : "") +
-                ">" + (text == null ? "" : text) + "</body></html>");
+                (style ? (" style=\"" + style + "\"") : "") + ">" + (text == null ? "" : text) + "</body></html>");
         contentDocument.close();
         if (Core.Web.Env.BROWSER_MOZILLA && !Core.Web.Env.BROWSER_FIREFOX) {
             // workaround for Mozilla (not Firefox)
@@ -1275,14 +1269,11 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
             contentDocument.designMode = "on";
         }
         
-        Core.Web.Event.add(this._iframe.contentWindow.document, "keypress", 
-                Core.method(this, this._processKeyPress), false);
-        Core.Web.Event.add(this._iframe.contentWindow.document, "keyup", 
-                Core.method(this, this._processKeyUp), false);
-        Core.Web.Event.add(this._iframe.contentWindow.document, "mousedown", 
-                Core.method(this, this._processMouseDown), false);
-        Core.Web.Event.add(this._iframe.contentWindow.document, "mouseup", 
-                Core.method(this, this._processMouseUp), false);
+        Core.Web.Event.add(this._iframe.contentWindow.document, "keypress",  Core.method(this, this._processKeyPress), false);
+        Core.Web.Event.add(this._iframe.contentWindow.document, "keyup", Core.method(this, this._processKeyUp), false);
+        Core.Web.Event.add(this._iframe.contentWindow.document, "mousedown", Core.method(this, this._processMouseDown), false);
+        Core.Web.Event.add(this._iframe.contentWindow.document, "mouseup", Core.method(this, this._processMouseUp), false);
+
         this._contentDocumentRendered = true;
     },
     
