@@ -77,10 +77,10 @@ public class RichTextAreaPeer extends AbstractComponentSynchronizePeer {
         addLocaleService(Locale.GERMAN, "de");
         CommonResources.install();
         ResourceRegistry resources = WebContainerServlet.getResourceRegistry();
-        resources.add("Extras", "image/richtext/AlignCenter.gif", ContentType.IMAGE_GIF);
-        resources.add("Extras", "image/richtext/AlignJustify.gif", ContentType.IMAGE_GIF);
-        resources.add("Extras", "image/richtext/AlignLeft.gif", ContentType.IMAGE_GIF);
-        resources.add("Extras", "image/richtext/AlignRight.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/richtext/AlignmentCenter.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/richtext/AlignmentJustify.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/richtext/AlignmentLeft.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/richtext/AlignmentRight.gif", ContentType.IMAGE_GIF);
         resources.add("Extras", "image/richtext/Background.gif", ContentType.IMAGE_GIF);
         resources.add("Extras", "image/richtext/Bold.gif", ContentType.IMAGE_GIF);
         resources.add("Extras", "image/richtext/BulletedList.gif", ContentType.IMAGE_GIF);
