@@ -44,7 +44,9 @@ public class CalendarSelect extends Component {
     public static final String DATE_CHANGED_PROPERTY = "date";
     public static final String PROPERTY_BORDER = "border";
     public static final String PROPERTY_BACKGROUND_IMAGE = "backgroundImage";
-
+    public static final String PROPERTY_DATE_FOREGROUND = "dateForeground";
+    public static final String PROPERTY_DATE_BACKGROUND = "dateBackground";
+    public static final String PROPERTY_ADJACENT_MONTH_DATE_BACKGROUND = "adjacentMonthDateBackground";
     public static final String PROPERTY_ADJACENT_MONTH_DATE_FOREGROUND = "adjacentMonthDateForeground";
     public static final String PROPERTY_SELECTED_DATE_BACKGROUND = "selectedDateBackground";
     public static final String PROPERTY_SELECTED_DATE_BACKGROUND_IMAGE = "selectedDateBackgroundImage";
@@ -67,6 +69,15 @@ public class CalendarSelect extends Component {
     public CalendarSelect(Date date) {
         super();
         this.date = date;
+    }
+    
+    /**
+     * Returns the background color of dates in adjacent (previous/next) months.
+     * 
+     * @return the background 
+     */
+    public Color getAdjacentMonthDateBackground() {
+        return (Color) get(PROPERTY_ADJACENT_MONTH_DATE_BACKGROUND);
     }
     
     /**
@@ -103,6 +114,24 @@ public class CalendarSelect extends Component {
      */
     public Date getDate() {
         return date;
+    }
+    
+    /**
+     * Returns the background color of dates shown in the calendar.
+     * 
+     * @return the background 
+     */
+    public Color getDateBackground() {
+        return (Color) get(PROPERTY_DATE_BACKGROUND);
+    }
+    
+    /**
+     * Returns the foreground color of dates shown in the calendar.
+     * 
+     * @return the foreground 
+     */
+    public Color getDateForeground() {
+        return (Color) get(PROPERTY_DATE_FOREGROUND);
     }
     
     /**
@@ -171,12 +200,39 @@ public class CalendarSelect extends Component {
     }
 
     /**
+     * Sets the background color of dates in adjacent (previous/next) months.
+     * 
+     * @param newValue the new background
+     */
+    public void setAdjacentMonthDateBackground(Color newValue) {
+        set(PROPERTY_ADJACENT_MONTH_DATE_BACKGROUND, newValue);
+    }
+
+    /**
      * Sets the foreground color of dates in adjacent (previous/next) months.
      * 
      * @param newValue the new foreground
      */
     public void setAdjacentMonthDateForeground(Color newValue) {
-        set(PROPERTY_SELECTED_DATE_FOREGROUND, newValue);
+        set(PROPERTY_ADJACENT_MONTH_DATE_FOREGROUND, newValue);
+    }
+
+   /**
+     * Sets the background color of the selected date
+     * 
+     * @param newValue the new background
+     */
+    public void setDateBackground(Color newValue) {
+        set(PROPERTY_DATE_BACKGROUND, newValue);
+    }
+
+    /**
+     * Sets the foreground color of the selected date
+     * 
+     * @param newValue the new foreground
+     */
+    public void setDateForeground(Color newValue) {
+        set(PROPERTY_DATE_FOREGROUND, newValue);
     }
 
     /**
