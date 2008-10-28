@@ -947,12 +947,18 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
         var x = itemBounds.left;
         var y = containerBounds.top + containerBounds.height;
 
-        var availableWidth = document.body.offsetWidth;
+        var bodyBounds = new Core.Web.Measure.Bounds(document.body);
         
-        if (x + width > availableWidth) {
-            x = availableWidth - width;
+        if (x + width > bodyBounds.width) {
+            x = bodyBounds.width - width;
             if (x < 0) {
                 x = 0;
+            }
+        }
+        if (y + height > bodyBounds.height) {
+            y = bodyBounds.height - height;
+            if (y < 0) {
+                y = 0;
             }
         }
         
@@ -1023,6 +1029,7 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
     renderMain: function(update) {
         var menuBarDiv = document.createElement("div");
         menuBarDiv.id = this.component.renderId;
+        menuBarDiv.style.cssText = "overflow:hidden;";
         
         Echo.Sync.Color.renderFB(this.component, menuBarDiv);
         var border = this.component.render("border", Extras.Sync.Menu._defaultBorder);
