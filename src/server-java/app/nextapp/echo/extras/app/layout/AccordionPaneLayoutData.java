@@ -29,15 +29,27 @@
 
 package nextapp.echo.extras.app.layout;
 
+import nextapp.echo.app.ImageReference;
 import nextapp.echo.app.LayoutData;
 
 /**
  * <code>LayoutData</code> implementation for children of 
  * <code>AccordionPane</code> components.
  */
-public class AccordionPaneLayoutData implements LayoutData {
+public class AccordionPaneLayoutData 
+implements LayoutData {
 
     private String title;
+    private ImageReference icon;
+    
+    /**
+     * Returns the icon of the accordion tab.
+     * 
+     * @return the tab icon
+     */
+    public ImageReference getIcon() {
+        return icon;
+    }
     
     /**
      * Returns the title of the accordion tab.
@@ -46,6 +58,15 @@ public class AccordionPaneLayoutData implements LayoutData {
      */
     public String getTitle() {
         return title;
+    }
+    
+    /**
+     * Sets the icon of the accordion tab.
+     * 
+     * @param newValue the new icon
+     */
+    public void setIcon(ImageReference newValue) {
+        icon = newValue;
     }
 
     /**

@@ -14,6 +14,8 @@
  * @sp {#Border} tabRolloverBorder the tab rollover border
  * @sp {Boolean} tabRolloverEnabled flag indicating whether rollover effects are enabled
  * @sp {#Color} tabRolloverForeground the tab rollover foreground color
+ * @ldp {#ImageReference} icon the icon to display within a tab
+ * @ldp {String} title the text to display within a tab
  */
 Extras.AccordionPane = Core.extend(Echo.Component, {
     

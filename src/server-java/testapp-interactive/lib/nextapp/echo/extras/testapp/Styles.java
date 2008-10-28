@@ -76,7 +76,7 @@ public class Styles {
     public static final ImageReference ICON_16_TAB_PANE 
             = new ResourceImageReference(IMAGE_PATH + "TabPaneIcon16.gif"); 
     public static final ImageReference ICON_16_TOOL_TIP_CONTAINER 
-    = new ResourceImageReference(IMAGE_PATH + "ToolTipContainerIcon16.gif"); 
+            = new ResourceImageReference(IMAGE_PATH + "ToolTipContainerIcon16.gif"); 
     public static final ImageReference ICON_16_TREE
             = new ResourceImageReference(IMAGE_PATH + "TreeIcon16.gif"); 
     public static final ImageReference ICON_16_TRANSITION_PANE 

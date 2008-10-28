@@ -338,11 +338,6 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
         Core.Web.Event.Selection.disable(this._tabDiv);
     },
     
-    _getTitle: function() {
-        var layoutData = this._childComponent.render("layoutData");
-        return layoutData ? layoutData.title : null;
-    },
-    
     _getContentInsets: function() {
         if (this._childComponent.pane) {
             return Extras.Sync.AccordionPane._paneInsets;
@@ -375,11 +370,24 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
     },
     
     _render: function(client, update) {
+        var layoutData = this._childComponent.render("layoutData") || {};
+        
         this._tabDiv = document.createElement("div");
         this._tabDiv.id = this._parent.component.renderId + "_tab_" + this._childComponent.renderId;
         this._tabDiv.style.cssText = "cursor:pointer;position:absolute;left:0;right:0;overflow:hidden;";
         Echo.Sync.Insets.render(this._parent._getTabInsets(), this._tabDiv, "padding");
-        this._tabDiv.appendChild(document.createTextNode(this._getTitle()));
+        
+        if (layoutData.icon) {
+            //FIXME Temporary implementation.  Need proper layout for common icon + text case.
+            var img = document.createElement("img");
+            Echo.Sync.ImageReference.renderImg(layoutData.icon, img);
+            img.style.paddingRight = "3px";
+            this._tabDiv.appendChild(img);
+        }
+        
+        if (layoutData.title) {
+            this._tabDiv.appendChild(document.createTextNode(layoutData.title));
+        }
     
         this._containerDiv = document.createElement("div");
         this._containerDiv.style.cssText = "display:none;position:absolute;left:0;right:0;overflow:hidden;";

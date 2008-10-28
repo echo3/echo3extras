@@ -51,6 +51,7 @@ extends LayoutDataPeer {
     throws SerialException {
         AccordionPaneLayoutData layoutData = (AccordionPaneLayoutData) propertyValue;
         propertyElement.setAttribute("t", "LayoutData");
+        SerialUtil.toXml(context, AccordionPaneLayoutData.class, propertyElement, "icon", layoutData.getIcon());
         SerialUtil.toXml(context, AccordionPaneLayoutData.class, propertyElement, "title", layoutData.getTitle());
     }
 }
