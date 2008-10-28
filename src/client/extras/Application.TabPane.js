@@ -43,6 +43,8 @@
  * @sp {#ImageReference} tabCloseIcon the tab close icon
  * @sp {#ImageReference} tabDisabledCloseIcon the tab close icon for tabs that may not be closed
  * @sp {#ImageReference} tabRolloverCloseIcon the tab close rollover effect icon
+ * @ldp {#ImageReference} icon the icon to display within a tab
+ * @ldp {String} title the text to display within a tab
  * @event tabClose An event fired when the user requests to close a tab.
  * @event tabSelect An event fired when the user selects a tab. 
  */
