@@ -202,7 +202,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
     
     _createDayContainer: function() {
         var dayContainerDiv = document.createElement("div");
-        dayContainerDiv.style.cssText = "position:absolute;"
+        dayContainerDiv.style.cssText = "position:absolute;";
         dayContainerDiv.style.width = this._rowWidth + "px";
         dayContainerDiv.style.height = (this._ySize * this._cellHeight + (this._ySize - 1) * this._vCellSpacing) + "px";
         for (var y = 0; y < this._ySize; ++y) {
@@ -211,6 +211,55 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
             dayContainerDiv.appendChild(rowDiv);
         }
         return dayContainerDiv;
+    },
+    
+    _createMonthYearInput: function() {
+        var i, option, img,
+            enabled = this.component.isRenderEnabled(),
+            span = document.createElement("span");
+        
+        this._monthSelect = document.createElement("select");
+        for (i = 0; i < 12; ++i) {
+            option = document.createElement("option");
+            option.appendChild(document.createTextNode(this._msg["Month." + i]));
+            this._monthSelect.appendChild(option);
+        }
+        if (!enabled) {
+            this._monthSelect.disabled = true;
+        }
+        span.appendChild(this._monthSelect);
+
+        span.appendChild(document.createTextNode(" "));
+        
+        this._yearDecSpan = document.createElement("span");
+        this._yearDecSpan.style.cursor = "pointer";
+        img = document.createElement("img");
+        img.src = this._icons.decrement ? this._icons.decrement :
+                this.client.getResourceUrl("Extras", "image/calendar/Decrement.gif");
+        img.alt = "-";
+        this._yearDecSpan.appendChild(img);
+        span.appendChild(this._yearDecSpan);
+        
+        this._yearField = document.createElement("input");
+        this._yearField.type = "text";
+        this._yearField.style.textAlign = "center";
+        this._yearField.maxLength = 4;
+        this._yearField.size = 5;
+        if (!enabled) {
+            this._yearField.readOnly = true;
+        }
+        span.appendChild(this._yearField);
+
+        this._yearIncSpan = document.createElement("span");
+        this._yearIncSpan.style.cursor = "pointer";
+        img = document.createElement("img");
+        img.src = this._icons.increment ? this._icons.increment :
+                this.client.getResourceUrl("Extras", "image/calendar/Increment.gif");
+        img.alt = "+";
+        this._yearIncSpan.appendChild(img);
+        span.appendChild(this._yearIncSpan);
+        
+        return span;
     },
 
     _createWeek: function(line) {
@@ -227,10 +276,10 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
             cellDiv.style.left = (x * (this._cellWidth + this._hCellSpacing)) + "px";
             cellDiv.style.width = this._renderedCellWidth + "px";
             cellDiv.style.height = this._renderedCellHeight + "px";
-            cellDiv.style.borderTop = "1px solid #efefef";
-            cellDiv.style.borderLeft = "1px solid #efefef";
-            cellDiv.style.borderRight = "1px solid #bfbfbf";
-            cellDiv.style.borderBottom = "1px solid #bfbfbf";
+            cellDiv.style.borderTop = "1px solid #efefef";  //FIXME hardcoded
+            cellDiv.style.borderLeft = "1px solid #efefef";  //FIXME hardcoded
+            cellDiv.style.borderRight = "1px solid #bfbfbf";  //FIXME hardcoded
+            cellDiv.style.borderBottom = "1px solid #bfbfbf";  //FIXME hardcoded
             cellDiv.style.padding = "2px 4px";
             cellDiv.style.overflow = "hidden";
             
@@ -287,6 +336,10 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
 
         this._cellWidth = cellBounds.width + this._padding.left + this._padding.right + 
                 this._borderSize.left + this._borderSize.right;
+        if (this._cellWidth * 7 < this._monthYearWidth) {
+            this._cellWidth = Math.ceil(this._monthYearWidth / 7);
+        }        
+        
         this._cellHeight = cellBounds.height + this._padding.top + this._padding.bottom +
                 this._borderSize.top + this._borderSize.bottom;
         this._hCellSpacing = 0;
@@ -375,12 +428,12 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
     renderAdd: function(update, parentElement) {
         this._msg = Extras.Sync.CalendarSelect.resource.get(this.component.getRenderLocale());
 
-        var i, j, td, tr, img, x, cellDiv, dayOfWeekName, headerDiv, option,
+        var i, j, td, tr, x, cellDiv, dayOfWeekName, monthYearDiv, monthYearInput, headerWidth,
             enabled = this.component.isRenderEnabled(),
             dayOfWeekNameAbbreviationLength = parseInt(this.component.render("dayOfWeekNameAbbreviationLength", 2), 10),
             date = this.component.get("date");
 
-        this._firstDayOfWeek = parseInt(this._msg["FirstDayOfWeek"]) || 0;
+        this._firstDayOfWeek = parseInt(this._msg["FirstDayOfWeek"], 10) || 0;
 
         if (!date) {
             date = new Date();
@@ -392,7 +445,9 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
              day: date.getDate()
         };
         this._monthData = new Extras.Sync.CalendarSelect.MonthData(this._date.year, this._date.month, this._firstDayOfWeek);    
-        // Load localization data.
+
+        monthYearInput = this._createMonthYearInput();
+        this._monthYearWidth = new Core.Web.Measure.Bounds(monthYearInput).width + 10; //FIXME hardcoded.
     
         this._loadRenderData();
 
@@ -402,56 +457,16 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         Echo.Sync.Font.render(this._font, this._div);
         Echo.Sync.Color.render(this.component.render("foreground", Extras.Sync.CalendarSelect.DEFAULT_FOREGROUND), this._div,
                 "color");
-        Echo.Sync.Color.render(this.component.render("foreground", Extras.Sync.CalendarSelect.DEFAULT_BACKGROUND), this._div,
+        Echo.Sync.Color.render(this.component.render("background", Extras.Sync.CalendarSelect.DEFAULT_BACKGROUND), this._div,
                 "backgroundColor");
         Echo.Sync.Border.render(this.component.render("border",  Extras.Sync.CalendarSelect.DEFAULT_DATE_BORDER), this._div);
         Echo.Sync.Font.render(this.component.render("font"), this._div);
         
-        headerDiv = document.createElement("div");
-        headerDiv.align = "center";
-        headerDiv.style.cssText = "padding:2px 5px;white-space:nowrap";
-        this._div.appendChild(headerDiv);
-        
-        this._monthSelect = document.createElement("select");
-        for (i = 0; i < 12; ++i) {
-            option = document.createElement("option");
-            option.appendChild(document.createTextNode(this._msg["Month." + i]));
-            this._monthSelect.appendChild(option);
-        }
-        if (!enabled) {
-            this._monthSelect.disabled = true;
-        }
-        headerDiv.appendChild(this._monthSelect);
-
-        headerDiv.appendChild(document.createTextNode(" "));
-        
-        this._yearDecSpan = document.createElement("span");
-        this._yearDecSpan.style.cursor = "pointer";
-        img = document.createElement("img");
-        img.src = this._icons.decrement ? this._icons.decrement :
-                this.client.getResourceUrl("Extras", "image/calendar/Decrement.gif");
-        img.alt = "-";
-        this._yearDecSpan.appendChild(img);
-        headerDiv.appendChild(this._yearDecSpan);
-        
-        this._yearField = document.createElement("input");
-        this._yearField.type = "text";
-        this._yearField.style.textAlign = "center";
-        this._yearField.maxLength = 4;
-        this._yearField.size = 5;
-        if (!enabled) {
-            this._yearField.readOnly = true;
-        }
-        headerDiv.appendChild(this._yearField);
-
-        this._yearIncSpan = document.createElement("span");
-        this._yearIncSpan.style.cursor = "pointer";
-        img = document.createElement("img");
-        img.src = this._icons.increment ? this._icons.increment :
-                this.client.getResourceUrl("Extras", "image/calendar/Increment.gif");
-        img.alt = "+";
-        this._yearIncSpan.appendChild(img);
-        headerDiv.appendChild(this._yearIncSpan);
+        monthYearDiv = document.createElement("div");
+        monthYearDiv.align = "center";
+        monthYearDiv.style.cssText = "padding:2px 5px;white-space:nowrap;overflow:hidden;"; //FIXME hardcoded
+        monthYearDiv.appendChild(monthYearInput);
+        this._div.appendChild(monthYearDiv);
         
         this._calendarDiv = document.createElement("div");
         this._calendarDiv.style.cssText = "position:relative;";
@@ -480,7 +495,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         }
         
         this._scrollContainer = document.createElement("div");
-        this._scrollContainer.style.cssText = "position:absolute;overflow:hidden;"
+        this._scrollContainer.style.cssText = "position:absolute;overflow:hidden;";
         this._scrollContainer.style.top = (this._headerHeight + this._headerMargin) + "px";
         this._scrollContainer.style.height = (this._ySize * this._cellHeight + (this._ySize - 1) * this._vCellSpacing) + "px";
         this._scrollContainer.style.width = this._rowWidth + "px";
@@ -538,7 +553,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
     },
     
     _setCellStyle: function(cellIndex, rollover, reset) {
-        date = this._monthData.getCellDate(cellIndex);
+        var date = this._monthData.getCellDate(cellIndex);
         var cell = this._getCell(cellIndex);
         if (!reset && date.day == this._date.day && date.month == this._date.month && date.year == this._date.year) {
             Echo.Sync.Color.renderClear(this._cellSelectedBackground, cell, "backgroundColor");
@@ -605,7 +620,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
     },
     
     _updateSelection: function() {
-        if (parseInt(this._yearField.value) !== this._date.year) {
+        if (parseInt(this._yearField.value, 10) !== this._date.year) {
             this._yearField.value = this._date.year;
         }
         if (this._monthSelect.selectedIndex != this._date.month) {
