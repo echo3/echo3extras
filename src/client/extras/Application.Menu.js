@@ -34,6 +34,7 @@ Extras.ContextMenu = Core.extend(Echo.Component, {
 
 /**
  * DropDownMenu component.
+ * If the <code>selectionEnabled</code> property is set, the component will display the last chosen menu item in its closed state.
  *
  * @sp {Number} animationTime the animation time (in milliseconds) (A value of zero indicates animation is disabled.)
  * @sp {#FillImage} backgroundImage the background image that will be displayed in the drop down box
@@ -60,6 +61,7 @@ Extras.ContextMenu = Core.extend(Echo.Component, {
  * @sp {#Extent} menuWidth the width of the expanded menu
  * @sp {#Color} selectionBackground the background color used to highlight the currently selected menu item
  * @sp {#FillImage} selectionBackgroundImage the background image used to highlight the currently selected menu item
+ * @sp {Boolean} selectionEnabled flag indicating whether item selection is enabled 
  * @sp {#Color} selectionForeground the foreground color used to highlight the currently selected menu item
  * @sp {String} selectionText the text displayed in the drop down box when no item is selected
  * @sp {#Extent} width the width of the drop down box
