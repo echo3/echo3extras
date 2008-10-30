@@ -491,11 +491,25 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
     
     getSubMenuPosition: function(menuModel, width, height) {
         var menuElement = this.itemElements[menuModel.id];
-        
         var itemBounds = new Core.Web.Measure.Bounds(menuElement);
         var menuBounds = new Core.Web.Measure.Bounds(this.element);
+        var x = menuBounds.left + menuBounds.width, y = itemBounds.top;
+        var windowBounds = new Core.Web.Measure.Bounds(document.body);
         
-        return { x: menuBounds.left + menuBounds.width, y: itemBounds.top };
+        if (x + width > windowBounds.width) {
+            x = windowBounds.width - width;
+            if (x < 0) {
+                x = 0;
+            }
+        }
+        if (y + height > windowBounds.height) {
+            y = windowBounds.height - height;
+            if (y < 0) {
+                y = 0;
+            }
+        }
+
+        return { x: x, y: y };
     },
     
     _processClick: function(e) {
@@ -687,15 +701,21 @@ Extras.Sync.DropDownMenu = Core.extend(Extras.Sync.Menu, {
         var x = bounds.left;
         var y = bounds.top + bounds.height;
 
-        var availableWidth = document.body.offsetWidth;
+        var windowBounds = new Core.Web.Measure.Bounds(document.body);
         
-        if (x + width > availableWidth) {
-            x = availableWidth - width;
+        if (x + width > windowBounds.width) {
+            x = windowBounds.width - width;
             if (x < 0) {
                 x = 0;
             }
         }
-        
+        if (y + height > windowBounds.height) {
+            y = windowBounds.height - height;
+            if (y < 0) {
+                y = 0;
+            }
+        }
+
         return { x: x, y: y };
     },
     
@@ -947,16 +967,16 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
         var x = itemBounds.left;
         var y = containerBounds.top + containerBounds.height;
 
-        var bodyBounds = new Core.Web.Measure.Bounds(document.body);
+        var windowBounds = new Core.Web.Measure.Bounds(document.body);
         
-        if (x + width > bodyBounds.width) {
-            x = bodyBounds.width - width;
+        if (x + width > windowBounds.width) {
+            x = windowBounds.width - width;
             if (x < 0) {
                 x = 0;
             }
         }
-        if (y + height > bodyBounds.height) {
-            y = bodyBounds.height - height;
+        if (y + height > windowBounds.height) {
+            y = windowBounds.height - height;
             if (y < 0) {
                 y = 0;
             }
