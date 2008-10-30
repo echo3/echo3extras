@@ -25,7 +25,6 @@ Extras.Sync.ToolTipContainer = Core.extend(Echo.Render.ComponentSync, {
         
         if (componentCount > 1) {
             this._toolTipDiv = this._createToolTip(update);
-            document.body.appendChild(this._toolTipDiv);
         }
         
         parentElement.appendChild(this._div);
@@ -48,16 +47,15 @@ Extras.Sync.ToolTipContainer = Core.extend(Echo.Render.ComponentSync, {
             this._applyDiv = null;
         }
         
-        if (this._toolTipDiv && this._toolTipDiv.parentNode) {
-            this._toolTipDiv.parentNode.removeChild(this._toolTipDiv);
+        if (this._toolTipDiv && this._toolTipDiv.parentNode === document.body) {
+            document.body.removeChild(this._toolTipDiv);
+            this._toolTipDiv = null;
         }
-        this._toolTipDiv = null;
     },
     
     _createToolTip: function(update) {
         var div = document.createElement("div");
         div.style.zIndex = 32767;
-        div.style.visibility = "hidden";
         div.style.position = "absolute";
         var width = this.component.render("width");
         if (width) {
@@ -106,8 +104,11 @@ Extras.Sync.ToolTipContainer = Core.extend(Echo.Render.ComponentSync, {
         if (!this.client || !this.client.verifyInput(this.component) || Core.Web.dragInProgress) {
             return;
         }
-        this._positionToolTip(e);
-        this._toolTipDiv.style.visibility = "visible";
+        
+        if (this._toolTipDiv.parentNode !== document.body) {
+            document.body.appendChild(this._toolTipDiv);
+            this._positionToolTip(e);
+        }
         return true;
     },
     
@@ -115,7 +116,9 @@ Extras.Sync.ToolTipContainer = Core.extend(Echo.Render.ComponentSync, {
         if (!this.client || !this.client.verifyInput(this.component)) {
             return;
         }
-        this._toolTipDiv.style.visibility = "hidden";
+        if (this._toolTipDiv.parentNode === document.body) {
+            document.body.removeChild(this._toolTipDiv);
+        }
         return true;
     }
 });
