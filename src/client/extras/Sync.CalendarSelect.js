@@ -13,7 +13,12 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         },
         DEFAULT_DATE_FOREGROUND: "#000000",
         DEFAULT_DATE_BACKGROUND: "#dfdfdf",
-        DEFAULT_DATE_BORDER: "1px outset #cfcfcf",
+        DEFAULT_DATE_BORDER: {
+            top: "1px solid #efefef",
+            left: "1px solid #efefef",
+            right: "1px solid #bfbfbf",
+            bottom: "1px solid #bfbfbf"
+        },
         DEFAULT_SELECTED_DATE_FOREGROUND: "#ffffff",
         DEFAULT_SELECTED_DATE_BACKGROUND: "#2f2f6f",
         DEFAULT_ADJACENT_MONTH_DATE_FOREGROUND: "#8f8f8f",
@@ -273,14 +278,10 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
             var cellDiv = document.createElement("div");
             cellDiv._cellIndex = 7 * line + x;
             cellDiv.style.cssText = "position:absolute;text-align:right;";
-//            cellDiv.style.backgroundColor = this._dateBackground;
             cellDiv.style.left = (x * (this._cellWidth + this._hCellSpacing)) + "px";
             cellDiv.style.width = this._renderedCellWidth + "px";
             cellDiv.style.height = this._renderedCellHeight + "px";
-            cellDiv.style.borderTop = "1px solid #efefef";  //FIXME hardcoded
-            cellDiv.style.borderLeft = "1px solid #efefef";  //FIXME hardcoded
-            cellDiv.style.borderRight = "1px solid #bfbfbf";  //FIXME hardcoded
-            cellDiv.style.borderBottom = "1px solid #bfbfbf";  //FIXME hardcoded
+            Echo.Sync.Border.render(this._dateBorder, cellDiv);
             cellDiv.style.padding = "2px 4px";
             cellDiv.style.overflow = "hidden";
             
@@ -295,6 +296,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
                 if (this._date.day == day) {
                     Echo.Sync.Color.render(this._dateSelectedBackground, cellDiv, "backgroundColor");
                     Echo.Sync.Color.render(this._dateSelectedForeground, cellDiv, "color");
+                    Echo.Sync.Border.render(this._dateSelectedBorder, cellDiv);
                 }
                 displayDay = day;
             }
@@ -321,6 +323,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
                 Extras.Sync.CalendarSelect.DEFAULT_SELECTED_DATE_FOREGROUND);
         this._dateSelectedBackground = this.component.render("selectedDateBackground", 
                 Extras.Sync.CalendarSelect.DEFAULT_SELECTED_DATE_BACKGROUND);
+        this._dateSelectedBorder = this.component.render("selectedDateBorder");
         this._dateRolloverBackground = this.component.render("rolloverDateBackground");
         if (!this._dateRolloverBackground) {
             this._dateRolloverBackground = Echo.Sync.Color.adjust(this._dateBackground, 0x20, 0x20, 0x20);
@@ -462,7 +465,8 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
                 "color");
         Echo.Sync.Color.render(this.component.render("background", Extras.Sync.CalendarSelect.DEFAULT_BACKGROUND), this._div,
                 "backgroundColor");
-        Echo.Sync.Border.render(this.component.render("border",  Extras.Sync.CalendarSelect.DEFAULT_DATE_BORDER), this._div);
+        Echo.Sync.FillImage.render(this.component.render("backgroundImage"), this._div);
+        Echo.Sync.Border.render(this.component.render("border",  Extras.Sync.CalendarSelect.DEFAULT_BORDER), this._div);
         Echo.Sync.Font.render(this.component.render("font"), this._div);
         
         monthYearDiv = document.createElement("div");
@@ -480,6 +484,17 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         
         this._currentRowDivs = [];
         
+        var headerDiv = document.createElement("div");
+        headerDiv.style.cssText = "position:absolute;";
+        headerDiv.style.width = (this._cellWidth * 7) + "px";
+        headerDiv.style.height = this._headerHeight + "px";
+        Echo.Sync.Color.render(this.component.render("headerForeground", Extras.Sync.CalendarSelect.DEFAULT_FOREGROUND), headerDiv,
+                "color");
+        Echo.Sync.Color.render(this.component.render("headerBackground", Extras.Sync.CalendarSelect.DEFAULT_BACKGROUND), headerDiv,
+                "backgroundColor");
+        Echo.Sync.FillImage.render(this.component.render("headerBackgroundImage"), headerDiv);
+        this._calendarDiv.appendChild(headerDiv);
+        
         for (x = 0; x < this._xSize; ++x) {
             cellDiv = document.createElement("div");
             cellDiv.style.cssText = "position:absolute;text-align:center;";
@@ -494,7 +509,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
             }
             cellDiv.appendChild(document.createTextNode(dayOfWeekName));
             
-            this._calendarDiv.appendChild(cellDiv);
+            headerDiv.appendChild(cellDiv);
         }
         
         this._scrollContainer = document.createElement("div");
@@ -562,16 +577,22 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         var date = this._monthData.getCellDate(cellIndex);
         var cell = this._getCell(cellIndex);
         if (!reset && date.day == this._date.day && date.month == this._date.month && date.year == this._date.year) {
+            // Render selected
             Echo.Sync.Color.renderClear(this._dateSelectedBackground, cell, "backgroundColor");
             Echo.Sync.Color.renderClear(this._dateSelectedForeground, cell, "color");
+            Echo.Sync.Border.render(this._dateSelectedBorder, cell);
         } else if (!reset && rollover) {
+            // Render rollover
             Echo.Sync.Color.renderClear(this._dateRolloverBackground, cell, "backgroundColor");
             Echo.Sync.Color.renderClear(this._dateRolloverForeground, cell, "color");
         } else {
             if (this._monthData.isCellAdjacent(cellIndex)) {
+                // Render adjacent
                 Echo.Sync.Color.renderClear(this._dateAdjacentBackground, cell, "backgroundColor");
                 Echo.Sync.Color.renderClear(this._dateAdjacentForeground, cell, "color");
             } else {
+                // Render default
+                Echo.Sync.Border.renderClear(this._dateBorder, cell);
                 cell.style.backgroundColor = "";
                 cell.style.color = "";
             }
