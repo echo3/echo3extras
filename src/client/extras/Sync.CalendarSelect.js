@@ -5,6 +5,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
 
     $static: {
     
+        DEFAULT_BORDER: "1px outset #cfcfcf",
         DEFAULT_BACKGROUND: "#cfcfcf",
         DEFAULT_FOREGROUND: "#000000",
         DEFAULT_FONT: {
@@ -272,7 +273,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
             var cellDiv = document.createElement("div");
             cellDiv._cellIndex = 7 * line + x;
             cellDiv.style.cssText = "position:absolute;text-align:right;";
-            cellDiv.style.backgroundColor = this._dateBackground;
+//            cellDiv.style.backgroundColor = this._dateBackground;
             cellDiv.style.left = (x * (this._cellWidth + this._hCellSpacing)) + "px";
             cellDiv.style.width = this._renderedCellWidth + "px";
             cellDiv.style.height = this._renderedCellHeight + "px";
@@ -313,6 +314,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         this._font = this.component.render("font", Extras.Sync.CalendarSelect.DEFAULT_FONT);
         this._dateForeground = this.component.render("dateForeground", Extras.Sync.CalendarSelect.DEFAULT_DATE_FOREGROUND);
         this._dateBackground = this.component.render("dateBackground", Extras.Sync.CalendarSelect.DEFAULT_DATE_BACKGROUND);
+        this._dateBorder = this.component.render("dateBorder", Extras.Sync.CalendarSelect.DEFAULT_DATE_BORDER);
         this._dateBackgroundImage = this.component.render("dateBackgroundImage", 
                 Extras.Sync.CalendarSelect.DEFAULT_DATE_BACKGROUND);
         this._dateSelectedForeground = this.component.render("selectedDateForeground",
@@ -325,8 +327,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         }
         this._dateAdjacentForeground = this.component.render("adjacentMonthDateForeground", 
                 Extras.Sync.CalendarSelect.DEFAULT_ADJACENT_MONTH_DATE_FOREGROUND);
-        this._dateAdjacentBackground = this.component.render("adjacentMonthDateBackground", 
-                Extras.Sync.CalendarSelect.DEFAULT_DATE_BACKGROUND);
+        this._dateAdjacentBackground = this.component.render("adjacentMonthDateBackground");
         
         var cellMeasure = document.createElement("span");
         cellMeasure.appendChild(document.createTextNode("96"));
@@ -501,6 +502,9 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         this._scrollContainer.style.top = (this._headerHeight + this._headerMargin) + "px";
         this._scrollContainer.style.height = (this._ySize * this._cellHeight + (this._ySize - 1) * this._vCellSpacing) + "px";
         this._scrollContainer.style.width = this._rowWidth + "px";
+        Echo.Sync.Color.render(this._dateForeground, this._scrollContainer, "color");
+        Echo.Sync.Color.render(this._dateBackground, this._scrollContainer, "backgroundColor");
+        Echo.Sync.FillImage.render(this._dateBackgroundImage, this._scrollContainer);
         this._calendarDiv.appendChild(this._scrollContainer);
         
         this._dayContainerDiv = this._createDayContainer();
@@ -568,8 +572,8 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
                 Echo.Sync.Color.renderClear(this._dateAdjacentBackground, cell, "backgroundColor");
                 Echo.Sync.Color.renderClear(this._dateAdjacentForeground, cell, "color");
             } else {
-                Echo.Sync.Color.renderClear(this._dateBackground, cell, "backgroundColor");
-                Echo.Sync.Color.renderClear(this._dateForeground, cell, "color");
+                cell.style.backgroundColor = "";
+                cell.style.color = "";
             }
         }
     },
