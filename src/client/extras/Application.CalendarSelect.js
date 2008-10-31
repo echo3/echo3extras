@@ -6,11 +6,15 @@
  * @sp {#Color} adjacentMonthDateBackground background color for dates in previous/next months
  * @sp {#Border} border the border wrapping the calendar
  * @sp {#FillImage} backgroundImage calendar background image
+ * @sp {Number} dayOfWeekNameAbbreviationLength number of characters to use in abbreviated day names (default 2)
  * @sp {#Color} dateBackground default background color of date cells
  * @sp {#Border} dateBorder default border of date cells
  * @sp {#FillImage} dateBackgroundImage default background image of date cells (note that this image is displayed behind the 
  *     entire calendar date grid, rather than being repeated in each cell)
  * @sp {#Color} dateForeground default foreground color of date cells
+ * @sp {#Color} headerBackground background color of the week header
+ * @sp {#FillImage} headerBackgroundImage background image of the week header
+ * @sp {#Color} headerForeground foreground color of the week header
  * @sp {#Color} rolloverDateBackground rollover background color of date cells
  * @sp {#Color} rolloverDateBorder rollover border of date cells
  * @sp {#FillImage} rolloverDateBackgroundImage rollover background image of date cells
