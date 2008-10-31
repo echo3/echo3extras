@@ -42,13 +42,24 @@ import nextapp.echo.app.FillImage;
 public class CalendarSelect extends Component {
 
     public static final String DATE_CHANGED_PROPERTY = "date";
-    public static final String PROPERTY_BORDER = "border";
-    public static final String PROPERTY_BACKGROUND_IMAGE = "backgroundImage";
-    public static final String PROPERTY_DATE_FOREGROUND = "dateForeground";
-    public static final String PROPERTY_DATE_BACKGROUND = "dateBackground";
     public static final String PROPERTY_ADJACENT_MONTH_DATE_BACKGROUND = "adjacentMonthDateBackground";
     public static final String PROPERTY_ADJACENT_MONTH_DATE_FOREGROUND = "adjacentMonthDateForeground";
+    public static final String PROPERTY_BORDER = "border";
+    public static final String PROPERTY_BACKGROUND_IMAGE = "backgroundImage";
+    public static final String PROPERTY_DATE_BACKGROUND = "dateBackground";
+    public static final String PROPERTY_DATE_BACKGROUND_IMAGE = "dateBackgroundImage";
+    public static final String PROPERTY_DATE_BORDER = "dateBorder";
+    public static final String PROPERTY_DATE_FOREGROUND = "dateForeground";
+    public static final String PROPERTY_DAY_OF_WEEK_ABBREVIATION_LENGTH = "dayOfWeekAbbreviationLength";
+    public static final String PROPERTY_HEADER_BACKGROUND = "headerBackground";
+    public static final String PROPERTY_HEADER_BACKGROUND_IMAGE = "headerBackgroundImage";
+    public static final String PROPERTY_HEADER_FOREGROUND = "headerForeground";
+    public static final String PROPERTY_ROLLOVER_DATE_BACKGROUND = "rolloverDateBackground";
+    public static final String PROPERTY_ROLLOVER_DATE_BACKGROUND_IMAGE = "rolloverDateBackgroundImage";
+    public static final String PROPERTY_ROLLOVER_DATE_BORDER = "rolloverDateBorder";
+    public static final String PROPERTY_ROLLOVER_DATE_FOREGROUND = "rolloverDateForeground";
     public static final String PROPERTY_SELECTED_DATE_BACKGROUND = "selectedDateBackground";
+    public static final String PROPERTY_SELECTED_DATE_BORDER = "selectedDateBorder";
     public static final String PROPERTY_SELECTED_DATE_BACKGROUND_IMAGE = "selectedDateBackgroundImage";
     public static final String PROPERTY_SELECTED_DATE_FOREGROUND = "selectedDateForeground";
     
@@ -90,7 +101,7 @@ public class CalendarSelect extends Component {
     }
     
     /**
-     * Returns the background image of the displayed calendar month.
+     * Returns the background image displayed within the entire component.
      * 
      * @return the background image
      */
@@ -99,7 +110,7 @@ public class CalendarSelect extends Component {
     }
     
     /**
-     * Returns the border surrounding the displayed calendar month.
+     * Returns the border surrounding the entire component.
      * 
      * @return the border
      */
@@ -117,7 +128,7 @@ public class CalendarSelect extends Component {
     }
     
     /**
-     * Returns the background color of dates shown in the calendar.
+     * Returns the default background color of date cells.
      * 
      * @return the background 
      */
@@ -126,12 +137,93 @@ public class CalendarSelect extends Component {
     }
     
     /**
-     * Returns the foreground color of dates shown in the calendar.
+     * Returns the default background image of date cells.
+     * 
+     * @return the background image 
+     */
+    public FillImage getDateBackgroundImage() {
+        return (FillImage) get(PROPERTY_DATE_BACKGROUND_IMAGE);
+    }
+    
+    /**
+     * Returns the default border of date cells.
+     * 
+     * @return the border
+     */
+    public Border getDateBorder() {
+        return (Border) get(PROPERTY_DATE_BORDER);
+    }
+    
+    /**
+     * Returns the default foreground color of date cells.
      * 
      * @return the foreground 
      */
     public Color getDateForeground() {
         return (Color) get(PROPERTY_DATE_FOREGROUND);
+    }
+    
+    /**
+     * Returns the background color of the week header.
+     * 
+     * @return the background
+     */
+    public Color getHeaderBackground() {
+        return (Color) get(PROPERTY_HEADER_BACKGROUND);
+    }
+    
+    /**
+     * Returns the background image of the week header.
+     * 
+     * @return the background image
+     */
+    public FillImage getHeaderBackgroundImage() {
+        return (FillImage) get(PROPERTY_HEADER_BACKGROUND_IMAGE);
+    }
+    
+    /**
+     * Returns the foreground color of the week header.
+     * 
+     * @return the foreground
+     */
+    public Color getHeaderForeground() {
+        return (Color) get(PROPERTY_HEADER_FOREGROUND);
+    }
+    
+    /**
+     * Returns the rollover background color of date cells.
+     * 
+     * @return the background 
+     */
+    public Color getRolloverDateBackground() {
+        return (Color) get(PROPERTY_ROLLOVER_DATE_BACKGROUND);
+    }
+    
+    /**
+     * Returns the rollover background image of date cells.
+     * 
+     * @return the background image
+     */
+    public FillImage getRolloverDateBackgroundImage() {
+        return (FillImage) get(PROPERTY_ROLLOVER_DATE_BACKGROUND_IMAGE);
+    }
+    
+    /**
+     * Returns the rollover border of date cells.
+     * 
+     * @return the border
+     */
+    public Border getRolloverDateBorder() {
+        return (Border) get(PROPERTY_ROLLOVER_DATE_BORDER);
+    }
+    
+    /**
+     * Returns the rollover foreground color of date cells.
+     * 
+     * @return the foreground 
+     */
+    public Color getRolloverDateForeground() {
+        return (Color) get(PROPERTY_ROLLOVER_DATE_FOREGROUND);
     }
     
     /**
@@ -153,6 +245,15 @@ public class CalendarSelect extends Component {
     }
     
     /**
+     * Returns the border of the selected date
+     * 
+     * @return the border
+     */
+    public Border getSelectedDateBorder() {
+        return (Border) get(PROPERTY_SELECTED_DATE_BORDER);
+    }
+    
+    /**
      * Returns the foreground color of the selected date
      * 
      * @return the foreground 
@@ -171,7 +272,7 @@ public class CalendarSelect extends Component {
     }
 
     /**
-     * Sets the background image of the displayed calendar month.
+     * Sets the background image displayed within the entire component.
      * 
      * @param newValue the new background image
      */
@@ -180,7 +281,7 @@ public class CalendarSelect extends Component {
     }
     
     /**
-     * Sets the border surrounding the displayed calendar month.
+     * Sets the border surrounding the entire component.
      * 
      * @param newValue the new border
      */
@@ -217,8 +318,8 @@ public class CalendarSelect extends Component {
         set(PROPERTY_ADJACENT_MONTH_DATE_FOREGROUND, newValue);
     }
 
-   /**
-     * Sets the background color of the selected date
+    /**
+     * Sets the default background color of date cells.
      * 
      * @param newValue the new background
      */
@@ -227,7 +328,25 @@ public class CalendarSelect extends Component {
     }
 
     /**
-     * Sets the foreground color of the selected date
+     * Sets the default background image of date cells.
+     * 
+     * @param newValue the new background
+     */
+    public void setDateBackgroundImage(FillImage newValue) {
+        set(PROPERTY_DATE_BACKGROUND_IMAGE, newValue);
+    }
+
+    /**
+     * Sets the default border of date cells.
+     * 
+     * @param newValue the new border
+     */
+    public void setDateBorder(Border newValue) {
+        set(PROPERTY_DATE_BORDER, newValue);
+    }
+
+    /**
+     * Sets the default foreground color of date cells.
      * 
      * @param newValue the new foreground
      */
@@ -236,7 +355,70 @@ public class CalendarSelect extends Component {
     }
 
     /**
-     * Sets the background color of the selected date
+     * Sets the background color of the week header.
+     * 
+     * @param newValue the new background
+     */
+    public void setHeaderBackground(Color newValue) {
+        set(PROPERTY_HEADER_BACKGROUND, newValue);
+    }
+    
+    /**
+     * Sets the background image of the week header.
+     * 
+     * @param newValue the new background image
+     */
+    public void setHeaderBackgroundImage(FillImage newValue) {
+        set(PROPERTY_HEADER_BACKGROUND_IMAGE, newValue);
+    }
+    
+    /**
+     * Sets the foreground color of the week header.
+     * 
+     * @param newValue the new foreground
+     */
+    public void setHeaderForeground(Color newValue) {
+        set(PROPERTY_HEADER_FOREGROUND, newValue);
+    }
+    
+    /**
+     * Sets the rollover background color of date cells.
+     * 
+     * @param newValue the new background
+     */
+    public void setRolloverDateBackground(Color newValue) {
+        set(PROPERTY_ROLLOVER_DATE_BACKGROUND, newValue);
+    }
+
+    /**
+     * Sets the rollover background image of date cells.
+     * 
+     * @param newValue the new background image
+     */
+    public void setRolloverDateBackgroundImage(FillImage newValue) {
+        set(PROPERTY_ROLLOVER_DATE_BACKGROUND_IMAGE, newValue);
+    }
+    
+    /**
+     * Sets the rollover border of date cells.
+     * 
+     * @param newValue the new border
+     */
+    public void setRolloverDateBorder(Border newValue) {
+        set(PROPERTY_ROLLOVER_DATE_BORDER, newValue);
+    }
+    
+    /**
+     * Sets the rollover foreground color of date cells.
+     * 
+     * @param newValue the new foreground
+     */
+    public void setRolloverDateForeground(Color newValue) {
+        set(PROPERTY_ROLLOVER_DATE_FOREGROUND, newValue);
+    }
+
+    /**
+     * Sets the background color of the selected date.
      * 
      * @param newValue the new background
      */
@@ -245,7 +427,7 @@ public class CalendarSelect extends Component {
     }
 
     /**
-     * Sets the background image of the selected date
+     * Sets the background image of the selected date.
      * 
      * @param newValue the new background image
      */
@@ -254,12 +436,20 @@ public class CalendarSelect extends Component {
     }
     
     /**
-     * Sets the foreground color of the selected date
+     * Sets the border of the selected date.
+     * 
+     * @param newValue the new border
+     */
+    public void setSelectedDateBorder(Border newValue) {
+        set(PROPERTY_SELECTED_DATE_BORDER, newValue);
+    }
+    
+    /**
+     * Sets the foreground color of the selected date.
      * 
      * @param newValue the new foreground
      */
     public void setSelectedDateForeground(Color newValue) {
         set(PROPERTY_SELECTED_DATE_FOREGROUND, newValue);
     }
-
 }
