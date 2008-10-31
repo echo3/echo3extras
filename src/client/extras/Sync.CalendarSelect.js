@@ -90,7 +90,9 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
             complete: function(abort) {
                 this._newContent.style.left = this._newContent.style.top = 
                         this._newContent.style.right = this._newContent.style.bottom = "";
-                this._container.removeChild(this._oldContent);
+                if (this._oldContent.parentNode) {
+                    this._oldContent.parentNode.removeChild(this._oldContent);
+                }
             }
         }),
         
