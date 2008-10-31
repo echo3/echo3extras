@@ -566,6 +566,10 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         this.insertHtml(tableHtml);
     },
     
+    _markFocused: function() {
+        this.component.application.setFocusedComponent(this);
+    },
+    
     _processCommand: function(e) {
         this.execCommand(e.actionCommand);
         this.focusDocument();
@@ -1165,6 +1169,8 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
             Core.Web.DOM.preventEventDefault(e);
             return;
         }
+        
+        this.component._richTextArea.peer._markFocused();
     
         this._storeData();
         this._storeRange();
