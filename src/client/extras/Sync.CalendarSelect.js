@@ -391,7 +391,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
     
     _processDateSelect: function(e) {
         if (!this.client || !this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY) || 
-                e.target._cellIndex == null) {
+                e.target._cellIndex == null || this._animation) {
             return;
         }
         this._setDate(this._monthData.getCellDate(e.target._cellIndex));
