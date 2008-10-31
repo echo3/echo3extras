@@ -772,7 +772,7 @@ Extras.Sync.DropDownMenu = Core.extend(Extras.Sync.Menu, {
     renderMain: function() {
         var dropDownDiv = document.createElement("div");
         dropDownDiv.id = this.component.renderId;
-        dropDownDiv.style.cssText = "width:100%;overflow:hidden;cursor:pointer;";
+        dropDownDiv.style.cssText = "overflow:hidden;cursor:pointer;";
         Echo.Sync.Color.render(this.component.render("foreground", Extras.Sync.Menu.DEFAULT_FOREGROUND), dropDownDiv, "color");
         Echo.Sync.Color.render(this.component.render("background", Extras.Sync.Menu.DEFAULT_BACKGROUND), 
                 dropDownDiv, "backgroundColor");
