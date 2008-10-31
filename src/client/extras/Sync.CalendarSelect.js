@@ -298,6 +298,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
                 if (this._date.day == day) {
                     Echo.Sync.Color.render(this._dateSelectedBackground, cellDiv, "backgroundColor");
                     Echo.Sync.Color.render(this._dateSelectedForeground, cellDiv, "color");
+                    Echo.Sync.FillImage.render(this._dateSelectedBackgroundImage, cellDiv);
                     Echo.Sync.Border.render(this._dateSelectedBorder, cellDiv);
                 }
                 displayDay = day;
@@ -325,6 +326,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
                 Extras.Sync.CalendarSelect.DEFAULT_SELECTED_DATE_FOREGROUND);
         this._dateSelectedBackground = this.component.render("selectedDateBackground", 
                 Extras.Sync.CalendarSelect.DEFAULT_SELECTED_DATE_BACKGROUND);
+        this._dateSelectedBackgroundImage = this.component.render("selectedDateBackgroundImage");
         this._dateSelectedBorder = this.component.render("selectedDateBorder");
         this._dateRolloverBackground = this.component.render("rolloverDateBackground");
         if (!this._dateRolloverBackground) {
@@ -582,6 +584,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
             // Render selected
             Echo.Sync.Color.renderClear(this._dateSelectedBackground, cell, "backgroundColor");
             Echo.Sync.Color.renderClear(this._dateSelectedForeground, cell, "color");
+            Echo.Sync.FillImage.render(this._dateSelectedBackgroundImage, cell);
             Echo.Sync.Border.render(this._dateSelectedBorder, cell);
         } else if (!reset && rollover) {
             // Render rollover
@@ -595,6 +598,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
             } else {
                 // Render default
                 Echo.Sync.Border.renderClear(this._dateBorder, cell);
+                cell.style.backgroundImage = "";
                 cell.style.backgroundColor = "";
                 cell.style.color = "";
             }
