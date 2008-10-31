@@ -413,6 +413,12 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         }
         this._setDate({ year: newValue, month: this._date.month, day: this._date.day });
     },
+
+    _processYearKeyUp: function(e) {
+        if (e.keyCode == 13) {
+            this._processYearChange(e);
+        }
+    },
     
     _processYearDecrement: function(e) {
         if (!this.client || !this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY)) {
@@ -534,6 +540,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
 
         Core.Web.Event.add(this._monthSelect, "change", Core.method(this, this._processMonthSelect), false);
         Core.Web.Event.add(this._yearField, "change", Core.method(this, this._processYearChange), false);
+        Core.Web.Event.add(this._yearField, "keyup", Core.method(this, this._processYearKeyUp), false);
         Core.Web.Event.add(this._yearDecSpan, "click", Core.method(this, this._processYearDecrement), false);
         Core.Web.Event.add(this._yearIncSpan, "click", Core.method(this, this._processYearIncrement), false);
         Core.Web.Event.add(this._calendarDiv, "click", Core.method(this, this._processDateSelect), false);
