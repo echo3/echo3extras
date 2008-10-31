@@ -406,11 +406,12 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
     },
     
     _processYearChange: function(e) {
-        if (!this.client || !this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY)) {
+        var newValue = parseInt(this._yearField.value, 10);
+        if (!this.client || !this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY) || isNaN(newValue)) {
             this._yearField.value = this._date.year;
             return;
         }
-        this._setDate({ year: parseInt(this._yearField.value, 10), month: this._date.month, day: this._date.day });
+        this._setDate({ year: newValue, month: this._date.month, day: this._date.day });
     },
     
     _processYearDecrement: function(e) {
