@@ -773,16 +773,21 @@ Extras.Sync.DropDownMenu = Core.extend(Extras.Sync.Menu, {
         var dropDownDiv = document.createElement("div");
         dropDownDiv.id = this.component.renderId;
         dropDownDiv.style.cssText = "overflow:hidden;cursor:pointer;";
+        
         Echo.Sync.Color.render(this.component.render("foreground", Extras.Sync.Menu.DEFAULT_FOREGROUND), dropDownDiv, "color");
         Echo.Sync.Color.render(this.component.render("background", Extras.Sync.Menu.DEFAULT_BACKGROUND), 
                 dropDownDiv, "backgroundColor");
         Echo.Sync.FillImage.render(this.component.render("backgroundImage"), dropDownDiv); 
         Echo.Sync.Border.render(this.component.render("border", Extras.Sync.Menu.DEFAULT_BORDER), dropDownDiv); 
+        Echo.Sync.Color.render(this.component.render("foreground", Extras.Sync.Menu.DEFAULT_FOREGROUND), dropDownDiv, "color");
         
         var relativeDiv = document.createElement("div");
         relativeDiv.style.cssText = "position:relative;overflow:hidden;"
         dropDownDiv.appendChild(relativeDiv);
         
+        Echo.Sync.Extent.render(this.component.render("width"), dropDownDiv, "width", true, true);
+        Echo.Sync.Extent.render(this.component.render("height"), relativeDiv, "height", false, true);
+
         var expandIcon = this.component.render("expandIcon", this.client.getResourceUrl("Extras", "image/menu/ArrowDown.gif"));
 
         this._contentDiv = document.createElement("div");
@@ -821,8 +826,10 @@ Extras.Sync.DropDownMenu = Core.extend(Extras.Sync.Menu, {
             this._contentDiv.appendChild(document.createTextNode(contentText ? contentText : "\u00a0"));
         }
         
-        var contentBounds = new Core.Web.Measure.Bounds(this._contentDiv);
-        relativeDiv.style.height = contentBounds.height + "px";
+        if (!this.component.render("height")) {
+            var contentBounds = new Core.Web.Measure.Bounds(this._contentDiv);
+            relativeDiv.style.height = contentBounds.height + "px";
+        }
 
         return dropDownDiv;
     },
