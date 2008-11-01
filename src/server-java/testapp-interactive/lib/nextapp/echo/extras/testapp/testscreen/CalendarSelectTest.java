@@ -66,6 +66,17 @@ public class CalendarSelectTest extends AbstractTest {
         addFontPropertyTests(TestControlPane.CATEGORY_PROPERTIES, CalendarSelect.PROPERTY_FONT);
         addBorderPropertyTests(TestControlPane.CATEGORY_PROPERTIES, CalendarSelect.PROPERTY_BORDER);
 
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set StyleName = Default", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                calendarSelect.setStyleName("Default");
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set StyleName = Null", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                calendarSelect.setStyleName(null);
+            }
+        });
         testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Query Date", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Date date = calendarSelect.getDate();

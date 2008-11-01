@@ -1,6 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- FIXME. Temporarily using full class names -->
 <ss>
+ <s n="Default" t="nextapp.echo.extras.app.CalendarSelect">
+  <p n="background" t="Color">#6f87af</p>
+  <p n="dateBackground" t="Color">#bcbcbc</p>
+  <p n="dateBackgroundImage" t="FillImage">
+   <fi t="r">
+    <i r="/nextapp/echo/extras/testapp/resource/image/CalendarSelectGradient.png"/>
+   </fi>
+  </p>
+  <p n="headerForeground" t="Color">#ffffff</p>
+  <p n="headerBackgroundImage" t="FillImage">
+   <fi t="r" y="50%">
+    <i r="/nextapp/echo/extras/testapp/resource/image/CalendarHeaderBackground.png"/>
+   </fi>
+  </p>
+  <p n="rolloverDateBackground" t="Color">#ffffff</p>
+  <p n="selectedDateBackground" t="Color">#1579c7</p>
+  <p n="selectedDateBackgroundImage" t="FillImage">
+   <fi t="r">
+    <i r="/nextapp/echo/extras/testapp/resource/image/CalendarSelectSelectedDateFill.png"/>
+   </fi>
+  </p>
+ </s>
  <s n="Default" t="nextapp.echo.app.button.AbstractButton">
   <p n="background" t="Color">#4f4f5f</p>
   <p n="foreground" t="Color">#efefff</p>
