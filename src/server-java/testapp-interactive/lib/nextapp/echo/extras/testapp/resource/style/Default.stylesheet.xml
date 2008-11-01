@@ -22,6 +22,9 @@
     <i r="/nextapp/echo/extras/testapp/resource/image/CalendarSelectSelectedDateFill.png"/>
    </fi>
   </p>
+  <p n="selectedDateBorder" t="Border">
+   <b t="1px solid #0e4f82" l="1px solid #0e4f82" b="1px solid #1472bc" r="1px solid #1472bc"/>
+  </p>
  </s>
  <s n="Default" t="nextapp.echo.app.button.AbstractButton">
   <p n="background" t="Color">#4f4f5f</p>
