@@ -221,7 +221,13 @@
   <p n="pressedBackground" t="Color">#2f2f3f</p>
   <p n="pressedForeground" t="Color">#ffafaf</p>
   <p n="pressedBorder" t="Border">1px inset #4f4f6f</p>
-  <p n="insets" t="Insets">3px 20px</p>
+  <p n="insets" t="Insets">3px 10px</p>
+ </s>
+<s n="TestControlButtonSmall" t="nextapp.echo.app.button.AbstractButton" b="TestControlButton">
+  <p n="font" t="Font">
+   <f it="1" sz="10px"/>
+  </p>
+  <p n="insets" t="Insets">3px 3px</p>
  </s>
  <s n="RichTextAreaToolbarButton" t="nextapp.echo.app.Button">
   <p n="font" t="Font">
@@ -239,6 +245,20 @@
   <p n="pressedForeground" t="Color">#000000</p>
   <p n="pressedBorder" t="Border">1px inset #afafbf</p>
   <p n="insets" t="Insets">1px 3px</p>
+ </s>
+ <s n="TestControlGroupLabel" t="nextapp.echo.app.Label">
+  <p n="layoutData" t="nextapp.echo.app.layout.SplitPaneLayoutData">
+   <p n="insets" t="Insets">0px 5px 0px 0px</p>
+  </p>
+ </s>
+ <s n="TestControlGroupRow" t="nextapp.echo.app.Row">
+  <p n="font" t="Font">
+   <f it="1" sz="10px"/>
+  </p>
+  <p n="background" t="Color">#3f3f4f</p>
+  <p n="foreground" t="Color">#ffffff</p>
+  <p n="border" t="Border">1px outset #3f3f4f</p>
+  <p n="insets" t="Insets">2px 10px</p>
  </s>
  <s n="TestControlColumn" t="nextapp.echo.app.Column">
   <p n="cellSpacing" t="Extent">1px</p>

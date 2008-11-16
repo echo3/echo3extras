@@ -34,6 +34,7 @@ import java.lang.reflect.Method;
 
 import nextapp.echo.app.Alignment;
 import nextapp.echo.app.Border;
+import nextapp.echo.app.Button;
 import nextapp.echo.app.Color;
 import nextapp.echo.app.Component;
 import nextapp.echo.app.Extent;
@@ -41,9 +42,16 @@ import nextapp.echo.app.FillImage;
 import nextapp.echo.app.Font;
 import nextapp.echo.app.ImageReference;
 import nextapp.echo.app.Insets;
+import nextapp.echo.app.Label;
+import nextapp.echo.app.Row;
 import nextapp.echo.app.SplitPane;
 import nextapp.echo.app.event.ActionEvent;
 import nextapp.echo.app.event.ActionListener;
+import nextapp.echo.extras.app.DropDownMenu;
+import nextapp.echo.extras.app.menu.DefaultMenuModel;
+import nextapp.echo.extras.app.menu.DefaultMenuSelectionModel;
+import nextapp.echo.extras.app.menu.DefaultOptionModel;
+import nextapp.echo.extras.app.menu.MenuSelectionModel;
 
 public class AbstractTest extends SplitPane {
 
@@ -67,27 +75,62 @@ public class AbstractTest extends SplitPane {
         this.testComponentParent = testComponentParent;
         this.testComponent = testComponent;
     }
-    
+
     protected void addBooleanPropertyTests(String category, final String propertyName) {
-        testControlsPane.addButton(category, propertyName + ": true", new ActionListener(){
+        addBooleanPropertyTests(category, propertyName, false);
+    }
+    
+    protected void addBooleanPropertyTests(String category, final String propertyName, boolean initialState) {
+        Row row = new Row();
+        row.setStyleName("TestControlGroupRow");
+        row.setCellSpacing(new Extent(5));
+        testControlsPane.addControl(category, row);
+
+        Label label = new Label(propertyName);
+        row.add(label);
+        
+        DefaultMenuModel booleanModel = new DefaultMenuModel();
+        booleanModel.addItem(new DefaultOptionModel("true", "True", null));
+        booleanModel.addItem(new DefaultOptionModel("false", "False", null));
+
+        final MenuSelectionModel selectionModel = new DefaultMenuSelectionModel();
+        selectionModel.setSelectedId(initialState ? "true" : "false");
+        
+        DropDownMenu menu = new DropDownMenu(booleanModel, selectionModel);
+        menu.setWidth(new Extent(100));
+        menu.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                setTestComponentProperty(propertyName, boolean.class, Boolean.TRUE);
+                boolean value = "true".equals(selectionModel.getSelectedId());
+                setTestComponentProperty(propertyName, boolean.class, Boolean.valueOf(value));
             }
         });
-        testControlsPane.addButton(category, propertyName + ": false", new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                setTestComponentProperty(propertyName, boolean.class, Boolean.FALSE);
-            }
-        });
+        row.add(menu);
+        
+        testControlsPane.addControl(category, row);
     }
     
     protected void addBorderPropertyTests(String category, final String propertyName) {
-        testControlsPane.addButton(category, propertyName + ": Randomize", new ActionListener(){
+        Button button;
+        Row row = new Row();
+        row.setStyleName("TestControlGroupRow");
+        testControlsPane.addControl(category, row);
+        
+        Label label = new Label(propertyName);
+        label.setStyleName("TestControlGroupLabel");
+        row.add(label);
+        
+        button = new Button("Rand");
+        button.setStyleName("TestControlButtonSmall");
+        button.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 setTestComponentProperty(propertyName, Border.class, StyleUtil.randomBorder());
             }
         });
-        testControlsPane.addButton(category, propertyName + ": Set Color", new ActionListener(){
+        row.add(button);
+        
+        button = new Button("Color");
+        button.setStyleName("TestControlButtonSmall");
+        button.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 Border border = (Border) getTestComponentProperty(propertyName);
                 if (border == null) {
@@ -97,23 +140,36 @@ public class AbstractTest extends SplitPane {
                         new Border(border.getSize(), StyleUtil.randomColor(), border.getStyle()));
             }
         });
-        testControlsPane.addButton(category, propertyName + ": Set Size", new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                setTestComponentProperty(propertyName, Border.class, 
-                        StyleUtil.nextBorderSize((Border) getTestComponentProperty(propertyName)));
-            }
-        });
-        testControlsPane.addButton(category, propertyName + ": Set Style", new ActionListener(){
+        row.add(button);
+        
+        button = new Button("Style");
+        button.setStyleName("TestControlButtonSmall");
+        button.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 setTestComponentProperty(propertyName, Border.class, 
                         StyleUtil.nextBorderStyle((Border) getTestComponentProperty(propertyName)));
             }
         });
-        testControlsPane.addButton(category, propertyName + ": null", new ActionListener(){
+        row.add(button);
+        
+        button = new Button("Size");
+        button.setStyleName("TestControlButtonSmall");
+        button.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                setTestComponentProperty(propertyName, Border.class, 
+                        StyleUtil.nextBorderSize((Border) getTestComponentProperty(propertyName)));
+            }
+        });
+        row.add(button);
+        
+        button = new Button("Null");
+        button.setStyleName("TestControlButtonSmall");
+        button.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 setTestComponentProperty(propertyName, Border.class, null);
             }
         });
+        row.add(button);
     }
     
     protected void addFillImagePropertyTests(String category, final String propertyName, final FillImage[] fillImageValues) {
@@ -136,7 +192,8 @@ public class AbstractTest extends SplitPane {
         });
     }
 
-    protected void addImageReferencePropertyTests(String category, final String propertyName, final ImageReference[] imageReferenceValues) {
+    protected void addImageReferencePropertyTests(String category, final String propertyName, 
+            final ImageReference[] imageReferenceValues) {
         for (int i = 0; i < imageReferenceValues.length; ++i) {
             final int index = i;
             String name = imageReferenceValues[i] == null ? "null" : Integer.toString(i);
@@ -149,15 +206,28 @@ public class AbstractTest extends SplitPane {
     }
     
     protected void addExtentPropertyTests(String category, final String propertyName, final Extent[] extentValues) {
+        Row row = new Row();
+        row.setCellSpacing(new Extent(5));
+        Label label = new Label(propertyName);
+        row.add(label);
+        
+        DefaultMenuModel model = new DefaultMenuModel();
         for (int i = 0; i < extentValues.length; ++i) {
             String extentString = extentValues[i] == null ? "null" : extentValues[i].toString();
-            final int index = i;
-            testControlsPane.addButton(category, propertyName + ": " + extentString, new ActionListener(){
-                public void actionPerformed(ActionEvent e) {
-                    setTestComponentProperty(propertyName, Extent.class, extentValues[index]);
-                }
-            });
+            model.addItem(new DefaultOptionModel(Integer.toString(i), extentString, null));
         }
+
+        final MenuSelectionModel selectionModel = new DefaultMenuSelectionModel();
+        
+        DropDownMenu menu = new DropDownMenu(model, selectionModel);
+        menu.setWidth(new Extent(100));
+        menu.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                int selectedIndex = Integer.parseInt(selectionModel.getSelectedId());
+                setTestComponentProperty(propertyName, Extent.class, extentValues[selectedIndex]);
+            }
+        });
+        row.add(menu);
     }
     
     protected void addColorPropertyTests(String category, final String propertyName) {

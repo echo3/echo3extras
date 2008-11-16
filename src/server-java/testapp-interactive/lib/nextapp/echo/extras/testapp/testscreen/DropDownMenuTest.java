@@ -105,8 +105,10 @@ public class DropDownMenuTest extends AbstractTest {
         addBorderPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "menuBorder");
         addFontPropertyTests(TestControlPane.CATEGORY_PROPERTIES, DropDownMenu.PROPERTY_MENU_FONT);
 
-        addImageReferencePropertyTests(TestControlPane.CATEGORY_PROPERTIES, DropDownMenu.PROPERTY_EXPAND_ICON, TEST_TOGGLE_IMAGES);
-        addExtentPropertyTests(TestControlPane.CATEGORY_PROPERTIES, DropDownMenu.PROPERTY_EXPAND_ICON_WIDTH, EXPAND_ICON_WIDTH_VALUES);
+        addImageReferencePropertyTests(TestControlPane.CATEGORY_PROPERTIES, DropDownMenu.PROPERTY_EXPAND_ICON, 
+                TEST_TOGGLE_IMAGES);
+        addExtentPropertyTests(TestControlPane.CATEGORY_PROPERTIES, DropDownMenu.PROPERTY_EXPAND_ICON_WIDTH, 
+                EXPAND_ICON_WIDTH_VALUES);
 
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "selectionForeground");
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "selectionBackground");
