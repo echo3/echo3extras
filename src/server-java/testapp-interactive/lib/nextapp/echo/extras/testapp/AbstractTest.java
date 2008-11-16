@@ -207,8 +207,11 @@ public class AbstractTest extends SplitPane {
     
     protected void addExtentPropertyTests(String category, final String propertyName, final Extent[] extentValues) {
         Row row = new Row();
-        row.setCellSpacing(new Extent(5));
+        row.setStyleName("TestControlGroupRow");
+        testControlsPane.addControl(category, row);
+
         Label label = new Label(propertyName);
+        label.setStyleName("TestControlGroupLabel");
         row.add(label);
         
         DefaultMenuModel model = new DefaultMenuModel();
