@@ -74,8 +74,9 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
              */
             bounds: null,
             
-            $construct: function(dataGrid, tileColumnIndex, tileRowIndex) {
+            $construct: function(dataGrid, containerElement, tileColumnIndex, tileRowIndex) {
                 this.dataGrid = dataGrid;
+                this.containerElement = containerElement;
                 this.tileIndex = { column: tileColumnIndex, row: tileRowIndex };
                  
                 this.cellIndex = {
@@ -172,7 +173,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 this.div.style.top = top + "px";
                 this.div.style.left = left + "px";
                 
-                this.dataGrid.scrollContainer.contentElement.appendChild(this.div);
+                this.containerElement.appendChild(this.div);
                 this.displayed = true;
             },
             
@@ -366,7 +367,6 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 return tile;
             },
             
-            
             get: function(columnIndex, rowIndex) {
                 if (columnIndex < 0 || rowIndex < 0 ||
                         rowIndex > this.dataGrid.size.rows / this.dataGrid.tileSize.rows ||
@@ -381,7 +381,8 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
 
                 var tile = cachedRow[columnIndex];
                 if (!tile) {
-                    tile = new Extras.Sync.DataGrid.Tile(this.dataGrid, columnIndex, rowIndex);
+                    tile = new Extras.Sync.DataGrid.Tile(this.dataGrid, this.dataGrid._regionElements.center,
+                            columnIndex, rowIndex);
                     cachedRow[columnIndex] = tile;
                 }
                 return tile;
@@ -474,6 +475,8 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
      */ 
     _div: null,
     
+    _regionElements: null,
+    
     /**
      * Viewport containing rendered tiles.
      */
@@ -488,14 +491,15 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
     
     fixedCells: null,
     
+    fixedCellSizes: null,
+    
+    /**
+     * The ScrollContainer.
+     */
+    scrollContainer: null,
+    
     $construct: function() {
         this._div = null;
-        this.fixedCells = {
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0
-        };
         this._viewport = new Extras.Sync.DataGrid.Viewport(this);
         this._displayRowIndex = 0;
         this._displayColumnIndex = 0;
@@ -528,15 +532,29 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
         return 20;
     },
 
+    _loadProperties: function() {
+        this._cellBorder = this.component.render("cellBorder");
+        this._model = this.component.get("model");
+        this.fixedCells = {
+            left: parseInt(this.component.render("fixedRowsLeft", 0)),
+            top: parseInt(this.component.render("fixedRowsTop", 0)),
+            right: parseInt(this.component.render("fixedRowsRight", 0)),
+            bottom: parseInt(this.component.render("fixedRowsBottom", 0))
+        };
+
+        // FIXME temporary
+        this.fixedCellSizes = { 
+            left: this.fixedCells.left * this._getColumnWidth(),
+            top: this.fixedCells.top * this._getRowHeight(),
+            right: this.fixedCells.right * this._getColumnWidth(),
+            bottom: this.fixedCells.bottom * this._getRowHeight()
+        };
+    },
+    
     _processScroll: function(e) {
         if (e.verticalIncrement) {
             this._scrollIncrementalVertical(e.verticalIncrement);
         }
-    },
-    
-    _loadProperties: function() {
-        this._cellBorder = this.component.render("cellBorder");
-        this._model = this.component.get("model");
     },
     
     renderAdd: function(update, parentElement) {
@@ -551,6 +569,8 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
         
         this._loadProperties();
         this._fullRenderRequired = true;
+        
+        this._renderRegions();
 
         parentElement.appendChild(this._div);
     },
@@ -558,7 +578,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
     renderDisplay: function() {
         Core.Web.VirtualPosition.redraw(this._div);
         this.scrollContainer.renderDisplay();
-    
+        
         if (this._fullRenderRequired) {
             if (this._model == null) {
                 this.size = {
@@ -582,9 +602,63 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
     renderDispose: function(update) {
         this._cachedTileRows = { };
         this._prototypeTable = null;
+        this._regionElements = null;
         this._div = null;
     },
     
+    _renderRegions: function() {
+        this._regionElements = {};
+    
+        if (this.fixedCells.top) {
+            if (this.fixedCells.left) {
+                this._regionElements.topLeft = document.createElement("div");
+                this._regionElements.topLeft.style.cssText = "position:absolute;overflow:hidden;top:0;left:0;";
+            }
+            
+            this._regionElements.topCenter = document.createElement("div");
+            this._regionElements.topCenter.style.cssText = "position:absolute;overflow:hidden;top:0;";
+
+            if (this.fixedCells.right) {
+                this._regionElements.topRight = document.createElement("div");
+                this._regionElements.topRight.style.cssText = "position:absolute;overflow:hidden;top:0;right:0;";
+            }
+        }
+        
+        if (this.fixedCells.left) {
+            this._regionElements.left = document.createElement("div");
+            this._regionElements.left.style.cssText = "position:absolute;overflow:hidden;left:0;";
+        }
+
+        this._regionElements.center = document.createElement("div");
+        this._regionElements.center.style.cssText = "position:absolute;overflow:hidden;top:0;left:0;right:0;bottom:0;";
+
+        if (this.fixedCells.right) {
+            this._regionElements.right.style.cssText = "position:absolute;overflow:hidden;right:0;";
+        }
+
+        if (this.fixedCells.bottom) {
+            if (this.fixedCells.left) {
+                this._regionElements.bottomLeft = document.createElement("div");
+                this._regionElements.bottomLeft.style.cssText = "position:absolute;overflow:hidden;bottom:0;left:0;";
+            }
+            
+            this._regionElements.bottomCenter = document.createElement("div");
+
+            if (this.fixedCells.right) {
+                this._regionElements.bottomRight = document.createElement("div");
+                this._regionElements.bottomRight.style.cssText = "position:absolute;overflow:hidden;bottom:0;right:0;";
+            }
+        }
+        
+        for (var name in this._regionElements) {
+            this.scrollContainer.contentElement.appendChild(this._regionElements[name]);
+        }
+    },
+    
+    _renderRegionSizes: function() {
+    
+    },
+
     renderUpdate: function(update) {
         var element = this._div;
         var containerElement = element.parentNode;
@@ -598,7 +672,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
      * Scrolls the viewable area up or down by a percentage of the viewable area height.
      */
     _scrollIncrementalVertical: function(percent) {
-        var scrollPixels = Math.round(this.scrollContainer.bounds.height * percent / 100);
+        var scrollPixels = Math.round(this.scrollContainer.bounds.height * percent / 10);
         this._viewport.adjustPosition(0, 0 - scrollPixels);
         
     },
