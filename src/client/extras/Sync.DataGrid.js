@@ -536,9 +536,9 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
         this._cellBorder = this.component.render("cellBorder");
         this._model = this.component.get("model");
         this.fixedCells = {
-            left: parseInt(this.component.render("fixedRowsLeft", 0)),
+            left: parseInt(this.component.render("fixedColumnsLeft", 0)),
             top: parseInt(this.component.render("fixedRowsTop", 0)),
-            right: parseInt(this.component.render("fixedRowsRight", 0)),
+            right: parseInt(this.component.render("fixedColumnsRight", 0)),
             bottom: parseInt(this.component.render("fixedRowsBottom", 0))
         };
 
@@ -597,6 +597,8 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             }
             this._fullRenderRequired = false;
         }
+
+        this._renderRegionSizes();
     },
     
     renderDispose: function(update) {
@@ -615,8 +617,8 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 this._regionElements.topLeft.style.cssText = "position:absolute;overflow:hidden;top:0;left:0;";
             }
             
-            this._regionElements.topCenter = document.createElement("div");
-            this._regionElements.topCenter.style.cssText = "position:absolute;overflow:hidden;top:0;";
+            this._regionElements.top = document.createElement("div");
+            this._regionElements.top.style.cssText = "position:absolute;overflow:hidden;top:0;";
 
             if (this.fixedCells.right) {
                 this._regionElements.topRight = document.createElement("div");
@@ -633,6 +635,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
         this._regionElements.center.style.cssText = "position:absolute;overflow:hidden;top:0;left:0;right:0;bottom:0;";
 
         if (this.fixedCells.right) {
+            this._regionElements.right = document.createElement("div");
             this._regionElements.right.style.cssText = "position:absolute;overflow:hidden;right:0;";
         }
 
@@ -642,7 +645,8 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 this._regionElements.bottomLeft.style.cssText = "position:absolute;overflow:hidden;bottom:0;left:0;";
             }
             
-            this._regionElements.bottomCenter = document.createElement("div");
+            this._regionElements.bottom = document.createElement("div");
+            this._regionElements.bottom.style.cssText = "position:absolute;overflow:hidden;bottom:0;";
 
             if (this.fixedCells.right) {
                 this._regionElements.bottomRight = document.createElement("div");
@@ -656,7 +660,73 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
     },
     
     _renderRegionSizes: function() {
-    
+        var i, size;
+        
+        if (this.fixedCells.top) {
+            size = 0;
+            for (i = 0; i < this.fixedCells.top; ++i) {
+                size += this._getRowHeight(i);
+            }
+            size += "px";
+            
+            if (this.fixedCells.left) {
+                this._regionElements.topLeft.style.height = this._regionElements.left.style.top = size;
+            }
+            this._regionElements.left.style.height = this._regionElements.center.style.top = size;
+            if (this.fixedCells.right) {
+                this._regionElements.topRight.style.height = this._regionElements.right.style.top = size;
+            }
+        }
+
+        if (this.fixedCells.bottom) {
+            size = 0;
+            for (i = 0; i < this.fixedCells.bottom; ++i) {
+                size += this._getRowHeight(this.size.rows - i - 1);
+            }
+            size += "px";
+            
+            if (this.fixedCells.left) {
+                this._regionElements.bottomLeft.style.height = this._regionElements.left.style.bottom = size;
+            }
+            this._regionElements.left.style.height = this._regionElements.center.style.bottom = size;
+            if (this.fixedCells.right) {
+                this._regionElements.bottomRight.style.height = this._regionElements.right.style.bottom = size;
+            }
+        }
+
+        if (this.fixedCells.left) {
+            size = 0;
+            for (i = 0; i < this.fixedCells.left; ++i) {
+                size += this._getColumnWidth(i);
+            }
+            size += "px";
+            
+            if (this.fixedCells.top) {
+                this._regionElements.topLeft.style.width = this._regionElements.top.style.left = size;
+            }
+            this._regionElements.left.style.width = this._regionElements.center.style.left = size;
+            if (this.fixedCells.bottom) {
+                this._regionElements.bottomLeft.style.width = this._regionElements.bottom.style.left = size;
+            }
+        }
+        
+        if (this.fixedCells.right) {
+            size = 0;
+            for (i = 0; i < this.fixedCells.right; ++i) {
+                size += this._getColumnWidth(this.size.columns - i - 1);
+            }
+            size += "px";
+            
+            if (this.fixedCells.top) {
+                this._regionElements.topRight.style.width = this._regionElements.top.style.right = size;
+            }
+            this._regionElements.right.style.width = this._regionElements.center.style.right = size;
+            if (this.fixedCells.bottom) {
+                this._regionElements.bottomRight.style.width = this._regionElements.bottom.style.right = size;
+            }
+        }
+        
+        //FIXME Virtual position.
     },
 
     renderUpdate: function(update) {
