@@ -20,35 +20,47 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
         PX: 1,
         PERECNT: 2,
 
+        REGION_POSITIONS: {
+            topLeft:     { h: -1, v: -1 },
+            top:         { h:  0, v: -1 },
+            topRight:    { h:  1, v: -1 },
+            left:        { h: -1, v:  0 },
+            center:      { h:  0, v:  0 },
+            right:       { h:  1, v:  0 },
+            bottomLeft:  { h: -1, v:  1 },
+            bottom:      { h:  0, v:  1 },
+            bottomRight: { h:  1, v:  1 }
+        },
+
         /**
          * Represenation of a "tile", a sub-table that renders a portion of the DataGrid.
          */
         Tile: Core.extend({
             
-            /**
-             * The containing DataGrid instance.
-             */
+            /** The containing DataGrid instance. */
             dataGrid: null,
             
-            /**
-             * The containing Viewport instance.
-             */ 
+            /** The containing Viewport instance. */ 
             viewport: null,
             
-            /**
-             * Flag indicating whether the tile is displayed.
-             */
+            /** Flag indicating whether the tile is displayed. */
             displayed: false,
             
-            /**
-             * The div element.
-             */
+            /** The div element. */
             div: null,
             
-            /**
-             * The table element.
-             */
+            /** The table element. */
             _table: null,
+            
+            /** The name of the region containing the cell, e.g., "top", "center", "bottomRight". */
+            region: null,
+            
+            /** 
+             * The position of the region, an object containing h and v properties, describing the horizontal
+             * and vertical position of the tile's containing region.  These properties may have values of -1, 0, or 1.
+             * A value of 0 indicates center, -1 indicates left/top, 1 indicates right/bottom.
+             */
+            regionPosition: null,
             
             /**
              * Edge information object.  Contains boolean properties "top", "right", "left", and "bottom" properties, 
@@ -74,14 +86,40 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
              */
             bounds: null,
             
-            $construct: function(dataGrid, containerElement, tileColumnIndex, tileRowIndex) {
+            $construct: function(dataGrid, region, tileColumnIndex, tileRowIndex) {
                 this.dataGrid = dataGrid;
-                this.containerElement = containerElement;
+                this.containerElement = this.dataGrid.regionElements[region];
                 this.tileIndex = { column: tileColumnIndex, row: tileRowIndex };
-                 
-                this.cellIndex = {
-                    top: this.tileIndex.row * this.dataGrid.tileSize.rows + this.dataGrid.fixedCells.top,
-                    left: this.tileIndex.column * this.dataGrid.tileSize.columns + this.dataGrid.fixedCells.left
+                this.region = region;
+                
+                this.regionPosition = Extras.Sync.DataGrid.REGION_POSITIONS[region];
+                
+                this.cellIndex = { };
+                
+                switch (this.regionPosition.h) {
+                case 0: 
+                    this.cellIndex.left = this.tileIndex.column * this.dataGrid.tileSize.columns + this.dataGrid.fixedCells.left;
+                    break;
+                case -1:
+                    this.tileIndex.left * this.dataGrid.tileSize.columns;
+                    break;
+                case 1:
+                    // FIXME Impl.
+                    throw new Error("unsupported");
+                    break;
+                };
+                
+                switch (this.regionPosition.v) {
+                case 0: 
+                    this.cellIndex.top = this.tileIndex.row * this.dataGrid.tileSize.rows + this.dataGrid.fixedCells.top;
+                    break;
+                case -1:
+                    this.tileIndex.top * this.tileIndex.row * this.dataGrid.tileSize.rows;
+                    break;
+                case 1:
+                    // FIXME Impl.
+                    throw new Error("unsupported");
+                    break;
                 };
                 
                 this.edge = { 
@@ -101,13 +139,17 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 }
             },
             
+            /**
+             * Adjusts the position of the tile.
+             * Has no effect in directions in which the cell is fixed (per region position property).
+             */
             adjustPosition: function(leftDelta, topDelta) {
                 if (this.div) {
-                    if (leftDelta) {
+                    if (leftDelta && !this.regionPosition.h) {
                         this.bounds.left += leftDelta;
                         this.div.style.left = this.bounds.left + "px";
                     }
-                    if (topDelta) {
+                    if (topDelta && !this.regionPosition.v) {
                         this.bounds.top += topDelta;
                         this.div.style.top = this.bounds.top + "px";
                     }
@@ -306,7 +348,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                     throw new Error("Tile not displayed, cannot position adjacent tile: " + tile);
                 }
                 
-                var adjacentTile = this.get(tile.tileIndex.column + direction.h, tile.tileIndex.row + direction.v);
+                var adjacentTile = this.get(tile.region, tile.tileIndex.column + direction.h, tile.tileIndex.row + direction.v);
                 adjacentTile.display(tile.bounds.left + (tile.bounds.width * direction.h), 
                         tile.bounds.top + (tile.bounds.height * direction.v));
                 return adjacentTile;
@@ -367,7 +409,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 return tile;
             },
             
-            get: function(columnIndex, rowIndex) {
+            get: function(region, columnIndex, rowIndex) {
                 if (columnIndex < 0 || rowIndex < 0 ||
                         rowIndex > this.dataGrid.size.rows / this.dataGrid.tileSize.rows ||
                         columnIndex > this.dataGrid.size.columns / this.dataGrid.tileSize.columns) {
@@ -381,8 +423,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
 
                 var tile = cachedRow[columnIndex];
                 if (!tile) {
-                    tile = new Extras.Sync.DataGrid.Tile(this.dataGrid, this.dataGrid._regionElements.center,
-                            columnIndex, rowIndex);
+                    tile = new Extras.Sync.DataGrid.Tile(this.dataGrid, region, columnIndex, rowIndex);
                     cachedRow[columnIndex] = tile;
                 }
                 return tile;
@@ -418,7 +459,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                     tileColumnIndex = initTileColumnIndex;
                     cursorXPx = 0;
                     while (cursorXPx < this.dataGrid.scrollContainer.bounds.width) {
-                        var tile = this.get(tileColumnIndex, tileRowIndex);
+                        var tile = this.get("center", tileColumnIndex, tileRowIndex);
                         tile.display(cursorXPx, cursorYPx);
                         if (tile.isEdgeRight()) {
                             break;
@@ -475,7 +516,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
      */ 
     _div: null,
     
-    _regionElements: null,
+    regionElements: null,
     
     /**
      * Viewport containing rendered tiles.
@@ -604,58 +645,58 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
     renderDispose: function(update) {
         this._cachedTileRows = { };
         this._prototypeTable = null;
-        this._regionElements = null;
+        this.regionElements = null;
         this._div = null;
     },
     
     _renderRegions: function() {
-        this._regionElements = {};
+        this.regionElements = {};
     
         if (this.fixedCells.top) {
             if (this.fixedCells.left) {
-                this._regionElements.topLeft = document.createElement("div");
-                this._regionElements.topLeft.style.cssText = "position:absolute;overflow:hidden;top:0;left:0;";
+                this.regionElements.topLeft = document.createElement("div");
+                this.regionElements.topLeft.style.cssText = "position:absolute;overflow:hidden;top:0;left:0;";
             }
             
-            this._regionElements.top = document.createElement("div");
-            this._regionElements.top.style.cssText = "position:absolute;overflow:hidden;top:0;";
+            this.regionElements.top = document.createElement("div");
+            this.regionElements.top.style.cssText = "position:absolute;overflow:hidden;top:0;";
 
             if (this.fixedCells.right) {
-                this._regionElements.topRight = document.createElement("div");
-                this._regionElements.topRight.style.cssText = "position:absolute;overflow:hidden;top:0;right:0;";
+                this.regionElements.topRight = document.createElement("div");
+                this.regionElements.topRight.style.cssText = "position:absolute;overflow:hidden;top:0;right:0;";
             }
         }
         
         if (this.fixedCells.left) {
-            this._regionElements.left = document.createElement("div");
-            this._regionElements.left.style.cssText = "position:absolute;overflow:hidden;left:0;";
+            this.regionElements.left = document.createElement("div");
+            this.regionElements.left.style.cssText = "position:absolute;overflow:hidden;left:0;";
         }
 
-        this._regionElements.center = document.createElement("div");
-        this._regionElements.center.style.cssText = "position:absolute;overflow:hidden;top:0;left:0;right:0;bottom:0;";
+        this.regionElements.center = document.createElement("div");
+        this.regionElements.center.style.cssText = "position:absolute;overflow:hidden;top:0;left:0;right:0;bottom:0;";
 
         if (this.fixedCells.right) {
-            this._regionElements.right = document.createElement("div");
-            this._regionElements.right.style.cssText = "position:absolute;overflow:hidden;right:0;";
+            this.regionElements.right = document.createElement("div");
+            this.regionElements.right.style.cssText = "position:absolute;overflow:hidden;right:0;";
         }
 
         if (this.fixedCells.bottom) {
             if (this.fixedCells.left) {
-                this._regionElements.bottomLeft = document.createElement("div");
-                this._regionElements.bottomLeft.style.cssText = "position:absolute;overflow:hidden;bottom:0;left:0;";
+                this.regionElements.bottomLeft = document.createElement("div");
+                this.regionElements.bottomLeft.style.cssText = "position:absolute;overflow:hidden;bottom:0;left:0;";
             }
             
-            this._regionElements.bottom = document.createElement("div");
-            this._regionElements.bottom.style.cssText = "position:absolute;overflow:hidden;bottom:0;";
+            this.regionElements.bottom = document.createElement("div");
+            this.regionElements.bottom.style.cssText = "position:absolute;overflow:hidden;bottom:0;";
 
             if (this.fixedCells.right) {
-                this._regionElements.bottomRight = document.createElement("div");
-                this._regionElements.bottomRight.style.cssText = "position:absolute;overflow:hidden;bottom:0;right:0;";
+                this.regionElements.bottomRight = document.createElement("div");
+                this.regionElements.bottomRight.style.cssText = "position:absolute;overflow:hidden;bottom:0;right:0;";
             }
         }
         
-        for (var name in this._regionElements) {
-            this.scrollContainer.contentElement.appendChild(this._regionElements[name]);
+        for (var name in this.regionElements) {
+            this.scrollContainer.contentElement.appendChild(this.regionElements[name]);
         }
     },
     
@@ -670,11 +711,11 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             size += "px";
             
             if (this.fixedCells.left) {
-                this._regionElements.topLeft.style.height = this._regionElements.left.style.top = size;
+                this.regionElements.topLeft.style.height = this.regionElements.left.style.top = size;
             }
-            this._regionElements.left.style.height = this._regionElements.center.style.top = size;
+            this.regionElements.left.style.height = this.regionElements.center.style.top = size;
             if (this.fixedCells.right) {
-                this._regionElements.topRight.style.height = this._regionElements.right.style.top = size;
+                this.regionElements.topRight.style.height = this.regionElements.right.style.top = size;
             }
         }
 
@@ -686,11 +727,11 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             size += "px";
             
             if (this.fixedCells.left) {
-                this._regionElements.bottomLeft.style.height = this._regionElements.left.style.bottom = size;
+                this.regionElements.bottomLeft.style.height = this.regionElements.left.style.bottom = size;
             }
-            this._regionElements.left.style.height = this._regionElements.center.style.bottom = size;
+            this.regionElements.left.style.height = this.regionElements.center.style.bottom = size;
             if (this.fixedCells.right) {
-                this._regionElements.bottomRight.style.height = this._regionElements.right.style.bottom = size;
+                this.regionElements.bottomRight.style.height = this.regionElements.right.style.bottom = size;
             }
         }
 
@@ -702,11 +743,11 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             size += "px";
             
             if (this.fixedCells.top) {
-                this._regionElements.topLeft.style.width = this._regionElements.top.style.left = size;
+                this.regionElements.topLeft.style.width = this.regionElements.top.style.left = size;
             }
-            this._regionElements.left.style.width = this._regionElements.center.style.left = size;
+            this.regionElements.left.style.width = this.regionElements.center.style.left = size;
             if (this.fixedCells.bottom) {
-                this._regionElements.bottomLeft.style.width = this._regionElements.bottom.style.left = size;
+                this.regionElements.bottomLeft.style.width = this.regionElements.bottom.style.left = size;
             }
         }
         
@@ -718,11 +759,11 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             size += "px";
             
             if (this.fixedCells.top) {
-                this._regionElements.topRight.style.width = this._regionElements.top.style.right = size;
+                this.regionElements.topRight.style.width = this.regionElements.top.style.right = size;
             }
-            this._regionElements.right.style.width = this._regionElements.center.style.right = size;
+            this.regionElements.right.style.width = this.regionElements.center.style.right = size;
             if (this.fixedCells.bottom) {
-                this._regionElements.bottomRight.style.width = this._regionElements.bottom.style.right = size;
+                this.regionElements.bottomRight.style.width = this.regionElements.bottom.style.right = size;
             }
         }
         
