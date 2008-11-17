@@ -101,7 +101,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                     this.cellIndex.left = this.tileIndex.column * this.dataGrid.tileSize.columns + this.dataGrid.fixedCells.left;
                     break;
                 case -1:
-                    this.tileIndex.left * this.dataGrid.tileSize.columns;
+                    this.cellIndex.left = this.tileIndex.column * this.dataGrid.tileSize.columns;
                     break;
                 case 1:
                     // FIXME Impl.
@@ -114,7 +114,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                     this.cellIndex.top = this.tileIndex.row * this.dataGrid.tileSize.rows + this.dataGrid.fixedCells.top;
                     break;
                 case -1:
-                    this.tileIndex.top * this.tileIndex.row * this.dataGrid.tileSize.rows;
+                    this.cellIndex.top = this.tileIndex.row * this.dataGrid.tileSize.rows;
                     break;
                 case 1:
                     // FIXME Impl.
