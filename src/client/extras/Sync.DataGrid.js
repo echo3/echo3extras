@@ -374,6 +374,9 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 }
                 
                 var adjacentTile = this.getTile(tile.tileIndex.column + direction.h, tile.tileIndex.row + direction.v);
+                if (adjacentTile == null) {
+                    return null;
+                }
                 adjacentTile.display(tile.bounds.left + (tile.bounds.width * direction.h), 
                         tile.bounds.top + (tile.bounds.height * direction.v));
                 return adjacentTile;
@@ -405,7 +408,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                         // Move down/up.
                         originTile = this.displayTileAdjacent(originTile, fromBottom ? 
                                 Extras.Sync.DataGrid.UP : Extras.Sync.DataGrid.DOWN);
-                    } while (originTile.isOnScreen());
+                    } while (originTile != null && originTile.isOnScreen());
                 }
             },
             
@@ -433,7 +436,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 if (columnIndex < 0 || rowIndex < 0 ||
                         rowIndex > this.dataGrid.size.rows / this.dataGrid.tileSize.rows ||
                         columnIndex > this.dataGrid.size.columns / this.dataGrid.tileSize.columns) {
-                    throw new Error("Invalid tile (" + columnIndex + "," + rowIndex +") is out-of-bounds.");
+                    return null;
                 }
                 var cachedRow = this._rows[rowIndex];
                 if (!cachedRow) {
