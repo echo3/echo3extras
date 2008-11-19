@@ -333,7 +333,8 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
                 var img;
 
                 this._oversizeControlDiv = document.createElement("div");
-                this._oversizeControlDiv.style.cssText = "position:absolute;top:0;right:0;z-index:2;";
+                this._oversizeControlDiv.style.cssText = "position:absolute;right:0;z-index:2;";
+                this._oversizeControlDiv.style[this._tabPosition == Extras.TabPane.TAB_POSITION_BOTTOM ? "bottom" : "top"] = 0;
 
                 this._previousControlDiv = document.createElement("span");
                 this._previousControlDiv.style.cssText = "cursor:pointer";
