@@ -1,3 +1,5 @@
+//FIXME.  Avoid potential tab-wrap issues when adding close icons.  (Close icons haven't loaded, won't be calculated in tab size).
+
 /**
  * Component rendering peer: TabPane
  */
