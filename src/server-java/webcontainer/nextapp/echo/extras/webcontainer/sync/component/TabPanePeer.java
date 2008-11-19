@@ -76,6 +76,8 @@ implements LazyRenderContainer {
         CommonResources.install();
         ResourceRegistry resources = WebContainerServlet.getResourceRegistry();
         resources.add("Extras", "image/tabpane/Close.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/tabpane/Previous.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/tabpane/Next.gif", ContentType.IMAGE_GIF);
     }
 
     public TabPanePeer() {
