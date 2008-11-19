@@ -26,7 +26,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         Echo.Render.registerPeer("Extras.TabPane", this);
     },
     
-    _icons: { },
+    _icons: null,
 
     /**
      * Primary DIV element.
@@ -193,6 +193,8 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     },
     
     renderAdd: function(update, parentElement) {
+        this._icons = { };
+        
         // Configure Properties
         this._activeTabId = this._getActiveTabId();
         this._borderType = this.component.render("borderType", Extras.Sync.TabPane._defaultBorderType);
@@ -206,11 +208,9 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         this._tabSpacing = this.component.render("tabSpacing", Extras.Sync.TabPane._defaultTabSpacing);
         this._tabCloseEnabled = this.component.render("tabCloseEnabled", false);
         if (this._tabCloseEnabled) {
-            this._tabCloseIcons = {};
-            this._tabCloseIcons.defaultIcon = this.component.render("tabCloseIcon");
-            this._tabCloseIcons.disabledIcon = this.component.render("tabDisabledCloseIcon");
-            this._tabCloseIcons.fallbackDefaultIcon = this.client.getResourceUrl("Extras", "image/tabpane/Close.gif");
-            this._tabCloseIcons.rolloverIcon = this.component.render("tabRolloverCloseIcon");
+            this._icons.defaultIcon = this.component.render("tabCloseIcon");
+            this._icons.disabledIcon = this.component.render("tabDisabledCloseIcon");
+            this._icons.rolloverIcon = this.component.render("tabRolloverCloseIcon");
         }
 
         // Render Border Insets
@@ -339,7 +339,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
                 this._previousControlDiv = document.createElement("span");
                 this._previousControlDiv.style.cssText = "cursor:pointer";
                 img = document.createElement("img");
-                img.src = this._icons.decrement ? this._icons.decrement :
+                img.src = this._icons.previous ? this._icons.previous :
                         this.client.getResourceUrl("Extras", "image/tabpane/Previous.gif");
                 img.style.marginRight = "2px";
                 img.alt = "<";
@@ -349,7 +349,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
                 this._nextControlDiv = document.createElement("span");
                 this._nextControlDiv.style.cssText = "cursor:pointer";
                 img = document.createElement("img");
-                img.src = this._icons.decrement ? this._icons.decrement :
+                img.src = this._icons.next ? this._icons.next :
                         this.client.getResourceUrl("Extras", "image/tabpane/Next.gif");
                 img.alt = ">";
                 this._nextControlDiv.appendChild(img);
@@ -570,7 +570,7 @@ Extras.Sync.TabPane.Tab = Core.extend({
     },
     
     _getCloseImage: function(rollover) {
-        var icons = this._parent._tabCloseIcons;
+        var icons = this._parent._icons;
         var icon;
         if (this._tabCloseEnabled) {
             if (rollover && this._parent.component.render("tabCloseIconRolloverEnabled")) {
@@ -579,7 +579,7 @@ Extras.Sync.TabPane.Tab = Core.extend({
         } else {
             icon = icons.disabledIcon;
         }
-        return icon ? icon : icons.defaultIcon || icons.fallbackDefaultIcon;
+        return icon ? icon : icons.defaultIcon || this._parent.client.getResourceUrl("Extras", "image/tabpane/Close.gif");
     },
     
     _getContentInsets: function() {
@@ -821,7 +821,7 @@ Extras.Sync.TabPane.Tab = Core.extend({
         
         var icon = layoutData ? layoutData.icon : null;
         var title = layoutData ? (layoutData.title ? layoutData.title : "*") : "*";
-        var closeIcon = this._parent._tabCloseEnabled && (this._tabCloseEnabled || this._parent._tabCloseIcons.disabledIcon);
+        var closeIcon = this._parent._tabCloseEnabled && (this._tabCloseEnabled || this._parent._icons.disabledIcon);
         if (icon || closeIcon) {
             // Render Text and Icon(s)
             var table = document.createElement("table");
