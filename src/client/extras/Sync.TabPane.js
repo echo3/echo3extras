@@ -293,21 +293,13 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     
     _configureHeaderSize: function() {
         var borderSize = Echo.Sync.Border.getPixelSize(this._tabActiveBorder);
-        var div = this._headerTabContainerTr.firstChild;
-        var maxHeight = 0;
-        while (div) {
-            var height = new Core.Web.Measure.Bounds(div).height;
-            if (height > maxHeight) {
-                maxHeight = height;
-            }
-            div = div.nextSibling;
-        }
+        var height = new Core.Web.Measure.Bounds(this._headerTabContainerDiv).height;
         
         if (this._tabPosition == Extras.TabPane.TAB_POSITION_BOTTOM) {
             this._contentContainerDiv.style.top = "0";
-            this._contentContainerDiv.style.bottom = (maxHeight - borderSize) + "px";
+            this._contentContainerDiv.style.bottom = (height - borderSize) + "px";
         } else {
-            this._contentContainerDiv.style.top = (maxHeight - borderSize ) + "px";
+            this._contentContainerDiv.style.top = (height - borderSize ) + "px";
             this._contentContainerDiv.style.bottom = "0";
         }
         this._contentContainerDiv.style.left = "0";
