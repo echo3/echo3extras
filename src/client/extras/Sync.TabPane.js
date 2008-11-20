@@ -19,7 +19,61 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         _defaultTabInset: 10,
         _defaultTabInsets: "3px 8px",
         _defaultTabPosition: Extras.TabPane.TAB_POSITION_TOP,
-        _defaultTabSpacing: 0
+        _defaultTabSpacing: 0,
+        
+        ScrollRunnable: Core.extend(Core.Web.Scheduler.Runnable, {
+        
+            reverse: false,
+            distance: 0,
+            repeat: true,
+            timeInterval: 20,
+            clickDistance: 35,
+            pixelsPerSecond: 200,
+            initialValue: null,
+            maximumValue: null,
+            disposed: false,
+            peer: null,
+            lastInvokeTime: null,
+        
+            $construct: function(peer, reverse, initialValue, maximumValue) {
+                this.peer = peer;
+                this.reverse = reverse;
+                this.initialValue = initialValue;
+                this.maximumValue = maximumValue;
+                this.lastInvokeTime = new Date().getTime();
+            },
+            
+            dispose: function() {
+                if (!this.disposed) {
+                    Core.Web.Scheduler.remove(this);
+                }
+                this.disposed = true;
+            },
+            
+            finish: function() {
+                if (this.distance < this.clickDistance) {
+                    this.distance = this.clickDistance;
+                    this.updatePosition();
+                }
+                this.dispose();
+            },
+            
+            run: function() {
+                var time = new Date().getTime();
+                this.distance += Math.ceil(this.pixelsPerSecond * (time - this.lastInvokeTime) / 1000);
+                this.lastInvokeTime = time;
+                this.updatePosition();
+            },
+            
+            updatePosition: function() {
+                var position = this.initialValue + ((this.reverse ? 1 : -1) * this.distance);
+                if (this.reverse ? position > this.maximumValue : position < this.maximumValue) {
+                    position = this.maximumValue;
+                    this.dispose();
+                }
+                this.peer._headerTabContainerDiv.style.marginLeft = position + "px";
+            }
+        })
     },
     
     $load: function() {
@@ -70,6 +124,8 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
      * Combined width of all tabs.
      */
     _totalTabWidth: 0,
+    
+    _scrollRunnable: null,
     
     $construct: function() {
         this._tabs = [];
@@ -135,30 +191,34 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         return null;
     },
     
-    _processPrevious: function(e) {
-        if (!this.client || !this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY)) {
-            return;
-        }
-        Core.Web.DOM.preventEventDefault(e);
-        var position = parseInt(this._headerTabContainerDiv.style.marginLeft) || 0;
-        var maximum = 0;
-        if (position < maximum) {
-            position += 50;
-            this._headerTabContainerDiv.style.marginLeft = (position < maximum ? position : maximum) + "px";
-        }
+    _processScrollPrevious: function(e) {
+        this._scrollTabs(true);
     },
     
-    _processNext: function(e) {
+    _processScrollStop: function(e) {
+        if (!this._scrollRunnable) {
+            return;
+        }
+        this._scrollRunnable.finish();
+        this._scrollRunnable = null;
+    },
+    
+    _processScrollNext: function(e) {
+        this._scrollTabs(false);
+    },
+    
+    _processNextUp: function(e) {
+    },
+    
+    _scrollTabs: function(reverse) {
         if (!this.client || !this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY)) {
             return;
         }
-        Core.Web.DOM.preventEventDefault(e);
-        var position = parseInt(this._headerTabContainerDiv.style.marginLeft) || 0;
-        var minimum = new Core.Web.Measure.Bounds(this._headerContainerDiv).width - this._totalTabWidth - 30;
-        if (position > minimum) {
-            position -= 50;
-            this._headerTabContainerDiv.style.marginLeft = (position > minimum ? position : minimum) + "px";
-        }
+        
+        var initialPosition = parseInt(this._headerTabContainerDiv.style.marginLeft) || 0;
+        this._scrollRunnable = new Extras.Sync.TabPane.ScrollRunnable(this, reverse, initialPosition, 
+                reverse ? 0 : new Core.Web.Measure.Bounds(this._headerContainerDiv).width - this._totalTabWidth - 30);
+        Core.Web.Scheduler.add(this._scrollRunnable);
     },
     
     /**
@@ -344,8 +404,10 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
                 this._nextControlDiv.appendChild(img);
                 this._oversizeControlDiv.appendChild(this._nextControlDiv);
                 
-                Core.Web.Event.add(this._previousControlDiv, "click", Core.method(this, this._processPrevious));
-                Core.Web.Event.add(this._nextControlDiv, "click", Core.method(this, this._processNext));
+                Core.Web.Event.add(this._previousControlDiv, "mousedown", Core.method(this, this._processScrollPrevious));
+                Core.Web.Event.add(this._previousControlDiv, "mouseup", Core.method(this, this._processScrollStop));
+                Core.Web.Event.add(this._nextControlDiv, "mousedown", Core.method(this, this._processScrollNext));
+                Core.Web.Event.add(this._nextControlDiv, "mouseup", Core.method(this, this._processScrollStop));
                 Core.Web.Event.Selection.disable(this._previousControlDiv);
                 Core.Web.Event.Selection.disable(this._nextControlDiv);
             }
