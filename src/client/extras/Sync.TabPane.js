@@ -1,5 +1,3 @@
-//FIXME.  Avoid potential tab-wrap issues when adding close icons.  (Close icons haven't loaded, won't be calculated in tab size).
-
 /**
  * Component rendering peer: TabPane
  */
@@ -73,16 +71,6 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
      */
     _totalTabWidth: 0,
     
-    /**
-     * The index of the first tab which should be displayed.
-     */ 
-    _firstDisplayedTab: null,
-    
-    /**
-     * The index of the last tab which should be displayed.
-     */ 
-    _lastDisplayedTab: null,
-    
     $construct: function() {
         this._tabs = [];
     },
@@ -98,13 +86,13 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         if (index == null || index == this._tabs.length) {
             this._tabs.push(tab);
             tab._render(update);
-            this._headerTabContainerDiv.appendChild(tab._headerDiv);
+            this._headerTabContainerTr.appendChild(tab._headerTd);
             this._contentContainerDiv.appendChild(tab._contentDiv);
         } else {
             this._tabs.splice(index, 0, tab);
             tab._render(update);
-            this._headerTabContainerDiv.insertBefore(tab._headerDiv, 
-                    this._headerTabContainerDiv.childNodes[index]);
+            this._headerTabContainerTr.insertBefore(tab._headerTd, 
+                    this._headerTabContainerTr.childNodes[index]);
             this._contentContainerDiv.insertBefore(tab._contentDiv,
                     this._contentContainerDiv.childNodes[index]);
         }
@@ -188,7 +176,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         }
         this._tabs.splice(tabIndex, 1);
         
-        Core.Web.DOM.removeNode(tab._headerDiv);
+        Core.Web.DOM.removeNode(tab._headerTd);
         Core.Web.DOM.removeNode(tab._contentDiv);
         
         tab._dispose();
@@ -238,7 +226,18 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         this._headerContainerDiv.style.cssText = "position:absolute;overflow:hidden;z-index:1;" +
                 (this._tabPosition == Extras.TabPane.TAB_POSITION_BOTTOM ? "bottom" : "top") + ":0;" +
                 "left:" + this._tabInsetPx + "px;right:" + this._tabInsetPx + "px;"
+                
         this._headerTabContainerDiv = document.createElement("div");
+        
+        var table = document.createElement("table");
+        table.style.padding = 0;
+        table.cellPadding = 0;
+        table.cellSpacing = 0;
+        var tbody = document.createElement("tbody");
+        this._headerTabContainerTr = document.createElement("tr");
+        tbody.appendChild(this._headerTabContainerTr);
+        table.appendChild(tbody);
+        this._headerTabContainerDiv.appendChild(table);
         this._headerContainerDiv.appendChild(this._headerTabContainerDiv);
         
         Echo.Sync.Font.render(this.component.render("font"), this._headerContainerDiv);
@@ -294,7 +293,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     
     _configureHeaderSize: function() {
         var borderSize = Echo.Sync.Border.getPixelSize(this._tabActiveBorder);
-        var div = this._headerTabContainerDiv.firstChild;
+        var div = this._headerTabContainerTr.firstChild;
         var maxHeight = 0;
         while (div) {
             var height = new Core.Web.Measure.Bounds(div).height;
@@ -317,18 +316,14 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     
     renderDisplay: function() {
         var containerWidth = new Core.Web.Measure.Bounds(this._headerContainerDiv).width;
-        var tabDiv = this._headerTabContainerDiv.firstChild;
+        var tabDiv = this._headerTabContainerTr.firstChild;
         this._totalTabWidth = 0;
         
         while (tabDiv) {
             this._totalTabWidth += new Core.Web.Measure.Bounds(tabDiv).width;
             tabDiv = tabDiv.nextSibling;
         }
-        
-        this._headerTabContainerDiv.style.width = this._totalTabWidth + "px"; 
 
-        this._updateDisplayedTabs();
-        
         var oversize = this._totalTabWidth > containerWidth;
         if (oversize) {
             if (!this._oversizeControlDiv) {
@@ -388,7 +383,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         this._tabs = [];
         this._div = null;
         this._headerContainerDiv = null;
-        this._headerTabContainerDiv = null;
+        this._headerTabContainerTr = null;
         this._contentContainerDiv = null;
         if (this._oversizeControlDiv) {
             Core.Web.Event.removeAll(this._previousControlDiv);
@@ -506,21 +501,6 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         if (!indexSet) {
             this.component.set("activeTabIndex", null);
         }
-    },
-    
-    _updateDisplayedTabs: function() {
-        var i = 0;
-        tabDiv = this._headerTabContainerDiv.firstChild;
-        while (tabDiv) {
-            if ((this._firstDisplayedTab == null || i >= this._firstDisplayedTab) &&
-                    (this._lastDisplayedTab == null || i <= this._lastDisplayedTab)) {
-                tabDiv.style.display = "block";
-            } else {
-                tabDiv.style.display = "none";
-            }
-            tabDiv = tabDiv.nextSibling;
-            ++i;
-        }
     }
 });
 
@@ -538,7 +518,7 @@ Extras.Sync.TabPane.Tab = Core.extend({
             this._tabCloseEnabled = false;
         }
         // elements
-        this._headerDiv = null;
+        this._headerTd = null;
         this._headerContentTable = null;
         this._contentDiv = null;
         this._leftTd = null;
@@ -548,21 +528,21 @@ Extras.Sync.TabPane.Tab = Core.extend({
     },
     
     _addEventListeners: function() {
-        Core.Web.Event.add(this._headerDiv, "click", Core.method(this, this._processClick), false);
-        Core.Web.Event.Selection.disable(this._headerDiv);
+        Core.Web.Event.add(this._headerTd, "click", Core.method(this, this._processClick), false);
+        Core.Web.Event.Selection.disable(this._headerTd);
         
         if (this._tabCloseEnabled) {
-            Core.Web.Event.add(this._headerDiv, "mouseover", Core.method(this, this._processEnter), false);
-            Core.Web.Event.add(this._headerDiv, "mouseout", Core.method(this, this._processExit), false);
+            Core.Web.Event.add(this._headerTd, "mouseover", Core.method(this, this._processEnter), false);
+            Core.Web.Event.add(this._headerTd, "mouseout", Core.method(this, this._processExit), false);
         }
     },
     
     _dispose: function() {
-        Core.Web.Event.removeAll(this._headerDiv);
+        Core.Web.Event.removeAll(this._headerTd);
         
         this._parent = null;
         this._childComponent = null;
-        this._headerDiv = null;
+        this._headerTd = null;
         this._headerContentTable = null;
         this._contentDiv = null;
         this._leftTd = null;
@@ -733,8 +713,8 @@ Extras.Sync.TabPane.Tab = Core.extend({
     },
     
     _render: function(update) {
-        this._headerDiv = this._renderHeader();
-        this._headerContentTable = this._headerDiv.firstChild;
+        this._headerTd = this._renderHeader();
+        this._headerContentTable = this._headerTd.firstChild;
         this._contentDiv = this._renderContent(update);
         
         this._highlight(this._childComponent.renderId == this._parent._activeTabId);
@@ -791,10 +771,11 @@ Extras.Sync.TabPane.Tab = Core.extend({
     _renderHeader: function() {
         var layoutData = this._childComponent.render("layoutData");
         
-        var headerDiv = document.createElement("div");
+        var headerTd = document.createElement("td");
+        headerTd.style.padding = 0;
+        headerTd.style.border = "0px none";
         
-        headerDiv.style[Core.Web.Env.CSS_FLOAT] = "left";
-        headerDiv.vAlign = this._parent._tabPosition == Extras.TabPane.TAB_POSITION_BOTTOM ? "top" : "bottom";
+        headerTd.vAlign = this._parent._tabPosition == Extras.TabPane.TAB_POSITION_BOTTOM ? "top" : "bottom";
         
         var tabTable = document.createElement("table");
         tabTable.cellPadding = "0";
@@ -867,9 +848,9 @@ Extras.Sync.TabPane.Tab = Core.extend({
     
         tabTbody.appendChild(tabTr);
         tabTable.appendChild(tabTbody);
-        headerDiv.appendChild(tabTable);
+        headerTd.appendChild(tabTable);
 
-        return headerDiv;
+        return headerTd;
     },
     
     _renderIcon: function(icon) {
