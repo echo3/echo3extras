@@ -167,6 +167,21 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         }
     },
 
+    _configureHeaderSize: function() {
+        var borderSize = Echo.Sync.Border.getPixelSize(this._tabActiveBorder);
+        var height = new Core.Web.Measure.Bounds(this._headerTabContainerDiv).height;
+        
+        if (this._tabPosition == Extras.TabPane.TAB_POSITION_BOTTOM) {
+            this._contentContainerDiv.style.top = "0";
+            this._contentContainerDiv.style.bottom = (height - borderSize) + "px";
+        } else {
+            this._contentContainerDiv.style.top = (height - borderSize ) + "px";
+            this._contentContainerDiv.style.bottom = "0";
+        }
+        this._contentContainerDiv.style.left = "0";
+        this._contentContainerDiv.style.right = "0";
+    },
+    
     /**
      * Determines the renderId of the active tab child component.
      * This method first queries the component's <code>activeTab</code> property, 
@@ -227,17 +242,6 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
      */
     _processScrollNext: function(e) {
         this._scrollTabs(false);
-    },
-    
-    _scrollTabs: function(reverse) {
-        if (!this.client || !this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY)) {
-            return;
-        }
-        
-        var initialPosition = parseInt(this._headerTabContainerDiv.style.marginLeft) || 0;
-        this._scrollRunnable = new Extras.Sync.TabPane.ScrollRunnable(this, reverse, initialPosition, 
-                reverse ? 0 : new Core.Web.Measure.Bounds(this._headerContainerDiv).width - this._totalTabWidth - 30);
-        Core.Web.Scheduler.add(this._scrollRunnable);
     },
     
     /**
@@ -308,15 +312,15 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
                 
         this._headerTabContainerDiv = document.createElement("div");
         
-        var table = document.createElement("table");
-        table.style.padding = 0;
-        table.cellPadding = 0;
-        table.cellSpacing = 0;
+        this._headerTabContainerTable = document.createElement("table");
+        this._headerTabContainerTable.style.padding = 0;
+        this._headerTabContainerTable.cellPadding = 0;
+        this._headerTabContainerTable.cellSpacing = 0;
         var tbody = document.createElement("tbody");
         this._headerTabContainerTr = document.createElement("tr");
         tbody.appendChild(this._headerTabContainerTr);
-        table.appendChild(tbody);
-        this._headerTabContainerDiv.appendChild(table);
+        this._headerTabContainerTable.appendChild(tbody);
+        this._headerTabContainerDiv.appendChild(this._headerTabContainerTable);
         this._headerContainerDiv.appendChild(this._headerTabContainerDiv);
         
         Echo.Sync.Font.render(this.component.render("font"), this._headerContainerDiv);
@@ -370,30 +374,10 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         parentElement.appendChild(this._div);
     },
     
-    _configureHeaderSize: function() {
-        var borderSize = Echo.Sync.Border.getPixelSize(this._tabActiveBorder);
-        var height = new Core.Web.Measure.Bounds(this._headerTabContainerDiv).height;
-        
-        if (this._tabPosition == Extras.TabPane.TAB_POSITION_BOTTOM) {
-            this._contentContainerDiv.style.top = "0";
-            this._contentContainerDiv.style.bottom = (height - borderSize) + "px";
-        } else {
-            this._contentContainerDiv.style.top = (height - borderSize ) + "px";
-            this._contentContainerDiv.style.bottom = "0";
-        }
-        this._contentContainerDiv.style.left = "0";
-        this._contentContainerDiv.style.right = "0";
-    },
-    
     renderDisplay: function() {
         var containerWidth = new Core.Web.Measure.Bounds(this._headerContainerDiv).width;
         var tabDiv = this._headerTabContainerTr.firstChild;
-        this._totalTabWidth = 0;
-        
-        while (tabDiv) {
-            this._totalTabWidth += new Core.Web.Measure.Bounds(tabDiv).width;
-            tabDiv = tabDiv.nextSibling;
-        }
+        this._totalTabWidth = new Core.Web.Measure.Bounds(this._headerTabContainerDiv.firstChild).width;
 
         var oversize = this._totalTabWidth > containerWidth;
         if (oversize) {
@@ -456,6 +440,8 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         this._tabs = [];
         this._div = null;
         this._headerContainerDiv = null;
+        this._headerTabContainerDiv = null;
+        this._headerTabContainerTable = null;
         this._headerTabContainerTr = null;
         this._contentContainerDiv = null;
         if (this._oversizeControlDiv) {
@@ -535,6 +521,17 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         return fullRender;
     },
     
+    _scrollTabs: function(reverse) {
+        if (!this.client || !this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY)) {
+            return;
+        }
+        
+        var initialPosition = parseInt(this._headerTabContainerDiv.style.marginLeft) || 0;
+        this._scrollRunnable = new Extras.Sync.TabPane.ScrollRunnable(this, reverse, initialPosition, 
+                reverse ? 0 : new Core.Web.Measure.Bounds(this._headerContainerDiv).width - this._totalTabWidth - 30);
+        Core.Web.Scheduler.add(this._scrollRunnable);
+    },
+    
     /**
      * Selects a specific tab.
      * 
@@ -574,6 +571,9 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         if (!indexSet) {
             this.component.set("activeTabIndex", null);
         }
+    },
+
+    _setScrollPosition: function(position) {
     }
 });
 
