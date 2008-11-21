@@ -21,16 +21,29 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         _defaultTabPosition: Extras.TabPane.TAB_POSITION_TOP,
         _defaultTabSpacing: 0,
         
+        /**
+         * Runnable to manage scrolling animation.
+         */
         ScrollRunnable: Core.extend(Core.Web.Scheduler.Runnable, {
         
-            reverse: false,
-            distance: 0,
             repeat: true,
             timeInterval: 20,
+
+            reverse: false,
+            distance: 0,
+            
+            /** Minimum distance to move (in case of click rather than hold */
             clickDistance: 50,
+            
+            /** Rate to scroll when scroll button held. */
             pixelsPerSecond: 400,
+            
+            /** Initial scroll position. */
             initialValue: null,
+            
+            /** Maximum scroll position. */
             maximumValue: null,
+            
             disposed: false,
             peer: null,
             lastInvokeTime: null,
@@ -529,14 +542,14 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         if (this._activeTabId) {
             tab = this._getTabById(this._activeTabId);
             if (tab) {
-                tab._highlight(false);
+                tab._renderActiveState(false);
             }
         }
         
         tab = this._getTabById(tabId);
         if (tab) {
             this._activeTabId = tabId;
-            tab._highlight(true);
+            tab._renderActiveState(true);
         } else {
             this._activeTabId = null;
         }
@@ -558,6 +571,11 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     }
 });
 
+/**
+ * Representation of a single tab (child component) within the tab pane.
+ * Provides tab-specific rendering functionality, handles setting active state
+ * on/off for an individual tab.
+ */
 Extras.Sync.TabPane.Tab = Core.extend({
 
     $construct: function(childComponent, parent) {
@@ -647,7 +665,10 @@ Extras.Sync.TabPane.Tab = Core.extend({
         return { width: (image.width ? image.width : null), fillImage: fillImage };
     },
     
-    _highlight: function(state) {
+    /**
+     * Renders the tab active or inactive, updating header state and showing/hiding tab content.
+     */
+    _renderActiveState: function(state) {
         var headerContentTable = this._headerContentTable;
         var centerTd = this._centerTd;
         var contentDiv = this._contentDiv;
@@ -678,7 +699,6 @@ Extras.Sync.TabPane.Tab = Core.extend({
         
         var activeBorderSize = Echo.Sync.Border.getPixelSize(this._parent._tabActiveBorder);
         var inactiveBorderSize = Echo.Sync.Border.getPixelSize(this._parent._tabInactiveBorder);
-
         
         if (this._parent._tabPosition == Extras.TabPane.TAB_POSITION_BOTTOM) {
             headerContentTable.style.marginTop = state ? 0 : activeBorderSize + "px";
@@ -734,6 +754,9 @@ Extras.Sync.TabPane.Tab = Core.extend({
         }
     },
     
+    /**
+     * Tab click handler.
+     */
     _processClick: function(e) {
         if (!this._parent || !this._parent.client || !this._parent.client.verifyInput(this._parent.component)) {
             return true;
@@ -752,6 +775,9 @@ Extras.Sync.TabPane.Tab = Core.extend({
         }
     },
     
+    /**
+     * Tab rollover enter handler.
+     */
     _processEnter: function(e) {
         if (!this._parent || !this._parent.client || !this._parent.client.verifyInput(this._parent.component)) {
             return true;
@@ -761,21 +787,30 @@ Extras.Sync.TabPane.Tab = Core.extend({
         this._closeImageTd.firstChild.src = Echo.Sync.ImageReference.getUrl(this._getCloseImage(rollover));
     },
     
+    /**
+     * Tab rollover exit handler.
+     */
     _processExit: function(e) {
         var rollover = Core.Web.DOM.isAncestorOf(this._closeImageTd, e.target);
         this._closeImageTd.firstChild.src = Echo.Sync.ImageReference.getUrl(this._getCloseImage(false));
     },
     
+    /**
+     * Renders the tab.
+     */
     _render: function(update) {
         this._headerTd = this._renderHeader();
         this._headerContentTable = this._headerTd.firstChild;
         this._contentDiv = this._renderContent(update);
         
-        this._highlight(this._childComponent.renderId == this._parent._activeTabId);
+        this._renderActiveState(this._childComponent.renderId == this._parent._activeTabId);
         this._addEventListeners();
     },
     
-    _renderCloseIconElement: function() {
+    /**
+     * Renders the close icon.
+     */
+    _renderCloseIcon: function() {
         var td = document.createElement("td");
         Echo.Sync.Alignment.render(this._parent.component.render("tabAlignment", 
                 Extras.Sync.TabPane._defaultTabAlignment), td, true, this._parent.component);
@@ -794,6 +829,9 @@ Extras.Sync.TabPane.Tab = Core.extend({
         return td;
     },
     
+    /**
+     * Renders the content of a tab.
+     */
     _renderContent: function(update) {
         var div = document.createElement("div");
         div.style.cssText = "position:absolute;top:0;left:0;overflow:auto;";
@@ -815,6 +853,9 @@ Extras.Sync.TabPane.Tab = Core.extend({
         return div;
     },
     
+    /**
+     * Tab-specific renderDisplay() tasks.
+     */
     _renderDisplay: function() {
         Core.Web.VirtualPosition.redraw(this._contentDiv);
     },
@@ -879,7 +920,7 @@ Extras.Sync.TabPane.Tab = Core.extend({
             tbody.appendChild(tr);
             tr.appendChild(textTd);
             if (closeIcon) {
-                this._closeImageTd = this._renderCloseIconElement();
+                this._closeImageTd = this._renderCloseIcon();
                 tr.appendChild(this._closeImageTd);
             }
             centerTd.appendChild(table);
@@ -907,6 +948,9 @@ Extras.Sync.TabPane.Tab = Core.extend({
         return headerTd;
     },
     
+    /**
+     * Renders the icon of a tab.
+     */
     _renderIcon: function(icon) {
         var td = document.createElement("td");
         Echo.Sync.Alignment.render(this._parent.component.render("tabAlignment", 
