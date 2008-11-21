@@ -115,10 +115,14 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     _activeTabId: null,
     
     /**
-     * Container DIV for the left/right arrows to navigate between tabs when too many tabs are present
-     * to all be displayed at once.
+     * Scroll previous arrow.
      */
-    _oversizeControlDiv: null,
+    _previousControlDiv: null,
+    
+    /**
+     * Scroll next arrow.
+     */
+    _nextControlDiv: null,
     
     /**
      * Array containing <code>Extras.Sync.TabPane.Tab</code> objects represented the displayed tabs.
@@ -216,10 +220,15 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     },
     
     /**
-     * Handler for mouse down event on scroll previous button.
+     * Handler for mouse down event on previous/next scroll buttons.
      */
-    _processScrollPrevious: function(e) {
-        this._scrollTabs(true);
+    _processScrollStart: function(e) {
+        if (!this.client || !this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY)) {
+            return;
+        }
+        
+        this._scrollRunnable = new Extras.Sync.TabPane.ScrollRunnable(this, e.registeredTarget === this._previousControlDiv);
+        Core.Web.Scheduler.add(this._scrollRunnable);
     },
     
     /**
@@ -231,13 +240,6 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         }
         this._scrollRunnable.finish();
         this._scrollRunnable = null;
-    },
-    
-    /**
-     * Handler for mouse down event on scroll next button.
-     */
-    _processScrollNext: function(e) {
-        this._scrollTabs(false);
     },
     
     /**
@@ -370,54 +372,50 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         parentElement.appendChild(this._div);
     },
     
+    setOversizeEnabled: function(previous, enabled) {
+        var controlDiv = previous ? this._previousControlDiv : this._nextControlDiv,
+            img;
+
+        if (enabled) {
+            if (controlDiv) {
+                controlDiv.style.display = "block";
+            } else {
+                controlDiv = document.createElement("div");
+                controlDiv.style.cssText = "position:absolute;z-index:2;cursor:pointer;";
+                controlDiv.style[Extras.TabPane.TAB_POSITION_BOTTOM ? "bottom" : "top"] = 0;
+                controlDiv.style[previous ? "left" : "right"] = 0;
+                
+                img = document.createElement("img");
+                controlDiv.appendChild(img);
+
+                Core.Web.Event.add(controlDiv, "mousedown", Core.method(this, this._processScrollStart));
+                Core.Web.Event.add(controlDiv, "mouseup", Core.method(this, this._processScrollStop));
+                Core.Web.Event.Selection.disable(controlDiv);
+
+                if (previous) {
+                    img.src = this._icons.previous ? this._icons.previous :
+                            this.client.getResourceUrl("Extras", "image/tabpane/Previous.gif");
+                    img.alt = "<";
+                    this._previousControlDiv = controlDiv;
+                } else {
+                    img.src = this._icons.next ? this._icons.next :
+                            this.client.getResourceUrl("Extras", "image/tabpane/Next.gif");
+                    img.alt = ">";
+                    this._nextControlDiv = controlDiv;
+                }
+                this._headerContainerDiv.appendChild(controlDiv);
+            }
+        } else if (controlDiv) {
+            controlDiv.style.display = "none";
+        }     
+    },
+    
     renderDisplay: function() {
+        var img, oversize, i;
+
         this._tabContainerWidth = new Core.Web.Measure.Bounds(this._headerContainerDiv).width;
         this._totalTabWidth = new Core.Web.Measure.Bounds(this._headerTabContainerDiv.firstChild).width;
 
-        var oversize = this._totalTabWidth > this._tabContainerWidth;
-        if (oversize) {
-            if (!this._oversizeControlDiv) {
-                var img;
-
-                this._oversizeControlDiv = document.createElement("div");
-                this._oversizeControlDiv.style.cssText = "position:absolute;right:0;z-index:2;";
-                this._oversizeControlDiv.style[this._tabPosition == Extras.TabPane.TAB_POSITION_BOTTOM ? "bottom" : "top"] = 0;
-
-                this._previousControlDiv = document.createElement("span");
-                this._previousControlDiv.style.cssText = "cursor:pointer";
-                img = document.createElement("img");
-                img.src = this._icons.previous ? this._icons.previous :
-                        this.client.getResourceUrl("Extras", "image/tabpane/Previous.gif");
-                img.style.marginRight = "2px";
-                img.alt = "<";
-                this._previousControlDiv.appendChild(img);
-                this._oversizeControlDiv.appendChild(this._previousControlDiv);
-
-                this._nextControlDiv = document.createElement("span");
-                this._nextControlDiv.style.cssText = "cursor:pointer";
-                img = document.createElement("img");
-                img.src = this._icons.next ? this._icons.next :
-                        this.client.getResourceUrl("Extras", "image/tabpane/Next.gif");
-                img.alt = ">";
-                this._nextControlDiv.appendChild(img);
-                this._oversizeControlDiv.appendChild(this._nextControlDiv);
-                
-                Core.Web.Event.add(this._previousControlDiv, "mousedown", Core.method(this, this._processScrollPrevious));
-                Core.Web.Event.add(this._previousControlDiv, "mouseup", Core.method(this, this._processScrollStop));
-                Core.Web.Event.add(this._nextControlDiv, "mousedown", Core.method(this, this._processScrollNext));
-                Core.Web.Event.add(this._nextControlDiv, "mouseup", Core.method(this, this._processScrollStop));
-                Core.Web.Event.Selection.disable(this._previousControlDiv);
-                Core.Web.Event.Selection.disable(this._nextControlDiv);
-            }
-            if (this._oversizeControlDiv.parentNode != this._headerContainerDiv) {
-                this._headerContainerDiv.appendChild(this._oversizeControlDiv);
-            }
-        } else {
-            if (this._oversizeControlDiv && this._oversizeControlDiv.parentNode) {
-                this._oversizeControlDiv.parentNode.removeChild(this._oversizeControlDiv);
-            }
-        }
-    
         Core.Web.VirtualPosition.redraw(this._div);
         Core.Web.VirtualPosition.redraw(this._contentContainerDiv);
         Core.Web.VirtualPosition.redraw(this._headerContainerDiv);
@@ -425,7 +423,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         // Re-bound scroll position.
         this.setScrollPosition(this.scrollPosition);
         
-        for (var i = 0; i < this._tabs.length; ++i) {
+        for (i = 0; i < this._tabs.length; ++i) {
             this._tabs[i]._renderDisplay();
         }
     },
@@ -442,10 +440,13 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         this._headerTabContainerTable = null;
         this._headerTabContainerTr = null;
         this._contentContainerDiv = null;
-        if (this._oversizeControlDiv) {
+        if (this._previousControlDiv) {
             Core.Web.Event.removeAll(this._previousControlDiv);
+            this._previousControlDiv = null;
+        }
+        if (this._nextControlDiv) {
             Core.Web.Event.removeAll(this._nextControlDiv);
-            this._previousControlDiv = this._nextControlDiv = this._oversizeControlDiv = null;
+            this._nextControlDiv = null;
         }
     },
     
@@ -519,15 +520,6 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         return fullRender;
     },
     
-    _scrollTabs: function(reverse) {
-        if (!this.client || !this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY)) {
-            return;
-        }
-        
-        this._scrollRunnable = new Extras.Sync.TabPane.ScrollRunnable(this, reverse);
-        Core.Web.Scheduler.add(this._scrollRunnable);
-    },
-    
     /**
      * Selects a specific tab.
      * 
@@ -580,6 +572,16 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         }
         this.scrollPosition = position;
         this._headerTabContainerDiv.style.marginLeft = (0 - position) + "px";
+        
+        oversize = this._totalTabWidth > this._tabContainerWidth;
+        if (oversize) {
+            this.setOversizeEnabled(true, position > 0);
+            this.setOversizeEnabled(false,position < this._totalTabWidth - this._tabContainerWidth);
+        } else {
+            this.setOversizeEnabled(true, false);
+            this.setOversizeEnabled(false, false);
+        }
+        
         return !bounded;
     }
 });
