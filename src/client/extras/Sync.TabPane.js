@@ -39,20 +39,16 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
             pixelsPerSecond: 400,
             
             /** Initial scroll position. */
-            initialValue: null,
-            
-            /** Maximum scroll position. */
-            maximumValue: null,
+            initialPosition: null,
             
             disposed: false,
             peer: null,
             lastInvokeTime: null,
         
-            $construct: function(peer, reverse, initialValue, maximumValue) {
+            $construct: function(peer, reverse) {
                 this.peer = peer;
                 this.reverse = reverse;
-                this.initialValue = initialValue;
-                this.maximumValue = maximumValue;
+                this.initialPosition = peer.scrollPosition;
                 this.lastInvokeTime = new Date().getTime();
             },
             
@@ -79,12 +75,10 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
             },
             
             updatePosition: function() {
-                var position = this.initialValue + ((this.reverse ? 1 : -1) * this.distance);
-                if (this.reverse ? position > this.maximumValue : position < this.maximumValue) {
-                    position = this.maximumValue;
+                var position = this.initialPosition + ((this.reverse ? -1 : 1) * this.distance);
+                if (!this.peer.setScrollPosition(position)) {
                     this.dispose();
                 }
-                this.peer._headerTabContainerDiv.style.marginLeft = position + "px";
             }
         })
     },
@@ -139,6 +133,8 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     _totalTabWidth: 0,
     
     _scrollRunnable: null,
+    
+    scrollPosition: 0,
     
     $construct: function() {
         this._tabs = [];
@@ -375,11 +371,10 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     },
     
     renderDisplay: function() {
-        var containerWidth = new Core.Web.Measure.Bounds(this._headerContainerDiv).width;
-        var tabDiv = this._headerTabContainerTr.firstChild;
+        this._tabContainerWidth = new Core.Web.Measure.Bounds(this._headerContainerDiv).width;
         this._totalTabWidth = new Core.Web.Measure.Bounds(this._headerTabContainerDiv.firstChild).width;
 
-        var oversize = this._totalTabWidth > containerWidth;
+        var oversize = this._totalTabWidth > this._tabContainerWidth;
         if (oversize) {
             if (!this._oversizeControlDiv) {
                 var img;
@@ -426,6 +421,9 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         Core.Web.VirtualPosition.redraw(this._div);
         Core.Web.VirtualPosition.redraw(this._contentContainerDiv);
         Core.Web.VirtualPosition.redraw(this._headerContainerDiv);
+        
+        // Re-bound scroll position.
+        this.setScrollPosition(this.scrollPosition);
         
         for (var i = 0; i < this._tabs.length; ++i) {
             this._tabs[i]._renderDisplay();
@@ -526,9 +524,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
             return;
         }
         
-        var initialPosition = parseInt(this._headerTabContainerDiv.style.marginLeft) || 0;
-        this._scrollRunnable = new Extras.Sync.TabPane.ScrollRunnable(this, reverse, initialPosition, 
-                reverse ? 0 : new Core.Web.Measure.Bounds(this._headerContainerDiv).width - this._totalTabWidth - 30);
+        this._scrollRunnable = new Extras.Sync.TabPane.ScrollRunnable(this, reverse);
         Core.Web.Scheduler.add(this._scrollRunnable);
     },
     
@@ -573,7 +569,18 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         }
     },
 
-    _setScrollPosition: function(position) {
+    setScrollPosition: function(position) {
+        var bounded = false;
+        if (position < 0) {
+            position = 0;
+            bounded = true;
+        } else if (position > 0 && position > this._totalTabWidth - this._tabContainerWidth) {
+            position = this._totalTabWidth - this._tabContainerWidth;
+            bounded = true;
+        }
+        this.scrollPosition = position;
+        this._headerTabContainerDiv.style.marginLeft = (0 - position) + "px";
+        return !bounded;
     }
 });
 
