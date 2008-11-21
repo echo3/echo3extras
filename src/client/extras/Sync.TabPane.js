@@ -372,44 +372,6 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         parentElement.appendChild(this._div);
     },
     
-    setOversizeEnabled: function(previous, enabled) {
-        var controlDiv = previous ? this._previousControlDiv : this._nextControlDiv,
-            img;
-
-        if (enabled) {
-            if (controlDiv) {
-                controlDiv.style.display = "block";
-            } else {
-                controlDiv = document.createElement("div");
-                controlDiv.style.cssText = "position:absolute;z-index:2;cursor:pointer;";
-                controlDiv.style[Extras.TabPane.TAB_POSITION_BOTTOM ? "bottom" : "top"] = 0;
-                controlDiv.style[previous ? "left" : "right"] = 0;
-                
-                img = document.createElement("img");
-                controlDiv.appendChild(img);
-
-                Core.Web.Event.add(controlDiv, "mousedown", Core.method(this, this._processScrollStart));
-                Core.Web.Event.add(controlDiv, "mouseup", Core.method(this, this._processScrollStop));
-                Core.Web.Event.Selection.disable(controlDiv);
-
-                if (previous) {
-                    img.src = this._icons.previous ? this._icons.previous :
-                            this.client.getResourceUrl("Extras", "image/tabpane/Previous.gif");
-                    img.alt = "<";
-                    this._previousControlDiv = controlDiv;
-                } else {
-                    img.src = this._icons.next ? this._icons.next :
-                            this.client.getResourceUrl("Extras", "image/tabpane/Next.gif");
-                    img.alt = ">";
-                    this._nextControlDiv = controlDiv;
-                }
-                this._headerContainerDiv.appendChild(controlDiv);
-            }
-        } else if (controlDiv) {
-            controlDiv.style.display = "none";
-        }     
-    },
-    
     renderDisplay: function() {
         var img, oversize, i;
 
@@ -561,6 +523,44 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         }
     },
 
+    _setOversizeEnabled: function(previous, enabled) {
+        var controlDiv = previous ? this._previousControlDiv : this._nextControlDiv,
+            img;
+
+        if (enabled) {
+            if (controlDiv) {
+                controlDiv.style.display = "block";
+            } else {
+                controlDiv = document.createElement("div");
+                controlDiv.style.cssText = "position:absolute;z-index:2;cursor:pointer;";
+                controlDiv.style[this._tabPosition === Extras.TabPane.TAB_POSITION_BOTTOM ? "bottom" : "top"] = "5px";
+                controlDiv.style[previous ? "left" : "right"] = "2px";
+                
+                img = document.createElement("img");
+                controlDiv.appendChild(img);
+
+                Core.Web.Event.add(controlDiv, "mousedown", Core.method(this, this._processScrollStart));
+                Core.Web.Event.add(controlDiv, "mouseup", Core.method(this, this._processScrollStop));
+                Core.Web.Event.Selection.disable(controlDiv);
+
+                if (previous) {
+                    img.src = this._icons.previous ? this._icons.previous :
+                            this.client.getResourceUrl("Extras", "image/tabpane/Previous.gif");
+                    img.alt = "<";
+                    this._previousControlDiv = controlDiv;
+                } else {
+                    img.src = this._icons.next ? this._icons.next :
+                            this.client.getResourceUrl("Extras", "image/tabpane/Next.gif");
+                    img.alt = ">";
+                    this._nextControlDiv = controlDiv;
+                }
+                this._div.appendChild(controlDiv);
+            }
+        } else if (controlDiv) {
+            controlDiv.style.display = "none";
+        }     
+    },
+    
     setScrollPosition: function(position) {
         var bounded = false;
         if (position < 0) {
@@ -575,11 +575,11 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         
         oversize = this._totalTabWidth > this._tabContainerWidth;
         if (oversize) {
-            this.setOversizeEnabled(true, position > 0);
-            this.setOversizeEnabled(false,position < this._totalTabWidth - this._tabContainerWidth);
+            this._setOversizeEnabled(true, position > 0);
+            this._setOversizeEnabled(false, position < this._totalTabWidth - this._tabContainerWidth);
         } else {
-            this.setOversizeEnabled(true, false);
-            this.setOversizeEnabled(false, false);
+            this._setOversizeEnabled(true, false);
+            this._setOversizeEnabled(false, false);
         }
         
         return !bounded;
