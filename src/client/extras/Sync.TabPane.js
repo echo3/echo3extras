@@ -204,10 +204,16 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         return null;
     },
     
+    /**
+     * Handler for mouse down event on scroll previous button.
+     */
     _processScrollPrevious: function(e) {
         this._scrollTabs(true);
     },
     
+    /**
+     * Handler for mouse up event on previous/next scroll buttons.
+     */
     _processScrollStop: function(e) {
         if (!this._scrollRunnable) {
             return;
@@ -216,11 +222,11 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         this._scrollRunnable = null;
     },
     
+    /**
+     * Handler for mouse down event on scroll next button.
+     */
     _processScrollNext: function(e) {
         this._scrollTabs(false);
-    },
-    
-    _processNextUp: function(e) {
     },
     
     _scrollTabs: function(reverse) {
