@@ -306,7 +306,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         this._headerContainerDiv = document.createElement("div");
         this._headerContainerDiv.style.cssText = "position:absolute;overflow:hidden;z-index:1;" +
                 (this._tabPosition == Extras.TabPane.TAB_POSITION_BOTTOM ? "bottom" : "top") + ":0;" +
-                "left:" + this._tabInsetPx + "px;right:" + this._tabInsetPx + "px;"
+                "left:" + this._tabInsetPx + "px;right:" + this._tabInsetPx + "px;";
                 
         this._headerTabContainerDiv = document.createElement("div");
         
@@ -562,7 +562,9 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     },
     
     setScrollPosition: function(position) {
-        var bounded = false;
+        var bounded = false,
+            oversize = this._totalTabWidth > this._tabContainerWidth;
+            
         if (position < 0) {
             position = 0;
             bounded = true;
@@ -573,7 +575,6 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         this.scrollPosition = position;
         this._headerTabContainerDiv.style.marginLeft = (0 - position) + "px";
         
-        oversize = this._totalTabWidth > this._tabContainerWidth;
         if (oversize) {
             this._setOversizeEnabled(true, position > 0);
             this._setOversizeEnabled(false, position < this._totalTabWidth - this._tabContainerWidth);
