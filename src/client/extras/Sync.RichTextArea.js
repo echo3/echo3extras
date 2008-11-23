@@ -1065,6 +1065,16 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
     $load: function() {
         Echo.Render.registerPeer("Extras.RichTextInput", this);
     },
+    
+    $static: {
+        _CSS_BOLD: /font-weight\:\s*bold/i,
+        _CSS_FOREGROUND_TEST: /^-?color\:/i,
+        _CSS_FOREGROUND_RGB: /^-?color\:\s*rgb\s*\(\s*(\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})/i,
+        _CSS_BACKGROUND_TEST: /background-color\:/i,
+        _CSS_BACKGROUND_RGB: /background-color\:\s*rgb\s*\(\s*(\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})/i,
+        _CSS_ITALIC: /font-style\:\s*italic/i,
+        _CSS_UNDERLINE: /text-decoration\:\s*underline/i
+    },
 
     /**
      * {Boolean} Flag indicating whether the parent component of the associated RichTextArea is a pane, 
@@ -1114,6 +1124,63 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
                 document.documentElement.style.display = "none";
                 document.documentElement.style.display = displayState;
             }));
+        }
+    },
+    
+    _getRangeStyle: function() {
+        var range = this._getSelectionRange();
+        var style = { };
+
+        var node = range.startContainer;
+        while (node) { 
+            if (node.nodeType == 1) {
+                switch (node.nodeName.toLowerCase()) {
+                case "b": case "strong":
+                    style.bold = true;
+                    break;
+                case "i": case "em":
+                    style.italic = true;
+                    break;
+                case "u":
+                    style.underline = true;
+                    break;
+                }
+            
+                var css = node.style.cssText;
+                style.bold |= Extras.Sync.RichTextArea.InputPeer._CSS_BOLD.test(css);
+                style.italic |= Extras.Sync.RichTextArea.InputPeer._CSS_ITALIC.test(css);
+                style.underline |= Extras.Sync.RichTextArea.InputPeer._CSS_UNDERLINE.test(css);
+                
+                if (!style.foreground && Extras.Sync.RichTextArea.InputPeer._CSS_FOREGROUND_TEST.test(css)) {
+                    var rgb = Extras.Sync.RichTextArea.InputPeer._CSS_FOREGROUND_RGB.exec(css);
+                    if (rgb) {
+                        style.foreground = Echo.Sync.Color.toHex(
+                                parseInt(rgb[1], 10), parseInt(rgb[2], 10), parseInt(rgb[3], 10));
+                    }
+                }
+
+                if (!style.background && Extras.Sync.RichTextArea.InputPeer._CSS_BACKGROUND_TEST.test(css)) {
+                    var rgb = Extras.Sync.RichTextArea.InputPeer._CSS_BACKGROUND_RGB.exec(css);
+                    if (rgb) {
+                        style.background = Echo.Sync.Color.toHex(
+                                parseInt(rgb[1], 10), parseInt(rgb[2], 10), parseInt(rgb[3], 10));
+                    }
+                }
+            }
+            node = node.parentNode;
+        }
+        
+        return style;
+    },
+    
+    _getSelectionRange: function() {
+        if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
+            var textRange = this._iframe.contentWindow.document.selection.createRange();
+            return {
+                startContainer: textRange.parentElement()
+            };
+        } else {
+            return this._iframe.contentWindow.getSelection().getRangeAt(0);
         }
     },
     
@@ -1181,10 +1248,12 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         }
         
         this.component._richTextArea.peer._markFocused();
-    
+        
         this._storeData();
         this._storeRange();
         
+        this._updateIndicators();
+    
         if (this._fireAction) {
             this._fireAction = false;
             this.component._richTextArea.doAction();
@@ -1345,6 +1414,11 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
             this._selectionRange = this._iframe.contentWindow.document.selection.createRange();
         }
+    },
+    
+    _updateIndicators: function() {
+        var style = this._getRangeStyle();
+        //Core.Debug.consoleWrite(Core.Debug.toString(style));
     }
 });
 
