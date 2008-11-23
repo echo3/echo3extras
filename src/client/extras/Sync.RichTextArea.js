@@ -5,12 +5,18 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
 
     $static: {
     
+        /**
+         * Default enabled feature set.
+         */
         defaultFeatures: {
             menu: true, toolbar: true, undo: true, clipboard: true, alignment: true, foreground: true, background: true,
             list: true, table: true, image: true, horizontalRule: true, hyperlink: true, subscript: true, 
             bold: true, italic: true, underline: true, strikethrough: true, paragraphStyle: true, indent: true
         },
 
+        /**
+         * Default localization strings.
+         */
         resource: new Core.ResourceBundle({
             "ColorDialog.Title.Foreground":     "Text Color",
             "ColorDialog.Title.Background":     "Highlight Color",
@@ -91,6 +97,10 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
     },
 
     $virtual: {
+    
+        /**
+         * Creates/returns the icon set for this RichTextArea.
+         */
         getIcons: function() {
             var icons = this._getDefaultIcons();
             var customIcons = this.component.get("icons");
@@ -229,27 +239,6 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         cursor.add(this._richTextInput);
         
         return contentPane;
-    },
-    
-    _getDefaultIcon: function(name) {
-        return this.client.getResourceUrl("Extras", "image/richtext/" + name + ".gif");
-    },
-    
-    /**
-     * Returns default icon set map object.
-     * @type object
-     */
-    _getDefaultIcons: function() {
-        var iconNames = [ "alignmentCenter", "alignmentJustify", "alignmentLeft", "alignmentRight",
-            "background", "bold", "bulletedList", "cancel", "copy", "cut", "foreground", "horizontalRule",
-            "hyperlink", "image", "ident", "italic", "numberedList", "ok", "outdent", "paste", "redo",
-            "subscript", "superscript", "table", "underline", "undo" ];
-        var defaultIcons = { };
-        for (var i = 0; i < iconNames.length; ++i) {
-            var iconResource = iconNames[i].charAt(0).toUpperCase() + iconNames[i].substring(1);
-            defaultIcons[iconNames[i]] = this.client.getResourceUrl("Extras", "image/richtext/" + iconResource + ".gif");
-        }
-        return defaultIcons;
     },
     
     /**
@@ -543,6 +532,27 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         return this._mainDiv;
     },
     
+    _getDefaultIcon: function(name) {
+        return this.client.getResourceUrl("Extras", "image/richtext/" + name + ".gif");
+    },
+    
+    /**
+     * Returns default icon set map object.
+     * @type Object
+     */
+    _getDefaultIcons: function() {
+        var iconNames = [ "alignmentCenter", "alignmentJustify", "alignmentLeft", "alignmentRight",
+            "background", "bold", "bulletedList", "cancel", "copy", "cut", "foreground", "horizontalRule",
+            "hyperlink", "image", "ident", "italic", "numberedList", "ok", "outdent", "paste", "redo",
+            "subscript", "superscript", "table", "underline", "undo" ];
+        var defaultIcons = { };
+        for (var i = 0; i < iconNames.length; ++i) {
+            var iconResource = iconNames[i].charAt(0).toUpperCase() + iconNames[i].substring(1);
+            defaultIcons[iconNames[i]] = this.client.getResourceUrl("Extras", "image/richtext/" + iconResource + ".gif");
+        }
+        return defaultIcons;
+    },
+    
     insertHtml: function(html) {
         this._richTextInput.peer._insertHtml(html);
     },
@@ -570,11 +580,6 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         this.component.application.setFocusedComponent(this);
     },
     
-    _processCommand: function(e) {
-        this.execCommand(e.actionCommand);
-        this.focusDocument();
-    },
-    
     _openDialog: function(dialogWindow) {
         // Activate overlay pane (if required).
         var contentPane;
@@ -594,6 +599,11 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         // Add parent-change listener to dialog so that overlay pane can be
         // deactivated when necessary.
         dialogWindow.addListener("parent", this._processDialogCloseRef);
+    },
+    
+    _processCommand: function(e) {
+        this.execCommand(e.actionCommand);
+        this.focusDocument();
     },
     
     _processComponentInsertHtml: function(e) {
