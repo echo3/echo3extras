@@ -31,6 +31,13 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
     _processMaskClickRef: null,
     _processKeyPressRef: null,
     
+    /**
+     * The collection of named overlay elements (top/left/right/bottom) deployed to cover non-menu elements of the
+     * screen with transparent DIVs when the menu is active.  This allows the menu to receive de-activation events,
+     * event if a mouse click is received in an IFRAME document.
+     */
+    _overlay: null,
+    
     $construct: function() {
         this._processMaskClickRef = Core.method(this, this._processMaskClick);
         this._processKeyPressRef = Core.method(this, this.processKeyPress);
@@ -101,6 +108,7 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
             return;
         }
         this.maskDeployed = true;
+        this._overlayAdd(new Core.Web.Measure.Bounds(this.element));
         
         Core.Web.Event.add(document.body, "click", this._processMaskClickRef, false);
         Core.Web.Event.add(document.body, "contextmenu", this._processMaskClickRef, false);
@@ -142,6 +150,58 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
             }
         }
         return false;
+    },
+    
+    _overlayAdd: function(bounds) {
+        this._overlayRemove();
+        
+        var bottom = bounds.top + bounds.height,
+            right = bounds.left + bounds.width,
+            bodyBounds = new Core.Web.Measure.Bounds(document.body);
+        this._overlay = { };
+
+        if (bounds.top > 0) {
+            this._overlay.top = document.createElement("div");
+            this._overlay.top.style.cssText = "position:absolute;z-index:32767;top:0;left:0;width:100%;" +
+                    "height:" + bounds.top + "px;";
+            document.body.appendChild(this._overlay.top);
+        }
+        
+        if (bottom < bodyBounds.height) {
+            this._overlay.bottom = document.createElement("div");
+            this._overlay.bottom.style.cssText = "position:absolute;z-index:32767;bottom:0;left:0;width:100%;" +
+                    "top:" + bottom + "px;";
+            document.body.appendChild(this._overlay.bottom);
+        }
+
+        if (bounds.left > 0) {
+            this._overlay.left = document.createElement("div");
+            this._overlay.left.style.cssText = "position:absolute;z-index:32767;left:0;" +
+                    "width:" + bounds.left + "px;top:" + bounds.top + "px;height:" + bounds.height + "px;";
+            document.body.appendChild(this._overlay.left);
+        }
+
+        if (right < bodyBounds.width) {
+            this._overlay.right = document.createElement("div");
+            this._overlay.right.style.cssText = "position:absolute;z-index:32767;right:0;" +
+                    "left:" + right + "px;top:" + bounds.top + "px;height:" + bounds.height + "px;";
+            document.body.appendChild(this._overlay.right);
+        }
+        
+        for (var name in this._overlay) {
+            Echo.Sync.FillImage.render(this.client.getResourceUrl("Echo", "resource/Transparent.gif"), this._overlay[name]);
+            Core.Web.VirtualPosition.redraw(this._overlay[name]);
+        }
+    },
+    
+    _overlayRemove: function() {
+        if (!this._overlay) {
+            return;
+        }
+        for (var name in this._overlay) {
+            document.body.removeChild(this._overlay[name]);
+        }
+        this._overlay = null;
     },
     
     _openMenu: function(menuModel) {
@@ -196,6 +256,7 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
         if (!this.maskDeployed) {
             return;
         }
+        this._overlayRemove();
         this.maskDeployed = false;
         Core.Web.Event.remove(document.body, "click", this._processMaskClickRef, false);
         Core.Web.Event.remove(document.body, "contextmenu", this._processMaskClickRef, false);
