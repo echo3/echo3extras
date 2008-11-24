@@ -398,7 +398,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
      * @type Echo.Component
      */
     _createToolbar: function() {
-        var row;
+        var row, button;
         var features = this.component.render("features", Extras.Sync.RichTextArea.defaultFeatures);
         var controlsRow = new Echo.Row({
             layoutData: {
@@ -423,15 +423,21 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         if (features.bold || features.italic || features.underline) {
             row = new Echo.Row();
             if (features.bold) {
-                row.add(this._createToolbarButton("B", this._icons.bold, this._msg["Menu.Bold"], this._processCommand, "bold"));
+                button = this._createToolbarButton("B", this._icons.bold, this._msg["Menu.Bold"], this._processCommand, "bold");
+                button.set("toggle", true);
+                row.add(button);
             }
             if (features.italic) {
-                row.add(this._createToolbarButton("I", this._icons.italic, this._msg["Menu.Italic"], 
-                        this._processCommand, "italic"));
+                button = this._createToolbarButton("I", this._icons.italic, this._msg["Menu.Italic"], 
+                        this._processCommand, "italic");
+                button.set("toggle", true);
+                row.add(button);
             }
             if (features.underline) {
-                row.add(this._createToolbarButton("U", this._icons.underline, this._msg["Menu.Underline"], 
-                        this._processCommand, "underline"));
+                button = this._createToolbarButton("U", this._icons.underline, this._msg["Menu.Underline"], 
+                        this._processCommand, "underline");
+                button.set("toggle", true);
+                row.add(button);
             }
             controlsRow.add(row);
         }
@@ -724,7 +730,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
     },
     
     _updateIndicators: function() {
-        var style = this._richTextInput.peer._getRangeStyle();
+        var style = this._richTextInput.peer._getCursorStyle();
         if (this._toolbarButtons.bold) {
             this._toolbarButtons.bold.set("pressed", style.bold);
         }
@@ -1099,6 +1105,8 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
             38: 1, 40: 1, 37: 1, 39: 1, 33: 1, 34: 1, 36: 1, 35: 1, 8: 1, 46: 1
         }
     },
+    
+    _cursorStyleUpdateRequired: false,
 
     /**
      * {Boolean} Flag indicating whether the parent component of the associated RichTextArea is a pane, 
@@ -1120,7 +1128,11 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         this._loadRange();
         this._iframe.contentWindow.document.execCommand(commandName, false, value);
         this._storeData();
+        
         this._forceIERedraw();
+        
+        // Flag that cursor style update is required.  Some browsers will not render nodes until text is inserted.
+        this._cursorStyleUpdateRequired = true;
     },
     
     focusDocument: function() {
@@ -1151,11 +1163,11 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         }
     },
     
-    _getRangeStyle: function() {
-        var range = this._getSelectionRange();
+    _getCursorStyle: function() {
+        var selection = this._getSelection();
         var style = { };
 
-        var node = range.startContainer;
+        var node = selection.node;
         while (node) { 
             if (node.nodeType == 1) {
                 switch (node.nodeName.toLowerCase()) {
@@ -1197,14 +1209,16 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         return style;
     },
     
-    _getSelectionRange: function() {
+    _getSelection: function() {
         if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
             var textRange = this._iframe.contentWindow.document.selection.createRange();
             return {
-                startContainer: textRange.parentElement()
+                node: textRange.parentElement()
             };
         } else {
-            return this._iframe.contentWindow.getSelection().getRangeAt(0);
+            return {
+                node: this._iframe.contentWindow.getSelection().anchorNode
+            }
         }
     },
     
@@ -1215,9 +1229,11 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
             }
             this._selectionRange.select();
             this._selectionRange.pasteHTML(html);
+            this._notifyCursorStyleChange();
         } else {
             this.execCommand("inserthtml", html);
         }
+        
         this.focusDocument();
         this._forceIERedraw();
     },
@@ -1248,6 +1264,13 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         }
     },
     
+    _notifyCursorStyleChange: function() {
+        this._cursorStyleUpdateRequired = false;
+        Core.Web.Scheduler.run(Core.method(this, function() {
+            this.component._richTextArea.peer._updateIndicators();
+        }));
+    },
+    
     _processProperty: function(e) {
         if (e.propertyName == "text") {
             this._loadData();
@@ -1276,8 +1299,8 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         this._storeData();
         this._storeRange();
         
-        if (Extras.Sync.RichTextArea.InputPeer._NAVIGATION_KEY_CODES[e.keyCode]) {
-            this.component._richTextArea.peer._updateIndicators();
+        if (this._cursorStyleUpdateRequired || Extras.Sync.RichTextArea.InputPeer._NAVIGATION_KEY_CODES[e.keyCode]) {
+            this._notifyCursorStyleChange();
         }
         
         if (this._fireAction) {
@@ -1301,7 +1324,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
 
         this._storeRange();
         
-        this.component._richTextArea.peer._updateIndicators();
+        this._notifyCursorStyleChange();
     },
     
     renderAdd: function(update, parentElement) {
@@ -1531,6 +1554,9 @@ Extras.Sync.RichTextArea.ToolbarButton = Core.extend(Echo.Button, {
     componentType: "Extras.RichTextToolbarButton",
     
     doAction: function() {
+        if (this.render("toggle")) {
+            this.set("pressed", !this.get("pressed"));
+        } 
         this.fireEvent({ source: this, type: "action", actionCommand: this.render("actionCommand") });
     }
 });
