@@ -191,9 +191,12 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
      */
     _paneRender: false,
     
+    _toolbarButtons: null,
+    
     $construct: function() {
         this._processComponentInsertHtmlRef = Core.method(this, this._processComponentInsertHtml);
         this._processDialogCloseRef = Core.method(this, this._processDialogClose);
+        this._toolbarButtons = { };
     },
     
     _addComponentListeners: function() {
@@ -507,7 +510,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
     },
     
     _createToolbarButton: function(text, icon, toolTipText, eventMethod, actionCommand) {
-        var button = new Echo.Button({
+        var button = new Extras.Sync.RichTextArea.ToolbarButton({
             actionCommand: actionCommand,
             styleName: this.component.render("toolbarButtonStyleName"),
             text: icon ? null : text,
@@ -517,6 +520,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         if (eventMethod) {
             button.addListener("action", Core.method(this, eventMethod));
         }
+        this._toolbarButtons[actionCommand] = button;
         return button;
     },
     
@@ -717,6 +721,19 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         Echo.Render.renderComponentDispose(update, update.parent);
         containerElement.removeChild(element);
         this.renderAdd(update, containerElement);
+    },
+    
+    _updateIndicators: function() {
+        var style = this._richTextInput.peer._getRangeStyle();
+        if (this._toolbarButtons.bold) {
+            this._toolbarButtons.bold.set("pressed", style.bold);
+        }
+        if (this._toolbarButtons.italic) {
+            this._toolbarButtons.italic.set("pressed", style.italic);
+        }
+        if (this._toolbarButtons.underline) {
+            this._toolbarButtons.underline.set("pressed", style.underline);
+        }
     }
 });
 
@@ -1073,7 +1090,14 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         _CSS_BACKGROUND_TEST: /background-color\:/i,
         _CSS_BACKGROUND_RGB: /background-color\:\s*rgb\s*\(\s*(\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})/i,
         _CSS_ITALIC: /font-style\:\s*italic/i,
-        _CSS_UNDERLINE: /text-decoration\:\s*underline/i
+        _CSS_UNDERLINE: /text-decoration\:\s*underline/i,
+        
+        /**
+         * Key codes which may result in cursor navigating into new style, requiring an update of the style indicators.
+         */
+        _NAVIGATION_KEY_CODES: {
+            38: 1, 40: 1, 37: 1, 39: 1, 33: 1, 34: 1, 36: 1, 35: 1, 8: 1, 46: 1
+        }
     },
 
     /**
@@ -1252,8 +1276,10 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         this._storeData();
         this._storeRange();
         
-        this._updateIndicators();
-    
+        if (Extras.Sync.RichTextArea.InputPeer._NAVIGATION_KEY_CODES[e.keyCode]) {
+            this.component._richTextArea.peer._updateIndicators();
+        }
+        
         if (this._fireAction) {
             this._fireAction = false;
             this.component._richTextArea.doAction();
@@ -1274,6 +1300,8 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         }
 
         this._storeRange();
+        
+        this.component._richTextArea.peer._updateIndicators();
     },
     
     renderAdd: function(update, parentElement) {
@@ -1414,11 +1442,6 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
             this._selectionRange = this._iframe.contentWindow.document.selection.createRange();
         }
-    },
-    
-    _updateIndicators: function() {
-        var style = this._getRangeStyle();
-        //Core.Debug.consoleWrite(Core.Debug.toString(style));
     }
 });
 
@@ -1496,5 +1519,84 @@ Extras.Sync.RichTextArea.TableDialog = Core.extend(
         }
         this.parent.remove(this);
         this.fireEvent({type: "tableInsert", source: this, data: data});
+    }
+});
+
+Extras.Sync.RichTextArea.ToolbarButton = Core.extend(Echo.Button, {
+
+    $load: function() {
+        Echo.ComponentFactory.registerType("Extras.RichTextToolbarButton", this);
+    },
+    
+    componentType: "Extras.RichTextToolbarButton",
+    
+    doAction: function() {
+        this.fireEvent({ source: this, type: "action", actionCommand: this.render("actionCommand") });
+    }
+});
+
+Extras.Sync.RichTextArea.ToolbarButtonPeer = Core.extend(Echo.Render.ComponentSync, {
+
+    $load: function() {
+        Echo.Render.registerPeer("Extras.RichTextToolbarButton", this);
+    },
+    
+    _div: null,
+
+    _processClick: function(e) {
+        if (!this.client || !this.client.verifyInput(this.component)) {
+            return true;
+        }
+        this.component.application.setFocusedComponent(this.component);
+        this.component.doAction();
+    },
+    
+    renderAdd: function(update, parentElement) {
+        var icon = this.component.render("icon");
+        
+        this._div = document.createElement("div");
+        
+        var foreground = this.component.render("foreground");
+        var background = this.component.render("background");
+        var border = this.component.render("border");
+        var backgroundImage = this.component.render("backgroundImage");
+        
+        if (this.component.render("pressed")) {
+            Echo.Sync.Color.render(this.component.render("pressedForeground", foreground), this._div, "color");
+            Echo.Sync.Color.render(this.component.render("presssedBackground", background), this._div, "backgroundColor");
+            Echo.Sync.Border.render(this.component.render("pressedBorder", border), this._div);
+            Echo.Sync.FillImage.render(this.component.render("pressedBackgroundImage", backgroundImage), this._div);
+        } else {
+            Echo.Sync.Color.render(foreground, this._div, "color");
+            Echo.Sync.Color.render(background, this._div, "backgroundColor");
+            Echo.Sync.Border.render(border, this._div);
+            Echo.Sync.FillImage.render(backgroundImage, this._div);
+        }
+        
+        Echo.Sync.Insets.render(this.component.render("insets"), this._div, "padding");
+        
+        if (icon) {
+            var imgElement = document.createElement("img");
+            Echo.Sync.ImageReference.renderImg(icon, imgElement);
+            this._div.appendChild(imgElement);
+        }
+        
+        Core.Web.Event.add(this._div, "click", Core.method(this, this._processClick), false);
+        
+        parentElement.appendChild(this._div);
+    },
+    
+    renderDispose: function(update) {
+        Core.Web.Event.removeAll(this._div);
+        this._div = null;
+    },
+    
+    renderUpdate: function(update) {
+        var element = this._div;
+        var containerElement = element.parentNode;
+        Echo.Render.renderComponentDispose(update, update.parent);
+        containerElement.removeChild(element);
+        this.renderAdd(update, containerElement);
+        return true;
     }
 });
