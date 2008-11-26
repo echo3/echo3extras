@@ -1265,6 +1265,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         this._renderedHtml = html;
         //FIXME always grabbing focus, this may be undesired...necessary to maintain focus though.
         this.renderFocus();
+        this.component._richTextArea.peer._updateIndicators();
     },
     
     _loadRange: function() {
