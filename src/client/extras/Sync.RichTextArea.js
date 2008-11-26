@@ -153,7 +153,8 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
          * Event handler for user request (from menu/toolbar) to set the background color.
          */
         processSetBackground: function(e) {
-            var colorDialog = new Extras.Sync.RichTextArea.ColorDialog(this.component, true, e.source.get("color"));
+            var colorDialog = new Extras.Sync.RichTextArea.ColorDialog(this.component, true,
+                    this._toolbarButtons.background.get("color"));
             colorDialog.addListener("colorSelect", Core.method(this, function(e) {
                 if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
                     Core.Web.Scheduler.run(Core.method(this, function() {
@@ -162,6 +163,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
                 } else {
                     this.execCommand("hilitecolor", e.data);
                 }
+                this._toolbarButtons.background.set("color", e.data);
                 this.focusDocument();
             }));
             this._openDialog(colorDialog);
@@ -171,9 +173,11 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
          * Event handler for user request (from menu/toolbar) to set the foreground color.
          */
         processSetForeground: function(e) {
-            var colorDialog = new Extras.Sync.RichTextArea.ColorDialog(this.component, false, e.source.get("color"));
+            var colorDialog = new Extras.Sync.RichTextArea.ColorDialog(this.component, false,
+                    this._toolbarButtons.foreground.get("color"));
             colorDialog.addListener("colorSelect", Core.method(this, function(e) {
                 this.execCommand("forecolor", e.data);
+                this._toolbarButtons.foreground.set("color", e.data);
                 this.focusDocument();
             }));
             this._openDialog(colorDialog);
