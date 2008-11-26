@@ -153,7 +153,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
          * Event handler for user request (from menu/toolbar) to set the background color.
          */
         processSetBackground: function(e) {
-            var colorDialog = new Extras.Sync.RichTextArea.ColorDialog(this.component, true);
+            var colorDialog = new Extras.Sync.RichTextArea.ColorDialog(this.component, true, e.source.get("color"));
             colorDialog.addListener("colorSelect", Core.method(this, function(e) {
                 if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
                     Core.Web.Scheduler.run(Core.method(this, function() {
@@ -171,7 +171,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
          * Event handler for user request (from menu/toolbar) to set the foreground color.
          */
         processSetForeground: function(e) {
-            var colorDialog = new Extras.Sync.RichTextArea.ColorDialog(this.component, false);
+            var colorDialog = new Extras.Sync.RichTextArea.ColorDialog(this.component, false, e.source.get("color"));
             colorDialog.addListener("colorSelect", Core.method(this, function(e) {
                 this.execCommand("forecolor", e.data);
                 this.focusDocument();
@@ -475,11 +475,11 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
             row = new Echo.Row();
             if (features.foreground) {
                 row.add(this._createToolbarButton("FG", this._icons.foreground, this._msg["Menu.SetForeground"], 
-                        this.processSetForeground));
+                        this.processSetForeground, "foreground"));
             }
             if (features.background) {
                 row.add(this._createToolbarButton("BG", this._icons.background, this._msg["Menu.SetBackground"], 
-                        this.processSetBackground));
+                        this.processSetBackground, "background"));
             }
             controlsRow.add(row);
         }
@@ -740,6 +740,12 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         if (this._toolbarButtons.underline) {
             this._toolbarButtons.underline.set("pressed", style.underline);
         }
+        if (this._toolbarButtons.foreground) {
+            this._toolbarButtons.foreground.set("color", style.foreground || "#000000");
+        }
+        if (this._toolbarButtons.background) {
+            this._toolbarButtons.background.set("color", style.background || "#ffffff");
+        }
     }
 });
 
@@ -870,7 +876,7 @@ Extras.Sync.RichTextArea.ColorDialog = Core.extend(Extras.Sync.RichTextArea.Abst
         ]
     },
     
-    $construct: function(richTextArea, setBackground) {
+    $construct: function(richTextArea, setBackground, initialColor) {
         Extras.Sync.RichTextArea.AbstractDialog.call(this, richTextArea,
                 Extras.Sync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL, 
                 {
@@ -891,6 +897,7 @@ Extras.Sync.RichTextArea.ColorDialog = Core.extend(Extras.Sync.RichTextArea.Abst
                                             setBackground ? "ColorDialog.PromptBackground" : "ColorDialog.PromptForeground"]
                                 }),
                                 this._colorSelect = new Extras.ColorSelect({
+                                    color: initialColor,
                                     displayValue: true
                                 })
                             ]
@@ -1592,8 +1599,12 @@ Extras.Sync.RichTextArea.ToolbarButtonPeer = Core.extend(Echo.Render.ComponentSy
         var icon = this.component.render("icon");
         
         this._div = document.createElement("div");
+        this._div.style.cssText = "position:relative;";
         
         this._renderButtonState(false);
+        if (this.component.render("color")) {
+            this._renderColor();
+        }
         
         Echo.Sync.Insets.render(this.component.render("insets"), this._div, "padding");
         
@@ -1637,9 +1648,23 @@ Extras.Sync.RichTextArea.ToolbarButtonPeer = Core.extend(Echo.Render.ComponentSy
         Echo.Sync.FillImage.renderClear(backgroundImage, this._div);
     },
     
+    _renderColor: function() {
+        var color = this.component.render("color");
+        if (!this._colorDiv) {
+            this._colorDiv = document.createElement("div");
+            this._colorDiv.style.cssText = "position:absolute;bottom:0;left:0;right:0;height:5px;line-height:0px;font-size:1px;";
+            if (Core.Web.Env.BROWSER_INTERNET_EXPLORER && Core.Web.Env.BROWSER_MAJOR_VERSION === 6) {
+                this._colorDiv.style.width = "16px";
+            }
+            this._colorDiv.style.backgroundColor = color || "#ffffff";
+            this._div.appendChild(this._colorDiv);
+        }
+    },
+    
     renderDispose: function(update) {
         Core.Web.Event.removeAll(this._div);
         this._div = null;
+        this._colorDiv = null;
     },
     
     renderUpdate: function(update) {
