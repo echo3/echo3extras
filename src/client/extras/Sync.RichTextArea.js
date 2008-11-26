@@ -1577,27 +1577,23 @@ Extras.Sync.RichTextArea.ToolbarButtonPeer = Core.extend(Echo.Render.ComponentSy
         this.component.doAction();
     },
     
+    _processRolloverEnter: function(e) {
+        if (!this.client || !this.client.verifyInput(this.component)) {
+            return true;
+        }
+        this._renderButtonState(true);
+    },
+
+    _processRolloverExit: function(e) {
+        this._renderButtonState(false);
+    },
+
     renderAdd: function(update, parentElement) {
         var icon = this.component.render("icon");
         
         this._div = document.createElement("div");
         
-        var foreground = this.component.render("foreground");
-        var background = this.component.render("background");
-        var border = this.component.render("border");
-        var backgroundImage = this.component.render("backgroundImage");
-        
-        if (this.component.render("pressed")) {
-            Echo.Sync.Color.render(this.component.render("pressedForeground", foreground), this._div, "color");
-            Echo.Sync.Color.render(this.component.render("presssedBackground", background), this._div, "backgroundColor");
-            Echo.Sync.Border.render(this.component.render("pressedBorder", border), this._div);
-            Echo.Sync.FillImage.render(this.component.render("pressedBackgroundImage", backgroundImage), this._div);
-        } else {
-            Echo.Sync.Color.render(foreground, this._div, "color");
-            Echo.Sync.Color.render(background, this._div, "backgroundColor");
-            Echo.Sync.Border.render(border, this._div);
-            Echo.Sync.FillImage.render(backgroundImage, this._div);
-        }
+        this._renderButtonState(false);
         
         Echo.Sync.Insets.render(this.component.render("insets"), this._div, "padding");
         
@@ -1608,8 +1604,37 @@ Extras.Sync.RichTextArea.ToolbarButtonPeer = Core.extend(Echo.Render.ComponentSy
         }
         
         Core.Web.Event.add(this._div, "click", Core.method(this, this._processClick), false);
+        Core.Web.Event.add(this._div, "mouseover", Core.method(this, this._processRolloverEnter), false);
+        Core.Web.Event.add(this._div, "mouseout", Core.method(this, this._processRolloverExit), false);
         
         parentElement.appendChild(this._div);
+    },
+       
+    _renderButtonState: function(rolloverState) {
+        var foreground = this.component.render("foreground");
+        var background = this.component.render("background");
+        var border = this.component.render("border");
+        var backgroundImage = this.component.render("backgroundImage");
+        
+        // Apply pressed effect.
+        if (this.component.render("pressed")) {
+            foreground = this.component.render("pressedForeground", foreground);
+            background = this.component.render("presssedBackground", background);
+            border = this.component.render("pressedBorder", border);
+            backgroundImage = this.component.render("pressedBackgroundImage", backgroundImage)
+        }
+        
+        // Apply rollover effect.
+        if (rolloverState) {
+            foreground = this.component.render("rolloverForeground", foreground);
+            background = this.component.render("rolloverBackground", background);
+            backgroundImage = this.component.render("rolloverBackgroundImage", backgroundImage)
+        }
+                        
+        Echo.Sync.Color.renderClear(foreground, this._div, "color");
+        Echo.Sync.Color.renderClear(background, this._div, "backgroundColor");
+        Echo.Sync.Border.renderClear(border, this._div);
+        Echo.Sync.FillImage.renderClear(backgroundImage, this._div);
     },
     
     renderDispose: function(update) {
