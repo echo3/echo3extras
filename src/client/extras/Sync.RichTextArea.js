@@ -197,6 +197,8 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
     
     _toolbarButtons: null,
     
+    _styleSelect: null,
+    
     $construct: function() {
         this._processComponentInsertHtmlRef = Core.method(this, this._processComponentInsertHtml);
         this._processDialogCloseRef = Core.method(this, this._processDialogClose);
@@ -412,6 +414,30 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
             cellSpacing: 10,
             insets: 2
         });
+        
+        // Style Dropdown.
+        if (features.paragraphStyle) {
+            var actionListener = Core.method(this, function(e) {
+                var style = this._styleSelect.get("selectedId");
+                this._richTextInput.peer.execCommand("formatblock", "<" + style + ">");
+            });
+            this._styleSelect = new Echo.SelectField({
+                items: [
+                    { id: "p", text: this._msg["Menu.Normal"] },
+                    { id: "pre", text: this._msg["Menu.Preformatted"] },
+                    { id: "h1", text: this._msg["Menu.Heading1"] },
+                    { id: "h2", text: this._msg["Menu.Heading2"] },
+                    { id: "h3", text: this._msg["Menu.Heading3"] },
+                    { id: "h4", text: this._msg["Menu.Heading4"] },
+                    { id: "h5", text: this._msg["Menu.Heading5"] },
+                    { id: "h6", text: this._msg["Menu.Heading6"] }
+                ],
+                events: {
+                    action: actionListener
+                }
+            });
+            controlsRow.add(this._styleSelect);
+        }
 
         // Undo/Redo Tools
         if (features.undo) {
@@ -749,6 +775,9 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         }
         if (this._toolbarButtons.background) {
             this._toolbarButtons.background.set("color", style.background || "#ffffff");
+        }
+        if (this._styleSelect) {
+            this._styleSelect.set("selectedId", style.paragraphStyle);
         }
     }
 });
@@ -1190,6 +1219,11 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
                     break;
                 case "u":
                     style.underline = true;
+                    break;
+                case "h1": case "h2": case "h3": case "h4": case "h5": case "h6": case "p": case "pre":
+                    if (!style.paragraphStyle) {
+                        style.paragraphStyle = node.nodeName.toLowerCase();
+                    }
                     break;
                 }
             
