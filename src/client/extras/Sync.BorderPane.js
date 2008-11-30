@@ -115,8 +115,7 @@ Extras.Sync.BorderPane = Core.extend(Echo.Render.ComponentSync, {
         this._content = document.createElement("div");
         this._content.style.cssText = "position:absolute;z-index:2;overflow:auto;";
         
-        Echo.Sync.Color.renderFB(this.component, this._content);
-        Echo.Sync.Font.render(this.component.render("font"), this._content);
+        Echo.Sync.renderComponentDefaults(this.component, this._content);
     
         var border = this.component.render("border", Extras.BorderPane.DEFAULT_BORDER);
         var contentInsets = Echo.Sync.Insets.toPixels(border.contentInsets);

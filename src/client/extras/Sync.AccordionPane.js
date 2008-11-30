@@ -36,8 +36,7 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
         this._div = document.createElement("div");
         this._div.id = this.component.renderId;
         this._div.style.cssText = "position:absolute;width:100%;height:100%;";
-        Echo.Sync.Color.renderFB(this.component, this._div);
-        Echo.Sync.Font.render(this.component.render("font"), this._div);
+        Echo.Sync.renderComponentDefaults(this.component, this._div);
         
         var componentCount = this.component.getComponentCount();
         for (var i = 0; i < componentCount; ++i) {
