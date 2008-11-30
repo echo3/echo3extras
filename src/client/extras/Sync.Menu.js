@@ -364,6 +364,7 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
         menuContentDiv.style.cssText = "position:relative;z-index:10;";
         this.element.appendChild(menuContentDiv);
 
+        Echo.Sync.LayoutDirection.render(this.component.getLayoutDirection(), menuContentDiv);
         Echo.Sync.Insets.render(Extras.Sync.Menu.RenderedMenu.defaultMenuInsets, 
                 menuContentDiv, "padding");
         Echo.Sync.Border.render(this.component.render("menuBorder", Extras.Sync.Menu.DEFAULT_BORDER),
@@ -835,12 +836,12 @@ Extras.Sync.DropDownMenu = Core.extend(Extras.Sync.Menu, {
         dropDownDiv.id = this.component.renderId;
         dropDownDiv.style.cssText = "overflow:hidden;cursor:pointer;";
         
+        Echo.Sync.LayoutDirection.render(this.component.getLayoutDirection(), dropDownDiv);
         Echo.Sync.Color.render(this.component.render("foreground", Extras.Sync.Menu.DEFAULT_FOREGROUND), dropDownDiv, "color");
         Echo.Sync.Color.render(this.component.render("background", Extras.Sync.Menu.DEFAULT_BACKGROUND), 
                 dropDownDiv, "backgroundColor");
         Echo.Sync.FillImage.render(this.component.render("backgroundImage"), dropDownDiv); 
         Echo.Sync.Border.render(this.component.render("border", Extras.Sync.Menu.DEFAULT_BORDER), dropDownDiv); 
-        Echo.Sync.Color.render(this.component.render("foreground", Extras.Sync.Menu.DEFAULT_FOREGROUND), dropDownDiv, "color");
         
         var relativeDiv = document.createElement("div");
         relativeDiv.style.cssText = "position:relative;overflow:hidden;"
@@ -1065,13 +1066,12 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
         menuBarDiv.id = this.component.renderId;
         menuBarDiv.style.cssText = "overflow:hidden;";
         
-        Echo.Sync.Color.renderFB(this.component, menuBarDiv);
+        Echo.Sync.renderComponentDefaults(this.component, menuBarDiv);
         var border = this.component.render("border", Extras.Sync.Menu.DEFAULT_BORDER);
         this._menuBarBorderHeight = Echo.Sync.Border.getPixelSize(border, "top") + Echo.Sync.Border.getPixelSize(border, "bottom"); 
         Echo.Sync.Border.render(border, menuBarDiv, "borderTop");
         Echo.Sync.Border.render(border, menuBarDiv, "borderBottom");
         Echo.Sync.FillImage.render(this.component.render("backgroundImage"), menuBarDiv); 
-        Echo.Sync.Font.render(this.component.render("font"), menuBarDiv, null);
         
         this._menuBarTable = document.createElement("table");
         this._menuBarTable.style.borderCollapse = "collapse";
