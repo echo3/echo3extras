@@ -491,6 +491,8 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         this._div = document.createElement("div");
         this._div.id = this.component.renderId;
         this._div.style.cssText = "width:" + (this._cellWidth * this._xSize) + "px;";
+        
+        Echo.Sync.LayoutDirection.render(this.component.getLayoutDirection(), this._div);
         Echo.Sync.Font.render(this._font, this._div);
         Echo.Sync.Color.render(this.component.render("foreground", Extras.Sync.CalendarSelect.DEFAULT_FOREGROUND), this._div,
                 "color");
