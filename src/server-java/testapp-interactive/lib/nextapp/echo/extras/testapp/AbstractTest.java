@@ -44,6 +44,7 @@ import nextapp.echo.app.Font;
 import nextapp.echo.app.ImageReference;
 import nextapp.echo.app.Insets;
 import nextapp.echo.app.Label;
+import nextapp.echo.app.LayoutDirection;
 import nextapp.echo.app.Row;
 import nextapp.echo.app.SplitPane;
 import nextapp.echo.app.event.ActionEvent;
@@ -355,6 +356,24 @@ public class AbstractTest extends SplitPane {
         testControlsPane.addButton(TestControlPane.CATEGORY_INTEGRATION, "Set Locale ARABIC (RTL)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 testComponent.setLocale(new Locale("ar"));
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_INTEGRATION, "Set Layout Direction Null", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testComponent.setLayoutDirection(null);
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_INTEGRATION, "Set Layout Direction LTR", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testComponent.setLayoutDirection(LayoutDirection.LTR);
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_INTEGRATION, "Set Layout Direction RTL", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testComponent.setLayoutDirection(LayoutDirection.RTL);
             }
         });
     }
