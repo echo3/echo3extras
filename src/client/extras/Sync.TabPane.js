@@ -330,7 +330,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         this._contentContainerDiv = document.createElement("div");
         this._contentContainerDiv.style.position = "absolute";
         this._contentContainerDiv.style.overflow = "hidden";
-        Echo.Sync.Color.renderFB(this.component, this._contentContainerDiv);
+        Echo.Sync.renderComponentDefaults(this.component, this._contentContainerDiv);
         
         // Render Tabs
         var activeTabFound = false;
