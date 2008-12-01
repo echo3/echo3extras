@@ -346,6 +346,12 @@ public class AbstractTest extends SplitPane {
             }
         });
 
+        testControlsPane.addButton(TestControlPane.CATEGORY_INTEGRATION, "Set Locale GERMANY (LTR)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testComponent.setLocale(Locale.GERMANY);
+            }
+        });
+
         testControlsPane.addButton(TestControlPane.CATEGORY_INTEGRATION, "Set Locale ARABIC (RTL)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 testComponent.setLocale(new Locale("ar"));
