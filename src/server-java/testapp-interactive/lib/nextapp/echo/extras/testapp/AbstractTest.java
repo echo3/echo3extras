@@ -31,6 +31,7 @@ package nextapp.echo.extras.testapp;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Locale;
 
 import nextapp.echo.app.Alignment;
 import nextapp.echo.app.Border;
@@ -330,6 +331,24 @@ public class AbstractTest extends SplitPane {
         testControlsPane.addButton(TestControlPane.CATEGORY_INTEGRATION, "Disable Component", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 testComponent.setEnabled(false);
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_INTEGRATION, "Set Locale Null", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testComponent.setEnabled(true);
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_INTEGRATION, "Set Locale ENGLISH (LTR)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testComponent.setLocale(Locale.ENGLISH);
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_INTEGRATION, "Set Locale ARABIC (RTL)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testComponent.setLocale(new Locale("ar"));
             }
         });
     }
