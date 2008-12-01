@@ -47,6 +47,7 @@ Extras.Sync.Group = Core.extend(Echo.Render.ComponentSync, {
         this._div = document.createElement("div");
         this._div.id = this.component.renderId;
         Echo.Sync.Color.render(this.component.render("foreground"), this._div, "color");
+        Echo.Sync.LayoutDirection.render(this.component.getLayoutDirection(), this._div);
     
         var content = this._renderContent();
         var borderParts = this._renderBorder(content);
