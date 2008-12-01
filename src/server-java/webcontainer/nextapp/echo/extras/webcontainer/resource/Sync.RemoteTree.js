@@ -1052,7 +1052,7 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
         }
         
         // Hack to make sure FF renders the whole table after expanding / collapsing a node
-        if (Core.Web.Env.BROWSER_FIREFOX && Core.Web.Env.BROWSER_MAJOR_VERSION == 3 && Core.Web.Env.BROWSER_MINOR_VERSION === 0) {
+        if (Core.Web.Env.BROWSER_FIREFOX && Core.Web.Env.BROWSER_VERSION_MAJOR == 3 && Core.Web.Env.BROWSER_MINOR_VERSION === 0) {
 			var elem = this._buggerTBody;
 	        var oldDisplay = elem.style.display;
 	        elem.style.display = "";

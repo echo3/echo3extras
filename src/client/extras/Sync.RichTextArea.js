@@ -1692,7 +1692,7 @@ Extras.Sync.RichTextArea.ToolbarButtonPeer = Core.extend(Echo.Render.ComponentSy
         if (!this._colorDiv) {
             this._colorDiv = document.createElement("div");
             this._colorDiv.style.cssText = "position:absolute;bottom:0;left:0;right:0;height:5px;line-height:0px;font-size:1px;";
-            if (Core.Web.Env.BROWSER_INTERNET_EXPLORER && Core.Web.Env.BROWSER_MAJOR_VERSION === 6) {
+            if (Core.Web.Env.BROWSER_INTERNET_EXPLORER && Core.Web.Env.BROWSER_VERSION_MAJOR === 6) {
                 this._colorDiv.style.width = "16px";
             }
             this._colorDiv.style.backgroundColor = color || "#ffffff";
