@@ -1261,8 +1261,9 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
                 node: textRange.parentElement()
             };
         } else {
+            var selection = this._iframe.contentWindow.getSelection();
             return {
-                node: this._iframe.contentWindow.getSelection().anchorNode
+                node: selection ? selection.anchorNode : null
             }
         }
     },
