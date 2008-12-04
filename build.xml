@@ -79,6 +79,39 @@
         <mkdir dir="${dir.dist.lib}"/>
         <jar jarfile="${dir.dist.lib}/${jarfile.extras.app}" basedir="${dir.build.server-java.app}"/>
     </target>
+    
+    <target name="test.compile.app" depends="dist.app">
+        <mkdir dir="${dir.build.server-java.app-test}"/>
+        <javac srcdir="${dir.src.server-java.app-test}" destdir="${dir.build.server-java.app-test}" 
+            debug="${debug}" deprecation="yes" source="${ant.build.javac.source}" target="${ant.build.javac.target}">
+            <classpath>
+                <pathelement path="${echo3.app.lib.jar}"/>
+                <pathelement path="${dir.dist.lib}/${jarfile.echo.app}"/>
+            </classpath>
+        </javac>
+        <copy todir="${dir.build.server-java.app-test}">
+            <fileset dir="${dir.src.server-java.app-test}">
+                <patternset refid="fileset.resources"/>
+            </fileset>
+        </copy>
+    </target>
+    
+    <target name="test.app" depends="test.compile.app" description="Test Echo Extras app Framework">
+        <mkdir dir="${dir.testoutput.app-test}"/>
+        <junit printsummary="yes" haltonfailure="no">
+            <classpath>
+                <pathelement path="${echo3.app.lib.jar}"/>
+                <pathelement path="${dir.build.server-java.app-test}"/>
+                <pathelement path="${dir.dist.lib}/${jarfile.echo.app}"/>
+            </classpath>
+            <formatter type="plain"/>
+            <batchtest fork="yes" todir="${dir.testoutput.app-test}">
+                <fileset dir="${dir.src.server-java.app-test}">
+                    <include name="**/*Test*.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
 
     <target name="checkenv">
         <available property="servlet.api.available" classname="javax.servlet.http.HttpServlet">
@@ -128,6 +161,8 @@
     </target>
         
     <target name="dist" depends="clean, dist.app, dist.webcontainer"/>
+    
+    <target name="test" depends="test.app"/>
     
     <target name="compile.testapp" depends="dist">
         <mkdir dir="${dir.build.server-java.testapp}/WEB-INF/classes"/>
@@ -247,7 +282,7 @@
     <target name="doc" 
             depends="doc.app, doc.app.private, doc.webcontainer, doc.webcontainer.private"/>
     
-    <target name="release" depends="clean, dist, dist.testapp, doc.public">
+    <target name="release" depends="clean, test, dist, dist.testapp, doc.public">
         <mkdir dir="${dir.build.server-java.release.root}"/>
         <mkdir dir="${dir.build.server-java.release.root}/SourceCode"/>
            <mkdir dir="${dir.build.server-java.release.root}/SourceCode/src"/>

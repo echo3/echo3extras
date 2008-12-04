@@ -66,20 +66,23 @@ public class DefaultTreeSelectionModel implements TreeSelectionModel {
         if (path == null) {
             return;
         }
-        if (paths.add(path)) {
-            fireValueChanged();
-        }
+        addSelectionPaths(new TreePath[] {path});
     }
 
     /**
      * @see nextapp.echo.extras.app.tree.TreeSelectionModel#addSelectionPaths(nextapp.echo.extras.app.tree.TreePath[])
      */
     public void addSelectionPaths(TreePath[] paths) {
-        if (paths == null) {
+        if (paths == null || paths.length == 0) {
             return;
         }
-        if (this.paths.addAll(Arrays.asList(paths))) {
-            fireValueChanged();
+        if (SINGLE_SELECTION == getSelectionMode()) {
+            this.paths.clear();
+            this.paths.add(paths[0]);
+        } else {
+            if (this.paths.addAll(Arrays.asList(paths))) {
+                fireValueChanged();
+            }
         }
     }
 
