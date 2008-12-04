@@ -480,5 +480,12 @@ public class TreeTest extends AbstractTest {
                 });
             }
         });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_INTEGRATION, "Re-add tree", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                pane.remove(tree);
+                pane.add(tree);
+            }
+        });
     }
 }
