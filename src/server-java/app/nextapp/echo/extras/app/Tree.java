@@ -35,6 +35,8 @@ import java.util.ArrayList;
 import java.util.EventListener;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -528,11 +530,11 @@ public class Tree extends Component {
      * Collapse all nodes in the tree.
      */
     public void collapseAll() {
-        Object root = model.getRoot();
-        if (root == null) {
-            return;
+        List collapseList = new LinkedList(expandedPaths);
+        for (Iterator it = collapseList.iterator(); it.hasNext();) {
+            TreePath path = (TreePath)it.next();
+            setExpandedState(path, false);
         }
-        collapseAll(new TreePath(root));
     }
     
     /**
@@ -541,11 +543,12 @@ public class Tree extends Component {
      * @param path the path to collapse
      */
     protected void collapseAll(TreePath path) {
-        setExpandedState(path, false);
-        Object value = path.getLastPathComponent();
-        int childCount = model.getChildCount(value);
-        for (int i = 0; i < childCount; ++i) {
-            collapseAll(path.pathByAddingChild(model.getChild(value, i)));
+        List collapseList = new LinkedList(expandedPaths);
+        for (Iterator it = collapseList.iterator(); it.hasNext();) {
+            TreePath expandedPath = (TreePath)it.next();
+            if (path.isDescendant(expandedPath)) {
+                setExpandedState(expandedPath, false);
+            }
         }
     }
 
@@ -1275,7 +1278,7 @@ public class Tree extends Component {
     }
 
     /**
-     * Sets the <code>TreeModel</code> begin visualized.
+     * Sets the <code>TreeModel</code> being visualized.
      * <p>
      * If the root node is not null, it will be expanded automatically.
      * 
@@ -1294,6 +1297,8 @@ public class Tree extends Component {
         }
         newValue.addTreeModelListener(modelListener);
         model = newValue;
+        
+        expandedPaths.clear();
         
         if (isAutoCreateColumnsFromModel()) {
             createDefaultColumnsFromModel();

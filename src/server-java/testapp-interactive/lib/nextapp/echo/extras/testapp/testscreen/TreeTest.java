@@ -121,6 +121,45 @@ public class TreeTest extends AbstractTest {
         }
     }
     
+    private static TreeModel generateTenLevelsOneNodeTreeModel() {
+        return new AbstractTreeModel() {
+            
+            public Object getChild(Object parent, int index) {
+                if (((Integer)parent).intValue() >= 10) {
+                    return null;
+                }
+                return new Integer(((Integer)parent).intValue() + 1);
+            }
+            
+            public int getChildCount(Object parent) {
+                if (((Integer)parent).intValue() >= 10) {
+                    return 0;
+                }
+                return 1;
+            }
+            
+            public int getColumnCount() {
+                return 1;
+            }
+            
+            public int getIndexOfChild(Object parent, Object child) {
+                return 0;
+            }
+            
+            public Object getRoot() {
+                return new Integer(0);
+            }
+            
+            public Object getValueAt(Object node, int column) {
+                return node;
+            }
+            
+            public boolean isLeaf(Object object) {
+                return false;
+            }
+        };
+    }
+    
     private static TreeModel generateSimpleTreeTableModel() {
         return new AbstractTreeModel() {
 
@@ -378,6 +417,13 @@ public class TreeTest extends AbstractTest {
         testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Simle treetable model with long node values", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tree.setModel(generateSimpleTreeTableModelWithLongNodeValues());
+                tree.setHeaderVisible(false);
+            }
+        });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Tree model (always one child, max 10 levels deep)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tree.setModel(generateTenLevelsOneNodeTreeModel());
                 tree.setHeaderVisible(false);
             }
         });

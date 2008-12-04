@@ -198,9 +198,11 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
             
             /**
              * Advance to the next row. If node is provided rows will be skipped until the row is 
-             * found that node is rendered to.
+             * found that node is rendered to. If no row is found for the node, null is returned,
+             * and the cursor is reset to its current state.
              */
             nextRow : function(node) {
+                var cursor = this.rowElement;
                 var result = this._nextRow();
                 if (!node) {
                     return result;
@@ -208,6 +210,9 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
                 var id = component.renderId + "_tr_" + node.getId();
                 while (result && result.id != id) {
                     result = this._nextRow();
+                }
+                if (!result && node) {
+                    this.rowElement = cursor;
                 }
                 return result;
             },
@@ -294,7 +299,12 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
             endRow = this._getRowElementForNode(nodeSibling);
         }
         var iterator = this._elementIterator(rowElement, endRow);
-        this._renderNodeRecursive(update, node, iterator, nodeDepth, insertBefore);
+        var visible = true;
+        var parentNode = this._treeStructure.getNode(node.getParentId())
+        if (parentNode) {
+        	visible = parentNode.isExpanded();
+        }
+        this._renderNodeRecursive(update, node, iterator, nodeDepth, insertBefore, visible);
     },
     
     _renderNodeRecursive: function(update, node, iterator, depth, insertBefore, visible) {
@@ -348,8 +358,14 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
         // render child nodes
         var expanded = node.isExpanded();    
         var childCount = node.getChildNodeCount();
+        insertBefore = trElement.nextSibling;
         for (var i = 0; i < childCount; ++i) {
             var childNode = node.getChildNode(i);
+            if (insertBefore) {
+            	if (insertBefore.id == (this.component.renderId + "_tr_" + childNode.getId())) {
+            		insertBefore = insertBefore.nextSibling;
+            	}
+            }
             if (expanded || !rendered) {
                 this._renderNodeRecursive(update, childNode, iterator, depth + 1, insertBefore, expanded);
             } else {
@@ -1063,6 +1079,9 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
         // hack ends here
         
         var rowIndex = this._getRowIndexForNode(node);
+        // make sure the property is sent to the server, it might be better to use an action for this
+        // but we also want to send a selection of the just expanded node.
+        this.component.set("expansion", -1);
         this.component.set("expansion", rowIndex);
         return true;
     },
