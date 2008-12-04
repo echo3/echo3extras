@@ -10,6 +10,18 @@ Extras.RemoteTree = Core.extend(Echo.Component, {
 
     componentType: "Extras.RemoteTree",
     
+    /**
+     * Holds the tree structure. Since a tree structure is always only partially sent down from the server
+     * we cannot use the local style because that will be overwritten and sent back to the server.
+     */
+    treeStructure: null,
+    
+    $construct: function(properties) {
+        Core.Debug.consoleWrite("construct tree component");
+        Echo.Component.call(this, properties);
+        this.treeStructure = null;
+    },
+    
     doAction: function() {
         this.fireEvent({type: "action", source: this});
     }

@@ -102,17 +102,22 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
         tableElement.appendChild(this._buggerTBody);
         //--
         
-        if (!this._treeStructure) {
-            this._treeStructure = this.component.get("treeStructure")[0];
+        Core.Debug.consoleWrite("component type: " + this.component.componentType);
+        if (this.component.treeStructure) {
+            // structure already set on component, local style property can only contain update
+            this._mergeTreeStructureUpdate(this.component.get("treeStructure"));
+        } else {
+            // initial render
+            this.component.treeStructure = this.component.get("treeStructure")[0];
         }
         this.columnCount = this.component.get("columnCount");
         
         this._renderColumnWidths();
         
         if (this._headerVisible) {
-            this._renderNode(update, this._treeStructure.getHeaderNode());
+            this._renderNode(update, this.component.treeStructure.getHeaderNode());
         }
-        var rootNode = this._treeStructure.getRootNode();
+        var rootNode = this.component.treeStructure.getRootNode();
         this._renderNode(update, rootNode);
         
         parentElement.appendChild(tableElement);
@@ -286,21 +291,21 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
     
     _renderNode: function(update, node) {
         var rowElement = this._getRowElementForNode(node);
-        var nodeDepth = this._treeStructure.getNodeDepth(node);
+        var nodeDepth = this.component.treeStructure.getNodeDepth(node);
         
         var insertBefore = null;
         if (rowElement) {
             insertBefore = rowElement.nextSibling;
         }
     
-        var nodeSibling = this._treeStructure.getNodeNextSibling(node, true);
+        var nodeSibling = this.component.treeStructure.getNodeNextSibling(node, true);
         var endRow = null;
         if (nodeSibling) {
             endRow = this._getRowElementForNode(nodeSibling);
         }
         var iterator = this._elementIterator(rowElement, endRow);
         var visible = true;
-        var parentNode = this._treeStructure.getNode(node.getParentId())
+        var parentNode = this.component.treeStructure.getNode(node.getParentId())
         if (parentNode) {
         	visible = parentNode.isExpanded();
         }
@@ -311,7 +316,7 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
         if (visible == null) {
             visible = true;
         }
-        if (!this._rootVisible && node == this._treeStructure.getRootNode()) {
+        if (!this._rootVisible && node == this.component.treeStructure.getRootNode()) {
             visible = false;
         }
         var trElement = iterator.nextRow(node);
@@ -389,7 +394,7 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
     _getToggleIcon: function(node) {
         var imageSuffix = this._getIconLineStyleSuffix();
         var bottom = "";
-        if (this._showLines && !this._treeStructure.hasNodeNextSibling(node)) {
+        if (this._showLines && !this.component.treeStructure.hasNodeNextSibling(node)) {
             bottom = "Bottom";
         }
         if (node.isExpanded()) {
@@ -402,7 +407,7 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
     _getJoinIcon: function(node) {
         var imageSuffix = this._getIconLineStyleSuffix();
         var bottom = "";
-        if (!this._treeStructure.hasNodeNextSibling(node)) {
+        if (!this.component.treeStructure.hasNodeNextSibling(node)) {
             bottom = "Bottom";
         }
         return this.component.render("lineJoin" + bottom + "Icon", this._imageSet["join" + bottom]);
@@ -498,7 +503,7 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
     _renderNodeRowStructure: function(insertBefore, node, depth) {
         var img;
         
-        var isHeader = node == this._treeStructure.getHeaderNode();
+        var isHeader = node == this.component.treeStructure.getHeaderNode();
         var trElement = document.createElement("tr");
         trElement.id = this.component.renderId + "_tr_" + node.getId();
         trElement.style.cursor = isHeader || !this._selectionEnabled ? "default" : "pointer";
@@ -512,10 +517,10 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
         nodeTable.appendChild(document.createElement("tbody"));
         var nodeRowElement = document.createElement("tr");
         
-        if (!this._rootVisible || (!this._showsRootHandle && node != this._treeStructure.getRootNode())) {
+        if (!this._rootVisible || (!this._showsRootHandle && node != this.component.treeStructure.getRootNode())) {
             --depth;
         }
-        var parentNode = this._treeStructure.getNode(node.getParentId());
+        var parentNode = this.component.treeStructure.getNode(node.getParentId());
         for (var c = 0; c < depth - 1; ++c) {
             var rowHeaderElement = document.createElement("td");
             rowHeaderElement.id = "tree_" + node.getId() + "_" + c;
@@ -528,17 +533,17 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
             rowHeaderElement.appendChild(img);
     
             if (parentNode) {
-                if (this._showLines && this._treeStructure.hasNodeNextSibling(parentNode) && this._imageSet.vertical) {
+                if (this._showLines && this.component.treeStructure.hasNodeNextSibling(parentNode) && this._imageSet.vertical) {
                     var verticalLineFillImage = { url: this._imageSet.vertical, repeat: "no-repeat", x: "50%", y: 0 };
                     Echo.Sync.FillImage.render(verticalLineFillImage, rowHeaderElement);
                 }
-                parentNode = this._treeStructure.getNode(parentNode.getParentId());
+                parentNode = this.component.treeStructure.getNode(parentNode.getParentId());
             }
             nodeRowElement.insertBefore(rowHeaderElement, nodeRowElement.firstChild);
         }
         
         var expandoElement;
-        if (!isHeader && !(!this._showsRootHandle && node == this._treeStructure.getRootNode())) {
+        if (!isHeader && !(!this._showsRootHandle && node == this.component.treeStructure.getRootNode())) {
             expandoElement = document.createElement("td");
             expandoElement.id = "tree_" + node.getId() + "_expando";
             expandoElement.__ExtrasTreeCellType = "expando";
@@ -892,7 +897,7 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
             if (selectedIds[i] === "") {
                 continue;
             }
-            var node = this._treeStructure.getNode(selectedIds[i]);
+            var node = this.component.treeStructure.getNode(selectedIds[i]);
             this._setSelectionState(node, true);
         }
     },
@@ -933,7 +938,7 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
         } else {
             nodeId = id.substring(id.indexOf("_tr_") + 4);
         }
-        return this._treeStructure.getNode(nodeId);
+        return this.component.treeStructure.getNode(nodeId);
     },
     
     /**
@@ -1062,6 +1067,7 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
             // no other peers will be called, so update may be null
             this._renderNode(null, node);
         } else if (node.getChildNodeCount() > 0) {
+            // we already have the children of this node, expand and render direct
             node.setExpanded(true);
             // no other peers will be called, so update may be null
             this._renderNode(null, node);
@@ -1115,7 +1121,7 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
                 endNode = this.lastSelectedNode;
             }
             
-            var iterator = this._treeStructure.iterator(startNode, false, endNode);
+            var iterator = this.component.treeStructure.iterator(startNode, false, endNode);
             var i = lastSelectedIndex < rowIndex ? lastSelectedIndex : rowIndex;
             trElement = this._getRowElementForNode(startNode);
             while (iterator.hasNext()) {
@@ -1199,7 +1205,7 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
         }
         this._effectBorderRows = null;
         this._prevMaxDepth = null;
-        this._treeStructure = null;
+        //this.component.treeStructure = null;
         this._tbodyElement = null;
         this._element = null;
     },
@@ -1240,31 +1246,37 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
         
         var element = this._element;
         var containerElement = element.parentNode;
-        var treeStructure = this._treeStructure;
         Echo.Render.renderComponentDispose(update, update.parent);
-        if (!fullStructure) {
-            this._treeStructure = treeStructure;
-        }
         containerElement.removeChild(element);
         this.renderAdd(update, containerElement);
         
         return true;
     },
     
-    _renderTreeStructureUpdate: function(treeStructureUpdate, update) {
+    _mergeTreeStructureUpdate: function(treeStructureUpdate) {
+        var nodes = [];
         var structs = treeStructureUpdate;
         for (var i = 0; i < structs.length; ++i) {
             var struct = structs[i]; 
             var updateRootNode = struct.getRootNode();
-            var node = this._treeStructure.getNode(updateRootNode.getId());
+            var node = this.component.treeStructure.getNode(updateRootNode.getId());
             if (node) {
-                this._treeStructure.addOrUpdateChildNodes(updateRootNode);
+                this.component.treeStructure.addOrUpdateChildNodes(updateRootNode);
                 node.setExpanded(updateRootNode.isExpanded());
             } else {
-                node = this._treeStructure.getNode(updateRootNode.getParentId());
+                node = this.component.treeStructure.getNode(updateRootNode.getParentId());
                 node.setExpanded(true);
-                this._treeStructure.addOrUpdateNode(updateRootNode);
+                this.component.treeStructure.addOrUpdateNode(updateRootNode);
             }
+            nodes.push(node);
+        }
+        return nodes;
+    },
+    
+    _renderTreeStructureUpdate: function(treeStructureUpdate, update) {
+        var nodes = this._mergeTreeStructureUpdate(treeStructureUpdate);
+        for (var i = 0; i < nodes.length; ++i) {
+            var node = nodes[i];
             this._renderNode(update, node);
         }
     }
