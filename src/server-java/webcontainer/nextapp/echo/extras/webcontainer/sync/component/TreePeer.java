@@ -212,11 +212,37 @@ extends AbstractComponentSynchronizePeer {
                     if (path1 == path2 || path1.equals(path2)) {
                         return 0;
                     }
-                    int row1 = tree.getRowForPath(path1);
-                    int row2 = tree.getRowForPath(path2);
-                    if (row1 < row2) {
+                    int path1Count = path1.getPathCount();
+                    int path2Count = path2.getPathCount();
+                    if (path1Count == 1) { // path1 has only root element
                         return -1;
-                    } else if (row1 > row2) {
+                    } else if (path2Count == 1) { // path2 has only root element
+                        return 1;
+                    }
+                    int end = Math.min(path1Count, path2Count);
+                    int i = 1;
+                    for (; i < end; i++) {
+                        Object comp1 = path1.getPathComponent(i);
+                        Object comp2 = path2.getPathComponent(i);
+                        if (comp1 != comp2) {
+                            return compareNodes(i, path1, path2);
+                        }
+                    }
+                    if (path1Count == i) { // path1 has only root element
+                        return -1;
+                    } else if (path2Count == i) { // path2 has only root element
+                        return 1;
+                    }
+                    return compareNodes(i, path1, path2);
+                }
+                
+                private int compareNodes(int index, TreePath path1, TreePath path2) {
+                    Object commonParent = path1.getPathComponent(index - 1);
+                    int index1 = tree.getModel().getIndexOfChild(commonParent, path1.getPathComponent(index));
+                    int index2 = tree.getModel().getIndexOfChild(commonParent, path2.getPathComponent(index));
+                    if (index1 < index2) {
+                        return -1;
+                    } else if (index1 > index2) {
                         return 1;
                     } else {
                         return 0;
