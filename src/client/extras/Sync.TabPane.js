@@ -136,6 +136,12 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
      */
     _totalTabWidth: 0,
     
+    /**
+     * Flag indicating whether the header size may need to be reconfigured (by invoking configureHeaderSize() in the next
+     * renderDisplay() execution.
+     */
+    _configureHeaderSizeRequired: false,
+    
     _scrollRunnable: null,
     
     scrollPosition: 0,
@@ -168,6 +174,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     },
 
     _configureHeaderSize: function() {
+        this._configureHeaderSizeRequired = false;
         var borderSize = Echo.Sync.Border.getPixelSize(this._tabActiveBorder);
         var height = new Core.Web.Measure.Bounds(this._headerTabContainerDiv).height;
         
@@ -352,7 +359,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
             }
         }
 
-        this._configureHeaderSize();
+        this._configureHeaderSizeRequired = true;
         
         if (this._borderType == Extras.TabPane.BORDER_TYPE_NONE) {
             this._contentContainerDiv.style.border = "0 none";
@@ -387,6 +394,17 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         
         for (i = 0; i < this._tabs.length; ++i) {
             this._tabs[i]._renderDisplay();
+        }
+
+        if (this._configureHeaderSizeRequired) {
+            this._configureHeaderSize();
+            
+            var imageListener = Core.method(this, function() {
+                if (this.component) { // Verify component still registered.
+                    this._configureHeaderSize();
+                }
+            });
+            Core.Web.Image.monitor(this._headerContainerDiv, imageListener);
         }
     },
     
@@ -469,7 +487,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
             if ((activeTabRemoved || this._activeTabId == null) && this.component.children.length > 0) {
                 this._selectTab(this.component.children[0].renderId);
             }
-            this._configureHeaderSize();
+            this._configureHeaderSizeRequired = true;
         }
     
         if (fullRender) {
