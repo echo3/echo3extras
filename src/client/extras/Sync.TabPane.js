@@ -187,6 +187,12 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         }
         this._contentContainerDiv.style.left = "0";
         this._contentContainerDiv.style.right = "0";
+
+        Core.Web.VirtualPosition.redraw(this._contentContainerDiv);
+        Core.Web.VirtualPosition.redraw(this._headerContainerDiv);
+        for (i = 0; i < this._tabs.length; ++i) {
+            this._tabs[i]._renderDisplay();
+        }
     },
     
     /**
@@ -391,10 +397,6 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         
         // Re-bound scroll position.
         this.setScrollPosition(this.scrollPosition);
-        
-        for (i = 0; i < this._tabs.length; ++i) {
-            this._tabs[i]._renderDisplay();
-        }
 
         if (this._configureHeaderSizeRequired) {
             this._configureHeaderSize();
@@ -405,6 +407,12 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
                 }
             });
             Core.Web.Image.monitor(this._headerContainerDiv, imageListener);
+        } else {
+            // Only invoke renderDisplay on tabs if configureHeaderSize() invocation is not required,
+            // as configureHeaderSize() will do this work as well.
+            for (i = 0; i < this._tabs.length; ++i) {
+                this._tabs[i]._renderDisplay();
+            }
         }
     },
     
@@ -928,8 +936,10 @@ Extras.Sync.TabPane.Tab = Core.extend({
         
         // Render TD element to contain tab content.
         var centerTd = document.createElement("td");
-        centerTd.style.verticalAlign = "top";
         Echo.Sync.Insets.render(Extras.Sync.TabPane._defaultTabInsets, centerTd, "padding");
+        
+        var labelDiv = document.createElement("div");
+        centerTd.appendChild(labelDiv);
         
         var icon = layoutData ? layoutData.icon : null;
         var title = layoutData ? (layoutData.title ? layoutData.title : "*") : "*";
@@ -957,14 +967,18 @@ Extras.Sync.TabPane.Tab = Core.extend({
                 this._closeImageTd = this._renderCloseIcon();
                 tr.appendChild(this._closeImageTd);
             }
-            centerTd.appendChild(table);
+            labelDiv.appendChild(table);
         } else {
             // Render Text Only
-            centerTd.style.whiteSpace = "nowrap";
+            labelDiv.style.whiteSpace = "nowrap";
             Echo.Sync.Alignment.render(this._parent.component.render("tabAlignment", 
-                    Extras.Sync.TabPane._defaultTabAlignment), centerTd, true, this._parent.component);
-            centerTd.appendChild(document.createTextNode(title));
+                    Extras.Sync.TabPane._defaultTabAlignment), labelDiv, true, this._parent.component);
+            labelDiv.appendChild(document.createTextNode(title));
         }
+        if (this._parent.component.render("tabHeight")) {
+            Echo.Sync.Extent.render(this._parent.component.render("tabHeight"), labelDiv, "height", false, false);
+        }
+
         tabTr.appendChild(centerTd);
         this._centerTd = centerTd;
     
