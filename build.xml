@@ -282,7 +282,7 @@
     <target name="doc" 
             depends="doc.app, doc.app.private, doc.webcontainer, doc.webcontainer.private"/>
     
-    <target name="release" depends="clean, test, dist, dist.testapp, doc.public">
+    <target name="release" depends="clean, dist, dist.testapp, doc.public">
         <mkdir dir="${dir.build.server-java.release.root}"/>
         <mkdir dir="${dir.build.server-java.release.root}/SourceCode"/>
            <mkdir dir="${dir.build.server-java.release.root}/SourceCode/src"/>
