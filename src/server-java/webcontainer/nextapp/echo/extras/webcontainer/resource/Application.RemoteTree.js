@@ -17,7 +17,6 @@ Extras.RemoteTree = Core.extend(Echo.Component, {
     treeStructure: null,
     
     $construct: function(properties) {
-        Core.Debug.consoleWrite("construct tree component");
         Echo.Component.call(this, properties);
         this.treeStructure = null;
     },

@@ -102,7 +102,6 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
         tableElement.appendChild(this._buggerTBody);
         //--
         
-        Core.Debug.consoleWrite("component type: " + this.component.componentType);
         if (this.component.treeStructure) {
             // structure already set on component, local style property can only contain update
             this._mergeTreeStructureUpdate(this.component.get("treeStructure"));
@@ -1242,6 +1241,9 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
                 // partial update
                 return false;
             }
+        } else {
+        	// we have a full structure property sent down from the server, reset current structure
+        	this.component.treeStructure = null;
         }
         
         var element = this._element;
