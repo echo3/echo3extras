@@ -97,7 +97,7 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
         //-- element needed for FF-specific hack, see _doExpansion function
         this._buggerTBody = document.createElement("tbody");
         this._buggerTBody.style.display = "none";
-		this._buggerRow = document.createElement("tr");
+        this._buggerRow = document.createElement("tr");
         this._buggerTBody.appendChild(this._buggerRow);
         tableElement.appendChild(this._buggerTBody);
         //--
@@ -306,7 +306,7 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
         var visible = true;
         var parentNode = this.component.treeStructure.getNode(node.getParentId())
         if (parentNode) {
-        	visible = parentNode.isExpanded();
+            visible = parentNode.isExpanded();
         }
         this._renderNodeRecursive(update, node, iterator, nodeDepth, insertBefore, visible);
     },
@@ -366,9 +366,9 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
         for (var i = 0; i < childCount; ++i) {
             var childNode = node.getChildNode(i);
             if (insertBefore) {
-            	if (insertBefore.id == (this.component.renderId + "_tr_" + childNode.getId())) {
-            		insertBefore = insertBefore.nextSibling;
-            	}
+                if (insertBefore.id == (this.component.renderId + "_tr_" + childNode.getId())) {
+                    insertBefore = insertBefore.nextSibling;
+                }
             }
             if (expanded || !rendered) {
                 this._renderNodeRecursive(update, childNode, iterator, depth + 1, insertBefore, expanded);
@@ -1074,12 +1074,12 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
         
         // Hack to make sure FF renders the whole table after expanding / collapsing a node
         if (Core.Web.Env.BROWSER_FIREFOX && Core.Web.Env.BROWSER_VERSION_MAJOR == 3 && Core.Web.Env.BROWSER_MINOR_VERSION === 0) {
-			var elem = this._buggerTBody;
-	        var oldDisplay = elem.style.display;
-	        elem.style.display = "";
-	        setTimeout(function() {
-		        elem.style.display = oldDisplay;
-	        }, 0);
+            var elem = this._buggerTBody;
+            var oldDisplay = elem.style.display;
+            elem.style.display = "";
+            setTimeout(function() {
+                elem.style.display = oldDisplay;
+            }, 0);
         }
         // hack ends here
         
@@ -1242,8 +1242,8 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
                 return false;
             }
         } else {
-        	// we have a full structure property sent down from the server, reset current structure
-        	this.component.treeStructure = null;
+            // we have a full structure property sent down from the server, reset current structure
+            this.component.treeStructure = null;
         }
         
         var element = this._element;
