@@ -77,8 +77,16 @@ public class DefaultTreeSelectionModel implements TreeSelectionModel {
             return;
         }
         if (SINGLE_SELECTION == getSelectionMode()) {
+        	if (paths[0].equals(getSelectionPath())) {
+        		// don't change when same selection path is set
+        		return;
+        	}
+        	boolean changed = !this.paths.isEmpty();
             this.paths.clear();
-            this.paths.add(paths[0]);
+            changed |= this.paths.add(paths[0]);
+            if (changed) {
+            	fireValueChanged();
+            }
         } else {
             if (this.paths.addAll(Arrays.asList(paths))) {
                 fireValueChanged();

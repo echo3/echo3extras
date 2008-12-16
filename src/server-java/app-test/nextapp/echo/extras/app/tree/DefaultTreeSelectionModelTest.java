@@ -29,6 +29,8 @@
 
 package nextapp.echo.extras.app.tree;
 
+import nextapp.echo.app.event.ChangeEvent;
+import nextapp.echo.app.event.ChangeListener;
 import junit.framework.TestCase;
 
 public class DefaultTreeSelectionModelTest extends TestCase {
@@ -133,6 +135,99 @@ public class DefaultTreeSelectionModelTest extends TestCase {
 		
 		assertEquals(0, selectionModel.getSelectionPaths().length);
 		assertTrue(selectionModel.isSelectionEmpty());
+	}
+	
+	public void testAddSameSelectionPathFiresOnce() {
+		Listener listener = new Listener();
+		selectionModel.addChangeListener(listener);
+
+		selectionModel.addSelectionPath(path1);
+		assertEquals(1, listener.getInvocationCount());
+		selectionModel.addSelectionPath(path1);
+		assertEquals(1, listener.getInvocationCount());
+	}
+	
+	public void testSetSelectionPathFiresListener() {
+		Listener listener = new Listener();
+		selectionModel.addChangeListener(listener);
+		
+		selectionModel.setSelectionPath(path1);
+		assertEquals(1, listener.getInvocationCount());
+	}
+	
+	public void testAddSelectionPathFiresListener() {
+		Listener listener = new Listener();
+		selectionModel.addChangeListener(listener);
+		
+		selectionModel.addSelectionPath(path1);
+		assertEquals(1, listener.getInvocationCount());
+		selectionModel.addSelectionPath(path2);
+		assertEquals(2, listener.getInvocationCount());
+	}
+	
+	public void testAddSelectionPathFiresListenerWhenMultipleSelection() {
+		selectionModel.setSelectionMode(TreeSelectionModel.MULTIPLE_SELECTION);
+		Listener listener = new Listener();
+		selectionModel.addChangeListener(listener);
+		
+		selectionModel.addSelectionPath(path1);
+		assertEquals(1, listener.getInvocationCount());
+		selectionModel.addSelectionPath(path2);
+		assertEquals(2, listener.getInvocationCount());
+	}
+	
+	public void testAddMultipleSelectionPathsFiresOnce() {
+		selectionModel.setSelectionMode(TreeSelectionModel.MULTIPLE_SELECTION);
+		Listener listener = new Listener();
+		selectionModel.addChangeListener(listener);
+		
+		selectionModel.addSelectionPaths(new TreePath[] {path1, path2});
+		assertEquals(1, listener.getInvocationCount());
+	}
+	
+	public void testSetMultipleSelectionPathsFiresOnce() {
+		selectionModel.setSelectionMode(TreeSelectionModel.MULTIPLE_SELECTION);
+		Listener listener = new Listener();
+		selectionModel.addChangeListener(listener);
+		
+		selectionModel.setSelectionPaths(new TreePath[] {path1, path2});
+		assertEquals(1, listener.getInvocationCount());
+	}
+	
+	public void testRemoveSelectionPathFiresListener() {
+		Listener listener = new Listener();
+		selectionModel.addChangeListener(listener);
+		
+		selectionModel.addSelectionPath(path1);
+		assertEquals(1, listener.getInvocationCount());
+		selectionModel.removeSelectionPath(path1);
+		assertEquals(2, listener.getInvocationCount());
+	}
+	
+	public void testClearSelectionFiresListener() {
+		Listener listener = new Listener();
+		selectionModel.addChangeListener(listener);
+		
+		selectionModel.addSelectionPath(path1);
+		assertEquals(1, listener.getInvocationCount());
+		selectionModel.clearSelection();
+		assertEquals(2, listener.getInvocationCount());
+	}
+	
+	private static class Listener implements ChangeListener {
+		private int count = 0;
+		
+		public void stateChanged(ChangeEvent e) {
+			count++;
+		}
+		
+		public int getInvocationCount() {
+			return count;
+		}
+		
+		public boolean isInvoked() {
+			return count != 0;
+		}
 	}
 	
 }
