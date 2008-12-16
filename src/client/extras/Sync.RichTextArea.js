@@ -1276,6 +1276,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
             this._selectionRange.select();
             this._selectionRange.pasteHTML(html);
             this._notifyCursorStyleChange();
+            this._storeData();
         } else {
             this.execCommand("inserthtml", html);
         }
