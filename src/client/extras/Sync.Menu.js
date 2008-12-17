@@ -52,7 +52,7 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
     /**
      * Reference to the mask click listener.
      */
-    _processMaskClickRef: null
+    _processMaskClickRef: null,
     
     /** Reference to menu key press listener. */
     _processKeyPressRef: null,
