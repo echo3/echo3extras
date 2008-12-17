@@ -196,6 +196,7 @@ public class MenuBarPaneTest extends AbstractTest {
         DefaultMenuModel secondIconMenuModel = new DefaultMenuModel(null, "Icon", Styles.ICON_16_COLOR_SELECT);
         menuModel.addItem(secondIconMenuModel);
         
+        menuModel.addItem(new DefaultOptionModel("in-menu-action", "Action", null));
         
         return menuModel;
     }
