@@ -13,22 +13,48 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
         MAX_Z_INDEX: 65535
     }, 
     
+    /**
+     * The root menu model.
+     * @type Extras.MenuModel
+     */
     menuModel: null,
+    
+    /**
+     * The menu state model.
+     * @type Extras.MenuStateModel
+     */
     stateModel: null,
+    
+    /**
+     * The root DOM element of the rendered menu.
+     * @type Element
+     */
     element: null,
+    
+    /**
+     * The active state of the menu, true when the menu is open.
+     * @type Boolean
+     */
     active: false,
 
-    /**
-     * Array containing RenderedState objects for open menus.
+    /** 
+     * Array containing RenderedState objects for open menus. 
+     * @type Boolean
      */
     _openMenuPath: null,
     
-    /**
-     * Flag indicating whether menu mask is deployed.
+    /** 
+     * Flag indicating whether menu mask is deployed. 
+     * @type Boolean
      */
     _maskDeployed: false,
     
-    _processMaskClickRef: null,
+    /**
+     * Reference to the mask click listener.
+     */
+    _processMaskClickRef: null
+    
+    /** Reference to menu key press listener. */
     _processKeyPressRef: null,
     
     /**
@@ -52,11 +78,19 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
          */
         getSubMenuPosition: function(menuModel, width, height) { },
 
+        /**
+         * Renders the top level menu of the menu component (that which resides in the DOM at all times).
+         * 
+         * @param {Echo.Update.ComponentUpdate} the hierarchy update for which the rendering is being performed
+         */
         renderMain: function(update) { }
     },
     
     $virtual: {
 
+        /**
+         * Activates the menu component.
+         */
         activate: function() {
             if (this.active) {
                 return false;
@@ -90,6 +124,9 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
             this.component.fireEvent({type: "action", source: this.component, data: path, modelId: itemModel.modelId});
         },
         
+        /**
+         * Key press listener.
+         */
         processKeyPress: function(e) {
             if (e.keyCode == 27) {
                 this.deactivate();
@@ -103,6 +140,9 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
         this._openMenuPath.push(menu);
     },
     
+    /**
+     * Adds the menu mask, such that click events on elements other than the menu will be captured by the menu.
+     */
     addMask: function() {
         if (this.maskDeployed) {
             return;
@@ -114,6 +154,9 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
         Core.Web.Event.add(document.body, "contextmenu", this._processMaskClickRef, false);
     },
     
+    /**
+     * Closes all open menus.
+     */
     closeAll: function() {
         while (this._openMenuPath.length > 0) {
             var menu = this._openMenuPath.pop();
@@ -121,6 +164,11 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
         }
     },
     
+    /**
+     * Closes all open menus which are descendants of the specified parent menu.
+     * 
+     * @param {Extras.MenuModel} the parent menu
+     */
     closeDescendants: function(parentMenu) {
         while (parentMenu != this._openMenuPath[this._openMenuPath.length - 1]) {
             var menu = this._openMenuPath.pop();
@@ -128,6 +176,9 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
         }
     },
     
+    /**
+     * Deactivates the menu component, closing any open menus.
+     */
     deactivate: function() {
         this.component.set("modal", false);
         if (!this.active) {
@@ -143,6 +194,13 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
         this.removeMask();
     },
     
+    /**
+     * Determines if the specified menu is currently open (on-screen).
+     * 
+     * @param {Extras.MenuModel} menuModel the menu
+     * @return true if the menu is open
+     * @type Boolean
+     */
     isOpen: function(menuModel) {
         for (var i = 0; i < this._openMenuPath.length; ++i) {
             if (this._openMenuPath[i].menuModel == menuModel) {
@@ -152,6 +210,12 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
         return false;
     },
     
+    /**
+     * Creates and adds the overlay mask elements to the screen, blocking all content except that within the specified bounds.
+     * 
+     * @param bounds an object containing the pixel bounds of the region NOT to be blocked, must provide top, left, width, and
+     *        height integer properties
+     */
     _overlayAdd: function(bounds) {
         this._overlayRemove();
         
@@ -194,6 +258,9 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
         }
     },
     
+    /**
+     * Removes the overlay mask from the screen, if present.
+     */
     _overlayRemove: function() {
         if (!this._overlay) {
             return;
@@ -204,6 +271,11 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
         this._overlay = null;
     },
     
+    /**
+     * Opens a menu.
+     * 
+     * @param {Extras.MenuModel} menuModel the menu to open
+     */
     _openMenu: function(menuModel) {
         if (this.isOpen(menuModel)) {
             return;
@@ -247,11 +319,17 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
         this.addMenu(subMenu);
     },
 
+    /**
+     * Handler for clicks on the overlay mask: de-activates menu.
+     */
     _processMaskClick: function(e) {
         this.deactivate();
         return true;
     },
     
+    /** 
+     * Removes the menu mask.
+     */
     removeMask: function() {
         if (!this.maskDeployed) {
             return;
