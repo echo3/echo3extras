@@ -107,6 +107,12 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
             return true;
         },
 
+        /**
+         * Activates a menu item.  Displays submenu if item is a submenu.  Invokes menu action if item
+         * is a menu option.
+         * 
+         * @param {Extras.ItemModel} itemModel the item model to activate.
+         */
         activateItem: function(itemModel) {
             if (this.stateModel && !this.stateModel.isEnabled(itemModel.modelId)) {
                 return;
@@ -119,9 +125,11 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
             }
         },
         
+        /**
+         * Fires an action event in response to a menu option being activated.
+         */
         processAction: function(itemModel) {
-            var path = itemModel.getItemPositionPath().join(".");
-            this.component.fireEvent({type: "action", source: this.component, data: path, modelId: itemModel.modelId});
+            this.component.doAction(itemModel);
         },
         
         /**
@@ -1210,7 +1218,7 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
         return menuBarDiv;
     },
     
-    _setActiveItem: function(itemModel) {
+    _setActiveItem: function(itemModel, execute) {
         if (this._activeItem == itemModel) {
             return;
         }

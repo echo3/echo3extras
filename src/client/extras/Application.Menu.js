@@ -29,7 +29,12 @@ Extras.ContextMenu = Core.extend(Echo.Component, {
     },
 
     componentType: "Extras.ContextMenu",
-    modalSupport: true
+    modalSupport: true,
+    
+    doAction: function(itemModel) {
+        var path = itemModel.getItemPositionPath().join(".");
+        this.fireEvent({type: "action", source: this, data: path, modelId: itemModel.modelId});
+    }
 });
 
 /**
@@ -73,7 +78,12 @@ Extras.DropDownMenu = Core.extend(Echo.Component, {
     },
 
     componentType: "Extras.DropDownMenu",
-    modalSupport: true
+    modalSupport: true,
+    
+    doAction: function(itemModel) {
+        var path = itemModel.getItemPositionPath().join(".");
+        this.fireEvent({type: "action", source: this, data: path, modelId: itemModel.modelId});
+    }
 });
 
 /**
@@ -111,7 +121,12 @@ Extras.MenuBarPane = Core.extend(Echo.Component, {
     },
 
     componentType: "Extras.MenuBarPane",
-    modalSupport: true
+    modalSupport: true,
+    
+    doAction: function(itemModel) {
+        var path = itemModel.getItemPositionPath().join(".");
+        this.fireEvent({type: "action", source: this, data: path, modelId: itemModel.modelId});
+    }
 });
 
 /**
