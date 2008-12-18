@@ -1087,11 +1087,24 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
 
         var itemModel = this._getItemModel(e.target);
         if (itemModel) {
-            this.activate();
-            this._setActiveItem(itemModel);
+            if (itemModel instanceof Extras.OptionModel) {
+                this.deactivate();
+                this.processAction(itemModel);
+            } else {
+                this.activate();
+                this._setActiveItem(itemModel);
+            }
         } else {
             this.deactivate();
         }
+    },
+    
+    _processItemEnter: function(e) {
+        this._processRollover(e, true);
+    },
+    
+    _processItemExit: function(e) {
+        this._processRollover(e, false);
     },
     
     _processRollover: function(e, state) {
@@ -1116,14 +1129,6 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
         } else {
             this._setItemHighlight(itemModel, state);
         }
-    },
-    
-    _processItemEnter: function(e) {
-        this._processRollover(e, true);
-    },
-    
-    _processItemExit: function(e) {
-        this._processRollover(e, false);
     },
     
     renderDisplay: function() {
