@@ -408,8 +408,8 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         var features = this.component.render("features", Extras.Sync.RichTextArea.defaultFeatures);
         var controlsRow;
         var panel = new Echo.Panel({
+            styleName: this.component.render("toolbarPanelStyleName"),
             layoutData: {
-                styleName: this.component.render("toolbarPanelStyleName"),
                 overflow: Echo.SplitPane.OVERFLOW_HIDDEN
             },
             insets: 2,
