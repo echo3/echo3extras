@@ -39,7 +39,6 @@ import nextapp.echo.extras.app.AccordionPane;
 import nextapp.echo.extras.webcontainer.service.CommonService;
 import nextapp.echo.webcontainer.AbstractComponentSynchronizePeer;
 import nextapp.echo.webcontainer.ComponentSynchronizePeer;
-import nextapp.echo.webcontainer.LazyRenderContainer;
 import nextapp.echo.webcontainer.ServerMessage;
 import nextapp.echo.webcontainer.Service;
 import nextapp.echo.webcontainer.UserInstance;
@@ -53,19 +52,13 @@ import nextapp.echo.webcontainer.util.MultiIterator;
  * 
  * @author n.beekman
  */
-public class AccordionPanePeer extends AbstractComponentSynchronizePeer implements LazyRenderContainer {
+public class AccordionPanePeer extends AbstractComponentSynchronizePeer {
 
     private static final Service ACCORDION_PANE_SERVICE = JavaScriptService.forResources("EchoExtras.AccordionPane",
             new String[] {  "nextapp/echo/extras/webcontainer/resource/Application.AccordionPane.js",  
                             "nextapp/echo/extras/webcontainer/resource/Sync.AccordionPane.js"});
     
     private static final String PROPERTY_ACTIVE_TAB = "activeTab";
-
-    /**
-     * Component property to enabled/disable lazy rendering of child tabs.
-     * Default value is interpreted to be true.
-     */
-    public static final String PROPERTY_LAZY_RENDER_ENABLED = "lazyRenderEnabled";
 
     static {
         WebContainerServlet.getServiceRegistry().add(ACCORDION_PANE_SERVICE);
@@ -139,14 +132,6 @@ public class AccordionPanePeer extends AbstractComponentSynchronizePeer implemen
         ServerMessage serverMessage = (ServerMessage) context.get(ServerMessage.class);
         serverMessage.addLibrary(CommonService.INSTANCE.getId());
         serverMessage.addLibrary(ACCORDION_PANE_SERVICE.getId());
-    }
-    
-    /**
-     * @see LazyRenderContainer#isRendered(Context, Component, Component)
-     */
-    public boolean isRendered(Context context, Component component, Component child) {
-        // FIXME implement lazy behavior
-        return true;
     }
     
     /**

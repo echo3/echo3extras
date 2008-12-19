@@ -46,7 +46,6 @@ import nextapp.echo.extras.testapp.ButtonColumn;
 import nextapp.echo.extras.testapp.StyleUtil;
 import nextapp.echo.extras.testapp.Styles;
 import nextapp.echo.extras.testapp.TestControlPane;
-import nextapp.echo.extras.webcontainer.sync.component.AccordionPanePeer;
 
 /**
  * Interactive test module for <code>AccordionPane</code>s.
@@ -343,26 +342,6 @@ public class AccordionPaneTest extends AbstractTest {
         // Integration Tests
         
         addStandardIntegrationTests();
-
-        // Lazy Rendering Properties
-        
-        testControlsPane.addButton("Lazy Render Tests", "LazyRenderEnabled = false", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                accordionPane.set(AccordionPanePeer.PROPERTY_LAZY_RENDER_ENABLED, Boolean.FALSE);
-            }
-        });
-        
-        testControlsPane.addButton("Lazy Render Tests", "LazyRenderEnabled = true", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                accordionPane.set(AccordionPanePeer.PROPERTY_LAZY_RENDER_ENABLED, Boolean.TRUE);
-            }
-        });
-        
-        testControlsPane.addButton("Lazy Render Tests", "LazyRenderEnabled = default (false)", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                accordionPane.set(AccordionPanePeer.PROPERTY_LAZY_RENDER_ENABLED, null);
-            }
-        });
     }
 
     private void addLabelRandomly(AccordionPane accordionPane) {

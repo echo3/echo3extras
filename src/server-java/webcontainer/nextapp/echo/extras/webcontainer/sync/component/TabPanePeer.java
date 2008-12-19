@@ -41,7 +41,6 @@ import nextapp.echo.extras.webcontainer.service.CommonService;
 import nextapp.echo.webcontainer.AbstractComponentSynchronizePeer;
 import nextapp.echo.webcontainer.ComponentSynchronizePeer;
 import nextapp.echo.webcontainer.ContentType;
-import nextapp.echo.webcontainer.LazyRenderContainer;
 import nextapp.echo.webcontainer.ResourceRegistry;
 import nextapp.echo.webcontainer.ServerMessage;
 import nextapp.echo.webcontainer.Service;
@@ -56,16 +55,9 @@ import nextapp.echo.webcontainer.util.MultiIterator;
  * 
  * @author n.beekman
  */
-public class TabPanePeer extends AbstractComponentSynchronizePeer 
-implements LazyRenderContainer {
-
+public class TabPanePeer extends AbstractComponentSynchronizePeer {
+    
     private static final String PROPERTY_ACTIVE_TAB = "activeTab";
-
-    /**
-     * Component property to enabled/disable lazy rendering of child tabs.
-     * Default value is interpreted to be true.
-     */
-    public static final String PROPERTY_LAZY_RENDER_ENABLED = "lazyRenderEnabled";
 
     private static final Service TAB_PANE_SERVICE = JavaScriptService.forResources("EchoExtras.TabPane",
             new String[] {  "nextapp/echo/extras/webcontainer/resource/Application.TabPane.js",  
@@ -200,14 +192,6 @@ implements LazyRenderContainer {
         ServerMessage serverMessage = (ServerMessage) context.get(ServerMessage.class);
         serverMessage.addLibrary(CommonService.INSTANCE.getId());
         serverMessage.addLibrary(TAB_PANE_SERVICE.getId());
-    }
-    
-    /**
-     * @see LazyRenderContainer#isRendered(Context, Component, Component)
-     */
-    public boolean isRendered(Context context, Component component, Component child) {
-        // FIXME implement lazy behavior
-        return true;
     }
     
     /**
