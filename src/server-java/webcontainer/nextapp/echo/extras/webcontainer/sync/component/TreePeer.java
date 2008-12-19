@@ -82,7 +82,7 @@ extends AbstractComponentSynchronizePeer {
     
     /**
      * Translates a selection update directive from the client to 
-     * a {@link TreePeer$TreeSelectionUpdate} object.
+     * a TreeSelectionUpdatePeer object.
      */
     public static class TreeSelectionUpdatePeer 
     implements SerialPropertyPeer {
@@ -288,7 +288,7 @@ extends AbstractComponentSynchronizePeer {
     }
     
     /**
-     * Uses {@link TreePeer$TreeStructureRenderer} to send down the current tree structure to the client.
+     * Uses TreeStructureRenderer to send down the current tree structure to the client.
      */
     public static class TreeStructurePeer 
     implements SerialPropertyPeer {
