@@ -232,16 +232,43 @@ public class RichTextAreaTest extends AbstractTest {
                 richTextArea.setLocale(Locale.GERMANY);
             }
         });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Style Name = Default", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                richTextArea.setStyleName("Default");   
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Style Name Null", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                richTextArea.setStyleName(null);   
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set toolbarButtonStyleName = Default", 
+                new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                richTextArea.setToolbarButtonStyleName("RichTextArea.ToolbarButton");   
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set toolbarButtonStyleName Null", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                richTextArea.setToolbarButtonStyleName(null);
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set toolbarPanelStyleName = Default", 
+                new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                richTextArea.setToolbarPanelStyleName("RichTextArea.ToolbarPanel");   
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set toolbarPanelStyleName Null", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                richTextArea.setToolbarPanelStyleName(null);
+            }
+        });
     }
-    
+
     private RichTextArea createStyledRTA() {
         RichTextArea rta = new RichTextArea();
-        rta.setMenuStyleName("Default");
-        rta.setToolbarButtonStyleName("RichTextAreaToolbarButton");
-        rta.setWindowPaneStyleName("Default");
-        rta.setControlPaneSplitPaneStyleName("ControlPane.Container.Bottom");
-        rta.setControlPaneRowStyleName("ControlPane");
-        rta.setControlPaneButtonStyleName("ControlPane.Button");
+        rta.setStyleName("Default");
         return rta;
     }
 }

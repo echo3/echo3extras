@@ -223,13 +223,28 @@
   <p n="pressedBorder" t="Border">1px inset #4f4f6f</p>
   <p n="insets" t="Insets">3px 10px</p>
  </s>
-<s n="TestControlButtonSmall" t="nextapp.echo.app.button.AbstractButton" b="TestControlButton">
+ <s n="TestControlButtonSmall" t="nextapp.echo.app.button.AbstractButton" b="TestControlButton">
   <p n="font" t="Font">
    <f it="1" sz="10px"/>
   </p>
   <p n="insets" t="Insets">3px 3px</p>
  </s>
- <s n="RichTextAreaToolbarButton" t="nextapp.echo.app.Button">
+ <s n="Default" t="nextapp.echo.extras.app.RichTextArea">
+  <p n="menuStyleName">Default</p>
+  <p n="windowPaneStyleName">Default</p>
+  <p n="controlPaneSplitPaneStyleName">ControlPane.Container.Bottom</p>
+  <p n="controlPaneRowStyleName">ControlPane</p>
+  <p n="controlPaneButtonStyleName">ControlPane.Button</p>
+  <p n="toolbarPanelStyleName">RichTextArea.ToolbarPanel</p>
+  <p n="toolbarButtonStyleName">RichTextArea.ToolbarButton</p>
+ </s>
+ <s n="RichTextArea.ToolbarPanel" t="nextapp.echo.app.Panel">
+  <p n="background" t="Color">#abcdef</p>
+  <p n="backgroundImage" t="FillImage">
+   <fi t="r" y="50%" r="x">/nextapp/echo/testapp/interactive/resource/image/ControlPaneFill.png</fi>
+  </p>
+ </s>
+ <s n="RichTextArea.ToolbarButton" t="nextapp.echo.app.Button">
   <p n="font" t="Font">
    <f sz="9px"/>
   </p>
