@@ -406,13 +406,19 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
     _createToolbar: function() {
         var row, button;
         var features = this.component.render("features", Extras.Sync.RichTextArea.defaultFeatures);
-        var controlsRow = new Echo.Row({
+        var controlsRow;
+        var panel = new Echo.Panel({
             layoutData: {
+                styleName: this.component.render("toolbarPanelStyleName"),
                 overflow: Echo.SplitPane.OVERFLOW_HIDDEN
             },
-            styleName: this.component.render("toolbarRowStyleName"),
-            cellSpacing: 10,
-            insets: 2
+            insets: 2,
+            children: [
+                controlsRow = new Echo.Row({
+                    styleName: this.component.render("toolbarRowStyleName"),
+                    cellSpacing: 10
+                })
+            ]
         });
         
         // Style Dropdown.
@@ -542,7 +548,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
             controlsRow.add(row);
         }
         
-        return controlsRow;
+        return panel;
     },
     
     _createToolbarButton: function(text, icon, toolTipText, eventMethod, actionCommand) {

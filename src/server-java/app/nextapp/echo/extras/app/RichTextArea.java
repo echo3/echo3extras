@@ -98,6 +98,7 @@ public class RichTextArea extends Component {
     public static final String PROPERTY_ICONS = "icons";
     public static final String PROPERTY_MENU_STYLE_NAME = "menuStyleName";
     public static final String PROPERTY_TOOLBAR_BUTTON_STYLE_NAME = "toolbarButtonStyleName";
+    public static final String PROPERTY_TOOLBAR_PANEL_STYLE_NAME = "toolbarPanelStyleName";
     public static final String PROPERTY_WINDOW_PANE_STYLE_NAME = "windowPaneStyleName";
     public static final String TEXT_CHANGED_PROPERTY = "text";
     private Document document;
@@ -191,6 +192,10 @@ public class RichTextArea extends Component {
         return (String) get(PROPERTY_TOOLBAR_BUTTON_STYLE_NAME);
     }
     
+    public String getToolbarPanelStyleName() {
+        return (String) get(PROPERTY_TOOLBAR_PANEL_STYLE_NAME);
+    }
+    
     public String getWindowPaneStyleName() {
         return (String) get(PROPERTY_WINDOW_PANE_STYLE_NAME);
     }
@@ -263,6 +268,10 @@ public class RichTextArea extends Component {
     
     public void setToolbarButtonStyleName(String newValue) {
         set(PROPERTY_TOOLBAR_BUTTON_STYLE_NAME, newValue);
+    }
+
+    public void setToolbarPanelStyleName(String newValue) {
+        set(PROPERTY_TOOLBAR_PANEL_STYLE_NAME, newValue);
     }
 
     public void setWindowPaneStyleName(String newValue) {

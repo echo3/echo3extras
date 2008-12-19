@@ -39,6 +39,7 @@ import nextapp.echo.app.Component;
 import nextapp.echo.app.ContentPane;
 import nextapp.echo.app.Grid;
 import nextapp.echo.app.Label;
+import nextapp.echo.app.Panel;
 import nextapp.echo.app.Row;
 import nextapp.echo.app.SelectField;
 import nextapp.echo.app.SplitPane;
@@ -123,6 +124,7 @@ public class RichTextAreaPeer extends AbstractComponentSynchronizePeer {
         addRequiredComponentClass(Grid.class);
         addRequiredComponentClass(Label.class);
         addRequiredComponentClass(MenuBarPane.class);
+        addRequiredComponentClass(Panel.class);
         addRequiredComponentClass(Row.class);
         addRequiredComponentClass(SelectField.class);
         addRequiredComponentClass(SplitPane.class);
