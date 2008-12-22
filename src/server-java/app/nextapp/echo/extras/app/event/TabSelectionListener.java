@@ -29,6 +29,7 @@
 
 package nextapp.echo.extras.app.event;
 
+import java.io.Serializable;
 import java.util.EventListener;
 
 /**
@@ -36,7 +37,8 @@ import java.util.EventListener;
  * 
  * @author n.beekman
  */
-public interface TabSelectionListener extends EventListener {
+public interface TabSelectionListener 
+extends EventListener, Serializable {
     
     /**
      * Invoked when a user selects a tab in a <code>TabPane</code>.

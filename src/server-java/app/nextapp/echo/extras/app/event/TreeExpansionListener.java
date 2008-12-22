@@ -29,9 +29,11 @@
 
 package nextapp.echo.extras.app.event;
 
+import java.io.Serializable;
 import java.util.EventListener;
 
-public interface TreeExpansionListener extends EventListener {
+public interface TreeExpansionListener 
+extends EventListener, Serializable {
 
     /**
      * Called whenever an item in the tree has been expanded.

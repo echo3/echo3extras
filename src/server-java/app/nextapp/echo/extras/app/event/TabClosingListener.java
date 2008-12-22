@@ -29,6 +29,7 @@
 
 package nextapp.echo.extras.app.event;
 
+import java.io.Serializable;
 import java.util.EventListener;
 
 /**
@@ -36,7 +37,8 @@ import java.util.EventListener;
  * 
  * @author n.beekman
  */
-public interface TabClosingListener extends EventListener {
+public interface TabClosingListener 
+extends EventListener, Serializable {
     
     /**
      * Invoked when a user attempts to close a tab in a <code>TabPane</code>.
