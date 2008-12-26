@@ -68,6 +68,28 @@ Extras.TransitionPane = Core.extend(Echo.Component, {
         TYPE_CAMERA_PAN_DOWN: 4,
         
         /**
+         * Transition setting for a horizontal blind effect with a black background.
+         * Top of blinds rotate inward.
+         */
+        TYPE_BLIND_BLACK_IN: 5,
+        
+        /**
+         * Transition setting for a horizontal blind effect with a black background.
+         * Top of blinds rotate outward.
+         */
+        TYPE_BLIND_BLACK_OUT: 6,
+        
+        /**
+         * Transition setting to fade to black, fade in new content.
+         */
+        TYPE_FADE_TO_BLACK: 7,
+    
+        /**
+         * Transition setting to fade to white, fade in new content.
+         */
+        TYPE_FADE_TO_WHITE: 8,
+
+        /**
          * Fades to new content over old content.
          */
         TYPE_FADE: 9

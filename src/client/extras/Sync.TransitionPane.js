@@ -46,6 +46,10 @@ Extras.Sync.TransitionPane = Core.extend(Echo.Render.ComponentSync, {
         case Extras.TransitionPane.TYPE_FADE:
             this._transitionClass = Extras.Sync.TransitionPane.FadeOpacityTransition;
             break;
+        case Extras.TransitionPane.TYPE_FADE_TO_BLACK:
+        case Extras.TransitionPane.TYPE_FADE_TO_WHITE:
+            this._transitionClass = Extras.Sync.TransitionPane.FadeOpacityColorTransition;
+            break;
         case Extras.TransitionPane.TYPE_CAMERA_PAN_DOWN:
         case Extras.TransitionPane.TYPE_CAMERA_PAN_LEFT:
         case Extras.TransitionPane.TYPE_CAMERA_PAN_RIGHT:
@@ -290,8 +294,7 @@ Extras.Sync.TransitionPane.CameraPanTransition = Core.extend(
     }
 });
 
-Extras.Sync.TransitionPane.FadeOpacityTransition = Core.extend(
-        Extras.Sync.TransitionPane.Transition, {
+Extras.Sync.TransitionPane.FadeOpacityTransition = Core.extend(Extras.Sync.TransitionPane.Transition, {
     
     runTime: 1000,
     
@@ -314,6 +317,59 @@ Extras.Sync.TransitionPane.FadeOpacityTransition = Core.extend(
                 this.transitionPane.childDiv.style.opacity = 0;
             }
         }
+        this.transitionPane.showContent();
+    },
+    
+    step: function(progress) {
+        var percent;
+        if (this.transitionPane.childDiv) {
+            if (Core.Web.Env.PROPRIETARY_IE_OPACITY_FILTER_REQUIRED) {
+                percent = Math.floor(progress * 100);
+                this.transitionPane.childDiv.style.filter = "alpha(opacity=" + percent + ")";
+            } else {
+                this.transitionPane.childDiv.style.opacity = progress;
+            }
+        } else if (this.transitionPane.oldChildDiv) {
+            if (Core.Web.Env.PROPRIETARY_IE_OPACITY_FILTER_REQUIRED) {
+                percent = Math.floor((1 - progress) * 100);
+                this.transitionPane.oldChildDiv.style.filter = "alpha(opacity=" + percent + ")";
+            } else {
+                this.transitionPane.oldChildDiv.style.opacity = 1 - progress;
+            }
+        }
+    }
+});
+
+Extras.Sync.TransitionPane.FadeOpacityColorTransition = Core.extend(Extras.Sync.TransitionPane.Transition, {
+
+    runTime: 1000,
+    _maskDiv: null,
+    
+    complete: function(abort) {
+        if (this.transitionPane.childDiv) {
+            this.transitionPane.childDiv.style.zIndex = 0;
+            if (Core.Web.Env.PROPRIETARY_IE_OPACITY_FILTER_REQUIRED) {
+                this.transitionPane.childDiv.style.filter = "";
+            } else {
+                this.transitionPane.childDiv.style.opacity = 1;
+            }
+        }
+    },
+    
+    init: function() {
+        this._maskDiv = document.createElement("div");
+        this._maskDiv.style.cssText = "position:absolute;width:100%;height:100%;z-index:32767";
+        this._maskDiv.style.backgroundColor = "white";
+
+        if (this.transitionPane.childDiv) {
+            if (Core.Web.Env.PROPRIETARY_IE_OPACITY_FILTER_REQUIRED) {
+                this.transitionPane.childDiv.style.filter = "alpha(opacity=0)";
+            } else {
+                this.transitionPane.childDiv.style.opacity = 0;
+            }
+        }
+
+        this.transitionPane.contentDiv.appendChild(this._maskDiv);
         this.transitionPane.showContent();
     },
     
