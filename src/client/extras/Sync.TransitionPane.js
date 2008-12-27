@@ -180,7 +180,7 @@ Extras.Sync.TransitionPane = Core.extend(Echo.Render.ComponentSync, {
     
     _transitionStart: function() {
         this._transition = new this._transitionClass(this);
-        this._transition.duration = this.component.render("duration", this._transition.duration);
+        this._transition.runTime = this.component.render("duration", this._transition.runTime);
         this._transition.start(Core.method(this, this._transitionFinish));
     },
     
