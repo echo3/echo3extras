@@ -56,7 +56,10 @@ Extras.Sync.TransitionPane = Core.extend(Echo.Render.ComponentSync, {
         case Extras.TransitionPane.TYPE_CAMERA_PAN_UP:
             this._transitionClass = Extras.Sync.TransitionPane.CameraPanTransition;
             break;
-
+        case Extras.TransitionPane.TYPE_BLIND_BLACK_IN:
+        case Extras.TransitionPane.TYPE_BLIND_BLACK_OUT:
+            this._transitionClass = Extras.Sync.TransitionPane.BlindTransition;
+            break;
         default:
             this._transitionClass = null;
             this._duration = null;
@@ -64,7 +67,7 @@ Extras.Sync.TransitionPane = Core.extend(Echo.Render.ComponentSync, {
     },
     
     /**
-     * Removes old content.
+     * Removes old content: remove oldChildDiv from parent, set oldChildDiv to null.
      */
     removeOldContent: function() {
         if (this.oldChildDiv) {
@@ -231,6 +234,55 @@ Extras.Sync.TransitionPane.Transition = Core.extend(Extras.Sync.Animation, {
     $construct: function(transitionPane) {
         this.transitionPane = transitionPane;
     }
+});
+
+Extras.Sync.TransitionPane.BlindTransition = Core.extend(Extras.Sync.TransitionPane.Transition, {
+
+    runTime: 1000,
+    _maskDiv: null,
+    _stepCount: 14,
+    _swapStep: null,
+    
+    complete: function(abort) {
+        this._maskDiv.parentNode.removeChild(this._maskDiv);
+    },
+    
+    init: function() {
+        this._swapStep = Math.floor(this._stepCount) / 2 + 1;
+        this._maskDiv = document.createElement("div");
+        this._maskDiv.style.cssText = "position:absolute;width:100%;height:100%;z-index:32767;";
+        this.transitionPane.contentDiv.appendChild(this._maskDiv);
+    },
+
+    step: function(progress) {
+        var currentStep = Math.ceil(progress * this._stepCount);
+        if (currentStep === 0) {
+            currentStep = 1;
+        }
+        if (currentStep === this._renderedStep) {
+            // No need to update, already current.
+            return;
+        }
+        var url = this.transitionPane.client.getResourceUrl("Extras", 
+                "image/transitionpane/blindblack/Frame" + currentStep + ".gif");
+        this._maskDiv.style.backgroundImage = "url(" + url + ")";
+        
+        if (currentStep < this._swapStep) {
+            if (this.transitionPane.oldChildDiv) {
+                if (this.reverseAnimation) {
+                    this.transitionPane.oldChildDiv.style.top = (this._swapStep - currentStep) + "px";
+                } else {
+                    this.transitionPane.oldChildDiv.style.top = (0 - currentStep) + "px";
+                }
+            }
+        } else {
+            if (this.renderedStep < this._swapStep) {
+                // blind is crossing horizontal, swap content.
+                this.showContent();
+                this.removeOldContent();
+            }
+        }
+    }    
 });
 
 Extras.Sync.TransitionPane.CameraPanTransition = Core.extend(

@@ -34,6 +34,8 @@ import nextapp.echo.app.util.Context;
 import nextapp.echo.extras.app.TransitionPane;
 import nextapp.echo.extras.webcontainer.service.CommonService;
 import nextapp.echo.webcontainer.AbstractComponentSynchronizePeer;
+import nextapp.echo.webcontainer.ContentType;
+import nextapp.echo.webcontainer.ResourceRegistry;
 import nextapp.echo.webcontainer.ServerMessage;
 import nextapp.echo.webcontainer.Service;
 import nextapp.echo.webcontainer.WebContainerServlet;
@@ -51,6 +53,12 @@ extends AbstractComponentSynchronizePeer {
 
     static {
         WebContainerServlet.getServiceRegistry().add(TRANSITION_PANE_SERVICE);
+        ResourceRegistry resources = WebContainerServlet.getResourceRegistry();
+
+        // Blind transition: Load frame image resources (Frame1.gif through Frame14.gif)
+        for (int i = 1; i <= 14; ++i) {
+            resources.add("Extras", "image/transitionpane/blindblack/Frame" + i + ".gif", ContentType.IMAGE_GIF);
+        }
     }
 
     /**
