@@ -242,6 +242,7 @@ Extras.Sync.TransitionPane.BlindTransition = Core.extend(Extras.Sync.TransitionP
     _maskDiv: null,
     _stepCount: 14,
     _swapStep: null,
+    _reverse: false,
     
     complete: function(abort) {
         this._maskDiv.parentNode.removeChild(this._maskDiv);
@@ -249,6 +250,8 @@ Extras.Sync.TransitionPane.BlindTransition = Core.extend(Extras.Sync.TransitionP
     
     init: function() {
         this._swapStep = Math.floor(this._stepCount) / 2 + 1;
+        this._reverse = this.transitionPane.type === Extras.TransitionPane.TYPE_BLIND_BLACK_OUT;
+
         this._maskDiv = document.createElement("div");
         this._maskDiv.style.cssText = "position:absolute;width:100%;height:100%;z-index:32767;";
         this.transitionPane.contentDiv.appendChild(this._maskDiv);
@@ -269,7 +272,7 @@ Extras.Sync.TransitionPane.BlindTransition = Core.extend(Extras.Sync.TransitionP
         
         if (currentStep < this._swapStep) {
             if (this.transitionPane.oldChildDiv) {
-                if (this.reverseAnimation) {
+                if (this._reverse) {
                     this.transitionPane.oldChildDiv.style.top = (this._swapStep - currentStep) + "px";
                 } else {
                     this.transitionPane.oldChildDiv.style.top = (0 - currentStep) + "px";
