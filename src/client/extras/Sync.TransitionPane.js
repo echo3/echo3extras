@@ -276,12 +276,14 @@ Extras.Sync.TransitionPane.BlindTransition = Core.extend(Extras.Sync.TransitionP
                 }
             }
         } else {
-            if (this.renderedStep < this._swapStep) {
+            if (this._renderedStep < this._swapStep) {
                 // blind is crossing horizontal, swap content.
-                this.showContent();
-                this.removeOldContent();
+                this.transitionPane.showContent();
+                this.transitionPane.removeOldContent();
             }
         }
+
+        this._renderedStep = currentStep;
     }    
 });
 
