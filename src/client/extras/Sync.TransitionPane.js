@@ -238,7 +238,7 @@ Extras.Sync.TransitionPane.Transition = Core.extend(Extras.Sync.Animation, {
 
 Extras.Sync.TransitionPane.BlindTransition = Core.extend(Extras.Sync.TransitionPane.Transition, {
 
-    runTime: 1000,
+    runTime: 700,
     _maskDiv: null,
     _stepCount: 14,
     _swapStep: null,
@@ -283,6 +283,13 @@ Extras.Sync.TransitionPane.BlindTransition = Core.extend(Extras.Sync.TransitionP
                 // blind is crossing horizontal, swap content.
                 this.transitionPane.showContent();
                 this.transitionPane.removeOldContent();
+            }
+            if (this.transitionPane.childDiv) {
+                if (this._reverse) {
+                    this.transitionPane.childDiv.style.top = (currentStep - this._stepCount) + "px";
+                } else {
+                    this.transitionPane.childDiv.style.top = (this._stepCount - currentStep) + "px";
+                }
             }
         }
 
