@@ -34,7 +34,7 @@ Extras.Sync.TransitionPane = Core.extend(Echo.Render.ComponentSync, {
     },
     
     doImmediateTransition: function() {
-        this._removeOldContent();
+        this.removeOldContent();
         if (this.childDiv) {
             this.showContent();
         }
@@ -63,7 +63,10 @@ Extras.Sync.TransitionPane = Core.extend(Echo.Render.ComponentSync, {
         }
     },
     
-    _removeOldContent: function() {
+    /**
+     * Removes old content.
+     */
+    removeOldContent: function() {
         if (this.oldChildDiv) {
             this.contentDiv.removeChild(this.oldChildDiv);
             this.oldChildDiv = null;
@@ -76,6 +79,9 @@ Extras.Sync.TransitionPane = Core.extend(Echo.Render.ComponentSync, {
         }
     },
     
+    /**
+     * Shows new content.
+     */
     showContent: function() {
         if (this.childDiv) {
             this.childDiv.style.visibility = "visible";
@@ -186,7 +192,7 @@ Extras.Sync.TransitionPane = Core.extend(Echo.Render.ComponentSync, {
         }
         
         // Remove content which was transitioned from.
-        this._removeOldContent();
+        this.removeOldContent();
         
         // Refocus current focused component if it is within TransitionPane.
         if (this.component && this.component.application) {
@@ -344,51 +350,36 @@ Extras.Sync.TransitionPane.FadeOpacityColorTransition = Core.extend(Extras.Sync.
 
     runTime: 1000,
     _maskDiv: null,
+    _swapped: false,
     
     complete: function(abort) {
-        if (this.transitionPane.childDiv) {
-            this.transitionPane.childDiv.style.zIndex = 0;
-            if (Core.Web.Env.PROPRIETARY_IE_OPACITY_FILTER_REQUIRED) {
-                this.transitionPane.childDiv.style.filter = "";
-            } else {
-                this.transitionPane.childDiv.style.opacity = 1;
-            }
-        }
+        this._maskDiv.parentNode.removeChild(this._maskDiv);
     },
     
     init: function() {
         this._maskDiv = document.createElement("div");
-        this._maskDiv.style.cssText = "position:absolute;width:100%;height:100%;z-index:32767";
-        this._maskDiv.style.backgroundColor = "white";
-
-        if (this.transitionPane.childDiv) {
-            if (Core.Web.Env.PROPRIETARY_IE_OPACITY_FILTER_REQUIRED) {
-                this.transitionPane.childDiv.style.filter = "alpha(opacity=0)";
-            } else {
-                this.transitionPane.childDiv.style.opacity = 0;
-            }
+        this._maskDiv.style.cssText = "position:absolute;width:100%;height:100%;z-index:32767;";
+        if (Core.Web.Env.PROPRIETARY_IE_OPACITY_FILTER_REQUIRED) {
+            this._maskDiv.style.filter = "alpha(opacity=0)";
+        } else {
+            this._maskDiv.style.opacity = 0;
         }
-
+        this._maskDiv.style.backgroundColor = "black";
         this.transitionPane.contentDiv.appendChild(this._maskDiv);
-        this.transitionPane.showContent();
     },
-    
+
     step: function(progress) {
-        var percent;
-        if (this.transitionPane.childDiv) {
-            if (Core.Web.Env.PROPRIETARY_IE_OPACITY_FILTER_REQUIRED) {
-                percent = Math.floor(progress * 100);
-                this.transitionPane.childDiv.style.filter = "alpha(opacity=" + percent + ")";
-            } else {
-                this.transitionPane.childDiv.style.opacity = progress;
-            }
-        } else if (this.transitionPane.oldChildDiv) {
-            if (Core.Web.Env.PROPRIETARY_IE_OPACITY_FILTER_REQUIRED) {
-                percent = Math.floor((1 - progress) * 100);
-                this.transitionPane.oldChildDiv.style.filter = "alpha(opacity=" + percent + ")";
-            } else {
-                this.transitionPane.oldChildDiv.style.opacity = 1 - progress;
-            }
+        var opacity = 1 - Math.abs(progress * 2 - 1);
+        if (progress > 0.5 && !this._swapped) {
+            this.transitionPane.showContent();
+            this.transitionPane.removeOldContent();
+            this._swapped = true;
+        }
+        if (Core.Web.Env.PROPRIETARY_IE_OPACITY_FILTER_REQUIRED) {
+            var percent = Math.floor(opacity * 100);
+            this._maskDiv.style.filter = "alpha(opacity=" + percent + ")";
+        } else {
+            this._maskDiv.style.opacity = opacity;
         }
     }
 });
