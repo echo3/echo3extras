@@ -364,7 +364,11 @@ Extras.Sync.TransitionPane.FadeOpacityColorTransition = Core.extend(Extras.Sync.
         } else {
             this._maskDiv.style.opacity = 0;
         }
-        this._maskDiv.style.backgroundColor = "black";
+        if (this.transitionPane.type === Extras.TransitionPane.TYPE_FADE_TO_WHITE) {
+            this._maskDiv.style.backgroundColor = "#ffffff";
+        } else {
+            this._maskDiv.style.backgroundColor = "#000000";
+        }
         this.transitionPane.contentDiv.appendChild(this._maskDiv);
     },
 
