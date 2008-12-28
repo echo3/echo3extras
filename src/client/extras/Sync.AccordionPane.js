@@ -331,8 +331,12 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
     _addEventListeners: function() {
         Core.Web.Event.add(this._tabDiv, "click", Core.method(this, this._processClick), false);
         if (this._parent.component.render("tabRolloverEnabled", true)) {
-            Core.Web.Event.add(this._tabDiv, "mouseover", Core.method(this, this._processEnter), false);
-            Core.Web.Event.add(this._tabDiv, "mouseout", Core.method(this, this._processExit), false);
+            Core.Web.Event.add(this._tabDiv, 
+                    Core.Web.Env.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED ? "mouseenter" : "mouseover", 
+                    Core.method(this, this._processEnter), false);
+            Core.Web.Event.add(this._tabDiv, 
+                    Core.Web.Env.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED ? "mouseleave" : "mouseout", 
+                    Core.method(this, this._processExit), false);
         }
         Core.Web.Event.Selection.disable(this._tabDiv);
     },
