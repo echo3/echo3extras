@@ -419,8 +419,10 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
         }
 
         Core.Web.Event.add(this.element, "click", Core.method(this, this._processClick), false);
-        Core.Web.Event.add(this.element, "mouseover", Core.method(this, this._processItemEnter), false);
-        Core.Web.Event.add(this.element, "mouseout", Core.method(this, this._processItemExit), false);
+        Core.Web.Event.add(this.element, Core.Web.Env.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED ? "mouseenter" : "mouseover",
+                Core.method(this, this._processItemEnter), false);
+        Core.Web.Event.add(this.element, Core.Web.Env.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED ? "mouseleave" : "mouseout",
+                Core.method(this, this._processItemExit), false);
         Core.Web.Event.Selection.disable(this.element);
     },
 
@@ -1211,8 +1213,10 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
         }
         
         Core.Web.Event.add(menuBarDiv, "click", Core.method(this, this._processClick), false);
-        Core.Web.Event.add(menuBarDiv, "mouseover", Core.method(this, this._processItemEnter), false);
-        Core.Web.Event.add(menuBarDiv, "mouseout", Core.method(this, this._processItemExit), false);
+        Core.Web.Event.add(menuBarDiv, Core.Web.Env.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED ? "mouseenter" : "mouseover", 
+                Core.method(this, this._processItemEnter), false);
+        Core.Web.Event.add(menuBarDiv, Core.Web.Env.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED ? "mouseleave" : "mouseout", 
+                Core.method(this, this._processItemExit), false);
         Core.Web.Event.Selection.disable(menuBarDiv);
     
         return menuBarDiv;
