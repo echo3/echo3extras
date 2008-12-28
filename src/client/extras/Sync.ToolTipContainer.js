@@ -73,11 +73,12 @@ Extras.Sync.ToolTipContainer = Core.extend(Echo.Render.ComponentSync, {
         Echo.Render.renderComponentAdd(update, applyToComponent, div);
         
         if (this.component.getComponentCount() > 1) {
-            var mouseEnterLeaveSupport = Core.Web.Env.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED;
-            var enterEvent = mouseEnterLeaveSupport ? "mouseenter" : "mouseover";
-            var exitEvent = mouseEnterLeaveSupport ? "mouseleave" : "mouseout";
-            Core.Web.Event.add(div, enterEvent, Core.method(this, this._processRolloverEnter), true);
-            Core.Web.Event.add(div, exitEvent, Core.method(this, this._processRolloverExit), true);
+            Core.Web.Event.add(div,
+                    Core.Web.Env.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED ? "mouseenter" : "mouseover", 
+                    Core.method(this, this._processRolloverEnter), true);
+            Core.Web.Event.add(div,
+                    Core.Web.Env.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED ? "mouseleave" : "mouseout", 
+                    Core.method(this, this._processRolloverExit), true);
             Core.Web.Event.add(div, "mousemove", Core.method(this, this._processMove), true);
         }
         
