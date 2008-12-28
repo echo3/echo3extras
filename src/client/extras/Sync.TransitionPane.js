@@ -273,7 +273,7 @@ Extras.Sync.TransitionPane.BlindTransition = Core.extend(Extras.Sync.TransitionP
         if (currentStep < this._swapStep) {
             if (this.transitionPane.oldChildDiv) {
                 if (this._reverse) {
-                    this.transitionPane.oldChildDiv.style.top = (this._swapStep - currentStep) + "px";
+                    this.transitionPane.oldChildDiv.style.top = currentStep + "px";
                 } else {
                     this.transitionPane.oldChildDiv.style.top = (0 - currentStep) + "px";
                 }
