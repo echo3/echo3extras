@@ -832,8 +832,6 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
 
 Extras.Sync.DataGrid.ScrollContainer = Core.extend({
 
-    _scrollBarWidth: 15,
-    _scrollBarHeight: 15,
     _vScrollAccumulator: 0,
     
     bounds: null,
@@ -849,7 +847,7 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
         
         this._vScrollContainer = document.createElement("div");
         this._vScrollContainer.style.cssText = "position:absolute;top:0;bottom:0;right:0;overflow:scroll;";
-        this._vScrollContainer.style.width = (1 + this._scrollBarWidth) + "px";
+        this._vScrollContainer.style.width = (1 + Core.Web.Measure.SCROLL_WIDTH) + "px";
         this._vScrollContent = document.createElement("div");
         this._vScrollContent.style.cssText = "width:1px;height:500%;";
         this._vScrollContainer.appendChild(this._vScrollContent);
@@ -857,7 +855,7 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
         
         this._hScrollContainer = document.createElement("div");
         this._hScrollContainer.style.cssText = "position:absolute;;bottom:0;left:0;right:0;overflow:scroll;";
-        this._hScrollContainer.style.height = (1 + this._scrollBarHeight) + "px";
+        this._hScrollContainer.style.height = (1 + Core.Web.Measure.SCROLL_HEIGHT) + "px";
         this._hScrollContent = document.createElement("div");
         this._hScrollContent.style.cssText = "height:1px;width:500%;";
         this._hScrollContainer.appendChild(this._hScrollContent);
@@ -886,12 +884,12 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
     
     configure: function(horizontal, vertical) {
         if (horizontal > 1) {
-            this._vScrollContainer.style.bottom = this.contentElement.style.bottom = this._scrollBarHeight + "px";
+            this._vScrollContainer.style.bottom = this.contentElement.style.bottom = Core.Web.Measure.SCROLL_HEIGHT + "px";
         } else {
             this._vScrollContainer.style.bottom = this.contentElement.style.bottom = 0;
         }
         if (vertical > 1) {
-            this._hScrollContainer.style.right = this.contentElement.style.right = this._scrollBarWidth + "px";
+            this._hScrollContainer.style.right = this.contentElement.style.right = Core.Web.Measure.SCROLL_WIDTH + "px";
         } else {
             this._hScrollContainer.style.right = this.contentElement.style.right = 0;
         }
