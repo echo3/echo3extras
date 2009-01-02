@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------
 Echo Extras, version 3.0
-Copyright (C) 2005-2008 NextApp, Inc.
+Copyright (C) 2005-2009 NextApp, Inc.
 
 http://echo.nextapp.com/site/echo3/addons/extras
 
