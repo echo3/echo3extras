@@ -164,6 +164,20 @@ public class AbstractTest extends SplitPane {
         });
         row.add(button);
         
+        button = new Button("Mult");
+        button.setStyleName("TestControlButtonSmall");
+        button.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                setTestComponentProperty(propertyName, Border.class, 
+                        new Border(new Border.Side[] { 
+                                new Border.Side(1, Color.RED, Border.STYLE_DASHED),
+                                new Border.Side(2, Color.YELLOW, Border.STYLE_SOLID),
+                                new Border.Side(3, Color.GREEN, Border.STYLE_SOLID),
+                                new Border.Side(4, Color.BLUE, Border.STYLE_DOTTED)}));
+            }
+        });
+        row.add(button);
+        
         button = new Button("Null");
         button.setStyleName("TestControlButtonSmall");
         button.addActionListener(new ActionListener(){
