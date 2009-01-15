@@ -38,6 +38,7 @@ import nextapp.echo.app.Component;
 import nextapp.echo.app.update.ClientUpdateManager;
 import nextapp.echo.app.util.Context;
 import nextapp.echo.extras.app.CalendarSelect;
+import nextapp.echo.extras.webcontainer.CommonResources;
 import nextapp.echo.extras.webcontainer.service.CommonService;
 import nextapp.echo.webcontainer.AbstractComponentSynchronizePeer;
 import nextapp.echo.webcontainer.ContentType;
@@ -68,6 +69,7 @@ extends AbstractComponentSynchronizePeer {
                 RESOURCE_DIR + "SyncLocale.CalendarSelect." + localeCode + ".js");
         WebContainerServlet.getServiceRegistry().add(service);
         LOCALE_SERVICES.put(locale, service);
+        CommonResources.install();
         ResourceRegistry resources = WebContainerServlet.getResourceRegistry();
         resources.add("Extras", "image/calendar/Increment.gif", ContentType.IMAGE_GIF);
         resources.add("Extras", "image/calendar/Decrement.gif", ContentType.IMAGE_GIF);

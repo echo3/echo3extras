@@ -32,6 +32,7 @@ package nextapp.echo.extras.webcontainer.sync.component;
 import nextapp.echo.app.Component;
 import nextapp.echo.app.util.Context;
 import nextapp.echo.extras.app.TransitionPane;
+import nextapp.echo.extras.webcontainer.CommonResources;
 import nextapp.echo.extras.webcontainer.service.CommonService;
 import nextapp.echo.webcontainer.AbstractComponentSynchronizePeer;
 import nextapp.echo.webcontainer.ContentType;
@@ -53,6 +54,7 @@ extends AbstractComponentSynchronizePeer {
 
     static {
         WebContainerServlet.getServiceRegistry().add(TRANSITION_PANE_SERVICE);
+        CommonResources.install();
         ResourceRegistry resources = WebContainerServlet.getResourceRegistry();
 
         // Blind transition: Load frame image resources (Frame1.gif through Frame14.gif)
