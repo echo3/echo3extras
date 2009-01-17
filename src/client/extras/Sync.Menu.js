@@ -757,7 +757,7 @@ Extras.Sync.ContextMenu = Core.extend(Extras.Sync.Menu, {
     },
 
     _processContextClick: function(e) {
-        if (!this.client || !this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY) || Core.Web.dragInProgress) {
+        if (!this.client || !this.client.verifyInput(this.component) || Core.Web.dragInProgress) {
             return true;
         }
     

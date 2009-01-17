@@ -128,7 +128,7 @@ Extras.Sync.ToolTipContainer = Core.extend(Echo.Render.ComponentSync, {
     },
     
     _processRolloverEnter: function(e) {
-        if (!this.client || !this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY) || Core.Web.dragInProgress) {
+        if (!this.client || !this.client.verifyInput(this.component) || Core.Web.dragInProgress) {
             return;
         }
         
@@ -140,7 +140,7 @@ Extras.Sync.ToolTipContainer = Core.extend(Echo.Render.ComponentSync, {
     },
     
     _processRolloverExit: function(e) {
-        if (!this.client || !this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY)) {
+        if (!this.client || !this.client.verifyInput(this.component)) {
             return;
         }
         if (this._toolTipDiv.parentNode === document.body) {

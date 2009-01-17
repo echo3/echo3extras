@@ -391,8 +391,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
     },
     
     _processDateRolloverEnter: function(e) {
-        if (!this.client || !this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY) ||
-                e.target._cellIndex == null || this._animation) {
+        if (!this.client || !this.client.verifyInput(this.component) || e.target._cellIndex == null || this._animation) {
             return;
         }
         if (this._rolloverCellIndex != null) {
@@ -410,15 +409,14 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
     },
     
     _processDateSelect: function(e) {
-        if (!this.client || !this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY) || 
-                e.target._cellIndex == null || this._animation) {
+        if (!this.client || !this.client.verifyInput(this.component) || e.target._cellIndex == null || this._animation) {
             return;
         }
         this._setDate(this._monthData.getCellDate(e.target._cellIndex));
     },
     
     _processMonthSelect: function(e) {
-        if (!this.client || !this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY)) {
+        if (!this.client || !this.client.verifyInput(this.component)) {
             this._monthSelect.selectedIndex = this._date.month;
             return;
         }        
@@ -427,7 +425,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
     
     _processYearChange: function(e) {
         var newValue = parseInt(this._yearField.value, 10);
-        if (!this.client || !this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY) || isNaN(newValue)) {
+        if (!this.client || !this.client.verifyInput(this.component) || isNaN(newValue)) {
             this._yearField.value = this._date.year;
             return;
         }
@@ -441,14 +439,14 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
     },
     
     _processYearDecrement: function(e) {
-        if (!this.client || !this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY)) {
+        if (!this.client || !this.client.verifyInput(this.component)) {
             return;
         }
         this._setDate({ year: this._date.year - 1, month: this._date.month, day: this._date.day });
     },
 
     _processYearIncrement: function(e) {
-        if (!this.client || !this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY)) {
+        if (!this.client || !this.client.verifyInput(this.component)) {
             return;
         }
         this._setDate({ year: this._date.year + 1, month: this._date.month, day: this._date.day });

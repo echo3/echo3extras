@@ -236,7 +236,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
      * Handler for mouse down event on previous/next scroll buttons.
      */
     _processScrollStart: function(e) {
-        if (!this.client || !this.client.verifyInput(this.component, Echo.Client.FLAG_INPUT_PROPERTY)) {
+        if (!this.client || !this.client.verifyInput(this.component)) {
             return;
         }
         
