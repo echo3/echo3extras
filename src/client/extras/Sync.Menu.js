@@ -419,10 +419,8 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
         }
 
         Core.Web.Event.add(this.element, "click", Core.method(this, this._processClick), false);
-        Core.Web.Event.add(this.element, Core.Web.Env.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED ? "mouseenter" : "mouseover",
-                Core.method(this, this._processItemEnter), false);
-        Core.Web.Event.add(this.element, Core.Web.Env.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED ? "mouseleave" : "mouseout",
-                Core.method(this, this._processItemExit), false);
+        Core.Web.Event.add(this.element, "mouseover", Core.method(this, this._processItemEnter), false);
+        Core.Web.Event.add(this.element, "mouseout", Core.method(this, this._processItemExit), false);
         Core.Web.Event.Selection.disable(this.element);
     },
 
@@ -663,7 +661,7 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
     
     _processClick: function(e) {
         Core.Web.DOM.preventEventDefault(e);
-        var itemModel = this._getItemModel(e.target);
+        var itemModel = this._getItemModel(Core.Web.DOM.getEventTarget(e));
         if (itemModel) {
             this._setActiveItem(itemModel, true);
         }
@@ -682,7 +680,7 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
             return true;
         }
         
-        var element = this._getItemElement(e.target);
+        var element = this._getItemElement(Core.Web.DOM.getEventTarget(e));
         if (!element) {
             return;
         }
@@ -1038,6 +1036,7 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
         if (element == null) {
             return null;
         }
+Core.Debug.consoleWrite(element.nodeName + "/" + element.id);        
         // Find TD element.
         while (element.nodeName.toLowerCase() != "td") {
             if (element == this.element) {
@@ -1095,7 +1094,7 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
         
         Core.Web.DOM.preventEventDefault(e);
 
-        var itemModel = this._getItemModel(e.target);
+        var itemModel = this._getItemModel(Core.Web.DOM.getEventTarget(e));
         if (itemModel) {
             if (itemModel instanceof Extras.OptionModel) {
                 this.deactivate();
@@ -1122,7 +1121,7 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
             return true;
         }
         
-        var element = this._getItemElement(e.target);
+        var element = this._getItemElement(Core.Web.DOM.getEventTarget(e));
         if (!element) {
             return;
         }
@@ -1213,10 +1212,8 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
         }
         
         Core.Web.Event.add(menuBarDiv, "click", Core.method(this, this._processClick), false);
-        Core.Web.Event.add(menuBarDiv, Core.Web.Env.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED ? "mouseenter" : "mouseover", 
-                Core.method(this, this._processItemEnter), false);
-        Core.Web.Event.add(menuBarDiv, Core.Web.Env.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED ? "mouseleave" : "mouseout", 
-                Core.method(this, this._processItemExit), false);
+        Core.Web.Event.add(menuBarDiv, "mouseover", Core.method(this, this._processItemEnter), false);
+        Core.Web.Event.add(menuBarDiv, "mouseout", Core.method(this, this._processItemExit), false);
         Core.Web.Event.Selection.disable(menuBarDiv);
     
         return menuBarDiv;
