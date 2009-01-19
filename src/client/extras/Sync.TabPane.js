@@ -174,9 +174,14 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     },
 
     _configureHeaderSize: function() {
+        var height = new Core.Web.Measure.Bounds(this._headerTabContainerDiv).height;
+        if (height === 0) {
+            // Cannot calculate header size.
+            return;
+        }
+        
         this._configureHeaderSizeRequired = false;
         var borderSize = Echo.Sync.Border.getPixelSize(this._tabActiveBorder);
-        var height = new Core.Web.Measure.Bounds(this._headerTabContainerDiv).height;
         
         if (this._tabPosition == Extras.TabPane.TAB_POSITION_BOTTOM) {
             this._contentContainerDiv.style.top = "0";
