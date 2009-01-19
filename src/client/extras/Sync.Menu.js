@@ -1036,7 +1036,6 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
         if (element == null) {
             return null;
         }
-Core.Debug.consoleWrite(element.nodeName + "/" + element.id);        
         // Find TD element.
         while (element.nodeName.toLowerCase() != "td") {
             if (element == this.element) {
