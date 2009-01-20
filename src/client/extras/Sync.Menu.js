@@ -229,35 +229,35 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
         
         var bottom = bounds.top + bounds.height,
             right = bounds.left + bounds.width,
-            bodyBounds = new Core.Web.Measure.Bounds(document.body);
+            domainBounds = new Core.Web.Measure.Bounds(this.client.domainElement);
         this._overlay = { };
 
         if (bounds.top > 0) {
             this._overlay.top = document.createElement("div");
             this._overlay.top.style.cssText = "position:absolute;z-index:32767;top:0;left:0;width:100%;" +
                     "height:" + bounds.top + "px;";
-            document.body.appendChild(this._overlay.top);
+            this.client.domainElement.appendChild(this._overlay.top);
         }
         
-        if (bottom < bodyBounds.height) {
+        if (bottom < domainBounds.height) {
             this._overlay.bottom = document.createElement("div");
             this._overlay.bottom.style.cssText = "position:absolute;z-index:32767;bottom:0;left:0;width:100%;" +
                     "top:" + bottom + "px;";
-            document.body.appendChild(this._overlay.bottom);
+            this.client.domainElement.appendChild(this._overlay.bottom);
         }
 
         if (bounds.left > 0) {
             this._overlay.left = document.createElement("div");
             this._overlay.left.style.cssText = "position:absolute;z-index:32767;left:0;" +
                     "width:" + bounds.left + "px;top:" + bounds.top + "px;height:" + bounds.height + "px;";
-            document.body.appendChild(this._overlay.left);
+            this.client.domainElement.appendChild(this._overlay.left);
         }
 
-        if (right < bodyBounds.width) {
+        if (right < domainBounds.width) {
             this._overlay.right = document.createElement("div");
             this._overlay.right.style.cssText = "position:absolute;z-index:32767;right:0;" +
                     "left:" + right + "px;top:" + bounds.top + "px;height:" + bounds.height + "px;";
-            document.body.appendChild(this._overlay.right);
+            this.client.domainElement.appendChild(this._overlay.right);
         }
         
         for (var name in this._overlay) {
@@ -274,7 +274,7 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
             return;
         }
         for (var name in this._overlay) {
-            document.body.removeChild(this._overlay[name]);
+            this.client.domainElement.removeChild(this._overlay[name]);
         }
         this._overlay = null;
     },
