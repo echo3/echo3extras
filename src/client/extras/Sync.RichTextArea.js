@@ -1212,6 +1212,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
     _getCursorStyle: function() {
         var selection = this._getSelection();
         var style = { };
+        var rgb;
 
         var node = selection.node;
         while (node) { 
@@ -1239,7 +1240,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
                 style.underline |= Extras.Sync.RichTextArea.InputPeer._CSS_UNDERLINE.test(css);
                 
                 if (!style.foreground && Extras.Sync.RichTextArea.InputPeer._CSS_FOREGROUND_TEST.test(css)) {
-                    var rgb = Extras.Sync.RichTextArea.InputPeer._CSS_FOREGROUND_RGB.exec(css);
+                    rgb = Extras.Sync.RichTextArea.InputPeer._CSS_FOREGROUND_RGB.exec(css);
                     if (rgb) {
                         style.foreground = Echo.Sync.Color.toHex(
                                 parseInt(rgb[1], 10), parseInt(rgb[2], 10), parseInt(rgb[3], 10));
@@ -1247,7 +1248,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
                 }
 
                 if (!style.background && Extras.Sync.RichTextArea.InputPeer._CSS_BACKGROUND_TEST.test(css)) {
-                    var rgb = Extras.Sync.RichTextArea.InputPeer._CSS_BACKGROUND_RGB.exec(css);
+                    rgb = Extras.Sync.RichTextArea.InputPeer._CSS_BACKGROUND_RGB.exec(css);
                     if (rgb) {
                         style.background = Echo.Sync.Color.toHex(
                                 parseInt(rgb[1], 10), parseInt(rgb[2], 10), parseInt(rgb[3], 10));
@@ -1270,7 +1271,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
             var selection = this._iframe.contentWindow.getSelection();
             return {
                 node: selection ? selection.anchorNode : null
-            }
+            };
         }
     },
     
@@ -1679,14 +1680,14 @@ Extras.Sync.RichTextArea.ToolbarButtonPeer = Core.extend(Echo.Render.ComponentSy
             foreground = this.component.render("pressedForeground", foreground);
             background = this.component.render("presssedBackground", background);
             border = this.component.render("pressedBorder", border);
-            backgroundImage = this.component.render("pressedBackgroundImage", backgroundImage)
+            backgroundImage = this.component.render("pressedBackgroundImage", backgroundImage);
         }
         
         // Apply rollover effect.
         if (rolloverState) {
             foreground = this.component.render("rolloverForeground", foreground);
             background = this.component.render("rolloverBackground", background);
-            backgroundImage = this.component.render("rolloverBackgroundImage", backgroundImage)
+            backgroundImage = this.component.render("rolloverBackgroundImage", backgroundImage);
         }
                         
         Echo.Sync.Color.renderClear(foreground, this._div, "color");

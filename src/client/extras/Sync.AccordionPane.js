@@ -319,7 +319,7 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
                                     Echo.Sync.Color.adjust(borderData.color, 20, 20, 20)),
                             bottom: Echo.Sync.Border.compose(borderDataBottom.size, borderDataBottom.style,
                                     Echo.Sync.Color.adjust(borderDataBottom.color, 20, 20, 20))
-                    }
+                    };
                 } else {
                     borderData = Echo.Sync.Border.parse(border);
                     border = Echo.Sync.Border.compose(borderData.size, borderData.style,

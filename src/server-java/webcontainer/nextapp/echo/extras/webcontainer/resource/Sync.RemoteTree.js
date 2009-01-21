@@ -304,7 +304,7 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
         }
         var iterator = this._elementIterator(rowElement, endRow);
         var visible = true;
-        var parentNode = this.component.treeStructure.getNode(node.getParentId())
+        var parentNode = this.component.treeStructure.getNode(node.getParentId());
         if (parentNode) {
             visible = parentNode.isExpanded();
         }
