@@ -852,19 +852,19 @@ Extras.Sync.DropDownMenu = Core.extend(Extras.Sync.Menu, {
                 var tbody = document.createElement("tbody");
                 var tr = document.createElement("tr");
                 var td = document.createElement("td");
-                td.style.cssText = "padding:0vertical-align:top;"
+                td.style.cssText = "padding:0vertical-align:top;";
                 img = document.createElement("img");
                 Echo.Sync.ImageReference.renderImg(itemModel.icon, img);
                 td.appendChild(img);
                 tr.appendChild(td);
                 td = document.createElement("td");
-                td.style.cssText = "padding:width:3px;"
+                td.style.cssText = "padding:width:3px;";
                 var spacingDiv = document.createElement("div");
                 spacingDiv.style.cssText = "width:3px";
                 td.appendChild(spacingDiv);
                 tr.appendChild(td);
                 td = document.createElement("td");
-                td.style.cssText = "padding:0vertical-align:top;"
+                td.style.cssText = "padding:0vertical-align:top;";
                 td.appendChild(document.createTextNode(itemModel.text));
                 tr.appendChild(td);
                 tbody.appendChild(tr);
@@ -930,7 +930,7 @@ Extras.Sync.DropDownMenu = Core.extend(Extras.Sync.Menu, {
         Echo.Sync.Border.render(this.component.render("border", Extras.Sync.Menu.DEFAULT_BORDER), dropDownDiv); 
         
         var relativeDiv = document.createElement("div");
-        relativeDiv.style.cssText = "position:relative;overflow:hidden;"
+        relativeDiv.style.cssText = "position:relative;overflow:hidden;";
         dropDownDiv.appendChild(relativeDiv);
         
         Echo.Sync.Extent.render(this.component.render("width"), dropDownDiv, "width", true, true);

@@ -248,7 +248,7 @@ Extras.MenuModel = Core.extend(Extras.ItemModel, {
     getItemModelFromPositions: function(itemPositions) {
         var menuModel = this;
         for (var i = 0; i < itemPositions.length; ++i) {
-            menuModel = menuModel.items[parseInt(itemPositions[i])];
+            menuModel = menuModel.items[parseInt(itemPositions[i], 10)];
         }
         return menuModel;
     },

@@ -95,7 +95,7 @@ Extras.Sync.Animation = Core.extend({
     _doStep: function() {
         var currentTime = new Date().getTime();
         if (currentTime < this.endTime) {
-            if (this.stepIndex == 0) {
+            if (this.stepIndex === 0) {
                 this.init();
             } else {
                 this.step((currentTime - this.startTime) / this.runTime);
