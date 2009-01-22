@@ -97,8 +97,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 case 1:
                     // FIXME Impl.
                     throw new Error("unsupported");
-                    break;
-                };
+                }
                 
                 switch (this.region.position.v) {
                 case 0: 
@@ -110,8 +109,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 case 1:
                     // FIXME Impl.
                     throw new Error("unsupported");
-                    break;
-                };
+                }
                 
                 this.edge = { 
                     top: this.tileIndex.row === 0,
@@ -226,7 +224,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
              * Determines if this tile is currently covering the left edge of the screen (pixel 0).
              */ 
             isEdgeLeft: function() {
-                return this.edge.left || this.tileIndex.column == 0 || 
+                return this.edge.left || this.tileIndex.column === 0 || 
                         (this.bounds.left <= 0 && this.bounds.left + this.bounds.width > 0);
             },
             
@@ -242,7 +240,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
              * Determines if this tile is currently covering the top edge of the screen (pixel 0).
              */ 
             isEdgeTop: function() {
-                return this.edge.top || this.tileIndex.row == 0 || 
+                return this.edge.top || this.tileIndex.row === 0 || 
                         (this.bounds.top <= 0 && this.bounds.top + this.bounds.height > 0);
             },
         
@@ -345,7 +343,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
              */
             clear: function() {
                 for (var rowIndex in this._rows) {
-                    row = this._rows[rowIndex];
+                    var row = this._rows[rowIndex];
                     for (var columnIndex in row) {
                         var tile = row[columnIndex];
                         tile.remove();
@@ -465,6 +463,8 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 case Extras.Sync.DataGrid.INDEX:
                     initTileColumnIndex = Math.floor(x / this.dataGrid.tileSize.columns);
                     break;
+                case Extras.Sync.DataGrid.PERCENT:
+                    throw new Error("Not yet supported.");
                 default:
                     throw new Error("Invalid yUnits: " + yUnits);
                 }
@@ -473,6 +473,8 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 case Extras.Sync.DataGrid.INDEX:
                     tileRowIndex = Math.floor(y / this.dataGrid.tileSize.rows);
                     break;
+                case Extras.Sync.DataGrid.PERCENT:
+                    throw new Error("Not yet supported.");
                 default:
                     throw new Error("Invalid yUnits: " + yUnits);
                 }
@@ -482,7 +484,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                     tileColumnIndex = initTileColumnIndex;
                     cursorXPx = 0;
                     while (cursorXPx < this.bounds.width) {
-                        var tile = this.getTile(tileColumnIndex, tileRowIndex);
+                        tile = this.getTile(tileColumnIndex, tileRowIndex);
                         tile.display(cursorXPx, cursorYPx);
                         if (tile.isEdgeRight()) {
                             break;
@@ -687,7 +689,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
         if (!this._prototypeTable) {
             this._prototypeTable = document.createElement("table");
             this._prototypeTable.cellPadding = this._prototypeTable.cellSpacing = 0;
-            this._prototypeTable.style.cssText = "table-layout:fixed;padding:0;border:0px none;"
+            this._prototypeTable.style.cssText = "table-layout:fixed;padding:0;border:0px none;";
             var tbody = document.createElement("tbody");
             this._prototypeTable.appendChild(tbody);
         }
@@ -702,10 +704,10 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
         this._cellBorder = this.component.render("cellBorder");
         this._model = this.component.get("model");
         this.fixedCells = {
-            left: parseInt(this.component.render("fixedColumnsLeft", 0)),
-            top: parseInt(this.component.render("fixedRowsTop", 0)),
-            right: parseInt(this.component.render("fixedColumnsRight", 0)),
-            bottom: parseInt(this.component.render("fixedRowsBottom", 0))
+            left: parseInt(this.component.render("fixedColumnsLeft", 0), 10),
+            top: parseInt(this.component.render("fixedRowsTop", 0), 10),
+            right: parseInt(this.component.render("fixedColumnsRight", 0), 10),
+            bottom: parseInt(this.component.render("fixedRowsBottom", 0), 10)
         };
 
         // FIXME temporary
@@ -824,7 +826,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             }
         }
         
-        for (var name in this.regions) {
+        for (name in this.regions) {
             this.regions[name].updateBounds(left, top, right, bottom);
         }
     }
