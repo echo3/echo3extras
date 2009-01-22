@@ -242,7 +242,10 @@ JSLINT = function () {
             strict     : true, // require the "use strict"; pragma
             sub        : true, // if all forms of subscript notation are tolerated
             white      : true, // if strict whitespace rules apply
-            widget     : true  // if the Yahoo Widgets globals should be predefined
+            widget     : true, // if the Yahoo Widgets globals should be predefined
+            ec_eqnull  : true  // if (x == null or x != null) should be allowed. (Custom option added for Echo)
+            
+            
         },
 
 // browser contains a set of global names which are commonly provided by a
@@ -2072,10 +2075,8 @@ JSLINT = function () {
                (node.type === '(string)' && !node.value) ||
                 node.type === 'true' ||
                 node.type === 'false' ||
-                node.type === 'undefined'; // ||
-//                node.type === 'null';
-// Above two comments removed to allow == null operations (routinely used in Echo for appropriate purpose
-// of determining (x === undefined || x === null).
+                node.type === 'undefined' ||
+                (!option.ec_eqnull && node.type === 'null');
     }
 
 
@@ -4797,6 +4798,10 @@ JSLINT = function () {
 
 // Report generator.
 
+    itself.getImplied = function() {
+        return to_array(implied);
+    }
+
     itself.report = function (option, sep) {
         var a = [], c, e, f, i, k, l, m = '', n, o = [], s, v, cl, va, un, ou, gl, la;
 
@@ -4985,7 +4990,12 @@ readDir = /* string[] */ function ( /* string */ path, /* opt RegExp */ filterRx
             quit(1);
         }
         print("jslint: Processing: " + files[fi]);
-        if (!JSLINT(input, {evil: true, forin: true, browser: true, passfail: false})) {
+        var result = JSLINT(input, {sub: true, ec_eqnull: true, evil: true, forin: true, browser: true, passfail: false,
+                predef: ["Core", "Echo", "Extras", "ActiveXObject", "DOMParser", "Document"]});
+        if (JSLINT.getImplied().length > 0) {
+            print("Unexpected globals: " + JSLINT.getImplied());
+        }
+        if (!result) {
             for (var i = 0; i < JSLINT.errors.length; i += 1) {
                 var e = JSLINT.errors[i];
                 if (e) {
