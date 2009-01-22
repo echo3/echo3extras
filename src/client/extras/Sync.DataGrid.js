@@ -830,6 +830,9 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
     }
 });
 
+/**
+ * Renders a scrolling container for the DataGrid, processing scroll events and managing scroll bar positions.
+ */
 Extras.Sync.DataGrid.ScrollContainer = Core.extend({
 
     _vScrollAccumulator: 0,
@@ -841,6 +844,12 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
     
     onScroll: null,
 
+    /**
+     * Creates a ScrollContainer.  The dispose() method should be invoked when the ScrollContainer will no longer be used.
+     *
+     * @param horizontal
+     * @param vertical
+     */
     $construct: function(horizontal, vertical) {
         this.rootElement = document.createElement("div");
         this.rootElement.style.cssText = "position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden;";
@@ -895,6 +904,9 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
         }
     },
     
+    /**
+     * Disposes of the ScrollContainer, releasing any resources in use.
+     */
     dispose: function() {
         Core.Web.Event.removeAll(this._hScrollContainer);
         Core.Web.Event.removeAll(this._vScrollContainer);
@@ -904,18 +916,33 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
         this.contentElement = null;
     },
     
+    /**
+     * Process a hoirzontal scroll bar adjustment event.
+     *
+     * @param e the event
+     */
     _processScrollH: function(e) {
-//        Core.Debug.consoleWrite("hscroll:" + this._hScrollContainer.scrollLeft);
+        Core.Debug.consoleWrite("hscroll:" + this._hScrollContainer.scrollLeft);
         if (this.onScroll) {
         }
     },
     
+    /**
+     * Process a vertical scroll bar adjustment event.
+     *
+     * @param e the event
+     */
     _processScrollV: function(e) {
-//        Core.Debug.consoleWrite("vscroll:" + this._vScrollContainer.scrollTop);
+        Core.Debug.consoleWrite("vscroll:" + this._vScrollContainer.scrollTop);
         if (this.onScroll) {
         }
     },
     
+    /**
+     * Processes a scroll wheel event.
+     *
+     * @param e the event
+     */
     _processWheel: function(e) {
         var wheelScroll;
         
@@ -934,6 +961,10 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
         return true;
     },
     
+    /**
+     * Executes operations which should be performed when the containing component synchronize peer's <code>renderDisplay</code>
+     * method is invoked.
+     */
     renderDisplay: function() {
         Core.Web.VirtualPosition.redraw(this.rootElement);
         Core.Web.VirtualPosition.redraw(this.contentElement);
