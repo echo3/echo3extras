@@ -195,7 +195,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
 
         Core.Web.VirtualPosition.redraw(this._contentContainerDiv);
         Core.Web.VirtualPosition.redraw(this._headerContainerDiv);
-        for (i = 0; i < this._tabs.length; ++i) {
+        for (var i = 0; i < this._tabs.length; ++i) {
             this._tabs[i]._renderDisplay();
         }
     },

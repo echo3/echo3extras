@@ -844,6 +844,7 @@ Extras.Sync.DropDownMenu = Core.extend(Extras.Sync.Menu, {
     _selectedItem: null,
     
     _createContent: function(itemModel) {
+        var img;
         if (itemModel.icon) {
             if (itemModel.text) {
                 // Render Text and Icon
