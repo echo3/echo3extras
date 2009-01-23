@@ -237,7 +237,7 @@ Extras.ItemModel = Core.extend({
 Extras.MenuModel = Core.extend(Extras.ItemModel, {
     
     /**
-     * The menu title.
+     * The menu title text.
      * @type String
      */
     text: null,
@@ -249,7 +249,7 @@ Extras.MenuModel = Core.extend(Extras.ItemModel, {
     icon: null,
     
     /**
-     * The child menu items.
+     * The child menu items, an array of <code>ItemModel</code>s.
      * @type Array
      */
     items: null,
@@ -258,11 +258,11 @@ Extras.MenuModel = Core.extend(Extras.ItemModel, {
      * Creates a new menu model
      * 
      * @param {String} modelId the id of the menu model
-     * @param {String} text the title of the menu model which will appear in its
+     * @param {String} text the title  text of the menu model which will appear in its
      *        parent menu when this menu is used as a submenu
      * @param {#ImageReference} icon the icon of the menu model which will appear in its
      *        parent menu when this menu is used as a submenu
-     * @param {Array}items the child menu items, an array of <code>ItemModel</code>s
+     * @param {Array} items the child menu items, an array of <code>ItemModel</code>s
      *        (optional)
      */
     $construct: function(modelId, text, icon, items) {
@@ -291,6 +291,7 @@ Extras.MenuModel = Core.extend(Extras.ItemModel, {
     
     /**
      * Finds an item by id in the <code>MenuModel</code>, searching descendant <code>MenuModel</code>s as necessary.
+     * 
      * @param id the id of the menu item to find
      * @return Extras.ItemModel the item model, or null if it cannot be found
      */
@@ -336,9 +337,7 @@ Extras.MenuModel = Core.extend(Extras.ItemModel, {
         return menuModel;
     },
     
-    /**
-     * toString() implementation.
-     */
+    /** @see Object#toString */
     toString: function() {
         return "MenuModel \"" + this.text + "\" Items:" + this.items.length;
     }
@@ -393,9 +392,7 @@ Extras.OptionModel = Core.extend(Extras.ItemModel, {
         return path;
     },
     
-    /**
-     * toString() implementation.
-     */
+    /** @see Object#toString */
     toString: function() {
         return "OptionModel \"" + this.text + "\"";
     }
@@ -439,9 +436,7 @@ Extras.RadioOptionModel = Core.extend(Extras.ToggleOptionModel, {
 /**
  * A representation of a menu separator.
  */
-Extras.SeparatorModel = Core.extend(Extras.ItemModel, {
-
-});
+Extras.SeparatorModel = Core.extend(Extras.ItemModel, { });
 
 /**
  * Representation of menu model state, describing which items are selected and/or disabled.
