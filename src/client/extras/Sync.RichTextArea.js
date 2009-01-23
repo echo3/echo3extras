@@ -623,7 +623,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
     },
     
     _markFocused: function() {
-        this.component.application.setFocusedComponent(this);
+        this.client.application.setFocusedComponent(this);
     },
     
     _openDialog: function(dialogWindow) {
@@ -1182,7 +1182,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
     },
     
     focusDocument: function() {
-        this.component.application.setFocusedComponent(this.component);
+        this.client.application.setFocusedComponent(this.component);
         this._forceIERedraw();
     },
     
@@ -1628,7 +1628,7 @@ Extras.Sync.RichTextArea.ToolbarButtonPeer = Core.extend(Echo.Render.ComponentSy
         if (!this.client || !this.client.verifyInput(this.component)) {
             return true;
         }
-        this.component.application.setFocusedComponent(this.component);
+        this.client.application.setFocusedComponent(this.component);
         this.component.doAction();
     },
     
