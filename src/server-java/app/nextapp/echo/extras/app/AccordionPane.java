@@ -38,8 +38,8 @@ import nextapp.echo.app.Pane;
 import nextapp.echo.app.PaneContainer;
 
 /**
- * AccordionPane component: contains multiple children in vertically arranged tabs that slide up and down to reveal a single
- * child at a time.  May contain multiple children.  May contain <code>Pane</code>s as children.
+ * <code>AccordionPane</code> component: contains multiple children in vertically arranged tabs that slide up and down to reveal a
+ * single child at a time. May contain multiple children. May contain <code>Pane</code>s as children.
  */
 public class AccordionPane extends Component
 implements Pane, PaneContainer {

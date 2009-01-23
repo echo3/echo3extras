@@ -1,5 +1,6 @@
 /**
- * CalendarSelect component.
+ * CalendarSelect component: an input component which allows selection of a single date.  Displays a representation of a calendar,
+ * showing the currently selected month/year.  May not contain child components.
  *
  * @cp {Date} date the selected date
  * @sp {#Color} adjacentMonthDateBackground background color for dates in previous/next months

@@ -36,8 +36,8 @@ import nextapp.echo.app.Pane;
 import nextapp.echo.app.PaneContainer;
 
 /**
- * A container which renders a <code>FillImageBorder</code> around its
- * content.
+ * <code>BorderPane</code> component: a container which renders a <code>FillImageBorder</code> around its content. May contain only
+ * one child. May contain a <code>Pane</code> component as a child.
  */
 public class BorderPane extends Component 
 implements Pane, PaneContainer {

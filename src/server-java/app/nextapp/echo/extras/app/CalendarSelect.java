@@ -37,7 +37,8 @@ import nextapp.echo.app.Component;
 import nextapp.echo.app.FillImage;
 
 /**
- * A user-input component which allows for the selection of a single date.
+ * <code>CalendarSelect</code> component: an input component which allows selection of a single date. Displays a representation of a
+ * calendar, showing the currently selected month/year. May not contain child components.
  */
 public class CalendarSelect extends Component {
 
