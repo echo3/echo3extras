@@ -80,9 +80,19 @@ public class Group extends Component {
     }
 
     /**
-     * Returns the configured border image.
+     * Returns the configured border image for the specified position.
      * 
-     * @param position the position of the image
+     * @param position the position of the image, one of the following values:
+     *        <ul>
+     *         <li><code>TOP_LEFT</code></li>
+     *         <li><code>TOP</code></li>
+     *         <li><code>TOP_RIGHT</code></li>
+     *         <li><code>LEFT</code></li>
+     *         <li><code>RIGHT</code></li>
+     *         <li><code>BOTTOM_LEFT</code></li>
+     *         <li><code>BOTTOM</code></li>
+     *         <li><code>BOTTOM_RIGHT</code></li>
+     *        </ul>
      * @return the border image
      */
     public ImageReference getBorderImage(int position) {
@@ -90,7 +100,7 @@ public class Group extends Component {
     }
     
     /**
-     * Returns the border inset.
+     * Returns the inset margin used to provide space for the border (a zero inset would render the content over the border).
      * 
      * @see #setBorderInsets(nextapp.echo.app.Insets)
      * @return the border inset
@@ -100,7 +110,7 @@ public class Group extends Component {
     }
     
     /**
-     * Returns the inset margin.
+     * Returns the inset margin around the content.
      * 
      * @return the inset margin
      */
@@ -163,19 +173,29 @@ public class Group extends Component {
     }
     
     /**
-     * Sets the border.
+     * Sets the border image for the specified position.
      * 
-     * @param newValue the new border
+     * @param position the image position, one of the following values:
+     *        <ul>
+     *         <li><code>TOP_LEFT</code></li>
+     *         <li><code>TOP</code></li>
+     *         <li><code>TOP_RIGHT</code></li>
+     *         <li><code>LEFT</code></li>
+     *         <li><code>RIGHT</code></li>
+     *         <li><code>BOTTOM_LEFT</code></li>
+     *         <li><code>BOTTOM</code></li>
+     *         <li><code>BOTTOM_RIGHT</code></li>
+     *        </ul>
+     * @param newValue the new border image
      */
     public void setBorderImage(int position, ImageReference newValue) {
         setIndex(PROPERTY_BORDER_IMAGE, position, newValue);
     }
     
     /**
-     * Sets the inset of the border images, thus defining the width and 
-     * height of the border images.
-     * The provided <code>Insets</code> value must only contain margins defined
-     * in pixel units.
+     * Sets the inset of the border images, used to provide space for the border (a zero inset would render the content over the 
+     * border).  For example, if the left border were 6 pixels wide, the left portion of the inset should be also be configured
+     * to 6 pixels.
      * 
      * @param borderInsets the new border inset
      */
@@ -184,7 +204,7 @@ public class Group extends Component {
     }
     
     /**
-     * Sets the inset margin.
+     * Sets the inset margin around the content
      * 
      * @param newValue the new inset margin
      */
