@@ -4,12 +4,11 @@
 Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
 
     $static: {
-        _paneInsets: 0,
         _defaultTabBackground: "#cfcfcf",
         _defaultTabBorder: "1px outset #cfcfcf",
         _defaultTabForeground: "#000000",
         _defaultTabInsets: "2px 5px",
-        _defaultTabContentInsets: this._paneInsets
+        _defaultTabContentInsets: 0
     },
     
     $load: function() {
@@ -361,7 +360,7 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
     
     _getContentInsets: function() {
         if (this._childComponent.pane) {
-            return Extras.Sync.AccordionPane._paneInsets;
+            return 0;
         } else {
             var insets = this._parent.component.render("defaultContentInsets");
             return insets ? insets : Extras.Sync.AccordionPane._defaultTabContentInsets;

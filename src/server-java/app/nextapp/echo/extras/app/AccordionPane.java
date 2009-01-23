@@ -38,9 +38,8 @@ import nextapp.echo.app.Pane;
 import nextapp.echo.app.PaneContainer;
 
 /**
- * A <code>PaneContainer</code> which contains multiple panes in vertically 
- * arranged tabs that slide up and down to reveal a single child 
- * <code>Pane</code> at a time.
+ * AccordionPane component, contains multiple children in vertically arranged tabs that slide up and down to reveal a single
+ * child at a time.  May contain <code>Pane</code>s as children.
  */
 public class AccordionPane extends Component
 implements Pane, PaneContainer {
@@ -51,7 +50,6 @@ implements Pane, PaneContainer {
     public static final String ACTIVE_TAB_INDEX_CHANGED_PROPERTY = "activeTabIndex";
     
     public static final String PROPERTY_DEFAULT_CONTENT_INSETS = "defaultContentInsets";
-    
     public static final String PROPERTY_TAB_BACKGROUND = "tabBackground";
     public static final String PROPERTY_TAB_BACKGROUND_IMAGE = "tabBackgroundImage";
     public static final String PROPERTY_TAB_BORDER = "tabBorder";
