@@ -1,6 +1,6 @@
 /**
- * AccordionPane component, contains multiple children in vertically arranged tabs that slide up and down to reveal a single
- * child at a time.  May contain panes as children.
+ * AccordionPane component: contains multiple children in vertically arranged tabs that slide up and down to reveal a single
+ * child at a time.  May contain multiple children.  May contain panes as children.
  *
  * @sp {Number} animationTime the duration (in milliseconds) for which the animation transition effect should be rendered
  *     A value of zero indicates an instantaneous transition
