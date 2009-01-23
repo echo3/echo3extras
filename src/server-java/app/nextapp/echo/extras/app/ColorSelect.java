@@ -34,8 +34,8 @@ import nextapp.echo.app.Component;
 import nextapp.echo.app.Extent;
 
 /**
- * A visual hue/saturation/value-based color selection component to select 
- * RGB colors. 
+ * <code>ColorSelect</code>: an input component which displays a hue selector and an integrated value/saturation selector
+ * to enable the selection of a 24-bit RGB color.  May not contain child components.
  */
 public class ColorSelect extends Component {
 

@@ -31,5 +31,6 @@ Extras.CalendarSelect = Core.extend(Echo.Component, {
         Echo.ComponentFactory.registerType("Extras.CalendarSelect", this);
     },
     
+    /** @see Echo.Component#componentType */
     componentType: "Extras.CalendarSelect"
 });
