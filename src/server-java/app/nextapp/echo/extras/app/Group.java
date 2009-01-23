@@ -37,8 +37,8 @@ import nextapp.echo.app.ImageReference;
 import nextapp.echo.app.Insets;
 
 /**
- * A container which renders a border consisting of images around its
- * content. Optionally draws a title in the top border.
+ * <code>Group</code> component: A container which renders a border consisting of images around its content. Optionally draws a
+ * title in the top border. May contain one child component. May not contain a <code>Pane</code> component as a child.
  * 
  * @author n.beekman
  */
