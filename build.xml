@@ -373,7 +373,7 @@
         </exec>
     </target>
     
-    <target name="lint.extras">
+    <target name="jslint.extras">
         <java fork="true" jar="${dir.resource.jslint}/rhino.jar">
             <arg value="${dir.resource.jslint}/jslint.js"/>
             <arg value="${dir.src.client.extras}/"/>
@@ -381,14 +381,14 @@
     </target>
 
 
-    <target name="lint.webcontainer">
+    <target name="jslint.webcontainer">
         <java fork="true" jar="${dir.resource.jslint}/rhino.jar">
             <arg value="${dir.resource.jslint}/jslint.js"/>
             <arg value="${dir.src.server-java.webcontainer.res}/"/>
         </java>
     </target>
 
-    <target name="lint" depends="lint.extras,lint.webcontainer">
+    <target name="jslint" depends="jslint.extras,jslint.webcontainer">
     </target>
 
 </project>
