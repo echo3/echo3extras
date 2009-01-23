@@ -1,26 +1,51 @@
 /**
- * ContextMenu component.
- *
- * @sp {#FillImage} backgroundImage the background image that will be displayed within menus
+ * ContextMenu component. May not contain child components.
+ * 
+ * @sp {#FillImage} backgroundImage the background image that will be displayed
+ *     within menus
  * @sp {#Border} border the border that will be displayed around the menus
- * @sp {#Color} disabledBackground the background color used to render disabled menu items
- * @sp {#FillImage} disabledBackgroundImage the background image used to render disabled menu items
- * @sp {#Color} disabledForeground the foreground color used to render disabled menu items
+ * @sp {#Color} disabledBackground the background color used to render disabled
+ *     menu items
+ * @sp {#FillImage} disabledBackgroundImage the background image used to render
+ *     disabled menu items
+ * @sp {#Color} disabledForeground the foreground color used to render disabled
+ *     menu items
  * @sp {#ImageReference} menuExpandIcon the icon used to expand child menus
- * @sp {#Color} selectionBackground the background color used to highlight the currently selected menu item
- * @sp {#FillImage} selectionBackgroundImage the background image used to highlight the currently selected menu item
- * @sp {#Color} selectionForeground the foreground color used to highlight the currently selected menu item
- * @sp {Number} activationMode a flag indicating how the context menu may be activated, one or more of the following
- *     values ORed together:
+ * @sp {#Color} selectionBackground the background color used to highlight the
+ *     currently selected menu item
+ * @sp {#FillImage} selectionBackgroundImage the background image used to
+ *     highlight the currently selected menu item
+ * @sp {#Color} selectionForeground the foreground color used to highlight the
+ *     currently selected menu item
+ * @sp {Number} activationMode a flag indicating how the context menu may be
+ *     activated, one or more of the following values ORed together:
  *     <ul>
- *      <li><code>ACTIVATION_MODE_CLICK</code>: activate menu when contents are clicked.</li>
- *      <li><code>ACTIVATION_MODE_CONTEXT_CLICK</code>: (the default) actiate menu when contents are context-clicked.</li>
+ *     <li><code>ACTIVATION_MODE_CLICK</code>: activate menu when contents
+ *     are clicked.</li>
+ *     <li><code>ACTIVATION_MODE_CONTEXT_CLICK</code>: (the default)
+ *     activate menu when contents are context-clicked.</li>
  *     </ul>
  */
 Extras.ContextMenu = Core.extend(Echo.Component, {
 
     $static: {
+    
+        /**
+         * Value for <code>activationMode</code> property, indicating that the
+         * context menu should be activated whenever the contents are
+         * (normal/left) clicked.
+         * 
+         * @type Number
+         */
         ACTIVATION_MODE_CLICK: 1,
+
+        /**
+         * Value for <code>activationMode</code> property, indicating that the
+         * context menu should be activated whenever the contents are context
+         * (right) clicked.
+         * 
+         * @type Number
+         */
         ACTIVATION_MODE_CONTEXT_CLICK: 2
     },
 
@@ -28,9 +53,17 @@ Extras.ContextMenu = Core.extend(Echo.Component, {
         Echo.ComponentFactory.registerType("Extras.ContextMenu", this);
     },
 
+    /** @see Echo.Component#componentType */
     componentType: "Extras.ContextMenu",
+    
+    /** @see Echo.Component#modalSupport */
     modalSupport: true,
     
+    /**
+     * Processes the user selection an item.
+     * 
+     * @param {Extras.ItemModel} itemModel the selected item
+     */
     doAction: function(itemModel) {
         var path = itemModel.getItemPositionPath().join(".");
         this.fireEvent({type: "action", source: this, data: path, modelId: itemModel.modelId});
@@ -38,37 +71,55 @@ Extras.ContextMenu = Core.extend(Echo.Component, {
 });
 
 /**
- * DropDownMenu component.
- * If the <code>selectionEnabled</code> property is set, the component will display the last chosen menu item in its closed state.
- *
- * @sp {Number} animationTime the animation time (in milliseconds) (A value of zero indicates animation is disabled.)
- * @sp {#FillImage} backgroundImage the background image that will be displayed in the drop down box
- *     (This image will also be used in child menus unless a value is specified for the <code>menuBackgroundImage</code> 
+ * DropDownMenu component. If the <code>selectionEnabled</code> property is
+ * set, the component will display the last chosen menu item in its closed
+ * state. May not contain child components.
+ * 
+ * @sp {Number} animationTime the animation time (in milliseconds) (A value of
+ *     zero indicates animation is disabled.)
+ * @sp {#FillImage} backgroundImage the background image that will be displayed
+ *     in the drop down box (This image will also be used in child menus unless
+ *     a value is specified for the <code>menuBackgroundImage</code>
  *     property.)
- * @sp {#Border} border the border that will be displayed around the drop down box (This border will also be used around
- *     child menus unless a value is specified for the <code>menuBorder</code> property.)
- * @sp {#Color} disabledBackground the background color used to render disabled menu items
- * @sp {#FillImage} disabledBackgroundImage the background image used to render disabled menu items
- * @sp {#ImageReference} disabledExpandIcon the expand icon displayed in the drop down box
- * @sp {#Color} disabledForeground the foreground color used to render disabled menu items
- * @sp {#ImageReference} expandIcon the expand icon displayed in the drop down box
- * @sp {#ImageReference} expandIconWidth the width of the expand icon displayed in the drop down box
+ * @sp {#Border} border the border that will be displayed around the drop down
+ *     box (This border will also be used around child menus unless a value is
+ *     specified for the <code>menuBorder</code> property.)
+ * @sp {#Color} disabledBackground the background color used to render disabled
+ *     menu items
+ * @sp {#FillImage} disabledBackgroundImage the background image used to render
+ *     disabled menu items
+ * @sp {#ImageReference} disabledExpandIcon the expand icon displayed in the
+ *     drop down box
+ * @sp {#Color} disabledForeground the foreground color used to render disabled
+ *     menu items
+ * @sp {#ImageReference} expandIcon the expand icon displayed in the drop down
+ *     box
+ * @sp {#ImageReference} expandIconWidth the width of the expand icon displayed
+ *     in the drop down box
  * @sp {#Extent} height the height of the drop down box
  * @sp {#Insets} insets the insets of the drop down box
  * @sp {Boolean} lineWrap flag indicating whether long lines should be wrapped
- * @sp {#Color} menuBackground the background color that will be shown in child menus
- * @sp {#FillImage} menuBackgroundImage the background image that will be drawn in child menus
+ * @sp {#Color} menuBackground the background color that will be shown in child
+ *     menus
+ * @sp {#FillImage} menuBackgroundImage the background image that will be drawn
+ *     in child menus
  * @sp {#Border} menuBorder the border that will be drawn around child menus
  * @sp {#ImageReference} menuExpandIcon the icon used to expand child menus
  * @sp {#Font} menuFont the font that will be shown in child menus
- * @sp {#Color} menuForeground the foreground color that will be shown in child menus
+ * @sp {#Color} menuForeground the foreground color that will be shown in child
+ *     menus
  * @sp {#Extent} menuHeight the height of the expanded menu
  * @sp {#Extent} menuWidth the width of the expanded menu
- * @sp {#Color} selectionBackground the background color used to highlight the currently selected menu item
- * @sp {#FillImage} selectionBackgroundImage the background image used to highlight the currently selected menu item
- * @sp {Boolean} selectionEnabled flag indicating whether item selection is enabled 
- * @sp {#Color} selectionForeground the foreground color used to highlight the currently selected menu item
- * @sp {String} selectionText the text displayed in the drop down box when no item is selected
+ * @sp {#Color} selectionBackground the background color used to highlight the
+ *     currently selected menu item
+ * @sp {#FillImage} selectionBackgroundImage the background image used to
+ *     highlight the currently selected menu item
+ * @sp {Boolean} selectionEnabled flag indicating whether item selection is
+ *     enabled
+ * @sp {#Color} selectionForeground the foreground color used to highlight the
+ *     currently selected menu item
+ * @sp {String} selectionText the text displayed in the drop down box when no
+ *     item is selected
  * @sp {#Extent} width the width of the drop down box
  */
 Extras.DropDownMenu = Core.extend(Echo.Component, {
@@ -77,9 +128,17 @@ Extras.DropDownMenu = Core.extend(Echo.Component, {
         Echo.ComponentFactory.registerType("Extras.DropDownMenu", this);
     },
 
+    /** @see Echo.Component#componentType */
     componentType: "Extras.DropDownMenu",
+
+    /** @see Echo.Component#modalSupport */
     modalSupport: true,
     
+    /**
+     * Processes the user selection an item.
+     * 
+     * @param {Extras.ItemModel} itemModel the selected item
+     */
     doAction: function(itemModel) {
         var path = itemModel.getItemPositionPath().join(".");
         this.fireEvent({type: "action", source: this, data: path, modelId: itemModel.modelId});
@@ -87,28 +146,43 @@ Extras.DropDownMenu = Core.extend(Echo.Component, {
 });
 
 /**
- * MenuBarPane component.
- *
- * @sp {Number} animationTime the animation time (in milliseconds) ( A value of zero indicates animation is disabled)
- * @sp {#FillImage} backgroundImage the background image that will be displayed in the menu bar  (This image will also be used in
- *     child menus  unless a value is specified for the <code>menuBackgroundImage</code> property.)
- * @sp  {#Border} border the border that will be displayed around the menu bar (This border will also be used around
- *     child menus unless a value is specified for the <code>menuBorder</code> property.)
- * @sp {#Color} disabledBackground the background color used to render disabled menu items
- * @sp {#FillImage} disabledBackgroundImage the background image used to render disabled menu items
- * @sp {#Color} disabledForeground the foreground color used to render disabled menu items
- * @sp {#Color} menuBackground the background color that will be displayed in child menus
- * @sp {#FillImage} menuBackgroundImage the background image that will be displayed in child menus
+ * MenuBarPane component: a menu bar containing "pull down" menus. This
+ * component is a Pane, and is generally best used as the first child of a
+ * <code>SplitPane</code> component whose <code>autoPositioned</code>
+ * property is set to true. May not contain child components.
+ * 
+ * @sp {Number} animationTime the animation time (in milliseconds) ( A value of
+ *     zero indicates animation is disabled)
+ * @sp {#FillImage} backgroundImage the background image that will be displayed
+ *     in the menu bar (This image will also be used in child menus unless a
+ *     value is specified for the <code>menuBackgroundImage</code> property.)
+ * @sp {#Border} border the border that will be displayed around the menu bar
+ *     (This border will also be used around child menus unless a value is
+ *     specified for the <code>menuBorder</code> property.)
+ * @sp {#Color} disabledBackground the background color used to render disabled
+ *     menu items
+ * @sp {#FillImage} disabledBackgroundImage the background image used to render
+ *     disabled menu items
+ * @sp {#Color} disabledForeground the foreground color used to render disabled
+ *     menu items
+ * @sp {#Color} menuBackground the background color that will be displayed in
+ *     child menus
+ * @sp {#FillImage} menuBackgroundImage the background image that will be
+ *     displayed in child menus
  * @sp {#Border} menuBorder the border that will be displayed around child menus
  * @sp {#ImageReference} menuExpandIcon the icon used to expand child menus
- * @sp {#Color} menuForeground the foreground color that will be displayed in child menus
- * @sp {Number} menuOpacity the opacity setting (percent) that will be used for the background
- *     color/image displayed in pulldown menus (Valid values are between
- *     1 and 100.  Some clients may not support this setting and will
+ * @sp {#Color} menuForeground the foreground color that will be displayed in
+ *     child menus
+ * @sp {Number} menuOpacity the opacity setting (percent) that will be used for
+ *     the background color/image displayed in pulldown menus (Valid values are
+ *     between 1 and 100. Some clients may not support this setting and will
  *     always render menus with 100% opacity)
- * @sp {#Color} selectionBackground the background color used to highlight the currently selected menu item
- * @sp {#FillImage} selectionBackgroundImage the background image used to highlight the currently selected menu item
- * @sp {#Color} selectionForeground the foreground color used to highlight the currently selected menu item
+ * @sp {#Color} selectionBackground the background color used to highlight the
+ *     currently selected menu item
+ * @sp {#FillImage} selectionBackgroundImage the background image used to
+ *     highlight the currently selected menu item
+ * @sp {#Color} selectionForeground the foreground color used to highlight the
+ *     currently selected menu item
  */
 Extras.MenuBarPane = Core.extend(Echo.Component, {
 
@@ -120,9 +194,17 @@ Extras.MenuBarPane = Core.extend(Echo.Component, {
         DEFAULT_INSETS: "3px 0px"
     },
 
+    /** @see Echo.Component#componentType */
     componentType: "Extras.MenuBarPane",
+    
+    /** @see Echo.Component#modalSupport */
     modalSupport: true,
     
+    /**
+     * Processes the user selection an item.
+     * 
+     * @param {Extras.ItemModel} itemModel the selected item
+     */
     doAction: function(itemModel) {
         var path = itemModel.getItemPositionPath().join(".");
         this.fireEvent({type: "action", source: this, data: path, modelId: itemModel.modelId});
@@ -130,20 +212,20 @@ Extras.MenuBarPane = Core.extend(Echo.Component, {
 });
 
 /**
- * Abstract base class for menu model components.
+ * Abstract base class for menu model items.
  */
 Extras.ItemModel = Core.extend({
 
     $abstract: true,
     
     /**
-     * The id of the item model.
+     * The unique identifier of the item model.
      * @type String
      */
     modelId: null,
     
     /**
-     * The parent menu model
+     * The parent menu model.
      * @type Extras.ItemModel
      */
     parent: null
@@ -174,13 +256,14 @@ Extras.MenuModel = Core.extend(Extras.ItemModel, {
     
     /**
      * Creates a new menu model
-     *
+     * 
      * @param {String} modelId the id of the menu model
-     * @param {String} text the title of the menu model which will appear in its parent menu
-     *        when this menu is used as a submenu
-     * @param {#ImageReference} icon the icon of the menu model which will appear in its parent menu
-     *        when this menu is used as a submenu
-     * @param {Array} items the child menu items, an array of <code>ItemModel</code>s (optional)
+     * @param {String} text the title of the menu model which will appear in its
+     *        parent menu when this menu is used as a submenu
+     * @param {#ImageReference} icon the icon of the menu model which will appear in its
+     *        parent menu when this menu is used as a submenu
+     * @param {Array}items the child menu items, an array of <code>ItemModel</code>s
+     *        (optional)
      */
     $construct: function(modelId, text, icon, items) {
         this.modelId = modelId;
