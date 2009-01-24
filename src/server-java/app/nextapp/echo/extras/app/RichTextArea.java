@@ -37,12 +37,17 @@ import nextapp.echo.app.text.Document;
 import nextapp.echo.app.text.StringDocument;
 
 /**
- * Rich text editing component.
+ * RichTextArea component: a rich text user input field which allows the user to
+ * select text styles, and insert/manipulate objects such as links, images, enumerated
+ * lists, or tables.  This component may not contain children.
  * 
- * Security warning: HTML input provided by this component should be considered potentially malicious.
- * Directly rendering the HTML entered by one user to other users of a multi-user application without
- * first "cleaning" it could be disastrous to the other users.  For example, a user could potentially embed
- * JavaScript code in URLs that would execute in the other users' browsers.
+ * Security warning: HTML input provided by this component should be considered
+ * potentially malicious. Directly rendering the HTML entered by one user to
+ * other users of a multi-user application without first "cleaning" it could be
+ * disastrous to the other users. For example, a user could potentially embed
+ * JavaScript code in URLs that would execute in the other users' browsers. Any
+ * cleaning operations must be performed on the client that will render such
+ * HTML (not the client sending it) or on a central trusted server.
  */
 public class RichTextArea extends Component {
 
