@@ -191,6 +191,10 @@ Extras.MenuBarPane = Core.extend(Echo.Component, {
     },
     
     $static: {
+        
+        /**
+         * Default inset margin.
+         */
         DEFAULT_INSETS: "3px 0px"
     },
 
