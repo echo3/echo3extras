@@ -293,7 +293,8 @@ Extras.MenuModel = Core.extend(Extras.ItemModel, {
      * Finds an item by id in the <code>MenuModel</code>, searching descendant <code>MenuModel</code>s as necessary.
      * 
      * @param id the id of the menu item to find
-     * @return Extras.ItemModel the item model, or null if it cannot be found
+     * @return the item model, or null if it cannot be found
+     * @type Extras.ItemModel
      */
     findItem: function(id) {
         var i;
@@ -314,6 +315,22 @@ Extras.MenuModel = Core.extend(Extras.ItemModel, {
     },
     
     /**
+     * Returns the <code>ItemModel</code> at a specific path within this menu model.
+     * 
+     * @param {Array} itemPositions array of integers describing path, e.g., [0,1,2] would
+     *        indicate the third item in the second item in the first item in this menu model.
+     * @return the found item
+     * @type Extras.ItemModel 
+     */
+    getItemModelFromPositions: function(itemPositions) {
+        var menuModel = this;
+        for (var i = 0; i < itemPositions.length; ++i) {
+            menuModel = menuModel.items[parseInt(itemPositions[i], 10)];
+        }
+        return menuModel;
+    },
+    
+    /**
      * Determines the index of the specified menu item.
      *
      * @param {Extras.ItemModel} item the item to find
@@ -327,14 +344,6 @@ Extras.MenuModel = Core.extend(Extras.ItemModel, {
             }
         }
         return -1;
-    },
-    
-    getItemModelFromPositions: function(itemPositions) {
-        var menuModel = this;
-        for (var i = 0; i < itemPositions.length; ++i) {
-            menuModel = menuModel.items[parseInt(itemPositions[i], 10)];
-        }
-        return menuModel;
     },
     
     /** @see Object#toString */
@@ -506,9 +515,12 @@ Extras.MenuStateModel = Core.extend({
      * @param {Boolean} enabled the enabled state
      */
     setEnabled: function(modelId, enabled) {
-        //FIXME allow disablement.
-        if (!enabled) {
-            this._disabledItems.push(modelId);
+        if (enabled) {
+            Core.Arrays.remove(this._disabledItems, modelId);
+        } else {
+            if (Core.Arrays.indexOf(this._disabledItems, modelId) == -1) {
+                this._disabledItems.push(modelId);
+            }
         }
     },
     
@@ -519,9 +531,12 @@ Extras.MenuStateModel = Core.extend({
      * @param {Boolean} selected the selection state
      */
     setSelected: function(modelId, selected) {
-        //FIXME allow deselection.
         if (selected) {
-            this._selectedItems.push(modelId);
+            if (Core.Arrays.indexOf(this._selectedItems, modelId) == -1) {
+                this._selectedItems.push(modelId);
+            }
+        } else {
+            Core.Arrays.remove(this._selectedItems, modelId);
         }
     }
 });

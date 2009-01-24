@@ -42,8 +42,9 @@ import nextapp.echo.extras.app.menu.MenuModel;
 import nextapp.echo.extras.app.menu.MenuStateModel;
 
 /**
- * A pull-down menu pane.  This component is a Pane, and is generally best used as the first child of a <code>SplitPane</code>
- * component whose <code>autoPositioned</code> property is set to true.   May not contain child components.
+ * MenuBarPane component: a menu bar containing "pull down" menus. This component is a <code>Pane</code>, and is generally best used
+ * as the first child of a <code>SplitPane</code> component whose <code>autoPositioned</code> property is set to true. May not
+ * contain child components.
  */
 public class MenuBarPane extends AbstractMenuComponent 
 implements Pane {
