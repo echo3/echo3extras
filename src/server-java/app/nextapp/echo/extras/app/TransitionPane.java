@@ -34,13 +34,9 @@ import nextapp.echo.app.Pane;
 import nextapp.echo.app.PaneContainer;
 
 /**
- * A container pane which displays a single child pane or component, rendering
- * an animated transition effect when its content is changed (when the child
- * is removed and a new one is added).
- * 
- * <strong>WARNING: This component is EXPERIMENTAL.  
- * The API is VERY LIKELY to change.</strong>
- * But you're going to use it anyway, aren't you?
+ * TransitionPane component: a container pane which displays a single child pane or component, rendering an animated transition
+ * effect when its content is changed (when the child is removed and a new one is added). May contain zero or one child components.
+ * May contain <code>Pane</code> components as children.
  */
 public class TransitionPane extends Component 
 implements Pane, PaneContainer {
