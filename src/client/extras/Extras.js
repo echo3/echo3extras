@@ -71,7 +71,7 @@ Extras.Sync.Animation = Core.extend({
     
     $virtual: {
         runTime: 0,
-        sleepInterval: 1
+        sleepInterval: 10
     },
 
     $abstract: {
@@ -125,7 +125,7 @@ Extras.Sync.Animation = Core.extend({
      * Starts the animation.
      */
     start: function(completeMethod) {
-        this._runnable = new Core.Web.Scheduler.MethodRunnable(Core.method(this, this._doStep),  parent._sleepInterval, false);
+        this._runnable = new Core.Web.Scheduler.MethodRunnable(Core.method(this, this._doStep),  this.sleepInterval, false);
         this.startTime = new Date().getTime();
         this.endTime = this.startTime + this.runTime;
         this._completeMethod = completeMethod;
