@@ -1,5 +1,6 @@
 /**
- * TabPane component.
+ * TabPane component: a container which displays children as an array of tabs, displaying only the component whose tab is selected
+ * at a specific time.  May contain zero or more child components.  May contain pane components as children.
  *
  * @cp {Number} activeTabIndex the index of the active tab
  * @sp {Number} borderType the border border type, one of the following values:
@@ -110,7 +111,10 @@ Extras.TabPane = Core.extend(Echo.Component, {
         Echo.ComponentFactory.registerType("Extras.TabPane", this);
     },
 
+    /** @see Echo.Component#componentType */
     componentType: "Extras.TabPane",
+
+    /** @see Echo.Component#pane */
     pane: true,
     
     /**
