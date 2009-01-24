@@ -48,9 +48,8 @@ import nextapp.echo.extras.app.event.TabSelectionListener;
 import nextapp.echo.extras.app.layout.TabPaneLayoutData;
 
 /**
- * ToolTipContainer component: a container which may contain two children, the first of which is always displayed and the second of
- * which is displayed with the mouse is hovered over the first. May contain zero, one, or two components as children. Many not
- * contain <code>Pane</code> components.
+ * TabPane component: a container which displays children as an array of tabs, displaying only the component whose tab is selected
+ * at a specific time. May contain zero or more child components. May contain <code>Pane</code> components as children.
  */
 public class TabPane extends Component 
 implements Pane, PaneContainer {
