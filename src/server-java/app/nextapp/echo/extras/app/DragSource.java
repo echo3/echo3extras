@@ -39,7 +39,7 @@ import nextapp.echo.extras.app.event.DropListener;
 
 /**
  * A container <code>Component</code> that enables its child to be dragged and
- * dropeed by the user onto any <code>Component</code> registered as a drop
+ * dropped by the user onto any <code>Component</code> registered as a drop
  * target. When a <code>Component</code> is successfully dropped onto a valid
  * drop target, a <code>DropEvent</code> is fired and all registered
  * <code>DropTargetListener</code>s are notified.
