@@ -46,9 +46,6 @@ import nextapp.echo.extras.app.event.DropListener;
  * <p>
  * <strong>WARNING: This component is EXPERIMENTAL. The API is VERY LIKELY to
  * change.</strong>
- * 
- * @deprecated This component has not yet been implemented in Echo3 and has been TEMPORARILY DEPRECATED to warn users.  S
- * See bug tracker issue 340 for status information.  When implemented, the component will be un-deprecated.  
  */
 public class DragSource extends Component {
 
@@ -61,6 +58,8 @@ public class DragSource extends Component {
     
     /**
      * Creates an empty DragSource
+     * @deprecated This component has not yet been implemented in Echo3 and has been TEMPORARILY DEPRECATED to warn users.  S
+     * See bug tracker issue 340 for status information.  When implemented, the component will be un-deprecated. 
      */
     public DragSource() { }
     
@@ -68,6 +67,8 @@ public class DragSource extends Component {
      * Creates a DragSource making the given 
      * Component visually draggable 
      * @param draggable The Component. 
+     * @deprecated This component has not yet been implemented in Echo3 and has been TEMPORARILY DEPRECATED to warn users.  S
+     * See bug tracker issue 340 for status information.  When implemented, the component will be un-deprecated. 
      */
     public DragSource(Component draggable) {
         this.add(draggable);
