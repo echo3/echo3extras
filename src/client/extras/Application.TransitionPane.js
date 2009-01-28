@@ -103,6 +103,9 @@ Extras.TransitionPane = Core.extend(Echo.Component, {
         Echo.ComponentFactory.registerType("Extras.TransitionPane", this);
     },
     
+    /** @see Echo.Component#componentType */
     componentType: "Extras.TransitionPane",
+
+    /** @see Echo.Component#pane */
     pane: true
 });
