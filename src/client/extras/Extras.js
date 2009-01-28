@@ -114,6 +114,9 @@ Extras.Sync.Animation = Core.extend({
         step: function(progress) { }
     },
     
+    /**
+     * Invoked by runnable to process a step of the animation.
+     */
     _doStep: function() {
         var currentTime = new Date().getTime();
         if (currentTime < this.endTime) {
