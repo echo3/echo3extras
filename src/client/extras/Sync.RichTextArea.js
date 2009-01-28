@@ -2,9 +2,33 @@
  * Component rendering peer: RichTextArea
  */
 Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
-
-    $static: {
     
+    $static: {
+
+        DEFAULT_CONTROL_PANE_SPLIT_PANE_STYLE: {
+            orientation: Echo.SplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP,
+            separatorColor: "#dfdfef",
+            separatorHeight: 1,
+            autoPositioned: true
+        },
+        
+        DEFAULT_CONTROL_PANE_ROW_STYLE: {
+            insets: "2px 10px",
+            cellSpacing: 3,
+            layoutData: {
+                overflow: Echo.SplitPane.OVERFLOW_HIDDEN,
+                background: "#cfcfdf"
+            }
+        },
+        
+        DEFAULT_CONTROL_PANE_BUTTON_STYLE: {
+            insets: "0px 8px",
+            lineWrap: false,
+            foreground: "#000000",
+            rolloverEnabled: true,
+            rolloverForeground: "#6f0f0f"
+        },
+        
         /**
          * Default enabled feature set.
          */
@@ -817,11 +841,11 @@ Extras.Sync.RichTextArea.AbstractDialog = Core.extend(Echo.WindowPane, {
                     orientation: Echo.SplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP,
                     autoPositioned: true,
                     styleName: controlPaneSplitPaneStyleName,
-                    style: controlPaneSplitPaneStyleName ? null : Extras.Sync.DEFAULT_CONTROL_PANE_SPLIT_PANE_STYLE,
+                    style: controlPaneSplitPaneStyleName ? null : Extras.Sync.RichTextArea.DEFAULT_CONTROL_PANE_SPLIT_PANE_STYLE,
                     children: [
                         this.controlsRow = new Echo.Row({
                             styleName: controlPaneRowStyleName,
-                            style: controlPaneRowStyleName ? null : Extras.Sync.DEFAULT_CONTROL_PANE_ROW_STYLE
+                            style: controlPaneRowStyleName ? null : Extras.Sync.RichTextArea.DEFAULT_CONTROL_PANE_ROW_STYLE
                         }),
                         content
                     ]
@@ -831,7 +855,7 @@ Extras.Sync.RichTextArea.AbstractDialog = Core.extend(Echo.WindowPane, {
         
         this.controlsRow.add(new Echo.Button({
             styleName: controlPaneButtonStyleName,
-            style: controlPaneButtonStyleName ? null : Extras.Sync.DEFAULT_CONTROL_PANE_BUTTON_STYLE,
+            style: controlPaneButtonStyleName ? null : Extras.Sync.RichTextArea.DEFAULT_CONTROL_PANE_BUTTON_STYLE,
             text: richTextArea.peer._msg["Generic.Ok"],
             icon: richTextArea.peer._icons.ok,
             events: {
@@ -842,7 +866,7 @@ Extras.Sync.RichTextArea.AbstractDialog = Core.extend(Echo.WindowPane, {
         if (type == Extras.Sync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL) {
             this.controlsRow.add(new Echo.Button({
                 styleName: controlPaneButtonStyleName,
-                style: controlPaneButtonStyleName ? null : Extras.Sync.DEFAULT_CONTROL_PANE_BUTTON_STYLE,
+                style: controlPaneButtonStyleName ? null : Extras.Sync.RichTextArea.DEFAULT_CONTROL_PANE_BUTTON_STYLE,
                 text: richTextArea.peer._msg["Generic.Cancel"],
                 icon: richTextArea.peer._icons.cancel,
                 events: {
