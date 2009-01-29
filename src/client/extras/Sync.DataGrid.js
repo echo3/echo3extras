@@ -40,9 +40,6 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             /** The containing DataGrid instance. */
             dataGrid: null,
             
-            /** The containing Viewport instance. */ 
-            viewport: null,
-            
             /** Flag indicating whether the tile is displayed. */
             displayed: false,
             
@@ -544,34 +541,6 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                     break;
                 }
             }
-        }),
-        
-        Viewport: Core.extend({
-        
-            dataGrid: null,
-            
-            $construct: function(dataGrid) {
-                this.dataGrid = dataGrid;
-            },
-
-            adjustPosition: function(x, y) {
-                for (var name in this.dataGrid.regions) {
-                    this.dataGrid.regions[name].adjustPosition(x, y);
-                }
-            },
-
-            dispose: function() {
-                
-            },
-            
-            /**
-             * Sets the position of the viewport.  Invocation will clear all existing tiles.
-             */
-            setPosition: function(x, xUnits, y, yUnits) {
-                for (var name in this.dataGrid.regions) {
-                    this.dataGrid.regions[name].setPosition(x, xUnits, y, yUnits);
-                }
-            }
         })
     },
     
@@ -617,11 +586,6 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
     regions: null,
     
     /**
-     * Viewport containing rendered tiles.
-     */
-    _vieport: null,
-    
-    /**
      * Data model.
      */ 
     _model: null,
@@ -639,11 +603,16 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
     
     $construct: function() {
         this._div = null;
-        this._viewport = new Extras.Sync.DataGrid.Viewport(this);
         this._displayRowIndex = 0;
         this._displayColumnIndex = 0;
     },
     
+    adjustPosition: function(x, y) {
+        for (var name in this.regions) {
+            this.regions[name].adjustPosition(x, y);
+        }
+    },
+
     _createRegions: function() {
         this.regions = { };
     
@@ -772,7 +741,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 };
                 var topRowIndex = Math.floor(this._displayRowIndex);
                 var leftColumnIndex = Math.floor(this._displayColumnIndex);
-                this._viewport.setPosition(this.component.get("columnIndex") || 0, Extras.Sync.DataGrid.INDEX,
+                this.setPosition(this.component.get("columnIndex") || 0, Extras.Sync.DataGrid.INDEX,
                         this.component.get("rowIndex") || 0, Extras.Sync.DataGrid.INDEX);
             }
             this._fullRenderRequired = false;
@@ -802,7 +771,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
      */
     _scrollIncrementalVertical: function(percent) {
         var scrollPixels = Math.round(this.scrollContainer.bounds.height * percent / 10);
-        this._viewport.adjustPosition(0, 0 - scrollPixels);
+        this.adjustPosition(0, 0 - scrollPixels);
         
     },
     
@@ -810,6 +779,15 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
         var row = this.size.rows * percent / 100;
     },
     
+    /**
+     * Sets the position of the viewport.  Invocation will clear all existing tiles.
+     */
+    setPosition: function(x, xUnits, y, yUnits) {
+        for (var name in this.regions) {
+            this.regions[name].setPosition(x, xUnits, y, yUnits);
+        }
+    },
+
     _updateRegionBounds: function() {
         var i, name, left = 0, top = 0, right = 0, bottom = 0;
         
