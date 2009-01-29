@@ -50,13 +50,13 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             displayed: false,
             
             /** 
-             * The div element. 
+             * The div element.  Outermost element of a tile, contains the <code>_table</code> element as its only child.
              * @type Element
              */
             div: null,
             
             /** 
-             * The table element. 
+             * The table element.  Contained within the <code>div</code> element.
              * @type Element
              */
             _table: null,
@@ -91,6 +91,14 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
              */
             bounds: null,
             
+            /**
+             * Creates a new <code>Tile</code>.
+             *
+             * @param {Extras.Sync.DataGrid} dataGrid  the containing data grid peer
+             * @param {Extras.Sync.DataGrid.Region} region the containing region
+             * @param {Number} tileColumnIndex the column index of the tile
+             * @param {Number} tileRowIndex the row index of the tile
+             */
             $construct: function(dataGrid, region, tileColumnIndex, tileRowIndex) {
                 this.dataGrid = dataGrid;
                 this.containerElement = region.element;
@@ -487,6 +495,25 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
 
             /**
              * Sets the position of the region.  Invocation will clear all existing tiles.
+             *
+             * @param {Number} x the horizontal position of the region
+             * @param {Number} the units of the horizontal position, one of the following values:
+             *        <ul>
+             *         <li><code>Extras.Sync.DataGrid.INDEX</code>: indicates the position value will
+             *          describe the index of the leftmost tile (may be a decimal value)</li>
+             *         <li><code>Extras.Sync.DataGrid.PERCENT</code>: indicates the percentile of the tile
+             *          that will be displayed in the center of the region, e.g., a value of 50 would
+             *          display the middle tile in the center of the screen</li>
+             *        </ul>
+             * @param {Number} x the vertical position of the region
+             * @param {Number} the units of the vertical position, one of the following values:
+             *        <ul>
+             *         <li><code>Extras.Sync.DataGrid.INDEX</code>: indicates the position value will
+             *          describe the index of the topmost tile (may be a decimal value)</li>
+             *         <li><code>Extras.Sync.DataGrid.PERCENT</code>: indicates the percentile of the tile
+             *          that will be displayed in the center of the region, e.g., a value of 50 would
+             *          display the middle tile in the center of the screen</li>
+             *        </ul>
              */
             setPosition: function(x, xUnits, y, yUnits) {
                 var tileRowIndex, tileColumnIndex, initTileColumnIndex,
@@ -535,6 +562,15 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 }
             },
             
+            /**
+             * Updates the rendered bounds of the region.  The values passed always indicate the pixel bounds of the
+             * center region of the DataGrid.
+             *
+             * @param {Number} left the offset from the left edge of the DataGrid to the left edge of the center region
+             * @param {Number} top the offset from the top edge of the DataGrid to the top edge of the center region
+             * @param {Number} right the offset from the right edge of the DataGrid to the right edge of the center region
+             * @param {Number} bottom the offset from the bottom edge of the DataGrid to the bottom edge of the center region
+             */
             updateBounds: function(left, top, right, bottom) {
                 this.bounds = { };
                 switch (this.position.h) {
@@ -954,7 +990,7 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
     },
     
     /**
-     * Process a hoirzontal scroll bar adjustment event.
+     * Process a horizontal scroll bar adjustment event.
      *
      * @param e the event
      */
