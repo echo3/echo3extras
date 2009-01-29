@@ -730,6 +730,9 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
         if (e.verticalIncrement) {
             this._scrollIncrementalVertical(e.verticalIncrement);
         }
+        if (e.horizontalIncrement) {
+            this._scrollIncrementalHorizontal(e.horizontalIncrement);
+        }
     },
     
     renderAdd: function(update, parentElement) {
@@ -794,6 +797,15 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
     },
     
     /**
+     * Scrolls the viewable area left or right by a percentage of the viewable area width.
+     */
+    _scrollIncrementalHorizontal: function(percent) {
+        var scrollPixels = Math.round(this.scrollContainer.bounds.width * percent / 10);
+        this.adjustPosition(0 - scrollPixels, 0);
+        
+    },
+    
+    /**
      * Scrolls the viewable area up or down by a percentage of the viewable area height.
      */
     _scrollIncrementalVertical: function(percent) {
@@ -853,6 +865,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
  */
 Extras.Sync.DataGrid.ScrollContainer = Core.extend({
 
+    _hScrollAccumulator: 0,
     _vScrollAccumulator: 0,
     
     bounds: null,
@@ -899,12 +912,14 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
     },
     
     _accumulatedScroll: function() {
-        if (this._vScrollAccumulator) {
-            var scrollAmount = this._vScrollAccumulator;
+        if (this._vScrollAccumulator || this._hScrollAccumulator) {
+            var v = this._vScrollAccumulator;
             this._vScrollAccumulator = 0;
+            var h = this._hScrollAccumulator;
+            this._hScrollAccumulator = 0;
             if (this.onScroll) {
                 // FIXME
-                this.onScroll({source: this, type: "scroll", verticalIncrement:  scrollAmount });
+                this.onScroll({source: this, type: "scroll", horizontalIncrement: h, verticalIncrement:  v });
             }
         }
     },
@@ -972,8 +987,13 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
             return;
         }
         
-        this._vScrollContainer.scrollTop += wheelScroll * 90;
-        this._vScrollAccumulator += wheelScroll;
+        if (e.shiftKey) {
+            this._hScrollContainer.scrollTop += wheelScroll * 90;
+            this._hScrollAccumulator += wheelScroll;
+        } else {
+            this._vScrollContainer.scrollTop += wheelScroll * 90;
+            this._vScrollAccumulator += wheelScroll;
+        }
         Core.Web.Scheduler.run(Core.method(this, this._accumulatedScroll), 10);
         
         Core.Web.DOM.preventEventDefault(e);
