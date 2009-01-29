@@ -20,7 +20,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
         PX: 1,
         PERECNT: 2,
 
-        REGION_POSITIONS: {
+        REGION_LOCATIONS: {
             topLeft:     { h: -1, v: -1 },
             top:         { h:  0, v: -1 },
             topRight:    { h:  1, v: -1 },
@@ -107,7 +107,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 
                 this.cellIndex = { };
                 
-                switch (this.region.position.h) {
+                switch (this.region.location.h) {
                 case 0: 
                     this.cellIndex.left = this.tileIndex.column * this.dataGrid.tileSize.columns + this.dataGrid.fixedCells.left;
                     break;
@@ -119,7 +119,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                     throw new Error("unsupported");
                 }
                 
-                switch (this.region.position.v) {
+                switch (this.region.location.v) {
                 case 0: 
                     this.cellIndex.top = this.tileIndex.row * this.dataGrid.tileSize.rows + this.dataGrid.fixedCells.top;
                     break;
@@ -150,18 +150,18 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             
             /**
              * Adjusts the position of the tile.
-             * Has no effect in directions in which the cell is fixed (per region position property).
+             * Has no effect in directions in which the cell is fixed (per region location property).
              *
              * @param {Number} h the number of pixels to adjust the tile horizontally
              * @param {Number} v the number of pixels to adjust the tile vertically
              */
             adjustPosition: function(h, v) {
                 if (this.div) {
-                    if (h && !this.region.position.h) {
+                    if (h && !this.region.location.h) {
                         this.bounds.left += h;
                         this.div.style.left = this.bounds.left + "px";
                     }
-                    if (v && !this.region.position.v) {
+                    if (v && !this.region.location.v) {
                         this.bounds.top += v;
                         this.div.style.top = this.bounds.top + "px";
                     }
@@ -349,11 +349,11 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             name: null,
             
             /** 
-             * The position of the region, an object containing h and v properties, describing the horizontal
-             * and vertical position of the tile's containing region.  These properties may have values of -1, 0, or 1.
+             * The location of the region, an object containing h and v properties.
+             * These h and v properties may have values of -1, 0, or 1.
              * A value of 0 indicates center, -1 indicates left/top, 1 indicates right/bottom.
              */
-            position: null,
+            location: null,
             
             /**
              * Creates a new Region.
@@ -366,19 +366,19 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 this.dataGrid = dataGrid;
                 this.name = name;
                 this._tiles = { };
-                this.position = Extras.Sync.DataGrid.REGION_POSITIONS[name];
+                this.location = Extras.Sync.DataGrid.REGION_LOCATIONS[name];
 
                 this.element = document.createElement("div");
                 this.element.style.cssText = "position:absolute;overflow:hidden;";
                 
-                if (this.position.h === -1) {
+                if (this.location.h === -1) {
                     this.element.style.left = 0;
-                } else if (this.position.h === 1) {
+                } else if (this.location.h === 1) {
                     this.element.style.right = 0;
                 }
-                if (this.position.v === -1) {
+                if (this.location.v === -1) {
                     this.element.style.top = 0;
-                } else if (this.position.h === 1) {
+                } else if (this.location.h === 1) {
                     this.element.style.bottom = 0;
                 }
             },
@@ -391,13 +391,13 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
              * @param {Number} y the number of vertical pixels to shift the tiles (positive values indicate downward)
              */
             adjustPosition: function(x, y) {
-                if (this.position.h && this.position.y) {
+                if (this.location.h && this.location.y) {
                     // This operation has no effect on corner tiles.
                     return;
                 }
             
-                x = this.position.h ? 0 : x;
-                y = this.position.v ? 0 : y;
+                x = this.location.h ? 0 : x;
+                y = this.location.v ? 0 : y;
                 var row, tile;
                 for (var rowIndex in this._tiles) {
                     row = this._tiles[rowIndex];
@@ -606,7 +606,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
              */
             updateBounds: function(left, top, right, bottom) {
                 this.bounds = { };
-                switch (this.position.h) {
+                switch (this.location.h) {
                 case -1: 
                     this.element.style.width = left + "px"; 
                     this.bounds.width = left;
@@ -621,7 +621,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                     this.bounds.width = right;
                     break;
                 }
-                switch (this.position.v) {
+                switch (this.location.v) {
                 case -1: 
                     this.element.style.height = top + "px"; 
                     this.bounds.height = top;
