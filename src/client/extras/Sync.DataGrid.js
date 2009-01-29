@@ -325,9 +325,27 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
              */
             dataGrid: null,
             
-            _rows: null,
+            /**
+             * Object containing all <code>Tile</code> instances held within the region.
+             * This object maps tile row indices to tile column maps.
+             * The tile column maps map column indices to actual tiles.
+             * The indices used are the indices of tiles, not the indices of the cells they contain.
+             * This object is organized like a two dimensional array, with rows as the first dimension and columns as the seccond,
+             * e.g., requesting _tiles[4][2] would return the tile at row 4 (the fifth row) and column 2 (the third column).
+             * Before making such a query one would have to ensure that _tiles[4] is defined.
+             */
+            _tiles: null,
+            
+            /**
+             * 
+             */
             bounds: null,
 
+            /**
+             * The region name one of the following values: 
+             * topLeft, top, topRight, left, center, right, bottomLeft, bottom, bottomRight
+             * @type String
+             */
             name: null,
             
             /** 
@@ -347,7 +365,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             $construct: function(dataGrid, name) {
                 this.dataGrid = dataGrid;
                 this.name = name;
-                this._rows = { };
+                this._tiles = { };
                 this.position = Extras.Sync.DataGrid.REGION_POSITIONS[name];
 
                 this.element = document.createElement("div");
@@ -381,8 +399,8 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 x = this.position.h ? 0 : x;
                 y = this.position.v ? 0 : y;
                 var row, tile;
-                for (var rowIndex in this._rows) {
-                    row = this._rows[rowIndex];
+                for (var rowIndex in this._tiles) {
+                    row = this._tiles[rowIndex];
                     for (var columnIndex in row) {
                         tile = row[columnIndex];
                         tile.adjustPosition(x, y);
@@ -395,15 +413,15 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
              * Clears the region of tiles, removing/disposing all tile objects in the process.
              */
             clear: function() {
-                for (var rowIndex in this._rows) {
-                    var row = this._rows[rowIndex];
+                for (var rowIndex in this._tiles) {
+                    var row = this._tiles[rowIndex];
                     for (var columnIndex in row) {
                         var tile = row[columnIndex];
                         tile.remove();
                         tile.dispose();
                     }
                 }
-                this._rows = { };
+                this._tiles = { };
             },
 
             /**
@@ -473,9 +491,9 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
              */
             _findVerticalEdgeTile: function(bottom) {
                 var row, tile, topRowIndex = null, rowIndex;
-                for (rowIndex in this._rows) {
+                for (rowIndex in this._tiles) {
                     if (topRowIndex == null || (bottom ? (rowIndex > topRowIndex) : (rowIndex < topRowIndex))) {
-                        row = this._rows[rowIndex];
+                        row = this._tiles[rowIndex];
                         for (var columnIndex in row) {
                             if (row[columnIndex].isOnScreen()) {
                                 tile = row[columnIndex];
@@ -494,10 +512,10 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                         columnIndex > this.dataGrid.size.columns / this.dataGrid.tileSize.columns) {
                     return null;
                 }
-                var cachedRow = this._rows[rowIndex];
+                var cachedRow = this._tiles[rowIndex];
                 if (!cachedRow) {
                     cachedRow = { };
-                    this._rows[rowIndex] = cachedRow;
+                    this._tiles[rowIndex] = cachedRow;
                 }
 
                 var tile = cachedRow[columnIndex];
