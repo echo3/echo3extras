@@ -37,30 +37,45 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
          */
         Tile: Core.extend({
             
-            /** The containing DataGrid instance. */
+            /** 
+             * The containing DataGrid instance. 
+             * @type Extras.Sync.DataGrid
+             */
             dataGrid: null,
             
-            /** Flag indicating whether the tile is displayed. */
+            /** 
+             * Flag indicating whether the tile is displayed. 
+             * @type Boolean
+             */
             displayed: false,
             
-            /** The div element. */
+            /** 
+             * The div element. 
+             * @type Element
+             */
             div: null,
             
-            /** The table element. */
+            /** 
+             * The table element. 
+             * @type Element
+             */
             _table: null,
             
-            /** The Extras.Sync.DataGrid.Region object containing the tile. */
+            /** 
+             * The region containing the tile. 
+             * @type Extras.Sync.DataGrid.Region
+             */
             region: null,
             
             /**
-             * Edge information object.  Contains boolean properties "top", "right", "left", and "bottom" properties, 
-             * indicating whether the tile is at each extreme edge.
+             * Edge information object.  Contains boolean "top", "right", "left", and "bottom" properties, 
+             * each of which evaluates to true if the tile is at that extreme edge.
              */
             edge: null,
             
             /**
-             * Cell index information object.  Contains top, right, left, and bottom properties, indicating the cells contained
-             * within the tile.
+             * Cell index information object.  Contains integer "top", "right", "left", and "bottom" properties, 
+             * each of which indicates the index of cells at that edge of the tile.
              */
             cellIndex: null,
             
@@ -299,6 +314,13 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
              */
             position: null,
             
+            /**
+             * Creates a new Region.
+             *
+             * @param {Extras.Sync.DataGrid} dataGrid the containing data grid synchronization peer
+             * @param {String} name the region name, one of the following values: 
+             *        topLeft, top, topRight, left, center, right, bottomLeft, bottom, bottomRight
+             */
             $construct: function(dataGrid, name) {
                 this.dataGrid = dataGrid;
                 this.name = name;
@@ -321,11 +343,11 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             },
 
             /**
-             * Adjusts position of tiles within the region, additionally filling in any areas that become
+             * Adjusts the positions of tiles within the region, additionally filling in any areas that become
              * unoccupied as a result of the adjustment.
              *
-             * @param x the number of horizontal pixels
-             * @param y the number of vertical pixels
+             * @param {Number} x the number of horizontal pixels to shift the tiles (positive values indicate to the right)
+             * @param {Number} y the number of vertical pixels to shift the tiles (positive values indicate downward)
              */
             adjustPosition: function(x, y) {
                 if (this.position.h && this.position.y) {
@@ -364,15 +386,16 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             /**
              * Displays a tile immediately adjacent to a tile.
              *
-             * @param tile the origin tile
+             * @param {Echo.Sync.DataGrid.Tile} tile the origin tile
              * @param direction the adjacent direction, one of the following values (defined in Extras.Sync.DataGrid):
              *        <ul>
-             *         <li>LEFT</li>
-             *         <li>RIGHT</li>
-             *         <li>UP</li>
-             *         <li>DOWN</li>
+             *         <li><code>LEFT</code></li>
+             *         <li><code>RIGHT</code></li>
+             *         <li><code>UP</code></li>
+             *         <li><code>DOWN</code></li>
              *        </ul>
              * @return the adjacent tile
+             * @type Echo.Sync.DataGrid.Tile
              */
             displayTileAdjacent: function(tile, direction) {
                 if (!tile.displayed) {
@@ -390,6 +413,8 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             
             /**
              * Ensures the region is filled with content.  Invoked after the viewport has been scrolled.
+             *
+             * @param {Boolean} fromBottom flag indicating whether filling should start from the bottom (true) or top (false)
              */
             fill: function(fromBottom) {
                 // Find top/bottommost tile.
@@ -420,6 +445,8 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             
             /**
              * Finds the topmost or bottommost tile that is on screen.  The found tile may be anywhere in the row.
+             *
+             * @param {Boolean} bottom flag indicating whether topmost (false) or bottommost (true) tile should be returned
              */
             _findVerticalEdgeTile: function(bottom) {
                 var row, tile, topRowIndex = null, rowIndex;
@@ -948,6 +975,8 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
         this._vScrollContainer.scrollTop += wheelScroll * 90;
         this._vScrollAccumulator += wheelScroll;
         Core.Web.Scheduler.run(Core.method(this, this._accumulatedScroll), 10);
+        
+        Core.Web.DOM.preventEventDefault(e);
         
         return true;
     },
