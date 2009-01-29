@@ -151,15 +151,18 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             /**
              * Adjusts the position of the tile.
              * Has no effect in directions in which the cell is fixed (per region position property).
+             *
+             * @param {Number} h the number of pixels to adjust the tile horizontally
+             * @param {Number} v the number of pixels to adjust the tile vertically
              */
-            adjustPosition: function(leftDelta, topDelta) {
+            adjustPosition: function(h, v) {
                 if (this.div) {
-                    if (leftDelta && !this.region.position.h) {
-                        this.bounds.left += leftDelta;
+                    if (h && !this.region.position.h) {
+                        this.bounds.left += h;
                         this.div.style.left = this.bounds.left + "px";
                     }
-                    if (topDelta && !this.region.position.v) {
-                        this.bounds.top += topDelta;
+                    if (v && !this.region.position.v) {
+                        this.bounds.top += v;
                         this.div.style.top = this.bounds.top + "px";
                     }
                 }
@@ -170,7 +173,8 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             },
             
             /**
-             * Renders the tile, placing the resultant elements in the instance properites of this object.
+             * Renders the tile.  Sets the div and _table element properties, measures rendered tile and sets
+             * bounds property.
              */
             create: function() {
                 var tr, td, row, column;
@@ -212,6 +216,13 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 this.div.style.width = this.bounds.width + "px";
             },
             
+            /**
+             * Displays the tile at the specified coordinates.
+             * Does nothing if the tile is already displayed.
+             *
+             * @param {Number} left the left pixel coordinate of the tile within the region
+             * @param {Number} top the top pixel coordinate of the tile within the region
+             */
             display: function(left, top) {
                 if (this.displayed) {
                     return;
@@ -228,6 +239,10 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 this.displayed = true;
             },
             
+            /**
+             * Disposes resources used by the tile.
+             * Must be invoked before the tile is discarded.
+             */
             dispose: function() {
                 this.div = this._table = null;
             },
@@ -990,23 +1005,25 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
     },
     
     /**
-     * Process a horizontal scroll bar adjustment event.
+     * Process a horizontal scroll bar drag adjustment event.
      *
      * @param e the event
      */
     _processScrollH: function(e) {
+        //FIXME Implement
         Core.Debug.consoleWrite("hscroll:" + this._hScrollContainer.scrollLeft);
         if (this.onScroll) {
         }
     },
     
     /**
-     * Process a vertical scroll bar adjustment event.
+     * Process a vertical scroll bar drag adjustment event.
      *
      * @param e the event
      */
     _processScrollV: function(e) {
         Core.Debug.consoleWrite("vscroll:" + this._vScrollContainer.scrollTop);
+        //FIXME Implement
         if (this.onScroll) {
         }
     },
@@ -1017,8 +1034,9 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
      * @param e the event
      */
     _processWheel: function(e) {
+        // Convert scroll wheel direction/distance data into uniform/cross-browser format:
+        // A value of 1 indicates one notch scroll down, -1 indicates one notch scroll up.
         var wheelScroll;
-        
         if (e.wheelDelta) {
             wheelScroll = e.wheelDelta / -120;
         } else if (e.detail) {
@@ -1028,14 +1046,17 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
         }
         
         if (e.shiftKey) {
+            // Scroll horizontally.
             this._hScrollContainer.scrollTop += wheelScroll * 90;
             this._hScrollAccumulator += wheelScroll;
         } else {
+            // Scroll vertically.
             this._vScrollContainer.scrollTop += wheelScroll * 90;
             this._vScrollAccumulator += wheelScroll;
         }
         Core.Web.Scheduler.run(Core.method(this, this._accumulatedScroll), 10);
         
+        // Prevent default scrolling action, or in the case of modifier keys, font adjustments, etc.
         Core.Web.DOM.preventEventDefault(e);
         
         return true;
