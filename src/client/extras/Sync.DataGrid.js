@@ -270,15 +270,26 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 }
             },
             
+            /** @see Object#toString */
             toString: function() {
                 return "Tile (" + this.tileIndex.column + "," + this.tileIndex.row + ")";
             }
         }),
         
+        /**
+         * Represents a region of the DataGrid.  A DataGrid may have up to nine regions, arranged as three
+         * rows and three columns.  Regions in the center row can be vertically scrolled, while the top and bottom rows
+         * are vertically fixed.  Regions in the center column can be horizontally scrolled , while the left and right
+         * columns are horizontally fixed.
+         */
         Region: Core.extend({
 
+            /**
+             * The containing Extras.Sync.DataGrid instance.
+             * @type Extras.Sync.DataGrid
+             */
             dataGrid: null,
-
+            
             _rows: null,
             bounds: null,
 
