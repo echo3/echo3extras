@@ -735,6 +735,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
         }
     },
     
+    /** @see Echo.Render.ComponentSync#renderAdd */
     renderAdd: function(update, parentElement) {
         this._div = document.createElement("div");
         this._div.style.cssText = "position:absolute;top:0;left:0;right:0;bottom:0;background-color:lime;";
@@ -751,6 +752,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
         parentElement.appendChild(this._div);
     },
     
+    /** @see Echo.Render.ComponentSync#renderDisplay */
     renderDisplay: function() {
         Core.Web.VirtualPosition.redraw(this._div);
         this.scrollContainer.renderDisplay();
@@ -780,6 +782,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
         this._updateRegionBounds();
     },
     
+    /** @see Echo.Render.ComponentSync#renderDispose */
     renderDispose: function(update) {
         this._cachedTileRows = { };
         this._prototypeTable = null;
@@ -787,6 +790,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
         this._div = null;
     },
 
+    /** @see Echo.Render.ComponentSync#renderUpdate */
     renderUpdate: function(update) {
         var element = this._div;
         var containerElement = element.parentNode;
