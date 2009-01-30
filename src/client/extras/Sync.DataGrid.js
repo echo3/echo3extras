@@ -31,6 +31,19 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             bottom:      { h:  0, v:  1 },
             bottomRight: { h:  1, v:  1 }
         },
+        
+        /**
+         * Determines if two segments in a line share any points.
+         *
+         * @param {Number} a1 first point of segment A
+         * @param {Number} a2 second point of segment A
+         * @param {Number} b1 first point of segment B
+         * @param {Number} b2 second point of segment B
+         * @return true if the segments share any points
+         */
+        intersect: function(a1, a2, b1, b2) {
+            return (b1 <= a1 && a1 <= b2) || (a1 <= b1 && b1 <= a2);
+        },
 
         /**
          * Representation of a "tile", a sub-table that renders a portion of the DataGrid.
@@ -287,13 +300,10 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 if (!this.displayed) {
                     return false;
                 }
-                var right = this.bounds.left + this.bounds.width;
-                var bottom = this.bounds.top + this.bounds.height;
-                return this.displayed &&
-                        ((this.bounds.left >= 0 && this.bounds.left <= this.region.bounds.width) ||
-                        (right >= 0 && right <= this.region.bounds.width)) &&
-                        ((this.bounds.top >= 0 && this.bounds.top <= this.region.bounds.height) ||
-                        (bottom >= 0 && bottom <= this.region.bounds.height));
+                return Extras.Sync.DataGrid.intersect(this.bounds.left, this.bounds.left + this.bounds.width,
+                        0, this.region.bounds.width) &&
+                        Extras.Sync.DataGrid.intersect(this.bounds.top, this.bounds.top + this.bounds.height,
+                        0, this.region.bounds.height);
             },
 
             /**
