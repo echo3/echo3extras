@@ -33,7 +33,8 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
         },
 
         /**
-         * Represenation of a "tile", a sub-table that renders a portion of the DataGrid.
+         * Representation of a "tile", a sub-table that renders a portion of the DataGrid.
+         * Tiles are contained within Regions.
          */
         Tile: Core.extend({
             
@@ -652,13 +653,13 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
     
     /**
      * The row to display at the topmost point of the viewable area.  This value may be have a fractional part,
-     * indiacating that only part of the row is visible.
+     * indicating that only part of the row is visible.
      */
     _displayRowIndex: null,
 
     /**
      * The column to display at the leftmost point of the viewable area.  This value may be have a fractional part,
-     * indiacating that only part of the column is visible.
+     * indicating that only part of the column is visible.
      */
     _displayColumnIndex: null,
     
