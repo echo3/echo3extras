@@ -121,6 +121,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 
                 this.cellIndex = { };
                 
+                // Determine left cell.
                 switch (this.region.location.h) {
                 case 0: 
                     this.cellIndex.left = this.tileIndex.column * this.dataGrid.tileSize.columns + this.dataGrid.fixedCells.left;
@@ -133,6 +134,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                     throw new Error("unsupported");
                 }
                 
+                // Determine top cell.
                 switch (this.region.location.v) {
                 case 0: 
                     this.cellIndex.top = this.tileIndex.row * this.dataGrid.tileSize.rows + this.dataGrid.fixedCells.top;
@@ -146,19 +148,22 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 }
                 
                 this.edge = { 
-                    top: this.tileIndex.row === 0,
-                    left: this.tileIndex.column === 0
+                    left: this.tileIndex.column === 0,
+                    top: this.tileIndex.row === 0
                 };
-                 
-                this.cellIndex.bottom = this.cellIndex.top + this.dataGrid.tileSize.rows - 1;
-                if (this.cellIndex.bottom >= this.dataGrid.size.rows - this.dataGrid.fixedCells.bottom - 1) {
-                    this.cellIndex.bottom = this.dataGrid.size.rows - this.dataGrid.fixedCells.bottom - 1;
-                    this.edge.bottom = true;
-                }
+                
+                // Determine right cell.
                 this.cellIndex.right = this.cellIndex.left + this.dataGrid.tileSize.columns - 1;
                 if (this.cellIndex.right >= this.dataGrid.size.columns - this.dataGrid.fixedCells.right - 1) {
                     this.cellIndex.right = this.dataGrid.size.columns - this.dataGrid.fixedCells.right - 1;
                     this.edge.right = true;
+                }
+
+                // Determine bottom cell.
+                this.cellIndex.bottom = this.cellIndex.top + this.dataGrid.tileSize.rows - 1;
+                if (this.cellIndex.bottom >= this.dataGrid.size.rows - this.dataGrid.fixedCells.bottom - 1) {
+                    this.cellIndex.bottom = this.dataGrid.size.rows - this.dataGrid.fixedCells.bottom - 1;
+                    this.edge.bottom = true;
                 }
             },
             
@@ -697,8 +702,15 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
      */ 
     _model: null,
 
+    /**
+     * Size of grid in rows and columns.  Contains numeric rows and columns properties.
+     */
     size: null,
     
+    /**
+     * Number of fixed cells in left, top, right, and bottom sides of the DataGrid.
+     * Contains numeric left, top, right, and bottom properties.
+     */
     fixedCells: null,
     
     fixedCellSizes: null,
