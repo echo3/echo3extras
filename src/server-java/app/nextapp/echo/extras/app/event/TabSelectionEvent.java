@@ -32,27 +32,28 @@ package nextapp.echo.extras.app.event;
 import java.util.EventObject;
 
 /**
- * An event describing an update to the state of a <code>TabPane</code>.
+ * Event describing the selection of a tab in a multi-tabbed component.
  */
-public class TabPaneEvent extends EventObject {
+public class TabSelectionEvent extends EventObject {
+
     private int tabIndex;
     
     /**
-     * Creates a new <code>TabPaneEvent</code>.
+     * Creates a new <code>TabSelectionEvent</code>.
      * 
      * @param source the source of the event
      */
-    public TabPaneEvent(Object source) {
+    public TabSelectionEvent(Object source) {
         this(source, -1);
     }
     
     /**
-     * Creates a new <code>TabPaneEvent</code>.
+     * Creates a new <code>TabSelectionEvent</code>.
      * 
      * @param source the source of the event
      * @param tabIndex the tab index on which the event occurred
      */
-    public TabPaneEvent(Object source, int tabIndex) {
+    public TabSelectionEvent(Object source, int tabIndex) {
         super(source);
         this.tabIndex = tabIndex;
     }

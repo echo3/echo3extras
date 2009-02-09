@@ -46,5 +46,5 @@ extends EventListener, Serializable {
      * 
      * @param e the <code>TabPaneEvent</code> describing the change
      */
-    public void tabSelected(TabPaneEvent e);
+    public void tabSelected(TabSelectionEvent e);
 }

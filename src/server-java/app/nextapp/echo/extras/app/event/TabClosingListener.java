@@ -46,5 +46,5 @@ extends EventListener, Serializable {
      * 
      * @param e the <code>TabPaneEvent</code> describing the change
      */
-    public void tabClosing(TabPaneEvent e);
+    public void tabClosing(TabClosingEvent e);
 }
