@@ -116,7 +116,7 @@ Extras.TabPane = Core.extend(Echo.Component, {
      * Processes a user request to close a tab.
      * Notifies listeners of a "tabClose" event.
      * 
-     * @param child the child tab component which is to be closed
+     * @param {String} tabId the renderId of the child tab component
      */
     doTabClose: function(tabId) {
         // Determine selected component.
@@ -133,7 +133,7 @@ Extras.TabPane = Core.extend(Echo.Component, {
      * Processes a user request to select a tab.
      * Notifies listeners of a "tabSelect" event.
      * 
-     * @param tabId the renderId of the child tab component
+     * @param {String} tabId the renderId of the child tab component
      */
     doTabSelect: function(tabId) {
         // Determine selected component.

@@ -308,7 +308,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
 
     /**
      * Retrieves the tab instance with the specified tab id.
-     * 
+     *
      * @param tabId the tab render id
      * @return the tab, or null if no tab is present with the specified id
      * @type Extras.Sync.TabPane.Tab
@@ -321,10 +321,6 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
             }
         }
         return null;
-    },
-    
-    _tabSelectListener: function(e) {
-        this._selectTab(e.tab.renderId);
     },
     
     /**
@@ -672,7 +668,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
             }
         } else if (controlDiv) {
             controlDiv.style.display = "none";
-        }     
+        }
     },
     
     setScrollPosition: function(position) {
@@ -698,6 +694,13 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         }
         
         return !bounded;
+    },
+    
+    /**
+     * Event listener to component instance for user tab selections.
+     */
+    _tabSelectListener: function(e) {
+        this._selectTab(e.tab.renderId);
     }
 });
 
