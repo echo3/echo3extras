@@ -4,22 +4,26 @@
 Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
 
     $static: {
+
         _supportedPartialProperties: ["activeTabId", "activeTabIndex"],
         _paneInsets: 0,
-        _defaultBorderType: Extras.TabPane.BORDER_TYPE_ADJACENT_TO_TABS,
-        _defaultForeground: "#000000",
-        _defaultInsets: 2,
-        _defaultTabActiveBorder: "1px solid #00004f",
-        _defaultTabActiveHeightIncrease: 2,
-        _defaultTabAlignment: "top",
-        _defaultTabCloseIconTextMargin: 5,
-        _defaultTabContentInsets: 0,
-        _defaultTabIconTextMargin: 5,
-        _defaultTabInactiveBorder: "1px solid #7f7f7f",
-        _defaultTabInset: 10,
-        _defaultTabInsets: "3px 8px",
-        _defaultTabPosition: Extras.TabPane.TAB_POSITION_TOP,
-        _defaultTabSpacing: 0,
+        
+        _DEFAULTS: {
+            borderType: Extras.TabPane.BORDER_TYPE_ADJACENT_TO_TABS,
+            foreground: "#000000",
+            insets: 2,
+            tabActiveBorder: "1px solid #00004f",
+            tabActiveHeightIncrease: 2,
+            tabAlignment: "top",
+            tabCloseIconTextMargin: 5,
+            tabContentInsets: 0,
+            tabIconTextMargin: 5,
+            tabInactiveBorder: "1px solid #7f7f7f",
+            tabInset: 10,
+            tabInsets: "3px 8px",
+            tabPosition: Extras.TabPane.TAB_POSITION_TOP,
+            tabSpacing: 0,
+        },
         
         /**
          * Runnable to manage scrolling animation.
@@ -299,15 +303,15 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         
         // Configure Properties
         this._activeTabId = this._getActiveTabId();
-        this._borderType = this.component.render("borderType", Extras.Sync.TabPane._defaultBorderType);
-        this._insets = this.component.render("insets", Extras.Sync.TabPane._defaultInsets);
-        this._tabActiveBorder = this.component.render("tabActiveBorder", Extras.Sync.TabPane._defaultTabActiveBorder);
+        this._borderType = this.component.render("borderType", Extras.Sync.TabPane._DEFAULTS.borderType);
+        this._insets = this.component.render("insets", Extras.Sync.TabPane._DEFAULTS.insets);
+        this._tabActiveBorder = this.component.render("tabActiveBorder", Extras.Sync.TabPane._DEFAULTS.tabActiveBorder);
         this._tabActiveHeightIncreasePx = Echo.Sync.Extent.toPixels(this.component.render("tabActiveHeightIncrease", 
-                Extras.Sync.TabPane._defaultTabActiveHeightIncrease));
-        this._tabInactiveBorder = this.component.render("tabInactiveBorder", Extras.Sync.TabPane._defaultTabInactiveBorder);
-        this._tabInsetPx = Echo.Sync.Extent.toPixels(this.component.render("tabInset",Extras.Sync.TabPane._defaultTabInset));
-        this._tabPosition = this.component.render("tabPosition", Extras.Sync.TabPane._defaultTabPosition);
-        this._tabSpacing = this.component.render("tabSpacing", Extras.Sync.TabPane._defaultTabSpacing);
+                Extras.Sync.TabPane._DEFAULTS.tabActiveHeightIncrease));
+        this._tabInactiveBorder = this.component.render("tabInactiveBorder", Extras.Sync.TabPane._DEFAULTS.tabInactiveBorder);
+        this._tabInsetPx = Echo.Sync.Extent.toPixels(this.component.render("tabInset",Extras.Sync.TabPane._DEFAULTS.tabInset));
+        this._tabPosition = this.component.render("tabPosition", Extras.Sync.TabPane._DEFAULTS.tabPosition);
+        this._tabSpacing = this.component.render("tabSpacing", Extras.Sync.TabPane._DEFAULTS.tabSpacing);
         this._tabCloseEnabled = this.component.render("tabCloseEnabled", false);
         if (this._tabCloseEnabled) {
             this._icons.defaultIcon = this.component.render("tabCloseIcon");
@@ -691,7 +695,7 @@ Extras.Sync.TabPane.Tab = Core.extend({
             return Extras.Sync.TabPane._paneInsets;
         } else {
             return this._parent.component.render("defaultContentInsets", 
-                    Extras.Sync.TabPane._defaultTabContentInsets);
+                    Extras.Sync.TabPane._DEFAULTS.tabContentInsets);
         }
     },
     
@@ -861,9 +865,9 @@ Extras.Sync.TabPane.Tab = Core.extend({
     _renderCloseIcon: function() {
         var td = document.createElement("td");
         Echo.Sync.Alignment.render(this._parent.component.render("tabAlignment", 
-                Extras.Sync.TabPane._defaultTabAlignment), td, true, this._parent.component);
+                Extras.Sync.TabPane._DEFAULTS.tabAlignment), td, true, this._parent.component);
         td.style.padding = "0 0 0 " + this._parent.component.render("tabCloseIconTextMargin", 
-                Extras.Sync.TabPane._defaultTabCloseIconTextMargin + "px");
+                Extras.Sync.TabPane._DEFAULTS.tabCloseIconTextMargin + "px");
         td.style.cursor = "pointer";
         var img = document.createElement("img");
         img.src = Echo.Sync.ImageReference.getUrl(this._getCloseImage(false));
@@ -942,7 +946,7 @@ Extras.Sync.TabPane.Tab = Core.extend({
         
         // Render TD element to contain tab content.
         var centerTd = document.createElement("td");
-        Echo.Sync.Insets.render(Extras.Sync.TabPane._defaultTabInsets, centerTd, "padding");
+        Echo.Sync.Insets.render(Extras.Sync.TabPane._DEFAULTS.tabInsets, centerTd, "padding");
         
         var labelDiv = document.createElement("div");
         centerTd.appendChild(labelDiv);
@@ -964,7 +968,7 @@ Extras.Sync.TabPane.Tab = Core.extend({
             var textTd = document.createElement("td");
             textTd.style.whiteSpace = "nowrap";
             Echo.Sync.Alignment.render(this._parent.component.render("tabAlignment", 
-                    Extras.Sync.TabPane._defaultTabAlignment), textTd, true, this._parent.component);
+                    Extras.Sync.TabPane._DEFAULTS.tabAlignment), textTd, true, this._parent.component);
             textTd.appendChild(document.createTextNode(title));
             table.appendChild(tbody);
             tbody.appendChild(tr);
@@ -978,7 +982,7 @@ Extras.Sync.TabPane.Tab = Core.extend({
             // Render Text Only
             labelDiv.style.whiteSpace = "nowrap";
             Echo.Sync.Alignment.render(this._parent.component.render("tabAlignment", 
-                    Extras.Sync.TabPane._defaultTabAlignment), labelDiv, true, this._parent.component);
+                    Extras.Sync.TabPane._DEFAULTS.tabAlignment), labelDiv, true, this._parent.component);
             labelDiv.appendChild(document.createTextNode(title));
         }
         if (this._parent.component.render("tabHeight")) {
@@ -1008,11 +1012,11 @@ Extras.Sync.TabPane.Tab = Core.extend({
     _renderIcon: function(icon) {
         var td = document.createElement("td");
         Echo.Sync.Alignment.render(this._parent.component.render("tabAlignment", 
-                Extras.Sync.TabPane._defaultTabAlignment), td, true, this._parent.component);
+                Extras.Sync.TabPane._DEFAULTS.tabAlignment), td, true, this._parent.component);
         var img = document.createElement("img");
         img.src = Echo.Sync.ImageReference.getUrl(icon);
         img.style.marginRight = this._parent.component.render("tabIconTextMargin", 
-                Extras.Sync.TabPane._defaultTabIconTextMargin + "px");
+                Extras.Sync.TabPane._DEFAULTS.tabIconTextMargin + "px");
         td.appendChild(img);
         return td;
     }
