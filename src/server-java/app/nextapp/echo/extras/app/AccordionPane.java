@@ -49,6 +49,7 @@ public class AccordionPane extends Component
 implements Pane, PaneContainer {
 
     public static final String ACTIVE_TAB_INDEX_CHANGED_PROPERTY = "activeTabIndex";
+    public static final String TAB_SELECTION_LISTENERS_CHANGED_PROPERTY = "tabSelectionListeners";
     
     public static final int DEFAULT_ANIMATION_TIME = 350;
     
@@ -77,6 +78,16 @@ implements Pane, PaneContainer {
      */ 
     public AccordionPane() {
         super();
+    }
+
+    /**
+     * Adds a <code>TabSelectionListener</code> to receive event notifications.
+     * 
+     * @param l the <code>TabSelectionListener</code> to add
+     */
+    public void addTabSelectionListener(TabSelectionListener l) {
+        getEventListenerList().addListener(TabSelectionListener.class, l);
+        firePropertyChange(TAB_SELECTION_LISTENERS_CHANGED_PROPERTY, null, l);
     }
 
     /**
@@ -238,6 +249,19 @@ implements Pane, PaneContainer {
         }
     }
     
+    /**
+     * Removes a <code>TabSelectionListener</code> from receiving event notifications.
+     * 
+     * @param l the <code>TabSelectionListener</code> to remove
+     */
+    public void removeTabSelectionListener(TabSelectionListener l) {
+        if (!hasEventListenerList()) {
+            return;
+        }
+        getEventListenerList().removeListener(TabSelectionListener.class, l);
+        firePropertyChange(TAB_SELECTION_LISTENERS_CHANGED_PROPERTY, null, l);
+    }
+
     /**
      * Sets the active tab index.
      * 
