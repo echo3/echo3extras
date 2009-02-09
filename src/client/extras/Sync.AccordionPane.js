@@ -31,108 +31,57 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
         this._resetOverflowForAnimation = Core.Web.Env.BROWSER_MOZILLA || Core.Web.Env.BROWSER_INTERNET_EXPLORER;
     },
     
-    renderAdd: function(update, parentElement) {
-        this._animationTime = this.component.render("animationTime", Extras.AccordionPane.DEFAULT_ANIMATION_TIME);
-        this._activeTabId = this.component.get("activeTabId");
-        
-        this._div = document.createElement("div");
-        this._div.id = this.component.renderId;
-        this._div.style.cssText = "position:absolute;width:100%;height:100%;";
-        Echo.Sync.renderComponentDefaults(this.component, this._div);
-        
-        var componentCount = this.component.getComponentCount();
-        for (var i = 0; i < componentCount; ++i) {
-            var child = this.component.getComponent(i);
-            var tab = new Extras.Sync.AccordionPane.Tab(child, this);
-            this._tabs.push(tab);
-            tab._render(this.client, update);
-            this._div.appendChild(tab._tabDiv);
-            this._div.appendChild(tab._containerDiv);
-        }
-        
-        parentElement.appendChild(this._div);
+    _getTabBackground: function() {
+        var background = this.component.render("tabBackground");
+        return background ? background : Extras.Sync.AccordionPane._DEFAULTS.tabBackground;
     },
     
-    renderDisplay: function() {
-        if (!this._rotation) {
-            this._redrawTabs(false);
-        }
+    _getTabBorder: function() {
+        var border = this.component.render("tabBorder");
+        return border ? border : Extras.Sync.AccordionPane._DEFAULTS.tabBorder;
+    },
+    
+    /**
+     * Retrieves the tab instance with the specified tab id.
+     * 
+     * @param tabId the tab id
+     * @return the tab, or null if no tab is present with the specified id
+     */
+    _getTabById: function(tabId) {
         for (var i = 0; i < this._tabs.length; ++i) {
-            this._tabs[i]._renderDisplay();
-        }
-    },
-    
-    renderUpdate: function(update) {
-        var fullRender;
-
-        if (update.hasUpdatedLayoutDataChildren() || update.hasAddedChildren() || update.hasRemovedChildren()) {
-            // Add/remove/layout data change: full render.
-            fullRender = true;
-        } else {
-            var propertyNames = update.getUpdatedPropertyNames();
-            if (propertyNames.length == 1 && propertyNames[0] == "activeTabId") {
-                this._selectTab(update.getUpdatedProperty("activeTabId").newValue);
-                fullRender = false;
-            } else {
-                fullRender = true;
+            var tab = this._tabs[i];
+            if (tab._childComponent.renderId == tabId) {
+                return tab;
             }
         }
-
-        if (fullRender) {
-            var element = this._div;
-            var containerElement = element.parentNode;
-            Echo.Render.renderComponentDispose(update, update.parent);
-            containerElement.removeChild(element);
-            this.renderAdd(update, containerElement);
-        }
-
-        return fullRender;
-    },
-
-    renderDispose: function(update) {
-        if (this._rotation) {
-            this._rotation.abort();
-        }
-        this._activeTabId = null;
-        for (var i = 0; i < this._tabs.length; i++) {
-            this._tabs[i]._dispose();
-        }
-        this._tabs = [];
-        this._div = null;
+        return null;
     },
     
     /**
-     * Selects a specific tab.
-     * 
-     * @param tabId {String} the id of the tab to select
-     */
-    _selectTab: function(tabId) {
-        if (tabId == this._activeTabId) {
-            return;
-        }
-        this.component.set("activeTabId", tabId);
-        
-        var oldTabId = this._activeTabId;
-        this._activeTabId = tabId;
-        if (oldTabId != null && this._animationEnabled) {
-            this._rotateTabs(oldTabId, tabId);
-        } else {
-            this._redrawTabs(true);
-        }
-    },
-    
-    /**
-     * Removes a tab from an AccordionPane.
+     * Determines the height of one or more tabs.
      *
-     * @param tab the tab to remove
+     * If only beginIndex is specified, the height of the tab at index beginIndex will be returned.
+     * Note that if endIndex is specified, the tab at index endIndex will NOT be included in the calculation,
+     * that is, to measure the height of tabs 2, 3, and 4, it is necessary specify beginIndex as 2 and endIndex as 5 (not 4).
+     *
+     * @param beginIndex the begin index, inclusive
+     * @param endIndex the end index, exclusive
      */
-    _removeTab: function(tab) {
-        var tabIndex = Core.Arrays.indexOf(this._tabs, tab);
-        this._tabs.splice(tabIndex, 1);
+    getTabHeight: function(beginIndex, endIndex) {
+        if (endIndex == null || endIndex < beginIndex) {
+            throw new Error("Invalid indices: begin=" + beginIndex + ",end=" + endIndex);
+        } else {
+            var tabHeight = 0;
+            for (var i = beginIndex; i < endIndex; ++i) {
+                tabHeight += this._tabs[i]._tabDiv.offsetHeight;
+            }
+            return tabHeight;
+        }
+    },
     
-        tab._tabDiv.parentNode.removeChild(tab._tabDiv);
-        tab._containerDiv.parentNode.removeChild(tab._containerDiv);
-        tab._dispose();
+    _getTabInsets: function() {
+        var insets = this.component.render("tabInsets");
+        return insets ? insets : Extras.Sync.AccordionPane._DEFAULTS.tabInsets;
     },
     
     /**
@@ -183,6 +132,94 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
         }
     },
     
+    /** @see Echo.Render.ComponentSync#renderAdd */
+    renderAdd: function(update, parentElement) {
+        this._animationTime = this.component.render("animationTime", Extras.AccordionPane.DEFAULT_ANIMATION_TIME);
+        this._activeTabId = this.component.get("activeTabId");
+        
+        this._div = document.createElement("div");
+        this._div.id = this.component.renderId;
+        this._div.style.cssText = "position:absolute;width:100%;height:100%;";
+        Echo.Sync.renderComponentDefaults(this.component, this._div);
+        
+        var componentCount = this.component.getComponentCount();
+        for (var i = 0; i < componentCount; ++i) {
+            var child = this.component.getComponent(i);
+            var tab = new Extras.Sync.AccordionPane.Tab(child, this);
+            this._tabs.push(tab);
+            tab._render(this.client, update);
+            this._div.appendChild(tab._tabDiv);
+            this._div.appendChild(tab._containerDiv);
+        }
+        
+        parentElement.appendChild(this._div);
+    },
+    
+    /** @see Echo.Render.ComponentSync#renderDisplay */
+    renderDisplay: function() {
+        if (!this._rotation) {
+            this._redrawTabs(false);
+        }
+        for (var i = 0; i < this._tabs.length; ++i) {
+            this._tabs[i]._renderDisplay();
+        }
+    },
+    
+    /** @see Echo.Render.ComponentSync#renderDispose */
+    renderDispose: function(update) {
+        if (this._rotation) {
+            this._rotation.abort();
+        }
+        this._activeTabId = null;
+        for (var i = 0; i < this._tabs.length; i++) {
+            this._tabs[i]._dispose();
+        }
+        this._tabs = [];
+        this._div = null;
+    },
+    
+    /** @see Echo.Render.ComponentSync#renderUpdate */
+    renderUpdate: function(update) {
+        var fullRender;
+
+        if (update.hasUpdatedLayoutDataChildren() || update.hasAddedChildren() || update.hasRemovedChildren()) {
+            // Add/remove/layout data change: full render.
+            fullRender = true;
+        } else {
+            var propertyNames = update.getUpdatedPropertyNames();
+            if (propertyNames.length == 1 && propertyNames[0] == "activeTabId") {
+                this._selectTab(update.getUpdatedProperty("activeTabId").newValue);
+                fullRender = false;
+            } else {
+                fullRender = true;
+            }
+        }
+
+        if (fullRender) {
+            var element = this._div;
+            var containerElement = element.parentNode;
+            Echo.Render.renderComponentDispose(update, update.parent);
+            containerElement.removeChild(element);
+            this.renderAdd(update, containerElement);
+        }
+
+        return fullRender;
+    },
+
+    /**
+     * Removes a tab from an AccordionPane.
+     *
+     * @param tab the tab to remove
+     */
+    _removeTab: function(tab) {
+        var tabIndex = Core.Arrays.indexOf(this._tabs, tab);
+        this._tabs.splice(tabIndex, 1);
+    
+        tab._tabDiv.parentNode.removeChild(tab._tabDiv);
+        tab._containerDiv.parentNode.removeChild(tab._containerDiv);
+        tab._dispose();
+    },
+    
     /**
      * "Rotates" the AccordionPane to display the specified tab.
      *
@@ -214,56 +251,23 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
     },
     
     /**
-     * Retrieves the tab instance with the specified tab id.
+     * Selects a specific tab.
      * 
-     * @param tabId the tab id
-     * @return the tab, or null if no tab is present with the specified id
+     * @param tabId {String} the id of the tab to select
      */
-    _getTabById: function(tabId) {
-        for (var i = 0; i < this._tabs.length; ++i) {
-            var tab = this._tabs[i];
-            if (tab._childComponent.renderId == tabId) {
-                return tab;
-            }
+    _selectTab: function(tabId) {
+        if (tabId == this._activeTabId) {
+            return;
         }
-        return null;
-    },
-    
-    _getTabBackground: function() {
-        var background = this.component.render("tabBackground");
-        return background ? background : Extras.Sync.AccordionPane._DEFAULTS.tabBackground;
-    },
-    
-    _getTabBorder: function() {
-        var border = this.component.render("tabBorder");
-        return border ? border : Extras.Sync.AccordionPane._DEFAULTS.tabBorder;
-    },
-    
-    /**
-     * Determines the height of one or more tabs.
-     *
-     * If only beginIndex is specified, the height of the tab at index beginIndex will be returned.
-     * Note that if endIndex is specified, the tab at index endIndex will NOT be included in the calculation,
-     * that is, to measure the height of tabs 2, 3, and 4, it is necessary specify beginIndex as 2 and endIndex as 5 (not 4).
-     *
-     * @param beginIndex the begin index, inclusive
-     * @param endIndex the end index, exclusive
-     */
-    getTabHeight: function(beginIndex, endIndex) {
-        if (endIndex == null || endIndex < beginIndex) {
-            throw new Error("Invalid indices: begin=" + beginIndex + ",end=" + endIndex);
+        this.component.set("activeTabId", tabId);
+        
+        var oldTabId = this._activeTabId;
+        this._activeTabId = tabId;
+        if (oldTabId != null && this._animationEnabled) {
+            this._rotateTabs(oldTabId, tabId);
         } else {
-            var tabHeight = 0;
-            for (var i = beginIndex; i < endIndex; ++i) {
-                tabHeight += this._tabs[i]._tabDiv.offsetHeight;
-            }
-            return tabHeight;
+            this._redrawTabs(true);
         }
-    },
-    
-    _getTabInsets: function() {
-        var insets = this.component.render("tabInsets");
-        return insets ? insets : Extras.Sync.AccordionPane._DEFAULTS.tabInsets;
     }
 });
 
@@ -278,6 +282,19 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
     $construct: function(childComponent, parent) {
         this._childComponent = childComponent;
         this._parent = parent;
+    },
+    
+    _addEventListeners: function() {
+        Core.Web.Event.add(this._tabDiv, "click", Core.method(this, this._processClick), false);
+        if (this._parent.component.render("tabRolloverEnabled", true)) {
+            Core.Web.Event.add(this._tabDiv, 
+                    Core.Web.Env.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED ? "mouseenter" : "mouseover", 
+                    Core.method(this, this._processEnter), false);
+            Core.Web.Event.add(this._tabDiv, 
+                    Core.Web.Env.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED ? "mouseleave" : "mouseout", 
+                    Core.method(this, this._processExit), false);
+        }
+        Core.Web.Event.Selection.disable(this._tabDiv);
     },
     
     _dispose: function() {
@@ -346,19 +363,6 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
             Echo.Sync.Border.render(border, tabDiv, "borderTop");
             Echo.Sync.Border.render(border, tabDiv, "borderBottom");
         }
-    },
-    
-    _addEventListeners: function() {
-        Core.Web.Event.add(this._tabDiv, "click", Core.method(this, this._processClick), false);
-        if (this._parent.component.render("tabRolloverEnabled", true)) {
-            Core.Web.Event.add(this._tabDiv, 
-                    Core.Web.Env.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED ? "mouseenter" : "mouseover", 
-                    Core.method(this, this._processEnter), false);
-            Core.Web.Event.add(this._tabDiv, 
-                    Core.Web.Env.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED ? "mouseleave" : "mouseout", 
-                    Core.method(this, this._processExit), false);
-        }
-        Core.Web.Event.Selection.disable(this._tabDiv);
     },
     
     _getContentInsets: function() {
@@ -500,6 +504,27 @@ Extras.Sync.AccordionPane.Rotation = Core.extend(Extras.Sync.Animation, {
         }
     },
     
+    /** @see Extras.Sync.Animation#complete */
+    complete: function() {
+        this._parent._rotation = null;
+
+        // Complete Rotation.
+        var parent = this._parent;
+        
+        if (this._parent._resetOverflowForAnimation) {
+            this._oldTab._contentDiv.style.overflow = "auto";
+            this._newTab._contentDiv.style.overflow = "auto";
+        }
+
+        var renderId = this._parent.component.renderId;
+        this._parent = null;
+        this._oldTab = null;
+        this._newTab = null;
+        
+        parent._redrawTabs(true);
+    },
+    
+    /** @see Extras.Sync.Animation#init */
     init: function() {
         this._newTab._containerDiv.style.height = "";
         if (this._directionDown) {
@@ -532,10 +557,7 @@ Extras.Sync.AccordionPane.Rotation = Core.extend(Extras.Sync.Animation, {
         this._newTab._contentDiv.style.height = newContentHeight + "px";
     },
 
-    /**
-     * Renders the next step of the rotation animation.
-     * Queues subsequent frame of animation via Window.setTimeout() call to self.
-     */
+    /** @see Extras.Sync.Animation#step */
     step: function(progress) {
         var i,
             oldContainerHeight,
@@ -590,24 +612,5 @@ Extras.Sync.AccordionPane.Rotation = Core.extend(Extras.Sync.Animation, {
             }
             this._newTab._containerDiv.style.height = newContainerHeight + "px";
         }
-    },
-    
-    complete: function() {
-        this._parent._rotation = null;
-
-        // Complete Rotation.
-        var parent = this._parent;
-        
-        if (this._parent._resetOverflowForAnimation) {
-            this._oldTab._contentDiv.style.overflow = "auto";
-            this._newTab._contentDiv.style.overflow = "auto";
-        }
-
-        var renderId = this._parent.component.renderId;
-        this._parent = null;
-        this._oldTab = null;
-        this._newTab = null;
-        
-        parent._redrawTabs(true);
     }
 });
