@@ -836,7 +836,7 @@ Extras.Sync.TabPane.Tab = Core.extend({
             // tab clicked
             this._parent._selectTab(this._childComponent.renderId);
             this._parent._setActiveTabId(this._childComponent.renderId);
-            this._parent.component.doTabSelect(this._childComponent);
+            this._parent.component.doTabSelect(this._childComponent.renderId);
         }
     },
     

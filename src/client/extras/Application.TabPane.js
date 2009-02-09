@@ -113,7 +113,7 @@ Extras.TabPane = Core.extend(Echo.Component, {
     pane: true,
     
     /**
-     * Processes a request to close a tab.
+     * Processes a user request to close a tab.
      * Notifies listeners of a "tabClose" event.
      * 
      * @param child the child tab component which is to be closed
@@ -122,15 +122,15 @@ Extras.TabPane = Core.extend(Echo.Component, {
         this.fireEvent({ type: "tabClose", source: this, tab: child, data: child.renderId });
     },
 
-    //FIXME. This method should manage active tab (not sync peer).
     /**
-     * Processes a request to select a tab.
+     * Processes a user request to select a tab.
      * Notifies listeners of a "tabSelect" event.
      * 
-     * @param child the child tab component which is to be selected
+     * @param tabId the renderId of the child tab component
      */
-    doTabSelect: function(child) {
-        this.fireEvent({ type: "tabSelect", source: this, tab: child, data: child.renderId });
+    doTabSelect: function(tabId) {
+        var tabComponent = this.application.getComponentByRenderId(tabId);
+        this.fireEvent({ type: "tabSelect", source: this, tab: tabComponent, data: tabId });
     }
 });
 
