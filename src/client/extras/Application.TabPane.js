@@ -118,8 +118,9 @@ Extras.TabPane = Core.extend(Echo.Component, {
      * 
      * @param child the child tab component which is to be closed
      */
-    doTabClose: function(child) {
-        this.fireEvent({ type: "tabClose", source: this, tab: child, data: child.renderId });
+    doTabClose: function(tabId) {
+        var tabComponent = this.application.getComponentByRenderId(tabId);
+        this.fireEvent({ type: "tabClose", source: this, tab: tabComponent, data: tabId });
     },
 
     /**
