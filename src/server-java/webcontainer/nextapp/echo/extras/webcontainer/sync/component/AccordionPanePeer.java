@@ -54,12 +54,12 @@ import nextapp.echo.webcontainer.util.MultiIterator;
  */
 public class AccordionPanePeer extends AbstractComponentSynchronizePeer {
 
+    private static final String PROPERTY_ACTIVE_TAB = "activeTab";
+
     private static final Service ACCORDION_PANE_SERVICE = JavaScriptService.forResources("EchoExtras.AccordionPane",
             new String[] {  "nextapp/echo/extras/webcontainer/resource/Application.AccordionPane.js",  
                             "nextapp/echo/extras/webcontainer/resource/Sync.AccordionPane.js"});
     
-    private static final String PROPERTY_ACTIVE_TAB = "activeTab";
-
     static {
         WebContainerServlet.getServiceRegistry().add(ACCORDION_PANE_SERVICE);
     }
