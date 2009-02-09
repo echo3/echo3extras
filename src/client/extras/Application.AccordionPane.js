@@ -28,6 +28,7 @@ Extras.AccordionPane = Core.extend(Echo.Component, {
     
         /**
          * The default animation time, 350ms.
+         * @type Number
          */
         DEFAULT_ANIMATION_TIME: 350
     },
