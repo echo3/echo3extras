@@ -130,7 +130,7 @@ Extras.TabPane = Core.extend(Echo.Component, {
      * @param child the child tab component which is to be selected
      */
     doTabSelect: function(child) {
-        this.fireEvent({ type: "tabSelect", source: this, tab: child, data: child.renderId });        
+        this.fireEvent({ type: "tabSelect", source: this, tab: child, data: child.renderId });
     }
 });
 

@@ -142,12 +142,18 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
      */
     _configureHeaderSizeRequired: false,
     
+    /** 
+     * Method reference to <code>_tabSelectListener</code> of instance. 
+     */
+    _tabSelectListenerRef: null,
+    
     _scrollRunnable: null,
     
     scrollPosition: 0,
     
     $construct: function() {
         this._tabs = [];
+        this._tabSelectListenerRef = Core.method(this, this._tabSelectListener);
     },
     
     /**
@@ -237,6 +243,10 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         return null;
     },
     
+    _tabSelectListener: function(e) {
+        Core.Debug.consoleWrite("Tab select");
+    },
+    
     /**
      * Handler for mouse down event on previous/next scroll buttons.
      */
@@ -283,6 +293,8 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     
     /** @see Echo.Render.ComponentSync#renderAdd */
     renderAdd: function(update, parentElement) {
+        this.component.addListener("tabSelect", this._tabSelectListenerRef);
+        
         this._icons = { };
         
         // Configure Properties
@@ -425,6 +437,8 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     
     /** @see Echo.Render.ComponentSync#renderDispose */
     renderDispose: function(update) {
+        this.component.removeListener("tabSelect", this._tabSelectListenerRef);
+
         this._activeTabId = null;
         for (var i = 0; i < this._tabs.length; i++) {
             this._tabs[i]._dispose();
