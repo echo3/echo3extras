@@ -147,6 +147,10 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         Echo.Render.registerPeer("Extras.TabPane", this);
     },
     
+    /**
+     * Name-to-ImageReference map for icons used by the TabPane, e.g., tab close and scroll icons.
+     * @type Object
+     */
     _icons: null,
 
     /**
@@ -288,7 +292,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     
     /**
      * Determines the renderId of the active tab child component.
-     * This method first queries the component's <code>activeTab</code> property, 
+     * This method first queries the component's <code>activeTabId</code> property, 
      * and if it is not set, the id is determined by finding the child component at the 
      * index specified by the component's <code>activeTabIndex</code> property.
      *
@@ -325,6 +329,8 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     
     /**
      * Handler for mouse down event on previous/next scroll buttons.
+     * 
+     * @param e the mouse down event
      */
     _processScrollStart: function(e) {
         if (!this.client || !this.client.verifyInput(this.component)) {
@@ -337,6 +343,8 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     
     /**
      * Handler for mouse up event on previous/next scroll buttons.
+     * 
+     * @param e the mouse up event
      */
     _processScrollStop: function(e) {
         if (!this._scrollRunnable) {
@@ -347,7 +355,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     },
     
     /**
-     * Removes a specific tab.
+     * Removes a specific tab.  Removes its rendering from the DOM.
      *
      * @param {Extras.Sync.TabPane.Tab} tab the tab to remove
      */
@@ -633,6 +641,13 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         }
     },
     
+    /**
+     * Enables/disables the scrolling controls used when the tab header is to wide to be displayed entirely at once.
+     * This method will lazy-render the specified scrolling control if it has not been previously enabled. 
+     * 
+     * @param {Boolean} previous flag indicating which scrolling control should be enabled/disabled, true indicating the
+     *        scroll-to-previous control, false indicating the scroll-to-next control
+     */
     _setOversizeEnabled: function(previous, enabled) {
         var controlDiv = previous ? this._previousControlDiv : this._nextControlDiv,
             img;
@@ -671,6 +686,14 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         }
     },
     
+    /**
+     * Sets the scroll position of the tab header.
+     * 
+     * @param {Number} position the scroll position, in pixels
+     * @return a boolean state indicating whether the scroll position could be set exactly (true) or was bounded by
+     *         an attempt to be scrolled to far (false)
+     * @type Boolean
+     */
     setScrollPosition: function(position) {
         var bounded = false,
             oversize = this._totalTabWidth > this._tabContainerWidth;
@@ -698,6 +721,8 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     
     /**
      * Event listener to component instance for user tab selections.
+     * 
+     * @param e the event
      */
     _tabSelectListener: function(e) {
         this._selectTab(e.tab.renderId);
