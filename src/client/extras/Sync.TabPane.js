@@ -201,7 +201,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     
     /**
      * Flag indicating whether the header size may need to be reconfigured (by invoking configureHeaderSize() in the next
-     * renderDisplay() execution.
+     * renderDisplay() execution).
      * @type Boolean
      */
     _configureHeaderSizeRequired: false,
@@ -255,6 +255,10 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         }
     },
 
+    /**
+     * Measures the height of the header region of the tab pane, adjusting the content region's size to accommodate it.
+     * Invoked in renderDisplay phase when <code>_configureHeaderSizeRequired</code> flag has been set.
+     */
     _configureHeaderSize: function() {
         var height = new Core.Web.Measure.Bounds(this._headerTabContainerDiv).height;
         if (height === 0) {
@@ -925,6 +929,8 @@ Extras.Sync.TabPane.Tab = Core.extend({
     
     /**
      * Renders the tab.
+     * 
+     * @param {Echo.Update.ComponentUpdate} update the component update 
      */
     _render: function(update) {
         this._headerTd = this._renderHeader();
@@ -959,6 +965,8 @@ Extras.Sync.TabPane.Tab = Core.extend({
     
     /**
      * Renders the content of a tab.
+     * 
+     * @param {Echo.Update.ComponentUpdate} update the component update 
      */
     _renderContent: function(update) {
         var div = document.createElement("div");
