@@ -144,7 +144,7 @@ public class AccordionPanePeer extends AbstractComponentSynchronizePeer {
             for (int i = 0; i < children.length; ++i) {
                 if (userInstance.getClientRenderId(children[i]).equals(newValue)) {
                     ClientUpdateManager clientUpdateManager = (ClientUpdateManager) context.get(ClientUpdateManager.class);
-                    clientUpdateManager.setComponentProperty(component, AccordionPane.INPUT_TAB_INDEX, new Integer(i));
+                    clientUpdateManager.setComponentProperty(component, AccordionPane.INPUT_TAB_SELECT, new Integer(i));
                     return;
                 }
             }

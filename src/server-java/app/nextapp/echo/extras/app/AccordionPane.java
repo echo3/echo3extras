@@ -29,6 +29,8 @@
 
 package nextapp.echo.extras.app;
 
+import java.util.EventListener;
+
 import nextapp.echo.app.Border;
 import nextapp.echo.app.Color;
 import nextapp.echo.app.Component;
@@ -36,6 +38,8 @@ import nextapp.echo.app.FillImage;
 import nextapp.echo.app.Insets;
 import nextapp.echo.app.Pane;
 import nextapp.echo.app.PaneContainer;
+import nextapp.echo.extras.app.event.TabSelectionEvent;
+import nextapp.echo.extras.app.event.TabSelectionListener;
 
 /**
  * <code>AccordionPane</code> component: contains multiple children in vertically arranged tabs that slide up and down to reveal a
@@ -44,11 +48,13 @@ import nextapp.echo.app.PaneContainer;
 public class AccordionPane extends Component
 implements Pane, PaneContainer {
 
-    public static final int DEFAULT_ANIMATION_TIME = 350;
-    
-    public static final String INPUT_TAB_INDEX = "inputTabIndex";
     public static final String ACTIVE_TAB_INDEX_CHANGED_PROPERTY = "activeTabIndex";
     
+    public static final int DEFAULT_ANIMATION_TIME = 350;
+    
+    public static final String INPUT_TAB_SELECT = "tabSelect";
+    
+    public static final String PROPERTY_ANIMATION_TIME = "animationTime";
     public static final String PROPERTY_DEFAULT_CONTENT_INSETS = "defaultContentInsets";
     public static final String PROPERTY_TAB_BACKGROUND = "tabBackground";
     public static final String PROPERTY_TAB_BACKGROUND_IMAGE = "tabBackgroundImage";
@@ -61,8 +67,6 @@ implements Pane, PaneContainer {
     public static final String PROPERTY_TAB_ROLLOVER_ENABLED = "tabRolloverEnabled";
     public static final String PROPERTY_TAB_ROLLOVER_FOREGROUND = "tabRolloverForeground";
     
-    public static final String PROPERTY_ANIMATION_TIME = "animationTime";
-    
     /**
      * Index of active tab.
      */ 
@@ -73,6 +77,23 @@ implements Pane, PaneContainer {
      */ 
     public AccordionPane() {
         super();
+    }
+
+    /**
+     * Notifies <code>TabSelectionListener</code>s that the user has selected a tab.
+     */
+    protected void fireTabSelected(int tabIndex) {
+        if (!hasEventListenerList()) {
+            return;
+        }
+        EventListener[] listeners = getEventListenerList().getListeners(TabSelectionListener.class);
+        if (listeners.length == 0) {
+            return;
+        }
+        TabSelectionEvent e = new TabSelectionEvent(this, tabIndex);
+        for (int i = 0; i < listeners.length; ++i) {
+            ((TabSelectionListener) listeners[i]).tabSelected(e);
+        }
     }
     
     /**
@@ -177,6 +198,15 @@ implements Pane, PaneContainer {
     }
     
     /**
+     * Returns the tab rollover foreground color.
+     *
+     * @return the tab rollover foreground color
+     */
+    public Color getTabRolloverForeground() {
+        return (Color) get(PROPERTY_TAB_ROLLOVER_FOREGROUND);
+    }
+    
+    /**
      * Determines whether rollover effects are enabled.
      * Default value is true.
      * 
@@ -185,15 +215,6 @@ implements Pane, PaneContainer {
     public boolean isTabRolloverEnabled() {
         Boolean value = (Boolean) get(PROPERTY_TAB_ROLLOVER_ENABLED);
         return value == null ? true : value.booleanValue();
-    }
-    
-    /**
-     * Returns the tab rollover foreground color.
-     *
-     * @return the tab rollover foreground color
-     */
-    public Color getTabRolloverForeground() {
-        return (Color) get(PROPERTY_TAB_ROLLOVER_FOREGROUND);
     }
     
     /**
@@ -212,7 +233,7 @@ implements Pane, PaneContainer {
      */
     public void processInput(String inputName, Object inputValue) {
         super.processInput(inputName, inputValue);
-        if (inputName.equals(INPUT_TAB_INDEX)) {
+        if (inputName.equals(INPUT_TAB_SELECT)) {
             setActiveTabIndex(((Integer) inputValue).intValue());
         }
     }
@@ -323,7 +344,7 @@ implements Pane, PaneContainer {
     /**
      * Sets whether tab rollover effects are enabled.
      *
-     * @param newValue thew new rollover effect state
+     * @param newValue the new rollover effect state
      */
     public void setTabRolloverEnabled(boolean newValue) {
         set(PROPERTY_TAB_ROLLOVER_ENABLED, new Boolean(newValue));
@@ -336,5 +357,13 @@ implements Pane, PaneContainer {
      */
     public void setTabRolloverForeground(Color newValue) {
         set(PROPERTY_TAB_ROLLOVER_FOREGROUND, newValue);
+    }
+
+    /**
+     * Processes a user request to select the tab with the given index.
+     */
+    public void userTabSelect(int tabIndex) {
+        fireTabSelected(tabIndex);
+        setActiveTabIndex(tabIndex);
     }
 }

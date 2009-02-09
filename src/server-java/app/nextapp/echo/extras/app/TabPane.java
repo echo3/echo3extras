@@ -42,8 +42,9 @@ import nextapp.echo.app.ImageReference;
 import nextapp.echo.app.Insets;
 import nextapp.echo.app.Pane;
 import nextapp.echo.app.PaneContainer;
-import nextapp.echo.extras.app.event.TabPaneEvent;
+import nextapp.echo.extras.app.event.TabClosingEvent;
 import nextapp.echo.extras.app.event.TabClosingListener;
+import nextapp.echo.extras.app.event.TabSelectionEvent;
 import nextapp.echo.extras.app.event.TabSelectionListener;
 import nextapp.echo.extras.app.layout.TabPaneLayoutData;
 
@@ -188,7 +189,7 @@ implements Pane, PaneContainer {
         if (listeners.length == 0) {
             return;
         }
-        TabPaneEvent e = new TabPaneEvent(this, tabIndex);
+        TabClosingEvent e = new TabClosingEvent(this, tabIndex);
         for (int i = 0; i < listeners.length; ++i) {
             ((TabClosingListener) listeners[i]).tabClosing(e);
         }
@@ -205,7 +206,7 @@ implements Pane, PaneContainer {
         if (listeners.length == 0) {
             return;
         }
-        TabPaneEvent e = new TabPaneEvent(this, tabIndex);
+        TabSelectionEvent e = new TabSelectionEvent(this, tabIndex);
         for (int i = 0; i < listeners.length; ++i) {
             ((TabSelectionListener) listeners[i]).tabSelected(e);
         }
