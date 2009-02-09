@@ -24,7 +24,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
             tabInset: 10,
             tabInsets: "3px 8px",
             tabPosition: Extras.TabPane.TAB_POSITION_TOP,
-            tabSpacing: 0,
+            tabSpacing: 0
         },
         
         /**
@@ -735,28 +735,82 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
  * on/off for an individual tab.
  */
 Extras.Sync.TabPane.Tab = Core.extend({
+    
+    /**
+     * The child component which will be rendered within the tab.
+     * @type Echo.Component
+     */
+    _childComponent: null,
+    
+    /**
+     * The TabPane synchronization peer.
+     * @type Extras.Sync.TabPane
+     */
+    _parent: null,
+    
+    /**
+     * TD element containing tab header (highest level element managed by Tab object in the header).
+     * @type Element
+     */
+    _headerTd: null,
+    
+    /**
+     * The DIV element which will contain the rendered child component.
+     * @type Element
+     */
+    _contentDiv: null,
+    
+    /**
+     * TD element containing left-side tab trim.
+     * @type Element
+     */
+    _leftTd: null,
+    
+    /**
+     * Center TD element, containing tab header content.
+     * @type Element
+     */
+    _centerTd: null,
+    
+    /**
+     * TD element containing right-side tab trim.
+     * @type Element
+     */
+    _rightTd: null,
+    
+    /**
+     * TD element containing close icon.
+     * @type Element
+     */
+    _closeIconTd: null,
+    
+    /**
+     * Flag indicating whether the tab may be closed.
+     * @type Boolean
+     */
+    _tabCloseEnabled: false,
 
+    /**
+     * Creates a new Tab instance.
+     * 
+     * @param {Echo.Component} childComponent the child component which will be rendered within the tab
+     * @param {Extras.Sync.TabPane} parent the TabPane synchronization peer
+     */
     $construct: function(childComponent, parent) {
         // state
         this._childComponent = childComponent;
         this._parent = parent;
-        this._rendered = false;
         if (parent._tabCloseEnabled) {
             var layoutData = this._childComponent.render("layoutData");
             this._tabCloseEnabled = layoutData ? layoutData.closeEnabled : false;
         } else {
             this._tabCloseEnabled = false;
         }
-        // elements
-        this._headerTd = null;
-        this._headerContentTable = null;
-        this._contentDiv = null;
-        this._leftTd = null;
-        this._centerTd = null;
-        this._rightTd = null;
-        this._closeImageTd = null;
     },
     
+    /**
+     * Adds event listeners to the tab to handle click and mouse events.
+     */
     _addEventListeners: function() {
         Core.Web.Event.add(this._headerTd, "click", Core.method(this, this._processClick), false);
         Core.Web.Event.Selection.disable(this._headerTd);
@@ -767,20 +821,28 @@ Extras.Sync.TabPane.Tab = Core.extend({
         }
     },
     
+    /**
+     * Disposes of the tab, releasing any resources.
+     */
     _dispose: function() {
         Core.Web.Event.removeAll(this._headerTd);
         
         this._parent = null;
         this._childComponent = null;
         this._headerTd = null;
-        this._headerContentTable = null;
         this._contentDiv = null;
         this._leftTd = null;
         this._centerTd = null;
         this._rightTd = null;
-        this._closeImageTd = null;
+        this._closeIconTd = null;
     },
     
+    /**
+     * Retries the close image (either default or rollover).
+     * 
+     * @param rollover flag indicating whether rollover (true) or default (false) image should be returned
+     * @type #ImageReference
+     */
     _getCloseImage: function(rollover) {
         var icons = this._parent._icons;
         var icon;
@@ -796,6 +858,8 @@ Extras.Sync.TabPane.Tab = Core.extend({
 
     /**
      * Determine content inset margin.
+     * 
+     * @return the content inset margin
      * @type #Insets
      */
     _getContentInsets: function() {
@@ -807,6 +871,12 @@ Extras.Sync.TabPane.Tab = Core.extend({
         }
     },
     
+    /**
+     * Retrieves left-side tab image data.  The returned object contains fillImage and width properties.
+     * 
+     * @param {Boolean} state the state of the tab, true for active, false for inactive
+     * @return a data object containing fillImage and width properties 
+     */
     _getLeftImage: function(state) {
         var propertyName = state ? "tabActiveLeftImage" : "tabInactiveLeftImage";
         var image = this._parent.component.render(propertyName);
@@ -817,6 +887,12 @@ Extras.Sync.TabPane.Tab = Core.extend({
         return { width: (image.width ? image.width : null), fillImage: fillImage };
     },
     
+    /**
+     * Retrieves right-side tab image data.  The returned object contains fillImage and width properties.
+     * 
+     * @param {Boolean} state the state of the tab, true for active, false for inactive
+     * @return a data object containing fillImage and width properties 
+     */
     _getRightImage: function(state) {
         var propertyName = state ? "tabActiveRightImage" : "tabInactiveRightImage";
         var image = this._parent.component.render(propertyName);
@@ -829,9 +905,11 @@ Extras.Sync.TabPane.Tab = Core.extend({
     
     /**
      * Renders the tab active or inactive, updating header state and showing/hiding tab content.
+     * 
+     * @param {Boolean} state the state of the tab, true for active, false for inactive
      */
     _renderActiveState: function(state) {
-        var headerContentTable = this._headerContentTable;
+        var headerContentTable = this._headerTd.firstChild;
         var centerTd = this._centerTd;
         var contentDiv = this._contentDiv;
         
@@ -923,7 +1001,7 @@ Extras.Sync.TabPane.Tab = Core.extend({
         if (!this._parent || !this._parent.client || !this._parent.client.verifyInput(this._parent.component)) {
             return true;
         }
-        if (this._closeImageTd && Core.Web.DOM.isAncestorOf(this._closeImageTd, e.target)) {
+        if (this._closeIconTd && Core.Web.DOM.isAncestorOf(this._closeIconTd, e.target)) {
             // close icon clicked
             if (!this._tabCloseEnabled) {
                 return;
@@ -937,22 +1015,26 @@ Extras.Sync.TabPane.Tab = Core.extend({
     
     /**
      * Tab rollover enter handler.
+     * 
+     * @param e the mouse event
      */
     _processEnter: function(e) {
         if (!this._parent || !this._parent.client || !this._parent.client.verifyInput(this._parent.component)) {
             return true;
         }
         
-        var rollover = Core.Web.DOM.isAncestorOf(this._closeImageTd, e.target);
-        this._closeImageTd.firstChild.src = Echo.Sync.ImageReference.getUrl(this._getCloseImage(rollover));
+        var rollover = Core.Web.DOM.isAncestorOf(this._closeIconTd, e.target);
+        this._closeIconTd.firstChild.src = Echo.Sync.ImageReference.getUrl(this._getCloseImage(rollover));
     },
     
     /**
      * Tab rollover exit handler.
+     * 
+     * @param e the mouse event
      */
     _processExit: function(e) {
-        var rollover = Core.Web.DOM.isAncestorOf(this._closeImageTd, e.target);
-        this._closeImageTd.firstChild.src = Echo.Sync.ImageReference.getUrl(this._getCloseImage(false));
+        var rollover = Core.Web.DOM.isAncestorOf(this._closeIconTd, e.target);
+        this._closeIconTd.firstChild.src = Echo.Sync.ImageReference.getUrl(this._getCloseImage(false));
     },
     
     /**
@@ -962,7 +1044,6 @@ Extras.Sync.TabPane.Tab = Core.extend({
      */
     _render: function(update) {
         this._headerTd = this._renderHeader();
-        this._headerContentTable = this._headerTd.firstChild;
         this._contentDiv = this._renderContent(update);
         
         this._renderActiveState(this._childComponent.renderId == this._parent._activeTabId);
@@ -1086,8 +1167,8 @@ Extras.Sync.TabPane.Tab = Core.extend({
             tbody.appendChild(tr);
             tr.appendChild(textTd);
             if (closeIcon) {
-                this._closeImageTd = this._renderCloseIcon();
-                tr.appendChild(this._closeImageTd);
+                this._closeIconTd = this._renderCloseIcon();
+                tr.appendChild(this._closeIconTd);
             }
             labelDiv.appendChild(table);
         } else {
