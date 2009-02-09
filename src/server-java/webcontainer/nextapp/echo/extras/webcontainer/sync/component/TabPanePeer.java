@@ -85,7 +85,7 @@ public class TabPanePeer extends AbstractComponentSynchronizePeer {
             
             public void processEvent(Context context, Component component, Object eventData) {
                 TabPane tabPane = (TabPane) component;
-                Integer tabIndex = getTabIndex(context, tabPane, (String)eventData);
+                Integer tabIndex = getTabIndex(context, tabPane, (String) eventData);
                 ClientUpdateManager clientUpdateManager = (ClientUpdateManager) context.get(ClientUpdateManager.class);
                 clientUpdateManager.setComponentAction(component, TabPane.INPUT_TAB_SELECT, tabIndex);
             }

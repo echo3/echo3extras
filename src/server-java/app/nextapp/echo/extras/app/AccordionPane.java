@@ -218,6 +218,18 @@ implements Pane, PaneContainer {
     }
     
     /**
+     * Determines the any <code>TabSelectionListener</code>s are registered.
+     * 
+     * @return true if any <code>TabSelectionListener</code>s are registered
+     */
+    public boolean hasTabSelectionListeners() {
+        if (!hasEventListenerList()) {
+            return false;
+        }
+        return getEventListenerList().getListenerCount(TabSelectionListener.class) > 0;
+    }
+    
+    /**
      * Determines whether rollover effects are enabled.
      * Default value is true.
      * 
