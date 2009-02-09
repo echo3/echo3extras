@@ -6,8 +6,10 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     $static: {
 
         _supportedPartialProperties: ["activeTabId", "activeTabIndex"],
-        _paneInsets: 0,
         
+        /**
+         * Default component property settings, used when supported component object does not provide settings. 
+         */
         _DEFAULTS: {
             borderType: Extras.TabPane.BORDER_TYPE_ADJACENT_TO_TABS,
             foreground: "#000000",
@@ -30,22 +32,49 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
          */
         ScrollRunnable: Core.extend(Core.Web.Scheduler.Runnable, {
         
+            /** @see Core.Web.Scheduler.Runnable#repeat */
             repeat: true,
+
+            /** @see Core.Web.Scheduler.Runnable#timeInterval */
             timeInterval: 20,
 
+            /**
+             * Direction of scrolling travel.  True indicates tabs are scrolling in reverse (revealing tabs to the left),
+             * true indicating scrolling forward (revealing tabs to the right).
+             * @type Boolean
+             */
             reverse: false,
+            
+            /**
+             * Current distance scrolled, in pixels.
+             * @type Number
+             */
             distance: 0,
             
-            /** Minimum distance to move (in case of click rather than hold */
+            /** 
+             * Minimum distance to move (in case of click rather than hold
+             * @type Number 
+             */
             clickDistance: 50,
             
-            /** Rate to scroll when scroll button held. */
+            /** 
+             * Rate to scroll when scroll button held.
+             * @type Number 
+             */
             pixelsPerSecond: 400,
             
-            /** Initial scroll position. */
+            /** 
+             * Initial scroll position.
+             * @type Number 
+             */
             initialPosition: null,
             
             disposed: false,
+            
+            /**
+             * The TabPane peer for which scrolling is being performed.
+             * @type Extras.Sync.TabPane
+             */
             peer: null,
             lastInvokeTime: null,
         
@@ -71,6 +100,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
                 this.dispose();
             },
             
+            /** @see Core.Web.Scheduler.Runnable#run */
             run: function() {
                 var time = new Date().getTime();
                 this.distance += Math.ceil(this.pixelsPerSecond * (time - this.lastInvokeTime) / 1000);
@@ -78,6 +108,9 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
                 this.updatePosition();
             },
             
+            /**
+             * Updates the scroll position of the tab pane header.
+             */
             updatePosition: function() {
                 var position = this.initialPosition + ((this.reverse ? -1 : 1) * this.distance);
                 if (!this.peer.setScrollPosition(position)) {
@@ -120,11 +153,13 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     
     /**
      * Scroll previous arrow.
+     * @type Element
      */
     _previousControlDiv: null,
     
     /**
      * Scroll next arrow.
+     * @type Element
      */
     _nextControlDiv: null,
     
@@ -136,25 +171,39 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     _tabs: null,
     
     /**
-     * Combined width of all tabs.
+     * Combined width of all tabs, in pixels.
+     * @type Number
      */
     _totalTabWidth: 0,
     
     /**
      * Flag indicating whether the header size may need to be reconfigured (by invoking configureHeaderSize() in the next
      * renderDisplay() execution.
+     * @type Boolean
      */
     _configureHeaderSizeRequired: false,
     
     /** 
-     * Method reference to <code>_tabSelectListener</code> of instance. 
+     * Method reference to <code>_tabSelectListener</code> of instance.
+     * @type Function 
      */
     _tabSelectListenerRef: null,
     
+    /**
+     * The ScrollRunnable currently scrolling the tab headers.  Null when the tab pane is not actively scrolling. 
+     * @type Extras.Sync.TabPane#ScrollRunnable
+     */
     _scrollRunnable: null,
     
+    /**
+     * Current scroll position of tab header, in pixels.
+     * @type Number
+     */
     scrollPosition: 0,
     
+    /**
+     * Constructor.
+     */
     $construct: function() {
         this._tabs = [];
         this._tabSelectListenerRef = Core.method(this, this._tabSelectListener);
@@ -689,13 +738,17 @@ Extras.Sync.TabPane.Tab = Core.extend({
         }
         return icon ? icon : icons.defaultIcon || this._parent.client.getResourceUrl("Extras", "image/tabpane/Close.gif");
     },
-    
+
+    /**
+     * Determine content inset margin.
+     * @type #Insets
+     */
     _getContentInsets: function() {
         if (this._childComponent.pane) {
-            return Extras.Sync.TabPane._paneInsets;
+            // Do not render insets on panes.
+            return 0;
         } else {
-            return this._parent.component.render("defaultContentInsets", 
-                    Extras.Sync.TabPane._DEFAULTS.tabContentInsets);
+            return this._parent.component.render("defaultContentInsets", Extras.Sync.TabPane._DEFAULTS.tabContentInsets);
         }
     },
     
@@ -1008,6 +1061,8 @@ Extras.Sync.TabPane.Tab = Core.extend({
     
     /**
      * Renders the icon of a tab.
+     * 
+     * @param {#ImageReference} icon the icon 
      */
     _renderIcon: function(icon) {
         var td = document.createElement("td");
