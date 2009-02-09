@@ -3,6 +3,8 @@
  * tabs that slide up and down to reveal a single child at a time. May contain
  * multiple children. May contain panes as children.
  * 
+ * @cp {String} activeTabId the renderId of the active tab
+ * @cp {Number} activeTabIndex the index of the active tab
  * @sp {Number} animationTime the duration (in milliseconds) for which the
  *     animation transition effect should be rendered A value of zero indicates
  *     an instantaneous transition

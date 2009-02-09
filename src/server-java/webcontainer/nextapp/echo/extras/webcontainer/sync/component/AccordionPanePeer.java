@@ -54,7 +54,7 @@ import nextapp.echo.webcontainer.util.MultiIterator;
  */
 public class AccordionPanePeer extends AbstractComponentSynchronizePeer {
 
-    private static final String PROPERTY_ACTIVE_TAB = "activeTab";
+    private static final String PROPERTY_ACTIVE_TAB_ID = "activeTabId";
 
     private static final Service ACCORDION_PANE_SERVICE = JavaScriptService.forResources("EchoExtras.AccordionPane",
             new String[] {  "nextapp/echo/extras/webcontainer/resource/Application.AccordionPane.js",  
@@ -65,7 +65,7 @@ public class AccordionPanePeer extends AbstractComponentSynchronizePeer {
     }
 
     public AccordionPanePeer() {
-        addOutputProperty(PROPERTY_ACTIVE_TAB);
+        addOutputProperty(PROPERTY_ACTIVE_TAB_ID);
     }
     
     /**
@@ -86,7 +86,7 @@ public class AccordionPanePeer extends AbstractComponentSynchronizePeer {
      * @see ComponentSynchronizePeer#getInputPropertyClass(String)
      */
     public Class getInputPropertyClass(String propertyName) {
-        if (PROPERTY_ACTIVE_TAB.equals(propertyName)) {
+        if (PROPERTY_ACTIVE_TAB_ID.equals(propertyName)) {
             return String.class;
         }
         return super.getInputPropertyClass(propertyName);
@@ -96,7 +96,7 @@ public class AccordionPanePeer extends AbstractComponentSynchronizePeer {
      * @see ComponentSynchronizePeer#getOutputProperty(Context, Component, String, int)
      */
     public Object getOutputProperty(Context context, Component component, String propertyName, int propertyIndex) {
-        if (PROPERTY_ACTIVE_TAB.equals(propertyName)) {
+        if (PROPERTY_ACTIVE_TAB_ID.equals(propertyName)) {
             AccordionPane accordionPane = (AccordionPane) component;
             int activeTabIndex = accordionPane.getActiveTabIndex();
             if (activeTabIndex != -1 && activeTabIndex < accordionPane.getVisibleComponentCount()) {
@@ -119,7 +119,7 @@ public class AccordionPanePeer extends AbstractComponentSynchronizePeer {
         if (update.hasUpdatedProperty(AccordionPane.ACTIVE_TAB_INDEX_CHANGED_PROPERTY) || update.hasAddedChildren() 
                 || update.hasRemovedChildren()) {
             return new MultiIterator(
-                    new Iterator[]{ normalPropertyIterator, new ArrayIterator(new String[] {PROPERTY_ACTIVE_TAB}) });
+                    new Iterator[]{ normalPropertyIterator, new ArrayIterator(new String[] {PROPERTY_ACTIVE_TAB_ID}) });
         }
         return normalPropertyIterator;
     }
@@ -138,7 +138,7 @@ public class AccordionPanePeer extends AbstractComponentSynchronizePeer {
      * @see ComponentSynchronizePeer#storeInputProperty(Context, Component, String, int, Object)
      */
     public void storeInputProperty(Context context, Component component, String propertyName, int index, Object newValue) {
-        if (PROPERTY_ACTIVE_TAB.equals(propertyName)) {
+        if (PROPERTY_ACTIVE_TAB_ID.equals(propertyName)) {
             UserInstance userInstance = (UserInstance) context.get(UserInstance.class);
             Component[] children = component.getVisibleComponents();
             for (int i = 0; i < children.length; ++i) {

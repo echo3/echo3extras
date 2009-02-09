@@ -57,7 +57,7 @@ import nextapp.echo.webcontainer.util.MultiIterator;
  */
 public class TabPanePeer extends AbstractComponentSynchronizePeer {
     
-    private static final String PROPERTY_ACTIVE_TAB = "activeTab";
+    private static final String PROPERTY_ACTIVE_TAB_ID = "activeTabId";
 
     private static final Service TAB_PANE_SERVICE = JavaScriptService.forResources("EchoExtras.TabPane",
             new String[] {  "nextapp/echo/extras/webcontainer/resource/Application.TabPane.js",  
@@ -75,7 +75,7 @@ public class TabPanePeer extends AbstractComponentSynchronizePeer {
     public TabPanePeer() {
         super();
         
-        addOutputProperty(PROPERTY_ACTIVE_TAB);
+        addOutputProperty(PROPERTY_ACTIVE_TAB_ID);
         
         addEvent(new AbstractComponentSynchronizePeer.EventPeer(TabPane.INPUT_TAB_SELECT, 
                 TabPane.TAB_SELECTION_LISTENERS_CHANGED_PROPERTY, String.class) {
@@ -122,7 +122,7 @@ public class TabPanePeer extends AbstractComponentSynchronizePeer {
      * @see ComponentSynchronizePeer#getInputPropertyClass(String)
      */
     public Class getInputPropertyClass(String propertyName) {
-        if (PROPERTY_ACTIVE_TAB.equals(propertyName)) {
+        if (PROPERTY_ACTIVE_TAB_ID.equals(propertyName)) {
             return String.class;
         }
         return super.getInputPropertyClass(propertyName);
@@ -132,7 +132,7 @@ public class TabPanePeer extends AbstractComponentSynchronizePeer {
      * @see ComponentSynchronizePeer#getOutputProperty(Context, Component, String, int)
      */
     public Object getOutputProperty(Context context, Component component, String propertyName, int propertyIndex) {
-        if (PROPERTY_ACTIVE_TAB.equals(propertyName)) {
+        if (PROPERTY_ACTIVE_TAB_ID.equals(propertyName)) {
             TabPane tabPane = (TabPane) component;
             int componentCount = tabPane.getVisibleComponentCount();
             if (componentCount == 0) {
@@ -179,7 +179,7 @@ public class TabPanePeer extends AbstractComponentSynchronizePeer {
         if (update.hasUpdatedProperty(TabPane.ACTIVE_TAB_INDEX_CHANGED_PROPERTY) || update.hasAddedChildren() 
                 || update.hasRemovedChildren()) {
             return new MultiIterator(
-                    new Iterator[]{ normalPropertyIterator, new ArrayIterator(new String[] {PROPERTY_ACTIVE_TAB}) });
+                    new Iterator[]{ normalPropertyIterator, new ArrayIterator(new String[] {PROPERTY_ACTIVE_TAB_ID}) });
         }
         return normalPropertyIterator;
     }
@@ -198,7 +198,7 @@ public class TabPanePeer extends AbstractComponentSynchronizePeer {
      * @see ComponentSynchronizePeer#storeInputProperty(Context, Component, String, int, Object)
      */
     public void storeInputProperty(Context context, Component component, String propertyName, int index, Object newValue) {
-        if (PROPERTY_ACTIVE_TAB.equals(propertyName)) {
+        if (PROPERTY_ACTIVE_TAB_ID.equals(propertyName)) {
             ClientUpdateManager clientUpdateManager = (ClientUpdateManager) context.get(ClientUpdateManager.class);
             clientUpdateManager.setComponentProperty(component, TabPane.ACTIVE_TAB_INDEX_CHANGED_PROPERTY, getTabIndex(context, 
                     (TabPane) component, (String) newValue));

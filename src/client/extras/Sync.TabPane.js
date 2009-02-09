@@ -4,7 +4,7 @@
 Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
 
     $static: {
-        _supportedPartialProperties: ["activeTab", "activeTabIndex"],
+        _supportedPartialProperties: ["activeTabId", "activeTabIndex"],
         _paneInsets: 0,
         _defaultBorderType: Extras.TabPane.BORDER_TYPE_ADJACENT_TO_TABS,
         _defaultForeground: "#000000",
@@ -210,7 +210,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
      * @type String
      */
     _getActiveTabId: function() {
-        var activeTabId = this.component.get("activeTab");
+        var activeTabId = this.component.get("activeTabId");
         if (!activeTabId) {
             var activeTabIndex = this.component.get("activeTabIndex");
             if (activeTabIndex != null && activeTabIndex < this.component.children.length) {
@@ -281,6 +281,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         tab._dispose();
     },
     
+    /** @see Echo.Render.ComponentSync#renderAdd */
     renderAdd: function(update, parentElement) {
         this._icons = { };
         
@@ -390,6 +391,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         parentElement.appendChild(this._div);
     },
     
+    /** @see Echo.Render.ComponentSync#renderDisplay */
     renderDisplay: function() {
         var img, oversize, i;
 
@@ -421,6 +423,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         }
     },
     
+    /** @see Echo.Render.ComponentSync#renderDispose */
     renderDispose: function(update) {
         this._activeTabId = null;
         for (var i = 0; i < this._tabs.length; i++) {
@@ -443,6 +446,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         }
     },
     
+    /** @see Echo.Render.ComponentSync#renderUpdate */
     renderUpdate: function(update) {
         var fullRender = false,
             tab,
@@ -485,7 +489,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
             }
             if (update.hasUpdatedProperties()) {
                 // partial update
-                var activeTabUpdate = update.getUpdatedProperty("activeTab");
+                var activeTabUpdate = update.getUpdatedProperty("activeTabId");
                 if (activeTabUpdate) {
                     activeTabRemoved = false;
                     this._selectTab(activeTabUpdate.newValue);
@@ -540,7 +544,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     },
     
     _setActiveTabId: function(activeTabId) {
-        this.component.set("activeTab", activeTabId);
+        this.component.set("activeTabId", activeTabId);
         var indexSet = false;
         for (var i = 0; i < this.component.children.length; ++i) {
             if (this.component.children[i].renderId == activeTabId) {

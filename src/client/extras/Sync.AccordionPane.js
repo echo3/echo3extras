@@ -30,7 +30,7 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
     
     renderAdd: function(update, parentElement) {
         this._animationTime = this.component.render("animationTime", Extras.AccordionPane.DEFAULT_ANIMATION_TIME);
-        this._activeTabId = this.component.get("activeTab");
+        this._activeTabId = this.component.get("activeTabId");
         
         this._div = document.createElement("div");
         this._div.id = this.component.renderId;
@@ -67,8 +67,8 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
             fullRender = true;
         } else {
             var propertyNames = update.getUpdatedPropertyNames();
-            if (propertyNames.length == 1 && propertyNames[0] == "activeTab") {
-                this._selectTab(update.getUpdatedProperty("activeTab").newValue);
+            if (propertyNames.length == 1 && propertyNames[0] == "activeTabId") {
+                this._selectTab(update.getUpdatedProperty("activeTabId").newValue);
                 fullRender = false;
             } else {
                 fullRender = true;
@@ -107,7 +107,7 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
         if (tabId == this._activeTabId) {
             return;
         }
-        this.component.set("activeTab", tabId);
+        this.component.set("activeTabId", tabId);
         
         var oldTabId = this._activeTabId;
         this._activeTabId = tabId;
