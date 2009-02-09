@@ -69,6 +69,10 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
              */
             initialPosition: null,
             
+            /**
+             * Flag indicating whether the ScrollRunnable is disposed.
+             * @type Boolean
+             */
             disposed: false,
             
             /**
@@ -76,8 +80,19 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
              * @type Extras.Sync.TabPane
              */
             peer: null,
+            
+            /**
+             * Last invocation time of run() method.  Used to determine the number of pixels which should be scrolled and 
+             * ensure a constant velocity of the tabs.
+             */
             lastInvokeTime: null,
         
+            /**
+             * Creates a new ScrollRunnable.
+             * 
+             * @param {Extras.Sync.TabPane} the synchronization peer
+             * @param {Boolean} direction of scrolling travel
+             */
             $construct: function(peer, reverse) {
                 this.peer = peer;
                 this.reverse = reverse;
@@ -85,6 +100,9 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
                 this.lastInvokeTime = new Date().getTime();
             },
             
+            /**
+             * Disposes of the scrolling runnable, removing it from the scheduler.
+             */
             dispose: function() {
                 if (!this.disposed) {
                     Core.Web.Scheduler.remove(this);
@@ -92,6 +110,11 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
                 this.disposed = true;
             },
             
+            /**
+             * Finishes the tab header scrolling operation in response to the user releasing the scroll button.
+             * Ensures the header has been scrolled the minimum "click distance", and if not, scrolls the header
+             * that distance.
+             */
             finish: function() {
                 if (this.distance < this.clickDistance) {
                     this.distance = this.clickDistance;
