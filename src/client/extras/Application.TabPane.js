@@ -119,7 +119,13 @@ Extras.TabPane = Core.extend(Echo.Component, {
      * @param child the child tab component which is to be closed
      */
     doTabClose: function(tabId) {
+        // Determine selected component.
         var tabComponent = this.application.getComponentByRenderId(tabId);
+        if (!tabComponent || tabComponent.parent != this) {
+            throw new Error("doTabClose(): Invalid tab: " + tabId);
+        }
+
+        // Notify tabClose listeners.
         this.fireEvent({ type: "tabClose", source: this, tab: tabComponent, data: tabId });
     },
 
@@ -130,7 +136,24 @@ Extras.TabPane = Core.extend(Echo.Component, {
      * @param tabId the renderId of the child tab component
      */
     doTabSelect: function(tabId) {
+        // Determine selected component.
         var tabComponent = this.application.getComponentByRenderId(tabId);
+        if (!tabComponent || tabComponent.parent != this) {
+            throw new Error("doTabSelect(): Invalid tab: " + tabId);
+        }
+        
+        // Store active tab id.
+        this.set("activeTabId", tabId);
+        
+        // Determine active tab index.
+        for (var i = 0; i < this.children.length; ++i) {
+            if (this.children[i].renderId == tabId) {
+                this.set("activeTabIndex", i);
+                break;
+            }
+        }
+
+        // Notify tabSelect listeners.
         this.fireEvent({ type: "tabSelect", source: this, tab: tabComponent, data: tabId });
     }
 });

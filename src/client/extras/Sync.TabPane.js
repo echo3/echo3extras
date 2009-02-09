@@ -244,7 +244,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     },
     
     _tabSelectListener: function(e) {
-        Core.Debug.consoleWrite("Tab select");
+        this._selectTab(e.tab.renderId);
     },
     
     /**
@@ -532,7 +532,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     },
     
     /**
-     * Selects a specific tab.
+     * Changes the displayed active tab.
      * 
      * @param tabId {String} the id of the tab to select
      */
@@ -557,21 +557,6 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         }
     },
     
-    _setActiveTabId: function(activeTabId) {
-        this.component.set("activeTabId", activeTabId);
-        var indexSet = false;
-        for (var i = 0; i < this.component.children.length; ++i) {
-            if (this.component.children[i].renderId == activeTabId) {
-                this.component.set("activeTabIndex", i);
-                indexSet = true;
-                break;
-            }
-        }
-        if (!indexSet) {
-            this.component.set("activeTabIndex", null);
-        }
-    },
-
     _setOversizeEnabled: function(previous, enabled) {
         var controlDiv = previous ? this._previousControlDiv : this._nextControlDiv,
             img;
@@ -834,8 +819,6 @@ Extras.Sync.TabPane.Tab = Core.extend({
             this._parent.component.doTabClose(this._childComponent.renderId);
         } else {
             // tab clicked
-            this._parent._selectTab(this._childComponent.renderId);
-            this._parent._setActiveTabId(this._childComponent.renderId);
             this._parent.component.doTabSelect(this._childComponent.renderId);
         }
     },
