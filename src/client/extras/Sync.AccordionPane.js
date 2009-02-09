@@ -4,11 +4,14 @@
 Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
 
     $static: {
-        _defaultTabBackground: "#cfcfcf",
-        _defaultTabBorder: "1px outset #cfcfcf",
-        _defaultTabForeground: "#000000",
-        _defaultTabInsets: "2px 5px",
-        _defaultTabContentInsets: 0
+    
+        _DEFAULTS: {
+            tabBackground: "#cfcfcf",
+            tabBorder: "1px outset #cfcfcf",
+            tabForeground: "#000000",
+            tabInsets: "2px 5px",
+            tabContentInsets: 0
+        }
     },
     
     $load: function() {
@@ -228,12 +231,12 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
     
     _getTabBackground: function() {
         var background = this.component.render("tabBackground");
-        return background ? background : Extras.Sync.AccordionPane._defaultTabBackground;
+        return background ? background : Extras.Sync.AccordionPane._DEFAULTS.tabBackground;
     },
     
     _getTabBorder: function() {
         var border = this.component.render("tabBorder");
-        return border ? border : Extras.Sync.AccordionPane._defaultTabBorder;
+        return border ? border : Extras.Sync.AccordionPane._DEFAULTS.tabBorder;
     },
     
     /**
@@ -260,7 +263,7 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
     
     _getTabInsets: function() {
         var insets = this.component.render("tabInsets");
-        return insets ? insets : Extras.Sync.AccordionPane._defaultTabInsets;
+        return insets ? insets : Extras.Sync.AccordionPane._DEFAULTS.tabInsets;
     }
 });
 
@@ -329,7 +332,7 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
             border = this._parent._getTabBorder();
             Echo.Sync.Color.render(this._parent._getTabBackground(), tabDiv, "backgroundColor");
             Echo.Sync.Color.render(this._parent.component.render("tabForeground", 
-                    Extras.Sync.AccordionPane._defaultTabForeground), tabDiv, "color");
+                    Extras.Sync.AccordionPane._DEFAULTS.tabForeground), tabDiv, "color");
             tabDiv.style.backgroundImage = "";
             tabDiv.style.backgroundPosition = "";
             tabDiv.style.backgroundRepeat = "";
@@ -363,7 +366,7 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
             return 0;
         } else {
             var insets = this._parent.component.render("defaultContentInsets");
-            return insets ? insets : Extras.Sync.AccordionPane._defaultTabContentInsets;
+            return insets ? insets : Extras.Sync.AccordionPane._DEFAULTS.tabContentInsets;
         }
     },
     
