@@ -26,9 +26,16 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
     _tabs: null,
     _resetOverflowForAnimation: false,
     
+    /** 
+     * Method reference to <code>_tabSelectListener</code> of instance.
+     * @type Function 
+     */
+    _tabSelectListenerRef: null,
+
     $construct: function() {
         this._tabs = [];
         this._resetOverflowForAnimation = Core.Web.Env.BROWSER_MOZILLA || Core.Web.Env.BROWSER_INTERNET_EXPLORER;
+        this._tabSelectListenerRef = Core.method(this, this._tabSelectListener);
     },
     
     _getTabBackground: function() {
@@ -134,6 +141,8 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
     
     /** @see Echo.Render.ComponentSync#renderAdd */
     renderAdd: function(update, parentElement) {
+        this.component.addListener("tabSelect", this._tabSelectListenerRef);
+        
         this._animationTime = this.component.render("animationTime", Extras.AccordionPane.DEFAULT_ANIMATION_TIME);
         this._activeTabId = this.component.get("activeTabId");
         
@@ -167,6 +176,8 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
     
     /** @see Echo.Render.ComponentSync#renderDispose */
     renderDispose: function(update) {
+        this.component.removeListener("tabSelect", this._tabSelectListenerRef);
+
         if (this._rotation) {
             this._rotation.abort();
         }
@@ -259,7 +270,6 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
         if (tabId == this._activeTabId) {
             return;
         }
-        this.component.set("activeTabId", tabId);
         
         var oldTabId = this._activeTabId;
         this._activeTabId = tabId;
@@ -268,6 +278,15 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
         } else {
             this._redrawTabs(true);
         }
+    },
+    
+    /**
+     * Event listener to component instance for user tab selections.
+     * 
+     * @param e the event
+     */
+    _tabSelectListener: function(e) {
+        this._selectTab(e.tab.renderId);
     }
 });
 
@@ -378,8 +397,7 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
         if (!this._parent || !this._parent.client || !this._parent.client.verifyInput(this._parent.component)) {
             return;
         }
-        this._parent._selectTab(this._childComponent.renderId);
-        // FIXME notify server
+        this._parent.component.doTabSelect(this._childComponent.renderId);
     },
     
     _processEnter: function(e) {
