@@ -40,9 +40,12 @@ import nextapp.echo.app.event.ActionListener;
 import nextapp.echo.app.layout.SplitPaneLayoutData;
 import nextapp.echo.extras.app.CalendarSelect;
 import nextapp.echo.extras.app.AccordionPane;
+import nextapp.echo.extras.app.event.TabSelectionEvent;
+import nextapp.echo.extras.app.event.TabSelectionListener;
 import nextapp.echo.extras.app.layout.AccordionPaneLayoutData;
 import nextapp.echo.extras.testapp.AbstractTest;
 import nextapp.echo.extras.testapp.ButtonColumn;
+import nextapp.echo.extras.testapp.InteractiveApp;
 import nextapp.echo.extras.testapp.StyleUtil;
 import nextapp.echo.extras.testapp.Styles;
 import nextapp.echo.extras.testapp.TestControlPane;
@@ -338,6 +341,18 @@ public class AccordionPaneTest extends AbstractTest {
                 }
             });
         }
+        
+        // Listener Tests
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_LISTENERS, "Add TabSelectionListener", new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                accordionPane.addTabSelectionListener(new TabSelectionListener(){
+                    public void tabSelected(TabSelectionEvent e) {
+                        InteractiveApp.getApp().consoleWrite("Tab selection event received: " + e.toString());
+                    }
+                });
+            }
+        });
 
         // Integration Tests
         

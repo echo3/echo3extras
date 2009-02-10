@@ -441,6 +441,8 @@ public class TabPaneTest extends AbstractTest {
             });
         }
         
+        // Listener Tests
+        
         testControlsPane.addButton(TestControlPane.CATEGORY_LISTENERS, "Add TabSelectionListener", new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 tabPane.addTabSelectionListener(new TabSelectionListener(){
