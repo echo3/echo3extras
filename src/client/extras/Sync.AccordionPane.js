@@ -32,17 +32,30 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
      */
     _tabSelectListenerRef: null,
 
+    /** Constructor. */
     $construct: function() {
         this._tabs = [];
         this._resetOverflowForAnimation = Core.Web.Env.BROWSER_MOZILLA || Core.Web.Env.BROWSER_INTERNET_EXPLORER;
         this._tabSelectListenerRef = Core.method(this, this._tabSelectListener);
     },
     
+    /**
+     * Determines the tab background color.
+     * 
+     * @return the tab background
+     * @type #Color 
+     */
     _getTabBackground: function() {
         var background = this.component.render("tabBackground");
         return background ? background : Extras.Sync.AccordionPane._DEFAULTS.tabBackground;
     },
     
+    /**
+     * Determines the tab border.
+     * 
+     * @return the tab border
+     * @type #Border
+     */
     _getTabBorder: function() {
         var border = this.component.render("tabBorder");
         return border ? border : Extras.Sync.AccordionPane._DEFAULTS.tabBorder;
@@ -71,8 +84,10 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
      * Note that if endIndex is specified, the tab at index endIndex will NOT be included in the calculation,
      * that is, to measure the height of tabs 2, 3, and 4, it is necessary specify beginIndex as 2 and endIndex as 5 (not 4).
      *
-     * @param beginIndex the begin index, inclusive
-     * @param endIndex the end index, exclusive
+     * @param {Number} beginIndex the begin index, inclusive
+     * @param {Number} endIndex the end index, exclusive
+     * @return the tab height(s), in pixels
+     * @type Number
      */
     getTabHeight: function(beginIndex, endIndex) {
         if (endIndex == null || endIndex < beginIndex) {
@@ -86,6 +101,13 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
         }
     },
     
+    
+    /**
+     * Determines the tab inset margin.
+     * 
+     * @return the tab inset margin
+     * @type #Insets
+     */
     _getTabInsets: function() {
         var insets = this.component.render("tabInsets");
         return insets ? insets : Extras.Sync.AccordionPane._DEFAULTS.tabInsets;
