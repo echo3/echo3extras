@@ -556,8 +556,16 @@ Extras.Sync.AccordionPane.Rotation = Core.extend(Extras.Sync.Animation, {
      */
     _regionHeight: null,
     
+    /**
+     * Numbers of tabs above that will not be moving.
+     * @type Number
+     */
     _numberOfTabsAbove: null,
     
+    /**
+     * Number of tabs below that will not be moving.
+     * @type Number
+     */
     _numberOfTabsBelow: null,
     
     /** 
@@ -568,6 +576,10 @@ Extras.Sync.AccordionPane.Rotation = Core.extend(Extras.Sync.Animation, {
      */
     _startPosition: null,
     
+    /**
+     * Number of pixels across which animation will occur.
+     * @type Number
+     */
     _animationDistance: null,
     
     /**
@@ -582,38 +594,22 @@ Extras.Sync.AccordionPane.Rotation = Core.extend(Extras.Sync.Animation, {
         this._oldTab = oldTab;
         this._newTab = newTab;
         
+        // Calculate and store parameters for rotation.
+        this._regionHeight = this._parent._div.offsetHeight;
         this._oldTabIndex = Core.Arrays.indexOf(this._parent._tabs, this._oldTab);
         this._newTabIndex = Core.Arrays.indexOf(this._parent._tabs, this._newTab);
-        this._directionDown = this._newTabIndex < this._oldTabIndex;
-        
         this._rotatingTabCount = Math.abs(this._newTabIndex - this._oldTabIndex);
-        
-        this._regionHeight = this._parent._div.offsetHeight;
-        
+        this._directionDown = this._newTabIndex < this._oldTabIndex;
         if (this._directionDown) {
-            // Numbers of tabs above that will not be moving.
             this._numberOfTabsAbove = this._newTabIndex + 1;
-            
-            // Number of tabs below that will not be moving.
             this._numberOfTabsBelow = this._parent._tabs.length - 1 - this._newTabIndex;
-            
-            // Initial top position of topmost moving tab.
             this._startPosition = this._parent.getTabHeight(0, this._newTabIndex + 1);
-            
-            // Number of pixels across which animation will occur.
             this._animationDistance = this._regionHeight - 
                     this._parent.getTabHeight(this._newTabIndex + 1, this._parent._tabs.length) - this._startPosition;
         } else {
-            // Numbers of tabs above that will not be moving.
             this._numberOfTabsAbove = this._newTabIndex;
-        
-            // Numbers of tabs below that will not be moving.
             this._numberOfTabsBelow = this._parent._tabs.length - 1 - this._newTabIndex;
-    
-            // Initial bottom position of bottommost moving tab.
             this._startPosition = this._parent.getTabHeight(this._newTabIndex + 1, this._parent._tabs.length);
-    
-            // Number of pixels across which animation will occur.
             this._animationDistance = this._regionHeight - this._parent.getTabHeight(0, this._newTabIndex + 1) - 
                     this._startPosition;
         }
