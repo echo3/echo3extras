@@ -46,12 +46,6 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
     _rotation: null,
     
     /**
-     * Flag indicating whether animation is enabled.
-     * @type Boolean
-     */
-    _animationEnabled: true,
-    
-    /**
      * Array of Extras.Sync.AccordionPane.Tab instances representing individual tabs.
      * @type Array
      */
@@ -267,10 +261,6 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
      * @param newTabId {String} the id of the tab that will be displayed
      */
     _rotateTabs: function(oldTabId, newTabId) {
-        if (this._animationTime < 1) {
-            this._redrawTabs(true);
-            return;
-        }
         var oldTab = this._getTabById(oldTabId);
         if (oldTab == null) {
             // Old tab has been removed.
@@ -302,7 +292,7 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
         
         var oldTabId = this._activeTabId;
         this._activeTabId = tabId;
-        if (oldTabId != null && this._animationEnabled) {
+        if (oldTabId != null && this._animationTime > 0) {
             this._rotateTabs(oldTabId, tabId);
         } else {
             this._redrawTabs(true);
