@@ -290,10 +290,34 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
  */
 Extras.Sync.AccordionPane.Tab = Core.extend({
     
-    _rendered: false,
+    /**
+     * DIV element containing the tab header
+     * @type Element
+     */
     _tabDiv: null,
+    
+    /**
+     * The AccordionPane synchronization peer.
+     * @type Extras.Sync.AccordionPane
+     */
     _parent: null,
+    
+    /**
+     * The content container DIV (contains content DIV).
+     * @type Element
+     */
     _containerDiv: null,
+    
+    /**
+     * The content DIV (contains child component rendering).
+     * @type Element
+     */
+    _contentDiv: null,
+    
+    /**
+     * The child component which will be rendered within the tab.
+     * @type Echo.Component
+     */
     _childComponent: null,
     
     /**
