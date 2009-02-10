@@ -526,25 +526,49 @@ Extras.Sync.AccordionPane.Rotation = Core.extend(Extras.Sync.Animation, {
      */
     _newTab: null,
     
+    /**
+     * Index of old tab.
+     * @type Number
+     */
     _oldTabIndex: null,
     
+    /**
+     * Index of new tab.
+     * @type Number
+     */
     _newTabIndex: null,
     
+    /**
+     * Flag indicating whether tabs will be rotating downward (true) or upward (false).
+     * @type Boolean
+     */
     _directionDown: null,
     
+    /**
+     * Number of tabs which are rotating.
+     * @type Number
+     */
     _rotatingTabCount: null,
     
+    /**
+     * Height of accordion pane.
+     * @type Number
+     */
     _regionHeight: null,
     
     _numberOfTabsAbove: null,
     
     _numberOfTabsBelow: null,
     
-    _startTopPosition: null,
+    /** 
+     * Initial position of extreme edge of first moving tab.
+     * For downward moves, this value is the top edge of the top tab.
+     * For upward moves, this value is the bottom edge of the bottom tab.
+     * @param Number
+     */
+    _startPosition: null,
     
     _animationDistance: null,
-    
-    _startBottomPosition: null,
     
     /**
      * Creates a new rotation.
@@ -564,7 +588,7 @@ Extras.Sync.AccordionPane.Rotation = Core.extend(Extras.Sync.Animation, {
         
         this._rotatingTabCount = Math.abs(this._newTabIndex - this._oldTabIndex);
         
-        this._regionHeight = this._newTab._tabDiv.parentNode.offsetHeight;
+        this._regionHeight = this._parent._div.offsetHeight;
         
         if (this._directionDown) {
             // Numbers of tabs above that will not be moving.
@@ -574,11 +598,11 @@ Extras.Sync.AccordionPane.Rotation = Core.extend(Extras.Sync.Animation, {
             this._numberOfTabsBelow = this._parent._tabs.length - 1 - this._newTabIndex;
             
             // Initial top position of topmost moving tab.
-            this._startTopPosition = this._parent.getTabHeight(0, this._newTabIndex + 1);
+            this._startPosition = this._parent.getTabHeight(0, this._newTabIndex + 1);
             
             // Number of pixels across which animation will occur.
             this._animationDistance = this._regionHeight - 
-                    this._parent.getTabHeight(this._newTabIndex + 1, this._parent._tabs.length) - this._startTopPosition;
+                    this._parent.getTabHeight(this._newTabIndex + 1, this._parent._tabs.length) - this._startPosition;
         } else {
             // Numbers of tabs above that will not be moving.
             this._numberOfTabsAbove = this._newTabIndex;
@@ -587,11 +611,11 @@ Extras.Sync.AccordionPane.Rotation = Core.extend(Extras.Sync.Animation, {
             this._numberOfTabsBelow = this._parent._tabs.length - 1 - this._newTabIndex;
     
             // Initial bottom position of bottommost moving tab.
-            this._startBottomPosition = this._parent.getTabHeight(this._newTabIndex + 1, this._parent._tabs.length);
+            this._startPosition = this._parent.getTabHeight(this._newTabIndex + 1, this._parent._tabs.length);
     
             // Number of pixels across which animation will occur.
             this._animationDistance = this._regionHeight - this._parent.getTabHeight(0, this._newTabIndex + 1) - 
-                    this._startBottomPosition;
+                    this._startPosition;
         }
     },
     
@@ -652,14 +676,13 @@ Extras.Sync.AccordionPane.Rotation = Core.extend(Extras.Sync.Animation, {
     step: function(progress) {
         var i,
             oldContainerHeight,
-            newContainerHeight;
-
-        var stepPosition = Math.round(progress * this._animationDistance);
+            newContainerHeight,
+            stepPosition = Math.round(progress * this._animationDistance);
 
         if (this._directionDown) {
             // Move each moving tab to next step position.
             for (i = this._oldTabIndex; i > this._newTabIndex; --i) {
-                this._parent._tabs[i]._tabDiv.style.top = (stepPosition + this._startTopPosition + 
+                this._parent._tabs[i]._tabDiv.style.top = (stepPosition + this._startPosition + 
                         this._parent.getTabHeight(this._newTabIndex + 1, i)) + "px";
             }
 
@@ -671,7 +694,7 @@ Extras.Sync.AccordionPane.Rotation = Core.extend(Extras.Sync.Animation, {
             this._newTab._containerDiv.style.height = newContainerHeight + "px";
 
             // Move top of old content downward.
-            var oldTop = stepPosition + this._startTopPosition + 
+            var oldTop = stepPosition + this._startPosition + 
                     this._parent.getTabHeight(this._newTabIndex + 1, this._oldTabIndex + 1);
             this._oldTab._containerDiv.style.top = oldTop + "px";
 
@@ -684,7 +707,7 @@ Extras.Sync.AccordionPane.Rotation = Core.extend(Extras.Sync.Animation, {
         } else {
             // Move each moving tab to next step position.
             for (i = this._oldTabIndex + 1; i <= this._newTabIndex; ++i) {
-                this._parent._tabs[i]._tabDiv.style.bottom = (stepPosition + this._startBottomPosition + 
+                this._parent._tabs[i]._tabDiv.style.bottom = (stepPosition + this._startPosition + 
                         this._parent.getTabHeight(i + 1, this._newTabIndex + 1)) + "px";
             }
 
