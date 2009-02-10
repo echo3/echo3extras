@@ -21,12 +21,47 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
         Echo.Render.registerPeer("Extras.AccordionPane", this);
     },
     
+    /**
+     * Tab rotation animation runtime, in milliseconds.
+     * @type Number
+     */
     _animationTime: 0,
+    
+    /**
+     * Root DIV.
+     * @type Element
+     */
     _div: null,
+    
+    /**
+     * renderId of currently active tab.
+     * @type String
+     */
     _activeTabId: null,
+    
+    /**
+     * Animated rotation currently in progress (null when not animating).
+     * @type Extras.Sync.AccordionPane.Rotation
+     */
     _rotation: null,
+    
+    /**
+     * Flag indicating whether animation is enabled.
+     * @type Boolean
+     */
     _animationEnabled: true,
+    
+    /**
+     * Array of Extras.Sync.AccordionPane.Tab instances representing individual tabs.
+     * @type Array
+     */
     _tabs: null,
+    
+    /**
+     * Flag indicating whether content overflow should be set to hidden during animation.
+     * Set based on browser type, used to prevent rendering artifacts in certain browsers.
+     * @type Boolean
+     */
     _resetOverflowForAnimation: false,
     
     /** 
