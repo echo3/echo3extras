@@ -996,6 +996,8 @@ Extras.Sync.TabPane.Tab = Core.extend({
     
     /**
      * Tab click handler.
+     * 
+     * @param e the click event
      */
     _processClick: function(e) {
         if (!this._parent || !this._parent.client || !this._parent.client.verifyInput(this._parent.component)) {

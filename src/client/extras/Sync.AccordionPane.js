@@ -5,6 +5,9 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
 
     $static: {
     
+        /**
+         * Default component property settings, used when supported component object does not provide settings. 
+         */
         _DEFAULTS: {
             tabBackground: "#cfcfcf",
             tabBorder: "1px outset #cfcfcf",
@@ -82,6 +85,9 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
     /**
      * Redraws tabs in the appropriate positions, exposing the content of the 
      * selected tab.
+     * 
+     * @param {Boolean} notifyComponentUpdate flag indicating whether child component should be notified to perform
+     *        renderDisplay() operations
      */
     _redrawTabs: function(notifyComponentUpdate) {
         if (this._rotation) {
@@ -144,7 +150,7 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
             var child = this.component.getComponent(i);
             var tab = new Extras.Sync.AccordionPane.Tab(child, this);
             this._tabs.push(tab);
-            tab._render(this.client, update);
+            tab._render(update);
             this._div.appendChild(tab._tabDiv);
             this._div.appendChild(tab._containerDiv);
         }
@@ -278,6 +284,10 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
     }
 });
 
+/**
+ * Representation of a single tab (child component) within the accordion pane.
+ * Provides tab-specific rendering functionality.
+ */
 Extras.Sync.AccordionPane.Tab = Core.extend({
     
     _rendered: false,
@@ -286,11 +296,20 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
     _containerDiv: null,
     _childComponent: null,
     
+    /**
+     * Creates a new Tab instance.
+     * 
+     * @param {Echo.Component} childComponent the child component which will be rendered within the tab
+     * @param {Extras.Sync.AccordionPane} parent the AccordionPane synchronization peer
+     */
     $construct: function(childComponent, parent) {
         this._childComponent = childComponent;
         this._parent = parent;
     },
     
+    /**
+     * Adds event listeners to the tab to handle click and mouse events.
+     */
     _addEventListeners: function() {
         Core.Web.Event.add(this._tabDiv, "click", Core.method(this, this._processClick), false);
         if (this._parent.component.render("tabRolloverEnabled", true)) {
@@ -304,6 +323,9 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
         Core.Web.Event.Selection.disable(this._tabDiv);
     },
     
+    /**
+     * Disposes of the tab, releasing any resources.
+     */
     _dispose: function() {
         Core.Web.Event.removeAll(this._tabDiv);
         this._parent = null;
@@ -312,7 +334,105 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
         this._containerDiv = null;
     },
     
-    _highlight: function(state) {
+    /**
+     * Determine content inset margin.
+     * 
+     * @return the content inset margin
+     * @type #Insets
+     */
+    _getContentInsets: function() {
+        if (this._childComponent.pane) {
+            return 0;
+        } else {
+            var insets = this._parent.component.render("defaultContentInsets");
+            return insets ? insets : Extras.Sync.AccordionPane._DEFAULTS.tabContentInsets;
+        }
+    },
+    
+    /**
+     * Tab click handler.
+     * 
+     * @param e the click event
+     */
+    _processClick: function(e) {
+        if (!this._parent || !this._parent.client || !this._parent.client.verifyInput(this._parent.component)) {
+            return;
+        }
+        this._parent.component.doTabSelect(this._childComponent.renderId);
+    },
+    
+    /**
+     * Tab rollover enter handler.
+     * 
+     * @param e the mouse event
+     */
+    _processEnter: function(e) {
+        if (!this._parent || !this._parent.client || !this._parent.client.verifyInput(this._parent.component)) {
+            return;
+        }
+        this._renderActiveState(true);
+    },
+    
+    /**
+     * Tab rollover exit handler.
+     * 
+     * @param e the mouse event
+     */
+    _processExit: function(e) {
+        if (!this._parent || !this._parent.client || !this._parent.client.verifyInput(this._parent.component)) {
+            return;
+        }
+        this._renderActiveState(false);
+    },
+    
+    /**
+     * Renders the tab.
+     * 
+     * @param {Echo.Update.ComponentUpdate} update the component update 
+     */
+    _render: function(update) {
+        var layoutData = this._childComponent.render("layoutData") || {};
+        
+        this._tabDiv = document.createElement("div");
+        this._tabDiv.id = this._parent.component.renderId + "_tab_" + this._childComponent.renderId;
+        this._tabDiv.style.cssText = "cursor:pointer;position:absolute;left:0;right:0;overflow:hidden;";
+        
+        Echo.Sync.Insets.render(this._parent.component.render("tabInsets", Extras.Sync.AccordionPane._DEFAULTS.tabInsets), 
+                this._tabDiv, "padding");
+        
+        if (layoutData.icon) {
+            //FIXME Temporary implementation.  Need proper layout for common icon + text case.
+            var img = document.createElement("img");
+            Echo.Sync.ImageReference.renderImg(layoutData.icon, img);
+            img.style.paddingRight = "3px";
+            this._tabDiv.appendChild(img);
+        }
+        
+        if (layoutData.title) {
+            this._tabDiv.appendChild(document.createTextNode(layoutData.title));
+        }
+    
+        this._containerDiv = document.createElement("div");
+        this._containerDiv.style.cssText = "display:none;position:absolute;left:0;right:0;overflow:hidden;";
+        
+        this._contentDiv = document.createElement("div");
+        this._contentDiv.style.cssText = "position:absolute;left:0;right:0;overflow:auto;";
+        Echo.Sync.Insets.render(this._getContentInsets(), this._contentDiv, "padding");
+        
+        Echo.Render.renderComponentAdd(update, this._childComponent, this._contentDiv);
+        
+        this._containerDiv.appendChild(this._contentDiv);
+        
+        this._renderActiveState(false);
+        this._addEventListeners();
+    },
+    
+    /**
+     * Renders the tab active or inactive, updating header state.
+     * 
+     * @param {Boolean} state the state of the tab, true for active, false for inactive
+     */
+    _renderActiveState: function(state) {
         var tabDiv = this._tabDiv,
             border = this._parent.component.render("tabBorder", Extras.Sync.AccordionPane._DEFAULTS.tabBorder),
             borderData,
@@ -373,73 +493,9 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
         }
     },
     
-    _getContentInsets: function() {
-        if (this._childComponent.pane) {
-            return 0;
-        } else {
-            var insets = this._parent.component.render("defaultContentInsets");
-            return insets ? insets : Extras.Sync.AccordionPane._DEFAULTS.tabContentInsets;
-        }
-    },
-    
-    _processClick: function(e) {
-        if (!this._parent || !this._parent.client || !this._parent.client.verifyInput(this._parent.component)) {
-            return;
-        }
-        this._parent.component.doTabSelect(this._childComponent.renderId);
-    },
-    
-    _processEnter: function(e) {
-        if (!this._parent || !this._parent.client || !this._parent.client.verifyInput(this._parent.component)) {
-            return;
-        }
-        this._highlight(true);
-    },
-    
-    _processExit: function(e) {
-        if (!this._parent || !this._parent.client || !this._parent.client.verifyInput(this._parent.component)) {
-            return;
-        }
-        this._highlight(false);
-    },
-    
-    _render: function(client, update) {
-        var layoutData = this._childComponent.render("layoutData") || {};
-        
-        this._tabDiv = document.createElement("div");
-        this._tabDiv.id = this._parent.component.renderId + "_tab_" + this._childComponent.renderId;
-        this._tabDiv.style.cssText = "cursor:pointer;position:absolute;left:0;right:0;overflow:hidden;";
-        
-        Echo.Sync.Insets.render(this._parent.component.render("tabInsets", Extras.Sync.AccordionPane._DEFAULTS.tabInsets), 
-                this._tabDiv, "padding");
-        
-        if (layoutData.icon) {
-            //FIXME Temporary implementation.  Need proper layout for common icon + text case.
-            var img = document.createElement("img");
-            Echo.Sync.ImageReference.renderImg(layoutData.icon, img);
-            img.style.paddingRight = "3px";
-            this._tabDiv.appendChild(img);
-        }
-        
-        if (layoutData.title) {
-            this._tabDiv.appendChild(document.createTextNode(layoutData.title));
-        }
-    
-        this._containerDiv = document.createElement("div");
-        this._containerDiv.style.cssText = "display:none;position:absolute;left:0;right:0;overflow:hidden;";
-        
-        this._contentDiv = document.createElement("div");
-        this._contentDiv.style.cssText = "position:absolute;left:0;right:0;overflow:auto;";
-        Echo.Sync.Insets.render(this._getContentInsets(), this._contentDiv, "padding");
-        
-        Echo.Render.renderComponentAdd(update, this._childComponent, this._contentDiv);
-        
-        this._containerDiv.appendChild(this._contentDiv);
-        
-        this._highlight(false);
-        this._addEventListeners();
-    },
-    
+    /**
+     * Tab-specific renderDisplay() tasks.
+     */
     _renderDisplay: function() {
         Core.Web.VirtualPosition.redraw(this._tabDiv);
         Core.Web.VirtualPosition.redraw(this._containerDiv);
