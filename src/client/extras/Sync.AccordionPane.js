@@ -504,24 +504,55 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
 });
 
 /**
- * Object to manage rotation animation of an AccordionPane.
- * These objects are created and assigned to a specific AccordionPane
- * while it is animating.
- *
- * Creates and starts a new Rotation.  This constructor will store the
- * created Rotation object in the specified AccordionPane's 'rotation'
- * property.
- *
- * @param parent the AccordionPane to rotate
- * @param oldTab the old (current) tab
- * @param newTab the new tab to display
+ * Manages the rotation animation of an AccordionPane.
  */
 Extras.Sync.AccordionPane.Rotation = Core.extend(Extras.Sync.Animation, {
     
+    /**
+     * The AccordionPane peer.
+     * @type Extras.Sync.AccordionPane
+     */
     _parent: null,
+
+    /**
+     * The old tab.
+     * @type Extras.Sync.AccordionPane.Tab 
+     */
     _oldTab: null,
+    
+    /**
+     * The new tab.
+     * @type Extras.Sync.AccordionPane.Tab 
+     */
     _newTab: null,
     
+    _oldTabIndex: null,
+    
+    _newTabIndex: null,
+    
+    _directionDown: null,
+    
+    _rotatingTabCount: null,
+    
+    _regionHeight: null,
+    
+    _numberOfTabsAbove: null,
+    
+    _numberOfTabsBelow: null,
+    
+    _startTopPosition: null,
+    
+    _animationDistance: null,
+    
+    _startBottomPosition: null,
+    
+    /**
+     * Creates a new rotation.
+     *
+     * @param {Extras.Sync.AccordionPane} parent the AccordionPane peer
+     * @param {Extras.Sync.AccordionPane.Tab} oldTab the old (current) tab
+     * @param {Extras.Sync.AccordionPane.Tab} newTab the new tab to display
+     */
     $construct: function(parent, oldTab, newTab) {
         this._parent = parent;
         this._oldTab = oldTab;
@@ -545,12 +576,9 @@ Extras.Sync.AccordionPane.Rotation = Core.extend(Extras.Sync.Animation, {
             // Initial top position of topmost moving tab.
             this._startTopPosition = this._parent.getTabHeight(0, this._newTabIndex + 1);
             
-            // Final top position of topmost moving tab.
-            this._endTopPosition = this._regionHeight - this._parent.getTabHeight(this._newTabIndex + 1, this._parent._tabs.length);
-            
             // Number of pixels across which animation will occur.
-            this._animationDistance = this._endTopPosition - this._startTopPosition;
-        
+            this._animationDistance = this._regionHeight - 
+                    this._parent.getTabHeight(this._newTabIndex + 1, this._parent._tabs.length) - this._startTopPosition;
         } else {
             // Numbers of tabs above that will not be moving.
             this._numberOfTabsAbove = this._newTabIndex;
@@ -561,11 +589,9 @@ Extras.Sync.AccordionPane.Rotation = Core.extend(Extras.Sync.Animation, {
             // Initial bottom position of bottommost moving tab.
             this._startBottomPosition = this._parent.getTabHeight(this._newTabIndex + 1, this._parent._tabs.length);
     
-            // Final bottom position of bottommost moving tab.
-            this._endBottomPosition = this._regionHeight - this._parent.getTabHeight(0, this._newTabIndex + 1);
-            
             // Number of pixels across which animation will occur.
-            this._animationDistance = this._endBottomPosition - this._startBottomPosition;
+            this._animationDistance = this._regionHeight - this._parent.getTabHeight(0, this._newTabIndex + 1) - 
+                    this._startBottomPosition;
         }
     },
     
