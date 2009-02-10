@@ -457,9 +457,7 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
             this.tabDiv.appendChild(img);
         }
         
-        if (layoutData.title) {
-            this.tabDiv.appendChild(document.createTextNode(layoutData.title));
-        }
+        this.tabDiv.appendChild(document.createTextNode(layoutData.title ? layoutData.title : "\u00a0"));
     
         this.containerDiv = document.createElement("div");
         this.containerDiv.style.cssText = "display:none;position:absolute;left:0;right:0;overflow:hidden;";
