@@ -42,9 +42,14 @@ import nextapp.echo.app.event.ActionListener;
 import nextapp.echo.app.layout.SplitPaneLayoutData;
 import nextapp.echo.extras.app.CalendarSelect;
 import nextapp.echo.extras.app.TabPane;
+import nextapp.echo.extras.app.event.TabClosingEvent;
+import nextapp.echo.extras.app.event.TabClosingListener;
+import nextapp.echo.extras.app.event.TabSelectionEvent;
+import nextapp.echo.extras.app.event.TabSelectionListener;
 import nextapp.echo.extras.app.layout.TabPaneLayoutData;
 import nextapp.echo.extras.testapp.AbstractTest;
 import nextapp.echo.extras.testapp.ButtonColumn;
+import nextapp.echo.extras.testapp.InteractiveApp;
 import nextapp.echo.extras.testapp.StyleUtil;
 import nextapp.echo.extras.testapp.Styles;
 import nextapp.echo.extras.testapp.TestControlPane;
@@ -435,6 +440,26 @@ public class TabPaneTest extends AbstractTest {
                 }
             });
         }
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_LISTENERS, "Add TabSelectionListener", new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                tabPane.addTabSelectionListener(new TabSelectionListener(){
+                    public void tabSelected(TabSelectionEvent e) {
+                        InteractiveApp.getApp().consoleWrite("Tab selection event received: " + e.toString());
+                    }
+                });
+            }
+        });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_LISTENERS, "Add TabCloseListener", new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                tabPane.addTabClosingListener(new TabClosingListener(){
+                    public void tabClosing(TabClosingEvent e) {
+                        InteractiveApp.getApp().consoleWrite("Tab closing event received: " + e.toString());
+                    }
+                });
+            }
+        });
         
         addStandardIntegrationTests();
     }

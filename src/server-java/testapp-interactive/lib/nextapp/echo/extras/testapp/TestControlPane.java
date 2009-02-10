@@ -44,6 +44,7 @@ public class TestControlPane extends SplitPane {
     public static final String CATEGORY_CONTENT = "Add / Remove Content";
     public static final String CATEGORY_PROPERTIES = "Properties";
     public static final String CATEGORY_SELECTION = "Selection";
+    public static final String CATEGORY_LISTENERS = "Listeners";
     public static final String CATEGORY_INTEGRATION = "Integration Tests";
     
     private AccordionPane controlGroupsAccordion;
