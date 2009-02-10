@@ -257,7 +257,7 @@ implements Pane, PaneContainer {
     public void processInput(String inputName, Object inputValue) {
         super.processInput(inputName, inputValue);
         if (inputName.equals(INPUT_TAB_SELECT)) {
-            setActiveTabIndex(((Integer) inputValue).intValue());
+            userTabSelect(((Integer) inputValue).intValue());
         }
     }
     

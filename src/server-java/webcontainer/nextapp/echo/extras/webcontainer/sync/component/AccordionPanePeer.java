@@ -65,7 +65,24 @@ public class AccordionPanePeer extends AbstractComponentSynchronizePeer {
     }
 
     public AccordionPanePeer() {
+        super();
+        
         addOutputProperty(PROPERTY_ACTIVE_TAB_ID);
+        
+        // Tab selection events.
+        addEvent(new AbstractComponentSynchronizePeer.EventPeer(AccordionPane.INPUT_TAB_SELECT, 
+                AccordionPane.TAB_SELECTION_LISTENERS_CHANGED_PROPERTY, String.class) {
+            public boolean hasListeners(Context context, Component component) {
+                return ((AccordionPane) component).hasTabSelectionListeners();
+            }
+            
+            public void processEvent(Context context, Component component, Object eventData) {
+                AccordionPane accordionPane = (AccordionPane) component;
+                Integer tabIndex = getTabIndex(context, accordionPane, (String) eventData);
+                ClientUpdateManager clientUpdateManager = (ClientUpdateManager) context.get(ClientUpdateManager.class);
+                clientUpdateManager.setComponentAction(component, AccordionPane.INPUT_TAB_SELECT, tabIndex);
+            }
+        });
     }
     
     /**
@@ -90,6 +107,25 @@ public class AccordionPanePeer extends AbstractComponentSynchronizePeer {
             return String.class;
         }
         return super.getInputPropertyClass(propertyName);
+    }
+
+    /**
+     * Gets the index of the component within the TabPane the given client renderId.
+     * 
+     * @param context the relevant <code>Context</code>
+     * @param tabPane the <code>TabPane</code>
+     * @param clientRenderId the element id
+     * @return the index if found, <code>null</code> otherwise.
+     */
+    private Integer getTabIndex(Context context, AccordionPane accordionPane, String clientRenderId) {
+        UserInstance userInstance = (UserInstance) context.get(UserInstance.class);
+        Component[] children = accordionPane.getVisibleComponents();
+        for (int i = 0; i < children.length; ++i) {
+            if (userInstance.getClientRenderId(children[i]).equals(clientRenderId)) {
+                return new Integer(i);
+            }
+        }
+        return null;
     }
 
     /**
