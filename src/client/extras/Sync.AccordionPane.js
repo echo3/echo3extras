@@ -40,28 +40,6 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
     },
     
     /**
-     * Determines the tab background color.
-     * 
-     * @return the tab background
-     * @type #Color 
-     */
-    _getTabBackground: function() {
-        var background = this.component.render("tabBackground");
-        return background ? background : Extras.Sync.AccordionPane._DEFAULTS.tabBackground;
-    },
-    
-    /**
-     * Determines the tab border.
-     * 
-     * @return the tab border
-     * @type #Border
-     */
-    _getTabBorder: function() {
-        var border = this.component.render("tabBorder");
-        return border ? border : Extras.Sync.AccordionPane._DEFAULTS.tabBorder;
-    },
-    
-    /**
      * Retrieves the tab instance with the specified tab id.
      * 
      * @param tabId the tab id
@@ -99,18 +77,6 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
             }
             return tabHeight;
         }
-    },
-    
-    
-    /**
-     * Determines the tab inset margin.
-     * 
-     * @return the tab inset margin
-     * @type #Insets
-     */
-    _getTabInsets: function() {
-        var insets = this.component.render("tabInsets");
-        return insets ? insets : Extras.Sync.AccordionPane._DEFAULTS.tabInsets;
     },
     
     /**
@@ -348,15 +314,17 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
     
     _highlight: function(state) {
         var tabDiv = this._tabDiv,
-            border,
+            border = this._parent.component.render("tabBorder", Extras.Sync.AccordionPane._DEFAULTS.tabBorder),
             borderData,
-            borderDataBottom;
+            borderDataBottom,
+            background = this._parent.component.render("tabBackground", Extras.Sync.AccordionPane._DEFAULTS.tabBackground);
+            
         if (state) {
-            var background = this._parent.component.render("tabRolloverBackground");
-            if (!background) {
-                background = Echo.Sync.Color.adjust(this._parent._getTabBackground(), 20, 20, 20);
+            var rolloverBackground = this._parent.component.render("tabRolloverBackground");
+            if (!rolloverBackground) {
+                rolloverBackground = Echo.Sync.Color.adjust(background, 20, 20, 20);
             }
-            Echo.Sync.Color.render(background, tabDiv, "backgroundColor");
+            Echo.Sync.Color.render(rolloverBackground, tabDiv, "backgroundColor");
             var backgroundImage = this._parent.component.render("tabRolloverBackgroundImage");
             if (backgroundImage) {
                 tabDiv.style.backgroundImage = "";
@@ -368,27 +336,26 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
             if (foreground) {
                 Echo.Sync.Color.render(foreground, tabDiv, "color");
             }
-            border = this._parent.component.render("tabRolloverBorder");
-            if (!border) {
-                border = this._parent._getTabBorder();
-                if (Echo.Sync.Border.isMultisided(border)) {
-                    borderData = Echo.Sync.Border.parse(border.top);
-                    borderDataBottom = Echo.Sync.Border.parse(border.bottom);
-                    border = {
+            var rolloverBorder = this._parent.component.render("tabRolloverBorder");
+            if (!rolloverBorder) {
+                rolloverBorder = border;
+                if (Echo.Sync.Border.isMultisided(rolloverBorder)) {
+                    borderData = Echo.Sync.Border.parse(rolloverBorder.top);
+                    borderDataBottom = Echo.Sync.Border.parse(rolloverBorder.bottom);
+                    rolloverBorder = {
                             top: Echo.Sync.Border.compose(borderData.size, borderData.style,
                                     Echo.Sync.Color.adjust(borderData.color, 20, 20, 20)),
                             bottom: Echo.Sync.Border.compose(borderDataBottom.size, borderDataBottom.style,
                                     Echo.Sync.Color.adjust(borderDataBottom.color, 20, 20, 20))
                     };
                 } else {
-                    borderData = Echo.Sync.Border.parse(border);
-                    border = Echo.Sync.Border.compose(borderData.size, borderData.style,
+                    borderData = Echo.Sync.Border.parse(rolloverBorder);
+                    rolloverBorder = Echo.Sync.Border.compose(borderData.size, borderData.style,
                             Echo.Sync.Color.adjust(borderData.color, 20, 20, 20));
                 }
             }
         } else {
-            border = this._parent._getTabBorder();
-            Echo.Sync.Color.render(this._parent._getTabBackground(), tabDiv, "backgroundColor");
+            Echo.Sync.Color.render(background, tabDiv, "backgroundColor");
             Echo.Sync.Color.render(this._parent.component.render("tabForeground", 
                     Extras.Sync.AccordionPane._DEFAULTS.tabForeground), tabDiv, "color");
             tabDiv.style.backgroundImage = "";
@@ -442,7 +409,9 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
         this._tabDiv = document.createElement("div");
         this._tabDiv.id = this._parent.component.renderId + "_tab_" + this._childComponent.renderId;
         this._tabDiv.style.cssText = "cursor:pointer;position:absolute;left:0;right:0;overflow:hidden;";
-        Echo.Sync.Insets.render(this._parent._getTabInsets(), this._tabDiv, "padding");
+        
+        Echo.Sync.Insets.render(this._parent.component.render("tabInsets", Extras.Sync.AccordionPane._DEFAULTS.tabInsets), 
+                this._tabDiv, "padding");
         
         if (layoutData.icon) {
             //FIXME Temporary implementation.  Need proper layout for common icon + text case.
