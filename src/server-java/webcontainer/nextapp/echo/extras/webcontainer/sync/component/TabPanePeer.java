@@ -72,11 +72,15 @@ public class TabPanePeer extends AbstractComponentSynchronizePeer {
         resources.add("Extras", "image/tabpane/Next.gif", ContentType.IMAGE_GIF);
     }
 
+    /**
+     * Default constructor.
+     */
     public TabPanePeer() {
         super();
         
         addOutputProperty(PROPERTY_ACTIVE_TAB_ID);
         
+        // Tab selection events.
         addEvent(new AbstractComponentSynchronizePeer.EventPeer(TabPane.INPUT_TAB_SELECT, 
                 TabPane.TAB_SELECTION_LISTENERS_CHANGED_PROPERTY, String.class) {
             public boolean hasListeners(Context context, Component component) {
@@ -91,6 +95,7 @@ public class TabPanePeer extends AbstractComponentSynchronizePeer {
             }
         });
 
+        // Tab closing events.
         addEvent(new AbstractComponentSynchronizePeer.EventPeer(TabPane.INPUT_TAB_CLOSE, 
                 TabPane.PROPERTY_TAB_CLOSE_ENABLED, String.class) {
             public boolean hasListeners(Context context, Component component) {
@@ -107,6 +112,9 @@ public class TabPanePeer extends AbstractComponentSynchronizePeer {
         });
     }
     
+    /**
+     * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#getClientComponentType(boolean)
+     */
     public String getClientComponentType(boolean shortType) {
         return "Extras.TabPane";
     }
@@ -155,24 +163,28 @@ public class TabPanePeer extends AbstractComponentSynchronizePeer {
     }
 
     /**
-     * Gets the index of the component with the given element id.
+     * Gets the index of the component within the TabPane the given client renderId.
      * 
-     * @param context
-     * @param tabPane
-     * @param elementId
+     * @param context the relevant <code>Context</code>
+     * @param tabPane the <code>TabPane</code>
+     * @param clientRenderId the element id
      * @return the index if found, <code>null</code> otherwise.
      */
-    private Integer getTabIndex(Context context, TabPane tabPane, String elementId) {
+    private Integer getTabIndex(Context context, TabPane tabPane, String clientRenderId) {
         UserInstance userInstance = (UserInstance) context.get(UserInstance.class);
         Component[] children = tabPane.getVisibleComponents();
         for (int i = 0; i < children.length; ++i) {
-            if (userInstance.getClientRenderId(children[i]).equals(elementId)) {
+            if (userInstance.getClientRenderId(children[i]).equals(clientRenderId)) {
                 return new Integer(i);
             }
         }
         return null;
     }
     
+    /**
+     * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#getUpdatedOutputPropertyNames(nextapp.echo.app.util.Context,
+     *      nextapp.echo.app.Component, nextapp.echo.app.update.ServerComponentUpdate)
+     */
     public Iterator getUpdatedOutputPropertyNames(Context context, Component component, ServerComponentUpdate update) {
         Iterator normalPropertyIterator = super.getUpdatedOutputPropertyNames(context, component, update);
         
