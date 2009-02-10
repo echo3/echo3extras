@@ -110,10 +110,36 @@ public class AccordionPanePeer extends AbstractComponentSynchronizePeer {
     }
 
     /**
+     * @see ComponentSynchronizePeer#getOutputProperty(Context, Component, String, int)
+     */
+    public Object getOutputProperty(Context context, Component component, String propertyName, int propertyIndex) {
+        if (PROPERTY_ACTIVE_TAB_ID.equals(propertyName)) {
+            AccordionPane accordionPane = (AccordionPane) component;
+            int componentCount = accordionPane.getVisibleComponentCount();
+            if (componentCount == 0) {
+                return null;
+            }
+            Component activeTab;
+            int activeTabIndex = accordionPane.getActiveTabIndex();
+            if (activeTabIndex == -1) {
+                activeTab = accordionPane.getVisibleComponent(0);
+            } else if (activeTabIndex < componentCount) {
+                activeTab = accordionPane.getVisibleComponent(activeTabIndex);
+            } else {
+                activeTab = accordionPane.getVisibleComponent(componentCount - 1);
+            }
+            UserInstance userInstance = (UserInstance) context.get(UserInstance.class);
+            return userInstance.getClientRenderId(activeTab);
+        } else {
+            return super.getOutputProperty(context, component, propertyName, propertyIndex);
+        }
+    }
+
+    /**
      * Gets the index of the component within the TabPane the given client renderId.
      * 
      * @param context the relevant <code>Context</code>
-     * @param tabPane the <code>TabPane</code>
+     * @param tabPane the <code>AccordionPane</code>
      * @param clientRenderId the element id
      * @return the index if found, <code>null</code> otherwise.
      */
@@ -126,23 +152,6 @@ public class AccordionPanePeer extends AbstractComponentSynchronizePeer {
             }
         }
         return null;
-    }
-
-    /**
-     * @see ComponentSynchronizePeer#getOutputProperty(Context, Component, String, int)
-     */
-    public Object getOutputProperty(Context context, Component component, String propertyName, int propertyIndex) {
-        if (PROPERTY_ACTIVE_TAB_ID.equals(propertyName)) {
-            AccordionPane accordionPane = (AccordionPane) component;
-            int activeTabIndex = accordionPane.getActiveTabIndex();
-            if (activeTabIndex != -1 && activeTabIndex < accordionPane.getVisibleComponentCount()) {
-                UserInstance userInstance = (UserInstance) context.get(UserInstance.class);
-                return userInstance.getClientRenderId(accordionPane.getVisibleComponent(activeTabIndex));
-            }
-            return null;
-        } else {
-            return super.getOutputProperty(context, component, propertyName, propertyIndex);
-        }
     }
 
     /**
@@ -175,15 +184,9 @@ public class AccordionPanePeer extends AbstractComponentSynchronizePeer {
      */
     public void storeInputProperty(Context context, Component component, String propertyName, int index, Object newValue) {
         if (PROPERTY_ACTIVE_TAB_ID.equals(propertyName)) {
-            UserInstance userInstance = (UserInstance) context.get(UserInstance.class);
-            Component[] children = component.getVisibleComponents();
-            for (int i = 0; i < children.length; ++i) {
-                if (userInstance.getClientRenderId(children[i]).equals(newValue)) {
-                    ClientUpdateManager clientUpdateManager = (ClientUpdateManager) context.get(ClientUpdateManager.class);
-                    clientUpdateManager.setComponentProperty(component, AccordionPane.INPUT_TAB_SELECT, new Integer(i));
-                    return;
-                }
-            }
+            ClientUpdateManager clientUpdateManager = (ClientUpdateManager) context.get(ClientUpdateManager.class);
+            clientUpdateManager.setComponentProperty(component, AccordionPane.ACTIVE_TAB_INDEX_CHANGED_PROPERTY, 
+                    getTabIndex(context, (AccordionPane) component, (String) newValue));
         }
     }
 }
