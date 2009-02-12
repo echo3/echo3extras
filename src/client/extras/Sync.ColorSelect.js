@@ -1,4 +1,92 @@
+/**
+ * Component rendering peer: ColorSelect
+ */
 Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
+    
+    $static: {
+    
+        /**
+         * Representation of an RGB color.
+         */
+        RGB: Core.extend({
+            
+            /** 
+             * Red value, 0-255.
+             * @type Number
+             */
+            r: null,
+            
+            /** 
+             * Green value, 0-255.
+             * @type Number
+             */
+            g: null,
+            
+            /** 
+             * Blue value, 0-255.
+             * @type Number
+             */
+            b: null,
+        
+            /**
+             * Creates a new RGB color.
+             * 
+             * @param {Number} r the red value (0-255)
+             * @param {Number} g the green value (0-255)
+             * @param {Number} b the blue value (0-255)
+             */
+            $construct: function(r, g, b) {
+                this.r = this._clean(r);
+                this.g = this._clean(g);
+                this.b = this._clean(b);
+            },
+            
+            /**
+             * Bounds the specified value between 0 and 255.
+             * 
+             * @param {Number} value a color value
+             * @return the bounded value
+             * @type Number  
+             */
+            _clean: function(value) {
+                value = value ? parseInt(value, 10) : 0;
+                if (value < 0) {
+                    return 0;
+                } else if (value > 255) {
+                    return 255;
+                } else {
+                    return value;
+                }
+            },
+            
+            /**
+             * Renders the RGB value as a hexadecimal triplet, e.g., #1a2b3c.
+             * 
+             * @return the hex triplet
+             * @type String
+             */
+            toHexTriplet: function() {
+                var rString = this.r.toString(16);
+                if (rString.length == 1) {
+                    rString = "0" + rString;
+                }
+                var gString = this.g.toString(16);
+                if (gString.length == 1) {
+                    gString = "0" + gString;
+                }
+                var bString = this.b.toString(16);
+                if (bString.length == 1) {
+                    bString = "0" + bString;
+                }
+                return "#" + rString + gString + bString;
+            },
+            
+            /** @see Object#toString */
+            toString: function() {
+                return this.toHexTriplet();
+            }
+        })
+    },
 
     $load: function() {
         Echo.Render.registerPeer("Extras.ColorSelect", this);
@@ -398,42 +486,3 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
     }
 });
 
-Extras.Sync.ColorSelect.RGB = Core.extend({
-
-    $construct: function(r, g, b) {
-        this.r = this._clean(r);
-        this.g = this._clean(g);
-        this.b = this._clean(b);
-    },
-    
-    _clean: function(value) {
-        value = value ? parseInt(value, 10) : 0;
-        if (value < 0) {
-            return 0;
-        } else if (value > 255) {
-            return 255;
-        } else {
-            return value;
-        }
-    },
-    
-    toHexTriplet: function() {
-        var rString = this.r.toString(16);
-        if (rString.length == 1) {
-            rString = "0" + rString;
-        }
-        var gString = this.g.toString(16);
-        if (gString.length == 1) {
-            gString = "0" + gString;
-        }
-        var bString = this.b.toString(16);
-        if (bString.length == 1) {
-            bString = "0" + bString;
-        }
-        return "#" + rString + gString + bString;
-    },
-    
-    toString: function() {
-        return this.toHexTriplet();
-    }
-});
