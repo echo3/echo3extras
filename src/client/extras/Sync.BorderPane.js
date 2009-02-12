@@ -86,6 +86,21 @@ Extras.Sync.BorderPane = Core.extend(Echo.Render.ComponentSync, {
         }
     },
     
+    /**
+     * Renders a sub-element of the border.
+     * 
+     * @param {#FillImageBorder} border the border
+     * @param {Number} position the index of the image within the border to use
+     * @param {Number} flags fill image rendering flags
+     * @param {Number} width the pixel width of the element
+     * @param {Number} height the pixel height of the element
+     * @param {Number} top the top position of the element
+     * @param {Number} right the right position of the element
+     * @param {Number} bottom the bottom position of the element
+     * @param {Number} left the left position of the element
+     * @return the created DIV
+     * @type Element
+     */
     _renderBorderPart: function(border, position, flags, width, height, top, right, bottom, left) {
         var div = document.createElement("div");
         div.style.cssText = "font-size:1px;position:absolute;";
