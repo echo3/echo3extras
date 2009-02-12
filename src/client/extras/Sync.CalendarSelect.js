@@ -371,7 +371,14 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
     
     _icons: { },
     
-    _animateUpdate: function(animate, vertical, forward, rowOverlap) {
+    /**
+     * Performs an animated update of the calendar.
+     *
+     * @param {Boolean} vertical transition new content in vertically (true) or horizontally (false)
+     * @param {Boolean} forward transition new content in rightward/downward (true) or upward/leftward (false)
+     * @param {Number} rowOverlap number of rows to overlap (applicable only in vertical transition)
+     */
+    _animateUpdate: function(vertical, forward, rowOverlap) {
         if (this._animation) {
             this._animation.abort();
         }
@@ -622,6 +629,12 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         this._setDate({ year: this._date.year + 1, month: this._date.month, day: this._date.day });
     },
     
+    /**
+     * Validates the specified date object (containing month/year/day properties to be within the constrained range.
+     * The date will be adjusted (if necessary) to comply with the constrained range.
+     * 
+     * @param date a date object containing month/day/year numeric properties
+     */
     _rangeCheck: function(date) {
         if (date.year < Extras.Sync.CalendarSelect.MINIMUM_YEAR) {
             date.year = Extras.Sync.CalendarSelect.MINIMUM_YEAR;
@@ -630,6 +643,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         }
     },
     
+    /** @see Echo.Render.ComponentSync#renderAdd */
     renderAdd: function(update, parentElement) {
         this._msg = Extras.Sync.CalendarSelect.resource.get(this.component.getRenderLocale());
 
@@ -740,6 +754,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         this._updateSelection();
     },
     
+    /** @see Echo.Render.ComponentSync#renderDispose */
     renderDispose: function(update) {
         Core.Web.Event.removeAll(this._monthSelect);
         Core.Web.Event.removeAll(this._yearField);
@@ -755,6 +770,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         this._calendarDiv = null;
     },
     
+    /** @see Echo.Render.ComponentSync#renderUpdate */
     renderUpdate: function(update) {
         if (update.isUpdatedPropertySetIn({date: true })) {
             var date = this.component.get("date") || new Date();
@@ -836,11 +852,11 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
                 } else {
                     overlap = 0;
                 }
-                this._animateUpdate(true, true, oldValue.month < newValue.month, overlap);
+                this._animateUpdate(true, oldValue.month < newValue.month, overlap);
             }
         } else {
             // Year/Month/Day Change
-            this._animateUpdate(true, false, oldValue.year < newValue.year);
+            this._animateUpdate(false, oldValue.year < newValue.year);
         }
         
         this._updateSelection();
