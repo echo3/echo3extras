@@ -409,14 +409,12 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
         this.element.style.top = y + "px";
 
         var animationTime = this.component.render("animationTime", 0);
-        if (!animationTime || Core.Web.Env.NOT_SUPPORTED_CSS_OPACITY) {
-            document.body.appendChild(this.element);
-        } else {
+        if (animationTime && !Core.Web.Env.NOT_SUPPORTED_CSS_OPACITY) {
             this.element.style.opacity = 0;
             var fadeRunnable = new Extras.Sync.FadeRunnable(this.element, true, 1, animationTime);
             Core.Web.Scheduler.add(fadeRunnable);
-            document.body.appendChild(this.element);
         }
+        document.body.appendChild(this.element);
 
         Core.Web.Event.add(this.element, "click", Core.method(this, this._processClick), false);
         Core.Web.Event.add(this.element, "mouseover", Core.method(this, this._processItemEnter), false);
