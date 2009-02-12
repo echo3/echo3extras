@@ -5,6 +5,9 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
 
     $static: {
     
+        /**
+         * Default rendering values used when component does not specify a property value.
+         */
         DEFAULTS: {
             border: "1px outset #cfcfcf",
             background: "#cfcfcf",
@@ -25,11 +28,28 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
             adjacentMonthDateForeground: "#8f8f8f"
         },
     
+        /**
+         * Minimum year to display (1582, beginning of Gregorian calendar).
+         * @type Number
+         */
         MINIMUM_YEAR: 1582,
+
+        /**
+         * Maximum year to display (9999).
+         * @type Number
+         */
         MAXIMUM_YEAR: 9999,
 
+        /**
+         * Array-map mapping month numbers (indices) to numbers of days in the month.
+         * February is not specified due to it requiring calculation based on year.
+         * @type Array
+         */
         _DAYS_IN_MONTH: [31, null, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
         
+        /**
+         * Localization resource bundle.
+         */
         resource: new Core.ResourceBundle({
             "DayOfWeek.0":     "Sunday",
             "DayOfWeek.1":     "Monday",
@@ -53,17 +73,97 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
             "FirstDayOfWeek":  0
         }),
         
+        /**
+         * Animation used for sliding new months/years into place.  The foreground color of the old content is also adjusted
+         * gradually during the transition.
+         */
         Animation: Core.extend(Extras.Sync.Animation, {
         
-            _oldContent: null,
-            _newContent: null,
-            _vertical: null,
-            _direction: null,
-            runTime: 500,
+            /**
+             * The container element.
+             * @type Element
+             */
+            _container: null,
+            
+            /**
+             * Measured bounds of <code>_container</code>.
+             * @type Core.Web.Measure.Bounds
+             */
             _containerBounds: null,
+            
+            /**
+             * The old content DIV.
+             * @type Element
+             */
+            _oldContent: null,
+
+            /**
+             * The new content DIV.
+             * @type Element
+             */
+            _newContent: null,
+            
+            /**
+             * Boolean flag indicating a vertical (true) or horizontal (false) direction of animation.
+             * @type Boolean
+             */
+            _vertical: null,
+            
+            /**
+             * Boolean flag indicating a downward/rightward (true) or upward/leftward (false) direction of animation.
+             * @type Boolean
+             */
+            _forward: null,
+            
+            /**
+             * Distance the animated effect will move the next content, in pixels.  May not be same as measured dimension
+             * in case of overlap.
+             * @type Number
+             */
             _travel: null,
+            
+            /**
+             * Number of pixels to overlap new content over old content (used when animating months vertically such that shared 
+             * weeks are retained during animation).
+             * @type Number
+             */
             _overlap: null,
+            
+            /**
+             * Old foreground color for old content.
+             * @type #Color
+             */
+            _oldColor: null,
+            
+            /**
+             * New foreground color for old content.
+             * @type #Color
+             */
+            _newColor: null,
+            
+            /**
+             * CSS positioning property being adjusted to perform animation (top/bottom/left/right). 
+             * @type String
+             */
+            _adjust: null,
         
+            /** @see Extras.Sync.Animation#runtime */
+            runTime: 500,
+
+            /**
+             * Constructor.
+             * 
+             * @param {Element} container the container element
+             * @param {Element} oldContent the old content DIV
+             * @param {Element} newContent the new content DIV
+             * @param {Boolean} vertical boolean flag indicating a vertical (true) or horizontal (false) direction of animation
+             * @param {Boolean} forward boolean flag indicating a downward/rightward (true) or upward/leftward (false) direction
+             *                  of animation
+             * @param {Number} overlap number of pixels to overlap new content over old content (used when animating months
+             *                 vertically such that shared weeks are retained during animation)
+             * @param {#Color} oldColor old foreground color for old content
+             * @param {#Color} newColor new foreground color for old content
+             */
             $construct: function(container, oldContent, newContent, vertical, forward, overlap, oldColor, newColor) {
                 this._container = container;
                 this._oldContent = oldContent;
@@ -75,6 +175,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
                 this._newColor = newColor;
             },
         
+            /** @see Extras.Sync.Animation#init */
             init: function() {
                 this._containerBounds = new Core.Web.Measure.Bounds(this._container);
                 this._travel = (this._vertical ? this._containerBounds.height : this._containerBounds.width) - this._overlap;
@@ -83,6 +184,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
                 this._container.appendChild(this._newContent);
             },
 
+            /** @see Extras.Sync.Animation#step */
             step: function(progress) {
                 var position = Math.round(this._travel * (1 - progress));
                 this._oldContent.style.color = Echo.Sync.Color.blend(this._oldColor, this._newColor, 2 * progress);
@@ -90,6 +192,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
                 this._newContent.style[this._adjust] = position + "px";
             },
 
+            /** @see Extras.Sync.Animation#complete */
             complete: function(abort) {
                 this._newContent.style.left = this._newContent.style.top = 
                         this._newContent.style.right = this._newContent.style.bottom = "";
@@ -99,16 +202,61 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
             }
         }),
         
+        /**
+         * Data object describing a month of a specific year in a specific locale (first day of week setting).
+         * Determines additional information about the month used for rendering.
+         */
         MonthData: Core.extend({
             
+            /**
+             * First day of week of the month, Sunday = 0.
+             * @type Number
+             */
             firstDayOfMonth: null,
+            
+            /**
+             * Number of days in the month.
+             * @type Number
+             */
             daysInMonth: null,
+            
+            /**
+             * Number of days in the previous month.
+             * @type Number
+             */
             daysInPreviousMonth: null,
+            
+            /** 
+             * The year.
+             * @type Number
+             */
             year: null,
+            
+            /**
+             * The month.
+             * @type Number
+             */
             month: null,
+            
+            /**
+             * Number of full or partial weeks in the month.  Varies by firstDayOfWeek value.  
+             * @type Number
+             */
             weekCount: null,
+            
+            /**
+             * Cell position of day 1 of the month (0 = leftmost cell, 6 = rightmost cell).
+             * @type Number
+             */
             firstCellPosition: null,
             
+            /**
+             * Constructor.
+             * 
+             * @param {Number} year the year
+             * @param {Number} month the month
+             * @param {Number} first day of week to use when rendering the month (0 = Sunday)
+             */
             $construct: function(year, month, firstDayOfWeek) {
                 this.year = year;
                 this.month = month;
@@ -124,6 +272,13 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
                 this.weekCount = Math.ceil((this.firstCellPosition + this.daysInMonth) / 7);
             },
             
+            /**
+             * Determines the date of the cell at the specified index.
+             * 
+             * @param {Number} cellIndex the cell index, 0 = top left cell
+             * @return an object describing the date at the specified cell, containing numeric month, day, and year properties
+             * @type Object
+             */
             getCellDate: function(cellIndex) {
                 var date;
                 if (cellIndex < this.firstCellPosition) {
@@ -140,10 +295,23 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
                 return date;
             },
             
+            /**
+             * Determines the cell index of the specified day in the month.
+             * 
+             * @param {Number} day the day of the month
+             * @return the cell index
+             * @type Number 
+             */
             getCellIndex: function(day) {
                 return day + this.firstCellPosition - 1;
             },
             
+            /**
+             * Determines if the specified cell index lies in the current month or an adjacent month.
+             * 
+             * @return true if the cell index lies in an adjacent month, false if not
+             * @type Boolean
+             */
             isCellAdjacent: function(cellIndex) {
                 return cellIndex < this.firstCellPosition || cellIndex >= (this.firstDayOfMonth + this.daysInMonth);
             }
