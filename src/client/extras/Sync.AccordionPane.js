@@ -112,8 +112,8 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
     },
     
     /**
-     * Redraws tabs in the appropriate positions, exposing the content of the 
-     * selected tab.
+     * Immediately redraws tabs in the appropriate positions, exposing the content of the 
+     * selected tab.  Any active animated rotation is aborted.
      * 
      * @param {Boolean} notifyComponentUpdate flag indicating whether child component should be notified to perform
      *        renderDisplay() operations
