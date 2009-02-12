@@ -475,6 +475,13 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         }));
     },
     
+    /**
+     * Creates a day-container DIV element, which will hold the days of the calendar.  These elements are added to and removed
+     * from the calendar using animation (if desired).
+     * 
+     * @return the day container element
+     * @type Element
+     */
     _createDayContainer: function() {
         var dayContainerDiv = document.createElement("div");
         dayContainerDiv.style.cssText = "position:absolute;";
@@ -488,6 +495,12 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         return dayContainerDiv;
     },
     
+    /**
+     * Creates the month and year input controls positioned above the calendar.
+     * 
+     * @return an element containing the month/year controls.
+     * @type Element
+     */
     _createMonthYearInput: function() {
         var i, option, img,
             enabled = this.component.isRenderEnabled(),
@@ -537,6 +550,12 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         return span;
     },
 
+    /**
+     * Creates a DIV containing a single week of days.
+     *
+     * @return the created DIV
+     * @type Element
+     */
     _createWeek: function(line) {
         var day = 1 - this._monthData.firstCellPosition + (7 * line);
         var rowDiv = document.createElement("div");
@@ -578,10 +597,21 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         return rowDiv;
     },
     
+    /**
+     * Returns the cell DIV for the specified cell index.
+     * 
+     * @param {Number} cellIndex the cell index (0 = upper left)
+     * @return the DIV element
+     * @type Element
+     */
     _getCell: function(cellIndex) {
         return this._dayContainerDiv.childNodes[Math.floor(cellIndex / 7)].childNodes[cellIndex % 7];
     },
     
+    /**
+     * Loads rendering information from component into local object.
+     * Calculates required sizes for day elements.
+     */
     _loadRenderData: function() {
         this._font = this.component.render("font", Extras.Sync.CalendarSelect.DEFAULTS.font);
         
@@ -649,6 +679,11 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
                 this._padding.top - this._padding.bottom;
     },
     
+    /**
+     * Processes a date rollover enter event.
+     * 
+     * @param e the event
+     */
     _processDateRolloverEnter: function(e) {
         if (!this.client || !this.client.verifyInput(this.component) || e.target._cellIndex == null || this._animation) {
             return;
@@ -660,6 +695,11 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         this._setCellStyle(this._rolloverCellIndex, true);
     },
     
+    /**
+     * Processes a date rollover exit event.
+     * 
+     * @param e the event
+     */
     _processDateRolloverExit: function(e) {
         if (this._rolloverCellIndex) {
             this._setCellStyle(this._rolloverCellIndex, false);
@@ -667,6 +707,11 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         }
     },
     
+    /**
+     * Processes a date selection (click) event.
+     * 
+     * @param e the event
+     */
     _processDateSelect: function(e) {
         if (!this.client || !this.client.verifyInput(this.component) || e.target._cellIndex == null || this._animation) {
             return;
@@ -674,6 +719,11 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         this._setDate(this._monthData.getCellDate(e.target._cellIndex));
     },
     
+    /**
+     * Processes a month selection event.
+     * 
+     * @param e the event
+     */
     _processMonthSelect: function(e) {
         if (!this.client || !this.client.verifyInput(this.component)) {
             this._monthSelect.selectedIndex = this._date.month;
@@ -682,6 +732,11 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         this._setDate({ year: this._date.year, month: this._monthSelect.selectedIndex, day: this._date.day });
     },
     
+    /**
+     * Processes a year input field change event.
+     * 
+     * @param e the event
+     */
     _processYearChange: function(e) {
         var newValue = parseInt(this._yearField.value, 10);
         if (!this.client || !this.client.verifyInput(this.component) || isNaN(newValue)) {
@@ -691,12 +746,22 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         this._setDate({ year: newValue, month: this._date.month, day: this._date.day });
     },
 
+    /**
+     * Processes a year input field key-up event.
+     * 
+     * @param e the event
+     */
     _processYearKeyUp: function(e) {
         if (e.keyCode == 13) {
             this._processYearChange(e);
         }
     },
     
+    /**
+     * Processes a year decrement button click event.
+     * 
+     * @param e the event
+     */
     _processYearDecrement: function(e) {
         if (!this.client || !this.client.verifyInput(this.component)) {
             return;
@@ -704,6 +769,11 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         this._setDate({ year: this._date.year - 1, month: this._date.month, day: this._date.day });
     },
 
+    /**
+     * Processes a year increment button click event.
+     * 
+     * @param e the event
+     */
     _processYearIncrement: function(e) {
         if (!this.client || !this.client.verifyInput(this.component)) {
             return;
@@ -834,7 +904,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         Core.Web.Event.add(this._calendarDiv, "mouseover", Core.method(this, this._processDateRolloverEnter), false);
         Core.Web.Event.add(this._calendarDiv, "mouseout", Core.method(this, this._processDateRolloverExit), false);
 
-        this._updateSelection();
+        this._updateMonthYearSelection();
     },
     
     /** @see Echo.Render.ComponentSync#renderDispose */
@@ -874,6 +944,13 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         return false;
     },
     
+    /**
+     * Sets the style of a specific day cell.
+     * 
+     * @param {Number} cellIndex the cell index (0 = upper-left)
+     * @param {Boolean} rollover flag indicating whether the mouse is currently rolled over the cell
+     * @param {Boolean} reset flag indicating whether the cell should be reset to its default state
+     */
     _setCellStyle: function(cellIndex, rollover, reset) {
         var date = this._monthData.getCellDate(cellIndex);
         var cell = this._getCell(cellIndex);
@@ -904,6 +981,11 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         }
     },
     
+    /**
+     * Sets the selected date.  Updates month/year fields and animates in new month/year if required.
+     * 
+     * @param newValue an object providing month, day, and year numeric properties
+     */
     _setDate: function(newValue) {
         var oldValue = this._date,
             oldCellIndex = this._monthData.getCellIndex(this._date.day),
@@ -942,16 +1024,22 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
             this._animateUpdate(false, oldValue.year < newValue.year);
         }
         
-        this._updateSelection();
+        this._updateMonthYearSelection();
         
         this._storeValue();
     },
     
+    /**
+     * Stores the selected date in the <code>Echo.Component</code> instance.
+     */
     _storeValue: function() {
         this.component.set("date", new Date(this._date.year, this._date.month, this._date.day));
     },
     
-    _updateSelection: function() {
+    /**
+     * Updates the month/year field selection values.
+     */
+    _updateMonthYearSelection: function() {
         if (parseInt(this._yearField.value, 10) !== this._date.year) {
             this._yearField.value = this._date.year;
         }
