@@ -383,16 +383,15 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
         defaultMenuInsets: "2px",
         defaultMenuItemInsets: "1px 12px",
         
+        /**
+         * Animation effect to fade-in menu.
+         */
         FadeAnimation: Core.extend(Extras.Sync.Animation, {
             
             _element: null,
-            _fadeIn: null,
-            _fullOpacity: null,
             
-            $construct: function(element, fadeIn, fullOpacity, runTime) {
+            $construct: function(element, runTime) {
                 this._element = element;
-                this._fadeIn = fadeIn;
-                this._fullOpacity = fullOpacity;
                 this.runTime = runTime;
             },
         
@@ -401,19 +400,12 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
             
             /** @see Extras.Sync.Animation#step */
             step: function(progress) {
-                this._element.style.opacity = this._fadeIn ? 
-                        progress * this._fullOpacity : this._fullOpacity - (progress * this._fullOpacity);
+                this._element.style.opacity = progress;
             },
 
             /** @see Extras.Sync.Animation#complete */
             complete: function(abort) {
-                if (this._fadeIn) {
-                    this._element.style.opacity = this._fullOpacity;
-                } else {
-                    if (this._element.parentNode) {
-                        this._element.parentNode.removeChild(this._element);
-                    }
-                }
+                this._element.style.opacity = 1;
             }
         })
     },
@@ -445,7 +437,7 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
         var animationTime = this.component.render("animationTime", 0);
         if (animationTime && !Core.Web.Env.NOT_SUPPORTED_CSS_OPACITY) {
             this.element.style.opacity = 0;
-            var fadeAnimation = new Extras.Sync.Menu.RenderedMenu.FadeAnimation(this.element, true, 1, animationTime);
+            var fadeAnimation = new Extras.Sync.Menu.RenderedMenu.FadeAnimation(this.element, animationTime);
             fadeAnimation.start();
         }
         document.body.appendChild(this.element);
