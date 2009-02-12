@@ -5,29 +5,35 @@ Extras.Sync.Group = Core.extend(Echo.Render.ComponentSync, {
 
     $static: {
     
-        DEFAULT_TITLE_INSETS: "0px 2px",
-        
-        DEFAULT_BORDER_INSETS: "10px",
-        
-        DEFAULT_BORDER_IMAGES: [
-            "image/group/GroupBorderTopLeft.png",
-            "image/group/GroupBorderTop.png",
-            "image/group/GroupBorderTopRight.png",
-            "image/group/GroupBorderLeft.png",
-            "image/group/GroupBorderRight.png",
-            "image/group/GroupBorderBottomLeft.png",
-            "image/group/GroupBorderBottom.png",
-            "image/group/GroupBorderBottomRight.png"
-        ]
+        /**
+         * Default rendering values used when component does not specify a property value.
+         */
+        DEFAULTS: {
+            borderImages: [
+                "image/group/GroupBorderTopLeft.png",
+                "image/group/GroupBorderTop.png",
+                "image/group/GroupBorderTopRight.png",
+                "image/group/GroupBorderLeft.png",
+                "image/group/GroupBorderRight.png",
+                "image/group/GroupBorderBottomLeft.png",
+                "image/group/GroupBorderBottom.png",
+                "image/group/GroupBorderBottomRight.png"
+            ],
+            borderInsets: "10px",
+            titleInsets: "0px 2px"
+        }
     },
 
     $load: function() {
         Echo.Render.registerPeer("Extras.Group", this);
     },
+    
+    _div: null,
+    
+    _borderImages: null,
 
-    $construct: function() {
-        this._div = null;
-        this._borderImages = null;
+    _getBorderImage: function(position, x, y) {
+        return this._getRepeatingBorderImage(position, "no-repeat", x, y);
     },
     
     /**
@@ -38,9 +44,22 @@ Extras.Sync.Group = Core.extend(Echo.Render.ComponentSync, {
      * @type {String}
      */
     _getImageUri: function(position) {
-        return this.client.getResourceUrl("Extras", Extras.Sync.Group.DEFAULT_BORDER_IMAGES[position]);
+        return this.client.getResourceUrl("Extras", Extras.Sync.Group.DEFAULTS.borderImages[position]);
     },
     
+    _getRepeatingBorderImage: function(position, repeat, x, y) {
+        var image;
+        if (this._borderImages) {
+            image = this._borderImages[position];
+        } else {
+            image = this._getImageUri(position);
+        }
+        if (image) {
+            return { url: image, repeat: repeat, x: x, y: y };
+        }
+    },
+    
+    /** @see Echo.Render.ComponentSync#renderAdd */
     renderAdd: function(update, parentElement) {
         this._borderImages = this.component.render("borderImage");
         
@@ -58,30 +77,11 @@ Extras.Sync.Group = Core.extend(Echo.Render.ComponentSync, {
         parentElement.appendChild(this._div);
     },
     
-    _getRepeatingBorderImage: function(position, repeat, x, y) {
-        var image;
-        if (this._borderImages) {
-            image = this._borderImages[position];
-        } else {
-            image = this._getImageUri(position);
-        }
-        if (image) {
-            return { url: image, repeat: repeat, x: x, y: y };
-        }
-    },
-    
-    _getBorderImage: function(position, x, y) {
-        return this._getRepeatingBorderImage(position, "no-repeat", x, y);
-    },
-    
     _renderBorder: function(contentElem) {
         var borderParts = [];
-        
-        var borderInsets = this.component.render("borderInsets", 
-                Extras.Sync.Group.DEFAULT_BORDER_INSETS);
+        var borderInsets = this.component.render("borderInsets", Extras.Sync.Group.DEFAULTS.borderInsets);
         var borderPixelInsets = Echo.Sync.Insets.toPixels(borderInsets);
-        var flags = this.component.render("ieAlphaRenderBorder") ? 
-                Echo.Sync.FillImage.FLAG_ENABLE_IE_PNG_ALPHA_FILTER : 0;
+        var flags = this.component.render("ieAlphaRenderBorder") ? Echo.Sync.FillImage.FLAG_ENABLE_IE_PNG_ALPHA_FILTER : 0;
         
         var topRight = document.createElement("div");
         topRight.style.width = "100%";
@@ -126,7 +126,7 @@ Extras.Sync.Group = Core.extend(Echo.Render.ComponentSync, {
             titleElem.style.whiteSpace = "nowrap";
             Echo.Sync.Font.render(this.component.render("titleFont"), titleElem);
             Echo.Sync.Insets.render(this.component.render("titleInsets",
-                    Extras.Sync.Group.DEFAULT_TITLE_INSETS), titleElem, "padding");
+                    Extras.Sync.Group.DEFAULTS.titleInsets), titleElem, "padding");
             var titleImage = this.component.render("titleBackgroundImage");
             if (titleImage) {
                 Echo.Sync.FillImage.render({ url: titleImage, repeat: "repeat-x", x: 0, y: "100%" }, titleElem, flags);
@@ -213,6 +213,13 @@ Extras.Sync.Group = Core.extend(Echo.Render.ComponentSync, {
         return div;
     },
     
+    /** @see Echo.Render.ComponentSync#renderDispose */
+    renderDispose: function(update) {
+        this._borderImages = null;
+        this._div = null;
+    },
+    
+    /** @see Echo.Render.ComponentSync#renderUpdate */
     renderUpdate: function(update) {
         var element = this._div;
         var containerElement = element.parentNode;
@@ -220,10 +227,5 @@ Extras.Sync.Group = Core.extend(Echo.Render.ComponentSync, {
         containerElement.removeChild(element);
         this.renderAdd(update, containerElement);
         return true;
-    },
-    
-    renderDispose: function(update) {
-        this._borderImages = null;
-        this._div = null;
     }
 });
