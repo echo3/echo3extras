@@ -5,23 +5,26 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
 
     $static: {
     
-        DEFAULT_BORDER: "1px outset #cfcfcf",
-        DEFAULT_BACKGROUND: "#cfcfcf",
-        DEFAULT_FOREGROUND: "#000000",
-        DEFAULT_FONT: {
-            size: "10pt"
+        DEFAULTS: {
+            border: "1px outset #cfcfcf",
+            background: "#cfcfcf",
+            foreground: "#000000",
+            font: {
+                size: "10pt"
+            },
+            dateForeground: "#000000",
+            dateBackground: "#dfdfdf",
+            dateBorder: {
+                top: "1px solid #efefef",
+                left: "1px solid #efefef",
+                right: "1px solid #bfbfbf",
+                bottom: "1px solid #bfbfbf"
+            },
+            selectedDateForeground: "#ffffff",
+            selectedDateBackground: "#2f2f6f",
+            adjacentMonthDateForeground: "#8f8f8f"
         },
-        DEFAULT_DATE_FOREGROUND: "#000000",
-        DEFAULT_DATE_BACKGROUND: "#dfdfdf",
-        DEFAULT_DATE_BORDER: {
-            top: "1px solid #efefef",
-            left: "1px solid #efefef",
-            right: "1px solid #bfbfbf",
-            bottom: "1px solid #bfbfbf"
-        },
-        DEFAULT_SELECTED_DATE_FOREGROUND: "#ffffff",
-        DEFAULT_SELECTED_DATE_BACKGROUND: "#2f2f6f",
-        DEFAULT_ADJACENT_MONTH_DATE_FOREGROUND: "#8f8f8f",
+    
         MINIMUM_YEAR: 1582,
         MAXIMUM_YEAR: 9999,
 
@@ -323,22 +326,21 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
     },
     
     _loadRenderData: function() {
-        this._font = this.component.render("font", Extras.Sync.CalendarSelect.DEFAULT_FONT);
+        this._font = this.component.render("font", Extras.Sync.CalendarSelect.DEFAULTS.font);
         
         // Default Cell Style
-        this._dateBackground = this.component.render("dateBackground", Extras.Sync.CalendarSelect.DEFAULT_DATE_BACKGROUND);
-        this._dateBorder = this.component.render("dateBorder", Extras.Sync.CalendarSelect.DEFAULT_DATE_BORDER);
-        this._dateBackgroundImage = this.component.render("dateBackgroundImage", 
-                Extras.Sync.CalendarSelect.DEFAULT_DATE_BACKGROUND);
-        this._dateForeground = this.component.render("dateForeground", Extras.Sync.CalendarSelect.DEFAULT_DATE_FOREGROUND);
+        this._dateBackground = this.component.render("dateBackground", Extras.Sync.CalendarSelect.DEFAULTS.dateBackground);
+        this._dateBorder = this.component.render("dateBorder", Extras.Sync.CalendarSelect.DEFAULTS.dateBorder);
+        this._dateBackgroundImage = this.component.render("dateBackgroundImage");
+        this._dateForeground = this.component.render("dateForeground", Extras.Sync.CalendarSelect.DEFAULTS.dateForeground);
         
         // Selected Cell Style
         this._dateSelectedBackground = this.component.render("selectedDateBackground", 
-                Extras.Sync.CalendarSelect.DEFAULT_SELECTED_DATE_BACKGROUND);
+                Extras.Sync.CalendarSelect.DEFAULTS.selectedDateBackground);
         this._dateSelectedBackgroundImage = this.component.render("selectedDateBackgroundImage");
         this._dateSelectedBorder = this.component.render("selectedDateBorder");
         this._dateSelectedForeground = this.component.render("selectedDateForeground",
-                Extras.Sync.CalendarSelect.DEFAULT_SELECTED_DATE_FOREGROUND);
+                Extras.Sync.CalendarSelect.DEFAULTS.selectedDateForeground);
         
         // Rollover Cell Style
         this._dateRolloverBackground = this.component.render("rolloverDateBackground");
@@ -351,7 +353,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         
         // Adjacent Cell Style
         this._dateAdjacentForeground = this.component.render("adjacentMonthDateForeground", 
-                Extras.Sync.CalendarSelect.DEFAULT_ADJACENT_MONTH_DATE_FOREGROUND);
+                Extras.Sync.CalendarSelect.DEFAULTS.adjacentMonthDateForeground);
         this._dateAdjacentBackground = this.component.render("adjacentMonthDateBackground");
         
         // Measure size of date cell text
@@ -492,12 +494,12 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         
         Echo.Sync.LayoutDirection.render(this.component.getLayoutDirection(), this._div);
         Echo.Sync.Font.render(this._font, this._div);
-        Echo.Sync.Color.render(this.component.render("foreground", Extras.Sync.CalendarSelect.DEFAULT_FOREGROUND), this._div,
+        Echo.Sync.Color.render(this.component.render("foreground", Extras.Sync.CalendarSelect.DEFAULTS.foreground), this._div,
                 "color");
-        Echo.Sync.Color.render(this.component.render("background", Extras.Sync.CalendarSelect.DEFAULT_BACKGROUND), this._div,
+        Echo.Sync.Color.render(this.component.render("background", Extras.Sync.CalendarSelect.DEFAULTS.background), this._div,
                 "backgroundColor");
         Echo.Sync.FillImage.render(this.component.render("backgroundImage"), this._div);
-        Echo.Sync.Border.render(this.component.render("border",  Extras.Sync.CalendarSelect.DEFAULT_BORDER), this._div);
+        Echo.Sync.Border.render(this.component.render("border",  Extras.Sync.CalendarSelect.DEFAULTS.border), this._div);
         Echo.Sync.Font.render(this.component.render("font"), this._div);
         
         monthYearDiv = document.createElement("div");
@@ -519,9 +521,9 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         headerDiv.style.cssText = "position:absolute;";
         headerDiv.style.width = (this._cellWidth * 7) + "px";
         headerDiv.style.height = this._headerHeight + "px";
-        Echo.Sync.Color.render(this.component.render("headerForeground", Extras.Sync.CalendarSelect.DEFAULT_FOREGROUND), headerDiv,
+        Echo.Sync.Color.render(this.component.render("headerForeground", Extras.Sync.CalendarSelect.DEFAULTS.foreground), headerDiv,
                 "color");
-        Echo.Sync.Color.render(this.component.render("headerBackground", Extras.Sync.CalendarSelect.DEFAULT_BACKGROUND), headerDiv,
+        Echo.Sync.Color.render(this.component.render("headerBackground", Extras.Sync.CalendarSelect.DEFAULTS.background), headerDiv,
                 "backgroundColor");
         Echo.Sync.FillImage.render(this.component.render("headerBackgroundImage"), headerDiv);
         this._calendarDiv.appendChild(headerDiv);
