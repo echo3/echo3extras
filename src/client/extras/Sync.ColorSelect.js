@@ -92,13 +92,46 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         Echo.Render.registerPeer("Extras.ColorSelect", this);
     },
     
+    /**
+     * Currently selected color hue.  Range: 0 <= h < 360.
+     * @type Number
+     */
     _h: 0,
+
+    /**
+     * Currently selected color saturation.  Range: 0 <= s <= 1
+     * @type Number
+     */
     _s: 0,
+
+    /**
+     * Currently selected color value.  Range: 0 <= v <= 1.
+     * @type Number
+     */
     _v: 0,
 
+    /**
+     * Method reference to _processHMouseMove.
+     * @type Function
+     */
     _processHMouseMoveRef: null,
+
+    /**
+     * Method reference to _processHMouseUp.
+     * @type Function
+     */
     _processHMouseUpRef: null,
+
+    /**
+     * Method reference to _processSVMouseMove.
+     * @type Function
+     */
     _processSVMouseMoveRef: null,
+
+    /**
+     * Method reference to _processSVMouseUp.
+     * @type Function
+     */
     _processSVMouseUpRef: null,
 
     $construct: function() {
@@ -108,6 +141,15 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         this._processSVMouseUpRef = Core.method(this, this._processSVMouseUp);
     },
         
+    /**
+     * Converts an HSV color to an RGB color.
+     * 
+     * @param {Number} h the color hue
+     * @param {Number} s the color saturation
+     * @param {Number} v the color value
+     * @return an RGB color
+     * @type Extras.Sync.ColorSelect.RGB 
+     */
     _hsvToRgb: function(h, s, v) {
         var r, g, b;
         if (s === 0) {
@@ -131,6 +173,11 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         return new Extras.Sync.ColorSelect.RGB(Math.round(r * 255), Math.round(g * 255), Math.round(b * 255));
     },
     
+    /**
+     * Processes a hue selector mouse down event.
+     * 
+     * @param e the event
+     */
     _processHMouseDown: function(e) {
         if (!this.client || !this.client.verifyInput(this.component) || Core.Web.dragInProgress) {
             return;
@@ -140,22 +187,42 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         this._processHUpdate(e);
     },
     
+    /**
+     * Processes a hue selector mouse move event.
+     * 
+     * @param e the event
+     */
     _processHMouseMove: function(e) {
         this._processHUpdate(e);
     },
     
+    /**
+     * Processes a hue selector mouse up event.
+     * 
+     * @param e the event
+     */
     _processHMouseUp: function(e) {
         Core.Web.Event.remove(this._hListenerDiv, "mousemove", this._processHMouseMoveRef, false);
         Core.Web.Event.remove(this._hListenerDiv, "mouseup", this._processHMouseUpRef, false);
         this._storeColor();
     },
     
+    /**
+     * Processes a mouse event which will update the selected hue (invoked by mouse/down move events).
+     * 
+     * @param e the event
+     */
     _processHUpdate: function(e) {
         var offset = Core.Web.DOM.getEventOffset(e);
         this._h = (this._saturationHeight - (offset.y - 7)) * 360 / this._saturationHeight;
         this._updateDisplayedColor();
     },
     
+    /**
+     * Processes a saturation-value selector mouse down event.
+     * 
+     * @param e the event
+     */
     _processSVMouseDown: function(e) {
         if (!this.client || !this.client.verifyInput(this.component) || Core.Web.dragInProgress) {
             return;
@@ -165,16 +232,31 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         this._processSVUpdate(e);
     },
     
+    /**
+     * Processes a saturation-value selector mouse move event.
+     * 
+     * @param e the event
+     */
     _processSVMouseMove: function(e) {
         this._processSVUpdate(e);
     },
     
+    /**
+     * Processes a saturation-value selector mouse up event.
+     * 
+     * @param e the event
+     */
     _processSVMouseUp: function(e) {
         Core.Web.Event.remove(this._svListenerDiv, "mousemove", this._processSVMouseMoveRef, false);
         Core.Web.Event.remove(this._svListenerDiv, "mouseup", this._processSVMouseUpRef, false);
         this._storeColor();
     },
     
+    /**
+     * Processes a mouse event which will update the selected saturation/value (invoked by mouse/down move events).
+     * 
+     * @param e the event
+     */
     _processSVUpdate: function(e) {
         var offset = Core.Web.DOM.getEventOffset(e);
         this._v = (offset.x - 7) / this._valueWidth;
@@ -182,6 +264,7 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         this._updateDisplayedColor();
     },
     
+    /** @see Echo.Render.ComponentSync#renderAdd */
     renderAdd: function(update, parentElement) {
         this._valueWidth = Echo.Sync.Extent.toPixels(
                 this.component.render("valueWidth", Extras.ColorSelect.DEFAULT_VALUE_WIDTH), true);
@@ -366,6 +449,7 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         this._setColor(this.component.get("color"));
     },
     
+    /** @see Echo.Render.ComponentSync#renderDispose */
     renderDispose: function(update) { 
         Core.Web.Event.removeAll(this._svListenerDiv);
         Core.Web.Event.removeAll(this._hListenerDiv);
@@ -378,6 +462,7 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         this._vLineDiv = null;
     },
     
+    /** @see Echo.Render.ComponentSync#renderUpdate */
     renderUpdate: function(update) {
         var div = this._div;
         var parentElement = div.parentNode;
@@ -441,11 +526,15 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         this.component.set("color", renderHexTriplet);
     },
     
+    /**
+     * Updates the displayed color.
+     */
     _updateDisplayedColor: function() {
         var baseColor;
         if (this.component.isRenderEnabled()) {
             baseColor = this._hsvToRgb(this._h, 1, 1);
         } else {
+            // Use a dull base color to enable a disabled effect.
             baseColor = this._hsvToRgb(this._h, 0.3, 0.7);
         }
         this._svDiv.style.backgroundColor = baseColor.toHexTriplet();
