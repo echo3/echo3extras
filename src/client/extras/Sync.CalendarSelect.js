@@ -345,31 +345,113 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         Echo.Render.registerPeer("Extras.CalendarSelect", this);
     },
     
+    /**
+     * Main outer DIV element.
+     * @type Element
+     */
     _div: null,
+    
+    /**
+     * Month SELECT field.
+     * @type Element
+     */
     _monthSelect: null,
+    
+    /**
+     * Year INPUT field.
+     * @type element
+     */
     _yearField: null,
     
+    /**
+     * Date rollover background color.
+     * @type #Color
+     */
     _dateRolloverBackground: null,
+    
+    /**
+     * Date rollover background image.
+     * @type #FillImage
+     */
     _dateRolloverBackgroundImage: null,
+
+    /**
+     * Date rollover border.
+     * @type #Border
+     */
     _dateRolloverBorder: null,
+
+    /**
+     * Date rollover foreground color.
+     * @type #Color
+     */
     _dateRolloverForeground: null,
     
+    /**
+     * Date selection background color.
+     * @type #Color
+     */
     _dateSelectedBackground: null,
+
+    /**
+     * Date selection background image.
+     * @type #FillImage
+     */
     _dateSelectedBackgroundImage: null,
+
+    /**
+     * Date selection border.
+     * @type #Border
+     */
     _dateSelectedBorder: null,
+
+    /**
+     * Date selection foreground color.
+     * @type #Color
+     */
     _dateSelectedForeground: null,
     
+    /**
+     * Index of currently rolled over cell. 
+     * @type Number
+     */
     _rolloverCellIndex: null,
     
+    /**
+     * Currently displayed month.
+     * @type Number
+     */
     _displayedMonth: null,
+
+    /**
+     * Currently displayed year.
+     * @type Number
+     */
     _displayedYear: null,
+
+    /**
+     * First day of week for displayed localization (0 = Sunday).
+     * @type Number
+     */
     _firstDayOfWeek: null,
     
+    /**
+     * Currently selected date.  An object with month, day, and year numeric properties.
+     * @type Object
+     */
     _date: null,
     
+    /**
+     * Localization data map.
+     * @type Object
+     */
     _msg: null,
     
-    _icons: { },
+    /**
+     * Custom icons map.
+     * @type object
+     */
+    _icons: null,
     
     /**
      * Performs an animated update of the calendar.
@@ -646,6 +728,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
     /** @see Echo.Render.ComponentSync#renderAdd */
     renderAdd: function(update, parentElement) {
         this._msg = Extras.Sync.CalendarSelect.resource.get(this.component.getRenderLocale());
+        this._icons = { };
 
         var i, j, td, tr, x, cellDiv, dayOfWeekName, monthYearDiv, monthYearInput, headerWidth,
             enabled = this.component.isRenderEnabled(),
