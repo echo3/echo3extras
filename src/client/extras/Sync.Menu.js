@@ -381,7 +381,41 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
     $static: {
         defaultIconTextMargin: 5,
         defaultMenuInsets: "2px",
-        defaultMenuItemInsets: "1px 12px"
+        defaultMenuItemInsets: "1px 12px",
+        
+        FadeAnimation: Core.extend(Extras.Sync.Animation, {
+            
+            _element: null,
+            _fadeIn: null,
+            _fullOpacity: null,
+            
+            $construct: function(element, fadeIn, fullOpacity, runTime) {
+                this._element = element;
+                this._fadeIn = fadeIn;
+                this._fullOpacity = fullOpacity;
+                this.runTime = runTime;
+            },
+        
+            /** @see Extras.Sync.Animation#init */
+            init: function() { },
+            
+            /** @see Extras.Sync.Animation#step */
+            step: function(progress) {
+                this._element.style.opacity = this._fadeIn ? 
+                        progress * this._fullOpacity : this._fullOpacity - (progress * this._fullOpacity);
+            },
+
+            /** @see Extras.Sync.Animation#complete */
+            complete: function(abort) {
+                if (this._fadeIn) {
+                    this._element.style.opacity = this._fullOpacity;
+                } else {
+                    if (this._element.parentNode) {
+                        this._element.parentNode.removeChild(this._element);
+                    }
+                }
+            }
+        })
     },
     
     menuSync: null,
@@ -411,8 +445,8 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
         var animationTime = this.component.render("animationTime", 0);
         if (animationTime && !Core.Web.Env.NOT_SUPPORTED_CSS_OPACITY) {
             this.element.style.opacity = 0;
-            var fadeRunnable = new Extras.Sync.FadeRunnable(this.element, true, 1, animationTime);
-            Core.Web.Scheduler.add(fadeRunnable);
+            var fadeAnimation = new Extras.Sync.Menu.RenderedMenu.FadeAnimation(this.element, true, 1, animationTime);
+            fadeAnimation.start();
         }
         document.body.appendChild(this.element);
 
