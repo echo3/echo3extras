@@ -17,6 +17,10 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
             border: "1px outset #cfcfcf"
         },
         
+        /**
+         * Highest possible z-index.
+         * @type Number
+         */
         MAX_Z_INDEX: 65535
     }, 
     
@@ -45,8 +49,8 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
     active: false,
 
     /** 
-     * Array containing RenderedState objects for open menus. 
-     * @type Boolean
+     * Array containing <code>Extras.MenuModel</code>s representing currently open menu path. 
+     * @type Array
      */
     _openMenuPath: null,
     
@@ -71,6 +75,9 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
      */
     _overlay: null,
     
+    /**
+     * Constructor.  Must be invoked by derivative class constructors.
+     */
     $construct: function() {
         this._processMaskClickRef = Core.method(this, this._processMaskClick);
         this._processKeyPressRef = Core.method(this, this.processKeyPress);
@@ -82,6 +89,10 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
         /**
          * Returns an object containing 'x' and 'y' properties indicating the position at 
          * which a submenu should be placed.
+         * 
+         * @param {Extras.MenuModel} menuModel the submenu
+         * @param {Number} width the width of the menu, in pixels 
+         * @param {Number} height the height of the menu, in pixels 
          */
         getSubMenuPosition: function(menuModel, width, height) { },
 
@@ -151,6 +162,11 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
         }
     },
 
+    /**
+     * Adds a menu to the open menu path.
+     * 
+     * @param {Extras.MenuModel} menu the menu to add
+     */
     addMenu: function(menu) {
         this._openMenuPath.push(menu);
     },
@@ -182,7 +198,7 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
     /**
      * Closes all open menus which are descendants of the specified parent menu.
      * 
-     * @param {Extras.MenuModel} the parent menu
+     * @param {Extras.MenuModel} parentMenu the parent menu
      */
     closeDescendants: function(parentMenu) {
         while (parentMenu != this._openMenuPath[this._openMenuPath.length - 1]) {
@@ -355,6 +371,7 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
         Core.Web.Event.remove(document.body, "contextmenu", this._processMaskClickRef, false);
     },
     
+    /** @see Echo.Render.ComponentSync#renderAdd */
     renderAdd: function(update, parentElement) {
         this.menuModel = this.component.get("model");
         this.stateModel = this.component.get("stateModel");
@@ -365,10 +382,12 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
         parentElement.appendChild(this.element);
     },
     
+    /** @see Echo.Render.ComponentSync#renderUpdate */
     renderDispose: function(update) {
         this.deactivate();
     },
     
+    /** @see Echo.Render.ComponentSync#renderUpdate */
     renderUpdate: function(update) {
         if (update.isUpdatedPropertySetIn({modal: true})) {
             // Do not re-render on update to modal state.
