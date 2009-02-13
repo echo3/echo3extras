@@ -66,22 +66,18 @@ Extras.Sync.Group = Core.extend(Echo.Render.ComponentSync, {
         Echo.Sync.Color.render(this.component.render("foreground"), this._div, "color");
         Echo.Sync.LayoutDirection.render(this.component.getLayoutDirection(), this._div);
     
-        var contentDiv = this._renderContent();
-        var borderParts = this._renderBorder(contentDiv);
-        for (var i = 0; i < borderParts.length; i++) {
-            this._div.appendChild(borderParts[i]);
-        }
+        this._renderBorder(update);
         
         parentElement.appendChild(this._div);
     },
     
     /**
-     * Returns an array of border DIV elements which should be appending to the parent DIV element.
+     * Renders border element, appends to main DIV.  Invokes _renderContent() to render content and append to
+     * DOM hierarchy in appropriate position.
      * 
-     * @param contentDiv the content element
+     * @param {Echo.Update.ComponentUpdate} the update
      */
-    _renderBorder: function(contentDiv) {
-        var borderParts = [];
+    _renderBorder: function(update) {
         var borderInsets = this.component.render("borderInsets", Extras.Sync.Group.DEFAULTS.borderInsets);
         var borderPixelInsets = Echo.Sync.Insets.toPixels(borderInsets);
         var flags = this.component.render("ieAlphaRenderBorder") ? Echo.Sync.FillImage.FLAG_ENABLE_IE_PNG_ALPHA_FILTER : 0;
@@ -159,7 +155,7 @@ Extras.Sync.Group = Core.extend(Echo.Render.ComponentSync, {
             topLeftDiv.appendChild(topDiv);
         }
         
-        borderParts.push(topRightDiv);
+        this._div.appendChild(topRightDiv);
         
         var rightDiv = document.createElement("div");
         rightDiv.style.width = "100%";
@@ -171,9 +167,9 @@ Extras.Sync.Group = Core.extend(Echo.Render.ComponentSync, {
         leftDiv.style.paddingLeft = borderPixelInsets.left + "px";
         Echo.Sync.FillImage.render(this._getBorderImage(3, "repeat-y", 0, 0), 
                 leftDiv, flags);
-        leftDiv.appendChild(contentDiv);
+        this._renderContent(update, leftDiv);
         rightDiv.appendChild(leftDiv);
-        borderParts.push(rightDiv);
+        this._div.appendChild(rightDiv);
         
         var bottomRightDiv = document.createElement("div");
         bottomRightDiv.style.width = "100%";
@@ -194,12 +190,16 @@ Extras.Sync.Group = Core.extend(Echo.Render.ComponentSync, {
         Echo.Sync.FillImage.render(this._getBorderImage(6, "repeat-x", 0, "100%"), 
                 bottomDiv, flags);
         bottomLeftDiv.appendChild(bottomDiv);
-        borderParts.push(bottomRightDiv);
-        
-        return borderParts;
+        this._div.appendChild(bottomRightDiv);
     },
     
-    _renderContent: function(update) {
+    /**
+     * Renders the content (child) of the Group.
+     * 
+     * @param {Echo.Update.ComponentUpdate} the update
+     * @param {Element} the element to which the content should be appended  
+     */
+    _renderContent: function(update, parentElement) {
         var div = document.createElement("div");
         
         Echo.Sync.FillImage.render(this.component.render("backgroundImage"), div);
@@ -213,7 +213,7 @@ Extras.Sync.Group = Core.extend(Echo.Render.ComponentSync, {
             Echo.Render.renderComponentAdd(update, child, div);
         }
         
-        return div;
+        parentElement.appendChild(div);
     },
     
     /** @see Echo.Render.ComponentSync#renderDispose */
