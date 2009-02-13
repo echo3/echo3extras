@@ -190,14 +190,6 @@ Extras.MenuBarPane = Core.extend(Echo.Component, {
         Echo.ComponentFactory.registerType("Extras.MenuBarPane", this);
     },
     
-    $static: {
-        
-        /**
-         * Default inset margin.
-         */
-        DEFAULT_INSETS: "3px 0px"
-    },
-
     /** @see Echo.Component#componentType */
     componentType: "Extras.MenuBarPane",
     

@@ -4,12 +4,16 @@
 Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
     
     $static: {
-        DEFAULT_FOREGROUND: "#000000",
-        DEFAULT_BACKGROUND: "#cfcfcf",
-        DEFAULT_DISABLED_FOREGROUND: "#7f7f7f",
-        DEFAULT_SELECTION_FOREGROUND: "#ffffff",
-        DEFAULT_SELECTION_BACKGROUND: "#3f3f3f",
-        DEFAULT_BORDER: "1px outset #cfcfcf",
+    
+        DEFAULTS: {
+            foreground: "#000000",
+            background: "#cfcfcf",
+            disabledForeground: "#7f7f7f",
+            selectionForeground: "#ffffff",
+            selectionBackground: "#3f3f3f",
+            border: "1px outset #cfcfcf"
+        },
+        
         MAX_Z_INDEX: 65535
     }, 
     
@@ -477,14 +481,14 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
         Echo.Sync.LayoutDirection.render(this.component.getLayoutDirection(), menuContentDiv);
         Echo.Sync.Insets.render(Extras.Sync.Menu.RenderedMenu.defaultMenuInsets, 
                 menuContentDiv, "padding");
-        Echo.Sync.Border.render(this.component.render("menuBorder", Extras.Sync.Menu.DEFAULT_BORDER),
+        Echo.Sync.Border.render(this.component.render("menuBorder", Extras.Sync.Menu.DEFAULTS.border),
                 menuContentDiv);
         var foreground;
         var menuForeground = this.component.render("menuForeground");
         if (menuForeground) {
             foreground = menuForeground;
         } else {
-            foreground = this.component.render("foreground", Extras.Sync.Menu.DEFAULT_FOREGROUND);
+            foreground = this.component.render("foreground", Extras.Sync.Menu.DEFAULTS.foreground);
         }
         Echo.Sync.Color.render(foreground, menuContentDiv, "color");
 
@@ -513,7 +517,7 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
         if (menuBackground) {
             background = menuBackground;
         } else {
-            background = this.component.render("background", Extras.Sync.Menu.DEFAULT_BACKGROUND);
+            background = this.component.render("background", Extras.Sync.Menu.DEFAULTS.background);
         }
         Echo.Sync.Color.render(background, backgroundDiv, "backgroundColor");
 
@@ -597,7 +601,7 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
                 }
                 if (this.stateModel && !this.stateModel.isEnabled(item.modelId)) {
                     Echo.Sync.Color.render(this.component.render("disabledForeground", 
-                            Extras.Sync.Menu.DEFAULT_DISABLED_FOREGROUND), menuItemContentTd, "color");
+                            Extras.Sync.Menu.DEFAULTS.disabledForeground), menuItemContentTd, "color");
                 }
                 menuItemContentTd.appendChild(document.createTextNode(item.text));
                 menuItemTr.appendChild(menuItemContentTd);
@@ -751,9 +755,9 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
         if (state) {
             Echo.Sync.FillImage.render(this.component.render("selectionBackgroundImage"), element);
             Echo.Sync.Color.render(this.component.render("selectionBackground", 
-                    Extras.Sync.Menu.DEFAULT_SELECTION_BACKGROUND), element, "backgroundColor");
+                    Extras.Sync.Menu.DEFAULTS.selectionBackground), element, "backgroundColor");
             Echo.Sync.Color.render(this.component.render("selectionForeground", 
-                    Extras.Sync.Menu.DEFAULT_SELECTION_FOREGROUND), element, "color");
+                    Extras.Sync.Menu.DEFAULTS.selectionForeground), element, "color");
         } else {
             element.style.backgroundImage = "";
             element.style.backgroundColor = "";
@@ -948,11 +952,11 @@ Extras.Sync.DropDownMenu = Core.extend(Extras.Sync.Menu, {
         dropDownDiv.style.cssText = "overflow:hidden;cursor:pointer;";
         
         Echo.Sync.LayoutDirection.render(this.component.getLayoutDirection(), dropDownDiv);
-        Echo.Sync.Color.render(this.component.render("foreground", Extras.Sync.Menu.DEFAULT_FOREGROUND), dropDownDiv, "color");
-        Echo.Sync.Color.render(this.component.render("background", Extras.Sync.Menu.DEFAULT_BACKGROUND), 
+        Echo.Sync.Color.render(this.component.render("foreground", Extras.Sync.Menu.DEFAULTS.foreground), dropDownDiv, "color");
+        Echo.Sync.Color.render(this.component.render("background", Extras.Sync.Menu.DEFAULTS.background), 
                 dropDownDiv, "backgroundColor");
         Echo.Sync.FillImage.render(this.component.render("backgroundImage"), dropDownDiv); 
-        Echo.Sync.Border.render(this.component.render("border", Extras.Sync.Menu.DEFAULT_BORDER), dropDownDiv); 
+        Echo.Sync.Border.render(this.component.render("border", Extras.Sync.Menu.DEFAULTS.border), dropDownDiv); 
         
         var relativeDiv = document.createElement("div");
         relativeDiv.style.cssText = "position:relative;overflow:hidden;";
@@ -1027,7 +1031,10 @@ Extras.Sync.DropDownMenu = Core.extend(Extras.Sync.Menu, {
 Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
 
     $static: {
-        _defaultItemInsets: "0px 12px"
+        DEFAULTS: {
+            itemInsets: "0px 12px",
+            insets: "3px 0px"
+        }
     },
     
     $load: function() {
@@ -1095,7 +1102,7 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
     
     getPreferredSize: function() {
         this._menuBarTable.style.height = "";
-        var insets = Echo.Sync.Insets.toPixels(this.component.render("insets", Extras.MenuBarPane.DEFAULT_INSETS));
+        var insets = Echo.Sync.Insets.toPixels(this.component.render("insets", Extras.Sync.MenuBarPane.DEFAULTS.insets));
         return { height: new Core.Web.Measure.Bounds(this.element).height + insets.top + insets.bottom };
     },
     
@@ -1183,7 +1190,7 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
         menuBarDiv.style.cssText = "overflow:hidden;";
         
         Echo.Sync.renderComponentDefaults(this.component, menuBarDiv);
-        var border = this.component.render("border", Extras.Sync.Menu.DEFAULT_BORDER);
+        var border = this.component.render("border", Extras.Sync.Menu.DEFAULTS.border);
         this._menuBarBorderHeight = Echo.Sync.Border.getPixelSize(border, "top") + Echo.Sync.Border.getPixelSize(border, "bottom"); 
         Echo.Sync.Border.render(border, menuBarDiv, "borderTop");
         Echo.Sync.Border.render(border, menuBarDiv, "borderBottom");
@@ -1211,8 +1218,7 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
                     menuBarTr.appendChild(menuBarItemTd);
                     var menuBarItemDiv = document.createElement("div");
                     menuBarItemDiv.style.whiteSpace = "nowrap";
-                    Echo.Sync.Insets.render(Extras.Sync.MenuBarPane._defaultItemInsets, 
-                            menuBarItemDiv, "padding");
+                    Echo.Sync.Insets.render(Extras.Sync.MenuBarPane.DEFAULTS.itemInsets, menuBarItemDiv, "padding");
                     menuBarItemTd.appendChild(menuBarItemDiv);
                     if (item.icon) {
                         // FIXME no load listeners being set on images for auto-resizing yet.
@@ -1268,9 +1274,9 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
         if (state) {
             Echo.Sync.FillImage.render(this.component.render("selectionBackgroundImage"), element);
             Echo.Sync.Color.render(this.component.render("selectionBackground", 
-                    Extras.Sync.Menu.DEFAULT_SELECTION_BACKGROUND), element, "backgroundColor");
+                    Extras.Sync.Menu.DEFAULTS.selectionBackground), element, "backgroundColor");
             Echo.Sync.Color.render(this.component.render("selectionForeground", 
-                    Extras.Sync.Menu.DEFAULT_SELECTION_FOREGROUND), element, "color");
+                    Extras.Sync.Menu.DEFAULTS.selectionForeground), element, "color");
         } else {
             element.style.backgroundImage = "";
             element.style.backgroundColor = "";
