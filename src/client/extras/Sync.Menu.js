@@ -5,6 +5,9 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
     
     $static: {
     
+        /**
+         * Default rendering values used when component does not specify a property value.
+         */
         DEFAULTS: {
             foreground: "#000000",
             background: "#cfcfcf",
@@ -383,10 +386,16 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
 Extras.Sync.Menu.RenderedMenu = Core.extend({
 
     $static: {
-        defaultIconTextMargin: 5,
-        defaultMenuInsets: "2px",
-        defaultMenuItemInsets: "1px 12px",
-        
+
+        /**
+         * Default rendering values used when component does not specify a property value.
+         */
+        DEFAULTS: {
+            iconTextMargin: 5,
+            menuInsets: "2px",
+            menuItemInsets: "1px 12px"
+        },
+    
         /**
          * Animation effect to fade-in menu.
          */
@@ -479,7 +488,7 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
         this.element.appendChild(menuContentDiv);
 
         Echo.Sync.LayoutDirection.render(this.component.getLayoutDirection(), menuContentDiv);
-        Echo.Sync.Insets.render(Extras.Sync.Menu.RenderedMenu.defaultMenuInsets, 
+        Echo.Sync.Insets.render(Extras.Sync.Menu.RenderedMenu.DEFAULTS.menuInsets, 
                 menuContentDiv, "padding");
         Echo.Sync.Border.render(this.component.render("menuBorder", Extras.Sync.Menu.DEFAULTS.border),
                 menuContentDiv);
@@ -555,12 +564,12 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
         var textPadding, iconPadding;
 
         if (hasIcons) {
-            var pixelInsets = Echo.Sync.Insets.toPixels(Extras.Sync.Menu.RenderedMenu.defaultMenuItemInsets);
+            var pixelInsets = Echo.Sync.Insets.toPixels(Extras.Sync.Menu.RenderedMenu.DEFAULTS.menuItemInsets);
             iconPadding = "0px 0px 0px " + pixelInsets.left + "px";
             textPadding = pixelInsets.top + "px " + pixelInsets.right + "px " + 
                     pixelInsets.bottom + "px " + pixelInsets.left + "px";
         } else {
-            textPadding = Extras.Sync.Menu.RenderedMenu.defaultMenuItemInsets;
+            textPadding = Extras.Sync.Menu.RenderedMenu.DEFAULTS.menuItemInsets;
         }
 
         for (i = 0; i < items.length; ++i) {
@@ -1031,6 +1040,10 @@ Extras.Sync.DropDownMenu = Core.extend(Extras.Sync.Menu, {
 Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
 
     $static: {
+    
+        /**
+         * Default rendering values used when component does not specify a property value.
+         */
         DEFAULTS: {
             itemInsets: "0px 12px",
             insets: "3px 0px"
