@@ -343,7 +343,7 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
             }
         }
         
-        subMenu.add(position.x, position.y);
+        subMenu.open(position.x, position.y);
         
         this.addMenu(subMenu);
     },
@@ -400,6 +400,9 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
     }
 });
 
+/**
+ * A single on-screen rendered menu.
+ */
 Extras.Sync.Menu.RenderedMenu = Core.extend({
 
     $static: {
@@ -440,17 +443,72 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
         })
     },
     
+    /**
+     * The containing menu synchronization peer.
+     * @type Extras.Sync.Menu
+     */
     menuSync: null,
+    
+    /**
+     * The menu component.
+     * @type Echo.Component
+     */
     component: null,
+    
+    /**
+     * The relevant client instance.
+     * @type Echo.Client
+     */
     client: null,
+    
+    /**
+     * The root element of the menu.
+     * @type Element
+     */
     element: null,
+    
+    /**
+     * Mapping between model ids and menu item TR elements.
+     * @type Object
+     */
     itemElements: null,
+    
+    /**
+     * The displayed menu model.
+     * @type Extras.MenuModel
+     */
     menuModel: null,
+    
+    /**
+     * The rendered pixel width of the model.
+     * @type Number
+     */
     width: null,
+    
+    /**
+     * The rendered pixel height of the model.
+     * @type Number
+     */
     height: null,
+    
+    /**
+     * The currently active menu item.
+     * @type Extras.ItemModel
+     */
     _activeItem: null,
+    
+    /**
+     * The menu state model.
+     * @type Extras.MenuStateModel
+     */
     stateModel: null,
     
+    /**
+     * Creates a new <code>RenderedMenu</code>.
+     * 
+     * @param {Extras.Sync.Menu} menuSync the menu synchronization peer
+     * @param {Extras.MenuModel} menuModel the menu model
+     */
     $construct: function(menuSync, menuModel) {
         this.menuSync = menuSync;
         this.menuModel = menuModel;
@@ -458,24 +516,6 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
         this.client = this.menuSync.client;
         this.stateModel = this.menuSync.stateModel;
         this.itemElements = { };
-    },
-
-    add: function(x, y) {
-        this.element.style.left = x + "px";
-        this.element.style.top = y + "px";
-
-        var animationTime = this.component.render("animationTime", 0);
-        if (animationTime && !Core.Web.Env.NOT_SUPPORTED_CSS_OPACITY) {
-            this.element.style.opacity = 0;
-            var fadeAnimation = new Extras.Sync.Menu.RenderedMenu.FadeAnimation(this.element, animationTime);
-            fadeAnimation.start();
-        }
-        document.body.appendChild(this.element);
-
-        Core.Web.Event.add(this.element, "click", Core.method(this, this._processClick), false);
-        Core.Web.Event.add(this.element, "mouseover", Core.method(this, this._processItemEnter), false);
-        Core.Web.Event.add(this.element, "mouseout", Core.method(this, this._processItemExit), false);
-        Core.Web.Event.Selection.disable(this.element);
     },
 
     close: function() {
@@ -713,6 +753,30 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
         return { x: menuBounds.left + menuBounds.width, y: itemBounds.top };
     },
     
+    /**
+     * Opens the rendered menu, displaying it on the screen at the specified position.
+     * 
+     * @param {Number} x the horizontal pixel position
+     * @param {Number} y the vertical pixel position
+     */
+    open: function(x, y) {
+        this.element.style.left = x + "px";
+        this.element.style.top = y + "px";
+
+        var animationTime = this.component.render("animationTime", 0);
+        if (animationTime && !Core.Web.Env.NOT_SUPPORTED_CSS_OPACITY) {
+            this.element.style.opacity = 0;
+            var fadeAnimation = new Extras.Sync.Menu.RenderedMenu.FadeAnimation(this.element, animationTime);
+            fadeAnimation.start();
+        }
+        document.body.appendChild(this.element);
+
+        Core.Web.Event.add(this.element, "click", Core.method(this, this._processClick), false);
+        Core.Web.Event.add(this.element, "mouseover", Core.method(this, this._processItemEnter), false);
+        Core.Web.Event.add(this.element, "mouseout", Core.method(this, this._processItemExit), false);
+        Core.Web.Event.Selection.disable(this.element);
+    },
+
     _processClick: function(e) {
         Core.Web.DOM.preventEventDefault(e);
         var itemModel = this._getItemModel(Core.Web.DOM.getEventTarget(e));
@@ -1074,6 +1138,7 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
     _activeItem: null,
     _menuBarTable: null,
     _menuBarBorderHeight: null,
+    
     itemElements: null,
     
     $construct: function() {
