@@ -91,10 +91,8 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
          * which a submenu should be placed.
          * 
          * @param {Extras.MenuModel} menuModel the submenu
-         * @param {Number} width the width of the menu, in pixels 
-         * @param {Number} height the height of the menu, in pixels 
          */
-        getSubMenuPosition: function(menuModel, width, height) { },
+        getSubMenuPosition: function(menuModel) { },
 
         /**
          * Renders the top level menu of the menu component (that which resides in the DOM at all times).
@@ -329,7 +327,7 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
             this.closeDescendants(parentMenu);
         }
 
-        var position = parentMenu.getSubMenuPosition(menuModel, subMenu.width, subMenu.height);
+        var position = parentMenu.getSubMenuPosition(menuModel);
         var windowBounds = new Core.Web.Measure.Bounds(document.body);
         
         if (position.x + subMenu.width > windowBounds.width) {
@@ -708,7 +706,7 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
         }
     },
     
-    getSubMenuPosition: function(menuModel, width, height) {
+    getSubMenuPosition: function(menuModel) {
         var menuElement = this.itemElements[menuModel.id];
         var itemBounds = new Core.Web.Measure.Bounds(menuElement);
         var menuBounds = new Core.Web.Measure.Bounds(this.element);
@@ -806,7 +804,7 @@ Extras.Sync.ContextMenu = Core.extend(Extras.Sync.Menu, {
     _mouseX: null,
     _mouseY: null,
     
-    getSubMenuPosition: function(menuModel, width, height) {
+    getSubMenuPosition: function(menuModel) {
         return { x: this._mouseX, y: this._mouseY };
     },
 
@@ -939,7 +937,7 @@ Extras.Sync.DropDownMenu = Core.extend(Extras.Sync.Menu, {
         }
     },
 
-    getSubMenuPosition: function(menuModel, width, height) {
+    getSubMenuPosition: function(menuModel) {
         var bounds = new Core.Web.Measure.Bounds(this.element);
         return { x: bounds.left, y: bounds.top + bounds.height };
     },
@@ -1138,7 +1136,7 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
         return { height: new Core.Web.Measure.Bounds(this.element).height + insets.top + insets.bottom };
     },
     
-    getSubMenuPosition: function(menuModel, width, height) {
+    getSubMenuPosition: function(menuModel) {
         var itemElement = this.itemElements[menuModel.id];
         if (!itemElement) {
             throw new Error("Invalid menu: " + menuModel);
