@@ -816,6 +816,11 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
         Core.Web.Event.Selection.disable(this.element);
     },
 
+    /**
+     * Processes a mouse click event.
+     * 
+     * @param e the event
+     */
     _processClick: function(e) {
         Core.Web.DOM.preventEventDefault(e);
         var itemModel = this._getItemModel(Core.Web.DOM.getEventTarget(e));
@@ -824,14 +829,30 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
         }
     },
     
+    /**
+     * Processes a mouse rollover enter event.
+     * 
+     * @param e the event
+     */
     _processItemEnter: function(e) {
         this._processRollover(e, true);
     },
 
+    /**
+     * Processes a mouse rollover exit event.
+     * 
+     * @param e the event
+     */
     _processItemExit: function(e) {
         this._processRollover(e, false);
     },
     
+    /**
+     * Processes mouse rollover events.
+     * 
+     * @param e the event
+     * @param {Boolean} state the rollover state, true indicating the mouse is currently rolled over an item
+     */
     _processRollover: function(e, state) {
         if (!this.client || !this.client.verifyInput(this.component) || Core.Web.dragInProgress) {
             return true;
@@ -855,6 +876,12 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
         }
     },
     
+    /**
+     * Sets the active item.
+     * 
+     * @param {Extras.ItemModel} itemModel the item
+     * @param {Boolean} execute flag indicating whether the item should be executed
+     */
     _setActiveItem: function(itemModel, execute) {
         if (this._activeItem) {
             this._setItemHighlight(this._activeItem, false);
@@ -879,6 +906,12 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
         }
     },
 
+    /**
+     * Sets the highlight state of an item.
+     * 
+     * @param {Extras.ItemModel} itemModel the item
+     * @param {Boolean} state the highlight state
+     */
     _setItemHighlight: function(itemModel, state) {
         var element = this.itemElements[itemModel.id];
         if (state) {
