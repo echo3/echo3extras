@@ -546,6 +546,10 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
         this._activeItem = null;
     },
 
+    /**
+     * Renders DOM element hierarchy of menu.  Does not display it within document (open() method will later
+     * be used to perform this operation).  
+     */
     create: function() {
         var i,
             item,
@@ -730,6 +734,13 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
         this.height = bounds.height;
     },
 
+    /**
+     * Returns the menu item TR element which is a parent of the specified element.
+     * 
+     * @param element an element which is a descendant of a TR element representing a menu item
+     * @return the TR element
+     * @type Element
+     */
     _getItemElement: function(element) {
         if (element == null) {
             return null;
@@ -744,6 +755,13 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
         return element;
     },
     
+    /**
+     * Determines a ItemModel id based on a menu item DOM element.
+     * 
+     * @param element the DOM element
+     * @return the ItemModel id
+     * @type String
+     */
     _getItemModel: function(element) {
         var itemModelId = null;
         element = this._getItemElement(element);
@@ -766,6 +784,7 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
         }
     },
     
+    /** @see Extras.Sync.Menu#getSubMenuPosition */
     getSubMenuPosition: function(menuModel) {
         var menuElement = this.itemElements[menuModel.id];
         var itemBounds = new Core.Web.Measure.Bounds(menuElement);
@@ -888,6 +907,7 @@ Extras.Sync.ContextMenu = Core.extend(Extras.Sync.Menu, {
     _mouseX: null,
     _mouseY: null,
     
+    /** @see Extras.Sync.Menu#getSubMenuPosition */
     getSubMenuPosition: function(menuModel) {
         return { x: this._mouseX, y: this._mouseY };
     },
@@ -906,11 +926,13 @@ Extras.Sync.ContextMenu = Core.extend(Extras.Sync.Menu, {
         this.activateItem(this.menuModel);
     },
 
+    /** @see Echo.Render.ComponentSync#renderDispose */
     renderDispose: function(update) {
         Core.Web.Event.removeAll(this.element);
         Extras.Sync.Menu.prototype.renderDispose.call(this, update);
     },
     
+    /** @see Extras.Sync.Menu#renderMain */
     renderMain: function(update) {
         var contextMenuDiv = document.createElement("div");
         contextMenuDiv.id = this.component.renderId;
@@ -931,6 +953,7 @@ Extras.Sync.ContextMenu = Core.extend(Extras.Sync.Menu, {
         return contextMenuDiv;
     },
     
+    /** @see Echo.Render.ComponentSync#renderUpdate */
     renderUpdate: function(update) {
         if (update.isUpdatedPropertySetIn({ stateModel: true, model: true })) {
             // partial update
@@ -1021,6 +1044,7 @@ Extras.Sync.DropDownMenu = Core.extend(Extras.Sync.Menu, {
         }
     },
 
+    /** @see Extras.Sync.Menu#getSubMenuPosition */
     getSubMenuPosition: function(menuModel) {
         var bounds = new Core.Web.Measure.Bounds(this.element);
         return { x: bounds.left, y: bounds.top + bounds.height };
@@ -1046,16 +1070,19 @@ Extras.Sync.DropDownMenu = Core.extend(Extras.Sync.Menu, {
         this.activateItem(this.menuModel);
     },
     
+    /** @see Echo.Render.ComponentSync#renderDisplay */
     renderDisplay: function() {
         Core.Web.VirtualPosition.redraw(this._containerDiv);
     },
     
+    /** @see Echo.Render.ComponentSync#renderDispose */
     renderDispose: function(update) {
         Core.Web.Event.removeAll(this.element);
         this._containerDiv = null;
         Extras.Sync.Menu.prototype.renderDispose.call(this, update);
     },
     
+    /** @see Extras.Sync.Menu#renderMain */
     renderMain: function() {
         var dropDownDiv = document.createElement("div");
         dropDownDiv.id = this.component.renderId;
@@ -1221,6 +1248,7 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
         return { height: new Core.Web.Measure.Bounds(this.element).height + insets.top + insets.bottom };
     },
     
+    /** @see Extras.Sync.Menu#getSubMenuPosition */
     getSubMenuPosition: function(menuModel) {
         var itemElement = this.itemElements[menuModel.id];
         if (!itemElement) {
@@ -1286,6 +1314,7 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
         }
     },
     
+    /** @see Echo.Render.ComponentSync#renderDisplay */
     renderDisplay: function() {
         Core.Web.VirtualPosition.redraw(this.element);
         var bounds = new Core.Web.Measure.Bounds(this.element.parentNode);
@@ -1293,12 +1322,14 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
         this._menuBarTable.style.height = height <= 0 ? "" : height + "px";
     },
 
+    /** @see Echo.Render.ComponentSync#renderDispose */
     renderDispose: function(update) {
         this._menuBarTable = null;
         Core.Web.Event.removeAll(this.element);
         Extras.Sync.Menu.prototype.renderDispose.call(this, update);
     },
     
+    /** @see Extras.Sync.Menu#renderMain */
     renderMain: function(update) {
         var menuBarDiv = document.createElement("div");
         menuBarDiv.id = this.component.renderId;
