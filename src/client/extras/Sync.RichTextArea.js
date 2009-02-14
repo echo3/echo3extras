@@ -5,39 +5,53 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
     
     $static: {
 
-        DEFAULT_CONTROL_PANE_SPLIT_PANE_STYLE: {
-            orientation: Echo.SplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP,
-            separatorColor: "#dfdfef",
-            separatorHeight: 1,
-            autoPositioned: true
-        },
-        
-        DEFAULT_CONTROL_PANE_ROW_STYLE: {
-            insets: "2px 10px",
-            cellSpacing: 3,
-            layoutData: {
-                overflow: Echo.SplitPane.OVERFLOW_HIDDEN,
-                background: "#cfcfdf"
+        /**
+         * Default rendering values used when component does not specify a property value.
+         */
+        DEFAULTS: {
+    
+            /**
+             * Default style object applied to control panes.
+             */
+            controlPaneStyle: {
+                separatorColor: "#dfdfef",
+                separatorHeight: 1,
+                autoPositioned: true
+            },
+            
+            /**
+             * Default style object applied to control pane option button container rows.
+             */
+            controlPaneRowStyle: {
+                insets: "2px 10px",
+                cellSpacing: 3,
+                layoutData: {
+                    overflow: Echo.SplitPane.OVERFLOW_HIDDEN,
+                    background: "#cfcfdf"
+                }
+            },
+            
+            /**
+             * Default style object applied to control pane option buttons.
+             */
+            controlPaneButtonStyle: {
+                insets: "0px 8px",
+                lineWrap: false,
+                foreground: "#000000",
+                rolloverEnabled: true,
+                rolloverForeground: "#6f0f0f"
+            },
+            
+            /**
+             * Default enabled feature set.
+             */
+            features: {
+                menu: true, toolbar: true, undo: true, clipboard: true, alignment: true, foreground: true, background: true,
+                list: true, table: true, image: true, horizontalRule: true, hyperlink: true, subscript: true, 
+                bold: true, italic: true, underline: true, strikethrough: true, paragraphStyle: true, indent: true
             }
         },
         
-        DEFAULT_CONTROL_PANE_BUTTON_STYLE: {
-            insets: "0px 8px",
-            lineWrap: false,
-            foreground: "#000000",
-            rolloverEnabled: true,
-            rolloverForeground: "#6f0f0f"
-        },
-        
-        /**
-         * Default enabled feature set.
-         */
-        defaultFeatures: {
-            menu: true, toolbar: true, undo: true, clipboard: true, alignment: true, foreground: true, background: true,
-            list: true, table: true, image: true, horizontalRule: true, hyperlink: true, subscript: true, 
-            bold: true, italic: true, underline: true, strikethrough: true, paragraphStyle: true, indent: true
-        },
-
         /**
          * Default localization strings.
          */
@@ -234,7 +248,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
     },
 
     createComponent: function() {
-        var features = this.component.render("features", Extras.Sync.RichTextArea.defaultFeatures);
+        var features = this.component.render("features", Extras.Sync.RichTextArea.DEFAULTS.features);
 
         var contentPane = new Echo.ContentPane();
         var cursor = contentPane;
@@ -281,7 +295,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
      * @type Extras.MenuModel
      */
     _createMainMenuBarModel: function() {
-        var features = this.component.render("features", Extras.Sync.RichTextArea.defaultFeatures);
+        var features = this.component.render("features", Extras.Sync.RichTextArea.DEFAULTS.features);
         var menu = new Extras.MenuModel(null, null, null);
         
         if (features.undo || features.clipboard) {
@@ -429,7 +443,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
      */
     _createToolbar: function() {
         var row, button;
-        var features = this.component.render("features", Extras.Sync.RichTextArea.defaultFeatures);
+        var features = this.component.render("features", Extras.Sync.RichTextArea.DEFAULTS.features);
         var controlsRow;
         var panel = new Echo.Panel({
             styleName: this.component.render("toolbarPanelStyleName"),
@@ -841,11 +855,11 @@ Extras.Sync.RichTextArea.AbstractDialog = Core.extend(Echo.WindowPane, {
                     orientation: Echo.SplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP,
                     autoPositioned: true,
                     styleName: controlPaneSplitPaneStyleName,
-                    style: controlPaneSplitPaneStyleName ? null : Extras.Sync.RichTextArea.DEFAULT_CONTROL_PANE_SPLIT_PANE_STYLE,
+                    style: controlPaneSplitPaneStyleName ? null : Extras.Sync.RichTextArea.DEFAULTS.controlPaneStyle,
                     children: [
                         this.controlsRow = new Echo.Row({
                             styleName: controlPaneRowStyleName,
-                            style: controlPaneRowStyleName ? null : Extras.Sync.RichTextArea.DEFAULT_CONTROL_PANE_ROW_STYLE
+                            style: controlPaneRowStyleName ? null : Extras.Sync.RichTextArea.DEFAULTS.controlPaneRowStyle
                         }),
                         content
                     ]
@@ -855,7 +869,7 @@ Extras.Sync.RichTextArea.AbstractDialog = Core.extend(Echo.WindowPane, {
         
         this.controlsRow.add(new Echo.Button({
             styleName: controlPaneButtonStyleName,
-            style: controlPaneButtonStyleName ? null : Extras.Sync.RichTextArea.DEFAULT_CONTROL_PANE_BUTTON_STYLE,
+            style: controlPaneButtonStyleName ? null : Extras.Sync.RichTextArea.DEFAULTS.controlPaneButtonStyle,
             text: richTextArea.peer._msg["Generic.Ok"],
             icon: richTextArea.peer._icons.ok,
             events: {
@@ -866,7 +880,7 @@ Extras.Sync.RichTextArea.AbstractDialog = Core.extend(Echo.WindowPane, {
         if (type == Extras.Sync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL) {
             this.controlsRow.add(new Echo.Button({
                 styleName: controlPaneButtonStyleName,
-                style: controlPaneButtonStyleName ? null : Extras.Sync.RichTextArea.DEFAULT_CONTROL_PANE_BUTTON_STYLE,
+                style: controlPaneButtonStyleName ? null : Extras.Sync.RichTextArea.DEFAULTS.controlPaneButtonStyle,
                 text: richTextArea.peer._msg["Generic.Cancel"],
                 icon: richTextArea.peer._icons.cancel,
                 events: {
