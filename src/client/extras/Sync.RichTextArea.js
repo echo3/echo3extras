@@ -156,7 +156,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         processInsertHyperlink: function(e) {
             var hyperlinkDialog = new Extras.Sync.RichTextArea.HyperlinkDialog(this.component);
             hyperlinkDialog.addListener("insertHyperlink", Core.method(this, function(e) {
-                this._richTextInput.peer._insertHtml("<a href=\"" + e.data.url + "\">" +
+                this._richTextInput.peer.insertHtml("<a href=\"" + e.data.url + "\">" +
                         (e.data.description ? e.data.description : e.data.url) + "</a>");
                 this.focusDocument();
             }));
@@ -169,7 +169,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         processInsertImage: function(e) {
             var imageDialog = new Extras.Sync.RichTextArea.ImageDialog(this.component);
             imageDialog.addListener("insertImage", Core.method(this, function(e) {
-                this._richTextInput.peer._insertHtml("<img src=\"" + e.data.url + "\">");
+                this._richTextInput.peer.insertHtml("<img src=\"" + e.data.url + "\">");
                 this.focusDocument();
             }));
             this._openDialog(imageDialog);
@@ -225,7 +225,9 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
     /**
      * Localized messages for rendered locale.
      */
-    _msg: null,
+    msg: null,
+    
+    icons: null,
     
     /**
      * {Boolean} Flag indicating whether the parent component is a pane, and thus whether the RichTextArea should consume
@@ -299,48 +301,48 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         var menu = new Extras.MenuModel(null, null, null);
         
         if (features.undo || features.clipboard) {
-            var editMenu = new Extras.MenuModel(null, this._msg["Menu.Edit"], null);
+            var editMenu = new Extras.MenuModel(null, this.msg["Menu.Edit"], null);
             if (features.undo) {
-                editMenu.addItem(new Extras.OptionModel("/undo", this._msg["Menu.Undo"], this._icons.undo));
-                editMenu.addItem(new Extras.OptionModel("/redo", this._msg["Menu.Redo"], this._icons.redo));
+                editMenu.addItem(new Extras.OptionModel("/undo", this.msg["Menu.Undo"], this.icons.undo));
+                editMenu.addItem(new Extras.OptionModel("/redo", this.msg["Menu.Redo"], this.icons.redo));
             }
             if (features.undo && features.clipboard) {
                 editMenu.addItem(new Extras.SeparatorModel());
             }
             if (features.clipboard) {
-                editMenu.addItem(new Extras.OptionModel("cut", this._msg["Menu.Cut"], this._icons.cut));
-                editMenu.addItem(new Extras.OptionModel("copy", this._msg["Menu.Copy"], this._icons.copy));
-                editMenu.addItem(new Extras.OptionModel("paste", this._msg["Menu.Paste"], this._icons.paste));
-                editMenu.addItem(new Extras.OptionModel("delete", this._msg["Menu.Delete"], this._icons["delete"]));
+                editMenu.addItem(new Extras.OptionModel("cut", this.msg["Menu.Cut"], this.icons.cut));
+                editMenu.addItem(new Extras.OptionModel("copy", this.msg["Menu.Copy"], this.icons.copy));
+                editMenu.addItem(new Extras.OptionModel("paste", this.msg["Menu.Paste"], this.icons.paste));
+                editMenu.addItem(new Extras.OptionModel("delete", this.msg["Menu.Delete"], this.icons["delete"]));
                 editMenu.addItem(new Extras.SeparatorModel());
-                editMenu.addItem(new Extras.OptionModel("/selectall", this._msg["Menu.SelectAll"], this._icons.selectAll));
+                editMenu.addItem(new Extras.OptionModel("/selectall", this.msg["Menu.SelectAll"], this.icons.selectAll));
             }
             menu.addItem(editMenu);
         }
         
         if (features.list || features.horizontalRule || features.image || features.hyperlink || features.table) {
-            var insertMenu = new Extras.MenuModel(null, this._msg["Menu.Insert"], null);
+            var insertMenu = new Extras.MenuModel(null, this.msg["Menu.Insert"], null);
             if (features.list) {
-                insertMenu.addItem(new Extras.OptionModel("/insertunorderedlist", this._msg["Menu.BulletedList"],
-                        this._icons.bulletedList));
-                insertMenu.addItem(new Extras.OptionModel("/insertorderedlist", this._msg["Menu.NumberedList"],
-                        this._icons.numberedList));
+                insertMenu.addItem(new Extras.OptionModel("/insertunorderedlist", this.msg["Menu.BulletedList"],
+                        this.icons.bulletedList));
+                insertMenu.addItem(new Extras.OptionModel("/insertorderedlist", this.msg["Menu.NumberedList"],
+                        this.icons.numberedList));
             }
             insertMenu.addItem(new Extras.SeparatorModel());
             if (features.horizontalRule) {
-                insertMenu.addItem(new Extras.OptionModel("/inserthorizontalrule", this._msg["Menu.InsertHorizontalRule"],
-                        this._icons.horizontalRule));
+                insertMenu.addItem(new Extras.OptionModel("/inserthorizontalrule", this.msg["Menu.InsertHorizontalRule"],
+                        this.icons.horizontalRule));
             }
             if (features.image) {
-                insertMenu.addItem(new Extras.OptionModel("insertimage", this._msg["Menu.InsertImage"], this._icons.image));
+                insertMenu.addItem(new Extras.OptionModel("insertimage", this.msg["Menu.InsertImage"], this.icons.image));
             }
             if (features.hyperlink) {
-                insertMenu.addItem(new Extras.OptionModel("inserthyperlink", this._msg["Menu.InsertHyperlink"],
-                        this._icons.hyperlink));
+                insertMenu.addItem(new Extras.OptionModel("inserthyperlink", this.msg["Menu.InsertHyperlink"],
+                        this.icons.hyperlink));
             }
             insertMenu.addItem(new Extras.SeparatorModel());
             if (features.table) {
-                insertMenu.addItem(new Extras.OptionModel("inserttable", this._msg["Menu.InsertTable"], this._icons.table));
+                insertMenu.addItem(new Extras.OptionModel("inserttable", this.msg["Menu.InsertTable"], this.icons.table));
             }
             menu.addItem(insertMenu);
         }
@@ -348,69 +350,69 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         if (features.bold || features.italic || features.underline || features.strikeThrough || 
                 features.subscript || features.paragraphStyle || features.alignment || features.indent || 
                 features.foreground || features.background) {
-            var formatMenu =  new Extras.MenuModel(null, this._msg["Menu.Format"], null);
+            var formatMenu =  new Extras.MenuModel(null, this.msg["Menu.Format"], null);
             if (features.bold || features.italic || features.underline || features.strikeThrough || 
                     features.subscript) {
             }
             if (features.paragraphStyle) {
-                formatMenu.addItem(new Extras.MenuModel(null, this._msg["Menu.ParagraphStyle"], this._icons.paragraphStyle, [
-                    new Extras.OptionModel("/formatblock/<p>", this._msg["Menu.Normal"], this._icons.styleNormal),
-                    new Extras.OptionModel("/formatblock/<pre>", this._msg["Menu.Preformatted"], this._icons.stylePreformatted),
-                    new Extras.OptionModel("/formatblock/<h1>", this._msg["Menu.Heading1"], this._icons.styleH1),
-                    new Extras.OptionModel("/formatblock/<h2>", this._msg["Menu.Heading2"], this._icons.styleH2),
-                    new Extras.OptionModel("/formatblock/<h3>", this._msg["Menu.Heading3"], this._icons.styleH3),
-                    new Extras.OptionModel("/formatblock/<h4>", this._msg["Menu.Heading4"], this._icons.styleH4),
-                    new Extras.OptionModel("/formatblock/<h5>", this._msg["Menu.Heading5"], this._icons.styleH5),
-                    new Extras.OptionModel("/formatblock/<h6>", this._msg["Menu.Heading6"], this._icons.styleH6)
+                formatMenu.addItem(new Extras.MenuModel(null, this.msg["Menu.ParagraphStyle"], this.icons.paragraphStyle, [
+                    new Extras.OptionModel("/formatblock/<p>", this.msg["Menu.Normal"], this.icons.styleNormal),
+                    new Extras.OptionModel("/formatblock/<pre>", this.msg["Menu.Preformatted"], this.icons.stylePreformatted),
+                    new Extras.OptionModel("/formatblock/<h1>", this.msg["Menu.Heading1"], this.icons.styleH1),
+                    new Extras.OptionModel("/formatblock/<h2>", this.msg["Menu.Heading2"], this.icons.styleH2),
+                    new Extras.OptionModel("/formatblock/<h3>", this.msg["Menu.Heading3"], this.icons.styleH3),
+                    new Extras.OptionModel("/formatblock/<h4>", this.msg["Menu.Heading4"], this.icons.styleH4),
+                    new Extras.OptionModel("/formatblock/<h5>", this.msg["Menu.Heading5"], this.icons.styleH5),
+                    new Extras.OptionModel("/formatblock/<h6>", this.msg["Menu.Heading6"], this.icons.styleH6)
                 ]));
             }
             if (features.bold || features.italic || features.underline || features.strikeThrough || features.subscript) {
-                var textMenu = new Extras.MenuModel(null, this._msg["Menu.TextStyle"], this._icons.textStyle);
-                textMenu.addItem(new Extras.OptionModel("/removeformat",  this._msg["Menu.PlainText"], this._icons.plainText));
+                var textMenu = new Extras.MenuModel(null, this.msg["Menu.TextStyle"], this.icons.textStyle);
+                textMenu.addItem(new Extras.OptionModel("/removeformat",  this.msg["Menu.PlainText"], this.icons.plainText));
                 textMenu.addItem(new Extras.SeparatorModel());
                 if (features.bold) {
-                    textMenu.addItem(new Extras.OptionModel("/bold",  this._msg["Menu.Bold"], this._icons.bold));
+                    textMenu.addItem(new Extras.OptionModel("/bold",  this.msg["Menu.Bold"], this.icons.bold));
                 }
                 if (features.italic) {
-                    textMenu.addItem(new Extras.OptionModel("/italic",  this._msg["Menu.Italic"], this._icons.italic));
+                    textMenu.addItem(new Extras.OptionModel("/italic",  this.msg["Menu.Italic"], this.icons.italic));
                 }
                 if (features.underline) {
-                    textMenu.addItem(new Extras.OptionModel("/underline",  this._msg["Menu.Underline"], this._icons.underline));
+                    textMenu.addItem(new Extras.OptionModel("/underline",  this.msg["Menu.Underline"], this.icons.underline));
                 }
                 if (features.strikethrough) {
-                    textMenu.addItem(new Extras.OptionModel("/strikethrough",  this._msg["Menu.Strikethrough"],
-                            this._icons.strikethrough));
+                    textMenu.addItem(new Extras.OptionModel("/strikethrough",  this.msg["Menu.Strikethrough"],
+                            this.icons.strikethrough));
                 }
                 textMenu.addItem(new Extras.SeparatorModel());
                 if (features.subscript) {
-                    textMenu.addItem(new Extras.OptionModel("/superscript", this._msg["Menu.Superscript"], 
-                            this._icons.superscript));
-                    textMenu.addItem(new Extras.OptionModel("/subscript", this._msg["Menu.Subscript"], this._icons.subscript));
+                    textMenu.addItem(new Extras.OptionModel("/superscript", this.msg["Menu.Superscript"], 
+                            this.icons.superscript));
+                    textMenu.addItem(new Extras.OptionModel("/subscript", this.msg["Menu.Subscript"], this.icons.subscript));
                 }
                 formatMenu.addItem(textMenu);
             }
             if (features.alignment) {
-                formatMenu.addItem(new Extras.MenuModel(null, this._msg["Menu.Alignment"], this._icons.alignment, [
-                    new Extras.OptionModel("/justifyleft",  this._msg["Menu.Left"], this._icons.alignmentLeft),
-                    new Extras.OptionModel("/justifycenter",  this._msg["Menu.Center"], this._icons.alignmentCenter),
-                    new Extras.OptionModel("/justifyright",  this._msg["Menu.Right"], this._icons.alignmentRight),
-                    new Extras.OptionModel("/justifyfull",  this._msg["Menu.Justified"], this._icons.alignmentJustify)
+                formatMenu.addItem(new Extras.MenuModel(null, this.msg["Menu.Alignment"], this.icons.alignment, [
+                    new Extras.OptionModel("/justifyleft",  this.msg["Menu.Left"], this.icons.alignmentLeft),
+                    new Extras.OptionModel("/justifycenter",  this.msg["Menu.Center"], this.icons.alignmentCenter),
+                    new Extras.OptionModel("/justifyright",  this.msg["Menu.Right"], this.icons.alignmentRight),
+                    new Extras.OptionModel("/justifyfull",  this.msg["Menu.Justified"], this.icons.alignmentJustify)
                 ]));
             }
             formatMenu.addItem(new Extras.SeparatorModel());
             if (features.indent) {
-                formatMenu.addItem(new Extras.OptionModel("/indent",  this._msg["Menu.Indent"], this._icons.indent));
-                formatMenu.addItem(new Extras.OptionModel("/outdent",  this._msg["Menu.Outdent"], this._icons.outdent));
+                formatMenu.addItem(new Extras.OptionModel("/indent",  this.msg["Menu.Indent"], this.icons.indent));
+                formatMenu.addItem(new Extras.OptionModel("/outdent",  this.msg["Menu.Outdent"], this.icons.outdent));
             }
             formatMenu.addItem(new Extras.SeparatorModel());
             if (features.foreground || features.background) {
                 if (features.foreground) {
-                    formatMenu.addItem(new Extras.OptionModel("foreground",  this._msg["Menu.SetForeground"], 
-                            this._icons.foreground));
+                    formatMenu.addItem(new Extras.OptionModel("foreground",  this.msg["Menu.SetForeground"], 
+                            this.icons.foreground));
                 }
                 if (features.background) {
-                    formatMenu.addItem(new Extras.OptionModel("background",  this._msg["Menu.SetBackground"], 
-                            this._icons.background));
+                    formatMenu.addItem(new Extras.OptionModel("background",  this.msg["Menu.SetBackground"], 
+                            this.icons.background));
                 }
             }
             menu.addItem(formatMenu);
@@ -467,14 +469,14 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
             });
             this._styleSelect = new Echo.SelectField({
                 items: [
-                    { id: "p", text: this._msg["Menu.Normal"] },
-                    { id: "pre", text: this._msg["Menu.Preformatted"] },
-                    { id: "h1", text: this._msg["Menu.Heading1"] },
-                    { id: "h2", text: this._msg["Menu.Heading2"] },
-                    { id: "h3", text: this._msg["Menu.Heading3"] },
-                    { id: "h4", text: this._msg["Menu.Heading4"] },
-                    { id: "h5", text: this._msg["Menu.Heading5"] },
-                    { id: "h6", text: this._msg["Menu.Heading6"] }
+                    { id: "p", text: this.msg["Menu.Normal"] },
+                    { id: "pre", text: this.msg["Menu.Preformatted"] },
+                    { id: "h1", text: this.msg["Menu.Heading1"] },
+                    { id: "h2", text: this.msg["Menu.Heading2"] },
+                    { id: "h3", text: this.msg["Menu.Heading3"] },
+                    { id: "h4", text: this.msg["Menu.Heading4"] },
+                    { id: "h5", text: this.msg["Menu.Heading5"] },
+                    { id: "h6", text: this.msg["Menu.Heading6"] }
                 ],
                 events: {
                     action: actionListener
@@ -487,8 +489,8 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         if (features.undo) {
             controlsRow.add(new Echo.Row({
                 children: [
-                    this._createToolbarButton("<<<", this._icons.undo, this._msg["Menu.Undo"], this._processCommand, "undo"),
-                    this._createToolbarButton(">>>", this._icons.redo, this._msg["Menu.Redo"], this._processCommand, "redo")
+                    this._createToolbarButton("<<<", this.icons.undo, this.msg["Menu.Undo"], this._processCommand, "undo"),
+                    this._createToolbarButton(">>>", this.icons.redo, this.msg["Menu.Redo"], this._processCommand, "redo")
                 ]
             }));
         }
@@ -497,18 +499,18 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         if (features.bold || features.italic || features.underline) {
             row = new Echo.Row();
             if (features.bold) {
-                button = this._createToolbarButton("B", this._icons.bold, this._msg["Menu.Bold"], this._processCommand, "bold");
+                button = this._createToolbarButton("B", this.icons.bold, this.msg["Menu.Bold"], this._processCommand, "bold");
                 button.set("toggle", true);
                 row.add(button);
             }
             if (features.italic) {
-                button = this._createToolbarButton("I", this._icons.italic, this._msg["Menu.Italic"], 
+                button = this._createToolbarButton("I", this.icons.italic, this.msg["Menu.Italic"], 
                         this._processCommand, "italic");
                 button.set("toggle", true);
                 row.add(button);
             }
             if (features.underline) {
-                button = this._createToolbarButton("U", this._icons.underline, this._msg["Menu.Underline"], 
+                button = this._createToolbarButton("U", this.icons.underline, this.msg["Menu.Underline"], 
                         this._processCommand, "underline");
                 button.set("toggle", true);
                 row.add(button);
@@ -520,9 +522,9 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         if (features.subscript) {
             controlsRow.add(new Echo.Row({
                 children: [
-                    this._createToolbarButton("^", this._icons.superscript, this._msg["Menu.Superscript"], 
+                    this._createToolbarButton("^", this.icons.superscript, this.msg["Menu.Superscript"], 
                             this._processCommand, "superscript"),
-                    this._createToolbarButton("v", this._icons.subscript,this._msg["Menu.Subscript"], 
+                    this._createToolbarButton("v", this.icons.subscript,this.msg["Menu.Subscript"], 
                             this._processCommand, "subscript")
                 ]
             }));
@@ -532,13 +534,13 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         if (features.alignment) {
             controlsRow.add(new Echo.Row({
                 children: [
-                    this._createToolbarButton("<-", this._icons.alignmentLeft, this._msg["Menu.Left"], 
+                    this._createToolbarButton("<-", this.icons.alignmentLeft, this.msg["Menu.Left"], 
                             this._processCommand, "justifyleft"),
-                    this._createToolbarButton("-|-", this._icons.alignmentCenter, this._msg["Menu.Center"], 
+                    this._createToolbarButton("-|-", this.icons.alignmentCenter, this.msg["Menu.Center"], 
                             this._processCommand, "justifycenter"),
-                    this._createToolbarButton("->", this._icons.alignmentRight, this._msg["Menu.Right"], 
+                    this._createToolbarButton("->", this.icons.alignmentRight, this.msg["Menu.Right"], 
                             this._processCommand, "justifyright"),
-                    this._createToolbarButton("||", this._icons.alignmentJustify, this._msg["Menu.Justified"], 
+                    this._createToolbarButton("||", this.icons.alignmentJustify, this.msg["Menu.Justified"], 
                             this._processCommand, "justifyfull")
                 ]
             }));
@@ -548,11 +550,11 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         if (features.foreground || features.background) {
             row = new Echo.Row();
             if (features.foreground) {
-                row.add(this._createToolbarButton("FG", this._icons.foreground, this._msg["Menu.SetForeground"], 
+                row.add(this._createToolbarButton("FG", this.icons.foreground, this.msg["Menu.SetForeground"], 
                         this.processSetForeground, "foreground"));
             }
             if (features.background) {
-                row.add(this._createToolbarButton("BG", this._icons.background, this._msg["Menu.SetBackground"], 
+                row.add(this._createToolbarButton("BG", this.icons.background, this.msg["Menu.SetBackground"], 
                         this.processSetBackground, "background"));
             }
             controlsRow.add(row);
@@ -562,25 +564,25 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         if (features.list || features.horizontalRule || features.image || features.hyperlink || features.table) {
             row = new Echo.Row();
             if (features.list) {
-                row.add(this._createToolbarButton("Bulleted List", this._icons.bulletedList, this._msg["Menu.BulletedList"], 
+                row.add(this._createToolbarButton("Bulleted List", this.icons.bulletedList, this.msg["Menu.BulletedList"], 
                         this._processCommand, "insertunorderedlist"));
-                row.add(this._createToolbarButton("Numbered List", this._icons.numberedList, this._msg["Menu.NumberedList"], 
+                row.add(this._createToolbarButton("Numbered List", this.icons.numberedList, this.msg["Menu.NumberedList"], 
                         this._processCommand, "insertorderedlist"));
             }
             if (features.horizontalRule) {
-                row.add(this._createToolbarButton("Horizontal Rule", this._icons.horizontalRule,
-                        this._msg["Menu.InsertHorizontalRule"],  this._processCommand, "inserthorizontalrule"));
+                row.add(this._createToolbarButton("Horizontal Rule", this.icons.horizontalRule,
+                        this.msg["Menu.InsertHorizontalRule"],  this._processCommand, "inserthorizontalrule"));
             }
             if (features.image) {
-                row.add(this._createToolbarButton("Image", this._icons.image, this._msg["Menu.InsertImage"], 
+                row.add(this._createToolbarButton("Image", this.icons.image, this.msg["Menu.InsertImage"], 
                         this.processInsertImage));
             }
             if (features.hyperlink) {
-                row.add(this._createToolbarButton("Hyperlink", this._icons.hyperlink, this._msg["Menu.InsertHyperlink"], 
+                row.add(this._createToolbarButton("Hyperlink", this.icons.hyperlink, this.msg["Menu.InsertHyperlink"], 
                         this.processInsertHyperlink));
             }
             if (features.table) {
-                row.add(this._createToolbarButton("Table", this._icons.table, this._msg["Menu.InsertTable"], 
+                row.add(this._createToolbarButton("Table", this.icons.table, this.msg["Menu.InsertTable"], 
                         this.processInsertTable));
             }
             controlsRow.add(row);
@@ -638,7 +640,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
     },
     
     insertHtml: function(html) {
-        this._richTextInput.peer._insertHtml(html);
+        this._richTextInput.peer.insertHtml(html);
     },
     
     insertImage: function(url) {
@@ -691,7 +693,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
     },
     
     _processComponentInsertHtml: function(e) {
-        this._richTextInput.peer._insertHtml(e.html);
+        this._richTextInput.peer.insertHtml(e.html);
     },
     
     _processDialogClose: function(e) {
@@ -743,7 +745,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
                     this._richTextInput.peer.execCommand(e.modelId);
                 } catch (ex) {
                     this._openDialog(new Extras.Sync.RichTextArea.MessageDialog(this.component,
-                            this._msg["Generic.Error"], this._msg["Error.ClipboardAccessDisabled"])); 
+                            this.msg["Generic.Error"], this.msg["Error.ClipboardAccessDisabled"])); 
                 }
             }
         }
@@ -755,11 +757,11 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
     
     renderAdd: function(update, parentElement) {
         this._addComponentListeners();
-        this._msg = Extras.Sync.RichTextArea.resource.get(this.component.getRenderLocale());
+        this.msg = Extras.Sync.RichTextArea.resource.get(this.component.getRenderLocale());
 
-        this._icons = this.getIcons();
-        if (!this._icons) {
-            this._icons = {};
+        this.icons = this.getIcons();
+        if (!this.icons) {
+            this.icons = {};
         }
         
         this._paneRender = this.component.parent.pane;
@@ -791,7 +793,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
     
     renderUpdate: function(update) {
         if (update.isUpdatedPropertySetIn({text: true })) {
-            this._richTextInput.peer._loadData();
+            this._richTextInput.peer.loadData();
             update.renderContext.displayRequired = [];
             return;
         }
@@ -899,8 +901,8 @@ Extras.Sync.RichTextArea.AbstractDialog = Core.extend(Echo.WindowPane, {
         this.controlsRow.add(new Echo.Button({
             styleName: controlPaneButtonStyleName,
             style: controlPaneButtonStyleName ? null : Extras.Sync.RichTextArea.DEFAULTS.controlPaneButtonStyle,
-            text: richTextArea.peer._msg["Generic.Ok"],
-            icon: richTextArea.peer._icons.ok,
+            text: richTextArea.peer.msg["Generic.Ok"],
+            icon: richTextArea.peer.icons.ok,
             events: {
                 action: Core.method(this, this.processOk)
             }
@@ -911,8 +913,8 @@ Extras.Sync.RichTextArea.AbstractDialog = Core.extend(Echo.WindowPane, {
             this.controlsRow.add(new Echo.Button({
                 styleName: controlPaneButtonStyleName,
                 style: controlPaneButtonStyleName ? null : Extras.Sync.RichTextArea.DEFAULTS.controlPaneButtonStyle,
-                text: richTextArea.peer._msg["Generic.Cancel"],
-                icon: richTextArea.peer._icons.cancel,
+                text: richTextArea.peer.msg["Generic.Cancel"],
+                icon: richTextArea.peer.icons.cancel,
                 events: {
                     action: Core.method(this, this.processCancel)
                 }
@@ -998,9 +1000,9 @@ Extras.Sync.RichTextArea.ColorDialog = Core.extend(Extras.Sync.RichTextArea.Abst
         Extras.Sync.RichTextArea.AbstractDialog.call(this, richTextArea,
                 Extras.Sync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL, 
                 {
-                    title: richTextArea.peer._msg[setBackground ? 
+                    title: richTextArea.peer.msg[setBackground ? 
                             "ColorDialog.Title.Background" : "ColorDialog.Title.Foreground"],
-                    icon: setBackground ? richTextArea.peer._icons.background : richTextArea.peer._icons.foreground,
+                    icon: setBackground ? richTextArea.peer.icons.background : richTextArea.peer.icons.foreground,
                     contentWidth: "32em",
                     contentHeight: "22em"
                 },
@@ -1011,7 +1013,7 @@ Extras.Sync.RichTextArea.ColorDialog = Core.extend(Extras.Sync.RichTextArea.Abst
                         new Echo.Column({
                             children: [
                                 new Echo.Label({
-                                    text: richTextArea.peer._msg[
+                                    text: richTextArea.peer.msg[
                                             setBackground ? "ColorDialog.PromptBackground" : "ColorDialog.PromptForeground"]
                                 }),
                                 this._colorSelect = new Extras.ColorSelect({
@@ -1063,20 +1065,20 @@ Extras.Sync.RichTextArea.HyperlinkDialog = Core.extend(Extras.Sync.RichTextArea.
         Extras.Sync.RichTextArea.AbstractDialog.call(this, richTextArea,
                 Extras.Sync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL,
                 {
-                    title: richTextArea.peer._msg["HyperlinkDialog.Title"], 
-                    icon: richTextArea.peer._icons.hyperlink
+                    title: richTextArea.peer.msg["HyperlinkDialog.Title"], 
+                    icon: richTextArea.peer.icons.hyperlink
                 },
                 new Echo.Column({
                     insets: 10,
                     children: [
                         new Echo.Label({
-                            text: richTextArea.peer._msg["HyperlinkDialog.PromptURL"]
+                            text: richTextArea.peer.msg["HyperlinkDialog.PromptURL"]
                         }),
                         this._urlField = new Echo.TextField({
                             width: "100%"
                         }),
                         new Echo.Label({
-                            text: richTextArea.peer._msg["HyperlinkDialog.PromptDescription"]
+                            text: richTextArea.peer.msg["HyperlinkDialog.PromptDescription"]
                         }),
                         this._descriptionField = new Echo.TextField({
                             width: "100%"
@@ -1092,8 +1094,8 @@ Extras.Sync.RichTextArea.HyperlinkDialog = Core.extend(Extras.Sync.RichTextArea.
         };
         if (!data.url) {
             this.parent.add(new Extras.Sync.RichTextArea.MessageDialog(this._richTextArea, 
-                    this._richTextArea.peer._msg["HyperlinkDialog.ErrorDialogTitle"], 
-                    this._richTextArea.peer._msg["HyperlinkDialog.ErrorDialog.URL"]));
+                    this._richTextArea.peer.msg["HyperlinkDialog.ErrorDialogTitle"], 
+                    this._richTextArea.peer.msg["HyperlinkDialog.ErrorDialog.URL"]));
             return;
         }
         this.parent.remove(this);
@@ -1107,14 +1109,14 @@ Extras.Sync.RichTextArea.ImageDialog = Core.extend(Extras.Sync.RichTextArea.Abst
         Extras.Sync.RichTextArea.AbstractDialog.call(this, richTextArea,
                 Extras.Sync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL,
                 {
-                    title: richTextArea.peer._msg["ImageDialog.Title"], 
-                    image: richTextArea.peer._icons.image
+                    title: richTextArea.peer.msg["ImageDialog.Title"], 
+                    image: richTextArea.peer.icons.image
                 },
                 new Echo.Column({
                     insets: 10,
                     children: [
                         new Echo.Label({
-                            text: richTextArea.peer._msg["ImageDialog.PromptURL"]
+                            text: richTextArea.peer.msg["ImageDialog.PromptURL"]
                         }),
                         this._urlField = new Echo.TextField({
                             width: "100%"
@@ -1129,8 +1131,8 @@ Extras.Sync.RichTextArea.ImageDialog = Core.extend(Extras.Sync.RichTextArea.Abst
         };
         if (!data.url) {
             this.parent.add(new Extras.Sync.RichTextArea.MessageDialog(this._richTextArea, 
-                    this._richTextArea.peer._msg["ImageDialog.ErrorDialogTitle"], 
-                    this._richTextArea.peer._msg["ImageDialog.ErrorDialog.URL"]));
+                    this._richTextArea.peer.msg["ImageDialog.ErrorDialogTitle"], 
+                    this._richTextArea.peer.msg["ImageDialog.ErrorDialog.URL"]));
             return;
         }
         this.parent.remove(this);
@@ -1354,7 +1356,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         }
     },
     
-    _insertHtml: function(html) {
+    insertHtml: function(html) {
         if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
             if (!this._selectionRange) {
                 this._selectionRange = this._iframe.contentWindow.document.body.createTextRange();
@@ -1371,7 +1373,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         this._forceIERedraw();
     },
     
-    _loadData: function() {
+    loadData: function() {
         var html = this.component._richTextArea.get("text");
         if (html == null) {
             // Mozilla and Opera has issues with cursor appearing in proper location when text area is devoid of content.
@@ -1407,7 +1409,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
     
     _processProperty: function(e) {
         if (e.propertyName == "text") {
-            this._loadData();
+            this.loadData();
         }
     },
     
@@ -1627,14 +1629,14 @@ Extras.Sync.RichTextArea.TableDialog = Core.extend(
         Extras.Sync.RichTextArea.AbstractDialog.call(this, richTextArea,
                 Extras.Sync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL,
                 {
-                    title: richTextArea.peer._msg["TableDialog.Title"], 
-                    icon: richTextArea.peer._icons.table
+                    title: richTextArea.peer.msg["TableDialog.Title"], 
+                    icon: richTextArea.peer.icons.table
                 },
                 new Echo.Grid({
                     insets: 10,
                     children: [
                         new Echo.Label({
-                            text: richTextArea.peer._msg["TableDialog.PromptRows"],
+                            text: richTextArea.peer.msg["TableDialog.PromptRows"],
                             layoutData: {
                                 alignment: "trailing"
                             }
@@ -1644,7 +1646,7 @@ Extras.Sync.RichTextArea.TableDialog = Core.extend(
                             width: 100   
                         }),
                         new Echo.Label({
-                            text: richTextArea.peer._msg["TableDialog.PromptColumns"],
+                            text: richTextArea.peer.msg["TableDialog.PromptColumns"],
                             layoutData: {
                                 alignment: "trailing"
                             }
@@ -1664,14 +1666,14 @@ Extras.Sync.RichTextArea.TableDialog = Core.extend(
         };
         if (isNaN(data.rows) || data.rows < 1 || data.rows > 50) {
             this.parent.add(new Extras.Sync.RichTextArea.MessageDialog(this._richTextArea, 
-                    this._richTextArea.peer._msg["TableDialog.ErrorDialogTitle"], 
-                    this._richTextArea.peer._msg["TableDialog.ErrorDialog.Rows"]));
+                    this._richTextArea.peer.msg["TableDialog.ErrorDialogTitle"], 
+                    this._richTextArea.peer.msg["TableDialog.ErrorDialog.Rows"]));
             return;
         }
         if (isNaN(data.columns) || data.columns < 1 || data.columns > 50) {
             this.parent.add(new Extras.Sync.RichTextArea.MessageDialog(this._richTextArea, 
-                    this._richTextArea.peer._msg["TableDialog.ErrorDialogTitle"], 
-                    this._richTextArea.peer._msg["TableDialog.ErrorDialog.Columns"]));
+                    this._richTextArea.peer.msg["TableDialog.ErrorDialogTitle"], 
+                    this._richTextArea.peer.msg["TableDialog.ErrorDialog.Columns"]));
             return;
         }
         this.parent.remove(this);
