@@ -1638,14 +1638,26 @@ Extras.Sync.RichTextArea.TableDialog = Core.extend(
     }
 });
 
+/**
+ * Toolbar button component: a simple button component which optionally provides the capability to be toggled on/off.
+ * Additionally provides the capability to show a currently selected color value (used by color selection buttons).
+ * 
+ * @cp {Boolean} pressed flag indicating whether button should be displayed as pressed (toggled on)
+ * @sp {Boolean} toggle flag indicating whether the button supports a toggled state.
+ * @sp {#Color} color the selected color. 
+ */
 Extras.Sync.RichTextArea.ToolbarButton = Core.extend(Echo.Button, {
 
     $load: function() {
         Echo.ComponentFactory.registerType("Extras.RichTextToolbarButton", this);
     },
     
+    /** @see Echo.Component#componentType */
     componentType: "Extras.RichTextToolbarButton",
     
+    /**
+     * Programmatically performs a button action.
+     */
     doAction: function() {
         if (this.render("toggle")) {
             this.set("pressed", !this.get("pressed"));
@@ -1654,14 +1666,26 @@ Extras.Sync.RichTextArea.ToolbarButton = Core.extend(Echo.Button, {
     }
 });
 
+/**
+ * Component rendering peer for ToolbarButton component. 
+ */
 Extras.Sync.RichTextArea.ToolbarButtonPeer = Core.extend(Echo.Render.ComponentSync, {
 
     $load: function() {
         Echo.Render.registerPeer("Extras.RichTextToolbarButton", this);
     },
     
+    /**
+     * Main DIV rendered DIV element.
+     * @type Element
+     */
     _div: null,
 
+    /**
+     * Processes a mouse click event.
+     * 
+     * @param e the event
+     */
     _processClick: function(e) {
         if (!this.client || !this.client.verifyInput(this.component)) {
             return true;
@@ -1670,6 +1694,11 @@ Extras.Sync.RichTextArea.ToolbarButtonPeer = Core.extend(Echo.Render.ComponentSy
         this.component.doAction();
     },
     
+    /**
+     * Processes a mouse rollover enter event.
+     * 
+     * @param e the event
+     */
     _processRolloverEnter: function(e) {
         if (!this.client || !this.client.verifyInput(this.component)) {
             return true;
@@ -1677,10 +1706,16 @@ Extras.Sync.RichTextArea.ToolbarButtonPeer = Core.extend(Echo.Render.ComponentSy
         this._renderButtonState(true);
     },
 
+    /**
+     * Processes a mouse rollover exit event.
+     * 
+     * @param e the event
+     */
     _processRolloverExit: function(e) {
         this._renderButtonState(false);
     },
 
+    /** @see Echo.Render.ComponentSync#renderAdd */
     renderAdd: function(update, parentElement) {
         var icon = this.component.render("icon");
         
@@ -1707,6 +1742,9 @@ Extras.Sync.RichTextArea.ToolbarButtonPeer = Core.extend(Echo.Render.ComponentSy
         parentElement.appendChild(this._div);
     },
        
+    /**
+     * Renders the state of the button (pressed/rollover effects).
+     */
     _renderButtonState: function(rolloverState) {
         var foreground = this.component.render("foreground");
         var background = this.component.render("background");
@@ -1734,6 +1772,9 @@ Extras.Sync.RichTextArea.ToolbarButtonPeer = Core.extend(Echo.Render.ComponentSy
         Echo.Sync.FillImage.renderClear(backgroundImage, this._div);
     },
     
+    /**
+     * Renders the selected color of the button.
+     */
     _renderColor: function() {
         var color = this.component.render("color");
         if (!this._colorDiv) {
@@ -1747,12 +1788,14 @@ Extras.Sync.RichTextArea.ToolbarButtonPeer = Core.extend(Echo.Render.ComponentSy
         }
     },
     
+    /** @see Echo.Render.ComponentSync#renderDispose */
     renderDispose: function(update) {
         Core.Web.Event.removeAll(this._div);
         this._div = null;
         this._colorDiv = null;
     },
     
+    /** @see Echo.Render.ComponentSync#renderUpdate */
     renderUpdate: function(update) {
         var element = this._div;
         var containerElement = element.parentNode;
