@@ -937,7 +937,16 @@ Extras.Sync.ContextMenu = Core.extend(Extras.Sync.Menu, {
         Echo.Render.registerPeer("Extras.ContextMenu", this);
     },
     
+    /** 
+     * X coordinate of activation mouse click.
+     * @type Number
+     */
     _mouseX: null,
+    
+    /**
+     * Y coordinate of activation mouse click.
+     * @type Number
+     */
     _mouseY: null,
     
     /** @see Extras.Sync.Menu#getSubMenuPosition */
@@ -945,6 +954,11 @@ Extras.Sync.ContextMenu = Core.extend(Extras.Sync.Menu, {
         return { x: this._mouseX, y: this._mouseY };
     },
 
+    /**
+     * Processes a mouse click/context-click event.
+     * 
+     * @param e the event
+     */
     _processContextClick: function(e) {
         if (!this.client || !this.client.verifyInput(this.component) || Core.Web.dragInProgress) {
             return true;
@@ -1033,11 +1047,24 @@ Extras.Sync.DropDownMenu = Core.extend(Extras.Sync.Menu, {
         Echo.Render.registerPeer("Extras.DropDownMenu", this);
     },
     
-    _containerDiv: null,
+    /**
+     * DIV containing selected item / root content.
+     * @type Element
+     */
     _contentDiv: null,
+
+    /**
+     * The selected item.
+     * @type Extras.ItemModel
+     */
     _selectedItem: null,
     
-    _createContent: function(itemModel) {
+    /**
+     * Creates the selection item content to display as the menu's root node.
+     * 
+     * @param {Extras.ItemModel} itemModel the selected item
+     */
+    _createSelectionContent: function(itemModel) {
         var img;
         if (itemModel.icon) {
             if (itemModel.text) {
@@ -1083,6 +1110,11 @@ Extras.Sync.DropDownMenu = Core.extend(Extras.Sync.Menu, {
         return { x: bounds.left, y: bounds.top + bounds.height };
     },
     
+    /** 
+     * Processes a menu action, updating selection state if selection is enabled.
+     * 
+     * @see Extras.Sync.Menu#processAction 
+     */
     processAction: function(itemModel) {
         if (this.component.render("selectionEnabled")) {
             this._setSelection(itemModel);
@@ -1092,6 +1124,11 @@ Extras.Sync.DropDownMenu = Core.extend(Extras.Sync.Menu, {
         Extras.Sync.Menu.prototype.processAction.call(this, itemModel);
     },
 
+    /**
+     * Processes a mouse click event.
+     * 
+     * @param e the event
+     */
     _processClick: function(e) {
         if (!this.client || !this.client.verifyInput(this.component) || Core.Web.dragInProgress) {
             return true;
@@ -1103,15 +1140,10 @@ Extras.Sync.DropDownMenu = Core.extend(Extras.Sync.Menu, {
         this.activateItem(this.menuModel);
     },
     
-    /** @see Echo.Render.ComponentSync#renderDisplay */
-    renderDisplay: function() {
-        Core.Web.VirtualPosition.redraw(this._containerDiv);
-    },
-    
     /** @see Echo.Render.ComponentSync#renderDispose */
     renderDispose: function(update) {
         Core.Web.Event.removeAll(this.element);
-        this._containerDiv = null;
+        this._contentDiv = null;
         Extras.Sync.Menu.prototype.renderDispose.call(this, update);
     },
     
@@ -1167,7 +1199,7 @@ Extras.Sync.DropDownMenu = Core.extend(Extras.Sync.Menu, {
         }
         
         if (this._selectedItem) {
-            this._contentDiv.appendChild(this._createContent(this._selectedItem));
+            this._contentDiv.appendChild(this._createSelectionContent(this._selectedItem));
         } else {
             var contentText = this.component.render("selectionText");
             this._contentDiv.appendChild(document.createTextNode(contentText ? contentText : "\u00a0"));
@@ -1191,7 +1223,7 @@ Extras.Sync.DropDownMenu = Core.extend(Extras.Sync.Menu, {
         for (var i = this._contentDiv.childNodes.length - 1; i >= 0; --i) {
             this._contentDiv.removeChild(this._contentDiv.childNodes[i]);
         }
-        this._contentDiv.appendChild(this._createContent(itemModel));
+        this._contentDiv.appendChild(this._createSelectionContent(itemModel));
     }
 });    
 
@@ -1215,23 +1247,48 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
        Echo.Render.registerPeer("Extras.MenuBarPane", this);
     },
     
+    /**
+     * The currently active menu item.
+     * @type Extras.ItemModel
+     */
     _activeItem: null,
+    
+    /**
+     * The menu bar's main TABLE element.
+     * @type Element
+     */
     _menuBarTable: null,
+    
+    /**
+     * The total height contribution of the menu bar's border, in pixels.
+     * @type Number
+     */
     _menuBarBorderHeight: null,
     
+    /**
+     * Mapping between model ids and menu item TD elements.
+     * @type Object
+     */
     itemElements: null,
     
+    /**
+     * Constructor.
+     */
     $construct: function() {
         Extras.Sync.Menu.call(this);
-        this.itemElements = {};
+        this.itemElements = { };
     },
     
+    /** @see Extras.Sync.Menu#activate */
     activate: function() {
         if (Extras.Sync.Menu.prototype.activate.call(this)) {
             this.addMenu(this);
         }
     },
-    
+
+    /**
+     * Closes the menu.
+     */
     close: function() {
         if (this._activeItem) {
             this._setItemHighlight(this._activeItem, false);
@@ -1239,6 +1296,13 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
         }
     },
     
+    /**
+     * Returns the menu item TD element which is a parent of the specified element.
+     * 
+     * @param element an element which is a descendant of a TD element representing a menu item
+     * @return the TD element
+     * @type Element
+     */
     _getItemElement: function(element) {
         if (element == null) {
             return null;
@@ -1253,6 +1317,13 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
         return element;
     },
     
+    /**
+     * Determines a ItemModel id based on a menu item DOM element.
+     * 
+     * @param element the DOM element
+     * @return the ItemModel id
+     * @type String
+     */
     _getItemModel: function(element) {
         var itemModelId = null;
         element = this._getItemElement(element);
@@ -1275,6 +1346,7 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
         }
     },
     
+    /** @see Echo.Render.ComponnetSync#getPreferredSize */
     getPreferredSize: function() {
         this._menuBarTable.style.height = "";
         var insets = Echo.Sync.Insets.toPixels(this.component.render("insets", Extras.Sync.MenuBarPane.DEFAULTS.insets));
@@ -1294,6 +1366,11 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
         return { x: itemBounds.left, y: containerBounds.top + containerBounds.height };
     },
     
+    /**
+     * Processes a mouse click event.
+     * 
+     * @param e the event
+     */
     _processClick: function(e) {
         if (!this.client || !this.client.verifyInput(this.component)) {
             return true;
@@ -1315,14 +1392,30 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
         }
     },
     
+    /**
+     * Processes a mouse rollover enter event.
+     * 
+     * @param e the event
+     */
     _processItemEnter: function(e) {
         this._processRollover(e, true);
     },
     
+    /**
+     * Processes a mouse rollover exit event.
+     * 
+     * @param e the event
+     */
     _processItemExit: function(e) {
         this._processRollover(e, false);
     },
     
+    /**
+     * Processes mouse rollover events.
+     * 
+     * @param e the event
+     * @param {Boolean} state the rollover state, true indicating the mouse is currently rolled over an item
+     */
     _processRollover: function(e, state) {
         if (!this.client || !this.client.verifyInput(this.component) || Core.Web.dragInProgress) {
             return true;
@@ -1428,6 +1521,12 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
         return menuBarDiv;
     },
     
+    /**
+     * Sets the active item.
+     * 
+     * @param {Extras.ItemModel} itemModel the item
+     * @param {Boolean} execute flag indicating whether the item should be executed
+     */
     _setActiveItem: function(itemModel, execute) {
         if (this._activeItem == itemModel) {
             return;
@@ -1448,6 +1547,12 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
         }
     },
     
+    /**
+     * Sets the highlight state of an item.
+     * 
+     * @param {Extras.ItemModel} itemModel the item
+     * @param {Boolean} state the highlight state
+     */
     _setItemHighlight: function(itemModel, state) {
         var element = this.itemElements[itemModel.id];
         if (state) {
