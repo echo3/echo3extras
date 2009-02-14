@@ -826,13 +826,40 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
     }
 });
 
+/**
+ * Abstract dialog message box.  Displays arbitrary content and  provides the user "Ok" and/or "Cancel" options.
+ */
 Extras.Sync.RichTextArea.AbstractDialog = Core.extend(Echo.WindowPane, {
 
     $static: {
+
+        /**
+         * Type flag indicating only an "Ok" option should be made available.
+         */
         TYPE_OK: 0,
+
+        /**
+         * Type flag indicating both "Ok" and "Cancel" options should be made available.
+         */
         TYPE_OK_CANCEL: 1
     },
+    
+    $abstract: true,
+    
+    /**
+     * The owning RichTextArea.
+     * @type Extras.RichTextArea
+     */
+    _richTextArea: null,
 
+    /**
+     * Constructor.
+     * 
+     * @param {Extras.RichTextArea} richTextArea the owning RichTextArea
+     * @param {Number} type the dialog type, either <code>TYPE_OK</code> or <code>TYPE_OK_CANCEL</code>
+     * @param properties initial properties to be set on the WindowPane
+     * @param {Echo.Component} content the component to display within the dialog 
+     */
     $construct: function(richTextArea, type, properties, content) {
         this._richTextArea = richTextArea;
     
@@ -840,6 +867,7 @@ Extras.Sync.RichTextArea.AbstractDialog = Core.extend(Echo.WindowPane, {
         var controlPaneRowStyleName = richTextArea.render("controlPaneRowStyleName");
         var controlPaneButtonStyleName = richTextArea.render("controlPaneButtonStyleName"); 
         
+        // Build control.
         Echo.WindowPane.call(this, {
             styleName: richTextArea.render("windowPaneStyleName"),
             iconInsets: "6px 10px",
@@ -867,6 +895,7 @@ Extras.Sync.RichTextArea.AbstractDialog = Core.extend(Echo.WindowPane, {
             ]
         });
         
+        // Add OK button.
         this.controlsRow.add(new Echo.Button({
             styleName: controlPaneButtonStyleName,
             style: controlPaneButtonStyleName ? null : Extras.Sync.RichTextArea.DEFAULTS.controlPaneButtonStyle,
@@ -877,6 +906,7 @@ Extras.Sync.RichTextArea.AbstractDialog = Core.extend(Echo.WindowPane, {
             }
         }));
         
+        // Add Cancel button.
         if (type == Extras.Sync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL) {
             this.controlsRow.add(new Echo.Button({
                 styleName: controlPaneButtonStyleName,
@@ -889,6 +919,7 @@ Extras.Sync.RichTextArea.AbstractDialog = Core.extend(Echo.WindowPane, {
             }));
         }
         
+        // Set properties.
         for (var x in properties) {
             this.set(x, properties[x]);
         }
@@ -896,10 +927,20 @@ Extras.Sync.RichTextArea.AbstractDialog = Core.extend(Echo.WindowPane, {
     
     $virtual: {
         
+        /**
+         * Processes a user selection of the "Cancel" button.
+         * 
+         * @param e the event
+         */
         processCancel: function(e) {
             this.parent.remove(this);
         },
         
+        /**
+         * Processes a user selection of the "OK" button.
+         * 
+         * @param e the event
+         */
         processOk: function(e) {
             this.parent.remove(this);
         }
