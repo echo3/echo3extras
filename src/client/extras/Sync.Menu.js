@@ -62,10 +62,14 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
     
     /**
      * Reference to the mask click listener.
+     * @type Function 
      */
     _processMaskClickRef: null,
     
-    /** Reference to menu key press listener. */
+    /** 
+     * Reference to menu key press listener.
+     * @type Function 
+     */
     _processKeyPressRef: null,
     
     /**
@@ -106,6 +110,7 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
 
         /**
          * Activates the menu component.
+         * Adds rendering mask to screen, sets menu component as modal.
          */
         activate: function() {
             if (this.active) {
@@ -207,6 +212,7 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
     
     /**
      * Deactivates the menu component, closing any open menus.
+     * Removes rendering mask from screen, sets menu component as non-modal.
      */
     deactivate: function() {
         this.component.set("modal", false);
@@ -417,12 +423,22 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
         },
     
         /**
-         * Animation effect to fade-in menu.
+         * Animation effect to fade-in a DOM element.
          */
         FadeAnimation: Core.extend(Extras.Sync.Animation, {
             
+            /**
+             * The faded-in element.
+             * @type Element
+             */
             _element: null,
             
+            /**
+             * Creates a new FadeAnimation.
+             * 
+             * @param {Element} element the element to fade in.
+             * @param {Number} runTime the animation run time (in milliseconds)
+             */
             $construct: function(element, runTime) {
                 this._element = element;
                 this.runTime = runTime;
@@ -518,6 +534,10 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
         this.itemElements = { };
     },
 
+    /**
+     * Closes the menu, removing it from the screen.
+     * Disposes all resources, object should be released for garbage collection after invocation.
+     */
     close: function() {
         Core.Web.Event.removeAll(this.element);
         document.body.removeChild(this.element);
