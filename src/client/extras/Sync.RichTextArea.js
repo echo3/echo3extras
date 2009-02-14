@@ -239,6 +239,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
     
     _styleSelect: null,
     
+    /** Constructor. */
     $construct: function() {
         this._processComponentInsertHtmlRef = Core.method(this, this._processComponentInsertHtml);
         this._processDialogCloseRef = Core.method(this, this._processDialogClose);
@@ -249,6 +250,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         this.component.addListener("insertHtml", this._processComponentInsertHtmlRef);
     },
 
+    /** @see #Echo.Arc.ComponentSync#createComponent */
     createComponent: function() {
         var features = this.component.render("features", Extras.Sync.RichTextArea.DEFAULTS.features);
 
