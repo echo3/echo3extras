@@ -127,7 +127,16 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         })
     },
     
+    /**
+     * Method reference to _processDialogClose().
+     * @type Function
+     */
     _processDialogCloseRef: null,
+
+    /**
+     * Method reference to _processComponentInsertHtml().
+     * @type Function
+     */
     _processComponentInsertHtmlRef: null,
 
     $load: function() {
@@ -138,6 +147,8 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
     
         /**
          * Creates/returns the icon set for this RichTextArea.
+         * 
+         * @return the icon set (name to URL mapping) object
          */
         getIcons: function() {
             var icons = this._getDefaultIcons();
@@ -152,6 +163,8 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         
         /**
          * Event handler for user request (from menu/toolbar) to insert a hyperlink.
+         * 
+         * @param e the event
          */
         processInsertHyperlink: function(e) {
             var hyperlinkDialog = new Extras.Sync.RichTextArea.HyperlinkDialog(this.component);
@@ -165,6 +178,8 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         
         /**
          * Event handler for user request (from menu/toolbar) to insert an image.
+         * 
+         * @param e the event
          */
         processInsertImage: function(e) {
             var imageDialog = new Extras.Sync.RichTextArea.ImageDialog(this.component);
@@ -177,6 +192,8 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
 
         /**
          * Event handler for user request (from menu/toolbar) to insert a table.
+         * 
+         * @param e the event
          */
         processInsertTable: function(e) {
             var tableDialog = new Extras.Sync.RichTextArea.TableDialog(this.component);
@@ -189,6 +206,8 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
 
         /**
          * Event handler for user request (from menu/toolbar) to set the background color.
+         * 
+         * @param e the event
          */
         processSetBackground: function(e) {
             var colorDialog = new Extras.Sync.RichTextArea.ColorDialog(this.component, true,
@@ -209,6 +228,8 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         
         /**
          * Event handler for user request (from menu/toolbar) to set the foreground color.
+         * 
+         * @param e the event
          */
         processSetForeground: function(e) {
             var colorDialog = new Extras.Sync.RichTextArea.ColorDialog(this.component, false,
@@ -227,17 +248,40 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
      */
     msg: null,
     
+    /**
+     * Mapping between icon names and icon URLs.
+     */
     icons: null,
     
     /**
      * {Boolean} Flag indicating whether the parent component is a pane, and thus whether the RichTextArea should consume
      * horizontal and vertical space.
+     * @type Boolean
      */
     _paneRender: false,
     
+    /**
+     * Mapping between toolbar button action commands and toolbar buttons.
+     */
     _toolbarButtons: null,
     
+    /**
+     * Style selection drop down.
+     * @type Echo.SelectField
+     */
     _styleSelect: null,
+    
+    /**
+     * The rich text input component.
+     * 
+     * @type Extras.Sync.RichTextArea.InputComponent
+     */
+    _richTextInput: null,
+    
+    /**
+     * Root rendered DIV element.
+     */
+    _mainDiv: null,
     
     /** Constructor. */
     $construct: function() {
@@ -246,6 +290,9 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         this._toolbarButtons = { };
     },
     
+    /**
+     * Adds listeners to supported Extras.RichTextArea object.
+     */
     _addComponentListeners: function() {
         this.component.addListener("insertHtml", this._processComponentInsertHtmlRef);
     },
@@ -753,6 +800,9 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         }
     },
     
+    /**
+     * Removes listeners from supported Extras.RichTextArea object.
+     */
     _removeComponentListeners: function() {
         this.component.removeListener("insertHtml", this._processComponentInsertHtmlRef);
     },
@@ -1624,8 +1674,7 @@ Extras.Sync.RichTextArea.MessageDialog = Core.extend(
     
     $construct: function(richTextArea, title, message) {
         Extras.Sync.RichTextArea.AbstractDialog.call(this, richTextArea,
-                Extras.Sync.RichTextArea.AbstractDialog.TYPE_OK,
-                {
+                Extras.Sync.RichTextArea.AbstractDialog.TYPE_OK, {
                     title: title
                 },
                 new Echo.Label({
@@ -1637,13 +1686,19 @@ Extras.Sync.RichTextArea.MessageDialog = Core.extend(
     }
 });
 
-Extras.Sync.RichTextArea.TableDialog = Core.extend(
-        Extras.Sync.RichTextArea.AbstractDialog, {
+/**
+ * Table creation dialog.  Prompts user for initial settings to insert table.
+ */
+Extras.Sync.RichTextArea.TableDialog = Core.extend(Extras.Sync.RichTextArea.AbstractDialog, {
 
+    /**
+     * Constructor.
+     * 
+     * @param {Extras.RichTextArea} richTextArea the supported RichTextArea
+     */
     $construct: function(richTextArea) {
         Extras.Sync.RichTextArea.AbstractDialog.call(this, richTextArea,
-                Extras.Sync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL,
-                {
+                Extras.Sync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL, {
                     title: richTextArea.peer.msg["TableDialog.Title"], 
                     icon: richTextArea.peer.icons.table
                 },
@@ -1674,6 +1729,7 @@ Extras.Sync.RichTextArea.TableDialog = Core.extend(
                 }));
     },
     
+    /** @see Extras.Sync.RichTextArea.AbstractDialog#processOk */
     processOk: function(e) {
         var data = {
             rows: parseInt(this._rowsField.get("text"), 10),
