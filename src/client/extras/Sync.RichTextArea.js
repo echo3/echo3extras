@@ -640,6 +640,18 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         return panel;
     },
     
+    /**
+     * Creates a toolbar button.
+     * 
+     * @param {String} text the button text
+     * @param {#ImageReference} icon the button icon
+     * @param {String} toolTipText the rollover tool tip text
+     * @param {Function} eventMethod the method to invoke when the button is clicked (must be a method of this object,
+     *        will automatically be wrapped using Core.method()) 
+     * @param {String} actionCommand the action command to send in fired events
+     * @return the toolbar button
+     * @type Extras.Sync.RichTextArea.ToolbarButton
+     */
     _createToolbarButton: function(text, icon, toolTipText, eventMethod, actionCommand) {
         var button = new Extras.Sync.RichTextArea.ToolbarButton({
             actionCommand: actionCommand,
@@ -655,24 +667,41 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         return button;
     },
     
+    /**
+     * Executes a rich-text editing command.  Delegates to RichTextInput peer.
+     * 
+     * @param {String} commandName the command name
+     * @param {String} value the (optional) value to send
+     */
     execCommand: function(commandName, value) {
         this._richTextInput.peer.execCommand(commandName, value);
     },
     
+    /**
+     * Focuses the edited document.  Delegates to RichTextInput peer.
+     */
     focusDocument: function() {
         this._richTextInput.peer.focusDocument();
     },
     
+    /** @see Echo.Arc.ComponentSync#getDomainElement */
     getDomainElement: function() { 
         return this._mainDiv;
     },
     
+    /** 
+     * Returns the default icon URL for the specified icon name.
+     * 
+     * @param {String} name the icon name
+     * @return the icon URL
+     * @type String
+     */
     _getDefaultIcon: function(name) {
         return this.client.getResourceUrl("Extras", "image/richtext/" + name + ".gif");
     },
     
     /**
-     * Returns default icon set map object.
+     * Creates and returns a default icon name to URL map object.
      * @type Object
      */
     _getDefaultIcons: function() {
@@ -688,14 +717,30 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         return defaultIcons;
     },
     
+    /**
+     * Inserts the provided HTML string at the cursor position.  Delegates to RichTextInput peer.
+     * 
+     * @param {String} html the HTML to insert
+     */
     insertHtml: function(html) {
         this._richTextInput.peer.insertHtml(html);
     },
     
+    /**
+     * Inserts an image at the cursor position.  This is a convenience method which invokes insertHtml().
+     * 
+     * @param {String} url the image URL
+     */
     insertImage: function(url) {
         this.insertHtml("<img src=\"" + url + "\">");
     },
     
+    /**
+     * Inserts an HTML table at the cursor position.  This is a convenience method which invokes insertHtml().
+     * 
+     * @param {Number} columns the number of columns
+     * @param {Number} rows the number of rows
+     */
     insertTable: function(columns, rows) {
         var rowHtml = "",
             i;
@@ -711,16 +756,24 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         this.insertHtml(tableHtml);
     },
     
+    /**
+     * Notifies the application that the RichTextArea is focused.
+     */
     _markFocused: function() {
         this.client.application.setFocusedComponent(this);
     },
     
+    /**
+     * Opens a dialog window.
+     * 
+     * @param {Echo.WindowPane} dialogWindow the dialog to open 
+     */
     _openDialog: function(dialogWindow) {
         // Activate overlay pane (if required).
         var contentPane;
         if (this._overlayPane == null) {
             this._overlayPane = new Extras.Sync.RichTextArea.OverlayPane();
-            this._overlayPane._richTextArea = this.component;
+            this._overlayPane.richTextArea = this.component;
             contentPane = new Echo.ContentPane();
             this._overlayPane.add(contentPane);
             this.baseComponent.add(this._overlayPane);
@@ -1197,8 +1250,7 @@ Extras.Sync.RichTextArea.ImageDialog = Core.extend(Extras.Sync.RichTextArea.Abst
 });
 
 /**
- * Pane which renders its content over the body of the application.  
- * This component breaks out of the element-based component hierarchy.
+ * Pane which renders its content over the entire domain of the application.  
  */
 Extras.Sync.RichTextArea.OverlayPane = Core.extend(Echo.Component, {
 
@@ -1207,13 +1259,29 @@ Extras.Sync.RichTextArea.OverlayPane = Core.extend(Echo.Component, {
     },
     
     _richTextArea: null,
+    
+    /** @see Echo.Component#componentType */
     componentType: "Extras.RichTextOverlayPane",
+    
+    /** @see Echo.Component#floatingPane */
     floatingPane: true,
+    
+    /** @see Echo.Component#pane */
     pane: true
 });
 
+/**
+ * Component rendering peer: OverlayPane.
+ * 
+ * This component renders itself over the EchoClient's domainElement, rather than beneath its
+ * specified parent element.
+ */
 Extras.Sync.RichTextArea.OverlayPanePeer = Core.extend(Echo.Render.ComponentSync, {
 
+    /**
+     * The rendered DIV.
+     * @type Element
+     */
     _div: null,
 
     $load: function() {
@@ -1229,7 +1297,7 @@ Extras.Sync.RichTextArea.OverlayPanePeer = Core.extend(Echo.Render.ComponentSync
         } else if (this.component.children.length > 1) {
             throw new Error("Too many children added to OverlayPane.");
         }
-        this.component._richTextArea.peer.client.domainElement.appendChild(this._div);
+        this.component.richTextArea.peer.client.domainElement.appendChild(this._div);
     },
     
     /** @see Echo.Render.ComponentSync#renderDisplay */
