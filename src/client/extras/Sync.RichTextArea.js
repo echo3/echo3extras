@@ -1521,15 +1521,29 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
     _cursorStyleUpdateRequired: false,
 
     /**
-     * {Boolean} Flag indicating whether the parent component of the associated RichTextArea is a pane, 
+     * Flag indicating whether the parent component of the associated RichTextArea is a pane, 
      * and thus whether the RichTextArea's input region should consume available vertical space.
+     * @type Boolean
      */
     _paneRender: false,
     
+    /**
+     * Flag indicating whether an action event should be fired.
+     * Set by _processKeyPress(), used by _processKeyUp().
+     * @type Boolean
+     */
     _fireAction: false,
     
+    /**
+     * The most recently retrieved document HTML.  This value is used to avoid updating the HTML when unnecessary.
+     * @type String 
+     */
     _renderedHtml: null,
     
+    /**
+     * Method reference to _processProperty().
+     * @type Function
+     */
     _processPropertyRef: null,
 
     /**
@@ -1592,6 +1606,18 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         }
     },
     
+    /**
+     * Determines style information about the text at the cursor position.
+     * Returns an object containing zero or more of the following properties:
+     * <ul>
+     *  <li><code>bold</code>: boolean value indicating the text is bold</li>
+     *  <li><code>italic</code>: boolean value indicating the text is italic</li>
+     *  <li><code>underline</code>: boolean value indicating the text is underline</li>
+     *  <li><code>paragraphStyle</code>: string value describing paragraph style, e.g., h1, h2, h3, h4, h5, h6, p, or pre</li>
+     *  <li><code>foreground</code>: hex triplet string indicating foreground color</li>
+     *  <li><code>background</code>: hex triplet string indicating background color</li>
+     * </ul>
+     */
     _getCursorStyle: function() {
         var selection = this._getSelection();
         var style = { };
@@ -1644,6 +1670,17 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         return style;
     },
     
+    /**
+     * Returns the current selection state of the input field.
+     * The object contains the following properties:
+     * <ul>
+     *  <li><code>node</code>: specifies a current node contained in the selection</li>
+     * </ul>
+     * This is a cross-platform workaround for differences in the selection API of MSIE vs. DOM compliant browsers.
+     * 
+     * @return the selection object
+     * @type Object
+     */
     _getSelection: function() {
         if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
             var textRange = this._iframe.contentWindow.document.selection.createRange();
@@ -1658,6 +1695,11 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         }
     },
     
+    /**
+     * Inserts arbitrary HTML within the document at the current cursor position.
+     * 
+     * @param {String} html the HTML code to insert
+     */
     insertHtml: function(html) {
         if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
             if (!this._selectionRange) {
@@ -1709,12 +1751,22 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         }));
     },
     
+    /**
+     * Processes a property change event on the supported component.
+     * 
+     * @param e the event
+     */
     _processProperty: function(e) {
         if (e.propertyName == "text") {
             this.loadData();
         }
     },
     
+    /**
+     * Processes a key press event within the input document.
+     * 
+     * @param e the event
+     */
     _processKeyPress: function(e) {
         if (!this.client || !this.client.verifyInput(this.component)) {
             Core.Web.DOM.preventEventDefault(e);
@@ -1726,6 +1778,11 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         }
     },
     
+    /**
+     * Processes a key up event within the input document.
+     * 
+     * @param e the event
+     */
     _processKeyUp: function(e) {
         if (!this.client || !this.client.verifyInput(this.component)) {
             Core.Web.DOM.preventEventDefault(e);
@@ -1747,6 +1804,11 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         }
     },
     
+    /**
+     * Processes a mouse down event within the input document.
+     * 
+     * @param e the event
+     */
     _processMouseDown: function(e) {
         if (!this.client || !this.client.verifyInput(this.component)) {
             Core.Web.DOM.preventEventDefault(e);
@@ -1754,6 +1816,11 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         }
     },
 
+    /**
+     * Processes a mouse up event within the input document.
+     * 
+     * @param e the event
+     */
     _processMouseUp: function(e) {
         if (!this.client || !this.client.verifyInput(this.component)) {
             Core.Web.DOM.preventEventDefault(e);
