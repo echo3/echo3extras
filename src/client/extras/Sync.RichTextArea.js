@@ -757,6 +757,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         this.component.removeListener("insertHtml", this._processComponentInsertHtmlRef);
     },
     
+    /** @see Echo.Render.ComponentSync#renderAdd */
     renderAdd: function(update, parentElement) {
         this._addComponentListeners();
         this.msg = Extras.Sync.RichTextArea.resource.get(this.component.getRenderLocale());
@@ -782,17 +783,20 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         parentElement.appendChild(this._mainDiv);
     },
     
+    /** @see Echo.Render.ComponentSync#renderDisplay */
+    renderDisplay: function() {
+        Core.Web.VirtualPosition.redraw(this._mainDiv);
+        Echo.Arc.ComponentSync.prototype.renderDisplay.call(this);
+    },
+    
+    /** @see Echo.Render.ComponentSync#renderDispose */
     renderDispose: function(update) {
         this._removeComponentListeners();
         Echo.Arc.ComponentSync.prototype.renderDispose.call(this, update);
         this._mainDiv = null;
     },
     
-    renderDisplay: function() {
-        Core.Web.VirtualPosition.redraw(this._mainDiv);
-        Echo.Arc.ComponentSync.prototype.renderDisplay.call(this);
-    },
-    
+    /** @see Echo.Render.ComponentSync#renderUpdate */
     renderUpdate: function(update) {
         if (update.isUpdatedPropertySetIn({text: true })) {
             this._richTextInput.peer.loadData();
@@ -1166,6 +1170,7 @@ Extras.Sync.RichTextArea.OverlayPanePeer = Core.extend(Echo.Render.ComponentSync
         Echo.Render.registerPeer("Extras.RichTextOverlayPane", this);
     },
 
+    /** @see Echo.Render.ComponentSync#renderAdd */
     renderAdd: function(update, parentElement) {
         this._div = document.createElement("div");
         this._div.style.cssText = "position:absolute;top:0;right:0;bottom:0;left:0;z-index:32767;";
@@ -1177,16 +1182,19 @@ Extras.Sync.RichTextArea.OverlayPanePeer = Core.extend(Echo.Render.ComponentSync
         this.component._richTextArea.peer.client.domainElement.appendChild(this._div);
     },
     
+    /** @see Echo.Render.ComponentSync#renderDisplay */
+    renderDisplay: function(update) {
+        Core.Web.VirtualPosition.redraw(this._div);
+    },
+    
+    /** @see Echo.Render.ComponentSync#renderDispose */
     renderDispose: function(update) {
         if (this._div && this._div.parentNode) {
             this._div.parentNode.removeChild(this._div);
         }
     },
     
-    renderDisplay: function(update) {
-        Core.Web.VirtualPosition.redraw(this._div);
-    },
-    
+    /** @see Echo.Render.ComponentSync#renderUpdate */
     renderUpdate: function(update) {
         var element = this._div;
         var containerElement = element.parentNode;
@@ -1465,6 +1473,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         this._notifyCursorStyleChange();
     },
     
+    /** @see Echo.Render.ComponentSync#renderAdd */
     renderAdd: function(update, parentElement) {
         this.component._richTextArea.addListener("property", this._processPropertyRef);
         
@@ -1551,6 +1560,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         this._contentDocumentRendered = true;
     },
     
+    /** @see Echo.Render.ComponentSync#renderDispose */
     renderDispose: function(update) {
         this.component._richTextArea.removeListener("property", this._processPropertyRef);
         Core.Web.Event.removeAll(this._iframe.contentWindow.document);
@@ -1560,6 +1570,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         this._selectionRange = null;
     },
     
+    /** @see Echo.Render.ComponentSync#renderDisplay */
     renderDisplay: function() {
         if (!this._contentDocumentRendered) {
             this._renderContentDocument();
@@ -1578,6 +1589,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         }
     },
 
+    /** @see Echo.Render.ComponentSync#renderFocus */
     renderFocus: function() {
         if (Core.Web.Env.BROWSER_SAFARI) {
             // Focus window first to avoid issue where Safari issue with updating content and then focusing.
@@ -1587,6 +1599,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         this._forceIERedraw();
     },
     
+    /** @see Echo.Render.ComponentSync#renderUpdate */
     renderUpdate: function(update) {
         // Not invoked.
     },
