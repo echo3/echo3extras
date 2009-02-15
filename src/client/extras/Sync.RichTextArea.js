@@ -1720,7 +1720,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
     loadData: function() {
         var html = this.component.rta.get("text");
         if (html == null) {
-            // Mozilla and Opera has issues with cursor appearing in proper location when text area is devoid of content.
+            // Mozilla and Opera have issues with cursor appearing in proper location when text area is devoid of content.
             html = (Core.Web.Env.BROWSER_MOZILLA || Core.Web.Env.BROWSER_OPERA) ? "<br/>" : "";
         }
         if (html == this._renderedHtml) {
