@@ -1432,6 +1432,9 @@ Extras.Sync.RichTextArea.OverlayPanePeer = Core.extend(Echo.Render.ComponentSync
     }
 });
 
+/**
+ * RichTextArea Input Component: provides actual rich text input area.
+ */
 Extras.Sync.RichTextArea.InputComponent = Core.extend(Echo.Component, {
 
     /**
@@ -1450,6 +1453,9 @@ Extras.Sync.RichTextArea.InputComponent = Core.extend(Echo.Component, {
     focusable: true
 });
 
+/**
+ * Component rendering peer: Extras.Sync.RichTextArea.InputComponent.
+ */
 Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
 
     $load: function() {
@@ -1457,12 +1463,47 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
     },
     
     $static: {
+        
+        /**
+         * Regular expression to determine if a style attribute is setting a bold font.
+         * @type RegExp 
+         */
         _CSS_BOLD: /font-weight\:\s*bold/i,
+
+        /**
+         * Regular expression to determine if a style attribute is setting a foreground color.
+         * @type RegExp 
+         */
         _CSS_FOREGROUND_TEST: /^-?color\:/i,
+        
+        /**
+         * Regular expression to determine the foreground color being set by a style attribute.
+         * @type RegExp 
+         */
         _CSS_FOREGROUND_RGB: /^-?color\:\s*rgb\s*\(\s*(\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})/i,
+                
+        /**
+         * Regular expression to determine if a style attribute is setting a background color.
+         * @type RegExp 
+         */
         _CSS_BACKGROUND_TEST: /background-color\:/i,
+
+        /**
+         * Regular expression to determine the background color being set by a style attribute.
+         * @type RegExp 
+         */
         _CSS_BACKGROUND_RGB: /background-color\:\s*rgb\s*\(\s*(\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})/i,
+                
+        /**
+         * Regular expression to determine if a style attribute is setting an italic font.
+         * @type RegExp 
+         */
         _CSS_ITALIC: /font-style\:\s*italic/i,
+        
+        /**
+         * Regular expression to determine if a style attribute is setting an underline font.
+         * @type RegExp 
+         */
         _CSS_UNDERLINE: /text-decoration\:\s*underline/i,
         
         /**
@@ -1473,6 +1514,10 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         }
     },
     
+    /**
+     * Flag indicating whether a style information update is required due to the cursor/selection having been moved/changed.
+     * @type Boolean
+     */
     _cursorStyleUpdateRequired: false,
 
     /**
@@ -1487,10 +1532,19 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
     
     _processPropertyRef: null,
 
+    /**
+     * Constructor.
+     */
     $construct: function() { 
         this._processPropertyRef = Core.method(this, this._processProperty);
     },
     
+    /**
+     * Executes a rich text editing command (via document.execCommand()).
+     * 
+     * @param {String} commandName the command name
+     * @param {String} value the command value
+     */
     execCommand: function(commandName, value) {
         this._loadRange();
         this._iframe.contentWindow.document.execCommand(commandName, false, value);
@@ -1502,11 +1556,19 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         this._cursorStyleUpdateRequired = true;
     },
     
+    /**
+     * Focuses the rich text input document.
+     */
     focusDocument: function() {
         this.client.application.setFocusedComponent(this.component);
         this._forceIERedraw();
     },
     
+    /**
+     * Forces Internet Explorer browsers to redraw the entire screen.  This is necessary after certain operations
+     * due to bugs in the IE platform that result in the screen becoming blank.  To workaround this issue, this method will
+     * set the  "display" property of the root document element to "none" and then revert it to its previous state.
+     */
     _forceIERedraw: function() {
         if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
             if (this._redrawScheduled || this.component.rta.peer.client.domainElement.offsetHeight !== 0) {
