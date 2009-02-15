@@ -333,7 +333,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
                 overflow: Echo.SplitPane.OVERFLOW_HIDDEN
             }
         });
-        this._richTextInput.richTextArea = this.component;
+        this._richTextInput.rta = this.component;
         cursor.add(this._richTextInput);
         
         return contentPane;
@@ -774,7 +774,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         var contentPane;
         if (this._overlayPane == null) {
             this._overlayPane = new Extras.Sync.RichTextArea.OverlayPane();
-            this._overlayPane.richTextArea = this.component;
+            this._overlayPane.rta = this.component;
             contentPane = new Echo.ContentPane();
             this._overlayPane.add(contentPane);
             this.baseComponent.add(this._overlayPane);
@@ -988,26 +988,26 @@ Extras.Sync.RichTextArea.AbstractDialog = Core.extend(Echo.WindowPane, {
      * The owning RichTextArea.
      * @type Extras.RichTextArea
      */
-    richTextArea: null,
+    rta: null,
 
     /**
      * Constructor.
      * 
-     * @param {Extras.RichTextArea} richTextArea the owning RichTextArea
+     * @param {Extras.RichTextArea} rta the owning RichTextArea
      * @param {Number} type the dialog type, either <code>TYPE_OK</code> or <code>TYPE_OK_CANCEL</code>
      * @param properties initial properties to be set on the WindowPane
      * @param {Echo.Component} content the component to display within the dialog 
      */
-    $construct: function(richTextArea, type, properties, content) {
-        this.richTextArea = richTextArea;
+    $construct: function(rta, type, properties, content) {
+        this.rta = rta;
     
-        var controlPaneSplitPaneStyleName = richTextArea.render("controlPaneSplitPaneStyleName");
-        var controlPaneRowStyleName = richTextArea.render("controlPaneRowStyleName");
-        var controlPaneButtonStyleName = richTextArea.render("controlPaneButtonStyleName"); 
+        var controlPaneSplitPaneStyleName = rta.render("controlPaneSplitPaneStyleName");
+        var controlPaneRowStyleName = rta.render("controlPaneRowStyleName");
+        var controlPaneButtonStyleName = rta.render("controlPaneButtonStyleName"); 
         
         // Build control.
         Echo.WindowPane.call(this, {
-            styleName: richTextArea.render("windowPaneStyleName"),
+            styleName: rta.render("windowPaneStyleName"),
             iconInsets: "6px 10px",
             contentWidth: "25em",
             contentHeight: "16em",
@@ -1037,8 +1037,8 @@ Extras.Sync.RichTextArea.AbstractDialog = Core.extend(Echo.WindowPane, {
         this.controlsRow.add(new Echo.Button({
             styleName: controlPaneButtonStyleName,
             style: controlPaneButtonStyleName ? null : Extras.Sync.RichTextArea.DEFAULTS.controlPaneButtonStyle,
-            text: richTextArea.peer.msg["Generic.Ok"],
-            icon: richTextArea.peer.icons.ok,
+            text: rta.peer.msg["Generic.Ok"],
+            icon: rta.peer.icons.ok,
             events: {
                 action: Core.method(this, this.processOk)
             }
@@ -1049,8 +1049,8 @@ Extras.Sync.RichTextArea.AbstractDialog = Core.extend(Echo.WindowPane, {
             this.controlsRow.add(new Echo.Button({
                 styleName: controlPaneButtonStyleName,
                 style: controlPaneButtonStyleName ? null : Extras.Sync.RichTextArea.DEFAULTS.controlPaneButtonStyle,
-                text: richTextArea.peer.msg["Generic.Cancel"],
-                icon: richTextArea.peer.icons.cancel,
+                text: rta.peer.msg["Generic.Cancel"],
+                icon: rta.peer.icons.cancel,
                 events: {
                     action: Core.method(this, this.processCancel)
                 }
@@ -1085,6 +1085,10 @@ Extras.Sync.RichTextArea.AbstractDialog = Core.extend(Echo.WindowPane, {
     }
 });
 
+/**
+ * Utilities for cleaning HTML.  
+ * Does not prevent malicious HTML code / perform any JavaScript filtering at this time. 
+ */
 Extras.Sync.RichTextArea.Html = {
 
     //FIXME Verify no illegal tags are present or correct.
@@ -1092,15 +1096,48 @@ Extras.Sync.RichTextArea.Html = {
     //FIXME Verify no illegal characters are present or correct.
     //FIXME Provide option to only remove the one trailing BR we add by default.
     
+    /**
+     * Regular expression to find P element blocks (open and closing tags).
+     * @type RegExp
+     */
     _P_BLOCK_FIND: /<p\b[^>]*>(.*?)<\/p>/ig,
+    
+    /**
+     * Regular expression to find standalone P elements.
+     * @type RegExp
+     */
     _P_STANDALONE_FIND: /<p\/?>/ig,
+
+    /**
+     * Regular expression to capture leading whitespace.
+     * @type RegExp
+     */
     _LEADING_WHITESPACE: /^(\s|<br\/?>|&nbsp;)+/i,
+
+    /**
+     * Regular expression to capture trailing whitespace.
+     * @type RegExp
+     */
     _TRAILING_WHITESPACE: /(\s|<br\/?>|&nbsp;)+$/i,
+    
+    /**
+     * Regular expression used to correct MSIE's FONT element color attributes which do not enclose attribute values in quotes.
+     * @type RegExp
+     */
     _MSIE_INVALID_FONT_COLOR_REPL: /(<font .*?color\=)(#[0-9a-fA-F]{3,6})(.*?>)/ig,
+
+    /**
+     * Regular expression used to correct MSIE's FONT element background attributes which do not enclose attribute values in quotes.
+     * @type RegExp
+     */
     _MSIE_INVALID_FONT_BACKGROUND_REPL: /(<font .*?)(background-color)/ig,
     
     /**
      * Cleans HTML input/output.
+     * 
+     * @param {String} html the HTML to clean
+     * @return the cleaned HTML
+     * @type String
      */
     clean: function(html) {
         html = html.replace(Extras.Sync.RichTextArea.Html._P_BLOCK_FIND, "$1<br/>");
@@ -1115,9 +1152,18 @@ Extras.Sync.RichTextArea.Html = {
     }
 };
 
+/**
+ * Color selection dialog.
+ */
 Extras.Sync.RichTextArea.ColorDialog = Core.extend(Extras.Sync.RichTextArea.AbstractDialog, {
 
     $static: {
+    
+        /**
+         * Default color swatch values.  
+         * Sourced from Tango color palete: http://tango.freedesktop.org/Tango_Icon_Theme_Guidelines
+         * @type Array
+         */
         COLORS: [ 
                 "#fce94f", "#edd400", "#c4a000",
                 "#fcaf3e", "#f57900", "#e8b86e",
@@ -1132,13 +1178,20 @@ Extras.Sync.RichTextArea.ColorDialog = Core.extend(Extras.Sync.RichTextArea.Abst
         ]
     },
     
-    $construct: function(richTextArea, setBackground, initialColor) {
-        Extras.Sync.RichTextArea.AbstractDialog.call(this, richTextArea,
+    /**
+     * Constructor.
+     * 
+     * @param {Extras.RichTextArea} rta the RichTextArea
+     * @param {Boolean} setBackground flag indicating whether background (true) or foreground (false) is being set
+     * @param {#Color} initialColor the initially selected color
+     */
+    $construct: function(rta, setBackground, initialColor) {
+        Extras.Sync.RichTextArea.AbstractDialog.call(this, rta,
                 Extras.Sync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL, 
                 {
-                    title: richTextArea.peer.msg[setBackground ? 
+                    title: rta.peer.msg[setBackground ? 
                             "ColorDialog.Title.Background" : "ColorDialog.Title.Foreground"],
-                    icon: setBackground ? richTextArea.peer.icons.background : richTextArea.peer.icons.foreground,
+                    icon: setBackground ? rta.peer.icons.background : rta.peer.icons.foreground,
                     contentWidth: "32em",
                     contentHeight: "22em"
                 },
@@ -1149,7 +1202,7 @@ Extras.Sync.RichTextArea.ColorDialog = Core.extend(Extras.Sync.RichTextArea.Abst
                         new Echo.Column({
                             children: [
                                 new Echo.Label({
-                                    text: richTextArea.peer.msg[
+                                    text: rta.peer.msg[
                                             setBackground ? "ColorDialog.PromptBackground" : "ColorDialog.PromptForeground"]
                                 }),
                                 this._colorSelect = new Extras.ColorSelect({
@@ -1167,6 +1220,12 @@ Extras.Sync.RichTextArea.ColorDialog = Core.extend(Extras.Sync.RichTextArea.Abst
                 }));
     },
     
+    /**
+     * Creates and returns an array of Echo.Button components which are used to select pre-set color values.
+     * 
+     * @return the color swatch buttons
+     * @type Array
+     */
     _createSwatches: function() {
         var children = [];
         var COLORS = Extras.Sync.RichTextArea.ColorDialog.COLORS;
@@ -1196,26 +1255,34 @@ Extras.Sync.RichTextArea.ColorDialog = Core.extend(Extras.Sync.RichTextArea.Abst
     }
 });
 
+/**
+ * Add Hyperlink Dialog.
+ */
 Extras.Sync.RichTextArea.HyperlinkDialog = Core.extend(Extras.Sync.RichTextArea.AbstractDialog, {
 
-    $construct: function(richTextArea) {
-        Extras.Sync.RichTextArea.AbstractDialog.call(this, richTextArea,
+    /**
+     * Constructor.
+     * 
+     * @param {Extras.RichTextArea} rta the RichTextArea
+     */
+    $construct: function(rta) {
+        Extras.Sync.RichTextArea.AbstractDialog.call(this, rta,
                 Extras.Sync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL,
                 {
-                    title: richTextArea.peer.msg["HyperlinkDialog.Title"], 
-                    icon: richTextArea.peer.icons.hyperlink
+                    title: rta.peer.msg["HyperlinkDialog.Title"], 
+                    icon: rta.peer.icons.hyperlink
                 },
                 new Echo.Column({
                     insets: 10,
                     children: [
                         new Echo.Label({
-                            text: richTextArea.peer.msg["HyperlinkDialog.PromptURL"]
+                            text: rta.peer.msg["HyperlinkDialog.PromptURL"]
                         }),
                         this._urlField = new Echo.TextField({
                             width: "100%"
                         }),
                         new Echo.Label({
-                            text: richTextArea.peer.msg["HyperlinkDialog.PromptDescription"]
+                            text: rta.peer.msg["HyperlinkDialog.PromptDescription"]
                         }),
                         this._descriptionField = new Echo.TextField({
                             width: "100%"
@@ -1231,9 +1298,9 @@ Extras.Sync.RichTextArea.HyperlinkDialog = Core.extend(Extras.Sync.RichTextArea.
             description: this._descriptionField.get("text")
         };
         if (!data.url) {
-            this.parent.add(new Extras.Sync.RichTextArea.MessageDialog(this.richTextArea, 
-                    this.richTextArea.peer.msg["HyperlinkDialog.ErrorDialogTitle"], 
-                    this.richTextArea.peer.msg["HyperlinkDialog.ErrorDialog.URL"]));
+            this.parent.add(new Extras.Sync.RichTextArea.MessageDialog(this.rta, 
+                    this.rta.peer.msg["HyperlinkDialog.ErrorDialogTitle"], 
+                    this.rta.peer.msg["HyperlinkDialog.ErrorDialog.URL"]));
             return;
         }
         this.parent.remove(this);
@@ -1241,20 +1308,28 @@ Extras.Sync.RichTextArea.HyperlinkDialog = Core.extend(Extras.Sync.RichTextArea.
     }
 });
 
+/**
+ * Add Image Dialog.
+ */
 Extras.Sync.RichTextArea.ImageDialog = Core.extend(Extras.Sync.RichTextArea.AbstractDialog, {
 
-    $construct: function(richTextArea) {
-        Extras.Sync.RichTextArea.AbstractDialog.call(this, richTextArea,
+    /**
+     * Constructor.
+     * 
+     * @param {Extras.RichTextArea} rta the RichTextArea
+     */
+    $construct: function(rta) {
+        Extras.Sync.RichTextArea.AbstractDialog.call(this, rta,
                 Extras.Sync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL,
                 {
-                    title: richTextArea.peer.msg["ImageDialog.Title"], 
-                    image: richTextArea.peer.icons.image
+                    title: rta.peer.msg["ImageDialog.Title"], 
+                    image: rta.peer.icons.image
                 },
                 new Echo.Column({
                     insets: 10,
                     children: [
                         new Echo.Label({
-                            text: richTextArea.peer.msg["ImageDialog.PromptURL"]
+                            text: rta.peer.msg["ImageDialog.PromptURL"]
                         }),
                         this._urlField = new Echo.TextField({
                             width: "100%"
@@ -1269,9 +1344,9 @@ Extras.Sync.RichTextArea.ImageDialog = Core.extend(Extras.Sync.RichTextArea.Abst
             url: this._urlField.get("text")
         };
         if (!data.url) {
-            this.parent.add(new Extras.Sync.RichTextArea.MessageDialog(this.richTextArea, 
-                    this.richTextArea.peer.msg["ImageDialog.ErrorDialogTitle"], 
-                    this.richTextArea.peer.msg["ImageDialog.ErrorDialog.URL"]));
+            this.parent.add(new Extras.Sync.RichTextArea.MessageDialog(this.rta, 
+                    this.rta.peer.msg["ImageDialog.ErrorDialogTitle"], 
+                    this.rta.peer.msg["ImageDialog.ErrorDialog.URL"]));
             return;
         }
         this.parent.remove(this);
@@ -1292,7 +1367,7 @@ Extras.Sync.RichTextArea.OverlayPane = Core.extend(Echo.Component, {
      * The supported RichTextArea.
      * @type Extras.RichTextArea
      */
-    richTextArea: null,
+    rta: null,
     
     /** @see Echo.Component#componentType */
     componentType: "Extras.RichTextOverlayPane",
@@ -1331,7 +1406,7 @@ Extras.Sync.RichTextArea.OverlayPanePeer = Core.extend(Echo.Render.ComponentSync
         } else if (this.component.children.length > 1) {
             throw new Error("Too many children added to OverlayPane.");
         }
-        this.component.richTextArea.peer.client.domainElement.appendChild(this._div);
+        this.component.rta.peer.client.domainElement.appendChild(this._div);
     },
     
     /** @see Echo.Render.ComponentSync#renderDisplay */
@@ -1362,7 +1437,7 @@ Extras.Sync.RichTextArea.InputComponent = Core.extend(Echo.Component, {
     /**
      * The containing RichTextArea component.
      */
-    richTextArea: null,
+    rta: null,
 
     $load: function() {
         Echo.ComponentFactory.registerType("Extras.RichTextInput", this);
@@ -1434,7 +1509,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
     
     _forceIERedraw: function() {
         if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
-            if (this._redrawScheduled || this.component.richTextArea.peer.client.domainElement.offsetHeight !== 0) {
+            if (this._redrawScheduled || this.component.rta.peer.client.domainElement.offsetHeight !== 0) {
                 // Do not schedule redraw if one is already scheduled, or if height of domain element is nonzero
                 // (the domain element having a height of 0 is indicative of the IE7's blanking bug having occurred).
                 return;
@@ -1539,7 +1614,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
     },
     
     loadData: function() {
-        var html = this.component.richTextArea.get("text");
+        var html = this.component.rta.get("text");
         if (html == null) {
             // Mozilla and Opera has issues with cursor appearing in proper location when text area is devoid of content.
             html = (Core.Web.Env.BROWSER_MOZILLA || Core.Web.Env.BROWSER_OPERA) ? "<br/>" : "";
@@ -1554,7 +1629,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         this._renderedHtml = html;
         //FIXME always grabbing focus, this may be undesired...necessary to maintain focus though.
         this.renderFocus();
-        this.component.richTextArea.peer._updateIndicators();
+        this.component.rta.peer._updateIndicators();
     },
     
     _loadRange: function() {
@@ -1568,7 +1643,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
     _notifyCursorStyleChange: function() {
         this._cursorStyleUpdateRequired = false;
         Core.Web.Scheduler.run(Core.method(this, function() {
-            this.component.richTextArea.peer._updateIndicators();
+            this.component.rta.peer._updateIndicators();
         }));
     },
     
@@ -1595,7 +1670,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
             return;
         }
         
-        this.component.richTextArea.peer._markFocused();
+        this.component.rta.peer._markFocused();
         
         this._storeData();
         this._storeRange();
@@ -1606,7 +1681,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         
         if (this._fireAction) {
             this._fireAction = false;
-            this.component.richTextArea.doAction();
+            this.component.rta.doAction();
         }
     },
     
@@ -1630,17 +1705,17 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
     
     /** @see Echo.Render.ComponentSync#renderAdd */
     renderAdd: function(update, parentElement) {
-        this.component.richTextArea.addListener("property", this._processPropertyRef);
+        this.component.rta.addListener("property", this._processPropertyRef);
         
         // Create IFRAME container DIV element.
         this._mainDiv = document.createElement("div");
-        Echo.Sync.Border.render(this.component.richTextArea.render("border", Extras.RichTextArea.DEFAULT_BORDER), this._mainDiv);
+        Echo.Sync.Border.render(this.component.rta.render("border", Extras.RichTextArea.DEFAULT_BORDER), this._mainDiv);
         
         // Create IFRAME element.
         this._iframe = document.createElement("iframe");
         this._iframe.style.width = this.width ? this.width : "100%";
 
-        this._paneRender = this.component.richTextArea.peer._paneRender;
+        this._paneRender = this.component.rta.peer._paneRender;
         if (!this._paneRender) {
             this._iframe.style.height = this.height ? this.height : "200px";
         }
@@ -1669,15 +1744,15 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         }
         
         var style = "height:100%;width:100%;margin:0px;padding:0px;";
-        var foreground = this.component.richTextArea.render("foreground");
+        var foreground = this.component.rta.render("foreground");
         if (foreground) {
             style += "color:" + foreground + ";";
         }
-        var background = this.component.richTextArea.render("background");
+        var background = this.component.rta.render("background");
         if (background) {
             style += "background-color:" + background + ";";
         }
-        var backgroundImage = this.component.richTextArea.render("backgroundImage");
+        var backgroundImage = this.component.rta.render("backgroundImage");
         if (backgroundImage) {
             style += "background-attachment: fixed;";
             style += "background-image:url(" + Echo.Sync.FillImage.getUrl(backgroundImage) + ");";
@@ -1691,7 +1766,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
             }
         }
         
-        var text = this.component.richTextArea.get("text");
+        var text = this.component.rta.get("text");
         var contentDocument = this._iframe.contentWindow.document;
         contentDocument.open();
         contentDocument.write("<html><body tabindex=\"0\" width=\"100%\" height=\"100%\"" +
@@ -1717,7 +1792,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
     
     /** @see Echo.Render.ComponentSync#renderDispose */
     renderDispose: function(update) {
-        this.component.richTextArea.removeListener("property", this._processPropertyRef);
+        this.component.rta.removeListener("property", this._processPropertyRef);
         Core.Web.Event.removeAll(this._iframe.contentWindow.document);
         this._mainDiv = null;
         this._iframe = null;
@@ -1734,7 +1809,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         var bounds = new Core.Web.Measure.Bounds(this._mainDiv.parentNode);
         
         if (bounds.height) {
-            var border = this.component.richTextArea.render("border", Extras.RichTextArea.DEFAULT_BORDER);
+            var border = this.component.rta.render("border", Extras.RichTextArea.DEFAULT_BORDER);
             var borderSize = Echo.Sync.Border.getPixelSize(border, "top") + Echo.Sync.Border.getPixelSize(border, "bottom");
     
             var calculatedHeight = (bounds.height < 100 ? 100 : bounds.height - borderSize) + "px";
@@ -1764,7 +1839,7 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
         var html = contentDocument.body.innerHTML;
         var cleanHtml = Extras.Sync.RichTextArea.Html.clean(html);
         this._renderedHtml = cleanHtml;
-        this.component.richTextArea.set("text", cleanHtml);
+        this.component.rta.set("text", cleanHtml);
     },
     
     _storeRange: function() {
@@ -1783,12 +1858,12 @@ Extras.Sync.RichTextArea.MessageDialog = Core.extend(
     /**
      * Constructor.
      * 
-     * @param {Extras.RichTextArea} the richTextArea
+     * @param {Extras.RichTextArea} the RichTextArea
      * @param {String} title the dialog title
      * @param {String} message the dialog message
      */
-    $construct: function(richTextArea, title, message) {
-        Extras.Sync.RichTextArea.AbstractDialog.call(this, richTextArea,
+    $construct: function(rta, title, message) {
+        Extras.Sync.RichTextArea.AbstractDialog.call(this, rta,
                 Extras.Sync.RichTextArea.AbstractDialog.TYPE_OK, {
                     title: title
                 },
@@ -1809,19 +1884,19 @@ Extras.Sync.RichTextArea.TableDialog = Core.extend(Extras.Sync.RichTextArea.Abst
     /**
      * Constructor.
      * 
-     * @param {Extras.RichTextArea} richTextArea the supported RichTextArea
+     * @param {Extras.RichTextArea} rta the supported RichTextArea
      */
-    $construct: function(richTextArea) {
-        Extras.Sync.RichTextArea.AbstractDialog.call(this, richTextArea,
+    $construct: function(rta) {
+        Extras.Sync.RichTextArea.AbstractDialog.call(this, rta,
                 Extras.Sync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL, {
-                    title: richTextArea.peer.msg["TableDialog.Title"], 
-                    icon: richTextArea.peer.icons.table
+                    title: rta.peer.msg["TableDialog.Title"], 
+                    icon: rta.peer.icons.table
                 },
                 new Echo.Grid({
                     insets: 10,
                     children: [
                         new Echo.Label({
-                            text: richTextArea.peer.msg["TableDialog.PromptRows"],
+                            text: rta.peer.msg["TableDialog.PromptRows"],
                             layoutData: {
                                 alignment: "trailing"
                             }
@@ -1831,7 +1906,7 @@ Extras.Sync.RichTextArea.TableDialog = Core.extend(Extras.Sync.RichTextArea.Abst
                             width: 100   
                         }),
                         new Echo.Label({
-                            text: richTextArea.peer.msg["TableDialog.PromptColumns"],
+                            text: rta.peer.msg["TableDialog.PromptColumns"],
                             layoutData: {
                                 alignment: "trailing"
                             }
@@ -1851,15 +1926,15 @@ Extras.Sync.RichTextArea.TableDialog = Core.extend(Extras.Sync.RichTextArea.Abst
             columns: parseInt(this._columnsField.get("text"), 10)
         };
         if (isNaN(data.rows) || data.rows < 1 || data.rows > 50) {
-            this.parent.add(new Extras.Sync.RichTextArea.MessageDialog(this.richTextArea, 
-                    this.richTextArea.peer.msg["TableDialog.ErrorDialogTitle"], 
-                    this.richTextArea.peer.msg["TableDialog.ErrorDialog.Rows"]));
+            this.parent.add(new Extras.Sync.RichTextArea.MessageDialog(this.rta, 
+                    this.rta.peer.msg["TableDialog.ErrorDialogTitle"], 
+                    this.rta.peer.msg["TableDialog.ErrorDialog.Rows"]));
             return;
         }
         if (isNaN(data.columns) || data.columns < 1 || data.columns > 50) {
-            this.parent.add(new Extras.Sync.RichTextArea.MessageDialog(this.richTextArea, 
-                    this.richTextArea.peer.msg["TableDialog.ErrorDialogTitle"], 
-                    this.richTextArea.peer.msg["TableDialog.ErrorDialog.Columns"]));
+            this.parent.add(new Extras.Sync.RichTextArea.MessageDialog(this.rta, 
+                    this.rta.peer.msg["TableDialog.ErrorDialogTitle"], 
+                    this.rta.peer.msg["TableDialog.ErrorDialog.Columns"]));
             return;
         }
         this.parent.remove(this);
@@ -1973,6 +2048,8 @@ Extras.Sync.RichTextArea.ToolbarButtonPeer = Core.extend(Echo.Render.ComponentSy
        
     /**
      * Renders the state of the button (pressed/rollover effects).
+     * 
+     * @param {Boolean} rolloverState flag indicating whether component is currently rolled over.
      */
     _renderButtonState: function(rolloverState) {
         var foreground = this.component.render("foreground");
