@@ -764,7 +764,8 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
     },
     
     /**
-     * Opens a dialog window.
+     * Opens a dialog window.  The dialog is displayed in an OverlayPane which shows
+     * the dialog over the application, rather than simply over the RichTextArea itself. 
      * 
      * @param {Echo.WindowPane} dialogWindow the dialog to open 
      */
@@ -789,15 +790,32 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         dialogWindow.addListener("parent", this._processDialogCloseRef);
     },
     
+    /**
+     * Processes a simple editor command action.  The event's actionCommand is sent to the input peer as the editor command name.
+     * This method is registered as a listener to various toolbar buttons.
+     * 
+     * @param e the event
+     */
     _processCommand: function(e) {
         this.execCommand(e.actionCommand);
         this.focusDocument();
     },
     
+    /**
+     * Processes an "insertHtml" event received from the Extras.RichTextArea component.
+     * 
+     * @param e the event
+     */
     _processComponentInsertHtml: function(e) {
         this._richTextInput.peer.insertHtml(e.html);
     },
     
+    /**
+     * Processes a dialog closing (de-parenting) event.
+     * Removes the OverlayPane.
+     * 
+     * @param e the event
+     */
     _processDialogClose: function(e) {
         if (e.newValue != null) {
             return;
@@ -813,6 +831,11 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         e.source.removeListener("parent", this._processDialogCloseRef);
     },
     
+    /**
+     * Processes an action received from the menu bar.
+     * 
+     * @param e the event
+     */
     _processMenuAction: function(e) {
         if (e.modelId.charAt(0) == '/') {
             var separatorIndex = e.modelId.indexOf("/", 1);
@@ -914,6 +937,10 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         this.renderAdd(update, containerElement);
     },
     
+    /**
+     * Updates the status of various press-able toolbar buttons to indicate the state of the text at the cursor position
+     * (e.g., bold/italic/underline, color, style selection).  
+     */
     _updateIndicators: function() {
         var style = this._richTextInput.peer._getCursorStyle();
         if (this._toolbarButtons.bold) {
@@ -1161,6 +1188,7 @@ Extras.Sync.RichTextArea.ColorDialog = Core.extend(Extras.Sync.RichTextArea.Abst
         return children;
     },
     
+    /** @see Extras.Sync.RichTextArea.AbstractDialog#processOk */
     processOk: function(e) {
         var color = this._colorSelect.get("color");
         this.parent.remove(this);
@@ -1196,6 +1224,7 @@ Extras.Sync.RichTextArea.HyperlinkDialog = Core.extend(Extras.Sync.RichTextArea.
                 }));
     },
     
+    /** @see Extras.Sync.RichTextArea.AbstractDialog#processOk */
     processOk: function(e) {
         var data = {
             url: this._urlField.get("text"),
@@ -1234,6 +1263,7 @@ Extras.Sync.RichTextArea.ImageDialog = Core.extend(Extras.Sync.RichTextArea.Abst
                 }));
     },
     
+    /** @see Extras.Sync.RichTextArea.AbstractDialog#processOk */
     processOk: function(e) {
         var data = {
             url: this._urlField.get("text")
@@ -1258,6 +1288,10 @@ Extras.Sync.RichTextArea.OverlayPane = Core.extend(Echo.Component, {
         Echo.ComponentFactory.registerType("Extras.RichTextOverlayPane", this);
     },
     
+    /**
+     * The supported RichTextArea.
+     * @type Extras.RichTextArea
+     */
     richTextArea: null,
     
     /** @see Echo.Component#componentType */
@@ -1334,7 +1368,10 @@ Extras.Sync.RichTextArea.InputComponent = Core.extend(Echo.Component, {
         Echo.ComponentFactory.registerType("Extras.RichTextInput", this);
     },
     
+    /** @see Echo.Component#componentType */
     componentType: "Extras.RichTextInput",
+    
+    /** @see Echo.Component#focusable */
     focusable: true
 });
 
@@ -1737,9 +1774,19 @@ Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
     }
 });
 
+/**
+ * Dialog window which displays a message.
+ */
 Extras.Sync.RichTextArea.MessageDialog = Core.extend(
         Extras.Sync.RichTextArea.AbstractDialog, {
-    
+   
+    /**
+     * Constructor.
+     * 
+     * @param {Extras.RichTextArea} the richTextArea
+     * @param {String} title the dialog title
+     * @param {String} message the dialog message
+     */
     $construct: function(richTextArea, title, message) {
         Extras.Sync.RichTextArea.AbstractDialog.call(this, richTextArea,
                 Extras.Sync.RichTextArea.AbstractDialog.TYPE_OK, {
