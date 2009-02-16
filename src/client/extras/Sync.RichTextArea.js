@@ -1228,8 +1228,8 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
      * Focuses the edited document.  Delegates to RichTextInput peer.
      */
     focusDocument: function() {
-//FIXME Coupled            
-        this._richTextInput.peer.focusDocument();
+// FIXME        
+//        this._richTextInput.peer.focusDocument();
     },
     
     /** @see Echo.Arc.ComponentSync#getDomainElement */
@@ -2234,6 +2234,11 @@ Extras.Sync.RichTextArea.ToolbarButtonPeer = Core.extend(Echo.Render.ComponentSy
         Core.Web.Event.removeAll(this._div);
         this._div = null;
         this._colorDiv = null;
+    },
+    
+    /** @see Echo.Render.ComponentSync#renderFocus */
+    renderFocus: function() {
+        // Empty implementation required due to supported component extending (focusable) Echo.Button.
     },
     
     /** @see Echo.Render.ComponentSync#renderUpdate */
