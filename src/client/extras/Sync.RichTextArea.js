@@ -522,7 +522,6 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
         var cleanHtml = Extras.Sync.RichTextArea.Html.clean(html);
         this._renderedHtml = cleanHtml;
         this.component.set("text", cleanHtml);
-Core.Debug.consoleWrite("SD:" + cleanHtml);        
     },
     
     _storeRange: function() {
@@ -866,6 +865,9 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
             layoutData: {
                 overflow: Echo.SplitPane.OVERFLOW_HIDDEN
             },
+            background: this.component.render("background"),
+            backgroundImage: this.component.render("backgroundImage"),
+            foreground: this.component.render("foreground"),
             text: this.component.get("text"),
             events: {
                 action: Core.method(this, function(e) {
