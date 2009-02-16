@@ -8,6 +8,74 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
     },
     
     $static: {
+
+        /**
+         * HTML manipulation/cleaning utilities.
+         */
+        Html: {
+        
+            //FIXME Verify no illegal tags are present or correct.
+            //FIXME Verify no unclosed tags are present or correct.
+            //FIXME Verify no illegal characters are present or correct.
+            //FIXME Provide option to only remove the one trailing BR we add by default.
+            
+            /**
+             * Regular expression to find P element blocks (open and closing tags).
+             * @type RegExp
+             */
+            _P_BLOCK_FIND: /<p\b[^>]*>(.*?)<\/p>/ig,
+            
+            /**
+             * Regular expression to find standalone P elements.
+             * @type RegExp
+             */
+            _P_STANDALONE_FIND: /<p\/?>/ig,
+        
+            /**
+             * Regular expression to capture leading whitespace.
+             * @type RegExp
+             */
+            _LEADING_WHITESPACE: /^(\s|<br\/?>|&nbsp;)+/i,
+        
+            /**
+             * Regular expression to capture trailing whitespace.
+             * @type RegExp
+             */
+            _TRAILING_WHITESPACE: /(\s|<br\/?>|&nbsp;)+$/i,
+            
+            /**
+             * Regular expression used to correct MSIE's FONT element color attributes which do not enclose attribute values 
+             * in quotes.
+             * @type RegExp
+             */
+            _MSIE_INVALID_FONT_COLOR_REPL: /(<font .*?color\=)(#[0-9a-fA-F]{3,6})(.*?>)/ig,
+        
+            /**
+             * Regular expression used to correct MSIE's FONT element background attributes which do not enclose attribute values 
+             * in quotes.
+             * @type RegExp
+             */
+            _MSIE_INVALID_FONT_BACKGROUND_REPL: /(<font .*?)(background-color)/ig,
+            
+            /**
+             * Cleans HTML input/output.
+             * 
+             * @param {String} html the HTML to clean
+             * @return the cleaned HTML
+             * @type String
+             */
+            clean: function(html) {
+                html = html.replace(Extras.Sync.RichTextInput.Html._P_BLOCK_FIND, "$1<br/>");
+                html = html.replace(Extras.Sync.RichTextInput.Html._P_STANDALONE_FIND, "<br/>");
+                html = html.replace(Extras.Sync.RichTextInput.Html._LEADING_WHITESPACE, "");
+                html = html.replace(Extras.Sync.RichTextInput.Html._TRAILING_WHITESPACE, "");
+                if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
+                    html = html.replace(Extras.Sync.RichTextInput.Html._MSIE_INVALID_FONT_COLOR_REPL, "$1\"$2\"$3");
+                    html = html.replace(Extras.Sync.RichTextInput.Html._MSIE_INVALID_FONT_BACKGROUND_REPL, "$1background-color");
+                }
+                return html;
+            }
+        },
         
         /**
          * Regular expression to determine if a style attribute is setting a bold font.
@@ -96,8 +164,16 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
      */
     _execCommandListener: null,
     
+    /**
+     * Root DIV element of rendered DOM hierarchy.
+     * @type Element
+     */
     _div: null,
     
+    /**
+     * Rendered IFRAME element containing editable document.
+     * @type Element
+     */
     _iframe: null,
 
     /**
@@ -162,6 +238,9 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
      *  <li><code>foreground</code>: hex triplet string indicating foreground color</li>
      *  <li><code>background</code>: hex triplet string indicating background color</li>
      * </ul>
+     * 
+     * @return the style object
+     * @type Object
      */
     _getCursorStyle: function() {
         var selection = this._getSelection();
@@ -262,6 +341,10 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
         this.client.forceRedraw();
     },
     
+    /**
+     * Loads the text data in the component's "text" property into the rendered editable document.
+     * @see #_storeData
+     */
     _loadData: function() {
         var html = this.component.get("text");
         if (html == null) {
@@ -281,6 +364,10 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
         this.component.doCursorStyleChange(this._getCursorStyle());
     },
     
+    /**
+     * Selects the last selected range (MSIE only).
+     * @see #_storeRange
+     */
     _loadRange: function() {
         if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
             if (this._selectionRange) {
@@ -516,21 +603,30 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
         this.renderAdd(update, containerElement);
     },
     
+    /**
+     * Stores the state of the editable document into the "text" property of the component.
+     * The HTML is cleaned first.
+     * @see #_loadData
+     */
     _storeData: function() {
         var contentDocument = this._iframe.contentWindow.document;
         var html = contentDocument.body.innerHTML;
-        var cleanHtml = Extras.Sync.RichTextArea.Html.clean(html);
+        var cleanHtml = Extras.Sync.RichTextInput.Html.clean(html);
         this._renderedHtml = cleanHtml;
         this.component.set("text", cleanHtml);
     },
     
+    /**
+     * Stores the current selection range (MSIE only).
+     * @see #_loadRange
+     */
     _storeRange: function() {
         if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
             this._selectionRange = this._iframe.contentWindow.document.selection.createRange();
         }
     }
 });
-        
+
 /**
  * Component rendering peer: RichTextArea
  */
@@ -1635,73 +1731,6 @@ Extras.Sync.RichTextArea.AbstractDialog = Core.extend(Echo.WindowPane, {
         }
     }
 });
-
-/**
- * Utilities for cleaning HTML.  
- * Does not prevent malicious HTML code / perform any JavaScript filtering at this time. 
- */
-Extras.Sync.RichTextArea.Html = {
-
-    //FIXME Verify no illegal tags are present or correct.
-    //FIXME Verify no unclosed tags are present or correct.
-    //FIXME Verify no illegal characters are present or correct.
-    //FIXME Provide option to only remove the one trailing BR we add by default.
-    
-    /**
-     * Regular expression to find P element blocks (open and closing tags).
-     * @type RegExp
-     */
-    _P_BLOCK_FIND: /<p\b[^>]*>(.*?)<\/p>/ig,
-    
-    /**
-     * Regular expression to find standalone P elements.
-     * @type RegExp
-     */
-    _P_STANDALONE_FIND: /<p\/?>/ig,
-
-    /**
-     * Regular expression to capture leading whitespace.
-     * @type RegExp
-     */
-    _LEADING_WHITESPACE: /^(\s|<br\/?>|&nbsp;)+/i,
-
-    /**
-     * Regular expression to capture trailing whitespace.
-     * @type RegExp
-     */
-    _TRAILING_WHITESPACE: /(\s|<br\/?>|&nbsp;)+$/i,
-    
-    /**
-     * Regular expression used to correct MSIE's FONT element color attributes which do not enclose attribute values in quotes.
-     * @type RegExp
-     */
-    _MSIE_INVALID_FONT_COLOR_REPL: /(<font .*?color\=)(#[0-9a-fA-F]{3,6})(.*?>)/ig,
-
-    /**
-     * Regular expression used to correct MSIE's FONT element background attributes which do not enclose attribute values in quotes.
-     * @type RegExp
-     */
-    _MSIE_INVALID_FONT_BACKGROUND_REPL: /(<font .*?)(background-color)/ig,
-    
-    /**
-     * Cleans HTML input/output.
-     * 
-     * @param {String} html the HTML to clean
-     * @return the cleaned HTML
-     * @type String
-     */
-    clean: function(html) {
-        html = html.replace(Extras.Sync.RichTextArea.Html._P_BLOCK_FIND, "$1<br/>");
-        html = html.replace(Extras.Sync.RichTextArea.Html._P_STANDALONE_FIND, "<br/>");
-        html = html.replace(Extras.Sync.RichTextArea.Html._LEADING_WHITESPACE, "");
-        html = html.replace(Extras.Sync.RichTextArea.Html._TRAILING_WHITESPACE, "");
-        if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
-            html = html.replace(Extras.Sync.RichTextArea.Html._MSIE_INVALID_FONT_COLOR_REPL, "$1\"$2\"$3");
-            html = html.replace(Extras.Sync.RichTextArea.Html._MSIE_INVALID_FONT_BACKGROUND_REPL, "$1background-color");
-        }
-        return html;
-    }
-};
 
 /**
  * Color selection dialog.
