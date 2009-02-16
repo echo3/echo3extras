@@ -1,4 +1,538 @@
 /**
+ * Component rendering peer: Extras.RichTextInput
+ */
+Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
+
+    $load: function() {
+        Echo.Render.registerPeer("Extras.RichTextInput", this);
+    },
+    
+    $static: {
+        
+        /**
+         * Regular expression to determine if a style attribute is setting a bold font.
+         * @type RegExp 
+         */
+        _CSS_BOLD: /font-weight\:\s*bold/i,
+
+        /**
+         * Regular expression to determine if a style attribute is setting a foreground color.
+         * @type RegExp 
+         */
+        _CSS_FOREGROUND_TEST: /^-?color\:/i,
+        
+        /**
+         * Regular expression to determine the foreground color being set by a style attribute.
+         * @type RegExp 
+         */
+        _CSS_FOREGROUND_RGB: /^-?color\:\s*rgb\s*\(\s*(\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})/i,
+                
+        /**
+         * Regular expression to determine if a style attribute is setting a background color.
+         * @type RegExp 
+         */
+        _CSS_BACKGROUND_TEST: /background-color\:/i,
+
+        /**
+         * Regular expression to determine the background color being set by a style attribute.
+         * @type RegExp 
+         */
+        _CSS_BACKGROUND_RGB: /background-color\:\s*rgb\s*\(\s*(\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})/i,
+                
+        /**
+         * Regular expression to determine if a style attribute is setting an italic font.
+         * @type RegExp 
+         */
+        _CSS_ITALIC: /font-style\:\s*italic/i,
+        
+        /**
+         * Regular expression to determine if a style attribute is setting an underline font.
+         * @type RegExp 
+         */
+        _CSS_UNDERLINE: /text-decoration\:\s*underline/i,
+        
+        /**
+         * Key codes which may result in cursor navigating into new style, requiring an update of the style indicators.
+         */
+        _NAVIGATION_KEY_CODES: {
+            38: 1, 40: 1, 37: 1, 39: 1, 33: 1, 34: 1, 36: 1, 35: 1, 8: 1, 46: 1
+        }
+    },
+    
+    /**
+     * Flag indicating whether a style information update is required due to the cursor/selection having been moved/changed.
+     * @type Boolean
+     */
+    _cursorStyleUpdateRequired: false,
+
+    /**
+     * Flag indicating whether an action event should be fired.
+     * Set by _processKeyPress(), used by _processKeyUp().
+     * @type Boolean
+     */
+    _fireAction: false,
+    
+    /**
+     * The most recently retrieved document HTML.  This value is used to avoid updating the HTML when unnecessary.
+     * @type String 
+     */
+    _renderedHtml: null,
+    
+    /**
+     * Listener to receive property events from component.
+     * @type Function
+     */
+    _propertyListener: null,
+
+    /**
+     * Listener to receive insertHtml events from component.
+     * @type Function
+     */
+    _insertHtmlListener: null,
+    
+    /**
+     * Listener to receive execCommand events from component.
+     * @type Function
+     */
+    _execCommandListener: null,
+    
+    _div: null,
+    
+    _iframe: null,
+
+    /**
+     * Constructor.
+     */
+    $construct: function() { 
+        this._propertyListener = Core.method(this, function(e) {
+            if (e.propertyName == "text") {
+                this._loadData();
+            }
+        });
+        this._insertHtmlListener = Core.method(this, function(e) {
+            this._insertHtml(e.html);
+        });
+        this._execCommandListener = Core.method(this, function(e) {
+            this._execCommand(e.commandName, e.value);
+        });
+    },
+    
+    /**
+     * Adds listeners to supported Extras.RichTextInput object.
+     */
+    _addComponentListeners: function() {
+        this.component.addListener("execCommand", this._execCommandListener);
+        this.component.addListener("insertHtml", this._insertHtmlListener);
+        this.component.addListener("property", this._propertyListener);
+    },
+
+    /**
+     * Executes a rich text editing command (via document.execCommand()).
+     * 
+     * @param {String} commandName the command name
+     * @param {String} value the command value
+     */
+    _execCommand: function(commandName, value) {
+        this._loadRange();
+        this._iframe.contentWindow.document.execCommand(commandName, false, value);
+        this._storeData();
+        
+        this.client.forceRedraw();
+        
+        // Flag that cursor style update is required.  Some browsers will not render nodes until text is inserted.
+        this._cursorStyleUpdateRequired = true;
+    },
+    
+    /**
+     * Focuses the rich text input document.
+     */
+    focusDocument: function() {
+        this.client.application.setFocusedComponent(this.component);
+        this.client.forceRedraw();
+    },
+    
+    /**
+     * Determines style information about the text at the cursor position.
+     * Returns an object containing zero or more of the following properties:
+     * <ul>
+     *  <li><code>bold</code>: boolean value indicating the text is bold</li>
+     *  <li><code>italic</code>: boolean value indicating the text is italic</li>
+     *  <li><code>underline</code>: boolean value indicating the text is underline</li>
+     *  <li><code>paragraphStyle</code>: string value describing paragraph style, e.g., h1, h2, h3, h4, h5, h6, p, or pre</li>
+     *  <li><code>foreground</code>: hex triplet string indicating foreground color</li>
+     *  <li><code>background</code>: hex triplet string indicating background color</li>
+     * </ul>
+     */
+    _getCursorStyle: function() {
+        var selection = this._getSelection();
+        var style = { };
+        var rgb;
+
+        var node = selection.node;
+        while (node) { 
+            if (node.nodeType == 1) {
+                switch (node.nodeName.toLowerCase()) {
+                case "b": case "strong":
+                    style.bold = true;
+                    break;
+                case "i": case "em":
+                    style.italic = true;
+                    break;
+                case "u":
+                    style.underline = true;
+                    break;
+                case "h1": case "h2": case "h3": case "h4": case "h5": case "h6": case "p": case "pre":
+                    if (!style.paragraphStyle) {
+                        style.paragraphStyle = node.nodeName.toLowerCase();
+                    }
+                    break;
+                }
+            
+                var css = node.style.cssText;
+                style.bold |= Extras.Sync.RichTextInput._CSS_BOLD.test(css);
+                style.italic |= Extras.Sync.RichTextInput._CSS_ITALIC.test(css);
+                style.underline |= Extras.Sync.RichTextInput._CSS_UNDERLINE.test(css);
+                
+                if (!style.foreground && Extras.Sync.RichTextInput._CSS_FOREGROUND_TEST.test(css)) {
+                    rgb = Extras.Sync.RichTextInput._CSS_FOREGROUND_RGB.exec(css);
+                    if (rgb) {
+                        style.foreground = Echo.Sync.Color.toHex(
+                                parseInt(rgb[1], 10), parseInt(rgb[2], 10), parseInt(rgb[3], 10));
+                    }
+                }
+
+                if (!style.background && Extras.Sync.RichTextInput._CSS_BACKGROUND_TEST.test(css)) {
+                    rgb = Extras.Sync.RichTextInput._CSS_BACKGROUND_RGB.exec(css);
+                    if (rgb) {
+                        style.background = Echo.Sync.Color.toHex(
+                                parseInt(rgb[1], 10), parseInt(rgb[2], 10), parseInt(rgb[3], 10));
+                    }
+                }
+            }
+            node = node.parentNode;
+        }
+        
+        return style;
+    },
+    
+    /**
+     * Returns the current selection state of the input field.
+     * The object contains the following properties:
+     * <ul>
+     *  <li><code>node</code>: specifies a current node contained in the selection</li>
+     * </ul>
+     * This is a cross-platform workaround for differences in the selection API of MSIE vs. DOM compliant browsers.
+     * 
+     * @return the selection object
+     * @type Object
+     */
+    _getSelection: function() {
+        if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
+            var textRange = this._iframe.contentWindow.document.selection.createRange();
+            return {
+                node: textRange.parentElement()
+            };
+        } else {
+            var selection = this._iframe.contentWindow.getSelection();
+            return {
+                node: selection ? selection.anchorNode : null
+            };
+        }
+    },
+    
+    /**
+     * Inserts arbitrary HTML within the document at the current cursor position.
+     * 
+     * @param {String} html the HTML code to insert
+     */
+    _insertHtml: function(html) {
+        if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
+            if (!this._selectionRange) {
+                this._selectionRange = this._iframe.contentWindow.document.body.createTextRange();
+            }
+            this._selectionRange.select();
+            this._selectionRange.pasteHTML(html);
+            this._notifyCursorStyleChange();
+            this._storeData();
+        } else {
+            this._execCommand("inserthtml", html);
+        }
+        
+        this.focusDocument();
+        this.client.forceRedraw();
+    },
+    
+    _loadData: function() {
+        var html = this.component.get("text");
+        if (html == null) {
+            // Mozilla and Opera have issues with cursor appearing in proper location when text area is devoid of content.
+            html = (Core.Web.Env.BROWSER_MOZILLA || Core.Web.Env.BROWSER_OPERA) ? "<br/>" : "";
+        }
+        if (html == this._renderedHtml) {
+            // No update necessary.
+            return;
+        }
+
+        var contentDocument = this._iframe.contentWindow.document;
+        contentDocument.body.innerHTML = html;
+        this._renderedHtml = html;
+        //FIXME always grabbing focus, this may be undesired...necessary to maintain focus though.
+        this.renderFocus();
+        this.component.doCursorStyleChange(this._getCursorStyle());
+    },
+    
+    _loadRange: function() {
+        if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
+            if (this._selectionRange) {
+                this._selectionRange.select();
+            }
+        }
+    },
+    
+    _notifyCursorStyleChange: function() {
+        this._cursorStyleUpdateRequired = false;
+        Core.Web.Scheduler.run(Core.method(this, function() {
+            this.component.doCursorStyleChange(this._getCursorStyle());
+        }));
+    },
+    
+    /**
+     * Processes a key press event within the input document.
+     * 
+     * @param e the event
+     */
+    _processKeyPress: function(e) {
+        if (!this.client || !this.client.verifyInput(this.component)) {
+            Core.Web.DOM.preventEventDefault(e);
+            return;
+        }
+
+        if (e.keyCode == 13) {
+            this._fireAction = true;
+        }
+    },
+    
+    /**
+     * Processes a key up event within the input document.
+     * 
+     * @param e the event
+     */
+    _processKeyUp: function(e) {
+        if (!this.client || !this.client.verifyInput(this.component)) {
+            Core.Web.DOM.preventEventDefault(e);
+            return;
+        }
+
+// Commented out till markFocused understood.
+//        this.component.rta.peer._markFocused();
+        
+        this._storeData();
+        this._storeRange();
+        
+        if (this._cursorStyleUpdateRequired || Extras.Sync.RichTextInput._NAVIGATION_KEY_CODES[e.keyCode]) {
+            this._notifyCursorStyleChange();
+        }
+        
+        if (this._fireAction) {
+            this._fireAction = false;
+            this.component.doAction();
+        }
+    },
+    
+    /**
+     * Processes a mouse down event within the input document.
+     * 
+     * @param e the event
+     */
+    _processMouseDown: function(e) {
+        if (!this.client || !this.client.verifyInput(this.component)) {
+            Core.Web.DOM.preventEventDefault(e);
+            return;
+        }
+    },
+
+    /**
+     * Processes a mouse up event within the input document.
+     * 
+     * @param e the event
+     */
+    _processMouseUp: function(e) {
+        if (!this.client || !this.client.verifyInput(this.component)) {
+            Core.Web.DOM.preventEventDefault(e);
+            return;
+        }
+
+        this._storeRange();
+        
+        this._notifyCursorStyleChange();
+    },
+    
+    /**
+     * Removes listeners from supported Extras.RichTextInput object.
+     */
+    _removeComponentListeners: function() {
+        this.component.removeListener("execCommand", this._execCommandListener);
+        this.component.removeListener("insertHtml", this._insertHtmlListener);
+        this.component.removeListener("property", this._propertyListener);
+    },
+    
+    /** @see Echo.Render.ComponentSync#renderAdd */
+    renderAdd: function(update, parentElement) {
+        this._addComponentListeners();
+        
+        // Create IFRAME container DIV element.
+        this._div = document.createElement("div");
+        Echo.Sync.Border.render(this.component.render("border", Extras.RichTextArea.DEFAULT_BORDER), this._div);
+        
+        // Create IFRAME element.
+        this._iframe = document.createElement("iframe");
+        this._iframe.style.width = this.width ? this.width : "100%";
+
+        if (!this.component.get("paneRender")) {
+            this._iframe.style.height = this.height ? this.height : "200px";
+        }
+
+        this._iframe.style.border = "0px none";
+        this._iframe.frameBorder = "0";
+    
+        this._div.appendChild(this._iframe);
+    
+        parentElement.appendChild(this._div);
+    },
+    
+    _renderContentDocument: function() {
+        // Ensure element is on-screen before rendering content/enabling design mode.
+        var element = this._iframe;
+        while (element != document.body) {
+            if (element == null) {
+                // Not added to parent.
+                return;
+            }
+            if (element.style.display == "none") {
+                // Not rendered.
+                return;
+            }
+            element = element.parentNode;
+        }
+        
+        var style = "height:100%;width:100%;margin:0px;padding:0px;";
+        var foreground = this.component.render("foreground");
+        if (foreground) {
+            style += "color:" + foreground + ";";
+        }
+        var background = this.component.render("background");
+        if (background) {
+            style += "background-color:" + background + ";";
+        }
+        var backgroundImage = this.component.render("backgroundImage");
+        if (backgroundImage) {
+            style += "background-attachment: fixed;";
+            style += "background-image:url(" + Echo.Sync.FillImage.getUrl(backgroundImage) + ");";
+            var backgroundRepeat = Echo.Sync.FillImage.getRepeat(backgroundImage);
+            if (backgroundRepeat) {
+                style += "background-repeat:" + backgroundRepeat + ";";
+            }
+            var backgroundPosition = Echo.Sync.FillImage.getPosition(backgroundImage);
+            if (backgroundPosition) {
+                style += "background-position:" + backgroundPosition + ";";
+            }
+        }
+        
+        var text = this.component.get("text");
+        var contentDocument = this._iframe.contentWindow.document;
+        contentDocument.open();
+        contentDocument.write("<html><body tabindex=\"0\" width=\"100%\" height=\"100%\"" +
+                (style ? (" style=\"" + style + "\"") : "") + ">" + (text == null ? "" : text) + "</body></html>");
+        contentDocument.close();
+        if (Core.Web.Env.BROWSER_MOZILLA && !Core.Web.Env.BROWSER_FIREFOX) {
+            // workaround for Mozilla (not Firefox)
+            var setDesignModeOn = function() {
+                contentDocument.designMode = "on";
+            };
+            setTimeout(setDesignModeOn, 0);
+        } else {
+            contentDocument.designMode = "on";
+        }
+        
+        Core.Web.Event.add(this._iframe.contentWindow.document, "keypress",  Core.method(this, this._processKeyPress), false);
+        Core.Web.Event.add(this._iframe.contentWindow.document, "keyup", Core.method(this, this._processKeyUp), false);
+        Core.Web.Event.add(this._iframe.contentWindow.document, "mousedown", Core.method(this, this._processMouseDown), false);
+        Core.Web.Event.add(this._iframe.contentWindow.document, "mouseup", Core.method(this, this._processMouseUp), false);
+
+        this._contentDocumentRendered = true;
+    },
+    
+    /** @see Echo.Render.ComponentSync#renderDispose */
+    renderDispose: function(update) {
+        this._removeComponentListeners();
+        Core.Web.Event.removeAll(this._iframe.contentWindow.document);
+        this._div = null;
+        this._iframe = null;
+        this._contentDocumentRendered = false;
+        this._selectionRange = null;
+    },
+    
+    /** @see Echo.Render.ComponentSync#renderDisplay */
+    renderDisplay: function() {
+        if (!this._contentDocumentRendered) {
+            this._renderContentDocument();
+        }
+
+        var bounds = new Core.Web.Measure.Bounds(this._div.parentNode);
+        
+        if (bounds.height) {
+            var border = this.component.render("border", Extras.RichTextArea.DEFAULT_BORDER);
+            var borderSize = Echo.Sync.Border.getPixelSize(border, "top") + Echo.Sync.Border.getPixelSize(border, "bottom");
+    
+            var calculatedHeight = (bounds.height < 100 ? 100 : bounds.height - borderSize) + "px";
+            if (this._iframe.style.height != calculatedHeight) {
+                this._iframe.style.height = calculatedHeight; 
+            }
+        }
+    },
+
+    /** @see Echo.Render.ComponentSync#renderFocus */
+    renderFocus: function() {
+        if (Core.Web.Env.BROWSER_SAFARI) {
+            // Focus window first to avoid issue where Safari issue with updating content and then focusing.
+            window.focus();
+        }
+        Core.Web.DOM.focusElement(this._iframe.contentWindow);
+        this.client.forceRedraw();
+    },
+    
+    /** @see Echo.Render.ComponentSync#renderUpdate */
+    renderUpdate: function(update) {
+        if (update.isUpdatedPropertySetIn({text: true })) {
+            this._loadData();
+            update.renderContext.displayRequired = [];
+            return;
+        }
+    
+        var element = this._div;
+        var containerElement = element.parentNode;
+        Echo.Render.renderComponentDispose(update, update.parent);
+        containerElement.removeChild(element);
+        this.renderAdd(update, containerElement);
+    },
+    
+    _storeData: function() {
+        var contentDocument = this._iframe.contentWindow.document;
+        var html = contentDocument.body.innerHTML;
+        var cleanHtml = Extras.Sync.RichTextArea.Html.clean(html);
+        this._renderedHtml = cleanHtml;
+        this.component.set("text", cleanHtml);
+Core.Debug.consoleWrite("SD:" + cleanHtml);        
+    },
+    
+    _storeRange: function() {
+        if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
+            this._selectionRange = this._iframe.contentWindow.document.selection.createRange();
+        }
+    }
+});
+        
+/**
  * Component rendering peer: RichTextArea
  */
 Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
@@ -169,7 +703,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         processInsertHyperlink: function(e) {
             var hyperlinkDialog = new Extras.Sync.RichTextArea.HyperlinkDialog(this.component);
             hyperlinkDialog.addListener("insertHyperlink", Core.method(this, function(e) {
-                this._richTextInput.peer.insertHtml("<a href=\"" + e.data.url + "\">" +
+                this._richTextInput.insertHtml("<a href=\"" + e.data.url + "\">" +
                         (e.data.description ? e.data.description : e.data.url) + "</a>");
                 this.focusDocument();
             }));
@@ -184,7 +718,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         processInsertImage: function(e) {
             var imageDialog = new Extras.Sync.RichTextArea.ImageDialog(this.component);
             imageDialog.addListener("insertImage", Core.method(this, function(e) {
-                this._richTextInput.peer.insertHtml("<img src=\"" + e.data.url + "\">");
+                this._richTextInput.insertHtml("<img src=\"" + e.data.url + "\">");
                 this.focusDocument();
             }));
             this._openDialog(imageDialog);
@@ -274,7 +808,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
     /**
      * The rich text input component.
      * 
-     * @type Extras.Sync.RichTextArea.InputComponent
+     * @type Extras.RichTextInput
      */
     _richTextInput: null,
     
@@ -328,12 +862,23 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
             cursor = toolbarContainer;
         }
         
-        this._richTextInput = new Extras.Sync.RichTextArea.InputComponent({
+        this._richTextInput = new Extras.RichTextInput({
             layoutData: {
                 overflow: Echo.SplitPane.OVERFLOW_HIDDEN
+            },
+            text: this.component.get("text"),
+            events: {
+                action: Core.method(this, function(e) {
+                    this.component.doAction();
+                }),
+                cursorStyleChange: Core.method(this, this._processCursorStyleChange),
+                property: Core.method(this, function(e) {
+                    if (e.propertyName == "text") {
+                        this._processTextUpdate(e);
+                    }
+                })
             }
         });
-        this._richTextInput.rta = this.component;
         cursor.add(this._richTextInput);
         
         return contentPane;
@@ -514,7 +1059,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         if (features.paragraphStyle) {
             var actionListener = Core.method(this, function(e) {
                 var style = this._styleSelect.get("selectedId");
-                this._richTextInput.peer.execCommand("formatblock", "<" + style + ">");
+                this._richTextInput.execCommand("formatblock", "<" + style + ">");
             });
             this._styleSelect = new Echo.SelectField({
                 items: [
@@ -674,13 +1219,14 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
      * @param {String} value the (optional) value to send
      */
     execCommand: function(commandName, value) {
-        this._richTextInput.peer.execCommand(commandName, value);
+        this._richTextInput.execCommand(commandName, value);
     },
     
     /**
      * Focuses the edited document.  Delegates to RichTextInput peer.
      */
     focusDocument: function() {
+//FIXME Coupled            
         this._richTextInput.peer.focusDocument();
     },
     
@@ -723,7 +1269,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
      * @param {String} html the HTML to insert
      */
     insertHtml: function(html) {
-        this._richTextInput.peer.insertHtml(html);
+        this._richTextInput.insertHtml(html);
     },
     
     /**
@@ -756,6 +1302,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         this.insertHtml(tableHtml);
     },
     
+//FIXME this method is not well doc'ed...not certain of real purpose, believe it has one.    
     /**
      * Notifies the application that the RichTextArea is focused.
      */
@@ -807,7 +1354,32 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
      * @param e the event
      */
     _processComponentInsertHtml: function(e) {
-        this._richTextInput.peer.insertHtml(e.html);
+        this._richTextInput.insertHtml(e.html);
+    },
+    
+    /**
+     * Updates the status of various press-able toolbar buttons to indicate the state of the text at the cursor position
+     * (e.g., bold/italic/underline, color, style selection).  
+     */
+    _processCursorStyleChange: function(e) {
+        if (this._toolbarButtons.bold) {
+            this._toolbarButtons.bold.set("pressed", e.style.bold);
+        }
+        if (this._toolbarButtons.italic) {
+            this._toolbarButtons.italic.set("pressed", e.style.italic);
+        }
+        if (this._toolbarButtons.underline) {
+            this._toolbarButtons.underline.set("pressed", e.style.underline);
+        }
+        if (this._toolbarButtons.foreground) {
+            this._toolbarButtons.foreground.set("color", e.style.foreground || "#000000");
+        }
+        if (this._toolbarButtons.background) {
+            this._toolbarButtons.background.set("color", e.style.background || "#ffffff");
+        }
+        if (this._styleSelect) {
+            this._styleSelect.set("selectedId", e.style.paragraphStyle);
+        }
     },
     
     /**
@@ -840,9 +1412,9 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         if (e.modelId.charAt(0) == '/') {
             var separatorIndex = e.modelId.indexOf("/", 1);
             if (separatorIndex == -1) {
-                this._richTextInput.peer.execCommand(e.modelId.substring(1));
+                this._richTextInput.execCommand(e.modelId.substring(1));
             } else {
-                this._richTextInput.peer.execCommand(e.modelId.substring(1, separatorIndex),
+                this._richTextInput.execCommand(e.modelId.substring(1, separatorIndex),
                         e.modelId.substring(separatorIndex + 1));
             }
         } else {
@@ -867,13 +1439,17 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
             case "paste":
             case "delete":
                 try {
-                    this._richTextInput.peer.execCommand(e.modelId);
+                    this._richTextInput.execCommand(e.modelId);
                 } catch (ex) {
                     this._openDialog(new Extras.Sync.RichTextArea.MessageDialog(this.component,
                             this.msg["Generic.Error"], this.msg["Error.ClipboardAccessDisabled"])); 
                 }
             }
         }
+    },
+    
+    _processTextUpdate: function(e) {
+        this.component.set("text", e.newValue);
     },
     
     /**
@@ -925,7 +1501,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
     /** @see Echo.Render.ComponentSync#renderUpdate */
     renderUpdate: function(update) {
         if (update.isUpdatedPropertySetIn({text: true })) {
-            this._richTextInput.peer.loadData();
+            this._richTextInput.set("text", this.component.get("text"));
             update.renderContext.displayRequired = [];
             return;
         }
@@ -935,32 +1511,6 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         Echo.Render.renderComponentDispose(update, update.parent);
         containerElement.removeChild(element);
         this.renderAdd(update, containerElement);
-    },
-    
-    /**
-     * Updates the status of various press-able toolbar buttons to indicate the state of the text at the cursor position
-     * (e.g., bold/italic/underline, color, style selection).  
-     */
-    _updateIndicators: function() {
-        var style = this._richTextInput.peer._getCursorStyle();
-        if (this._toolbarButtons.bold) {
-            this._toolbarButtons.bold.set("pressed", style.bold);
-        }
-        if (this._toolbarButtons.italic) {
-            this._toolbarButtons.italic.set("pressed", style.italic);
-        }
-        if (this._toolbarButtons.underline) {
-            this._toolbarButtons.underline.set("pressed", style.underline);
-        }
-        if (this._toolbarButtons.foreground) {
-            this._toolbarButtons.foreground.set("color", style.foreground || "#000000");
-        }
-        if (this._toolbarButtons.background) {
-            this._toolbarButtons.background.set("color", style.background || "#ffffff");
-        }
-        if (this._styleSelect) {
-            this._styleSelect.set("selectedId", style.paragraphStyle);
-        }
     }
 });
 
@@ -1429,552 +1979,6 @@ Extras.Sync.RichTextArea.OverlayPanePeer = Core.extend(Echo.Render.ComponentSync
         containerElement.removeChild(element);
         this.renderAdd(update, containerElement);
         return true;
-    }
-});
-
-/**
- * RichTextArea Input Component: provides actual rich text input area.
- */
-Extras.Sync.RichTextArea.InputComponent = Core.extend(Echo.Component, {
-
-    /**
-     * The containing RichTextArea component.
-     */
-    rta: null,
-
-    $load: function() {
-        Echo.ComponentFactory.registerType("Extras.RichTextInput", this);
-    },
-    
-    /** @see Echo.Component#componentType */
-    componentType: "Extras.RichTextInput",
-    
-    /** @see Echo.Component#focusable */
-    focusable: true
-});
-
-/**
- * Component rendering peer: Extras.Sync.RichTextArea.InputComponent.
- */
-Extras.Sync.RichTextArea.InputPeer = Core.extend(Echo.Render.ComponentSync, {
-
-    $load: function() {
-        Echo.Render.registerPeer("Extras.RichTextInput", this);
-    },
-    
-    $static: {
-        
-        /**
-         * Regular expression to determine if a style attribute is setting a bold font.
-         * @type RegExp 
-         */
-        _CSS_BOLD: /font-weight\:\s*bold/i,
-
-        /**
-         * Regular expression to determine if a style attribute is setting a foreground color.
-         * @type RegExp 
-         */
-        _CSS_FOREGROUND_TEST: /^-?color\:/i,
-        
-        /**
-         * Regular expression to determine the foreground color being set by a style attribute.
-         * @type RegExp 
-         */
-        _CSS_FOREGROUND_RGB: /^-?color\:\s*rgb\s*\(\s*(\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})/i,
-                
-        /**
-         * Regular expression to determine if a style attribute is setting a background color.
-         * @type RegExp 
-         */
-        _CSS_BACKGROUND_TEST: /background-color\:/i,
-
-        /**
-         * Regular expression to determine the background color being set by a style attribute.
-         * @type RegExp 
-         */
-        _CSS_BACKGROUND_RGB: /background-color\:\s*rgb\s*\(\s*(\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})/i,
-                
-        /**
-         * Regular expression to determine if a style attribute is setting an italic font.
-         * @type RegExp 
-         */
-        _CSS_ITALIC: /font-style\:\s*italic/i,
-        
-        /**
-         * Regular expression to determine if a style attribute is setting an underline font.
-         * @type RegExp 
-         */
-        _CSS_UNDERLINE: /text-decoration\:\s*underline/i,
-        
-        /**
-         * Key codes which may result in cursor navigating into new style, requiring an update of the style indicators.
-         */
-        _NAVIGATION_KEY_CODES: {
-            38: 1, 40: 1, 37: 1, 39: 1, 33: 1, 34: 1, 36: 1, 35: 1, 8: 1, 46: 1
-        }
-    },
-    
-    /**
-     * Flag indicating whether a style information update is required due to the cursor/selection having been moved/changed.
-     * @type Boolean
-     */
-    _cursorStyleUpdateRequired: false,
-
-    /**
-     * Flag indicating whether the parent component of the associated RichTextArea is a pane, 
-     * and thus whether the RichTextArea's input region should consume available vertical space.
-     * @type Boolean
-     */
-    _paneRender: false,
-    
-    /**
-     * Flag indicating whether an action event should be fired.
-     * Set by _processKeyPress(), used by _processKeyUp().
-     * @type Boolean
-     */
-    _fireAction: false,
-    
-    /**
-     * The most recently retrieved document HTML.  This value is used to avoid updating the HTML when unnecessary.
-     * @type String 
-     */
-    _renderedHtml: null,
-    
-    /**
-     * Method reference to _processProperty().
-     * @type Function
-     */
-    _processPropertyRef: null,
-
-    /**
-     * Constructor.
-     */
-    $construct: function() { 
-        this._processPropertyRef = Core.method(this, this._processProperty);
-    },
-    
-    /**
-     * Executes a rich text editing command (via document.execCommand()).
-     * 
-     * @param {String} commandName the command name
-     * @param {String} value the command value
-     */
-    execCommand: function(commandName, value) {
-        this._loadRange();
-        this._iframe.contentWindow.document.execCommand(commandName, false, value);
-        this._storeData();
-        
-        this._forceIERedraw();
-        
-        // Flag that cursor style update is required.  Some browsers will not render nodes until text is inserted.
-        this._cursorStyleUpdateRequired = true;
-    },
-    
-    /**
-     * Focuses the rich text input document.
-     */
-    focusDocument: function() {
-        this.client.application.setFocusedComponent(this.component);
-        this._forceIERedraw();
-    },
-    
-    /**
-     * Forces Internet Explorer browsers to redraw the entire screen.  This is necessary after certain operations
-     * due to bugs in the IE platform that result in the screen becoming blank.  To workaround this issue, this method will
-     * set the  "display" property of the root document element to "none" and then revert it to its previous state.
-     */
-    _forceIERedraw: function() {
-        if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
-            if (this._redrawScheduled || this.component.rta.peer.client.domainElement.offsetHeight !== 0) {
-                // Do not schedule redraw if one is already scheduled, or if height of domain element is nonzero
-                // (the domain element having a height of 0 is indicative of the IE7's blanking bug having occurred).
-                return;
-            }
-            
-            this._redrawScheduled = true;
-            
-            // Force full screen redraw to avoid IE bug where screen mysteriously goes blank in IE.
-            Core.Web.Scheduler.run(Core.method(this, function() {
-                this._redrawScheduled = false;
-                var displayState = document.documentElement.style.display;
-                if (!displayState) {
-                    displayState = "";
-                }
-                document.documentElement.style.display = "none";
-                document.documentElement.style.display = displayState;
-            }));
-        }
-    },
-    
-    /**
-     * Determines style information about the text at the cursor position.
-     * Returns an object containing zero or more of the following properties:
-     * <ul>
-     *  <li><code>bold</code>: boolean value indicating the text is bold</li>
-     *  <li><code>italic</code>: boolean value indicating the text is italic</li>
-     *  <li><code>underline</code>: boolean value indicating the text is underline</li>
-     *  <li><code>paragraphStyle</code>: string value describing paragraph style, e.g., h1, h2, h3, h4, h5, h6, p, or pre</li>
-     *  <li><code>foreground</code>: hex triplet string indicating foreground color</li>
-     *  <li><code>background</code>: hex triplet string indicating background color</li>
-     * </ul>
-     */
-    _getCursorStyle: function() {
-        var selection = this._getSelection();
-        var style = { };
-        var rgb;
-
-        var node = selection.node;
-        while (node) { 
-            if (node.nodeType == 1) {
-                switch (node.nodeName.toLowerCase()) {
-                case "b": case "strong":
-                    style.bold = true;
-                    break;
-                case "i": case "em":
-                    style.italic = true;
-                    break;
-                case "u":
-                    style.underline = true;
-                    break;
-                case "h1": case "h2": case "h3": case "h4": case "h5": case "h6": case "p": case "pre":
-                    if (!style.paragraphStyle) {
-                        style.paragraphStyle = node.nodeName.toLowerCase();
-                    }
-                    break;
-                }
-            
-                var css = node.style.cssText;
-                style.bold |= Extras.Sync.RichTextArea.InputPeer._CSS_BOLD.test(css);
-                style.italic |= Extras.Sync.RichTextArea.InputPeer._CSS_ITALIC.test(css);
-                style.underline |= Extras.Sync.RichTextArea.InputPeer._CSS_UNDERLINE.test(css);
-                
-                if (!style.foreground && Extras.Sync.RichTextArea.InputPeer._CSS_FOREGROUND_TEST.test(css)) {
-                    rgb = Extras.Sync.RichTextArea.InputPeer._CSS_FOREGROUND_RGB.exec(css);
-                    if (rgb) {
-                        style.foreground = Echo.Sync.Color.toHex(
-                                parseInt(rgb[1], 10), parseInt(rgb[2], 10), parseInt(rgb[3], 10));
-                    }
-                }
-
-                if (!style.background && Extras.Sync.RichTextArea.InputPeer._CSS_BACKGROUND_TEST.test(css)) {
-                    rgb = Extras.Sync.RichTextArea.InputPeer._CSS_BACKGROUND_RGB.exec(css);
-                    if (rgb) {
-                        style.background = Echo.Sync.Color.toHex(
-                                parseInt(rgb[1], 10), parseInt(rgb[2], 10), parseInt(rgb[3], 10));
-                    }
-                }
-            }
-            node = node.parentNode;
-        }
-        
-        return style;
-    },
-    
-    /**
-     * Returns the current selection state of the input field.
-     * The object contains the following properties:
-     * <ul>
-     *  <li><code>node</code>: specifies a current node contained in the selection</li>
-     * </ul>
-     * This is a cross-platform workaround for differences in the selection API of MSIE vs. DOM compliant browsers.
-     * 
-     * @return the selection object
-     * @type Object
-     */
-    _getSelection: function() {
-        if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
-            var textRange = this._iframe.contentWindow.document.selection.createRange();
-            return {
-                node: textRange.parentElement()
-            };
-        } else {
-            var selection = this._iframe.contentWindow.getSelection();
-            return {
-                node: selection ? selection.anchorNode : null
-            };
-        }
-    },
-    
-    /**
-     * Inserts arbitrary HTML within the document at the current cursor position.
-     * 
-     * @param {String} html the HTML code to insert
-     */
-    insertHtml: function(html) {
-        if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
-            if (!this._selectionRange) {
-                this._selectionRange = this._iframe.contentWindow.document.body.createTextRange();
-            }
-            this._selectionRange.select();
-            this._selectionRange.pasteHTML(html);
-            this._notifyCursorStyleChange();
-            this._storeData();
-        } else {
-            this.execCommand("inserthtml", html);
-        }
-        
-        this.focusDocument();
-        this._forceIERedraw();
-    },
-    
-    loadData: function() {
-        var html = this.component.rta.get("text");
-        if (html == null) {
-            // Mozilla and Opera have issues with cursor appearing in proper location when text area is devoid of content.
-            html = (Core.Web.Env.BROWSER_MOZILLA || Core.Web.Env.BROWSER_OPERA) ? "<br/>" : "";
-        }
-        if (html == this._renderedHtml) {
-            // No update necessary.
-            return;
-        }
-
-        var contentDocument = this._iframe.contentWindow.document;
-        contentDocument.body.innerHTML = html;
-        this._renderedHtml = html;
-        //FIXME always grabbing focus, this may be undesired...necessary to maintain focus though.
-        this.renderFocus();
-        this.component.rta.peer._updateIndicators();
-    },
-    
-    _loadRange: function() {
-        if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
-            if (this._selectionRange) {
-                this._selectionRange.select();
-            }
-        }
-    },
-    
-    _notifyCursorStyleChange: function() {
-        this._cursorStyleUpdateRequired = false;
-        Core.Web.Scheduler.run(Core.method(this, function() {
-            this.component.rta.peer._updateIndicators();
-        }));
-    },
-    
-    /**
-     * Processes a property change event on the supported component.
-     * 
-     * @param e the event
-     */
-    _processProperty: function(e) {
-        if (e.propertyName == "text") {
-            this.loadData();
-        }
-    },
-    
-    /**
-     * Processes a key press event within the input document.
-     * 
-     * @param e the event
-     */
-    _processKeyPress: function(e) {
-        if (!this.client || !this.client.verifyInput(this.component)) {
-            Core.Web.DOM.preventEventDefault(e);
-            return;
-        }
-
-        if (e.keyCode == 13) {
-            this._fireAction = true;
-        }
-    },
-    
-    /**
-     * Processes a key up event within the input document.
-     * 
-     * @param e the event
-     */
-    _processKeyUp: function(e) {
-        if (!this.client || !this.client.verifyInput(this.component)) {
-            Core.Web.DOM.preventEventDefault(e);
-            return;
-        }
-        
-        this.component.rta.peer._markFocused();
-        
-        this._storeData();
-        this._storeRange();
-        
-        if (this._cursorStyleUpdateRequired || Extras.Sync.RichTextArea.InputPeer._NAVIGATION_KEY_CODES[e.keyCode]) {
-            this._notifyCursorStyleChange();
-        }
-        
-        if (this._fireAction) {
-            this._fireAction = false;
-            this.component.rta.doAction();
-        }
-    },
-    
-    /**
-     * Processes a mouse down event within the input document.
-     * 
-     * @param e the event
-     */
-    _processMouseDown: function(e) {
-        if (!this.client || !this.client.verifyInput(this.component)) {
-            Core.Web.DOM.preventEventDefault(e);
-            return;
-        }
-    },
-
-    /**
-     * Processes a mouse up event within the input document.
-     * 
-     * @param e the event
-     */
-    _processMouseUp: function(e) {
-        if (!this.client || !this.client.verifyInput(this.component)) {
-            Core.Web.DOM.preventEventDefault(e);
-            return;
-        }
-
-        this._storeRange();
-        
-        this._notifyCursorStyleChange();
-    },
-    
-    /** @see Echo.Render.ComponentSync#renderAdd */
-    renderAdd: function(update, parentElement) {
-        this.component.rta.addListener("property", this._processPropertyRef);
-        
-        // Create IFRAME container DIV element.
-        this._mainDiv = document.createElement("div");
-        Echo.Sync.Border.render(this.component.rta.render("border", Extras.RichTextArea.DEFAULT_BORDER), this._mainDiv);
-        
-        // Create IFRAME element.
-        this._iframe = document.createElement("iframe");
-        this._iframe.style.width = this.width ? this.width : "100%";
-
-        this._paneRender = this.component.rta.peer._paneRender;
-        if (!this._paneRender) {
-            this._iframe.style.height = this.height ? this.height : "200px";
-        }
-
-        this._iframe.style.border = "0px none";
-        this._iframe.frameBorder = "0";
-    
-        this._mainDiv.appendChild(this._iframe);
-    
-        parentElement.appendChild(this._mainDiv);
-    },
-    
-    _renderContentDocument: function() {
-        // Ensure element is on-screen before rendering content/enabling design mode.
-        var element = this._iframe;
-        while (element != document.body) {
-            if (element == null) {
-                // Not added to parent.
-                return;
-            }
-            if (element.style.display == "none") {
-                // Not rendered.
-                return;
-            }
-            element = element.parentNode;
-        }
-        
-        var style = "height:100%;width:100%;margin:0px;padding:0px;";
-        var foreground = this.component.rta.render("foreground");
-        if (foreground) {
-            style += "color:" + foreground + ";";
-        }
-        var background = this.component.rta.render("background");
-        if (background) {
-            style += "background-color:" + background + ";";
-        }
-        var backgroundImage = this.component.rta.render("backgroundImage");
-        if (backgroundImage) {
-            style += "background-attachment: fixed;";
-            style += "background-image:url(" + Echo.Sync.FillImage.getUrl(backgroundImage) + ");";
-            var backgroundRepeat = Echo.Sync.FillImage.getRepeat(backgroundImage);
-            if (backgroundRepeat) {
-                style += "background-repeat:" + backgroundRepeat + ";";
-            }
-            var backgroundPosition = Echo.Sync.FillImage.getPosition(backgroundImage);
-            if (backgroundPosition) {
-                style += "background-position:" + backgroundPosition + ";";
-            }
-        }
-        
-        var text = this.component.rta.get("text");
-        var contentDocument = this._iframe.contentWindow.document;
-        contentDocument.open();
-        contentDocument.write("<html><body tabindex=\"0\" width=\"100%\" height=\"100%\"" +
-                (style ? (" style=\"" + style + "\"") : "") + ">" + (text == null ? "" : text) + "</body></html>");
-        contentDocument.close();
-        if (Core.Web.Env.BROWSER_MOZILLA && !Core.Web.Env.BROWSER_FIREFOX) {
-            // workaround for Mozilla (not Firefox)
-            var setDesignModeOn = function() {
-                contentDocument.designMode = "on";
-            };
-            setTimeout(setDesignModeOn, 0);
-        } else {
-            contentDocument.designMode = "on";
-        }
-        
-        Core.Web.Event.add(this._iframe.contentWindow.document, "keypress",  Core.method(this, this._processKeyPress), false);
-        Core.Web.Event.add(this._iframe.contentWindow.document, "keyup", Core.method(this, this._processKeyUp), false);
-        Core.Web.Event.add(this._iframe.contentWindow.document, "mousedown", Core.method(this, this._processMouseDown), false);
-        Core.Web.Event.add(this._iframe.contentWindow.document, "mouseup", Core.method(this, this._processMouseUp), false);
-
-        this._contentDocumentRendered = true;
-    },
-    
-    /** @see Echo.Render.ComponentSync#renderDispose */
-    renderDispose: function(update) {
-        this.component.rta.removeListener("property", this._processPropertyRef);
-        Core.Web.Event.removeAll(this._iframe.contentWindow.document);
-        this._mainDiv = null;
-        this._iframe = null;
-        this._contentDocumentRendered = false;
-        this._selectionRange = null;
-    },
-    
-    /** @see Echo.Render.ComponentSync#renderDisplay */
-    renderDisplay: function() {
-        if (!this._contentDocumentRendered) {
-            this._renderContentDocument();
-        }
-
-        var bounds = new Core.Web.Measure.Bounds(this._mainDiv.parentNode);
-        
-        if (bounds.height) {
-            var border = this.component.rta.render("border", Extras.RichTextArea.DEFAULT_BORDER);
-            var borderSize = Echo.Sync.Border.getPixelSize(border, "top") + Echo.Sync.Border.getPixelSize(border, "bottom");
-    
-            var calculatedHeight = (bounds.height < 100 ? 100 : bounds.height - borderSize) + "px";
-            if (this._iframe.style.height != calculatedHeight) {
-                this._iframe.style.height = calculatedHeight; 
-            }
-        }
-    },
-
-    /** @see Echo.Render.ComponentSync#renderFocus */
-    renderFocus: function() {
-        if (Core.Web.Env.BROWSER_SAFARI) {
-            // Focus window first to avoid issue where Safari issue with updating content and then focusing.
-            window.focus();
-        }
-        Core.Web.DOM.focusElement(this._iframe.contentWindow);
-        this._forceIERedraw();
-    },
-    
-    /** @see Echo.Render.ComponentSync#renderUpdate */
-    renderUpdate: function(update) {
-        // Not invoked.
-    },
-    
-    _storeData: function() {
-        var contentDocument = this._iframe.contentWindow.document;
-        var html = contentDocument.body.innerHTML;
-        var cleanHtml = Extras.Sync.RichTextArea.Html.clean(html);
-        this._renderedHtml = cleanHtml;
-        this.component.rta.set("text", cleanHtml);
-    },
-    
-    _storeRange: function() {
-        if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
-            this._selectionRange = this._iframe.contentWindow.document.selection.createRange();
-        }
     }
 });
 
