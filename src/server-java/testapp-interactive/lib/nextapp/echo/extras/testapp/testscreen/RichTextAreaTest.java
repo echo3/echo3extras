@@ -67,7 +67,7 @@ public class RichTextAreaTest extends AbstractTest {
         
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "foreground");
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "background");
-        
+        addFillImagePropertyTests(TestControlPane.CATEGORY_PROPERTIES, "backgroundImage", Styles.TEST_FILL_IMAGES);        
         addBorderPropertyTests(TestControlPane.CATEGORY_PROPERTIES, RichTextArea.PROPERTY_BORDER);
 
         testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Text: null", new ActionListener(){

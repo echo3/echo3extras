@@ -103,6 +103,11 @@ public class Styles {
     public static final FillImage FILL_IMAGE_TAB_BACKGROUND = new FillImage(
             new ResourceImageReference(IMAGE_PATH + "TabBackground.png"));
     
+    public static final FillImage[] TEST_FILL_IMAGES = new FillImage[] { null, 
+            FILL_IMAGE_SHADOW_BACKGROUND_DARK_BLUE, FILL_IMAGE_SHADOW_BACKGROUND_LIGHT_BLUE,
+            FILL_IMAGE_PEWTER_LINE, FILL_IMAGE_LIGHT_BLUE_LINE,
+            FILL_IMAGE_SILVER_LINE};
+
     public static final ImageReference ICON_24_NO = new ResourceImageReference(IMAGE_PATH + "Icon24No.gif"); 
     public static final ImageReference ICON_24_YES = new ResourceImageReference(IMAGE_PATH + "Icon24Yes.gif");
     public static final ImageReference ECHO_IMAGE = new ResourceImageReference(IMAGE_PATH + "Echo.png");

@@ -31,6 +31,7 @@ package nextapp.echo.extras.app;
 
 import nextapp.echo.app.Border;
 import nextapp.echo.app.Component;
+import nextapp.echo.app.FillImage;
 import nextapp.echo.app.event.DocumentEvent;
 import nextapp.echo.app.event.DocumentListener;
 import nextapp.echo.app.text.Document;
@@ -95,6 +96,7 @@ public class RichTextArea extends Component {
 
     public static final String DOCUMENT_CHANGED_PROPERTY = "document";
 
+    public static final String PROPERTY_BACKGROUND_IMAGE = "backgroundImage";
     public static final String PROPERTY_BORDER = "border";
     public static final String PROPERTY_CONTROL_PANE_BUTTON_STYLE_NAME = "controlPaneButtonStyleName";
     public static final String PROPERTY_CONTROL_PANE_ROW_STYLE_NAME = "controlPaneRowStyleName";
@@ -143,6 +145,15 @@ public class RichTextArea extends Component {
         setDocument(document);
     }
 
+    /**
+     * Returns the background image of the text entry area.
+     * 
+     * @return the background image
+     */
+    public FillImage getBackgroundImage() {
+        return (FillImage) get(PROPERTY_BACKGROUND_IMAGE);
+    }
+    
     /**
      * Returns the border surrounding the text entry area.
      * 
@@ -214,6 +225,15 @@ public class RichTextArea extends Component {
         if (TEXT_CHANGED_PROPERTY.equals(inputName)) {
             setText((String) inputValue);
         }
+    }
+    
+    /**
+     * Sets the background image displayed in the text entry area.
+     * 
+     * @param newValue the new background image
+     */
+    public void setBackgroundImage(FillImage newValue) {
+        set(PROPERTY_BACKGROUND_IMAGE, newValue);
     }
     
     /**

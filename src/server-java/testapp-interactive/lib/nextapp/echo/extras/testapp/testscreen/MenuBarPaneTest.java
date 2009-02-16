@@ -31,7 +31,6 @@ package nextapp.echo.extras.testapp.testscreen;
 
 import nextapp.echo.app.ContentPane;
 import nextapp.echo.app.Extent;
-import nextapp.echo.app.FillImage;
 import nextapp.echo.app.Label;
 import nextapp.echo.app.SplitPane;
 import nextapp.echo.app.WindowPane;
@@ -58,11 +57,6 @@ import nextapp.echo.extras.testapp.TestControlPane;
  */
 public class MenuBarPaneTest extends AbstractTest {
     
-    private static final FillImage[] TEST_FILL_IMAGES = new FillImage[] { null, 
-            Styles.FILL_IMAGE_SHADOW_BACKGROUND_DARK_BLUE, Styles.FILL_IMAGE_SHADOW_BACKGROUND_LIGHT_BLUE,
-            Styles.FILL_IMAGE_PEWTER_LINE, Styles.FILL_IMAGE_LIGHT_BLUE_LINE,
-            Styles.FILL_IMAGE_SILVER_LINE};
-
     public MenuBarPaneTest() {
         super("MenuBarPane", Styles.ICON_16_MENU_BAR_PANE);
         
@@ -88,17 +82,17 @@ public class MenuBarPaneTest extends AbstractTest {
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "foreground");
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "background");
         addBorderPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "border");
-        addFillImagePropertyTests(TestControlPane.CATEGORY_PROPERTIES, "backgroundImage", TEST_FILL_IMAGES);
+        addFillImagePropertyTests(TestControlPane.CATEGORY_PROPERTIES, "backgroundImage", Styles.TEST_FILL_IMAGES);
         addFontPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "font");
         addIntegerPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "menuOpacity", new int[]{0, 10, 50, 90, 100});
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "menuForeground");
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "menuBackground");
-        addFillImagePropertyTests(TestControlPane.CATEGORY_PROPERTIES, "menuBackgroundImage", TEST_FILL_IMAGES);
+        addFillImagePropertyTests(TestControlPane.CATEGORY_PROPERTIES, "menuBackgroundImage", Styles.TEST_FILL_IMAGES);
         addBorderPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "menuBorder");
         
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "selectionForeground");
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "selectionBackground");
-        addFillImagePropertyTests(TestControlPane.CATEGORY_PROPERTIES, "selectionBackgroundImage", TEST_FILL_IMAGES);
+        addFillImagePropertyTests(TestControlPane.CATEGORY_PROPERTIES, "selectionBackgroundImage", Styles.TEST_FILL_IMAGES);
         addIntegerPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "animationTime", new int[]{0, 150, 300, 1500});
         
         testControlsPane.addButton(TestControlPane.CATEGORY_INTEGRATION, "Add Test WindowPane", new ActionListener(){
