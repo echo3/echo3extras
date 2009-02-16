@@ -9,6 +9,10 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
     
     $static: {
 
+        DEFAULTS: {
+            border: "1px inset #7f7f7f"
+        },
+        
         /**
          * HTML manipulation/cleaning utilities.
          */
@@ -507,7 +511,7 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
         
         // Create IFRAME container DIV element.
         this._div = document.createElement("div");
-        Echo.Sync.Border.render(this.component.render("border", Extras.RichTextArea.DEFAULT_BORDER), this._div);
+        Echo.Sync.Border.render(this.component.render("border", Extras.Sync.RichTextInput.DEFAULTS.border), this._div);
         
         // Create IFRAME element.
         this._iframe = document.createElement("iframe");
@@ -609,7 +613,7 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
         var bounds = new Core.Web.Measure.Bounds(this._div.parentNode);
         
         if (bounds.height) {
-            var border = this.component.render("border", Extras.RichTextArea.DEFAULT_BORDER);
+            var border = this.component.render("border", Extras.Sync.RichTextInput.DEFAULTS.border);
             var borderSize = Echo.Sync.Border.getPixelSize(border, "top") + Echo.Sync.Border.getPixelSize(border, "bottom");
     
             var calculatedHeight = (bounds.height < 100 ? 100 : bounds.height - borderSize) + "px";

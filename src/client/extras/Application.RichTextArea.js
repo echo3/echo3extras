@@ -31,10 +31,6 @@
  */
 Extras.RichTextArea = Core.extend(Echo.Component, {
 
-    $static: {
-        DEFAULT_BORDER: "1px inset #7f7f7f"
-    },
-
     $load: function() {
         Echo.ComponentFactory.registerType("Extras.RichTextArea", this);
     },
