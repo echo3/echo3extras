@@ -58,6 +58,153 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
             _MSIE_INVALID_FONT_BACKGROUND_REPL: /(<font .*?)(background-color)/ig,
             
             /**
+             * Regular expression to determine if a style attribute is setting a bold font.
+             * @type RegExp 
+             */
+            _CSS_BOLD: /font-weight\:\s*bold/i,
+    
+            /**
+             * Regular expression to determine if a style attribute is setting a foreground color.
+             * @type RegExp 
+             */
+            _CSS_FOREGROUND_TEST: /^-?color\:/i,
+            
+            /**
+             * Regular expression to determine the foreground color being set by a style attribute.
+             * @type RegExp 
+             */
+            _CSS_FOREGROUND_RGB: /^-?color\:\s*rgb\s*\(\s*(\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})/i,
+                    
+            /**
+             * Regular expression to determine if a style attribute is setting a background color.
+             * @type RegExp 
+             */
+            _CSS_BACKGROUND_TEST: /background-color\:/i,
+    
+            /**
+             * Regular expression to determine the background color being set by a style attribute.
+             * @type RegExp 
+             */
+            _CSS_BACKGROUND_RGB: /background-color\:\s*rgb\s*\(\s*(\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})/i,
+                    
+            /**
+             * Regular expression to determine if a style attribute is setting an italic font.
+             * @type RegExp 
+             */
+            _CSS_ITALIC: /font-style\:\s*italic/i,
+            
+            /**
+             * Regular expression to determine if a style attribute is setting an underline font.
+             * @type RegExp 
+             */
+            _CSS_UNDERLINE: /text-decoration\:\s*underline/i,
+            
+            /**
+             * An object which reports style information about a specific node's text content, including inherited style properties.
+             */
+            StyleData: Core.extend({
+                
+                /**
+                 * Flag indicating whether the text is bold.
+                 * @type Boolean
+                 */
+                bold: false,
+                
+                /**
+                 * Flag indicating whether the text is italicized.
+                 * @type Boolean
+                 */
+                italic: false,
+                
+                /**
+                 * Flag indicating whether the text is underlined.
+                 * @type Boolean
+                 */
+                underline: false,
+                
+                /**
+                 * The paragraph style, one of the following values:
+                 * <ul>
+                 *  <li>p</li>
+                 *  <li>pre</li>
+                 *  <li>h1</li>
+                 *  <li>h2</li>
+                 *  <li>h3</li>
+                 *  <li>h4</li>
+                 *  <li>h5</li>
+                 *  <li>h6</li>
+                 * </ul>
+                 * 
+                 * @type String
+                 */
+                paragraphStyle: null,
+                
+                /**
+                 * The text foreground color.
+                 * @type #Color
+                 */
+                foreground: null,
+                
+                /**
+                 * The text background color.
+                 * @type #Color
+                 */
+                background: null,
+                
+                /**
+                 * Creates a new style for a specific DOM node.
+                 * 
+                 * @param {Node} node the node
+                 */
+                $construct: function(node) {
+                    var rgb;
+            
+                    while (node) { 
+                        if (node.nodeType == 1) {
+                            switch (node.nodeName.toLowerCase()) {
+                            case "b": case "strong":
+                                this.bold = true;
+                                break;
+                            case "i": case "em":
+                                this.italic = true;
+                                break;
+                            case "u":
+                                this.underline = true;
+                                break;
+                            case "h1": case "h2": case "h3": case "h4": case "h5": case "h6": case "p": case "pre":
+                                if (!this.paragraphStyle) {
+                                    this.paragraphStyle = node.nodeName.toLowerCase();
+                                }
+                                break;
+                            }
+                        
+                            var css = node.style.cssText;
+                            this.bold |= Extras.Sync.RichTextInput.Html._CSS_BOLD.test(css);
+                            this.italic |= Extras.Sync.RichTextInput.Html._CSS_ITALIC.test(css);
+                            this.underline |= Extras.Sync.RichTextInput.Html._CSS_UNDERLINE.test(css);
+                            
+                            if (!this.foreground && Extras.Sync.RichTextInput.Html._CSS_FOREGROUND_TEST.test(css)) {
+                                rgb = Extras.Sync.RichTextInput.Html._CSS_FOREGROUND_RGB.exec(css);
+                                if (rgb) {
+                                    this.foreground = Echo.Sync.Color.toHex(
+                                            parseInt(rgb[1], 10), parseInt(rgb[2], 10), parseInt(rgb[3], 10));
+                                }
+                            }
+            
+                            if (!this.background && Extras.Sync.RichTextInput.Html._CSS_BACKGROUND_TEST.test(css)) {
+                                rgb = Extras.Sync.RichTextInput.Html._CSS_BACKGROUND_RGB.exec(css);
+                                if (rgb) {
+                                    this.background = Echo.Sync.Color.toHex(
+                                            parseInt(rgb[1], 10), parseInt(rgb[2], 10), parseInt(rgb[3], 10));
+                                }
+                            }
+                        }
+                        node = node.parentNode;
+                    }
+                }
+            }),
+            
+            /**
              * Cleans HTML input/output.
              * 
              * @param {String} html the HTML to clean
@@ -78,49 +225,7 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
         },
         
         /**
-         * Regular expression to determine if a style attribute is setting a bold font.
-         * @type RegExp 
-         */
-        _CSS_BOLD: /font-weight\:\s*bold/i,
-
-        /**
-         * Regular expression to determine if a style attribute is setting a foreground color.
-         * @type RegExp 
-         */
-        _CSS_FOREGROUND_TEST: /^-?color\:/i,
-        
-        /**
-         * Regular expression to determine the foreground color being set by a style attribute.
-         * @type RegExp 
-         */
-        _CSS_FOREGROUND_RGB: /^-?color\:\s*rgb\s*\(\s*(\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})/i,
-                
-        /**
-         * Regular expression to determine if a style attribute is setting a background color.
-         * @type RegExp 
-         */
-        _CSS_BACKGROUND_TEST: /background-color\:/i,
-
-        /**
-         * Regular expression to determine the background color being set by a style attribute.
-         * @type RegExp 
-         */
-        _CSS_BACKGROUND_RGB: /background-color\:\s*rgb\s*\(\s*(\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})/i,
-                
-        /**
-         * Regular expression to determine if a style attribute is setting an italic font.
-         * @type RegExp 
-         */
-        _CSS_ITALIC: /font-style\:\s*italic/i,
-        
-        /**
-         * Regular expression to determine if a style attribute is setting an underline font.
-         * @type RegExp 
-         */
-        _CSS_UNDERLINE: /text-decoration\:\s*underline/i,
-        
-        /**
-         * Key codes which may result in cursor navigating into new style, requiring an update of the style indicators.
+         * Key codes which may result in cursor navigating into new style, resulting in a "cursorStyleChange" event being fired.
          */
         _NAVIGATION_KEY_CODES: {
             38: 1, 40: 1, 37: 1, 39: 1, 33: 1, 34: 1, 36: 1, 35: 1, 8: 1, 46: 1
@@ -228,73 +333,6 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
     },
     
     /**
-     * Determines style information about the text at the cursor position.
-     * Returns an object containing zero or more of the following properties:
-     * <ul>
-     *  <li><code>bold</code>: boolean value indicating the text is bold</li>
-     *  <li><code>italic</code>: boolean value indicating the text is italic</li>
-     *  <li><code>underline</code>: boolean value indicating the text is underline</li>
-     *  <li><code>paragraphStyle</code>: string value describing paragraph style, e.g., h1, h2, h3, h4, h5, h6, p, or pre</li>
-     *  <li><code>foreground</code>: hex triplet string indicating foreground color</li>
-     *  <li><code>background</code>: hex triplet string indicating background color</li>
-     * </ul>
-     * 
-     * @return the style object
-     * @type Object
-     */
-    _getCursorStyle: function() {
-        var selection = this._getSelection();
-        var style = { };
-        var rgb;
-
-        var node = selection.node;
-        while (node) { 
-            if (node.nodeType == 1) {
-                switch (node.nodeName.toLowerCase()) {
-                case "b": case "strong":
-                    style.bold = true;
-                    break;
-                case "i": case "em":
-                    style.italic = true;
-                    break;
-                case "u":
-                    style.underline = true;
-                    break;
-                case "h1": case "h2": case "h3": case "h4": case "h5": case "h6": case "p": case "pre":
-                    if (!style.paragraphStyle) {
-                        style.paragraphStyle = node.nodeName.toLowerCase();
-                    }
-                    break;
-                }
-            
-                var css = node.style.cssText;
-                style.bold |= Extras.Sync.RichTextInput._CSS_BOLD.test(css);
-                style.italic |= Extras.Sync.RichTextInput._CSS_ITALIC.test(css);
-                style.underline |= Extras.Sync.RichTextInput._CSS_UNDERLINE.test(css);
-                
-                if (!style.foreground && Extras.Sync.RichTextInput._CSS_FOREGROUND_TEST.test(css)) {
-                    rgb = Extras.Sync.RichTextInput._CSS_FOREGROUND_RGB.exec(css);
-                    if (rgb) {
-                        style.foreground = Echo.Sync.Color.toHex(
-                                parseInt(rgb[1], 10), parseInt(rgb[2], 10), parseInt(rgb[3], 10));
-                    }
-                }
-
-                if (!style.background && Extras.Sync.RichTextInput._CSS_BACKGROUND_TEST.test(css)) {
-                    rgb = Extras.Sync.RichTextInput._CSS_BACKGROUND_RGB.exec(css);
-                    if (rgb) {
-                        style.background = Echo.Sync.Color.toHex(
-                                parseInt(rgb[1], 10), parseInt(rgb[2], 10), parseInt(rgb[3], 10));
-                    }
-                }
-            }
-            node = node.parentNode;
-        }
-        
-        return style;
-    },
-    
-    /**
      * Returns the current selection state of the input field.
      * The object contains the following properties:
      * <ul>
@@ -361,7 +399,7 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
         this._renderedHtml = html;
         //FIXME always grabbing focus, this may be undesired...necessary to maintain focus though.
         this.renderFocus();
-        this.component.doCursorStyleChange(this._getCursorStyle());
+        this.component.doCursorStyleChange(new Extras.Sync.RichTextInput.Html.StyleData(this._getSelection().node));
     },
     
     /**
@@ -379,7 +417,7 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
     _notifyCursorStyleChange: function() {
         this._cursorStyleUpdateRequired = false;
         Core.Web.Scheduler.run(Core.method(this, function() {
-            this.component.doCursorStyleChange(this._getCursorStyle());
+            this.component.doCursorStyleChange(new Extras.Sync.RichTextInput.Html.StyleData(this._getSelection().node));
         }));
     },
     
