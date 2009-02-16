@@ -463,7 +463,6 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
             this._activeTabId = null;
             if (componentCount > 0) {
                 this._selectTab(this.component.getComponent(0).renderId);
-                this._setActiveTabId(this._activeTabId);
             }
         }
 
