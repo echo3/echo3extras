@@ -414,6 +414,9 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
         }
     },
     
+    /**
+     * Notifies component object of a potential cursor style change (such that it may notify registered listeners).
+     */
     _notifyCursorStyleChange: function() {
         this._cursorStyleUpdateRequired = false;
         Core.Web.Scheduler.run(Core.method(this, function() {
