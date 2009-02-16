@@ -1228,8 +1228,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
      * Focuses the edited document.  Delegates to RichTextInput peer.
      */
     focusDocument: function() {
-// FIXME        
-//        this._richTextInput.peer.focusDocument();
+        this.arcApplication.setFocusedComponent(this._richTextInput);
     },
     
     /** @see Echo.Arc.ComponentSync#getDomainElement */
