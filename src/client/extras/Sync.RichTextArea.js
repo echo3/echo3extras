@@ -448,9 +448,6 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
             return;
         }
 
-// Commented out till markFocused understood.
-//        this.component.rta.peer._markFocused();
-        
         this._storeData();
         this._storeRange();
         
@@ -525,6 +522,9 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
         parentElement.appendChild(this._div);
     },
     
+    /**
+     * Renders the editable content document within the created IFRAME.
+     */
     _renderContentDocument: function() {
         // Ensure element is on-screen before rendering content/enabling design mode.
         var element = this._iframe;
@@ -1435,14 +1435,6 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         }
         tableHtml += "</tbody></table>";
         this.insertHtml(tableHtml);
-    },
-    
-//FIXME this method is not well doc'ed...not certain of real purpose, believe it has one.    
-    /**
-     * Notifies the application that the RichTextArea is focused.
-     */
-    _markFocused: function() {
-        this.client.application.setFocusedComponent(this);
     },
     
     /**
