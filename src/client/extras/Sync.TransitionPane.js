@@ -91,6 +91,7 @@ Extras.Sync.TransitionPane = Core.extend(Echo.Render.ComponentSync, {
         }
     },
 
+    /** @see Echo.Render.ComponentSync#renderAdd */
     renderAdd: function(update, parentElement) {
         this._containerDiv = document.createElement("div");
         this._containerDiv.id = this.component.renderId;
@@ -127,6 +128,7 @@ Extras.Sync.TransitionPane = Core.extend(Echo.Render.ComponentSync, {
         this.contentDiv.appendChild(this.childDiv);
     },
     
+    /** @see Echo.Render.ComponentSync#renderDispose */
     renderDispose: function(update) {
         this._initialContentLoaded = false;
         if (this._transition) {
@@ -137,6 +139,7 @@ Extras.Sync.TransitionPane = Core.extend(Echo.Render.ComponentSync, {
         this._containerDiv = null;
     },
 
+    /** @see Echo.Render.ComponentSync#renderUpdate */
     renderUpdate: function(update) {
         var fullRender = false;
         if (update.hasUpdatedLayoutDataChildren()) {
@@ -212,6 +215,10 @@ Extras.Sync.TransitionPane = Core.extend(Echo.Render.ComponentSync, {
  */
 Extras.Sync.TransitionPane.Transition = Core.extend(Extras.Sync.Animation, {
 
+    /**
+     * The transition pane synchronization peer.
+     * @type Extras.Sync.TransitionPane
+     */
     transitionPane: null,
 
     /**
@@ -220,34 +227,50 @@ Extras.Sync.TransitionPane.Transition = Core.extend(Extras.Sync.Animation, {
      * This value will automatically be overridden if the TransitionPane component
      * has its "duration" property set.
      * @type Number
+     * @see Extras.Sync.Animation#runTime
      */
     runTime: 350,
 
     /**
      * Interval at which transition steps should be invoked, in milliseconds.
      * @type Number
+     * @see Extras.Sync.Animation#sleepInterval
      */
     sleepInterval: 10,
     
-    $abstract: { },
+    $abstract: true,
 
+    /**
+     * Constructor.
+     * 
+     * @param {Extras.Sync.TransitionPane} transitionPane the transition pane peer 
+     */
     $construct: function(transitionPane) {
         this.transitionPane = transitionPane;
     }
 });
 
+/**
+ * Transition implementation to translate between old content and new content by flipping horizontal blinds, as though the old
+ * screen were written to one side and the new screen were written to the other.
+ * Uses a series of alpha-channeled PNG images to approximate the effect.
+ */
 Extras.Sync.TransitionPane.BlindTransition = Core.extend(Extras.Sync.TransitionPane.Transition, {
 
+    /** @see Extras.Sync.Animation#runTime */
     runTime: 700,
+
     _maskDiv: null,
     _stepCount: 14,
     _swapStep: null,
     _reverse: false,
     
+    /** @see Extras.Sync.Animation#complete */
     complete: function(abort) {
         this._maskDiv.parentNode.removeChild(this._maskDiv);
     },
     
+    /** @see Extras.Sync.Animation#init */
     init: function() {
         this._swapStep = Math.floor(this._stepCount) / 2 + 1;
         this._reverse = this.transitionPane.type === Extras.TransitionPane.TYPE_BLIND_BLACK_OUT;
@@ -257,6 +280,7 @@ Extras.Sync.TransitionPane.BlindTransition = Core.extend(Extras.Sync.TransitionP
         this.transitionPane.contentDiv.appendChild(this._maskDiv);
     },
 
+    /** @see Extras.Sync.Animation#step */
     step: function(progress) {
         var currentStep = Math.ceil(progress * this._stepCount);
         if (currentStep === 0) {
@@ -297,6 +321,10 @@ Extras.Sync.TransitionPane.BlindTransition = Core.extend(Extras.Sync.TransitionP
     }    
 });
 
+/**
+ * Transition implementation to pan from old content to new content, as though both were either horizontally
+ * or vertically adjacent and the screen (camera) were moving from one to the other.
+ */
 Extras.Sync.TransitionPane.CameraPanTransition = Core.extend(
         Extras.Sync.TransitionPane.Transition, {
         
@@ -304,6 +332,7 @@ Extras.Sync.TransitionPane.CameraPanTransition = Core.extend(
     
     _travel: null,
 
+    /** @see Extras.Sync.Animation#complete */
     complete: function(abort) {
         if (this.transitionPane.childDiv) {
             this.transitionPane.childDiv.style.zIndex = 0;
@@ -312,6 +341,7 @@ Extras.Sync.TransitionPane.CameraPanTransition = Core.extend(
         }
     },
     
+    /** @see Extras.Sync.Animation#init */
     init: function() {
         var bounds = new Core.Web.Measure.Bounds(this.transitionPane.contentDiv);
         this._travel = (this.transitionPane.type == Extras.TransitionPane.TYPE_CAMERA_PAN_DOWN || 
@@ -321,6 +351,7 @@ Extras.Sync.TransitionPane.CameraPanTransition = Core.extend(
         }
     },
     
+    /** @see Extras.Sync.Animation#step */
     step: function(progress) {
         switch (this.transitionPane.type) {
         case Extras.TransitionPane.TYPE_CAMERA_PAN_DOWN:
@@ -364,10 +395,15 @@ Extras.Sync.TransitionPane.CameraPanTransition = Core.extend(
     }
 });
 
+/**
+ * Transition implementation to fade from old content to new content.
+ */
 Extras.Sync.TransitionPane.FadeOpacityTransition = Core.extend(Extras.Sync.TransitionPane.Transition, {
     
+    /** @see Extras.Sync.Animation#runTime */
     runTime: 1000,
     
+    /** @see Extras.Sync.Animation#complete */
     complete: function(abort) {
         if (this.transitionPane.childDiv) {
             this.transitionPane.childDiv.style.zIndex = 0;
@@ -379,6 +415,7 @@ Extras.Sync.TransitionPane.FadeOpacityTransition = Core.extend(Extras.Sync.Trans
         }
     },
     
+    /** @see Extras.Sync.Animation#init */
     init: function() {
         if (this.transitionPane.childDiv) {
             if (Core.Web.Env.PROPRIETARY_IE_OPACITY_FILTER_REQUIRED) {
@@ -390,6 +427,7 @@ Extras.Sync.TransitionPane.FadeOpacityTransition = Core.extend(Extras.Sync.Trans
         this.transitionPane.showContent();
     },
     
+    /** @see Extras.Sync.Animation#step */
     step: function(progress) {
         var percent;
         if (this.transitionPane.childDiv) {
@@ -410,16 +448,32 @@ Extras.Sync.TransitionPane.FadeOpacityTransition = Core.extend(Extras.Sync.Trans
     }
 });
 
+/**
+ * Transition implementation to fade from old content to a solid color, then fade to new content.
+ */
 Extras.Sync.TransitionPane.FadeOpacityColorTransition = Core.extend(Extras.Sync.TransitionPane.Transition, {
 
+    /** @see Extras.Sync.Animation#runTime */
     runTime: 1000,
+
+    /**
+     * The masking color DIV element being faded in/out over the changing content.
+     * @type Element
+     */
     _maskDiv: null,
+    
+    /**
+     * Flag indicating whether old content has been fully faded out and swapped for new content.
+     * @type Boolean
+     */
     _swapped: false,
     
+    /** @see Extras.Sync.Animation#complete */
     complete: function(abort) {
         this._maskDiv.parentNode.removeChild(this._maskDiv);
     },
     
+    /** @see Extras.Sync.Animation#init */
     init: function() {
         this._maskDiv = document.createElement("div");
         this._maskDiv.style.cssText = "position:absolute;width:100%;height:100%;z-index:32767;";
@@ -436,6 +490,7 @@ Extras.Sync.TransitionPane.FadeOpacityColorTransition = Core.extend(Extras.Sync.
         this.transitionPane.contentDiv.appendChild(this._maskDiv);
     },
 
+    /** @see Extras.Sync.Animation#step */
     step: function(progress) {
         var opacity = 1 - Math.abs(progress * 2 - 1);
         if (progress > 0.5 && !this._swapped) {
