@@ -36,11 +36,23 @@ import java.util.Map;
 
 import nextapp.echo.app.ImageReference;
 
+/**
+ * A default mutable <code>IconSet</code> implementation.
+ */
 public class DefaultIconSet 
 implements IconSet {
 
+    /**
+     * Name to icon mapping.
+     */
     private Map icons = new HashMap();
     
+    /**
+     * Adds an icon to the icon set.
+     * 
+     * @param name the icon name
+     * @param icon the icon
+     */
     public void addIcon(String name, ImageReference icon) {
         icons.put(name, icon);
     }

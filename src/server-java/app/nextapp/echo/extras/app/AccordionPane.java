@@ -402,6 +402,8 @@ implements Pane, PaneContainer {
 
     /**
      * Processes a user request to select the tab with the given index.
+     * 
+     * @param tabIndex the new tab index
      */
     public void userTabSelect(int tabIndex) {
         fireTabSelected(tabIndex);

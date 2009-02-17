@@ -125,6 +125,8 @@ public class ContextMenu extends AbstractMenuComponent {
     }
     
     /**
+     * Returns the component to apply the context menu to.
+     * 
      * @return the Component which the context menu is being applied to.
      */
     public Component getApplyTo() {

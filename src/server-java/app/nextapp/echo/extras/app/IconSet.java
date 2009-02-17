@@ -33,9 +33,23 @@ import java.util.Iterator;
 
 import nextapp.echo.app.ImageReference;
 
+/**
+ * A collection of named <code>ImageReference</code>s.
+ */
 public interface IconSet {
 
+    /**
+     * Returns an iterator over the (String) names of an icons in the <code>IconSet</code>.
+     * 
+     * @return the iterator
+     */
     public Iterator getIconNames();
     
+    /**
+     * Returns the <code>ImageReference</code> with the specified name.
+     * 
+     * @param name the icon name
+     * @return the icon
+     */
     public ImageReference getIcon(String name);
 }

@@ -64,6 +64,9 @@ public class CalendarSelect extends Component {
     public static final String PROPERTY_SELECTED_DATE_BACKGROUND_IMAGE = "selectedDateBackgroundImage";
     public static final String PROPERTY_SELECTED_DATE_FOREGROUND = "selectedDateForeground";
     
+    /**
+     * The selected date.
+     */
     private Date date;
     
     /**
