@@ -5,6 +5,10 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
 
     $static: {
 
+        /** 
+         * Supported partial update properties. 
+         * @type Array
+         */
         _supportedPartialProperties: ["activeTabId", "activeTabIndex"],
         
         /**

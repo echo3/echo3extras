@@ -7,64 +7,29 @@ Extras.Sync.ToolTipContainer = Core.extend(Echo.Render.ComponentSync, {
         Echo.Render.registerPeer("Extras.ToolTipContainer", this);
     },
     
-    $construct: function() {
-        this._div = null;
-        this._applyDiv = null;
-        this._toolTipDiv = null;
-    },
+    /**
+     * Main container DIV element.
+     * @type Element
+     */
+    _div: null,
     
-    renderAdd: function(update, parentElement) {
-        this._div = document.createElement("div");
-        this._div.id = this.component.renderId;
-        var componentCount = this.component.getComponentCount();
-        
-        if (componentCount > 0) {
-            this._applyDiv = this._createApplyTo(update);
-            this._div.appendChild(this._applyDiv);
-        }
-        
-        if (componentCount > 1) {
-            this._toolTipDiv = this._createToolTip(update);
-        }
-        
-        parentElement.appendChild(this._div);
-    },
+    /**
+     * DIV container for component to which tool tip is being applied.
+     * @type Element
+     */
+    _applyDiv: null,
     
-    renderUpdate: function(update) {
-        var element = this._div;
-        var containerElement = element.parentNode;
-        Echo.Render.renderComponentDispose(update, update.parent);
-        containerElement.removeChild(element);
-        this.renderAdd(update, containerElement);
-        return true;
-    },
+    /**
+     * DIV container for tool tip component.
+     * @type Element
+     */
+    _toolTipDiv: null,
     
-    renderDispose: function(update) {
-        this._div = null;
-        
-        if (this._applyDiv) {
-            Core.Web.Event.removeAll(this._applyDiv);
-            this._applyDiv = null;
-        }
-        
-        if (this._toolTipDiv && this._toolTipDiv.parentNode === document.body) {
-            document.body.removeChild(this._toolTipDiv);
-            this._toolTipDiv = null;
-        }
-    },
-    
-    _createToolTip: function(update) {
-        var div = document.createElement("div");
-        div.style.zIndex = 32767;
-        div.style.position = "absolute";
-        var width = this.component.render("width");
-        if (width) {
-            div.style.width = Echo.Sync.Extent.toCssValue(width);
-        }
-        Echo.Render.renderComponentAdd(update, this.component.getComponent(1), div);
-        return div;
-    },
-    
+    /**
+     * Renders container element for the applied-to component and the applied-to component itself.
+     * 
+     * @param {Echo.Update.ComponentUpdate} the update 
+     */
     _createApplyTo: function(update) {
         var applyToComponent = this.component.getComponent(0);
         
@@ -85,6 +50,28 @@ Extras.Sync.ToolTipContainer = Core.extend(Echo.Render.ComponentSync, {
         return div;
     },
     
+    /**
+     * Renders tool tip container element, contained component.
+     * 
+     * @param {Echo.Update.ComponentUpdate} the update 
+     */
+    _createToolTip: function(update) {
+        var div = document.createElement("div");
+        div.style.zIndex = 32767;
+        div.style.position = "absolute";
+        var width = this.component.render("width");
+        if (width) {
+            div.style.width = Echo.Sync.Extent.toCssValue(width);
+        }
+        Echo.Render.renderComponentAdd(update, this.component.getComponent(1), div);
+        return div;
+    },
+    
+    /**
+     * Positions tool tip over applied-to component based on mouse position.
+     * 
+     * @param e a mouse event containing mouse cursor positioning information
+     */
     _positionToolTip: function(e) {
         // Determine cursor position.
         var cursorX = (e.pageX || (e.clientX + (document.documentElement.scrollLeft || document.body.scrollLeft)));
@@ -119,6 +106,11 @@ Extras.Sync.ToolTipContainer = Core.extend(Echo.Render.ComponentSync, {
         this._toolTipDiv.style.top = tipY + "px";
     },
     
+    /**
+     * Processes a mouse move event.
+     * 
+     * @param e the event
+     */
     _processMove: function(e) {
         if (!this.client || !this.client.verifyInput(this.component) || Core.Web.dragInProgress) {
             return;
@@ -127,6 +119,11 @@ Extras.Sync.ToolTipContainer = Core.extend(Echo.Render.ComponentSync, {
         return true;
     },
     
+    /**
+     * Processes a mouse rollover enter event.
+     * 
+     * @param e the event
+     */
     _processRolloverEnter: function(e) {
         if (!this.client || !this.client.verifyInput(this.component) || Core.Web.dragInProgress) {
             return;
@@ -139,6 +136,11 @@ Extras.Sync.ToolTipContainer = Core.extend(Echo.Render.ComponentSync, {
         return true;
     },
     
+    /**
+     * Processes a mouse rollover exit event.
+     * 
+     * @param e the event
+     */
     _processRolloverExit: function(e) {
         if (!this.client || !this.client.verifyInput(this.component)) {
             return;
@@ -146,6 +148,49 @@ Extras.Sync.ToolTipContainer = Core.extend(Echo.Render.ComponentSync, {
         if (this._toolTipDiv.parentNode === document.body) {
             document.body.removeChild(this._toolTipDiv);
         }
+        return true;
+    },
+
+    /** @see Echo.Render.ComponentSync#renderAdd */
+    renderAdd: function(update, parentElement) {
+        this._div = document.createElement("div");
+        this._div.id = this.component.renderId;
+        var componentCount = this.component.getComponentCount();
+        
+        if (componentCount > 0) {
+            this._applyDiv = this._createApplyTo(update);
+            this._div.appendChild(this._applyDiv);
+        }
+        
+        if (componentCount > 1) {
+            this._toolTipDiv = this._createToolTip(update);
+        }
+        
+        parentElement.appendChild(this._div);
+    },
+    
+    /** @see Echo.Render.ComponentSync#renderDispose */
+    renderDispose: function(update) {
+        this._div = null;
+        
+        if (this._applyDiv) {
+            Core.Web.Event.removeAll(this._applyDiv);
+            this._applyDiv = null;
+        }
+        
+        if (this._toolTipDiv && this._toolTipDiv.parentNode === document.body) {
+            document.body.removeChild(this._toolTipDiv);
+            this._toolTipDiv = null;
+        }
+    },
+    
+    /** @see Echo.Render.ComponentSync#renderUpdate */
+    renderUpdate: function(update) {
+        var element = this._div;
+        var containerElement = element.parentNode;
+        Echo.Render.renderComponentDispose(update, update.parent);
+        containerElement.removeChild(element);
+        this.renderAdd(update, containerElement);
         return true;
     }
 });
