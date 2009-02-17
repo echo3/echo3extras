@@ -49,6 +49,7 @@ import nextapp.echo.extras.app.event.DropListener;
 public class DragSource extends Component {
 
     public static final String DROP_TARGET_LISTENERS_CHANGED_PROPERTY = "dropTargetListeners";
+    public static final String DROP_TARGETS_CHANGED_PROPERTY = "dropTargetsChanged";
     public static final String INPUT_DROP = "drop";
     
     /**
@@ -82,6 +83,7 @@ public class DragSource extends Component {
      */
     public void addDropTarget(String dropTargetId) {
         dropTargetIds.add(dropTargetId);
+        firePropertyChange(DROP_TARGETS_CHANGED_PROPERTY, null, dropTargetId);
     }
     
     /**
@@ -145,6 +147,7 @@ public class DragSource extends Component {
      */
     public void removeAllDropTargets(){
         dropTargetIds.clear();
+        firePropertyChange(DROP_TARGETS_CHANGED_PROPERTY, null, null);
     }
     
     /**
@@ -154,6 +157,7 @@ public class DragSource extends Component {
      */
     public void removeDropTarget(String dropTargetId) {
         dropTargetIds.remove(dropTargetId);
+        firePropertyChange(DROP_TARGETS_CHANGED_PROPERTY, dropTargetId, null);
     }
     
     /**

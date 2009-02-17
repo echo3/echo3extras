@@ -29,6 +29,8 @@
 
 package nextapp.echo.extras.webcontainer.sync.component;
 
+import java.util.Iterator;
+
 import nextapp.echo.app.Component;
 import nextapp.echo.app.util.Context;
 import nextapp.echo.extras.app.DragSource;
@@ -36,6 +38,7 @@ import nextapp.echo.extras.webcontainer.service.CommonService;
 import nextapp.echo.webcontainer.AbstractComponentSynchronizePeer;
 import nextapp.echo.webcontainer.ServerMessage;
 import nextapp.echo.webcontainer.Service;
+import nextapp.echo.webcontainer.UserInstance;
 import nextapp.echo.webcontainer.WebContainerServlet;
 import nextapp.echo.webcontainer.service.JavaScriptService;
 
@@ -48,8 +51,18 @@ public class DragSourcePeer extends AbstractComponentSynchronizePeer {
             new String[] {  "nextapp/echo/extras/webcontainer/resource/Application.DragSource.js",  
                             "nextapp/echo/extras/webcontainer/resource/Sync.DragSource.js"});
     
+    private static final String DROP_TARGETS = "dropTargets";
+    
     static {
         WebContainerServlet.getServiceRegistry().add(DRAG_SOURCE_SERVICE);
+    }
+    
+    /**
+     * Default constructor.
+     */
+    public DragSourcePeer() {
+        super();
+        addOutputProperty(DROP_TARGETS);
     }
     
     /**
@@ -64,6 +77,38 @@ public class DragSourcePeer extends AbstractComponentSynchronizePeer {
      */
     public Class getComponentClass() {
         return DragSource.class;
+    }
+    
+    /**
+     * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#getOutputProperty(
+     *      nextapp.echo.app.util.Context, nextapp.echo.app.Component, java.lang.String, int)
+     */
+    public Object getOutputProperty(Context context, Component component, String propertyName, int propertyIndex) {
+        if (propertyName.equals(DROP_TARGETS)) {
+            DragSource dragSource = (DragSource) component;
+            if (dragSource.getDropTargetCount() == 0) {
+                return null;
+            } else {
+                // Return comma-delimited list of drop target render ids.
+                UserInstance userInstance = (UserInstance) context.get(UserInstance.class);
+                Iterator it = dragSource.getDropTargets();
+                StringBuffer out = new StringBuffer();
+                while (it.hasNext()) {
+                    String dropTargetId = (String) it.next();
+                    Component dropTarget = (Component) component.getApplicationInstance().getComponentByRenderId(dropTargetId);
+                    if (dropTarget == null) {
+                        continue;
+                    }
+                    out.append(userInstance.getClientRenderId(dropTarget));
+                    if (it.hasNext()) {
+                        out.append(",");
+                    }
+                }
+                return out.toString();
+            }
+        } else {
+            return super.getOutputProperty(context, component, propertyName, propertyIndex);
+        }
     }
     
     /**
