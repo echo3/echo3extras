@@ -81,10 +81,12 @@ public class DragSourceTest extends AbstractTest {
         final Column dropTarget1 = new Column();
         dropTarget1.setBorder(new Border(2, Color.RED, Border.STYLE_OUTSET));
         dropTarget1.add(new Label("Drop Target 1"));
+        dropTarget1.setRenderId("DropTarget1");
 
         final Column dropTarget2 = new Column();
         dropTarget2.setBorder(new Border(2, Color.RED, Border.STYLE_OUTSET));
         dropTarget2.add(new Label("Drop Target 2"));
+        dropTarget1.setRenderId("DropTarget2");
 
         row.add(labelColumn);
         // row.add(buttonColumn);
@@ -95,8 +97,8 @@ public class DragSourceTest extends AbstractTest {
             Label label = new Label("Draggable Label " + i);
             label.setBackground(StyleUtil.randomBrightColor());
             DragSource ds = new DragSource(label);
-            ds.addDropTarget(dropTarget1);
-            ds.addDropTarget(dropTarget2);
+            ds.addDropTarget(dropTarget1.getRenderId());
+            ds.addDropTarget(dropTarget2.getRenderId());
             ds.addDropTargetListener(new DropListener() {
                 public void dropPerformed(DropEvent event) {
                     DragSource dragged = (DragSource) event.getSource();

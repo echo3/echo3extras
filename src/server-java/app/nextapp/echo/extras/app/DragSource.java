@@ -29,9 +29,11 @@
 
 package nextapp.echo.extras.app;
 
+import java.util.Collections;
 import java.util.EventListener;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import nextapp.echo.app.Component;
 import nextapp.echo.extras.app.event.DropEvent;
@@ -43,54 +45,49 @@ import nextapp.echo.extras.app.event.DropListener;
  * target. When a <code>Component</code> is successfully dropped onto a valid
  * drop target, a <code>DropEvent</code> is fired and all registered
  * <code>DropTargetListener</code>s are notified.
- * <p>
- * <strong>WARNING: This component is EXPERIMENTAL. The API is VERY LIKELY to
- * change.</strong>
  */
 public class DragSource extends Component {
 
     public static final String DROP_TARGET_LISTENERS_CHANGED_PROPERTY = "dropTargetListeners";
-    public static final String INPUT_DROP = "ACTION_INPUT_DROP";
-    
-    public static final String PROPERTY_TOOL_TIP_TEXT = "toolTipText";
+    public static final String INPUT_DROP = "drop";
     
     /**
      * Collection of drop target components.
      */
-    private List dropTargets;
+    private Set dropTargetIds = new HashSet();
     
     /**
-     * Creates an empty DragSource
-     * @deprecated This component has not yet been implemented in Echo3 and has been TEMPORARILY DEPRECATED to warn users.  S
-     * See bug tracker issue 340 for status information.  When implemented, the component will be un-deprecated. 
+     * Creates an empty DragSource.
+     * @deprecated under development, do not use.
      */
-    public DragSource() { }
+    public DragSource() { 
+        super();
+    }
     
     /**
-     * Creates a DragSource making the given 
-     * Component visually draggable 
-     * @param draggable The Component. 
-     * @deprecated This component has not yet been implemented in Echo3 and has been TEMPORARILY DEPRECATED to warn users.  S
-     * See bug tracker issue 340 for status information.  When implemented, the component will be un-deprecated. 
+     * Creates a DragSource making the given Component visually draggable.
+     *  
+     * @param draggable the draggable component
+     * @deprecated under development, do not use.
      */
     public DragSource(Component draggable) {
+        super();
         this.add(draggable);
     }
    
     /**
      * Adds a target component to the drop target list.
-     * @param dropTarget the drop target.
+     * 
+     * @param dropTargetId the <code>renderId</code> of the drop target component to add
      */
-    public void addDropTarget(Component dropTarget) {
-        if (getDropTargetList().indexOf(dropTarget) < 0) {
-            getDropTargetList().add(dropTarget);
-        }
+    public void addDropTarget(String dropTargetId) {
+        dropTargetIds.add(dropTargetId);
     }
     
     /**
      * Adds a <code>DropListener</code> to the listener list
      * 
-     * @param listener the listener.
+     * @param listener the listener
      */
     public void addDropTargetListener(DropListener listener) {
         getEventListenerList().addListener(DropListener.class, listener);
@@ -116,52 +113,21 @@ public class DragSource extends Component {
     }
     
     /**
-     * Returns the drop target <code>Component</code> at the specified index
-     * @param n the index.
-     * @return the drop target.
-     */
-    public Component getDropTargetAt(int n) {
-        return (Component) getDropTargetList().get(n);
-    }
-    
-    /**
-     * Returns total number of drop target <code>Components</code>
+     * Returns the total number of drop targets.
      * 
-     * @return the total number drop targets.
+     * @return the total number drop targets
      */
     public int getDropTargetCount() {
-        return getDropTargetList().size();
+        return dropTargetIds.size();
     }
     
     /**
-     * Returns the local list of Drop Target Components.
+     * Returns an iterator over the render ids (Strings) of all drop targets. 
      * 
-     * @return the drop target list
+     * @return the drop targets
      */
-    protected List getDropTargetList() {
-        if (this.dropTargets == null) {
-            this.dropTargets = new LinkedList();
-        }       
-        return this.dropTargets;
-    }
-    
-    /**
-     * Returns all drop target <code>Components</code>
-     * 
-     * @return the drop targets.
-     */
-    public Component[] getDropTargets() {
-        return (Component[]) getDropTargetList().toArray(new Component[]{});
-    }
-    
-    /**
-     * Gets the tool tip text (displayed when the drag-able 
-     * component is over a valid drop target).
-     * 
-     * @return the tool tip text
-     */
-    public String getToolTipText(String newValue) {
-        return (String) get(PROPERTY_TOOL_TIP_TEXT);
+    public Iterator getDropTargets() {
+        return Collections.unmodifiableSet(dropTargetIds).iterator();
     }
     
     /**
@@ -178,36 +144,27 @@ public class DragSource extends Component {
      * Removes all <code>Components</code> from the drop target list
      */
     public void removeAllDropTargets(){
-        getDropTargetList().clear();
+        dropTargetIds.clear();
     }
     
     /**
-     * Removes a <code>Component</code> from the drop target list
-     * @param dropTarget the component.
+     * Removes a target component to the drop target list.
+     * 
+     * @param dropTargetId the <code>renderId</code> of the drop target component to remove
      */
-    public void removeDropTarget(Component dropTarget) {
-        getDropTargetList().remove(dropTarget);
+    public void removeDropTarget(String dropTargetId) {
+        dropTargetIds.remove(dropTargetId);
     }
     
     /**
      * Removes a <code>DropListener</code> from the listener list
      * 
-     * @param listener the listener.
+     * @param listener the listener
      */
     public void removeDropTargetListener(DropListener listener) {
         if (!hasEventListenerList()) {
             return;
         }
         getEventListenerList().removeListener(DropListener.class, listener);
-    }
-    
-    /**
-     * Sets the tool tip text (displayed when the drag-able 
-     * component is over a valid drop target).
-     * 
-     * @param newValue the new tool tip text
-     */
-    public void setToolTipText(String newValue) {
-        set(PROPERTY_TOOL_TIP_TEXT, newValue);
     }
 }
