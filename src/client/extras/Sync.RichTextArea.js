@@ -1008,6 +1008,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
             },
             background: this.component.render("background"),
             backgroundImage: this.component.render("backgroundImage"),
+            border: this.component.render("border"),
             foreground: this.component.render("foreground"),
             text: this.component.get("text"),
             events: {
