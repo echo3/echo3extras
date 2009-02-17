@@ -54,6 +54,9 @@ public class DragSource extends Component {
     
     public static final String PROPERTY_TOOL_TIP_TEXT = "toolTipText";
     
+    /**
+     * Collection of drop target components.
+     */
     private List dropTargets;
     
     /**
@@ -152,7 +155,7 @@ public class DragSource extends Component {
     }
     
     /**
-     * Gets the tool tip text (displayed when the draggable 
+     * Gets the tool tip text (displayed when the drag-able 
      * component is over a valid drop target).
      * 
      * @return the tool tip text
@@ -199,7 +202,7 @@ public class DragSource extends Component {
     }
     
     /**
-     * Sets the tool tip text (displayed when the draggable 
+     * Sets the tool tip text (displayed when the drag-able 
      * component is over a valid drop target).
      * 
      * @param newValue the new tool tip text
