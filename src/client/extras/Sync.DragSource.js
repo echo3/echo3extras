@@ -62,6 +62,7 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
     
     /** @see Echo.Render.ComponentSync#renderDispose */
     renderDispose: function(update) {
+        this._dragStop();
         Core.Web.Event.removeAll(this._div);
 
         this._cloneDiv = null;
