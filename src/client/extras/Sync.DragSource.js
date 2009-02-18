@@ -78,8 +78,15 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
      */
     _dragDrop: function(e) {
         var targetElement = this._findElement(this.client.domainElement, e.clientX, e.clientY);
-        if (targetElement && targetElement.id) {
-            Core.Debug.consoleWrite("target:" + targetElement.id);
+        while (targetElement && targetElement != this.client.domainElement) {
+            if (targetElement.id) {
+                var target = this.client.application.getComponentByRenderId(targetElement.id);
+                if (target) {
+                    Core.Debug.consoleWrite(target);
+                    break;
+                }
+            }
+            targetElement = targetElement.parentNode;
         }
     },
     
