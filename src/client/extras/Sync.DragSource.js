@@ -78,33 +78,33 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
      */
     _dragDrop: function(e) {
         var i,
-            target = null,
+            specificTarget = null,
             dropTarget, 
             testTarget,
             dropTargetIds,
             targetElement = this._findElement(this.client.domainElement, e.clientX, e.clientY);
         
-        // Find target component.
-        while (!target && targetElement && targetElement != this.client.domainElement) {
+        // Find specific target component.
+        while (!specificTarget && targetElement && targetElement != this.client.domainElement) {
             if (targetElement.id) {
-                target = this.client.application.getComponentByRenderId(targetElement.id);
+                specificTarget = this.client.application.getComponentByRenderId(targetElement.id);
             }
             targetElement = targetElement.parentNode;
         }
         
-        // Return if target component could not be found.
-        if (!target) {
+        // Return if specific target component could not be found.
+        if (!specificTarget) {
             return;
         }
 
-        // FIXME Temporary test code, only accommodating single target.
+        // Retrieve valid drop target renderIds from component.
         var dropTargetIds = this.component.get("dropTargetIds");
         if (!dropTargetIds) {
             dropTargetIds = [];
         }
         
         // Find actual drop target.
-        testTarget = target;
+        testTarget = specificTarget;
         while (testTarget && !dropTarget) {
             for (i = 0; i < dropTargetIds.length; ++i) {
                 if (dropTargetIds[i] == testTarget.renderId) {
@@ -118,11 +118,12 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
         
         // Return immediately if target is not a descendent of a drop target.
         if (!dropTarget) {
-        Core.Debug.consoleWrite("Drop target NOT found: " + target);
+Core.Debug.consoleWrite("Drop target NOT found: " + specificTarget);
             return;
         }
         
-        Core.Debug.consoleWrite("Drop target found: " + dropTarget + ":::" + target);
+Core.Debug.consoleWrite("Drop target found: " + dropTarget + ":::" + specificTarget);
+        this.component.doDrop(dropTarget.renderId, specificTarget.renderId);
     },
     
     /**
