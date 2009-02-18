@@ -47,8 +47,10 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
     
     /**
      * Start a drag operation.
+     * 
+     * @param the e relevant mouse down event which started the drag operation
      */
-    _dragStart: function() {
+    _dragStart: function(e) {
         this._dragStop();
         
         this._overlayDiv = document.createElement("div");
@@ -59,15 +61,24 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
         
         this._dragDiv = this._div.cloneNode(true);
         this._dragDiv.style.position = "absolute";
-        this._dragDiv.style.position.top = this._divOrigin.left + "px";
-        this._dragDiv.style.position.left = this._divOrigin.top + "px";
-        this._setDragOpacity(0.2);
+        this._setDragOpacity(0.75);
         this._overlayDiv.appendChild(this._dragDiv);
 
         document.body.appendChild(this._overlayDiv);
 
         Core.Web.Event.add(document.body, "mousemove", this._processMouseMoveRef, true);
         Core.Web.Event.add(document.body, "mouseup", this._processMouseUpRef, true);
+        
+        this._dragUpdate(e);
+    },
+    
+    /**
+     * Performs a drop operation.
+     * 
+     * @param e the relevant mouse up event describing where the dragged item was dropped
+     */
+    _dragDrop: function(e) {
+        
     },
     
     /**
@@ -84,6 +95,16 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
         this._dragDiv = null;
     },
     
+    /**
+     * Updates the position of the dragged object in response to mouse movement.
+     * 
+     * @param e the relevant mouse move event which necessitated the drag update
+     */
+    _dragUpdate: function(e) {
+        this._dragDiv.style.top = e.clientY + "px";
+        this._dragDiv.style.left = e.clientX + "px";
+    },
+    
     _processMouseDown: function(e) {
         Core.Web.DOM.preventEventDefault(e);
 
@@ -91,14 +112,16 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
             return;
         }
         
-        this._dragStart();
+        this._dragStart(e);
     },
     
     _processMouseMove: function(e) {
+        this._dragUpdate(e);
     },
     
     _processMouseUp: function(e) {
         this._dragStop();
+        this._dragDrop();
     },
     
     /** @see Echo.Render.ComponentSync#renderAdd */
