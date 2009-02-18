@@ -77,17 +77,50 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
      * @param e the relevant mouse up event describing where the dragged item was dropped
      */
     _dragDrop: function(e) {
-        var targetElement = this._findElement(this.client.domainElement, e.clientX, e.clientY);
-        while (targetElement && targetElement != this.client.domainElement) {
+        var i,
+            target = null,
+            dropTarget, 
+            testTarget,
+            dropTargetIds,
+            targetElement = this._findElement(this.client.domainElement, e.clientX, e.clientY);
+        
+        // Find target component.
+        while (!target && targetElement && targetElement != this.client.domainElement) {
             if (targetElement.id) {
-                var target = this.client.application.getComponentByRenderId(targetElement.id);
-                if (target) {
-                    Core.Debug.consoleWrite(target);
-                    break;
-                }
+                target = this.client.application.getComponentByRenderId(targetElement.id);
             }
             targetElement = targetElement.parentNode;
         }
+        
+        // Return if target component could not be found.
+        if (!target) {
+            return;
+        }
+
+        // FIXME Temporary test code, only accommodating single target.
+        var dropTargetIds = [ this.component.get("dropTargetIds") ];
+Core.Debug.consoleWrite("DT ids: " + dropTargetIds);        
+        
+        // Find actual drop target.
+        testTarget = target;
+        while (testTarget && !dropTarget) {
+            for (i = 0; i < dropTargetIds.length; ++i) {
+                if (dropTargetIds[i] == testTarget.renderId) {
+                    // Drop target found.
+                    dropTarget = testTarget;
+                    break;
+                }
+            }
+            testTarget = testTarget.parent;
+        }
+        
+        // Return immediately if target is not a descendent of a drop target.
+        if (!dropTarget) {
+        Core.Debug.consoleWrite("Drop target NOT found: " + target);
+            return;
+        }
+        
+        Core.Debug.consoleWrite("Drop target found: " + dropTarget + ":::" + target);
     },
     
     /**

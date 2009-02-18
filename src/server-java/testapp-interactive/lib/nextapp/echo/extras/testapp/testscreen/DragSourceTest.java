@@ -98,7 +98,7 @@ public class DragSourceTest extends AbstractTest {
             label.setBackground(StyleUtil.randomBrightColor());
             DragSource ds = new DragSource(label);
             ds.addDropTarget(dropTarget1.getRenderId());
-            ds.addDropTarget(dropTarget2.getRenderId());
+//            ds.addDropTarget(dropTarget2.getRenderId());
             ds.addDropTargetListener(new DropListener() {
                 public void dropPerformed(DropEvent event) {
                     DragSource dragged = (DragSource) event.getSource();

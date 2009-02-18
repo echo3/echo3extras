@@ -51,7 +51,7 @@ public class DragSourcePeer extends AbstractComponentSynchronizePeer {
             new String[] {  "nextapp/echo/extras/webcontainer/resource/Application.DragSource.js",  
                             "nextapp/echo/extras/webcontainer/resource/Sync.DragSource.js"});
     
-    private static final String DROP_TARGETS = "dropTargets";
+    private static final String DROP_TARGET_IDS = "dropTargetIds";
     
     static {
         WebContainerServlet.getServiceRegistry().add(DRAG_SOURCE_SERVICE);
@@ -62,7 +62,7 @@ public class DragSourcePeer extends AbstractComponentSynchronizePeer {
      */
     public DragSourcePeer() {
         super();
-        addOutputProperty(DROP_TARGETS);
+        addOutputProperty(DROP_TARGET_IDS);
     }
     
     /**
@@ -84,7 +84,7 @@ public class DragSourcePeer extends AbstractComponentSynchronizePeer {
      *      nextapp.echo.app.util.Context, nextapp.echo.app.Component, java.lang.String, int)
      */
     public Object getOutputProperty(Context context, Component component, String propertyName, int propertyIndex) {
-        if (propertyName.equals(DROP_TARGETS)) {
+        if (propertyName.equals(DROP_TARGET_IDS)) {
             DragSource dragSource = (DragSource) component;
             if (dragSource.getDropTargetCount() == 0) {
                 return null;
