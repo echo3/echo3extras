@@ -89,12 +89,20 @@ public class DragSourcePeer extends AbstractComponentSynchronizePeer {
             UserInstance userInstance = (UserInstance) context.get(UserInstance.class);
             String dropTargetId = dragSource.getDropTarget(propertyIndex);
             Component dropTarget = (Component) component.getApplicationInstance().getComponentByRenderId(dropTargetId);
-            return userInstance.getClientRenderId(dropTarget);
+            if (dropTarget == null) {
+                return null;
+            } else {
+                return userInstance.getClientRenderId(dropTarget);
+            }
         } else {
             return super.getOutputProperty(context, component, propertyName, propertyIndex);
         }
     }
     
+    /**
+     * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#getOutputPropertyIndices(nextapp.echo.app.util.Context,
+     *      nextapp.echo.app.Component, java.lang.String)
+     */
     public Iterator getOutputPropertyIndices(Context context, Component component, String propertyName) {
         if (propertyName.equals(DROP_TARGET_IDS)) {
             DragSource dragSource = (DragSource) component;
@@ -102,14 +110,23 @@ public class DragSourcePeer extends AbstractComponentSynchronizePeer {
             return new Iterator() {
                 int i = 0;
                 
+                /**
+                 * @see java.util.Iterator#hasNext()
+                 */
                 public boolean hasNext() {
                     return i < count;
                 }
                 
+                /**
+                 * @see java.util.Iterator#next()
+                 */
                 public Object next() {
                     return new Integer(i++);
                 }
                 
+                /**
+                 * @see java.util.Iterator#remove()
+                 */
                 public void remove() {
                     throw new UnsupportedOperationException();
                 }

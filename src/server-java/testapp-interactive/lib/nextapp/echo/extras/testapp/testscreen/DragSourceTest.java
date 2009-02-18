@@ -145,5 +145,4 @@ public class DragSourceTest extends AbstractTest {
 
         addStandardIntegrationTests();
     }
-
 }
