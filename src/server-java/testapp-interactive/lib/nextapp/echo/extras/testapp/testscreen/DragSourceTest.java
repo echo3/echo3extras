@@ -99,7 +99,7 @@ public class DragSourceTest extends AbstractTest {
             DragSource ds = new DragSource(label);
             ds.addDropTarget(dropTarget1.getRenderId());
             ds.addDropTarget(dropTarget2.getRenderId());
-            ds.addDropTargetListener(new DropListener() {
+            ds.addDropListener(new DropListener() {
                 public void dropPerformed(DropEvent event) {
                     DragSource dragged = (DragSource) event.getSource();
                     labelColumn.remove(dragged);

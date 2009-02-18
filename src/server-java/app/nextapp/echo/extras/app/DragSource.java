@@ -92,7 +92,7 @@ public class DragSource extends Component {
      * 
      * @param listener the listener
      */
-    public void addDropTargetListener(DropListener listener) {
+    public void addDropListener(DropListener listener) {
         getEventListenerList().addListener(DropListener.class, listener);
         // Notification of action listener changes is provided due to 
         // existence of hasActionListeners() method. 
@@ -167,7 +167,7 @@ public class DragSource extends Component {
      * 
      * @param listener the listener
      */
-    public void removeDropTargetListener(DropListener listener) {
+    public void removeDropListener(DropListener listener) {
         if (!hasEventListenerList()) {
             return;
         }
