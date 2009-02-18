@@ -20,6 +20,7 @@ Extras.DragSource = Core.extend(Echo.Component, {
      *        (must be a descendant of dropTargetComponent, may be equal to dropTarget)
      */
     doDrop: function(dropTarget, specificTarget) {
-        this.fireEvent({ type: "drop", source: this, dropTarget: dropTarget, specificTarget: specificTarget });
+        this.fireEvent({ type: "drop", source: this, dropTarget: dropTarget, specificTarget: specificTarget, 
+                data: dropTarget });
     }
 });

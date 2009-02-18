@@ -46,8 +46,8 @@ import nextapp.echo.extras.app.event.DropListener;
  */
 public class DragSource extends Component {
 
-    public static final String DROP_TARGET_LISTENERS_CHANGED_PROPERTY = "dropTargetListeners";
-    public static final String DROP_TARGETS_CHANGED_PROPERTY = "dropTargetsChanged";
+    public static final String DROP_LISTENERS_CHANGED_PROPERTY = "dropListeners";
+    public static final String DROP_TARGETS_CHANGED_PROPERTY = "dropTargets";
     public static final String INPUT_DROP = "drop";
 
     /**
@@ -94,9 +94,7 @@ public class DragSource extends Component {
      */
     public void addDropListener(DropListener listener) {
         getEventListenerList().addListener(DropListener.class, listener);
-        // Notification of action listener changes is provided due to 
-        // existence of hasActionListeners() method. 
-        firePropertyChange(DROP_TARGET_LISTENERS_CHANGED_PROPERTY, null, listener);
+        firePropertyChange(DROP_LISTENERS_CHANGED_PROPERTY, null, listener);
     }
     
     /**
@@ -104,7 +102,7 @@ public class DragSource extends Component {
      * 
      * @param event the <code>DropEvent</code> to send
      */
-    public void fireDropEvent(DropEvent event) {
+    private void fireDropEvent(DropEvent event) {
         if (!hasEventListenerList()) {
             return;
         }
@@ -134,12 +132,22 @@ public class DragSource extends Component {
     }
     
     /**
+     * Determines if any <code>DropListener</code>s are currently registered.
+     * 
+     * @return true if any <code>DropListener</code>s are currently registered
+     */
+    public boolean hasDropListeners() {
+        return hasEventListenerList() && getEventListenerList().getListenerCount(DropListener.class) > 0;
+    }
+    
+    /**
      * @see nextapp.echo.app.Component#processInput(java.lang.String, java.lang.Object)
      */
     public void processInput(String name, Object value) {
         super.processInput(name, value);
         if (INPUT_DROP.equals(name)) {
-            fireDropEvent(new DropEvent(this, value));
+            Component specificComponent = (Component) value;
+            fireDropEvent(new DropEvent(this, specificComponent, specificComponent));
         }
     }
     
@@ -172,5 +180,6 @@ public class DragSource extends Component {
             return;
         }
         getEventListenerList().removeListener(DropListener.class, listener);
+        firePropertyChange(DROP_LISTENERS_CHANGED_PROPERTY, listener, null);
     }
 }

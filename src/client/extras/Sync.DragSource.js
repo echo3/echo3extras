@@ -118,11 +118,9 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
         
         // Return immediately if target is not a descendent of a drop target.
         if (!dropTarget) {
-Core.Debug.consoleWrite("Drop target NOT found: " + specificTarget);
             return;
         }
         
-Core.Debug.consoleWrite("Drop target found: " + dropTarget + ":::" + specificTarget);
         this.component.doDrop(dropTarget.renderId, specificTarget.renderId);
     },
     

@@ -29,6 +29,7 @@
 
 package nextapp.echo.extras.app.event;
 
+import nextapp.echo.app.Component;
 import nextapp.echo.app.event.ActionEvent;
 import nextapp.echo.extras.app.DragSource;
 
@@ -38,22 +39,35 @@ import nextapp.echo.extras.app.DragSource;
  */
 public class DropEvent extends ActionEvent {
 
-    private Object target;
+    private Component target;
+    private Component specificTarget;
     
     /**
      * Creates a DropEvent with the given Component as the 
      * draggable (source) and drop target Component (target)
      * 
-     * @param source The draggable Component
-     * @param target The drop target Component
+     * @param source the draggable Component
+     * @param target the configured drop target Component
+     * @param target the most specific component upon which the source was dropped
      */
-    public DropEvent(Object source, Object target) {
+    public DropEvent(Object source, Component target, Component specificTarget) {
         super(source, DragSource.INPUT_DROP);
         this.target = target;
     }
-
+    
     /**
-     * Returns the drop target Component
+     * Returns most specific component upon which the source was dropped
+     * 
+     * @return the most specific target component 
+     */
+    public Component getSpecificTarget() {
+        return specificTarget;
+    }
+    
+    /**
+     * Returns the drop target <code>Component</code>.
+     * 
+     * @return the drop target 
      */
     public Object getTarget() {
         return this.target;

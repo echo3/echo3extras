@@ -32,6 +32,7 @@ package nextapp.echo.extras.webcontainer.sync.component;
 import java.util.Iterator;
 
 import nextapp.echo.app.Component;
+import nextapp.echo.app.update.ClientUpdateManager;
 import nextapp.echo.app.util.Context;
 import nextapp.echo.extras.app.DragSource;
 import nextapp.echo.extras.webcontainer.service.CommonService;
@@ -62,7 +63,22 @@ public class DragSourcePeer extends AbstractComponentSynchronizePeer {
      */
     public DragSourcePeer() {
         super();
+        
         addOutputProperty(DROP_TARGET_IDS, true);
+        
+        addEvent(new AbstractComponentSynchronizePeer.EventPeer(DragSource.INPUT_DROP, 
+                DragSource.DROP_LISTENERS_CHANGED_PROPERTY, String.class) {
+            public boolean hasListeners(Context context, Component component) {
+                return ((DragSource) component).hasDropListeners();
+            }
+            
+            public void processEvent(Context context, Component component, Object eventData) {
+                ClientUpdateManager clientUpdateManager = (ClientUpdateManager) context.get(ClientUpdateManager.class);
+                UserInstance userInstance = (UserInstance) context.get(UserInstance.class);
+                Component specificComponent = userInstance.getComponentByClientRenderId((String) eventData);
+                clientUpdateManager.setComponentAction(component, DragSource.INPUT_DROP, specificComponent);
+            }
+        });
     }
     
     /**
