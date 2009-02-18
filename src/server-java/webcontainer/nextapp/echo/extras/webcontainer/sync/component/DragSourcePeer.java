@@ -62,7 +62,7 @@ public class DragSourcePeer extends AbstractComponentSynchronizePeer {
      */
     public DragSourcePeer() {
         super();
-        addOutputProperty(DROP_TARGET_IDS);
+        addOutputProperty(DROP_TARGET_IDS, true);
     }
     
     /**
@@ -86,31 +86,39 @@ public class DragSourcePeer extends AbstractComponentSynchronizePeer {
     public Object getOutputProperty(Context context, Component component, String propertyName, int propertyIndex) {
         if (propertyName.equals(DROP_TARGET_IDS)) {
             DragSource dragSource = (DragSource) component;
-            if (dragSource.getDropTargetCount() == 0) {
-                return null;
-            } else {
-                // Return comma-delimited list of drop target render ids.
-                UserInstance userInstance = (UserInstance) context.get(UserInstance.class);
-                Iterator it = dragSource.getDropTargets();
-                StringBuffer out = new StringBuffer();
-                while (it.hasNext()) {
-                    String dropTargetId = (String) it.next();
-                    Component dropTarget = (Component) component.getApplicationInstance().getComponentByRenderId(dropTargetId);
-                    if (dropTarget == null) {
-                        continue;
-                    }
-                    out.append(userInstance.getClientRenderId(dropTarget));
-                    if (it.hasNext()) {
-                        out.append(",");
-                    }
-                }
-                return out.toString();
-            }
+            UserInstance userInstance = (UserInstance) context.get(UserInstance.class);
+            String dropTargetId = dragSource.getDropTarget(propertyIndex);
+            Component dropTarget = (Component) component.getApplicationInstance().getComponentByRenderId(dropTargetId);
+            return userInstance.getClientRenderId(dropTarget);
         } else {
             return super.getOutputProperty(context, component, propertyName, propertyIndex);
         }
     }
     
+    public Iterator getOutputPropertyIndices(Context context, Component component, String propertyName) {
+        if (propertyName.equals(DROP_TARGET_IDS)) {
+            DragSource dragSource = (DragSource) component;
+            final int count = dragSource.getDropTargetCount();
+            return new Iterator() {
+                int i = 0;
+                
+                public boolean hasNext() {
+                    return i < count;
+                }
+                
+                public Object next() {
+                    return new Integer(i++);
+                }
+                
+                public void remove() {
+                    throw new UnsupportedOperationException();
+                }
+            };
+        } else {
+            return super.getOutputPropertyIndices(context, component, propertyName);
+        }
+    }
+
     /**
      * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#init(nextapp.echo.app.util.Context, Component)
      */

@@ -29,11 +29,9 @@
 
 package nextapp.echo.extras.app;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.EventListener;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.List;
 
 import nextapp.echo.app.Component;
 import nextapp.echo.extras.app.event.DropEvent;
@@ -51,11 +49,11 @@ public class DragSource extends Component {
     public static final String DROP_TARGET_LISTENERS_CHANGED_PROPERTY = "dropTargetListeners";
     public static final String DROP_TARGETS_CHANGED_PROPERTY = "dropTargetsChanged";
     public static final String INPUT_DROP = "drop";
-    
+
     /**
      * Collection of drop target components.
      */
-    private Set dropTargetIds = new HashSet();
+    private List dropTargetIdList = new ArrayList();
     
     /**
      * Creates an empty DragSource.
@@ -82,7 +80,10 @@ public class DragSource extends Component {
      * @param dropTargetId the <code>renderId</code> of the drop target component to add
      */
     public void addDropTarget(String dropTargetId) {
-        dropTargetIds.add(dropTargetId);
+        if (dropTargetIdList.indexOf(dropTargetId) != -1) {
+            return;
+        }
+        dropTargetIdList.add(dropTargetId);
         firePropertyChange(DROP_TARGETS_CHANGED_PROPERTY, null, dropTargetId);
     }
     
@@ -115,21 +116,21 @@ public class DragSource extends Component {
     }
     
     /**
+     * Returns an iterator over the render ids (Strings) of all drop targets. 
+     * 
+     * @return the <code>renderId</code> of the drop target component at the specified index 
+     */
+    public String getDropTarget(int index) {
+        return (String) dropTargetIdList.get(index);
+    }
+    
+    /**
      * Returns the total number of drop targets.
      * 
      * @return the total number drop targets
      */
     public int getDropTargetCount() {
-        return dropTargetIds.size();
-    }
-    
-    /**
-     * Returns an iterator over the render ids (Strings) of all drop targets. 
-     * 
-     * @return the drop targets
-     */
-    public Iterator getDropTargets() {
-        return Collections.unmodifiableSet(dropTargetIds).iterator();
+        return dropTargetIdList.size();
     }
     
     /**
@@ -146,7 +147,7 @@ public class DragSource extends Component {
      * Removes all <code>Components</code> from the drop target list
      */
     public void removeAllDropTargets(){
-        dropTargetIds.clear();
+        dropTargetIdList.clear();
         firePropertyChange(DROP_TARGETS_CHANGED_PROPERTY, null, null);
     }
     
@@ -156,8 +157,9 @@ public class DragSource extends Component {
      * @param dropTargetId the <code>renderId</code> of the drop target component to remove
      */
     public void removeDropTarget(String dropTargetId) {
-        dropTargetIds.remove(dropTargetId);
-        firePropertyChange(DROP_TARGETS_CHANGED_PROPERTY, dropTargetId, null);
+        if (dropTargetIdList.remove(dropTargetId)) {
+            firePropertyChange(DROP_TARGETS_CHANGED_PROPERTY, dropTargetId, null);
+        }
     }
     
     /**

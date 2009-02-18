@@ -98,8 +98,10 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
         }
 
         // FIXME Temporary test code, only accommodating single target.
-        var dropTargetIds = [ this.component.get("dropTargetIds") ];
-Core.Debug.consoleWrite("DT ids: " + dropTargetIds);        
+        var dropTargetIds = this.component.get("dropTargetIds");
+        if (!dropTargetIds) {
+            dropTargetIds = [];
+        }
         
         // Find actual drop target.
         testTarget = target;
