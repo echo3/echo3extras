@@ -54,7 +54,7 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
         this._dragStop();
         
         this._overlayDiv = document.createElement("div");
-        this._overlayDiv.style.cssText = "position:absolute;z-index:32767;width:100%;height:100%;";
+        this._overlayDiv.style.cssText = "position:absolute;z-index:32767;width:100%;height:100%;cursor:pointer;";
         Echo.Sync.FillImage.render(this.client.getResourceUrl("Echo", "resource/Transparent.gif"), this._overlayDiv);
 
         this._divOrigin = new Core.Web.Measure.Bounds(this._div);
@@ -127,6 +127,8 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
     /** @see Echo.Render.ComponentSync#renderAdd */
     renderAdd: function(update, parentElement) {
         this._div = document.createElement("div");
+        this._div.id = this.component.renderId;
+        this._div.style.cssText = "cursor:pointer;";
         if (this.component.children.length > 0) {
             Echo.Render.renderComponentAdd(update, this.component.children[0], this._div);
         }
