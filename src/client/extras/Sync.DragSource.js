@@ -26,8 +26,6 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
      */
     _overlayDiv: null,
     
-    _divOrigin: null,
-
     /**
      * Method reference to <code>_processMouseMove()</code>.
      * @type Function
@@ -40,6 +38,9 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
      */
     _processMouseUpRef: null,
 
+    /**
+     * Constructor.
+     */
     $construct: function() {
         this._processMouseMoveRef = Core.method(this, this._processMouseMove);
         this._processMouseUpRef = Core.method(this, this._processMouseUp);
@@ -57,8 +58,6 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
         this._overlayDiv.style.cssText = "position:absolute;z-index:32767;width:100%;height:100%;cursor:pointer;";
         Echo.Sync.FillImage.render(this.client.getResourceUrl("Echo", "resource/Transparent.gif"), this._overlayDiv);
 
-        this._divOrigin = new Core.Web.Measure.Bounds(this._div);
-        
         this._dragDiv = this._div.cloneNode(true);
         this._dragDiv.style.position = "absolute";
         this._setDragOpacity(0.75);
@@ -78,7 +77,10 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
      * @param e the relevant mouse up event describing where the dragged item was dropped
      */
     _dragDrop: function(e) {
-        
+        var targetElement = this._findElement(this.client.domainElement, e.clientX, e.clientY);
+        if (targetElement && targetElement.id) {
+            Core.Debug.consoleWrite("target:" + targetElement.id);
+        }
     },
     
     /**
@@ -105,6 +107,162 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
         this._dragDiv.style.left = e.clientX + "px";
     },
     
+    /**
+     * Finds the highest-level (z-index) element at the specified x/y coordinate.
+     * 
+     * @param {Element} searchElement the element at which to begin searching
+     * @param {Number} x the x coordinate
+     * @param {Number} y the y coordinate
+     * @return the element
+     * @type Element
+     */
+    _findElement: function(searchElement, x, y) {
+        if (searchElement.style.display == "none" || searchElement.style.visibility == "hidden" || 
+                (searchElement.nodeName && searchElement.nodeName.toLowerCase() == "colgroup")) {
+            // Ignore non-displayed elements, hidden elements, and COLGROUP elements.
+            return null;
+        }
+
+        var searchElementIsCandidate = false;
+        if (!(searchElement.nodeName && searchElement.nodeName.toLowerCase() == "tr")) {
+            var bounds = new Core.Web.Measure.Bounds(searchElement);
+            if (this._isBoundsDefined(bounds)) {
+                // Only take action if bounds is defined, as elements without positioning can contain positioned elements.
+            
+                if (this._isInBounds(bounds, x, y)) {
+                    // Mark search element as being in candidate.
+                    // This flag will be used to ensure that elements with undefined bounds are not returned as candidate.
+                    // In any case, it is necessary to continue to search them for children that might be candidates though.
+                    searchElementIsCandidate = true;
+                } else {
+                    // Out of bounds.
+                    return null;
+                }
+            }
+        }
+        
+        var candidates = null;
+
+        // At this point, element is still a candidate.  Now we look for child elements with greater specificity.
+        for (var i = 0; i < searchElement.childNodes.length; ++i) {
+            if (searchElement.childNodes[i].nodeType != 1) {
+                continue;
+            }
+            
+            var resultElement = this._findElement(searchElement.childNodes[i], x, y);
+            if (resultElement) {
+                if (candidates == null) {
+                    candidates = new Array();
+                }
+                candidates.push(resultElement);
+            }
+        }
+        
+        if (candidates != null) {
+            if (candidates.length == 1) {
+                return candidates[0];
+            } else {
+                return this._findHighestCandidate(searchElement, candidates);
+            }
+        }
+        
+        // The 'searchElement' is the best candidate found.  Return it only in the case where its bounds are actually defined.
+        return searchElementIsCandidate ? searchElement : null;
+    },
+    
+    /**
+     * Determine which element amongst candidates is displayed above others (based on z-index).
+     * 
+     * @param {Element} searchElement the highest-level element from which all candidate elements descend
+     * @param {Array} candidates an array of candidate elements to test
+     * @return the highest candidate element
+     * @type Element
+     */
+    _findHighestCandidate: function(searchElement, candidates) {
+        var candidatePaths = new Array(candidates.length);
+        var candidateIndex;
+        for (candidateIndex = 0; candidateIndex < candidates.length; ++candidateIndex) {
+            candidatePaths[candidateIndex] = [];
+            var element = candidates[candidateIndex];
+            if (element.style.zIndex) {
+                candidatePaths[candidateIndex].unshift(element.style.zIndex);
+            }
+            while (element != searchElement) {
+                element = element.parentNode;
+                if (element.style.zIndex) {
+                    candidatePaths[candidateIndex].unshift(element.style.zIndex);
+                }
+            }
+        }
+        
+        var elementIndex = 0;
+        var elementsFoundOnIteration;
+        do {
+            elementsFoundOnIteration = false;
+            var highestZIndex = 0;
+            var highestCandidateIndices = [];
+            for (candidateIndex = 0; candidateIndex < candidatePaths.length; ++candidateIndex) {
+                if (elementIndex < candidatePaths[candidateIndex].length) {
+                    var zIndex = candidatePaths[candidateIndex][elementIndex];
+                    if (zIndex && zIndex > 0 && zIndex >= highestZIndex) {
+                        if (zIndex == highestZIndex) {
+                            // Value is equal to previous highest found, add to list of highest.
+                            highestCandidateIndices.push(candidateIndex);
+                        } else {
+                            // Value is greater than highest found, clear list of highest and add.
+                            highestCandidateIndices = [];
+                            highestCandidateIndices.push(candidateIndex);
+                        }
+                    }
+                    elementsFound = true;
+                }
+            }
+            
+            if (highestCandidateIndices.length == 1) {
+                // Only one candidate remains: return it.
+                return candidates[highestCandidateIndices[0]];
+            } else if (highestCandidateIndices.length > 0) {
+                // Remove candidates that are now longer in contention.
+                var remainingCandidates = new Array(highestCandidateIndices.length);
+                for (var i = 0; i < highestCandidateIndices.length; ++i) {
+                    remainingCandidates[i] = candidates[highestCandidateIndices[i]];
+                }
+                candidates = remainingCandidates;
+            }
+        } while (elementsFoundOnIteration);
+        
+        return candidates[candidates.length - 1];
+    },
+    
+    /**
+     * Determines if the specified bounding area is defined (has contained pixels).
+     * 
+     * @param {Core.Web.Measure.Bounds} bounds the bounding region
+     * @return true if the bounds has a defined, nonzero area
+     * @type Boolean
+     */
+    _isBoundsDefined: function(bounds) {
+        return bounds.width != 0 && bounds.height !=0;
+    },
+
+    /**
+     * Determines if a point is within a bounding region.
+     * 
+     * @param {Core.Web.Measure.Bounds} bounds the bounding region
+     * @param {Number} x the horizontal coordinate of the point
+     * @param {Number} y the vertical coordinate of the point
+     * @return true if the point is in the bounding region
+     * @type Boolean
+     */
+    _isInBounds: function(bounds, x, y) {
+        return x >= bounds.left && y >= bounds.top && x <= bounds.left + bounds.width && y <= bounds.top + bounds.height;
+    },
+
+    /**
+     * Processes a mouse down event on the drag source container element.
+     * 
+     * @param e the event
+     */
     _processMouseDown: function(e) {
         Core.Web.DOM.preventEventDefault(e);
 
@@ -115,13 +273,23 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
         this._dragStart(e);
     },
     
+    /**
+     * Processes a mouse move event (on the overlay DIV).
+     * 
+     * @param e the event
+     */
     _processMouseMove: function(e) {
         this._dragUpdate(e);
     },
     
+    /**
+     * Processes a mouse up event (on the overlay DIV).
+     * 
+     * @param e the event
+     */
     _processMouseUp: function(e) {
         this._dragStop();
-        this._dragDrop();
+        this._dragDrop(e);
     },
     
     /** @see Echo.Render.ComponentSync#renderAdd */
@@ -156,6 +324,11 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
         this.renderAdd(update, containerElement);
     },
     
+    /**
+     * Sets the opacity of the dragged item.
+     * 
+     * @param value the new opacity
+     */
     _setDragOpacity: function(value) {
         if (Core.Web.Env.NOT_SUPPORTED_CSS_OPACITY) {
             if (Core.Web.Env.PROPRIETARY_IE_OPACITY_FILTER_REQUIRED) {
