@@ -31,6 +31,7 @@ package nextapp.echo.extras.testapp.testscreen;
 
 import nextapp.echo.app.Alignment;
 import nextapp.echo.app.Border;
+import nextapp.echo.app.Button;
 import nextapp.echo.app.Color;
 import nextapp.echo.app.Column;
 import nextapp.echo.app.Component;
@@ -38,6 +39,8 @@ import nextapp.echo.app.Extent;
 import nextapp.echo.app.Insets;
 import nextapp.echo.app.Label;
 import nextapp.echo.app.Row;
+import nextapp.echo.app.event.ActionEvent;
+import nextapp.echo.app.event.ActionListener;
 import nextapp.echo.extras.app.DragSource;
 import nextapp.echo.extras.app.event.DropEvent;
 import nextapp.echo.extras.app.event.DropListener;
@@ -51,8 +54,6 @@ import nextapp.echo.extras.testapp.Styles;
  */
 public class DragSourceTest extends AbstractTest {
     
-    // TODO: Experimental support buttons (functionality/tests currently disabled)
-
     public DragSourceTest() {
         super("DragSource", Styles.ICON_16_DRAG_SOURCE);
         
@@ -74,11 +75,9 @@ public class DragSourceTest extends AbstractTest {
         labelColumn.setBorder(new Border(2, Color.BLUE, Border.STYLE_INSET));
         labelColumn.add(new Label("Drag Sources: Labels"));
 
-        /*
         final Column buttonColumn = new Column();
         buttonColumn.setBorder(new Border(2, Color.BLUE, Border.STYLE_INSET));
         buttonColumn.add(new Label("Drag Sources: Buttons"));
-        */
         
         final Column dropTarget1 = new Column();
         dropTarget1.setBorder(new Border(2, Color.RED, Border.STYLE_OUTSET));
@@ -99,7 +98,7 @@ public class DragSourceTest extends AbstractTest {
         dropTarget2.add(embeddedColumn);
 
         row.add(labelColumn);
-        // row.add(buttonColumn);
+        row.add(buttonColumn);
         row.add(dropTarget1);
         row.add(dropTarget2);
 
@@ -121,34 +120,28 @@ public class DragSourceTest extends AbstractTest {
             labelColumn.add(ds);
         }
 
-        /*
         for (int i = 0; i < 6; i++) {
-            Button button = new Button("Draggable Button " + i);
+            final Button button = new Button("Draggable Button " + i);
             button.setBackground(StyleUtil.randomBrightColor());
             button.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent arg0) {
-                    WindowPane alertWindow = new WindowPane();
-                    alertWindow.setModal(true);
-                    alertWindow.setTitle("Button Clicked");
-                    alertWindow.setInsets(new Insets(10));
-                    alertWindow.add(new Label("A draggable button was clicked."));
-                    InteractiveApp.getApp().getDefaultWindow().getContent().add(alertWindow);
+                public void actionPerformed(ActionEvent e) {
+                    InteractiveApp.getApp().consoleWrite("A draggable button was clicked: " + button);
                 }
             });
             DragSource ds = new DragSource(button);
-            ds.addDropTarget(dropTarget1);
-            ds.addDropTarget(dropTarget2);
-            ds.addDropTargetListener(new DropListener() {
+            ds.addDropTarget(dropTarget1.getRenderId());
+            ds.addDropTarget(dropTarget2.getRenderId());
+            ds.addDropListener(new DropListener() {
                 public void dropPerformed(DropEvent event) {
                     DragSource dragged = (DragSource) event.getSource();
                     buttonColumn.remove(dragged);
                     Component dropTarget = (Component) event.getTarget();
-                    dropTarget.add(dragged.getComponent(0));
+                    dropTarget.add(dragged);
+                    showDropEvent(event);
                 }
             });
             buttonColumn.add(ds);
         }
-        */
         
         for (int i = 0; i < 10; ++i) {
             containerColumn.add(new Label("This content present to enable scrollbar for testing."));

@@ -342,7 +342,7 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
             Echo.Render.renderComponentAdd(update, this.component.children[0], this._div);
         }
 
-        Core.Web.Event.add(this._div, "mousedown", Core.method(this, this._processMouseDown), false);
+        Core.Web.Event.add(this._div, "mousedown", Core.method(this, this._processMouseDown), true);
         
         parentElement.appendChild(this._div);
     },
