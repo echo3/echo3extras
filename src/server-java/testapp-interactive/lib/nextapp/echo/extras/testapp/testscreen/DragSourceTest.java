@@ -35,6 +35,7 @@ import nextapp.echo.app.Color;
 import nextapp.echo.app.Column;
 import nextapp.echo.app.Component;
 import nextapp.echo.app.Extent;
+import nextapp.echo.app.Insets;
 import nextapp.echo.app.Label;
 import nextapp.echo.app.Row;
 import nextapp.echo.extras.app.DragSource;
@@ -85,8 +86,16 @@ public class DragSourceTest extends AbstractTest {
 
         final Column dropTarget2 = new Column();
         dropTarget2.setBorder(new Border(2, Color.RED, Border.STYLE_OUTSET));
+        dropTarget2.setInsets(new Insets(10));
         dropTarget2.add(new Label("Drop Target 2"));
         dropTarget2.setRenderId("DropTarget2");
+        
+        Column embeddedColumn = new Column();
+        embeddedColumn.setBorder(new Border(2, Color.GREEN, Border.STYLE_INSET));
+        embeddedColumn.add(new Label("Embedded Column"));
+        embeddedColumn.setRenderId("EmbeddedColumn");
+        embeddedColumn.setInsets(new Insets(10));
+        dropTarget2.add(embeddedColumn);
 
         row.add(labelColumn);
         // row.add(buttonColumn);

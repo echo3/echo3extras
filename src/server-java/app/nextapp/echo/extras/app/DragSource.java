@@ -83,6 +83,9 @@ public class DragSource extends Component {
         if (dropTargetIdList.indexOf(dropTargetId) != -1) {
             return;
         }
+        if (dropTargetId == null) {
+            throw new IllegalArgumentException("Cannot add null drop target id.");
+        }
         dropTargetIdList.add(dropTargetId);
         firePropertyChange(DROP_TARGETS_CHANGED_PROPERTY, null, dropTargetId);
     }
@@ -146,15 +149,28 @@ public class DragSource extends Component {
     public void processInput(String name, Object value) {
         super.processInput(name, value);
         if (INPUT_DROP.equals(name)) {
+            // Specific component provided as event value.
             Component specificComponent = (Component) value;
-            fireDropEvent(new DropEvent(this, specificComponent, specificComponent));
+
+            // Determine drop tagret component (will be either specificCopmonent or an ancestor thereof.
+            Component targetComponent = specificComponent;
+            while (targetComponent != null && dropTargetIdList.indexOf(targetComponent.getRenderId()) == -1) {
+                targetComponent = targetComponent.getParent();
+            }
+            if (targetComponent == null) {
+                // Unable to find registered drop target component (should not occur).
+                return;
+            }
+            
+            // Fire event.
+            fireDropEvent(new DropEvent(this, targetComponent, specificComponent));
         }
     }
     
     /**
      * Removes all <code>Components</code> from the drop target list
      */
-    public void removeAllDropTargets(){
+    public void removeAllDropTargets() {
         dropTargetIdList.clear();
         firePropertyChange(DROP_TARGETS_CHANGED_PROPERTY, null, null);
     }
