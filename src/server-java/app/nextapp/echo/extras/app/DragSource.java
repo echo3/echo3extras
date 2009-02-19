@@ -43,6 +43,8 @@ import nextapp.echo.extras.app.event.DropListener;
  * target. When a <code>Component</code> is successfully dropped onto a valid
  * drop target, a <code>DropEvent</code> is fired and all registered
  * <code>DropTargetListener</code>s are notified.
+ * 
+ * Note that this component API is new and may change before the release candidate (though likely minorly/not at all).
  */
 public class DragSource extends Component {
 
@@ -57,7 +59,6 @@ public class DragSource extends Component {
     
     /**
      * Creates an empty DragSource.
-     * @deprecated under development, do not use.
      */
     public DragSource() { 
         super();
@@ -67,7 +68,6 @@ public class DragSource extends Component {
      * Creates a DragSource making the given Component visually draggable.
      *  
      * @param draggable the draggable component
-     * @deprecated under development, do not use.
      */
     public DragSource(Component draggable) {
         super();
