@@ -114,7 +114,7 @@ public class DragSourceTest extends AbstractTest {
                     DragSource dragged = (DragSource) event.getSource();
                     labelColumn.remove(dragged);
                     Component dropTarget = (Component) event.getTarget();
-                    dropTarget.add(dragged.getComponent(0));
+                    dropTarget.add(dragged);
                     showDropEvent(event);
                 }
             });
