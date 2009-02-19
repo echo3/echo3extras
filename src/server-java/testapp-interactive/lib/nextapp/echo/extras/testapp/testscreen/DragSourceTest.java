@@ -42,6 +42,7 @@ import nextapp.echo.extras.app.DragSource;
 import nextapp.echo.extras.app.event.DropEvent;
 import nextapp.echo.extras.app.event.DropListener;
 import nextapp.echo.extras.testapp.AbstractTest;
+import nextapp.echo.extras.testapp.InteractiveApp;
 import nextapp.echo.extras.testapp.StyleUtil;
 import nextapp.echo.extras.testapp.Styles;
 
@@ -114,6 +115,7 @@ public class DragSourceTest extends AbstractTest {
                     labelColumn.remove(dragged);
                     Component dropTarget = (Component) event.getTarget();
                     dropTarget.add(dragged.getComponent(0));
+                    showDropEvent(event);
                 }
             });
             labelColumn.add(ds);
@@ -153,5 +155,10 @@ public class DragSourceTest extends AbstractTest {
         }
 
         addStandardIntegrationTests();
+    }
+    
+    private void showDropEvent(DropEvent e) {
+        String message = "DropEvent src=" + e.getSource() + " target=" + e.getTarget() + " specTarget=" + e.getSpecificTarget();
+        InteractiveApp.getApp().consoleWrite(message);
     }
 }

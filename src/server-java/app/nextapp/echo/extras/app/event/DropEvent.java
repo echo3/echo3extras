@@ -53,6 +53,7 @@ public class DropEvent extends ActionEvent {
     public DropEvent(Object source, Component target, Component specificTarget) {
         super(source, DragSource.INPUT_DROP);
         this.target = target;
+        this.specificTarget = specificTarget;
     }
     
     /**
