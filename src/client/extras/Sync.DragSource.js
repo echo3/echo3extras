@@ -98,7 +98,7 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
         }
 
         // Retrieve valid drop target renderIds from component.
-        var dropTargetIds = this.component.get("dropTargetIds");
+        dropTargetIds = this.component.get("dropTargetIds");
         if (!dropTargetIds) {
             dropTargetIds = [];
         }
@@ -193,7 +193,7 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
             var resultElement = this._findElement(searchElement.childNodes[i], x, y);
             if (resultElement) {
                 if (candidates == null) {
-                    candidates = new Array();
+                    candidates = [];
                 }
                 candidates.push(resultElement);
             }
@@ -220,7 +220,7 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
      * @type Element
      */
     _findHighestCandidate: function(searchElement, candidates) {
-        var candidatePaths = new Array(candidates.length);
+        var candidatePaths = [];
         var candidateIndex;
         for (candidateIndex = 0; candidateIndex < candidates.length; ++candidateIndex) {
             candidatePaths[candidateIndex] = [];
@@ -255,7 +255,7 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
                             highestCandidateIndices.push(candidateIndex);
                         }
                     }
-                    elementsFound = true;
+                    elementsFoundOnIteration = true;
                 }
             }
             
@@ -264,7 +264,7 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
                 return candidates[highestCandidateIndices[0]];
             } else if (highestCandidateIndices.length > 0) {
                 // Remove candidates that are now longer in contention.
-                var remainingCandidates = new Array(highestCandidateIndices.length);
+                var remainingCandidates = [];
                 for (var i = 0; i < highestCandidateIndices.length; ++i) {
                     remainingCandidates[i] = candidates[highestCandidateIndices[i]];
                 }
@@ -283,7 +283,7 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
      * @type Boolean
      */
     _isBoundsDefined: function(bounds) {
-        return bounds.width != 0 && bounds.height !=0;
+        return bounds.width !== 0 && bounds.height !== 0;
     },
 
     /**
