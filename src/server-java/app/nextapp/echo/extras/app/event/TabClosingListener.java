@@ -42,7 +42,7 @@ extends EventListener, Serializable {
     
     /**
      * Invoked when a user attempts to close a tab in a <code>TabPane</code>.
-     * Use {@link TabPaneEvent#getTabIndex()} to retrieve the index of the tab.
+     * Use {@link TabClosingEvent#getTabIndex()} to retrieve the index of the tab.
      * 
      * @param e the <code>TabPaneEvent</code> describing the change
      */

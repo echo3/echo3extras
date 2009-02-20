@@ -42,7 +42,7 @@ extends EventListener, Serializable {
     
     /**
      * Invoked when a user selects a tab in a <code>TabPane</code>.
-     * Use {@link TabPaneEvent#getTabIndex()} to retrieve the index of the tab.
+     * Use {@link TabSelectionEvent#getTabIndex()} to retrieve the index of the tab.
      * 
      * @param e the <code>TabPaneEvent</code> describing the change
      */

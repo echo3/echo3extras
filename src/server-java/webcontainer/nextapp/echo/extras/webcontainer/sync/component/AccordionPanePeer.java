@@ -139,7 +139,7 @@ public class AccordionPanePeer extends AbstractComponentSynchronizePeer {
      * Gets the index of the component within the TabPane the given client renderId.
      * 
      * @param context the relevant <code>Context</code>
-     * @param tabPane the <code>AccordionPane</code>
+     * @param accordionPane the <code>AccordionPane</code>
      * @param clientRenderId the element id
      * @return the index if found, <code>null</code> otherwise.
      */

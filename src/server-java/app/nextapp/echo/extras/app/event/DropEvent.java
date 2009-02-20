@@ -48,7 +48,7 @@ public class DropEvent extends ActionEvent {
      * 
      * @param source the draggable Component
      * @param target the configured drop target Component
-     * @param target the most specific component upon which the source was dropped
+     * @param specificTarget the most specific component upon which the source was dropped
      */
     public DropEvent(Object source, Component target, Component specificTarget) {
         super(source, DragSource.INPUT_DROP);
