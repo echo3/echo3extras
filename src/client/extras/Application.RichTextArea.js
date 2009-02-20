@@ -96,6 +96,12 @@ Extras.RichTextInput = Core.extend(Echo.Component, {
         this.fireEvent({source: this, type: "cursorStyleChange", style: style});
     },
     
+    /**
+     * Executes a rich-text editing command.
+     * 
+     * @param {String} commandName the command name
+     * @param {String} value the (optional) value to send
+     */
     execCommand: function(commandName, value) {
         this.fireEvent({type: "execCommand", source: this, commandName: commandName, value: value });
     },
