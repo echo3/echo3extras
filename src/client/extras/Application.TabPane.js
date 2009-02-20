@@ -168,7 +168,7 @@ Extras.TabPane = Core.extend(Echo.Component, {
         switch (e.propertyName) {
         case "activeTabId":
             if (this.application) {
-                for (var i = 0; i < this.children.length; ++i) {
+                for (i = 0; i < this.children.length; ++i) {
                     if (this.children[i].renderId == e.value) {
                         if (this.get("activeTabIndex") != i) {
                             this.set("activeTabIndex", i);
