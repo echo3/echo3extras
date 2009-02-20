@@ -1,5 +1,6 @@
 /**
- * Component rendering peer: BorderPane
+ * Component rendering peer: BorderPane.
+ * This class should not be extended by developers, the implementation is subject to change.
  */
 Extras.Sync.BorderPane = Core.extend(Echo.Render.ComponentSync, {
 

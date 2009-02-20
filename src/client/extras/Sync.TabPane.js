@@ -1,5 +1,6 @@
 /**
- * Component rendering peer: TabPane
+ * Component rendering peer: TabPane.
+ * This class should not be extended by developers, the implementation is subject to change.
  */
 Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
 

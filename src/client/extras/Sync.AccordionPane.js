@@ -1,5 +1,6 @@
 /**
- * Component rendering peer: AccordionPane
+ * Component rendering peer: AccordionPane.
+ * This class should not be extended by developers, the implementation is subject to change.
  */
 Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
 

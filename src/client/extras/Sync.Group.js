@@ -1,5 +1,6 @@
 /**
- * Component rendering peer: Group
+ * Component rendering peer: Group.
+ * This class should not be extended by developers, the implementation is subject to change.
  */
 Extras.Sync.Group = Core.extend(Echo.Render.ComponentSync, {
 

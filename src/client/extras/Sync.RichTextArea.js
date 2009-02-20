@@ -1,5 +1,6 @@
 /**
- * Component rendering peer: Extras.RichTextInput
+ * Component rendering peer: Extras.RichTextInput.
+ * This class should not be extended by developers, the implementation is subject to change.
  */
 Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
 

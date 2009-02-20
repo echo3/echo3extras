@@ -1,5 +1,6 @@
 /**
  * Component rendering peer: TransitionPane.
+ * This class should not be extended by developers, the implementation is subject to change.
  */
 Extras.Sync.TransitionPane = Core.extend(Echo.Render.ComponentSync, {
 

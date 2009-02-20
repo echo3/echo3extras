@@ -1,5 +1,6 @@
 /**
  * Abstract base class for menu rendering peers.
+ * This class should not be extended by developers, the implementation is subject to change.
  */
 Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
     

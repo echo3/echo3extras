@@ -1,5 +1,6 @@
 /**
- * Component rendering peer: CalendarSelect
+ * Component rendering peer: CalendarSelect.
+ * This class should not be extended by developers, the implementation is subject to change.
  */
 Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
 

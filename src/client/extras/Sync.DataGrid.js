@@ -1,5 +1,6 @@
 /**
- * Component rendering peer: DataGrid
+ * Component rendering peer: DataGrid.
+ * This class should not be extended by developers, the implementation is subject to change.
  *
  * This is an EXPERIMENTAL component, it should not be used at this point for any purpose other than testing it.
  */

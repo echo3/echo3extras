@@ -1,5 +1,6 @@
 /**
- * Component rendering peer: ColorSelect
+ * Component rendering peer: ColorSelect.
+ * This class should not be extended by developers, the implementation is subject to change.
  */
 Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
     

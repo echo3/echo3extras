@@ -1,5 +1,6 @@
 /**
- * Component rendering peer: ToolTipContainer
+ * Component rendering peer: ToolTipContainer.
+ * This class should not be extended by developers, the implementation is subject to change.
  */
 Extras.Sync.ToolTipContainer = Core.extend(Echo.Render.ComponentSync, {
     

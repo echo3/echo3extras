@@ -1,5 +1,6 @@
 /**
- * Component rendering peer: DragSource
+ * Component rendering peer: DragSource.
+ * This class should not be extended by developers, the implementation is subject to change.
  */
 Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
     
