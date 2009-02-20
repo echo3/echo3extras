@@ -46,6 +46,15 @@ Extras.AccordionPane = Core.extend(Echo.Component, {
     pane: true,
     
     /**
+     * Constructor.
+     * @param properties associative mapping of initial property values (optional)
+     */
+    $construct: function(properties) {
+        Echo.Component.call(this, properties);
+        this.addListener("property", Core.method(this, this._tabChangeListener));
+    },
+    
+    /**
      * Processes a user request to select a tab.
      * Notifies listeners of a "tabSelect" event.
      * 
@@ -60,17 +69,37 @@ Extras.AccordionPane = Core.extend(Echo.Component, {
         
         // Store active tab id.
         this.set("activeTabId", tabId);
-        
-        // Determine active tab index.
-        for (var i = 0; i < this.children.length; ++i) {
-            if (this.children[i].renderId == tabId) {
-                this.set("activeTabIndex", i);
-                break;
-            }
-        }
 
         // Notify tabSelect listeners.
         this.fireEvent({ type: "tabSelect", source: this, tab: tabComponent, data: tabId });
+    },
+    
+    /**
+     * Internal property listener which synchronizes activeTabIndex and activeTabId properties when possible.
+     * 
+     * @param e a property event
+     */
+    _tabChangeListener: function(e) {
+        var i;
+        switch (e.propertyName) {
+        case "activeTabId":
+            if (this.application) {
+                for (var i = 0; i < this.children.length; ++i) {
+                    if (this.children[i].renderId == e.value) {
+                        if (this.get("activeTabIndex") != i) {
+                            this.set("activeTabIndex", i);
+                        }
+                        return;
+                    }
+                }
+            }
+            break;
+        case "activeTabIndex":
+            i = parseInt(e.newValue, 10);
+            if (this.application && this.children[i] && this.get("activeTabId") != this.children[i].renderId) {
+                this.set("activeTabId", this.children[i].renderId);
+            }
+            break;
+        }
     }
 });
-
