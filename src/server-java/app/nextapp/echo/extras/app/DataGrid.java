@@ -30,6 +30,10 @@
 package nextapp.echo.extras.app;
 
 import nextapp.echo.app.Component;
+import nextapp.echo.extras.app.datagrid.AbstractDataGridModel;
+import nextapp.echo.extras.app.datagrid.DataGridModel;
+import nextapp.echo.extras.app.event.DataGridModelEvent;
+import nextapp.echo.extras.app.event.DataGridModelListener;
 
 /**
  * DataGrid component.
@@ -37,10 +41,98 @@ import nextapp.echo.app.Component;
  * This component is under heavy development, it should not be used except for testing purposes.
  */
 public class DataGrid extends Component {
+    
+    /**
+     * Empty DataGridModel implementation.
+     */
+    private static class EmptyDataGridModel extends AbstractDataGridModel { 
+    
+        /**
+         * @see nextapp.echo.extras.app.datagrid.DataGridModel#get(int, int)
+         */
+        public Object get(int column, int row) {
+            return null;
+        }
+    
+        /**
+         * @see nextapp.echo.extras.app.datagrid.DataGridModel#getColumnCount()
+         */
+        public int getColumnCount() {
+            return 0;
+        }
+    
+        /**
+         * @see nextapp.echo.extras.app.datagrid.DataGridModel#getRowCount()
+         */
+        public int getRowCount() {
+            return 0;
+        }
+    }
+
+    public static final String MODEL_CHANGED_PROPERTY = "model";
 
     /**
-     * Creates a new <code>DataGrid</code> with a default model.
+     * Listener to monitor changes to model.
+     */
+    private DataGridModelListener modelListener = new DataGridModelListener() {
+        
+        /** Serial Version UID. */
+        private static final long serialVersionUID = 20070101L;
+
+        /**
+         * @see nextapp.echo.extras.app.event.DataGridModelListener#modelChanged(nextapp.echo.extras.app.event.DataGridModelEvent)
+         */
+        public void modelChanged(DataGridModelEvent e) {
+            // Implement.
+        }
+    };
+
+    /**
+     * The model.
+     */
+    private DataGridModel model;
+    
+    /**
+     * Creates a new <code>DataGrid</code> with an empty model.
      */
     public DataGrid() {
+        this(new EmptyDataGridModel());
+    }
+    
+    /**
+     * Creates a new <code>DataGrid</code> with the specified model.
+     * 
+     * @param model the model
+     */
+    public DataGrid(DataGridModel model) {
+        super();
+        setModel(model);
+    }
+    
+    /**
+     * Retrieves the model.
+     * 
+     * @return the model
+     */
+    public DataGridModel getModel() {
+        return model;
+    }
+    
+    /**
+     * Sets the model.
+     * 
+     * @param newValue the new model (may not be null)
+     */
+    public void setModel(DataGridModel newValue) {
+        if (newValue == null) {
+            throw new IllegalArgumentException("The model may not be null.");
+        }
+        DataGridModel oldValue = model;
+        if (oldValue != null) {
+            oldValue.removeDataGridModelListener(modelListener);
+        }
+        model = newValue;
+        newValue.addDataGridModelListener(modelListener);
+        firePropertyChange(MODEL_CHANGED_PROPERTY, oldValue, newValue);
     }
 }
