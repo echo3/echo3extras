@@ -1,5 +1,5 @@
 /**
- * Component rendering peer: RichTextArea
+ * RemoteClient-hosted RichTextArea component.
  */
 Extras.RemoteRichTextArea = Core.extend(Extras.RichTextArea, {
 
@@ -10,6 +10,9 @@ Extras.RemoteRichTextArea = Core.extend(Extras.RichTextArea, {
     componentType: "Extras.RemoteRichTextArea"
 });
 
+/**
+ * RemoteClient-hosted RichTextArea component synchronization peer.
+ */
 Extras.Sync.RemoteRichTextArea = Core.extend(Extras.Sync.RichTextArea, {
 
     $load: function() {
