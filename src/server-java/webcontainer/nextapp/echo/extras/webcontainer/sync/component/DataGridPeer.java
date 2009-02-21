@@ -48,7 +48,8 @@ public class DataGridPeer extends AbstractComponentSynchronizePeer {
     
     private static final Service DATA_GRID_SERVICE = JavaScriptService.forResources("EchoExtras.DataGrid",
             new String[] {  "nextapp/echo/extras/webcontainer/resource/Application.DataGrid.js",  
-                            "nextapp/echo/extras/webcontainer/resource/Sync.DataGrid.js"});
+                            "nextapp/echo/extras/webcontainer/resource/Sync.DataGrid.js",
+                            "nextapp/echo/extras/webcontainer/resource/RemoteClient.DataGrid.js"});
     static {
         CommonResources.install();
 
@@ -61,7 +62,7 @@ public class DataGridPeer extends AbstractComponentSynchronizePeer {
      * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#getClientComponentType(boolean)
      */
     public String getClientComponentType(boolean shortType) {
-        return "Extras.DataGrid";
+        return "Extras.RemoteDataGrid";
     }
 
     /**
