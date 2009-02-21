@@ -69,5 +69,21 @@ Extras.DataGrid.Model = Core.extend({
          * @type Number
          */
         getRowCount: function() { }
+    },
+    
+    $virtual: {
+        
+        /**
+         * Invoked to notify model of a region of data which should be made available for display.
+         * 
+         * @param {Function} callback function which should be invoked by implemnetation when prefetching has completed
+         *        this function may be invoked asynchronously, i.e., as a result of an event that is fired some time after the
+         *        prefetch method has returned
+         * @param {Number} firstColumn the first column to retrieve (inclusive)
+         * @param {Number} firstRow the first row to retrieve (inclusive)
+         * @param {Number} lastColumn the last column to retrieve (inclusive)
+         * @param {Number} lastRow the last row to retrieve (inclusive)
+         */
+        prefetch: null
     }
 });
