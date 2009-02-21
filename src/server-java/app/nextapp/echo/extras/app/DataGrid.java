@@ -83,7 +83,7 @@ public class DataGrid extends Component {
          * @see nextapp.echo.extras.app.event.DataGridModelListener#modelChanged(nextapp.echo.extras.app.event.DataGridModelEvent)
          */
         public void modelChanged(DataGridModelEvent e) {
-            // Implement.
+            firePropertyChange(MODEL_CHANGED_PROPERTY, null, null);
         }
     };
 
