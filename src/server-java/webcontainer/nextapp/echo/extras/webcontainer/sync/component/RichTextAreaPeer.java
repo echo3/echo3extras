@@ -107,6 +107,12 @@ public class RichTextAreaPeer extends AbstractComponentSynchronizePeer {
         resources.add("Extras", "image/richtext/Undo.gif", ContentType.IMAGE_GIF);
     }
     
+    /**
+     * Adds a locale-specific service.
+     * 
+     * @param locale server-side <code>Locale</code>
+     * @param localeCode client-side locale code
+     */
     private static void addLocaleService(Locale locale, String localeCode) {
         Service service = JavaScriptService.forResource("EchoExtras.RichTextArea." + localeCode, 
                 RESOURCE_DIR + "SyncLocale.RichTextArea." + localeCode + ".js");
@@ -114,6 +120,9 @@ public class RichTextAreaPeer extends AbstractComponentSynchronizePeer {
         LOCALE_SERVICES.put(locale, service);
     }
     
+    /**
+     * Default constructor.
+     */
     public RichTextAreaPeer() {
         super();
         
