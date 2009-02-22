@@ -191,6 +191,12 @@ public class RichTextAreaPeer extends AbstractComponentSynchronizePeer {
         installLocaleService(context, component);
     }
 
+    /**
+     * Installs a locale-specific service (if available) for a specific component.
+     * 
+     * @param context the relevant <code>Context</code>
+     * @param component the component
+     */
     private void installLocaleService(Context context, Component component) {
         Locale locale = component.getRenderLocale();
         if (LOCALE_SERVICES.containsKey(locale)) {
