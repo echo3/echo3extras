@@ -40,13 +40,11 @@ Extras.RemoteDataGrid = Core.extend(Extras.DataGrid, {
             
             /** @see Extras.DataGrid.Model#getColumnCount */
             getColumnCount: function() {
-Core.Debug.consoleWrite("GCCC");
                 return this._columnCount;
             },
             
             /** @see Extras.DataGrid.Model#getRowCount */
             getRowCount: function() {
-Core.Debug.consoleWrite("GRRR");
                 return this._rowCount;
             },
             
@@ -65,9 +63,7 @@ Core.Debug.consoleWrite("GRRR");
     componentType: "Extras.RemoteDataGrid",
     
     $construct: function(properties) {
-Core.Debug.consoleWrite("CONS");        
         Extras.DataGrid.call(this, properties);
-        this.set("model", new Extras.RemoteDataGrid.Model(1000, 1000));
     }
 });
 
@@ -77,7 +73,27 @@ Core.Debug.consoleWrite("CONS");
 Extras.Sync.RemoteDataGrid = Core.extend(Extras.Sync.DataGrid, {
 
     $static: {
+
+        Serial: {
     
+            Model: Core.extend(Echo.Serial.PropertyTranslator, {
+                
+                $static: {
+                
+                    /** @see Echo.Serial.PropertyTranslator#toProperty */
+                    toProperty: function(client, pElement) {
+                        var modelElement = pElement.firstChild;
+                        var model = new Extras.RemoteDataGrid.Model(parseInt(modelElement.getAttribute("cc"), 10),
+                                parseInt(modelElement.getAttribute("rc"), 10));
+                        return model;
+                    }
+                },
+                
+                $load: function() {
+                    Echo.Serial.addPropertyTranslator("Extras.RemoteDataGrid.Model", this);
+                }
+            })
+        }
     },
     
     $load: function() {

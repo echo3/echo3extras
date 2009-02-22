@@ -115,6 +115,7 @@ public class DataGridPeer extends AbstractComponentSynchronizePeer {
          */
         public void toXml(Context context, Class objectClass, Element propertyElement, Object propertyValue)
         throws SerialException {
+            propertyElement.setAttribute("t", "Extras.RemoteDataGrid.Model");
             PropertyPeerFactory factory = (PropertyPeerFactory) context.get(PropertyPeerFactory.class);
             ModelData modelData = (ModelData) propertyValue;
             DataGridModel model = modelData.getModel();
@@ -152,7 +153,7 @@ public class DataGridPeer extends AbstractComponentSynchronizePeer {
      */
     public DataGridPeer() {
         super();
-   //     addOutputProperty(DataGrid.MODEL_CHANGED_PROPERTY);
+        addOutputProperty(DataGrid.MODEL_CHANGED_PROPERTY);
     }
 
     /**
