@@ -29,8 +29,12 @@
 
 package nextapp.echo.extras.testapp.testscreen;
 
+import nextapp.echo.app.event.ActionEvent;
+import nextapp.echo.app.event.ActionListener;
 import nextapp.echo.extras.app.DataGrid;
+import nextapp.echo.extras.app.datagrid.AbstractDataGridModel;
 import nextapp.echo.extras.testapp.AbstractTest;
+import nextapp.echo.extras.testapp.TestControlPane;
 
 
 /**
@@ -38,11 +42,69 @@ import nextapp.echo.extras.testapp.AbstractTest;
  */
 public class DataGridTest extends AbstractTest {
     
+    private static class MultiplicationModel extends AbstractDataGridModel {
+        
+        private int size;
+        
+        public MultiplicationModel(int size) {
+            super();
+            this.size = size;
+        }
+        
+        public int getRowCount() {
+            return size;
+        }
+    
+        public int getColumnCount() {
+            return size;
+        }
+    
+        public Object get(int column, int row) {
+            return Long.toString(((long) column + 1) * ((long) row + 1));
+        }
+    }
+    
     public DataGridTest() {
         super("DataGrid", null);
 
         final DataGrid dataGrid = new DataGrid();
         add(dataGrid);
         setTestComponent(this, dataGrid);
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "0 Multiplication Model", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dataGrid.setModel(new MultiplicationModel(1000));
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "10 Multiplication Model", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dataGrid.setModel(new MultiplicationModel(1000));
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "100 Multiplication Model", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dataGrid.setModel(new MultiplicationModel(1000));
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "1000 Multiplication Model", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dataGrid.setModel(new MultiplicationModel(1000));
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "1M Multiplication Model", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dataGrid.setModel(new MultiplicationModel(1000000));
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "1B Multiplication Model", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dataGrid.setModel(new MultiplicationModel(1000000000));
+            }
+        });
     }
 }
