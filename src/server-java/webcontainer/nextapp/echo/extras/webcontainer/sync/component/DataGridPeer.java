@@ -29,9 +29,15 @@
 
 package nextapp.echo.extras.webcontainer.sync.component;
 
+import org.w3c.dom.Element;
+
 import nextapp.echo.app.Component;
+import nextapp.echo.app.serial.SerialException;
+import nextapp.echo.app.serial.SerialPropertyPeer;
 import nextapp.echo.app.util.Context;
 import nextapp.echo.extras.app.DataGrid;
+import nextapp.echo.extras.app.datagrid.DataGridModel;
+import nextapp.echo.extras.app.datagrid.PrefetchDataGridModel;
 import nextapp.echo.extras.webcontainer.CommonResources;
 import nextapp.echo.extras.webcontainer.service.CommonService;
 import nextapp.echo.webcontainer.AbstractComponentSynchronizePeer;
@@ -50,13 +56,86 @@ public class DataGridPeer extends AbstractComponentSynchronizePeer {
             new String[] {  "nextapp/echo/extras/webcontainer/resource/Application.DataGrid.js",  
                             "nextapp/echo/extras/webcontainer/resource/Sync.DataGrid.js",
                             "nextapp/echo/extras/webcontainer/resource/RemoteClient.DataGrid.js"});
+
+    private static class ModelData {
+        
+        private int firstColumn, firstRow, lastColumn, lastRow;
+        private DataGridModel model;
+        
+        public ModelData(DataGridModel model, int firstColumn, int firstRow, int lastColumn, int lastRow) {
+            super();
+            this.model = model;
+            this.firstColumn = firstColumn;
+            this.firstRow = firstRow;
+            this.lastColumn = lastColumn;
+            this.lastRow = lastRow;
+
+            if (model instanceof PrefetchDataGridModel) {
+                ((PrefetchDataGridModel) model).prefetch(firstColumn, firstRow, lastColumn, lastRow);
+            }
+        }
+        
+        public DataGridModel getModel() {
+            return model;
+        }
+        
+        public int getFirstColumn() {
+            return firstColumn;
+        }
+        
+        public int getFirstRow() {
+            return firstRow;
+        }
+        
+        public int getLastColumn() {
+            return lastColumn;
+        }
+        
+        public int getLastRow() {
+            return lastRow;
+        }
+    }
+    
+    public static class ModelDataSerialPeer 
+    implements SerialPropertyPeer {
+
+        /**
+         * @see nextapp.echo.app.serial.SerialPropertyPeer#toProperty(nextapp.echo.app.util.Context, java.lang.Class,
+         *      org.w3c.dom.Element)
+         */
+        public Object toProperty(Context context, Class objectClass, Element propertyElement)
+        throws SerialException {
+            throw new UnsupportedOperationException();
+        }
+
+        /**
+         * @see nextapp.echo.app.serial.SerialPropertyPeer#toXml(nextapp.echo.app.util.Context, java.lang.Class,
+         *      org.w3c.dom.Element, java.lang.Object)
+         */
+        public void toXml(Context context, Class objectClass, Element propertyElement, Object propertyValue)
+        throws SerialException {
+            ModelData modelData = (ModelData) propertyValue;
+            Element fragElement = propertyElement.getOwnerDocument().createElement("frag");
+            fragElement.setAttribute("x1", Integer.toString(modelData.getFirstColumn()));
+            fragElement.setAttribute("y1", Integer.toString(modelData.getFirstRow()));
+            fragElement.setAttribute("x2", Integer.toString(modelData.getLastColumn()));
+            fragElement.setAttribute("y2", Integer.toString(modelData.getLastRow()));
+            for (int row = modelData.getFirstRow(); row < modelData.getLastRow(); ++row) {
+                for (int column = modelData.getFirstColumn(); column < modelData.getLastColumn(); ++column) {
+                    Element pElement = propertyElement.getOwnerDocument().createElement("p");
+                    fragElement.appendChild(pElement);
+                }
+            }
+            propertyElement.appendChild(fragElement);
+        }
+    }
+    
     static {
         CommonResources.install();
 
         ServiceRegistry services = WebContainerServlet.getServiceRegistry();
         services.add(DATA_GRID_SERVICE);
     }
-    
     
     /**
      * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#getClientComponentType(boolean)
@@ -72,6 +151,19 @@ public class DataGridPeer extends AbstractComponentSynchronizePeer {
         return DataGrid.class;
     }
     
+    /**
+     * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#getOutputProperty(
+     *      nextapp.echo.app.util.Context, nextapp.echo.app.Component, java.lang.String, int)
+     */
+    public Object getOutputProperty(Context context, Component component, String propertyName, int propertyIndex) {
+        if (propertyName.equals(DataGrid.MODEL_CHANGED_PROPERTY)) {
+            DataGrid dataGrid = (DataGrid) component;
+            return new ModelData(dataGrid.getModel(), 0, 0, 19, 19);
+        } else {
+            return super.getOutputProperty(context, component, propertyName, propertyIndex);
+        }
+    }
+
     /**
      * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#init(nextapp.echo.app.util.Context, Component)
      */
