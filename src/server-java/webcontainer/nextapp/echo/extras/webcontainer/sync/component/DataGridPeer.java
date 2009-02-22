@@ -126,8 +126,8 @@ public class DataGridPeer extends AbstractComponentSynchronizePeer {
             modelElement.setAttribute("y1", Integer.toString(modelData.getFirstRow()));
             modelElement.setAttribute("x2", Integer.toString(modelData.getLastColumn()));
             modelElement.setAttribute("y2", Integer.toString(modelData.getLastRow()));
-            for (int row = modelData.getFirstRow(); row < modelData.getLastRow(); ++row) {
-                for (int column = modelData.getFirstColumn(); column < modelData.getLastColumn(); ++column) {
+            for (int row = modelData.getFirstRow(); row <= modelData.getLastRow(); ++row) {
+                for (int column = modelData.getFirstColumn(); column <= modelData.getLastColumn(); ++column) {
                     Element pElement = propertyElement.getOwnerDocument().createElement("p");
                     Object modelValue = model.get(column, row);
                     if (modelValue != null) {

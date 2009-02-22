@@ -23,19 +23,26 @@ Extras.RemoteDataGrid = Core.extend(Extras.DataGrid, {
             _rowCount: null,
             
             /**
+             * Row storage.  Temporary implementation, this will crash and burn on large DataGrids.
+             */
+            _rows: null,
+            
+            /**
              * Constructor.
              * 
              * @param {Number} columnCount the column count
              * @param {Number} rowCount the row count
              */
             $construct: function(columnCount, rowCount) {
+                this._rows = [];
                 this._columnCount = columnCount;
                 this._rowCount = rowCount;
             },
             
             /** @see Extras.DataGrid.Model#get */
             get: function(column, row) {
-                return "Test: " + column * row;
+                var rowArray = this._rows[row];
+                return rowArray ? rowArray[column] : null;
             },
             
             /** @see Extras.DataGrid.Model#getColumnCount */
@@ -51,6 +58,15 @@ Extras.RemoteDataGrid = Core.extend(Extras.DataGrid, {
             /** @see Extras.DataGrid.Model#prefetch */
             prefetch: function(callback, firstColumn, firstRow, lastColumn, lastRow) {
                 callback();
+            },
+            
+            set: function(column, row, value) {
+                var rowArray = this._rows[row];
+                if (!rowArray) {
+                    rowArray = [];
+                    this._rows[row] = rowArray;
+                }
+                this._rows[row][column] = value;
             }
         })
     },
@@ -85,6 +101,24 @@ Extras.Sync.RemoteDataGrid = Core.extend(Extras.Sync.DataGrid, {
                         var modelElement = pElement.firstChild;
                         var model = new Extras.RemoteDataGrid.Model(parseInt(modelElement.getAttribute("cc"), 10),
                                 parseInt(modelElement.getAttribute("rc"), 10));
+                        var x1 = parseInt(modelElement.getAttribute("x1"), 10),
+                            y1 = parseInt(modelElement.getAttribute("y1"), 10),
+                            x2 = parseInt(modelElement.getAttribute("x2"), 10),
+                            y2 = parseInt(modelElement.getAttribute("y2"), 10);
+                        var x = x1, y = y1;
+                        var valueElement = modelElement.firstChild;
+                        while (valueElement) {
+                            // Retrieve value.  (Use property sync peers, not implemented yet)
+                            model.set(x, y, valueElement.firstChild ? valueElement.firstChild.nodeValue : null);
+                            
+                            // Move to next value.
+                            valueElement = valueElement.nextSibling;
+                            ++x;
+                            if (x > x2) {
+                                x = x1;
+                                ++y;
+                            }
+                        }
                         return model;
                     }
                 },
