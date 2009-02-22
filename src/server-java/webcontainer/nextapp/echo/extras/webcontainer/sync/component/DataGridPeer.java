@@ -118,11 +118,13 @@ public class DataGridPeer extends AbstractComponentSynchronizePeer {
             PropertyPeerFactory factory = (PropertyPeerFactory) context.get(PropertyPeerFactory.class);
             ModelData modelData = (ModelData) propertyValue;
             DataGridModel model = modelData.getModel();
-            Element fragElement = propertyElement.getOwnerDocument().createElement("frag");
-            fragElement.setAttribute("x1", Integer.toString(modelData.getFirstColumn()));
-            fragElement.setAttribute("y1", Integer.toString(modelData.getFirstRow()));
-            fragElement.setAttribute("x2", Integer.toString(modelData.getLastColumn()));
-            fragElement.setAttribute("y2", Integer.toString(modelData.getLastRow()));
+            Element modelElement = propertyElement.getOwnerDocument().createElement("model");
+            modelElement.setAttribute("cc", Integer.toString(model.getColumnCount()));
+            modelElement.setAttribute("rc", Integer.toString(model.getRowCount()));
+            modelElement.setAttribute("x1", Integer.toString(modelData.getFirstColumn()));
+            modelElement.setAttribute("y1", Integer.toString(modelData.getFirstRow()));
+            modelElement.setAttribute("x2", Integer.toString(modelData.getLastColumn()));
+            modelElement.setAttribute("y2", Integer.toString(modelData.getLastRow()));
             for (int row = modelData.getFirstRow(); row < modelData.getLastRow(); ++row) {
                 for (int column = modelData.getFirstColumn(); column < modelData.getLastColumn(); ++column) {
                     Element pElement = propertyElement.getOwnerDocument().createElement("p");
@@ -131,10 +133,10 @@ public class DataGridPeer extends AbstractComponentSynchronizePeer {
                         SerialPropertyPeer modelValuePeer = factory.getPeerForProperty(modelValue.getClass());
                         modelValuePeer.toXml(context, objectClass, pElement, modelValue);
                     }
-                    fragElement.appendChild(pElement);
+                    modelElement.appendChild(pElement);
                 }
             }
-            propertyElement.appendChild(fragElement);
+            propertyElement.appendChild(modelElement);
         }
     }
     
@@ -150,9 +152,9 @@ public class DataGridPeer extends AbstractComponentSynchronizePeer {
      */
     public DataGridPeer() {
         super();
-        addOutputProperty(DataGrid.MODEL_CHANGED_PROPERTY);
+   //     addOutputProperty(DataGrid.MODEL_CHANGED_PROPERTY);
     }
-    
+
     /**
      * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#getClientComponentType(boolean)
      */
@@ -166,7 +168,7 @@ public class DataGridPeer extends AbstractComponentSynchronizePeer {
     public Class getComponentClass() {
         return DataGrid.class;
     }
-    
+
     /**
      * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#getOutputProperty(
      *      nextapp.echo.app.util.Context, nextapp.echo.app.Component, java.lang.String, int)

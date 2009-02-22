@@ -35,16 +35,18 @@ Extras.RemoteDataGrid = Core.extend(Extras.DataGrid, {
             
             /** @see Extras.DataGrid.Model#get */
             get: function(column, row) {
-                return null;
+                return "Test: " + column * row;
             },
             
             /** @see Extras.DataGrid.Model#getColumnCount */
             getColumnCount: function() {
+Core.Debug.consoleWrite("GCCC");
                 return this._columnCount;
             },
             
             /** @see Extras.DataGrid.Model#getRowCount */
             getRowCount: function() {
+Core.Debug.consoleWrite("GRRR");
                 return this._rowCount;
             },
             
@@ -60,7 +62,13 @@ Extras.RemoteDataGrid = Core.extend(Extras.DataGrid, {
     },
     
     /** @see Echo.Component#componentType */
-    componentType: "Extras.RemoteDataGrid"
+    componentType: "Extras.RemoteDataGrid",
+    
+    $construct: function(properties) {
+Core.Debug.consoleWrite("CONS");        
+        Extras.DataGrid.call(this, properties);
+        this.set("model", new Extras.RemoteDataGrid.Model(1000, 1000));
+    }
 });
 
 /**
