@@ -57,7 +57,7 @@ public class DataGridPeer extends AbstractComponentSynchronizePeer {
                             "nextapp/echo/extras/webcontainer/resource/Sync.DataGrid.js",
                             "nextapp/echo/extras/webcontainer/resource/RemoteClient.DataGrid.js"});
 
-    private static class ModelData {
+    public static class ModelData {
         
         private int firstColumn, firstRow, lastColumn, lastRow;
         private DataGridModel model;
@@ -96,7 +96,7 @@ public class DataGridPeer extends AbstractComponentSynchronizePeer {
         }
     }
     
-    public static class ModelDataSerialPeer 
+    public static class ModelDataPeer 
     implements SerialPropertyPeer {
 
         /**
@@ -135,6 +135,14 @@ public class DataGridPeer extends AbstractComponentSynchronizePeer {
 
         ServiceRegistry services = WebContainerServlet.getServiceRegistry();
         services.add(DATA_GRID_SERVICE);
+    }
+    
+    /**
+     * Default constructor.
+     */
+    public DataGridPeer() {
+        super();
+        addOutputProperty(DataGrid.MODEL_CHANGED_PROPERTY);
     }
     
     /**
