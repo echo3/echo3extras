@@ -32,6 +32,7 @@ package nextapp.echo.extras.webcontainer.sync.component;
 import org.w3c.dom.Element;
 
 import nextapp.echo.app.Component;
+import nextapp.echo.app.serial.PropertyPeerFactory;
 import nextapp.echo.app.serial.SerialException;
 import nextapp.echo.app.serial.SerialPropertyPeer;
 import nextapp.echo.app.util.Context;
@@ -114,7 +115,9 @@ public class DataGridPeer extends AbstractComponentSynchronizePeer {
          */
         public void toXml(Context context, Class objectClass, Element propertyElement, Object propertyValue)
         throws SerialException {
+            PropertyPeerFactory factory = (PropertyPeerFactory) context.get(PropertyPeerFactory.class);
             ModelData modelData = (ModelData) propertyValue;
+            DataGridModel model = modelData.getModel();
             Element fragElement = propertyElement.getOwnerDocument().createElement("frag");
             fragElement.setAttribute("x1", Integer.toString(modelData.getFirstColumn()));
             fragElement.setAttribute("y1", Integer.toString(modelData.getFirstRow()));
@@ -123,6 +126,11 @@ public class DataGridPeer extends AbstractComponentSynchronizePeer {
             for (int row = modelData.getFirstRow(); row < modelData.getLastRow(); ++row) {
                 for (int column = modelData.getFirstColumn(); column < modelData.getLastColumn(); ++column) {
                     Element pElement = propertyElement.getOwnerDocument().createElement("p");
+                    Object modelValue = model.get(column, row);
+                    if (modelValue != null) {
+                        SerialPropertyPeer modelValuePeer = factory.getPeerForProperty(modelValue.getClass());
+                        modelValuePeer.toXml(context, objectClass, pElement, modelValue);
+                    }
                     fragElement.appendChild(pElement);
                 }
             }
