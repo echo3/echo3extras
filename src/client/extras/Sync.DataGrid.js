@@ -225,7 +225,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                         if (row === this.cellIndex.top) {
                             td.style.width = columnWidths[column] + "px";
                         }
-                        var value = this.dataGrid._model.get(column, row)
+                        var value = this.dataGrid._model.get(column, row);
                         if (value == null) {
                             // FIXME Temporary fix for zero-height cells causing rendering to take forever.
                             // Remove when bounding is working properly.
