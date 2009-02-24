@@ -65,7 +65,7 @@ public class DataGridTest extends AbstractTest {
     }
     
     public DataGridTest() {
-        super("DataGrid", null);
+        super("DataGrid *unstable/experimental*", null);
 
         final DataGrid dataGrid = new DataGrid();
         add(dataGrid);
