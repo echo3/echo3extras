@@ -85,7 +85,7 @@ Extras.AccordionPane = Core.extend(Echo.Component, {
         case "activeTabId":
             if (this.application) {
                 for (i = 0; i < this.children.length; ++i) {
-                    if (this.children[i].renderId == e.value) {
+                    if (this.children[i].renderId == e.newValue) {
                         if (this.get("activeTabIndex") != i) {
                             this.set("activeTabIndex", i);
                         }
