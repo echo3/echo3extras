@@ -87,3 +87,4 @@ Extras.DataGrid.Model = Core.extend({
         prefetch: null
     }
 });
+

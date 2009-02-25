@@ -45,6 +45,105 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
         intersect: function(a1, a2, b1, b2) {
             return (b1 <= a1 && a1 <= b2) || (a1 <= b1 && b1 <= a2);
         },
+        
+        /**
+         * Abstract base class for cell renderers.
+         */
+        CellRenderer: Core.extend({
+            
+            $abstract: {
+            
+                /**
+                 * Returns an HTML representation of a DataGrid cell.
+                 * 
+                 * @param {Extras.Sync.DataGrid.RenderContext} context contextual information
+                 *        (provides reference to DataGrid instance, capabilities to get/set state object for cell)
+                 * @param value the value provided by the model
+                 * @param {Number} column the column index
+                 * @param {Number} row the row index 
+                 * 
+                 * @return a rendered node which should be added to the DOM in the cell (may return null)
+                 * @type Node
+                 */
+                render: function(context, value, column, row) { }
+            },
+            
+            $virtual: {
+
+                /**
+                 * Optional disposal method to deallocate resources used by a rendered DataGrid cell.
+                 * May be used for purposes such as unregistering listeners on interactive cell renderings.
+                 * A state object must have been set in the RenderContext in order for this method to be invoked.
+                 * 
+                 * @param {Extras.Sync.DataGrid.RenderContext} context contextual information
+                 *        (provides reference to DataGrid instance, capabilities to get/set state object for cell) 
+                 * @param {Number} column
+                 * @param {Number} row 
+                 */
+                dispose: null
+            }
+        }),
+        
+        /**
+         * Contextual data used by cell renderers.
+         * Provides capability to get/set state of cell, access to DataGrid instance.
+         * RenderContexts are created and disposed with tiles.
+         */
+        RenderContext: Core.extend({
+            
+            _states: null,
+            
+            /**
+             * The relevant DataGrid.
+             * @type Extras.DataGrid
+             */
+            dataGrid: null,
+            
+            /**
+             * Creates a new RenderContext.
+             * 
+             * @param {Extras.DataGrid} dataGrid the relevant DataGrid.
+             */
+            $construct: function(dataGrid) {
+                this.dataGrid = dataGrid;
+                this._states = {};
+            },
+            
+            /**
+             * Invoked by the tile when it is disposed.  Should never be manually invoked.
+             */
+            dispose: function() {
+                for (var x in this._states) {
+                    //FIXME implement cell disposal
+                }
+            },
+            
+            /**
+             * Retrieves the state object for a rendered cell.
+             * 
+             * @param {Number} column the cell column index
+             * @param {Number} row the cell row index 
+             * @return the state object
+             */
+            getState: function(column, row) {
+                return this._states[column + "," + row];
+            },
+            
+            /**
+             * Sets the state object for a rendered cell.
+             * State objects are arbitrary renderer-defined objects containing state information about a cell.
+             * A typical use for a state object would be for an interactive cell to store elements such that listeners 
+             * may be removed from them when a cell is disposed.
+             * 
+             * @param {Number} column the cell column index
+             * @param {Number} row the cell row index
+             * @param state the state object, an arbitrary renderer-defined object containing state information about the
+             *        cell  
+             */
+            setState: function(column, row, state) {
+                this._states[column + "," + row] = state;
+            }
+        }),
 
         /**
          * Representation of a "tile", a sub-table that renders a portion of the DataGrid.
@@ -106,6 +205,8 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
              */
             bounds: null,
             
+            renderContext: null,
+            
             /**
              * Creates a new <code>Tile</code>.
              *
@@ -116,6 +217,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
              */
             $construct: function(dataGrid, region, tileColumnIndex, tileRowIndex) {
                 this.dataGrid = dataGrid;
+                this.renderContext = new Extras.Sync.DataGrid.RenderContext(dataGrid);
                 this.containerElement = region.element;
                 this.tileIndex = { column: tileColumnIndex, row: tileRowIndex };
                 this.region = region;
