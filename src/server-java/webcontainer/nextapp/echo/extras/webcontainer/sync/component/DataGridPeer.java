@@ -29,6 +29,10 @@
 
 package nextapp.echo.extras.webcontainer.sync.component;
 
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.w3c.dom.Element;
 
 import nextapp.echo.app.Component;
@@ -42,6 +46,8 @@ import nextapp.echo.extras.app.datagrid.PrefetchDataGridModel;
 import nextapp.echo.extras.webcontainer.CommonResources;
 import nextapp.echo.extras.webcontainer.service.CommonService;
 import nextapp.echo.webcontainer.AbstractComponentSynchronizePeer;
+import nextapp.echo.webcontainer.Connection;
+import nextapp.echo.webcontainer.ContentType;
 import nextapp.echo.webcontainer.ServerMessage;
 import nextapp.echo.webcontainer.Service;
 import nextapp.echo.webcontainer.ServiceRegistry;
@@ -53,7 +59,42 @@ import nextapp.echo.webcontainer.service.JavaScriptService;
  */
 public class DataGridPeer extends AbstractComponentSynchronizePeer {
     
-    private static final Service DATA_GRID_SERVICE = JavaScriptService.forResources("EchoExtras.DataGrid",
+    private static final Service MODEL_SERVICE = new Service() {
+
+        private static final int MAX_SIZE = 1024;
+        
+        /**
+         * @see nextapp.echo.webcontainer.Service#getId()
+         */
+        public String getId() {
+            return "EchoExtras.DataGrid.Model";
+        }
+
+        /**
+         * @see nextapp.echo.webcontainer.Service#getVersion()
+         */
+        public int getVersion() {
+            return DO_NOT_CACHE;
+        }
+
+        public void service(Connection conn)
+        throws IOException {
+            HttpServletRequest request = conn.getRequest();
+            String clientRenderId = request.getParameter("cid");
+            DataGrid dataGrid = (DataGrid) conn.getUserInstance().getComponentByClientRenderId(clientRenderId);
+            int firstColumn = Integer.parseInt(request.getParameter("x1"));
+            int lastColumn = Integer.parseInt(request.getParameter("x2"));
+            int firstRow = Integer.parseInt(request.getParameter("y1"));
+            int lastRow = Integer.parseInt(request.getParameter("y2"));
+            if ((lastRow - firstRow + 1) * (lastColumn - firstColumn + 1) > MAX_SIZE) {
+                throw new IOException("Model request exceeded maximum size of " + MAX_SIZE + " cells.");
+            }
+            ModelData modelData = new ModelData(dataGrid.getModel(), firstColumn, firstRow, lastColumn, lastRow);
+            conn.setContentType(ContentType.TEXT_XML);
+        }
+    };
+    
+    private static final Service SCRIPT_SERVICE = JavaScriptService.forResources("EchoExtras.DataGrid",
             new String[] {  "nextapp/echo/extras/webcontainer/resource/Application.DataGrid.js",  
                             "nextapp/echo/extras/webcontainer/resource/Sync.DataGrid.js",
                             "nextapp/echo/extras/webcontainer/resource/RemoteClient.DataGrid.js"});
@@ -145,7 +186,8 @@ public class DataGridPeer extends AbstractComponentSynchronizePeer {
         CommonResources.install();
 
         ServiceRegistry services = WebContainerServlet.getServiceRegistry();
-        services.add(DATA_GRID_SERVICE);
+        services.add(SCRIPT_SERVICE);
+        services.add(MODEL_SERVICE);
     }
     
     /**
@@ -190,6 +232,6 @@ public class DataGridPeer extends AbstractComponentSynchronizePeer {
         super.init(context, component);
         ServerMessage serverMessage = (ServerMessage) context.get(ServerMessage.class);
         serverMessage.addLibrary(CommonService.INSTANCE.getId());
-        serverMessage.addLibrary(DATA_GRID_SERVICE.getId());
+        serverMessage.addLibrary(SCRIPT_SERVICE.getId());
     }
 }
