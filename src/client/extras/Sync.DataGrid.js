@@ -116,7 +116,6 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 for (var x in this._states) {
                     //FIXME implement cell disposal
                 }
-                Core.Debug.consoleWrite("RC DISPOSE");
             },
             
             /**
