@@ -116,6 +116,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 for (var x in this._states) {
                     //FIXME implement cell disposal
                 }
+                Core.Debug.consoleWrite("RC DISPOSE");
             },
             
             /**
@@ -205,7 +206,11 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
              */
             bounds: null,
             
-            renderContext: null,
+            /**
+             * The RenderContext instance specific to this tile.
+             * @type Extras.Sync.DataGrid.RenderContext
+             */
+            _renderContext: null,
             
             /**
              * Creates a new <code>Tile</code>.
@@ -217,7 +222,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
              */
             $construct: function(dataGrid, region, tileColumnIndex, tileRowIndex) {
                 this.dataGrid = dataGrid;
-                this.renderContext = new Extras.Sync.DataGrid.RenderContext(dataGrid);
+                this._renderContext = new Extras.Sync.DataGrid.RenderContext(dataGrid);
                 this.containerElement = region.element;
                 this.tileIndex = { column: tileColumnIndex, row: tileRowIndex };
                 this.region = region;
@@ -372,6 +377,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
              * Must be invoked before the tile is discarded.
              */
             dispose: function() {
+                this._renderContext.dispose();
                 this.div = this._table = null;
             },
             
