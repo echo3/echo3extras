@@ -66,6 +66,9 @@ public class DataGridPeer extends AbstractComponentSynchronizePeer {
     
     private static final Service MODEL_SERVICE = new Service() {
 
+        /**
+         * Maximum number of cells to render in a single service request.
+         */
         private static final int MAX_SIZE = 4096;
         
         /**
@@ -104,7 +107,7 @@ public class DataGridPeer extends AbstractComponentSynchronizePeer {
                 Document document = DomUtil.createDocument("model", null, null, null);
                 Context context = new SynchronizationContext(conn, document);
                 
-                renderModelContent(context, modelData, document.getDocumentElement());
+                renderModelDataContent(context, modelData, document.getDocumentElement());
                 
                 conn.setContentType(ContentType.TEXT_XML);
                 DomUtil.save(document, conn.getOutputStream(), null);
@@ -121,11 +124,23 @@ public class DataGridPeer extends AbstractComponentSynchronizePeer {
                             "nextapp/echo/extras/webcontainer/resource/Sync.DataGrid.js",
                             "nextapp/echo/extras/webcontainer/resource/RemoteClient.DataGrid.js"});
 
+    /**
+     * A representation of a block of <code>DataGridModel</code> data.
+     */
     public static class ModelData {
         
         private int firstColumn, firstRow, lastColumn, lastRow;
         private DataGridModel model;
         
+        /**
+         * Creates a new <code>ModelData</code> instance.
+         * 
+         * @param model the <code>DataGridModel</code>
+         * @param firstColumn the first column (inclusive)
+         * @param firstRow the first row (inclusive)
+         * @param lastColumn the last column (inclusive)
+         * @param lastRow the last row (inclusive)
+         */
         public ModelData(DataGridModel model, int firstColumn, int firstRow, int lastColumn, int lastRow) {
             super();
             this.model = model;
@@ -139,27 +154,55 @@ public class DataGridPeer extends AbstractComponentSynchronizePeer {
             }
         }
         
+        /**
+         * Returns the <code>DataGridModel</code>.
+         * 
+         * @return the <code>DataGridModel</code>
+         */
         public DataGridModel getModel() {
             return model;
         }
         
+        /**
+         * Returns the first column.
+         * 
+         * @return the first column
+         */
         public int getFirstColumn() {
             return firstColumn;
         }
         
+        /**
+         * Returns the first row.
+         * 
+         * @return the first row
+         */
         public int getFirstRow() {
             return firstRow;
         }
         
+        /**
+         * Returns the last column.
+         * 
+         * @return the last column
+         */
         public int getLastColumn() {
             return lastColumn;
         }
         
+        /**
+         * Returns the last row.
+         * 
+         * @return the last row
+         */
         public int getLastRow() {
             return lastRow;
         }
     }
     
+    /**
+     * Serialization peer for <code>ModelData</code>.
+     */
     public static class ModelDataPeer 
     implements SerialPropertyPeer {
 
@@ -188,12 +231,20 @@ public class DataGridPeer extends AbstractComponentSynchronizePeer {
             modelElement.setAttribute("y1", Integer.toString(modelData.getFirstRow()));
             modelElement.setAttribute("x2", Integer.toString(modelData.getLastColumn()));
             modelElement.setAttribute("y2", Integer.toString(modelData.getLastRow()));
-            renderModelContent(context, modelData, modelElement);
+            renderModelDataContent(context, modelData, modelElement);
             propertyElement.appendChild(modelElement);
         }
     }
     
-    public static void renderModelContent(Context context, ModelData modelData, Element parentElement) 
+    /**
+     * Renders the content of a model data property to XML.  Appends created property elements to specified parent element.
+     * 
+     * @param context the relevant <code>Context</code> object (a <code>SynchronizationContext</code>)
+     * @param modelData the <code>ModelData</code> whose content is to be rendered
+     * @param parentElement the parent DOM <code>Element</code>
+     * @throws SerialException
+     */
+    public static void renderModelDataContent(Context context, ModelData modelData, Element parentElement) 
     throws SerialException {
         PropertyPeerFactory factory = (PropertyPeerFactory) context.get(PropertyPeerFactory.class);
         for (int row = modelData.getFirstRow(); row <= modelData.getLastRow(); ++row) {
