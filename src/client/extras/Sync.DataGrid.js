@@ -944,7 +944,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
     /** @see Echo.Render.ComponentSync#renderAdd */
     renderAdd: function(update, parentElement) {
         this._div = document.createElement("div");
-        this._div.style.cssText = "position:absolute;top:0;left:0;right:0;bottom:0;background-color:lime;";
+        this._div.style.cssText = "position:absolute;top:0;left:0;right:0;bottom:0;";
         this._div.id = this.component.renderId;
         
         this.scrollContainer = new Extras.Sync.DataGrid.ScrollContainer();
@@ -1135,6 +1135,22 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
         }
     },
     
+    /**
+     * Programmatically adjusts the position of horizontal and/or vertical scroll bars.
+     * 
+     * @param {Number} horizontal the number of pixels to adjust horizontally 
+     * @param {Number} vertical the number of pixels to adjust vertically 
+     */
+    _adjustScroll: function(horizontal, vertical) {
+        this._lastScrollSetTime = new Date().getTime();
+        if (horizontal) {
+            this._hScrollContainer.scrollLeft += horizontal;
+        }
+        if (vertical) {
+            this._vScrollContainer.scrollTop += vertical;
+        }
+    },
+    
     configure: function(horizontal, vertical) {
         if (horizontal > 1) {
             this._vScrollContainer.style.bottom = this.contentElement.style.bottom = Core.Web.Measure.SCROLL_HEIGHT + "px";
@@ -1207,8 +1223,6 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
      * @param e the event
      */
     _processWheel: function(e) {
-        this._lastScrollSetTime = new Date().getTime();
-
         // Convert scroll wheel direction/distance data into uniform/cross-browser format:
         // A value of 1 indicates one notch scroll down, -1 indicates one notch scroll up.
         var wheelScroll;
@@ -1222,11 +1236,11 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
         
         if (e.shiftKey) {
             // Scroll horizontally.
-            this._hScrollContainer.scrollTop += wheelScroll * 90;
+            this._adjustScroll(wheelScroll * 90, 0);
             this._hScrollAccumulator += wheelScroll;
         } else {
             // Scroll vertically.
-            this._vScrollContainer.scrollTop += wheelScroll * 90;
+            this._adjustScroll(0, wheelScroll * 90);
             this._vScrollAccumulator += wheelScroll;
         }
         Core.Web.Scheduler.run(Core.method(this, this._accumulatedScroll), 10);
