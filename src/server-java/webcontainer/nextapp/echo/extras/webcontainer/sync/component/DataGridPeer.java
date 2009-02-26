@@ -50,9 +50,11 @@ import nextapp.echo.extras.webcontainer.service.CommonService;
 import nextapp.echo.webcontainer.AbstractComponentSynchronizePeer;
 import nextapp.echo.webcontainer.Connection;
 import nextapp.echo.webcontainer.ContentType;
+import nextapp.echo.webcontainer.SynchronizationContext;
 import nextapp.echo.webcontainer.ServerMessage;
 import nextapp.echo.webcontainer.Service;
 import nextapp.echo.webcontainer.ServiceRegistry;
+import nextapp.echo.webcontainer.SynchronizationException;
 import nextapp.echo.webcontainer.WebContainerServlet;
 import nextapp.echo.webcontainer.service.JavaScriptService;
 import nextapp.echo2migration.DomUtil;
@@ -64,7 +66,7 @@ public class DataGridPeer extends AbstractComponentSynchronizePeer {
     
     private static final Service MODEL_SERVICE = new Service() {
 
-        private static final int MAX_SIZE = 1024;
+        private static final int MAX_SIZE = 4096;
         
         /**
          * @see nextapp.echo.webcontainer.Service#getId()
@@ -80,6 +82,9 @@ public class DataGridPeer extends AbstractComponentSynchronizePeer {
             return DO_NOT_CACHE;
         }
 
+        /**
+         * @see nextapp.echo.webcontainer.Service#service(nextapp.echo.webcontainer.Connection)
+         */
         public void service(Connection conn)
         throws IOException {
             try {
@@ -90,17 +95,23 @@ public class DataGridPeer extends AbstractComponentSynchronizePeer {
                 int lastColumn = Integer.parseInt(request.getParameter("x2"));
                 int firstRow = Integer.parseInt(request.getParameter("y1"));
                 int lastRow = Integer.parseInt(request.getParameter("y2"));
-                if ((lastRow - firstRow + 1) * (lastColumn - firstColumn + 1) > MAX_SIZE) {
-                    throw new IOException("Model request exceeded maximum size of " + MAX_SIZE + " cells.");
+                int size = (lastRow - firstRow + 1) * (lastColumn - firstColumn + 1);
+                if (size > MAX_SIZE) {
+                    throw new IOException("Model request for " + size + " cells exceeded maximum size of " + MAX_SIZE + " cells.");
                 }
                 ModelData modelData = new ModelData(dataGrid.getModel(), firstColumn, firstRow, lastColumn, lastRow);
                 
                 Document document = DomUtil.createDocument("model", null, null, null);
+                Context context = new SynchronizationContext(conn, document);
+                
+                renderModelContent(context, modelData, document.getDocumentElement());
                 
                 conn.setContentType(ContentType.TEXT_XML);
                 DomUtil.save(document, conn.getOutputStream(), null);
+            } catch (SerialException ex) {
+                throw new SynchronizationException("Unable to render model data.", ex);
             } catch (SAXException ex) {
-                throw new IOException();
+                throw new SynchronizationException("Unable to render model data.", ex);
             }
         }
     };
@@ -152,22 +163,6 @@ public class DataGridPeer extends AbstractComponentSynchronizePeer {
     public static class ModelDataPeer 
     implements SerialPropertyPeer {
 
-        public static void renderModelContent(Context context, Class objectClass, ModelData modelData, Element parentElement) 
-        throws SerialException {
-            PropertyPeerFactory factory = (PropertyPeerFactory) context.get(PropertyPeerFactory.class);
-            for (int row = modelData.getFirstRow(); row <= modelData.getLastRow(); ++row) {
-                for (int column = modelData.getFirstColumn(); column <= modelData.getLastColumn(); ++column) {
-                    Element pElement = parentElement.getOwnerDocument().createElement("p");
-                    Object modelValue = modelData.getModel().get(column, row);
-                    if (modelValue != null) {
-                        SerialPropertyPeer modelValuePeer = factory.getPeerForProperty(modelValue.getClass());
-                        modelValuePeer.toXml(context, objectClass, pElement, modelValue);
-                    }
-                    parentElement.appendChild(pElement);
-                }
-            }
-        }
-        
         /**
          * @see nextapp.echo.app.serial.SerialPropertyPeer#toProperty(nextapp.echo.app.util.Context, java.lang.Class,
          *      org.w3c.dom.Element)
@@ -193,8 +188,24 @@ public class DataGridPeer extends AbstractComponentSynchronizePeer {
             modelElement.setAttribute("y1", Integer.toString(modelData.getFirstRow()));
             modelElement.setAttribute("x2", Integer.toString(modelData.getLastColumn()));
             modelElement.setAttribute("y2", Integer.toString(modelData.getLastRow()));
-            renderModelContent(context, objectClass, modelData, modelElement);
+            renderModelContent(context, modelData, modelElement);
             propertyElement.appendChild(modelElement);
+        }
+    }
+    
+    public static void renderModelContent(Context context, ModelData modelData, Element parentElement) 
+    throws SerialException {
+        PropertyPeerFactory factory = (PropertyPeerFactory) context.get(PropertyPeerFactory.class);
+        for (int row = modelData.getFirstRow(); row <= modelData.getLastRow(); ++row) {
+            for (int column = modelData.getFirstColumn(); column <= modelData.getLastColumn(); ++column) {
+                Element pElement = parentElement.getOwnerDocument().createElement("p");
+                Object modelValue = modelData.getModel().get(column, row);
+                if (modelValue != null) {
+                    SerialPropertyPeer modelValuePeer = factory.getPeerForProperty(modelValue.getClass());
+                    modelValuePeer.toXml(context, DataGridModel.class, pElement, modelValue);
+                }
+                parentElement.appendChild(pElement);
+            }
         }
     }
     
