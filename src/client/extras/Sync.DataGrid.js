@@ -1082,7 +1082,7 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
 
     rootElement: null,
     contentElement: null,
-    _lastWheelEventTime: 0,
+    _lastScrollSetTime: 0,
     
     onScroll: null,
 
@@ -1161,12 +1161,12 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
     },
     
     /**
-     * Determines if a just-received scroll event is the result of a scroll wheel adjustment.
+     * Determines if a just-received scroll event is the result of a user adjusting a scroll bar or a result of the
+     * scroll bar having been adjusted programmatically.  
      * In this case, the event will not be processed as a scroll adjustment.
-     * This determination is presently based on the time since the last wheel event.
      */
-    _isWheelEvent: function() {
-        return (new Date().getTime() - this._lastWheelEventTime) < 100; 
+    _isUserScroll: function() {
+        return (new Date().getTime() - this._lastScrollSetTime) > 100; 
     },
     
     /**
@@ -1175,7 +1175,7 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
      * @param e the event
      */
     _processScrollH: function(e) {
-        if (this._isWheelEvent()) {
+        if (!this._isUserScroll()) {
             return;
         }
 
@@ -1191,7 +1191,7 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
      * @param e the event
      */
     _processScrollV: function(e) {
-        if (this._isWheelEvent()) {
+        if (!this._isUserScroll()) {
             return;
         }
 
@@ -1207,7 +1207,7 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
      * @param e the event
      */
     _processWheel: function(e) {
-        this._lastWheelEventTime = new Date().getTime();
+        this._lastScrollSetTime = new Date().getTime();
 
         // Convert scroll wheel direction/distance data into uniform/cross-browser format:
         // A value of 1 indicates one notch scroll down, -1 indicates one notch scroll up.
