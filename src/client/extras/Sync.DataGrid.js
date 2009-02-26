@@ -1141,7 +1141,7 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
      * @param {Number} horizontal the number of pixels to adjust horizontally 
      * @param {Number} vertical the number of pixels to adjust vertically 
      */
-    _adjustScroll: function(horizontal, vertical) {
+    _adjustScrollPx: function(horizontal, vertical) {
         this._lastScrollSetTime = new Date().getTime();
         if (horizontal) {
             this._hScrollContainer.scrollLeft += horizontal;
@@ -1179,7 +1179,6 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
     /**
      * Determines if a just-received scroll event is the result of a user adjusting a scroll bar or a result of the
      * scroll bar having been adjusted programmatically.  
-     * In this case, the event will not be processed as a scroll adjustment.
      */
     _isUserScroll: function() {
         return (new Date().getTime() - this._lastScrollSetTime) > 100; 
@@ -1236,11 +1235,11 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
         
         if (e.shiftKey) {
             // Scroll horizontally.
-            this._adjustScroll(wheelScroll * 90, 0);
+            this._adjustScrollPx(wheelScroll * 90, 0);
             this._hScrollAccumulator += wheelScroll;
         } else {
             // Scroll vertically.
-            this._adjustScroll(0, wheelScroll * 90);
+            this._adjustScrollPx(0, wheelScroll * 90);
             this._vScrollAccumulator += wheelScroll;
         }
         Core.Web.Scheduler.run(Core.method(this, this._accumulatedScroll), 10);
