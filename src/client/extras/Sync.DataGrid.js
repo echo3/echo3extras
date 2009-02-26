@@ -1082,6 +1082,7 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
 
     rootElement: null,
     contentElement: null,
+    _lastWheelEventTime: 0,
     
     onScroll: null,
 
@@ -1160,11 +1161,24 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
     },
     
     /**
+     * Determines if a just-received scroll event is the result of a scroll wheel adjustment.
+     * In this case, the event will not be processed as a scroll adjustment.
+     * This determination is presently based on the time since the last wheel event.
+     */
+    _isWheelEvent: function() {
+        return (new Date().getTime() - this._lastWheelEventTime) < 100; 
+    },
+    
+    /**
      * Process a horizontal scroll bar drag adjustment event.
      *
      * @param e the event
      */
     _processScrollH: function(e) {
+        if (this._isWheelEvent()) {
+            return;
+        }
+
         //FIXME Implement
         Core.Debug.consoleWrite("hscroll:" + this._hScrollContainer.scrollLeft);
         if (this.onScroll) {
@@ -1177,6 +1191,10 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
      * @param e the event
      */
     _processScrollV: function(e) {
+        if (this._isWheelEvent()) {
+            return;
+        }
+
         Core.Debug.consoleWrite("vscroll:" + this._vScrollContainer.scrollTop);
         //FIXME Implement
         if (this.onScroll) {
@@ -1189,6 +1207,8 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
      * @param e the event
      */
     _processWheel: function(e) {
+        this._lastWheelEventTime = new Date().getTime();
+
         // Convert scroll wheel direction/distance data into uniform/cross-browser format:
         // A value of 1 indicates one notch scroll down, -1 indicates one notch scroll up.
         var wheelScroll;
