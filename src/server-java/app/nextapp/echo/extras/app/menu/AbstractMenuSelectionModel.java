@@ -35,7 +35,8 @@ import nextapp.echo.app.event.ChangeEvent;
 import nextapp.echo.app.event.ChangeListener;
 import nextapp.echo.app.event.EventListenerList;
 
-public abstract class AbstractMenuSelectionModel implements MenuSelectionModel {
+public abstract class AbstractMenuSelectionModel 
+implements MenuSelectionModel {
 
     private EventListenerList listenerList = new EventListenerList();
 

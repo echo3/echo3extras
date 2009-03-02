@@ -29,9 +29,11 @@
 
 package nextapp.echo.extras.app.menu;
 
+import java.io.Serializable;
+
 import nextapp.echo.app.event.ChangeListener;
 
-public interface MenuSelectionModel {
+public interface MenuSelectionModel extends Serializable {
     
     void addChangeListener(ChangeListener l);
     
