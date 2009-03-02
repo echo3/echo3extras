@@ -35,6 +35,7 @@ package nextapp.echo.extras.app.tree;
  * that the root is always the first element (index 0) of the array.
  */
 public class TreePath {
+    
     /**
      * Path representing the parent, null if lastPathComponent represents the
      * root.

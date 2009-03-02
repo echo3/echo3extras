@@ -131,8 +131,8 @@ public class Tree extends Component {
                         headerRenderer = DEFAULT_TREE_CELL_RENDERER;
                     }
                 }
-                Component renderedComponent 
-                        = headerRenderer.getTreeCellRendererComponent(Tree.this, null, headerValue, modelColumnIndex, HEADER_ROW, false);
+                Component renderedComponent = headerRenderer.getTreeCellRendererComponent(Tree.this, null, headerValue, 
+                        modelColumnIndex, HEADER_ROW, false);
                 if (renderedComponent == null) {
                     renderedComponent = new Label();
                 }
@@ -168,8 +168,8 @@ public class Tree extends Component {
             for (int i = 0; i < columnCount; ++i) {
                 int modelColumnIndex = treeColumns[i].getModelIndex();
                 Object modelValue = model.getValueAt(node, modelColumnIndex);
-                Component renderedComponent 
-                        = columnRenderers[i].getTreeCellRendererComponent(Tree.this, treePath, modelValue, modelColumnIndex, row, leaf);
+                Component renderedComponent = columnRenderers[i].getTreeCellRendererComponent(
+                        Tree.this, treePath, modelValue, modelColumnIndex, row, leaf);
                 if (renderedComponent == null) {
                     renderedComponent = new Label();
                 }
