@@ -29,9 +29,11 @@
 
 package nextapp.echo.extras.app.tree;
 
+import java.io.Serializable;
+
 import nextapp.echo.extras.app.event.TreeModelListener;
 
-public interface TreeModel {
+public interface TreeModel extends Serializable {
 
     public void addTreeModelListener(TreeModelListener l);
     

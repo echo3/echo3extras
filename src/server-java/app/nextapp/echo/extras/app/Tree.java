@@ -31,6 +31,7 @@ package nextapp.echo.extras.app;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.EventListener;
 import java.util.HashMap;
@@ -78,7 +79,8 @@ import nextapp.echo.extras.app.tree.TreeSelectionModel;
  */
 public class Tree extends Component {
 
-    private class Renderer {
+    private class Renderer 
+    implements Serializable {
 
         private int columnCount;
         private int row;
@@ -410,13 +412,16 @@ public class Tree extends Component {
         }
     };
     
-    private PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
+    private class TreeSelectionModelListener implements PropertyChangeListener, Serializable {
+        
         public void propertyChange(PropertyChangeEvent evt) {
             if (TreeSelectionModel.SELECTION_MODE_PROPERTY.equals(evt.getPropertyName())) {
                 firePropertyChange(SELECTION_MODE_CHANGED_PROPERTY, evt.getOldValue(), evt.getNewValue());
             }
         }
     };
+    
+    private PropertyChangeListener propertyChangeListener = new TreeSelectionModelListener();
 
     private TreeModel model;
     private TreeColumnModel columnModel;

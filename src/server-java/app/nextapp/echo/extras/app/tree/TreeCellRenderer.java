@@ -29,10 +29,12 @@
 
 package nextapp.echo.extras.app.tree;
 
+import java.io.Serializable;
+
 import nextapp.echo.app.Component;
 import nextapp.echo.extras.app.Tree;
 
-public interface TreeCellRenderer {
+public interface TreeCellRenderer extends Serializable {
     
     public Component getTreeCellRendererComponent(Tree tree, TreePath treePath, Object value, int column, int row, boolean leaf);
 }

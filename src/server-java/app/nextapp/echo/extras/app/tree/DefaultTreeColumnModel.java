@@ -45,7 +45,19 @@ import nextapp.echo.extras.app.event.TreeColumnModelListener;
  * The default <code>TreeColumnModel</code> implementation.
  */
 public class DefaultTreeColumnModel
-implements Serializable, TreeColumnModel {
+implements TreeColumnModel {
+    
+    private class ColumnChangeForwarder 
+    implements PropertyChangeListener, Serializable {
+        
+        public void propertyChange(PropertyChangeEvent evt) {
+            int index = columns.indexOf(evt.getSource());
+            TreeColumnModelEvent event = new TreeColumnModelEvent(DefaultTreeColumnModel.this, index, index);
+            fireColumnResized(event);
+        }
+    };
+    
+    private ColumnChangeForwarder columnChangeForwarder = new ColumnChangeForwarder();
     
     /**
      * A collection of all columns in the column model in order.
@@ -56,14 +68,6 @@ implements Serializable, TreeColumnModel {
      * A listener storage facility.
      */
     protected EventListenerList listenerList = new EventListenerList();
-    
-    private PropertyChangeListener columnChangeForwarder = new PropertyChangeListener() {
-        public void propertyChange(PropertyChangeEvent evt) {
-            int index = columns.indexOf(evt.getSource());
-            TreeColumnModelEvent event = new TreeColumnModelEvent(DefaultTreeColumnModel.this, index, index);
-            fireColumnResized(event);
-        }
-    };
     
     /**
      * Creates a new DefaultTreeColumnModel.

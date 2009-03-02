@@ -30,10 +30,13 @@
 package nextapp.echo.extras.app.tree;
 
 import java.beans.PropertyChangeListener;
+import java.io.Serializable;
 
 import nextapp.echo.app.event.ChangeListener;
 
-public interface TreeSelectionModel {
+public interface TreeSelectionModel 
+extends Serializable {
+    
     public static final String SELECTION_MODE_PROPERTY = "selectionMode";
     
     public static final int SINGLE_SELECTION = 0;

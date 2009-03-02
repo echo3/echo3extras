@@ -29,12 +29,15 @@
 
 package nextapp.echo.extras.app.tree;
 
+import java.io.Serializable;
+
 /**
  * Represents a path to a node. A TreePath is an array of Objects that are
  * vended from a TreeModel. The elements of the array are ordered such
  * that the root is always the first element (index 0) of the array.
  */
-public class TreePath {
+public class TreePath 
+implements Serializable {
     
     /**
      * Path representing the parent, null if lastPathComponent represents the
