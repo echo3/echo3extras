@@ -29,6 +29,9 @@
 
 package nextapp.echo.extras.testapp;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.Locale;
 
 import nextapp.echo.app.Component;
@@ -86,6 +89,8 @@ public class TestPane extends ContentPane {
                             modalWindow);
                 } else if (e.getActionCommand().equals("OpenConsole")) {
                     InteractiveApp.getApp().consoleWrite(null);
+                } else if (e.getActionCommand().equals("Serialize")) {
+                    doSerialTest();
                 } else if (e.getActionCommand().startsWith("Locale_")) {
                     String language = e.getActionCommand().substring(
                             "Locale_".length());
@@ -189,6 +194,8 @@ public class TestPane extends ContentPane {
         DefaultMenuModel optionsMenu = new DefaultMenuModel(null, "Options");
         optionsMenu.addItem(new DefaultOptionModel("OpenConsole", "Open Console",
                 null));
+        optionsMenu.addItem(new DefaultOptionModel("Serialize", "Test Serialization",
+                null));
         optionsMenu.addItem(new DefaultOptionModel("OpenModalDialog",
                 "Open Model Dialog", null));
         optionsMenu.addItem(new SeparatorModel());
@@ -284,5 +291,22 @@ public class TestPane extends ContentPane {
         menu.setStyleName("Default");
         menu.addActionListener(commandActionListener);
         menuVerticalPane.add(menu);
+    }
+    
+    private void doSerialTest() {
+        ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+        ObjectOutputStream objectOut;
+        
+        try {
+            objectOut = new ObjectOutputStream(byteOut);
+            objectOut.writeObject(this.getApplicationInstance());
+            objectOut.flush();
+            objectOut.close();
+            byte[] data = byteOut.toByteArray();
+            InteractiveApp.getApp().consoleWrite("Serialized.  Length: " + data.length);
+        } catch (IOException ex) {
+            InteractiveApp.getApp().consoleWrite(ex.toString());
+        }
+        
     }
 }
