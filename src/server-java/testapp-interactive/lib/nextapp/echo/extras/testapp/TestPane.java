@@ -307,6 +307,5 @@ public class TestPane extends ContentPane {
         } catch (IOException ex) {
             InteractiveApp.getApp().consoleWrite(ex.toString());
         }
-        
     }
 }
