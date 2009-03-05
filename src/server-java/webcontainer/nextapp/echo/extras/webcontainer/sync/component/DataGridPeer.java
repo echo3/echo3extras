@@ -42,6 +42,7 @@ import nextapp.echo.app.serial.PropertyPeerFactory;
 import nextapp.echo.app.serial.SerialException;
 import nextapp.echo.app.serial.SerialPropertyPeer;
 import nextapp.echo.app.util.Context;
+import nextapp.echo.app.util.DomUtil;
 import nextapp.echo.extras.app.DataGrid;
 import nextapp.echo.extras.app.datagrid.DataGridModel;
 import nextapp.echo.extras.app.datagrid.PrefetchDataGridModel;
@@ -57,7 +58,6 @@ import nextapp.echo.webcontainer.ServiceRegistry;
 import nextapp.echo.webcontainer.SynchronizationException;
 import nextapp.echo.webcontainer.WebContainerServlet;
 import nextapp.echo.webcontainer.service.JavaScriptService;
-import nextapp.echo2migration.DomUtil;
 
 /**
  * Synchronization peer for <code>DataGrid</code>s.
