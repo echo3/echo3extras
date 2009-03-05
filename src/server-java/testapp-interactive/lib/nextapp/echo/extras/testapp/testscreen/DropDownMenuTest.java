@@ -34,6 +34,7 @@ import nextapp.echo.app.Extent;
 import nextapp.echo.app.FillImage;
 import nextapp.echo.app.ImageReference;
 import nextapp.echo.app.Label;
+import nextapp.echo.app.Row;
 import nextapp.echo.app.SplitPane;
 import nextapp.echo.app.WindowPane;
 import nextapp.echo.app.event.ActionEvent;
@@ -70,7 +71,7 @@ public class DropDownMenuTest extends AbstractTest {
     private static final Extent[] EXTENT_VALUES = new Extent[]{null, new Extent(16), new Extent(32), new Extent(64), 
         new Extent(128), new Extent(256), new Extent(512), new Extent(100, Extent.PERCENT)};
     private static final Extent[] EXPAND_ICON_WIDTH_VALUES = new Extent[]{null, new Extent(11), new Extent(16), new Extent(32)};
-
+    
     public DropDownMenuTest() {
         super("DropDownMenu", Styles.ICON_16_DROP_DOWN_MENU);
         
@@ -114,7 +115,7 @@ public class DropDownMenuTest extends AbstractTest {
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "selectionBackground");
         addFillImagePropertyTests(TestControlPane.CATEGORY_PROPERTIES, "selectionBackgroundImage", TEST_FILL_IMAGES);
         
-        testControlsPane.addButton(TestControlPane.CATEGORY_INTEGRATION, "Add Test WindowPane", new ActionListener(){
+        testControlsPane.addButton(TestControlPane.CATEGORY_INTEGRATION, "Add Test Window: SplitPane", new ActionListener(){
         
             public void actionPerformed(ActionEvent e) {
                 ContentPane rootContent = getApplicationInstance().getDefaultWindow().getContent();
@@ -134,6 +135,29 @@ public class DropDownMenuTest extends AbstractTest {
                 });
                 splitPane.add(menu);
                 splitPane.add(new Label(StyleUtil.QUASI_LATIN_TEXT_1));
+                rootContent.add(windowPane);
+            }
+        });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_INTEGRATION, "Add Test window: Row", new ActionListener(){
+        
+            public void actionPerformed(ActionEvent e) {
+                ContentPane rootContent = getApplicationInstance().getDefaultWindow().getContent();
+                WindowPane windowPane = new WindowPane();
+                windowPane.setTitle("Menu Test Window");
+                windowPane.setStyleName("Default");
+                Row row  = new Row();
+                windowPane.add(row);
+                DropDownMenu menu = new DropDownMenu(createMenuModel());
+                menu.setStateModel(createMenuStateModel());
+                menu.addActionListener(new ActionListener() {
+                
+                    public void actionPerformed(ActionEvent e) {
+                        InteractiveApp.getApp().consoleWrite("Menu action: menu=" + e.getSource() 
+                                + ", command=" + e.getActionCommand());
+                    }
+                });
+                row.add(menu);
                 rootContent.add(windowPane);
             }
         });
