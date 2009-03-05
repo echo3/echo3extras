@@ -120,7 +120,7 @@ public class DropDownMenuTest extends AbstractTest {
             public void actionPerformed(ActionEvent e) {
                 ContentPane rootContent = getApplicationInstance().getDefaultWindow().getContent();
                 WindowPane windowPane = new WindowPane();
-                windowPane.setTitle("Menu Test Window");
+                windowPane.setTitle("SplitPane Test Window");
                 windowPane.setStyleName("Default");
                 SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM, DEFAULT_MENU_HEIGHT);
                 windowPane.add(splitPane);
@@ -144,7 +144,7 @@ public class DropDownMenuTest extends AbstractTest {
             public void actionPerformed(ActionEvent e) {
                 ContentPane rootContent = getApplicationInstance().getDefaultWindow().getContent();
                 WindowPane windowPane = new WindowPane();
-                windowPane.setTitle("Menu Test Window");
+                windowPane.setTitle("Row Test Window");
                 windowPane.setStyleName("Default");
                 Row row  = new Row();
                 windowPane.add(row);
