@@ -147,6 +147,7 @@ public class DropDownMenuTest extends AbstractTest {
                 windowPane.setTitle("Row Test Window");
                 windowPane.setStyleName("Default");
                 Row row  = new Row();
+                row.setCellSpacing(new Extent(10));
                 windowPane.add(row);
                 DropDownMenu menu = new DropDownMenu(createMenuModel());
                 menu.setStateModel(createMenuStateModel());
@@ -158,6 +159,31 @@ public class DropDownMenuTest extends AbstractTest {
                     }
                 });
                 row.add(menu);
+                
+                menu = new DropDownMenu(createMenuModel());
+                menu.setSelectionModel(new DefaultMenuSelectionModel());
+                menu.addActionListener(new ActionListener() {
+                
+                    public void actionPerformed(ActionEvent e) {
+                        InteractiveApp.getApp().consoleWrite("Menu action: menu=" + e.getSource() 
+                                + ", command=" + e.getActionCommand());
+                    }
+                });
+                row.add(menu);
+                
+                menu = new DropDownMenu(createMenuModel());
+                menu.setSelectionText("Test");
+                menu.setSelectionModel(new DefaultMenuSelectionModel());
+                menu.setStateModel(createMenuStateModel());
+                menu.addActionListener(new ActionListener() {
+                
+                    public void actionPerformed(ActionEvent e) {
+                        InteractiveApp.getApp().consoleWrite("Menu action: menu=" + e.getSource() 
+                                + ", command=" + e.getActionCommand());
+                    }
+                });
+                row.add(menu);
+                
                 rootContent.add(windowPane);
             }
         });
