@@ -121,6 +121,7 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
             this.active = true;
             this.addMask();
             
+            this.client.application.setFocusedComponent(this.component);
             Core.Web.DOM.focusElement(this.element);
             Core.Web.Event.add(this.element, 
                     Core.Web.Env.QUIRK_IE_KEY_DOWN_EVENT_REPEAT ? "keydown" : "keypress",
@@ -163,6 +164,10 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
                 return false;
             }
             return true;
+        },
+        
+        renderFocus: function() {
+            Core.Web.DOM.focusElement(this.element);
         }
     },
 

@@ -59,6 +59,9 @@ Extras.ContextMenu = Core.extend(Echo.Component, {
     /** @see Echo.Component#modalSupport */
     modalSupport: true,
     
+    /** @see Echo.Component#focusable */
+    focusable: true,
+    
     /**
      * Processes the user selection an item.
      * 
@@ -134,6 +137,9 @@ Extras.DropDownMenu = Core.extend(Echo.Component, {
     /** @see Echo.Component#modalSupport */
     modalSupport: true,
     
+    /** @see Echo.Component#focusable */
+    focusable: true,
+
     /**
      * Processes the user selection an item.
      * 
@@ -196,6 +202,9 @@ Extras.MenuBarPane = Core.extend(Echo.Component, {
     /** @see Echo.Component#modalSupport */
     modalSupport: true,
     
+    /** @see Echo.Component#focusable */
+    focusable: true,
+
     /**
      * Processes the user selection an item.
      * 
