@@ -1160,33 +1160,30 @@ Extras.Sync.DropDownMenu = Core.extend(Extras.Sync.Menu, {
                 dropDownDiv, "backgroundColor");
         Echo.Sync.FillImage.render(this.component.render("backgroundImage"), dropDownDiv); 
         Echo.Sync.Border.render(this.component.render("border", Extras.Sync.Menu.DEFAULTS.border), dropDownDiv); 
-        
-        var relativeDiv = document.createElement("div");
-        relativeDiv.style.cssText = "position:relative;overflow:hidden;";
-        dropDownDiv.appendChild(relativeDiv);
-        
         Echo.Sync.Extent.render(this.component.render("width"), dropDownDiv, "width", true, true);
-        Echo.Sync.Extent.render(this.component.render("height"), relativeDiv, "height", false, true);
+        Echo.Sync.Extent.render(this.component.render("height"), dropDownDiv, "height", false, true);
 
+        var relativeDiv = document.createElement("div");
+        relativeDiv.style.cssText = "float:right;position:relative;";
+        dropDownDiv.appendChild(relativeDiv);
+
+        var expandDiv = document.createElement("div");
+        expandDiv.style.cssText = "position:absolute;top:2px;right:2px;";
         var expandIcon = this.component.render("expandIcon", this.client.getResourceUrl("Extras", "image/menu/ArrowDown.gif"));
-
-        this._contentDiv = document.createElement("div");
-        this._contentDiv.style.cssText = "position:absolute;white-space:nowrap;";
-        Echo.Sync.Insets.render(this.component.render("insets", "2px 5px"), this._contentDiv, "padding");
-        
-        relativeDiv.appendChild(this._contentDiv);
-        var expandElement = document.createElement("span");
-        expandElement.style.position = "absolute";
-        expandElement.style.top = "2px";
-        expandElement.style.right = "2px";
-
         var img = document.createElement("img");
-        img.style.verticalAlign = "middle";
         Echo.Sync.ImageReference.renderImg(expandIcon, img);
-        expandElement.appendChild(img);
+        expandDiv.appendChild(img);
+        relativeDiv.appendChild(expandDiv);
+  
+        this._contentDiv = document.createElement("div");
+        this._contentDiv.style.cssText = "float:left;white-space:nowrap;";
+        Echo.Sync.Insets.render(this.component.render("insets", "2px 5px"), this._contentDiv, "padding");
+        dropDownDiv.appendChild(this._contentDiv);
+        
+        var clearDiv = document.createElement("div");
+        clearDiv.style.cssText = "clear:both;";
+        dropDownDiv.appendChild(clearDiv);
 
-        relativeDiv.appendChild(expandElement);
-    
         Core.Web.Event.add(dropDownDiv, "click", Core.method(this, this._processClick), false);
         Core.Web.Event.Selection.disable(dropDownDiv);
 
