@@ -312,11 +312,10 @@
   <p n="cellSpacing" t="Extent">40px</p>
  </s>
  <s b="Default" n="WelcomePane" t="nextapp.echo.app.WindowPane">
-  <p n="width" t="Extent">550px</p>
-  <p n="height" t="Extent">300px</p>
+  <p n="width" t="Extent">40em</p>
   <p n="resizable" t="b">true</p>
   <p n="positionX" t="Extent">160px</p>
-  <p n="positionY" t="Extent">300px</p>
+  <p n="positionY" t="Extent">-50px</p>
  </s>
  <s n="Shadow" t="nextapp.echo.extras.app.BorderPane">
   <p n="ieAlphaRenderBorder" t="b">true</p>
