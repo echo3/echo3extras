@@ -68,8 +68,8 @@ public class TabPanePeer extends AbstractComponentSynchronizePeer {
         CommonResources.install();
         ResourceRegistry resources = WebContainerServlet.getResourceRegistry();
         resources.add("Extras", "image/tabpane/Close.gif", ContentType.IMAGE_GIF);
-        resources.add("Extras", "image/tabpane/Previous.gif", ContentType.IMAGE_GIF);
-        resources.add("Extras", "image/tabpane/Next.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/tabpane/Previous.png", ContentType.IMAGE_PNG);
+        resources.add("Extras", "image/tabpane/Next.png", ContentType.IMAGE_PNG);
     }
 
     /**

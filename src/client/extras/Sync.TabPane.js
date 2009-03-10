@@ -679,12 +679,12 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
 
                 if (previous) {
                     img.src = this._icons.scrollLeftIcon ? this._icons.scrollLeftIcon :
-                            this.client.getResourceUrl("Extras", "image/tabpane/Previous.gif");
+                            this.client.getResourceUrl("Extras", "image/tabpane/Previous.png");
                     img.alt = "<";
                     this._previousControlDiv = controlDiv;
                 } else {
                     img.src = this._icons.scrollRightIcon ? this._icons.scrollRightIcon :
-                            this.client.getResourceUrl("Extras", "image/tabpane/Next.gif");
+                            this.client.getResourceUrl("Extras", "image/tabpane/Next.png");
                     img.alt = ">";
                     this._nextControlDiv = controlDiv;
                 }
