@@ -384,7 +384,12 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     renderAdd: function(update, parentElement) {
         this.component.addListener("tabSelect", this._tabSelectListenerRef);
         
-        this._icons = { };
+        this._icons = { 
+            scrollLeftIcon: this.component.render("scrollLeftIcon"),
+            scrollRightIcon: this.component.render("scrollRightIcon"),
+            rolloverScrollLeftIcon: this.component.render("rolloverScrollLeftIcon"),
+            rolloverScrollRightIcon: this.component.render("rolloverScrollRightIcon")
+        };
         
         // Configure Properties
         this._activeTabId = this._getActiveTabId();
@@ -673,12 +678,12 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
                 Core.Web.Event.Selection.disable(controlDiv);
 
                 if (previous) {
-                    img.src = this._icons.previous ? this._icons.previous :
+                    img.src = this._icons.scrollLeftIcon ? this._icons.scrollLeftIcon :
                             this.client.getResourceUrl("Extras", "image/tabpane/Previous.gif");
                     img.alt = "<";
                     this._previousControlDiv = controlDiv;
                 } else {
-                    img.src = this._icons.next ? this._icons.next :
+                    img.src = this._icons.scrollRightIcon ? this._icons.scrollRightIcon :
                             this.client.getResourceUrl("Extras", "image/tabpane/Next.gif");
                     img.alt = ">";
                     this._nextControlDiv = controlDiv;

@@ -65,6 +65,10 @@ implements Pane, PaneContainer {
     public static final String PROPERTY_BORDER_TYPE = "borderType";
     public static final String PROPERTY_DEFAULT_CONTENT_INSETS = "defaultContentInsets";
     public static final String PROPERTY_INSETS = "insets";
+    public static final String PROPERTY_ROLLOVER_SCROLL_LEFT_ICON = "rolloverScrollLeftIcon";
+    public static final String PROPERTY_ROLLOVER_SCROLL_RIGHT_ICON = "rolloverScrollRightIcon";
+    public static final String PROPERTY_SCROLL_LEFT_ICON = "scrollLeftIcon";
+    public static final String PROPERTY_SCROLL_RIGHT_ICON = "scrollRightIcon";
     public static final String PROPERTY_TAB_ACTIVE_BACKGROUND = "tabActiveBackground";
     public static final String PROPERTY_TAB_ACTIVE_BACKGROUND_IMAGE = "tabActiveBackgroundImage";
     public static final String PROPERTY_TAB_ACTIVE_BORDER = "tabActiveBorder";
@@ -263,6 +267,42 @@ implements Pane, PaneContainer {
      */
     public Insets getInsets() {
         return (Insets) get(PROPERTY_INSETS);
+    }
+    
+    /**
+     * Returns the left-hand rollover icon displayed when too many tabs are present to fit on-screen.
+     *   
+     * @return the left rollover scroll icon
+     */
+    public ImageReference getRolloverScrollLeftIcon() {
+        return (ImageReference) get(PROPERTY_ROLLOVER_SCROLL_LEFT_ICON);
+    }
+    
+    /**
+     * Returns the right-hand rollover icon displayed when too many tabs are present to fit on-screen.
+     *   
+     * @return the right rollover scroll icon
+     */
+    public ImageReference getRolloverScrollRightIcon() {
+        return (ImageReference) get(PROPERTY_ROLLOVER_SCROLL_RIGHT_ICON);
+    }
+    
+    /**
+     * Returns the left-hand icon displayed when too many tabs are present to fit on-screen.
+     *   
+     * @return the left scroll icon
+     */
+    public ImageReference getScrollLeftIcon() {
+        return (ImageReference) get(PROPERTY_SCROLL_LEFT_ICON);
+    }
+    
+    /**
+     * Returns the right-hand icon displayed when too many tabs are present to fit on-screen.
+     *   
+     * @return the right scroll icon
+     */
+    public ImageReference getScrollRightIcon() {
+        return (ImageReference) get(PROPERTY_SCROLL_RIGHT_ICON);
     }
     
     /**
@@ -678,6 +718,42 @@ implements Pane, PaneContainer {
      */
     public void setInsets(Insets newValue) {
         set(PROPERTY_INSETS, newValue);
+    }
+
+    /**
+     * Sets the left-hand rollover icon displayed when too many tabs are present to fit on-screen.
+     *   
+     * @param newValue the new left rollover scroll icon
+     */
+    public void setRolloverScrollLeftIcon(ImageReference newValue) {
+        set(PROPERTY_ROLLOVER_SCROLL_LEFT_ICON, newValue);
+    }
+    
+    /**
+     * Sets the right-hand rollover icon displayed when too many tabs are present to fit on-screen.
+     *   
+     * @param newValue the new right rollover scroll icon
+     */
+    public void setRolloverScrollRightIcon(ImageReference newValue) {
+        set(PROPERTY_ROLLOVER_SCROLL_RIGHT_ICON, newValue);
+    }
+    
+    /**
+     * Sets the left-hand icon displayed when too many tabs are present to fit on-screen.
+     *   
+     * @param newValue the new left scroll icon
+     */
+    public void setScrollLeftIcon(ImageReference newValue) {
+        set(PROPERTY_SCROLL_LEFT_ICON, newValue);
+    }
+    
+    /**
+     * Sets the right-hand icon displayed when too many tabs are present to fit on-screen.
+     *   
+     * @param newValue the new right scroll icon
+     */
+    public void setScrollRightIcon(ImageReference newValue) {
+        set(PROPERTY_SCROLL_RIGHT_ICON, newValue);
     }
     
     /**
