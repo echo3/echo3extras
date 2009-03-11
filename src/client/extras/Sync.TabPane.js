@@ -333,7 +333,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     },
     
     /**
-     * Handler for mouse rollover event on previous/next scroll buttons.
+     * Handler for mouse rollover enter/exit events on previous/next scroll buttons.
      * 
      * @param e the mouse rollover event
      */
