@@ -92,13 +92,13 @@ public class CalendarSelectTest extends AbstractTest {
         });
         testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Add CalendarSelect WindowPane", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                WindowPane windowPane = new WindowPane("Calendar Select Test", new Extent(240), new Extent(225));
+                WindowPane windowPane = new WindowPane("Calendar Select Test", new Extent(240), null);
                 windowPane.setPositionX(new Extent((int) (Math.random() * 500)));
                 windowPane.setPositionY(new Extent((int) (Math.random() * 300) + 140));
                 windowPane.setStyleName("Default");
                 windowPane.setInsets(new Insets(10, 5));
                 CalendarSelect calendarSelect = new CalendarSelect();
-                calendarSelect.setBackgroundImage(Styles.FILL_IMAGE_LIGHT_BLUE_LINE);
+                calendarSelect.setStyleName("Default");
                 windowPane.add(calendarSelect);
                 InteractiveApp.getApp().getDefaultWindow().getContent().add(windowPane);
             }
