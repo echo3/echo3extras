@@ -333,6 +333,40 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     },
     
     /**
+     * Handler for mouse rollover event on previous/next scroll buttons.
+     * 
+     * @param e the mouse rollover event
+     */
+    _processScrollRollover: function(e) {
+        if (!this.client || !this.client.verifyInput(this.component)) {
+            return;
+        }
+        
+        var previous = e.registeredTarget === this._previousControlDiv;
+        var enter = e.type == "mouseover";
+        
+        if (enter) {
+            if (previous) {
+                this._previousControlDiv.firstChild.src = this._icons.rolloverScrollLeftIcon ? 
+                        this._icons.rolloverScrollLeftIcon :
+                        this.client.getResourceUrl("Extras", "image/tabpane/PreviousRollover.png");
+            } else {
+                this._nextControlDiv.firstChild.src = this._icons.rolloverScrollRightIcon ? 
+                        this._icons.rolloverScrollRightIcon :
+                        this.client.getResourceUrl("Extras", "image/tabpane/NextRollover.png");
+            }
+        } else {
+            if (previous) {
+                this._previousControlDiv.firstChild.src = this._icons.scrollLeftIcon ? this._icons.scrollLeftIcon :
+                        this.client.getResourceUrl("Extras", "image/tabpane/Previous.png");
+            } else {
+                this._nextControlDiv.firstChild.src = this._icons.scrollRightIcon ? this._icons.scrollRightIcon :
+                        this.client.getResourceUrl("Extras", "image/tabpane/Next.png");
+            }
+        }
+    },
+    
+    /**
      * Handler for mouse down event on previous/next scroll buttons.
      * 
      * @param e the mouse down event
@@ -675,6 +709,8 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
 
                 Core.Web.Event.add(controlDiv, "mousedown", Core.method(this, this._processScrollStart));
                 Core.Web.Event.add(controlDiv, "mouseup", Core.method(this, this._processScrollStop));
+                Core.Web.Event.add(controlDiv, "mouseover", Core.method(this, this._processScrollRollover)); 
+                Core.Web.Event.add(controlDiv, "mouseout", Core.method(this, this._processScrollRollover)); 
                 Core.Web.Event.Selection.disable(controlDiv);
 
                 if (previous) {

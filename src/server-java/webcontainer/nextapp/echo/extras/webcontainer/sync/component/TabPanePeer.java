@@ -70,6 +70,8 @@ public class TabPanePeer extends AbstractComponentSynchronizePeer {
         resources.add("Extras", "image/tabpane/Close.gif", ContentType.IMAGE_GIF);
         resources.add("Extras", "image/tabpane/Previous.png", ContentType.IMAGE_PNG);
         resources.add("Extras", "image/tabpane/Next.png", ContentType.IMAGE_PNG);
+        resources.add("Extras", "image/tabpane/PreviousRollover.png", ContentType.IMAGE_PNG);
+        resources.add("Extras", "image/tabpane/NextRollover.png", ContentType.IMAGE_PNG);
     }
 
     /**
