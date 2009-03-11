@@ -344,25 +344,26 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         
         var previous = e.registeredTarget === this._previousControlDiv;
         var enter = e.type == "mouseover";
+        var icon;
         
         if (enter) {
-            if (previous) {
-                this._previousControlDiv.firstChild.src = this._icons.rolloverScrollLeftIcon ? 
-                        this._icons.rolloverScrollLeftIcon :
-                        this.client.getResourceUrl("Extras", "image/tabpane/PreviousRollover.png");
-            } else {
-                this._nextControlDiv.firstChild.src = this._icons.rolloverScrollRightIcon ? 
-                        this._icons.rolloverScrollRightIcon :
-                        this.client.getResourceUrl("Extras", "image/tabpane/NextRollover.png");
+            // Set rollover icon.
+            icon = previous ? this._icons.rolloverScrollLeftIcon : this._icons.rolloverScrollRightIcon;
+            if (!icon && !(previous ? this._icons.scrollLeftIcon : this._icons.scrollRightIcon)) {
+                // Configured rollover icon not found, Use default rollover icon, but only if default icon is in use.
+                icon = this.client.getResourceUrl("Extras", previous ? 
+                        "image/tabpane/PreviousRollover.png" : "image/tabpane/NextRollover.png");
             }
         } else {
-            if (previous) {
-                this._previousControlDiv.firstChild.src = this._icons.scrollLeftIcon ? this._icons.scrollLeftIcon :
-                        this.client.getResourceUrl("Extras", "image/tabpane/Previous.png");
-            } else {
-                this._nextControlDiv.firstChild.src = this._icons.scrollRightIcon ? this._icons.scrollRightIcon :
-                        this.client.getResourceUrl("Extras", "image/tabpane/Next.png");
+            // Set default icon.
+            icon = previous ? this._icons.scrollLeftIcon : this._icons.scrollRightIcon;
+            if (!icon) {
+                icon = this.client.getResourceUrl("Extras", previous ? "image/tabpane/Previous.png" : "image/tabpane/Next.png");
             }
+        }
+        
+        if (icon) {
+            e.registeredTarget.firstChild.src = Echo.Sync.ImageReference.getUrl(icon);
         }
     },
     
