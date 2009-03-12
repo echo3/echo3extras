@@ -106,5 +106,47 @@ public class DataGridTest extends AbstractTest {
                 dataGrid.setModel(new MultiplicationModel(1000000000));
             }
         });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Row = 0", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dataGrid.setRowIndex(new Integer(0));
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Row = 1", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dataGrid.setRowIndex(new Integer(1));
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Row = 2", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dataGrid.setRowIndex(new Integer(2));
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Row = 2.5", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dataGrid.setRowIndex(new Double(2.5));
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Row = 50", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dataGrid.setRowIndex(new Integer(50));
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Row = 100", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dataGrid.setRowIndex(new Integer(100));
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Row = 1000", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dataGrid.setRowIndex(new Integer(1000));
+            }
+        });
     }
 }

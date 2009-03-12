@@ -274,6 +274,10 @@ public class DataGridPeer extends AbstractComponentSynchronizePeer {
     public DataGridPeer() {
         super();
         addOutputProperty(DataGrid.MODEL_CHANGED_PROPERTY);
+        addOutputProperty(DataGrid.COLUMN_INDEX_CHANGED_PROPERTY);
+        addOutputProperty(DataGrid.ROW_INDEX_CHANGED_PROPERTY);
+        addOutputProperty(DataGrid.COLUMN_PERCENT_CHANGED_PROPERTY);
+        addOutputProperty(DataGrid.ROW_PERCENT_CHANGED_PROPERTY);
     }
 
     /**
@@ -295,9 +299,17 @@ public class DataGridPeer extends AbstractComponentSynchronizePeer {
      *      nextapp.echo.app.util.Context, nextapp.echo.app.Component, java.lang.String, int)
      */
     public Object getOutputProperty(Context context, Component component, String propertyName, int propertyIndex) {
+        DataGrid dataGrid = (DataGrid) component;
         if (propertyName.equals(DataGrid.MODEL_CHANGED_PROPERTY)) {
-            DataGrid dataGrid = (DataGrid) component;
             return new ModelData(dataGrid.getModel(), 0, 0, 19, 19);
+        } else if (propertyName.equals(DataGrid.COLUMN_INDEX_CHANGED_PROPERTY)) {
+            return dataGrid.getColumnIndex();
+        } else if (propertyName.equals(DataGrid.ROW_INDEX_CHANGED_PROPERTY)) {
+            return dataGrid.getRowIndex();
+        } else if (propertyName.equals(DataGrid.COLUMN_PERCENT_CHANGED_PROPERTY)) {
+            return dataGrid.getColumnPercent();
+        } else if (propertyName.equals(DataGrid.ROW_PERCENT_CHANGED_PROPERTY)) {
+            return dataGrid.getRowPercent();
         } else {
             return super.getOutputProperty(context, component, propertyName, propertyIndex);
         }
