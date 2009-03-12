@@ -69,7 +69,11 @@ public class DataGrid extends Component {
         }
     }
 
+    public static final String COLUMN_INDEX_CHANGED_PROPERTY = "columnIndex";
+    public static final String COLUMN_PERCENT_CHANGED_PROPERTY = "columnPercent";
     public static final String MODEL_CHANGED_PROPERTY = "model";
+    public static final String ROW_INDEX_CHANGED_PROPERTY = "rowIndex";
+    public static final String ROW_PERCENT_CHANGED_PROPERTY = "rowPercent";
 
     /**
      * Listener to monitor changes to model.
@@ -86,7 +90,31 @@ public class DataGrid extends Component {
             firePropertyChange(MODEL_CHANGED_PROPERTY, null, null);
         }
     };
+    
+    /**
+     * The first displayed row index.
+     * Either this value or <code>columnPercent</code> will be null.
+     */
+    private Number columnIndex;
+    
+    /**
+     * The percent index of columns which will be displayed (0 = leftmost columns, 100 = rightmost columns).
+     * Either this value or <code>columnIndex</code> will be null.
+     */
+    private Number columnPercent;
+    
+    /**
+     * The first displayed row index.
+     * Either this value or <code>rowPercent</code> will be null.
+     */
+    private Number rowIndex;
 
+    /**
+     * The percent index of rows which will be displayed (0 = topmost rows, 100 = bottommost rows).
+     * Either this value or <code>rowIndex</code> will be null.
+     */
+    private Number rowPercent;
+    
     /**
      * The model.
      */
@@ -110,6 +138,26 @@ public class DataGrid extends Component {
     }
     
     /**
+     * Returns the first displayed column index.
+     * Either this method or <code>getColumnPercent()</code> will return null.
+     * 
+     * @return the first displayed column index
+     */
+    public Number getColumnIndex() {
+        return columnIndex;
+    }
+
+    /**
+     * Returns the percent index of columns which will be displayed (0 = leftmost columns, 100 = rightmost columns).
+     * Either this method or <code>getColumnIndex()</code> will return null.
+     * 
+     * @return the percent index of columns which will be displayed
+     */
+    public Number getColumnPercent() {
+        return columnPercent;
+    }
+
+    /**
      * Retrieves the model.
      * 
      * @return the model
@@ -118,6 +166,56 @@ public class DataGrid extends Component {
         return model;
     }
     
+    /**
+     * Returns the first displayed row index.
+     * Either this method or <code>getRowPercent()</code> will return null.
+     * 
+     * @return the first displayed row index
+     */
+    public Number getRowIndex() {
+        return rowIndex;
+    }
+
+    /**
+     * Returns the percent index of rows which will be displayed (0 = topmost rows, 100 = bottommost rows).
+     * Either this method or <code>getRowIndex()</code> will return null.
+     * 
+     * @return the percent index of rows which will be displayed
+     */
+    public Number getRowPercent() {
+        return rowPercent;
+    }
+
+    /**
+     * Sets the first displayed column index.
+     * This will override any setting configured using <code>setColumnPercent()</code> 
+     * 
+     * @param newValue the new first displayed column index
+     */
+    public void setColumnIndex(Number newValue) {
+        if (this.columnPercent != null) {
+            setColumnPercent(null);
+        }
+        Number oldValue = (Number) columnIndex;
+        columnIndex = newValue;
+        firePropertyChange(COLUMN_INDEX_CHANGED_PROPERTY, oldValue, newValue);
+    }
+    
+    /**
+     * Sets the percent index of columns which will be displayed (0 = leftmost columns, 100 = rightmost columns).
+     * This will override any setting configured using <code>setColumnIndex()</code> 
+     * 
+     * @param newValue the new percent column index
+     */
+    public void setColumnPercent(Number newValue) {
+        if (this.columnIndex != null) {
+            setColumnIndex(null);
+        }
+        Number oldValue = (Number) columnPercent;
+        columnPercent = newValue;
+        firePropertyChange(COLUMN_PERCENT_CHANGED_PROPERTY, oldValue, newValue);
+    }
+
     /**
      * Sets the model.
      * 
@@ -134,5 +232,35 @@ public class DataGrid extends Component {
         model = newValue;
         newValue.addDataGridModelListener(modelListener);
         firePropertyChange(MODEL_CHANGED_PROPERTY, oldValue, newValue);
+    }
+    
+    /**
+     * Sets the first displayed row index.
+     * This will override any setting configured using <code>setRowPercent()</code> 
+     * 
+     * @param newValue the new first displayed row index
+     */
+    public void setRowIndex(Number newValue) {
+        if (this.rowPercent != null) {
+            setRowPercent(null);
+        }
+        Number oldValue = (Number) rowIndex;
+        rowIndex = newValue;
+        firePropertyChange(ROW_INDEX_CHANGED_PROPERTY, oldValue, newValue);
+    }
+    
+    /**
+     * Sets the percent index of rows which will be displayed (0 = topmost rows, 100 = bottommost rows).
+     * This will override any setting configured using <code>setRowIndex()</code> 
+     * 
+     * @param newValue the new percent row index
+     */
+    public void setRowPercent(Number newValue) {
+        if (this.rowIndex != null) {
+            setRowIndex(null);
+        }
+        Number oldValue = (Number) rowPercent;
+        rowPercent = newValue;
+        firePropertyChange(ROW_PERCENT_CHANGED_PROPERTY, oldValue, newValue);
     }
 }
