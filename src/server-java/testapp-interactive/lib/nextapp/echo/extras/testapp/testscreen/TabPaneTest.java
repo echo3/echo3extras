@@ -36,6 +36,7 @@ import nextapp.echo.app.ImageReference;
 import nextapp.echo.app.Label;
 import nextapp.echo.app.ResourceImageReference;
 import nextapp.echo.app.SplitPane;
+import nextapp.echo.app.TaskQueueHandle;
 import nextapp.echo.app.WindowPane;
 import nextapp.echo.app.event.ActionEvent;
 import nextapp.echo.app.event.ActionListener;
@@ -287,6 +288,16 @@ public class TabPaneTest extends AbstractTest {
             }
         });
 
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add RichTextAreaTest", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                RichTextAreaTest rtaTest = new RichTextAreaTest();
+                TabPaneLayoutData layoutData = new TabPaneLayoutData();
+                layoutData.setTitle("RTA #" + tabNumber++);
+                rtaTest.setLayoutData(layoutData);
+                tabPane.add(rtaTest);
+            }
+        });
+
         testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add ContentPane", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 final ContentPane contentPane = new ContentPane();
@@ -437,6 +448,33 @@ public class TabPaneTest extends AbstractTest {
             testControlsPane.addButton(TestControlPane.CATEGORY_SELECTION, "Select TabIndex " + i, new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     tabPane.setActiveTabIndex(tabIndex);
+                }
+            });
+        }
+        
+        for (int i = 0; i < 10; ++i) {
+            final int tabIndex = i;
+            testControlsPane.addButton(TestControlPane.CATEGORY_SELECTION, "3Sec Delay: Select TabIndex " + i, 
+                    new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    final InteractiveApp app = InteractiveApp.getApp();
+                    final TaskQueueHandle tqh = app.createTaskQueue();
+                    Thread thread = new Thread() {
+                        public void run() {
+                            try {
+                                Thread.sleep(3000);
+                            } catch (InterruptedException ex) {
+                            }
+                            app.enqueueTask(tqh, new Runnable() {
+                            
+                                public void run() {
+                                    tabPane.setActiveTabIndex(tabIndex);
+                                    app.removeTaskQueue(tqh);
+                                }
+                            });
+                        }
+                    };
+                    thread.start();
                 }
             });
         }
