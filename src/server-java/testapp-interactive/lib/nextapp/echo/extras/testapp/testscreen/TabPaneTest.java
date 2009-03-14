@@ -278,6 +278,16 @@ public class TabPaneTest extends AbstractTest {
             }
         });
 
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add MenuBarPaneTest", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                MenuBarPaneTest menuBarPaneTest = new MenuBarPaneTest();
+                TabPaneLayoutData layoutData = new TabPaneLayoutData();
+                layoutData.setTitle("MBPT #" + tabNumber++);
+                menuBarPaneTest.setLayoutData(layoutData);
+                tabPane.add(menuBarPaneTest);
+            }
+        });
+
         testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add TabPaneTest", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 TabPaneTest tabPaneTest = new TabPaneTest();
