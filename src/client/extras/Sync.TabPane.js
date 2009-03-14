@@ -332,6 +332,11 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         return null;
     },
     
+    /** @see Echo.Render.ComponentSync#isChildDisplayed */
+    isChildVisible: function(component) {
+        return component.renderId == this._activeTabId;
+    },
+    
     /**
      * Handler for mouse rollover enter/exit events on previous/next scroll buttons.
      * 
@@ -783,6 +788,13 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
 Extras.Sync.TabPane.Tab = Core.extend({
     
     /**
+     * Active state of the tab (true indicating the tab is the active tab in its TabPane).
+     * Initial (non-rendered) state is indicated by null.
+     * @type Boolean
+     */
+    _activeState: null,
+    
+    /**
      * The child component which will be rendered within the tab.
      * @type Echo.Component
      */
@@ -955,6 +967,12 @@ Extras.Sync.TabPane.Tab = Core.extend({
      * @param {Boolean} state the state of the tab, true for active, false for inactive
      */
     _renderActiveState: function(state) {
+        if (this._activeState === state) {
+            // Do nothing if values are unchanged.   
+            // Note initial value of oldValue is null.
+            return;
+        }
+        
         var headerContentTable = this._headerTd.firstChild;
         var centerTd = this._centerTd;
         var contentDiv = this._contentDiv;
@@ -1026,6 +1044,11 @@ Extras.Sync.TabPane.Tab = Core.extend({
             }
         }
         
+        if (this._activeState !== null && !state) {
+            // Notify child component hierarchy that it is being hidden (unless performing initial render,
+            // i.e., this._activeState === null).
+            Echo.Render.renderComponentHide(this._childComponent);
+        }
         // show/hide content
         if (Core.Web.Env.BROWSER_MOZILLA && !Core.Web.Env.BROWSER_FIREFOX) {
             contentDiv.style.right = state ? "0" : "100%";
@@ -1038,6 +1061,8 @@ Extras.Sync.TabPane.Tab = Core.extend({
             // required because any previous notifications could have taken place when this tab was hidden.
             Echo.Render.renderComponentDisplay(this._childComponent);
         }
+
+        this._activeState = state;
     },
     
     /**
