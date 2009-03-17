@@ -678,31 +678,14 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
              *          display the middle tile in the center of the screen</li>
              *        </ul>
              */
-            setPosition: function(x, xUnits, y, yUnits) {
+            setPosition: function(x, y) {
                 var tileRowIndex, tileColumnIndex, initTileColumnIndex,
                     cursorXPx, cursorYPx, tile;
 
                 this.clear();
                 
-                switch (xUnits) {
-                case Extras.Sync.DataGrid.INDEX:
-                    initTileColumnIndex = Math.floor(x / this.dataGrid.tileSize.columns);
-                    break;
-                case Extras.Sync.DataGrid.PERCENT:
-                    throw new Error("Not yet supported.");
-                default:
-                    throw new Error("Invalid yUnits: " + yUnits);
-                }
-                
-                switch (yUnits) {
-                case Extras.Sync.DataGrid.INDEX:
-                    tileRowIndex = Math.floor(y / this.dataGrid.tileSize.rows);
-                    break;
-                case Extras.Sync.DataGrid.PERCENT:
-                    throw new Error("Not yet supported.");
-                default:
-                    throw new Error("Invalid yUnits: " + yUnits);
-                }
+                initTileColumnIndex = Math.floor(x / this.dataGrid.tileSize.columns);
+                tileRowIndex = Math.floor(y / this.dataGrid.tileSize.rows);
 
                 cursorYPx = 0;
                 while (cursorYPx < this.bounds.height) {
@@ -979,8 +962,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 };
                 var topRowIndex = Math.floor(this._displayRowIndex);
                 var leftColumnIndex = Math.floor(this._displayColumnIndex);
-                this.setPosition(this.component.get("columnIndex") || 0, Extras.Sync.DataGrid.INDEX,
-                        this.component.get("rowIndex") || 0, Extras.Sync.DataGrid.INDEX);
+                this.setPosition(this.component.get("columnIndex") || 0, this.component.get("rowIndex") || 0);
             }
             this._fullRenderRequired = false;
         }
@@ -1031,9 +1013,9 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
     /**
      * Sets the position of the viewport.  Invocation will clear all existing tiles.
      */
-    setPosition: function(x, xUnits, y, yUnits) {
+    setPosition: function(x, y) {
         for (var name in this.regions) {
-            this.regions[name].setPosition(x, xUnits, y, yUnits);
+            this.regions[name].setPosition(x, y);
         }
     },
 
