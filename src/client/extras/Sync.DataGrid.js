@@ -1066,6 +1066,11 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
     contentElement: null,
     _lastScrollSetTime: 0,
     
+    size: 5,
+    
+    scrollX: 0,
+    scrollY: 0,
+    
     onScroll: null,
 
     /**
@@ -1078,11 +1083,12 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
         this.rootElement = document.createElement("div");
         this.rootElement.style.cssText = "position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden;";
         
+        
         this._vScrollContainer = document.createElement("div");
         this._vScrollContainer.style.cssText = "position:absolute;top:0;bottom:0;right:0;overflow:scroll;";
         this._vScrollContainer.style.width = (1 + Core.Web.Measure.SCROLL_WIDTH) + "px";
         this._vScrollContent = document.createElement("div");
-        this._vScrollContent.style.cssText = "width:1px;height:500%;";
+        this._vScrollContent.style.cssText = "width:1px;height:" + (this.size * 100) + "%;";
         this._vScrollContainer.appendChild(this._vScrollContent);
         this.rootElement.appendChild(this._vScrollContainer);
         
@@ -1090,7 +1096,7 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
         this._hScrollContainer.style.cssText = "position:absolute;;bottom:0;left:0;right:0;overflow:scroll;";
         this._hScrollContainer.style.height = (1 + Core.Web.Measure.SCROLL_HEIGHT) + "px";
         this._hScrollContent = document.createElement("div");
-        this._hScrollContent.style.cssText = "height:1px;width:500%;";
+        this._hScrollContent.style.cssText = "height:1px;width:" + (this.size * 100) + "%;";
         this._hScrollContainer.appendChild(this._hScrollContent);
         this.rootElement.appendChild(this._hScrollContainer);
         
@@ -1176,8 +1182,10 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
             return;
         }
 
+        var scrollPosition = this._hScrollContainer.scrollLeft / ((this.size - 1) * this.bounds.width);
+        
         //FIXME Implement
-        Core.Debug.consoleWrite("hscroll:" + this._hScrollContainer.scrollLeft);
+        Core.Debug.consoleWrite("hscroll:" + scrollPosition);
         if (this.onScroll) {
         }
     },
@@ -1191,8 +1199,10 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
         if (!this._isUserScroll()) {
             return;
         }
-
-        Core.Debug.consoleWrite("vscroll:" + this._vScrollContainer.scrollTop);
+        
+        var scrollPosition = this._vScrollContainer.scrollTop / ((this.size - 1) * this.bounds.height);
+        
+        Core.Debug.consoleWrite("vscroll:" + scrollPosition);
         //FIXME Implement
         if (this.onScroll) {
         }
@@ -1243,5 +1253,8 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
         Core.Web.VirtualPosition.redraw(this._vScrollContainer);
         
         this.bounds = new Core.Web.Measure.Bounds(this.contentElement);
+        this._scrollHeight = new Core.Web.Measure.Bounds(this._hScrollContent).height;
+        this._scrollWidth = new Core.Web.Measure.Bounds(this._vScrollContent).width;
+        Core.Debug.consoleWrite(this.bounds);
     }
 });
