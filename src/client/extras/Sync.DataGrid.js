@@ -819,6 +819,13 @@ Core.Debug.consoleWrite("dist-value = " + (dist - value));
     },
     
     adjustPositionPx: function(xPx, yPx) {
+        // FIXME Temporary bounds restrictions.
+        if (this.position.x < 0 && xPx > 0) {
+            xPx = 0;
+        }
+        if (this.position.y < 0 && yPx > 0) {
+            yPx = 0;
+        }
         
         this._adjustIndexByPx(xPx, true);
         this._adjustIndexByPx(yPx, false);
@@ -895,7 +902,7 @@ Core.Debug.consoleWrite("dist-value = " + (dist - value));
     },
     
     _getRowHeight: function(row) {
-        return 20;
+        return 17; //FIXME
     },
 
     _loadProperties: function() {
