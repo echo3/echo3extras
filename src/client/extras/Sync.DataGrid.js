@@ -787,9 +787,41 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
         this.position = { x: 0, y: 0 };
     },
     
-    adjustPositionPx: function(x, y) {
+    _adjustIndexByPx: function(px, horizontal) {
+        if (px === 0) {
+            return;
+        }
+        
+        var index = horizontal ? this.position.x : this.position.y,
+            dist = Math.abs(px),
+            inc = px < 0 ? 1 : -1,
+            value = 0,
+            getSize = horizontal ? this._getColumnWidth : this._getRowHeight;
+           
+        
+        while (value < dist) {
+            var size = getSize(index);
+            value += size;
+            index += inc;
+        }
+        
+        if (horizontal) {
+            this.position.x = index;
+        } else {
+            this.position.y = index;
+        }
+    },
+    
+    adjustPositionPx: function(xPx, yPx) {
+        
+        this._adjustIndexByPx(xPx, true);
+        this._adjustIndexByPx(yPx, false);
+        
+        Core.Debug.consoleWrite(Core.Debug.toString(this.position));
+        
+        
         for (var name in this.regions) {
-            this.regions[name].adjustPositionPx(x, y);
+            this.regions[name].adjustPositionPx(xPx, yPx);
         }
     },
 
