@@ -832,10 +832,13 @@ Core.Debug.consoleWrite("dist-value = " + (dist - value));
         
         Core.Debug.consoleWrite(Core.Debug.toString(this.position));
         
-        
         for (var name in this.regions) {
             this.regions[name].adjustPositionPx(xPx, yPx);
         }
+        
+        this.scrollContainer.setPosition(this.position.x / this.size.columns, this.position.y / this.size.rows);
+        
+        Core.Debug.consoleWrite("ScrollPos: " + (this.position.y / this.size.rows));
     },
 
     _createRegions: function() {

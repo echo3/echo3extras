@@ -73,19 +73,19 @@ public class DataGridTest extends AbstractTest {
 
         testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "0 Multiplication Model", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                dataGrid.setModel(new MultiplicationModel(1000));
+                dataGrid.setModel(new MultiplicationModel(0));
             }
         });
 
         testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "10 Multiplication Model", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                dataGrid.setModel(new MultiplicationModel(1000));
+                dataGrid.setModel(new MultiplicationModel(10));
             }
         });
 
         testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "100 Multiplication Model", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                dataGrid.setModel(new MultiplicationModel(1000));
+                dataGrid.setModel(new MultiplicationModel(100));
             }
         });
 
