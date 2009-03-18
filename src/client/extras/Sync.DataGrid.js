@@ -798,11 +798,17 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             value = 0,
             getSize = horizontal ? this._getColumnWidth : this._getRowHeight;
            
-        
+Core.Debug.consoleWrite("px=" + px);        
         while (value < dist) {
             var size = getSize(index);
-            value += size;
-            index += inc;
+            if (value + size > dist) {
+Core.Debug.consoleWrite("dist-value = " + (dist - value));                
+                index += inc * ((dist - value) / size); 
+                value = dist;
+            } else {
+                value += size;
+                index += inc;
+            }
         }
         
         if (horizontal) {
