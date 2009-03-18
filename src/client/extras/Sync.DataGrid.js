@@ -281,7 +281,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
              * @param {Number} h the number of pixels to adjust the tile horizontally
              * @param {Number} v the number of pixels to adjust the tile vertically
              */
-            adjustPosition: function(h, v) {
+            adjustPositionPx: function(h, v) {
                 if (this.div) {
                     if (h && !this.region.location.h) {
                         this.bounds.left += h;
@@ -520,7 +520,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
              * @param {Number} x the number of horizontal pixels to shift the tiles (positive values indicate to the right)
              * @param {Number} y the number of vertical pixels to shift the tiles (positive values indicate downward)
              */
-            adjustPosition: function(x, y) {
+            adjustPositionPx: function(x, y) {
                 if (this.location.h && this.location.y) {
                     // This operation has no effect on corner tiles.
                     return;
@@ -533,7 +533,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                     row = this._tiles[rowIndex];
                     for (var columnIndex in row) {
                         tile = row[columnIndex];
-                        tile.adjustPosition(x, y);
+                        tile.adjustPositionPx(x, y);
                     }
                 }
                 this.fill(y > 0);
@@ -660,23 +660,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
              * Sets the position of the region.  Invocation will clear all existing tiles.
              *
              * @param {Number} x the horizontal position of the region
-             * @param {Number} the units of the horizontal position, one of the following values:
-             *        <ul>
-             *         <li><code>Extras.Sync.DataGrid.INDEX</code>: indicates the position value will
-             *          describe the index of the leftmost tile (may be a decimal value)</li>
-             *         <li><code>Extras.Sync.DataGrid.PERCENT</code>: indicates the percentile of the tile
-             *          that will be displayed in the center of the region, e.g., a value of 50 would
-             *          display the middle tile in the center of the screen</li>
-             *        </ul>
-             * @param {Number} x the vertical position of the region
-             * @param {Number} the units of the vertical position, one of the following values:
-             *        <ul>
-             *         <li><code>Extras.Sync.DataGrid.INDEX</code>: indicates the position value will
-             *          describe the index of the topmost tile (may be a decimal value)</li>
-             *         <li><code>Extras.Sync.DataGrid.PERCENT</code>: indicates the percentile of the tile
-             *          that will be displayed in the center of the region, e.g., a value of 50 would
-             *          display the middle tile in the center of the screen</li>
-             *        </ul>
+             * @param {Number} y the vertical position of the region
              */
             setPosition: function(x, y) {
                 var tileRowIndex, tileColumnIndex, initTileColumnIndex,
@@ -764,33 +748,14 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
     _fullRenderRequired: null,
     
     /**
-     * The row to display at the topmost point of the viewable area.  This value may be have a fractional part,
-     * indicating that only part of the row is visible.
-     */
-    _displayRowIndex: null,
-
-    /**
-     * The column to display at the leftmost point of the viewable area.  This value may be have a fractional part,
-     * indicating that only part of the column is visible.
-     */
-    _displayColumnIndex: null,
-    
-    /**
-     * The percentile of rows displayed on the viewable area, with 0% representing the topmost set of rows and 100%
-     * representing the bottommost set of rows.  This value may have a fractional part.
-     */
-    _displayRowPercent: null,
-    
-    /**
-     * The percentile of columns displayed on the viewable area, with 0% representing the leftmost set of columns and 100%
-     * representing the rightmost set of columns.  This value may have a fractional part.
-     */
-    _displayColumnPercent: null,
-    
-    /**
      * Root DIV element of rendered component.
      */ 
     _div: null,
+    
+    /**
+     * Current displayed index position.  Contains x and y numeric properties.
+     */
+    position: null,
     
     regions: null,
     
@@ -819,13 +784,12 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
     
     $construct: function() {
         this._div = null;
-        this._displayRowIndex = 0;
-        this._displayColumnIndex = 0;
+        this.position = { x: 0, y: 0 };
     },
     
-    adjustPosition: function(x, y) {
+    adjustPositionPx: function(x, y) {
         for (var name in this.regions) {
-            this.regions[name].adjustPosition(x, y);
+            this.regions[name].adjustPositionPx(x, y);
         }
     },
 
@@ -922,6 +886,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
         if (e.horizontalIncrement) {
             this._scrollIncrementalHorizontal(e.horizontalIncrement);
         }
+        Core.Debug.consoleWrite(this.y);
     },
     
     /** @see Echo.Render.ComponentSync#renderAdd */
@@ -960,8 +925,8 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                     columns: this._model.getColumnCount(),
                     rows: this._model.getRowCount()
                 };
-                var topRowIndex = Math.floor(this._displayRowIndex);
-                var leftColumnIndex = Math.floor(this._displayColumnIndex);
+                var topRowIndex = Math.floor(this.position.y);
+                var leftColumnIndex = Math.floor(this.position.x);
                 this.setPosition(this.component.get("columnIndex") || 0, this.component.get("rowIndex") || 0);
             }
             this._fullRenderRequired = false;
@@ -993,7 +958,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
      */
     _scrollIncrementalHorizontal: function(percent) {
         var scrollPixels = Math.round(this.scrollContainer.bounds.width * percent / 10);
-        this.adjustPosition(0 - scrollPixels, 0);
+        this.adjustPositionPx(0 - scrollPixels, 0);
         
     },
     
@@ -1002,7 +967,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
      */
     _scrollIncrementalVertical: function(percent) {
         var scrollPixels = Math.round(this.scrollContainer.bounds.height * percent / 10);
-        this.adjustPosition(0, 0 - scrollPixels);
+        this.adjustPositionPx(0, 0 - scrollPixels);
         
     },
     
@@ -1123,22 +1088,6 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
         }
     },
     
-    /**
-     * Programmatically adjusts the position of horizontal and/or vertical scroll bars.
-     * 
-     * @param {Number} horizontal the number of pixels to adjust horizontally 
-     * @param {Number} vertical the number of pixels to adjust vertically 
-     */
-    _adjustScrollPx: function(horizontal, vertical) {
-        this._lastScrollSetTime = new Date().getTime();
-        if (horizontal) {
-            this._hScrollContainer.scrollLeft += horizontal;
-        }
-        if (vertical) {
-            this._vScrollContainer.scrollTop += vertical;
-        }
-    },
-    
     configure: function(horizontal, vertical) {
         if (horizontal > 1) {
             this._vScrollContainer.style.bottom = this.contentElement.style.bottom = Core.Web.Measure.SCROLL_HEIGHT + "px";
@@ -1182,10 +1131,10 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
             return;
         }
 
-        var scrollPosition = this._hScrollContainer.scrollLeft / ((this.size - 1) * this.bounds.width);
+        this.scrollX = this._hScrollContainer.scrollLeft / ((this.size - 1) * this.bounds.width);
         
         //FIXME Implement
-        Core.Debug.consoleWrite("hscroll:" + scrollPosition);
+        Core.Debug.consoleWrite("hscroll:" + this.scrollX);
         if (this.onScroll) {
         }
     },
@@ -1200,9 +1149,9 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
             return;
         }
         
-        var scrollPosition = this._vScrollContainer.scrollTop / ((this.size - 1) * this.bounds.height);
+        this.scrollY = this._vScrollContainer.scrollTop / ((this.size - 1) * this.bounds.height);
         
-        Core.Debug.consoleWrite("vscroll:" + scrollPosition);
+        Core.Debug.consoleWrite("vscroll:" + this.scrollY);
         //FIXME Implement
         if (this.onScroll) {
         }
@@ -1227,11 +1176,9 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
         
         if (e.shiftKey) {
             // Scroll horizontally.
-            this._adjustScrollPx(wheelScroll * 90, 0);
             this._hScrollAccumulator += wheelScroll;
         } else {
             // Scroll vertically.
-            this._adjustScrollPx(0, wheelScroll * 90);
             this._vScrollAccumulator += wheelScroll;
         }
         Core.Web.Scheduler.run(Core.method(this, this._accumulatedScroll), 10);
@@ -1256,5 +1203,13 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
         this._scrollHeight = new Core.Web.Measure.Bounds(this._hScrollContent).height;
         this._scrollWidth = new Core.Web.Measure.Bounds(this._vScrollContent).width;
         Core.Debug.consoleWrite(this.bounds);
+    },
+    
+    setPosition: function(scrollX, scrollY) {
+        this.scrollX = scrollX;
+        this.scrollY = scrollY;
+        
+        this._hScrollContainer.scrollLeft = this.scrollX * ((this.size - 1) * this.bounds.width);
+        this._vScrollContainer.scrollTop = this.scrollY * ((this.size - 1) * this.bounds.height);
     }
 });
