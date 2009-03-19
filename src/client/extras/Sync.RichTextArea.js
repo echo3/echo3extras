@@ -1696,7 +1696,6 @@ Extras.Sync.RichTextArea.AbstractDialog = Core.extend(Echo.WindowPane, {
             styleName: rta.render("windowPaneStyleName"),
             iconInsets: "6px 10px",
             contentWidth: "25em",
-            contentHeight: "16em",
             modal: true,
             resizable: false,
             events: {
@@ -1812,7 +1811,6 @@ Extras.Sync.RichTextArea.ColorDialog = Core.extend(Extras.Sync.RichTextArea.Abst
                             "ColorDialog.Title.Background" : "ColorDialog.Title.Foreground"],
                     icon: setBackground ? rta.peer.icons.background : rta.peer.icons.foreground,
                     contentWidth: "32em",
-                    contentHeight: "22em"
                 },
                 new Echo.Row({
                     cellSpacing: "1em",
