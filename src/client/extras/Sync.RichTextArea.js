@@ -2093,6 +2093,8 @@ Extras.Sync.RichTextArea.TableDialog = Core.extend(Extras.Sync.RichTextArea.Abst
                     icon: rta.peer.icons.table
                 },
                 new Echo.Grid({
+                    width: "100%",
+                    columnWidth: ["25%", "75%"],
                     insets: 10,
                     children: [
                         new Echo.Label({
@@ -2103,7 +2105,7 @@ Extras.Sync.RichTextArea.TableDialog = Core.extend(Extras.Sync.RichTextArea.Abst
                         }),
                         this._rowsField = new Echo.TextField({
                             text: "2",
-                            width: 100   
+                            width: "100%"
                         }),
                         new Echo.Label({
                             text: rta.peer.msg["TableDialog.PromptColumns"],
@@ -2113,7 +2115,7 @@ Extras.Sync.RichTextArea.TableDialog = Core.extend(Extras.Sync.RichTextArea.Abst
                         }),
                         this._columnsField = new Echo.TextField({
                             text: "3",
-                            width: 100
+                            width: "100%"
                         })
                     ]
                 }));
