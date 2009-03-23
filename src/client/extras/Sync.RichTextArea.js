@@ -1810,7 +1810,7 @@ Extras.Sync.RichTextArea.ColorDialog = Core.extend(Extras.Sync.RichTextArea.Abst
                     title: rta.peer.msg[setBackground ? 
                             "ColorDialog.Title.Background" : "ColorDialog.Title.Foreground"],
                     icon: setBackground ? rta.peer.icons.background : rta.peer.icons.foreground,
-                    contentWidth: "32em",
+                    contentWidth: "32em"
                 },
                 new Echo.Row({
                     cellSpacing: "1em",
