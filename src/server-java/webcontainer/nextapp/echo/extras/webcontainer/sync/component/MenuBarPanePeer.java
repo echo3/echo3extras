@@ -40,7 +40,7 @@ public class MenuBarPanePeer extends AbstractMenuPeer {
     /**
      * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#getClientComponentType(boolean)
      */
-    public String getClientComponentType(boolean shortType) {
+    public String getClientComponentType(boolean mode) {
         return "Extras.MenuBarPane";
     }
     
