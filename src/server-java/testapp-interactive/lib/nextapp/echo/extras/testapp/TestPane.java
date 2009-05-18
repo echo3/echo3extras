@@ -64,60 +64,45 @@ public class TestPane extends ContentPane {
          * @see nextapp.echo.app.event.ActionListener#actionPerformed(nextapp.echo.app.event.ActionEvent)
          */
         public void actionPerformed(ActionEvent e) {
-            try {
-                if (e.getActionCommand() == null) {
-                    InteractiveApp.getApp().displayWelcomePane();
-                } else if (e.getActionCommand().startsWith("Launch_")) {
-                    String screenClassName = "nextapp.echo.extras.testapp.testscreen."
-                            + e.getActionCommand().substring("Launch ".length());
-                    Class screenClass = Class.forName(screenClassName);
-                    Component content = (Component) screenClass.newInstance();
-                    if (menuVerticalPane.getComponentCount() > 1) {
-                        menuVerticalPane.remove(1);
-                    }
-                    menuVerticalPane.add(content);
-                } else if (e.getActionCommand().equals("OpenModalDialog")) {
-                    WindowPane modalWindow = new WindowPane();
-                    modalWindow.setStyleName("Default");
-                    modalWindow.setInsets(new Insets(10, 5));
-                    modalWindow.setTitle("Blocking Modal WindowPane");
-                    modalWindow.setModal(true);
-                    modalWindow
-                            .add(new Label(
-                                    "Verify this modal WindowPane blocks input to all components."));
-                    InteractiveApp.getApp().getDefaultWindow().getContent().add(
-                            modalWindow);
-                } else if (e.getActionCommand().equals("OpenConsole")) {
-                    InteractiveApp.getApp().consoleWrite(null);
-                } else if (e.getActionCommand().equals("Serialize")) {
-                    doSerialTest();
-                } else if (e.getActionCommand().startsWith("Locale_")) {
-                    String language = e.getActionCommand().substring(
-                            "Locale_".length());
-                    if ("Default".equals(language)) {
-                        InteractiveApp.getApp().setLocale(Locale.getDefault());
-                    } else {
-                        InteractiveApp.getApp().setLocale(new Locale(language));
-                    }
-                } else if (e.getActionCommand().equals("Reset")) {
-                    InteractiveApp.getApp().displayTestPane();
-                } else if (e.getActionCommand().equals("Exit")) {
-                    InteractiveApp.getApp().displayWelcomePane();
+            if (e.getActionCommand() == null) {
+                InteractiveApp.getApp().displayWelcomePane();
+            } else if (e.getActionCommand().startsWith("Launch_")) {
+                String testName = e.getActionCommand().substring("Launch ".length());
+                startTest(testName);
+            } else if (e.getActionCommand().equals("OpenModalDialog")) {
+                WindowPane modalWindow = new WindowPane();
+                modalWindow.setStyleName("Default");
+                modalWindow.setInsets(new Insets(10, 5));
+                modalWindow.setTitle("Blocking Modal WindowPane");
+                modalWindow.setModal(true);
+                modalWindow
+                        .add(new Label(
+                                "Verify this modal WindowPane blocks input to all components."));
+                InteractiveApp.getApp().getDefaultWindow().getContent().add(
+                        modalWindow);
+            } else if (e.getActionCommand().equals("OpenConsole")) {
+                InteractiveApp.getApp().consoleWrite(null);
+            } else if (e.getActionCommand().equals("Serialize")) {
+                doSerialTest();
+            } else if (e.getActionCommand().startsWith("Locale_")) {
+                String language = e.getActionCommand().substring(
+                        "Locale_".length());
+                if ("Default".equals(language)) {
+                    InteractiveApp.getApp().setLocale(Locale.getDefault());
+                } else {
+                    InteractiveApp.getApp().setLocale(new Locale(language));
                 }
-            } catch (ClassNotFoundException ex) {
-                add(new MessageDialog("Cannot Load Test", ex.toString(),
-                        Styles.ICON_64_ERROR, MessageDialog.CONTROLS_OK));
-            } catch (InstantiationException ex) {
-                throw new RuntimeException(ex.toString());
-            } catch (IllegalAccessException ex) {
-                throw new RuntimeException(ex.toString());
+            } else if (e.getActionCommand().equals("Reset")) {
+                InteractiveApp.getApp().displayTestPane();
+            } else if (e.getActionCommand().equals("Exit")) {
+                InteractiveApp.getApp().displayWelcomePane();
             }
         }
     };
     
     private SplitPane menuVerticalPane;
     
-    public TestPane() {
+    public TestPane(String testName) {
         super();
     
         setBackgroundImage(Styles.FILL_IMAGE_EXTRAS_BACKGROUND);
@@ -291,6 +276,10 @@ public class TestPane extends ContentPane {
         menu.setStyleName("Default");
         menu.addActionListener(commandActionListener);
         menuVerticalPane.add(menu);
+        
+        if (testName != null) {
+            startTest(testName);
+        }
     }
     
     private void doSerialTest() {
@@ -306,6 +295,25 @@ public class TestPane extends ContentPane {
             InteractiveApp.getApp().consoleWrite("Serialized.  Length: " + data.length);
         } catch (IOException ex) {
             InteractiveApp.getApp().consoleWrite(ex.toString());
+        }
+    }
+    
+    private void startTest(String testName) {
+        try {
+            String screenClassName = "nextapp.echo.extras.testapp.testscreen." + testName;
+            Class screenClass = Class.forName(screenClassName);
+            Component content = (Component) screenClass.newInstance();
+            if (menuVerticalPane.getComponentCount() > 1) {
+                menuVerticalPane.remove(1);
+            }
+            menuVerticalPane.add(content);
+        } catch (ClassNotFoundException ex) {
+            add(new MessageDialog("Cannot Load Test", ex.toString(),
+                    Styles.ICON_64_ERROR, MessageDialog.CONTROLS_OK));
+        } catch (InstantiationException ex) {
+            throw new RuntimeException(ex.toString());
+        } catch (IllegalAccessException ex) {
+            throw new RuntimeException(ex.toString());
         }
     }
 }

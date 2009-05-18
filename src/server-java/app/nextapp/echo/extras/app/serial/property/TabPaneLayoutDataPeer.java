@@ -51,8 +51,57 @@ extends LayoutDataPeer {
     throws SerialException {
         TabPaneLayoutData layoutData = (TabPaneLayoutData) propertyValue;
         propertyElement.setAttribute("t", "LayoutData");
-        SerialUtil.toXml(context, TabPaneLayoutData.class, propertyElement, "closeEnabled", Boolean.valueOf(layoutData.isCloseEnabled()));
+        SerialUtil.toXml(context, TabPaneLayoutData.class, propertyElement, "closeEnabled", 
+                Boolean.valueOf(layoutData.isCloseEnabled()));
         SerialUtil.toXml(context, TabPaneLayoutData.class, propertyElement, "title", layoutData.getTitle());
         SerialUtil.toXml(context, TabPaneLayoutData.class, propertyElement, "icon", layoutData.getIcon());
+        SerialUtil.toXml(context, TabPaneLayoutData.class, propertyElement, "toolTipText", layoutData.getToolTipText());
+        
+        SerialUtil.toXml(context, TabPaneLayoutData.class, propertyElement, "activeBackground", 
+                layoutData.getActiveBackground());
+        SerialUtil.toXml(context, TabPaneLayoutData.class, propertyElement, "activeBackgroundImage", 
+                layoutData.getActiveBackgroundImage());
+        SerialUtil.toXml(context, TabPaneLayoutData.class, propertyElement, "activeBorder", 
+                layoutData.getActiveBorder());
+        SerialUtil.toXml(context, TabPaneLayoutData.class, propertyElement, "activeFont", 
+                layoutData.getActiveFont());
+        SerialUtil.toXml(context, TabPaneLayoutData.class, propertyElement, "activeForeground", 
+                layoutData.getActiveForeground());
+        SerialUtil.toXml(context, TabPaneLayoutData.class, propertyElement, "activeIcon", 
+                layoutData.getActiveIcon());
+        SerialUtil.toXml(context, TabPaneLayoutData.class, propertyElement, "activeImageBorder", 
+                layoutData.getActiveImageBorder());
+        SerialUtil.toXml(context, TabPaneLayoutData.class, propertyElement, "activeInsets", 
+                layoutData.getActiveInsets());
+
+        SerialUtil.toXml(context, TabPaneLayoutData.class, propertyElement, "inactiveBackground", 
+                layoutData.getInactiveBackground());
+        SerialUtil.toXml(context, TabPaneLayoutData.class, propertyElement, "inactiveBackgroundImage", 
+                layoutData.getInactiveBackgroundImage());
+        SerialUtil.toXml(context, TabPaneLayoutData.class, propertyElement, "inactiveBorder", 
+                layoutData.getInactiveBorder());
+        SerialUtil.toXml(context, TabPaneLayoutData.class, propertyElement, "inactiveFont", 
+                layoutData.getInactiveFont());
+        SerialUtil.toXml(context, TabPaneLayoutData.class, propertyElement, "inactiveForeground", 
+                layoutData.getInactiveForeground());
+        SerialUtil.toXml(context, TabPaneLayoutData.class, propertyElement, "inactiveImageBorder", 
+                layoutData.getInactiveImageBorder());
+        SerialUtil.toXml(context, TabPaneLayoutData.class, propertyElement, "inactiveInsets", 
+                layoutData.getInactiveInsets());
+
+        SerialUtil.toXml(context, TabPaneLayoutData.class, propertyElement, "rolloverBackground", 
+                layoutData.getRolloverBackground());
+        SerialUtil.toXml(context, TabPaneLayoutData.class, propertyElement, "rolloverBackgroundImage", 
+                layoutData.getRolloverBackgroundImage());
+        SerialUtil.toXml(context, TabPaneLayoutData.class, propertyElement, "rolloverBorder", 
+                layoutData.getRolloverBorder());
+        SerialUtil.toXml(context, TabPaneLayoutData.class, propertyElement, "rolloverFont", 
+                layoutData.getRolloverFont());
+        SerialUtil.toXml(context, TabPaneLayoutData.class, propertyElement, "rolloverForeground", 
+                layoutData.getRolloverForeground());
+        SerialUtil.toXml(context, TabPaneLayoutData.class, propertyElement, "rolloverIcon", 
+                layoutData.getRolloverIcon());
+        SerialUtil.toXml(context, TabPaneLayoutData.class, propertyElement, "rolloverImageBorder", 
+                layoutData.getRolloverImageBorder());
     }
 }

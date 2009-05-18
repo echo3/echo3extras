@@ -5,8 +5,32 @@
 Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
 
     $static: {
+    
+        /**
+         * Prototype zero-padding table/tbody/tr hierarchy.
+         * @type Element
+         */
+        _TABLE: null,
+    
+        /**
+         * Generates a zero-pading table/tbody/tr hierarchy.
+         * 
+         * @return the root table element
+         * @type Element
+         */
+        _createTable: function() {
+            if (!this._TABLE) {
+                this._TABLE = document.createElement("table");
+                this._TABLE.style.cssText = "border-collapse:collapse;padding:0;";
+                var tbody = document.createElement("tbody");
+                this._TABLE.appendChild(tbody);
+                var tr = document.createElement("tr");
+                tbody.appendChild(tr);
+            }
+            return this._TABLE.cloneNode(true);
+        },
 
-        /** 
+        /**
          * Supported partial update properties. 
          * @type Array
          */
@@ -27,7 +51,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
             tabIconTextMargin: 5,
             tabInactiveBorder: "1px solid #7f7f7f",
             tabInset: 10,
-            tabInsets: "3px 8px",
+            tabInsets: "1px 8px",
             tabPosition: Extras.TabPane.TAB_POSITION_TOP,
             tabSpacing: 0
         },
@@ -125,6 +149,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
                     this.distance = this.clickDistance;
                     this.updatePosition();
                 }
+                this.peer.renderDisplay();
                 this.dispose();
             },
             
@@ -184,6 +209,12 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     _activeTabId: null,
     
     /**
+     * The renderId of the displayed tab.
+     * @type String 
+     */
+    _displayedTabId: null,
+    
+    /**
      * Scroll previous arrow.
      * @type Element
      */
@@ -195,6 +226,29 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
      */
     _nextControlDiv: null,
     
+    /**
+     * Data object containing information about a pending update to a tab's rollover state.
+     */
+    _pendingRollover: null,
+    
+    /**
+     * The tab which is currently rolled over.
+     * @type String
+     */
+    _rolloverTabId: null,
+    
+    /**
+     * Flag indicating whether the current rolled over tab's close icon is rolled over.
+     * @type Boolean
+     */
+    _rolloverTabCloseState: false,
+    
+    /**
+     * Runnable used to delay rendering of rollover effects to avoid flicker.
+     * @type Core.Web.Scheduler.Runnable
+     */
+    _rolloverRunnable: null,
+
     /**
      * Array containing <code>Extras.Sync.TabPane.Tab</code> objects represented the displayed tabs.
      * Each index of this array matches the corresponding child component index.
@@ -209,11 +263,23 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     _totalTabWidth: 0,
     
     /**
-     * Flag indicating whether the header size may need to be reconfigured (by invoking configureHeaderSize() in the next
-     * renderDisplay() execution).
+     * Height of the header, in pixels.
+     * @type Number
+     */
+    _headerHeight: null,
+    
+    /**
+     * Flag indicating whether a re-layout operation is required.  Flag is set by renderAdd()/renderUpdate() methods.
      * @type Boolean
      */
-    _configureHeaderSizeRequired: false,
+    _layoutRequired: false,
+    
+    /**
+     * Flag indicating whether a full header re-render operation is required.  Flag is set by renderUpdate() method in response
+     * to child layout data changes to avoid full render.
+     * @type Boolean
+     */
+    _headerUpdateRequired: false,
     
     /** 
      * Method reference to <code>_tabSelectListener</code> of instance.
@@ -227,11 +293,17 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
      */
     _scrollRunnable: null,
     
-    /**
+    /** 
      * Current scroll position of tab header, in pixels.
      * @type Number
      */
     scrollPosition: 0,
+    
+    /**
+     * Flag indicating rendered layout direction of component (true if right-to-left).
+     * @type Boolean
+     */
+    _rtl: false,
     
     /**
      * Constructor.
@@ -251,47 +323,157 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     _addTab: function(update, tab, index) {
         if (index == null || index == this._tabs.length) {
             this._tabs.push(tab);
-            tab._render(update);
-            this._headerTabContainerTr.appendChild(tab._headerTd);
+            tab._renderAdd(update);
+            this._headerContainerDiv.appendChild(tab._headerDiv);
             this._contentContainerDiv.appendChild(tab._contentDiv);
         } else {
             this._tabs.splice(index, 0, tab);
-            tab._render(update);
-            this._headerTabContainerTr.insertBefore(tab._headerTd, 
-                    this._headerTabContainerTr.childNodes[index]);
-            this._contentContainerDiv.insertBefore(tab._contentDiv,
-                    this._contentContainerDiv.childNodes[index]);
+            tab._renderAdd(update);
+            this._headerContainerDiv.insertBefore(tab._headerDiv, this._headerContainerDiv.childNodes[index]);
+            this._contentContainerDiv.insertBefore(tab._contentDiv, this._contentContainerDiv.childNodes[index]);
         }
     },
 
     /**
      * Measures the height of the header region of the tab pane, adjusting the content region's size to accommodate it.
-     * Invoked in renderDisplay phase when <code>_configureHeaderSizeRequired</code> flag has been set.
+     * Invoked in renderDisplay phase when <code>_layoutRequired</code> flag has been set.
      */
-    _configureHeaderSize: function() {
-        var height = new Core.Web.Measure.Bounds(this._headerTabContainerDiv).height;
-        if (height === 0) {
-            // Cannot calculate header size.
+    _renderLayout: function() {
+        if (!this._layoutRequired) {
             return;
         }
         
-        this._configureHeaderSizeRequired = false;
-        var borderSize = Echo.Sync.Border.getPixelSize(this._tabActiveBorder);
+        this._renderHeaderPositions();
         
-        if (this._tabPosition == Extras.TabPane.TAB_POSITION_BOTTOM) {
-            this._contentContainerDiv.style.top = "0";
-            this._contentContainerDiv.style.bottom = (height - borderSize) + "px";
-        } else {
-            this._contentContainerDiv.style.top = (height - borderSize ) + "px";
-            this._contentContainerDiv.style.bottom = "0";
+        if (this._headerHeight === 0) {
+            return;
         }
-        this._contentContainerDiv.style.left = "0";
-        this._contentContainerDiv.style.right = "0";
-
+        this._layoutRequired = false;
+        
+        if (this._borderDiv) {
+            // Adjust image border DIV to match header height.
+            this._borderDiv.style[this._tabSide] = (this._headerHeight - this._ibContentInsetsPx[this._tabSide]) + "px";
+        }
+        
+        var borderSize = this._borderType == Extras.TabPane.BORDER_TYPE_NONE ? 0 : Echo.Sync.Border.getPixelSize(this._border);
+        this._headerContainerDiv.style.height = this._headerHeight + "px";
+        this._contentContainerDiv.style.left = this._contentContainerDiv.style.right = 
+                this._contentContainerDiv.style[this._oppositeSide] = 0;
+        this._contentContainerDiv.style[this._tabSide] = (this._headerHeight - borderSize) + "px";
+        
         Core.Web.VirtualPosition.redraw(this._contentContainerDiv);
         Core.Web.VirtualPosition.redraw(this._headerContainerDiv);
         for (var i = 0; i < this._tabs.length; ++i) {
             this._tabs[i]._renderDisplay();
+        }
+        
+        // Add image monitor to re-execute renderLayout as images are loaded.
+        var imageListener = Core.method(this, function() {
+            if (this.component) { // Verify component still registered.
+                this._layoutRequired = true;
+                this._renderLayout();
+            }
+        });
+        Core.Web.Image.monitor(this._headerContainerDiv, imageListener);
+    },
+    
+    /**
+     * Positions tabs.
+     * Equalizes tab heights to height of tallest tab.
+     * Determines and stores the object's <code>_totalTabWidth</code> and <code>_headerHeight</code> properties.
+     */
+    _renderHeaderPositions: function() {
+        var maxActiveHeight = 0,
+            maxInactiveHeight = 0,
+            tabActiveHeight,
+            tabInactiveHeight,
+            i,
+            clearHeight = this._tabHeight ? (this._tabHeight + "px") : "";
+            
+        this._totalTabWidth = 0;
+        this._headerHeight = 0;
+
+        var maximumTabWidth = this.component.render("tabWidth") ? null : this.component.render("tabMaximumWidth");
+        var maximumTabWidthPx;
+        if (maximumTabWidth) {
+            if (Echo.Sync.Extent.isPercent(maximumTabWidth)) {
+                var percent = parseInt(maximumTabWidth, 10);
+                maximumTabWidthPx = Math.floor(this._tabContainerWidth * percent / 100); 
+            } else {
+                maximumTabWidthPx = Echo.Sync.Extent.toPixels(maximumTabWidth);
+            }
+        }
+        
+        for (i = 0; i < this._tabs.length; ++i) {
+            // Clear height/width settings.
+            this._tabs[i]._heightTd.style.height = clearHeight;
+            if (maximumTabWidthPx) {
+                this._tabs[i]._labelDiv.style.width = "";
+                var labelBounds = new Core.Web.Measure.Bounds(this._tabs[i]._labelDiv, 
+                            { flags: Core.Web.Measure.Bounds.FLAG_MEASURE_DIMENSION });
+                if (labelBounds.width > maximumTabWidthPx) {
+                    this._tabs[i]._labelDiv.style.width = maximumTabWidthPx + "px";
+                }
+            }
+            
+            // Determine bounds of tab.
+            var headerDivBounds = new Core.Web.Measure.Bounds(this._tabs[i]._headerDiv, 
+                    { flags: Core.Web.Measure.Bounds.FLAG_MEASURE_DIMENSION });
+            
+            // Determine adjustment in height of tab when it is active.
+            var adjust = this._tabActiveHeightIncreasePx + this._tabInactivePositionAdjustPx +
+                    this._tabs[i]._activeSurroundHeight - this._tabs[i]._inactiveSurroundHeight;
+
+            // Load tab active and inactive heights.
+            if (this._tabs[i]._active) {
+                tabActiveHeight = headerDivBounds.height;
+                tabInactiveHeight = headerDivBounds.height - adjust;
+            } else {
+                tabInactiveHeight = headerDivBounds.height;
+                tabActiveHeight = headerDivBounds.height + adjust;
+            }
+            
+            // Set maximum active/inactive heights if necessary.
+            maxInactiveHeight = tabInactiveHeight > maxInactiveHeight ? tabInactiveHeight : maxInactiveHeight;
+            maxActiveHeight = tabActiveHeight > maxActiveHeight ? tabActiveHeight : maxActiveHeight;
+            
+            // Horizontally position the tab at rightmost position.
+            this._tabs[i]._headerDiv.style.left = this._totalTabWidth + "px";
+            
+            // Set z-index of tab based on position (left to right increase, but with active tab above all inactive tabs,
+            // and rollover tab above all tabs).
+            this._tabs[i]._headerDiv.style.zIndex = (this._rolloverTabId === this._tabs[i].id) ? (this._tabs.length + 1) : 
+                    (this._tabs[i]._active ? this._tabs.length : i);
+            
+            // Move rendering cursor to right / calculate total width.
+            this._totalTabWidth += headerDivBounds.width;
+            if (i < this._tabs.length - 1) {
+                // Add tab spacing.
+                this._totalTabWidth += this._tabSpacingPx;
+            }
+        }
+
+        // Set minimum heights of tabs for height equalization.
+        for (i = 0; i < this._tabs.length; ++i) {
+            if (this._tabs[i]._active) {
+                this._tabs[i]._heightTd.style.height = (maxActiveHeight -
+                        (this._tabs[i]._activeSurroundHeight + this._tabInactivePositionAdjustPx + 
+                        this._tabActiveHeightIncreasePx)) + "px";
+            } else {
+                this._tabs[i]._heightTd.style.height = (maxInactiveHeight - this._tabs[i]._inactiveSurroundHeight) + "px";
+            }
+        }
+        
+        // Determine maximum height of tabs (either active or inactive).
+        this._headerHeight = maxActiveHeight > maxInactiveHeight ? maxActiveHeight : maxInactiveHeight;
+        
+        if (Core.Web.VirtualPosition.enabled) {
+            for (i = 0; i < this._tabs.length; ++i) {
+                if (this._tabs[i]._fibContainer) {
+                    Echo.Sync.FillImageBorder.renderContainerDisplay(this._tabs[i]._fibContainer);
+                    Core.Web.VirtualPosition.redraw(this._tabs[i]._backgroundDiv);
+                }
+            }
         }
     },
     
@@ -314,6 +496,26 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         }
         return activeTabId;
     },
+    
+    /**
+     * Determines the pxiel height of the separation between inactive tabs and the tab content area.  (For a TAB_POSITION_TOP,
+     * this is the bottom of the tabs to the top of tab content).
+     * 
+     * @return the height
+     * @type Number
+     */
+    _getSeparatorHeight: function() {
+        if (this._borderType == Extras.TabPane.BORDER_TYPE_NONE) {
+            return 0;
+        }
+        
+        if (this._imageBorder) {
+            //FIXME, possibly provide a configurable property for this.
+            return 0;
+        }
+
+        return Echo.Sync.Border.getPixelSize(this._border, this._tabSide);
+    },
 
     /**
      * Retrieves the tab instance with the specified tab id.
@@ -325,7 +527,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     _getTabById: function(tabId) {
         for (var i = 0; i < this._tabs.length; ++i) {
             var tab = this._tabs[i];
-            if (tab._childComponent.renderId == tabId) {
+            if (tab.id == tabId) {
                 return tab;
             }
         }
@@ -409,163 +611,201 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         if (tabIndex == -1) {
             return;
         }
-        if (tab._childComponent.renderId == this._activeTabId) {
+        if (tab.id == this._activeTabId) {
             this._activeTabId = null;
         }
         this._tabs.splice(tabIndex, 1);
         
-        Core.Web.DOM.removeNode(tab._headerTd);
+        Core.Web.DOM.removeNode(tab._headerDiv);
         Core.Web.DOM.removeNode(tab._contentDiv);
         
-        tab._dispose();
+        tab._renderDispose();
     },
     
     /** @see Echo.Render.ComponentSync#renderAdd */
     renderAdd: function(update, parentElement) {
         this.component.addListener("tabSelect", this._tabSelectListenerRef);
         
+        // Store rendering properties.
         this._icons = { 
             scrollLeftIcon: this.component.render("scrollLeftIcon"),
             scrollRightIcon: this.component.render("scrollRightIcon"),
             rolloverScrollLeftIcon: this.component.render("rolloverScrollLeftIcon"),
             rolloverScrollRightIcon: this.component.render("rolloverScrollRightIcon")
         };
-        
-        // Configure Properties
+        this._rtl = !this.component.getRenderLayoutDirection().isLeftToRight();
         this._activeTabId = this._getActiveTabId();
-        this._borderType = this.component.render("borderType", Extras.Sync.TabPane._DEFAULTS.borderType);
+        this._tabRolloverEnabled = this.component.render("tabRolloverEnabled");
         this._insets = this.component.render("insets", Extras.Sync.TabPane._DEFAULTS.insets);
         this._tabActiveBorder = this.component.render("tabActiveBorder", Extras.Sync.TabPane._DEFAULTS.tabActiveBorder);
-        this._tabActiveHeightIncreasePx = Echo.Sync.Extent.toPixels(this.component.render("tabActiveHeightIncrease", 
-                Extras.Sync.TabPane._DEFAULTS.tabActiveHeightIncrease));
+        this._imageBorder = this.component.render("imageBorder");
+        this._border = this._imageBorder ? null : this._border = this.component.render("border", this._tabActiveBorder);
+        this._borderType = this.component.render("borderType", Extras.Sync.TabPane._DEFAULTS.borderType);
         this._tabInactiveBorder = this.component.render("tabInactiveBorder", Extras.Sync.TabPane._DEFAULTS.tabInactiveBorder);
         this._tabInsetPx = Echo.Sync.Extent.toPixels(this.component.render("tabInset",Extras.Sync.TabPane._DEFAULTS.tabInset));
-        this._tabPosition = this.component.render("tabPosition", Extras.Sync.TabPane._DEFAULTS.tabPosition);
-        this._tabSpacing = this.component.render("tabSpacing", Extras.Sync.TabPane._DEFAULTS.tabSpacing);
+        this._tabPositionBottom = this.component.render("tabPosition", Extras.Sync.TabPane._DEFAULTS.tabPosition) == 
+                Extras.TabPane.TAB_POSITION_BOTTOM;
+        this._tabSide = this._tabPositionBottom ? "bottom" : "top";
+        this._oppositeSide = this._tabPositionBottom ? "top" : "bottom";
+        this._tabSpacingPx = Echo.Sync.Extent.toPixels(this.component.render("tabSpacing", 
+                Extras.Sync.TabPane._DEFAULTS.tabSpacing));
+        this._tabActiveHeightIncreasePx = Echo.Sync.Extent.toPixels(
+                this.component.render("tabActiveHeightIncrease", Extras.Sync.TabPane._DEFAULTS.tabActiveHeightIncrease));
+        this._tabInactivePositionAdjustPx = this._getSeparatorHeight();
         this._tabCloseEnabled = this.component.render("tabCloseEnabled", false);
         if (this._tabCloseEnabled) {
             this._icons.defaultIcon = this.component.render("tabCloseIcon");
             this._icons.disabledIcon = this.component.render("tabDisabledCloseIcon");
             this._icons.rolloverIcon = this.component.render("tabRolloverCloseIcon");
         }
+        this._tabActiveInsets = Echo.Sync.Insets.toPixels(this.component.render("tabActiveInsets"));
+        this._tabInactiveInsets = Echo.Sync.Insets.toPixels(this.component.render("tabInactiveInsets"));
+        this._tabHeight = Echo.Sync.Extent.toPixels(this.component.render("tabHeight"), false) || 0;
 
-        // Render Border Insets
+        // Store rendering properties: border/content insets.
         var pixelInsets = Echo.Sync.Insets.toPixels(this._insets);
+        if (this._imageBorder) {
+            this._ibBorderInsetsPx = Echo.Sync.Insets.toPixels(this._imageBorder.borderInsets);
+            this._ibContentInsetsPx = Echo.Sync.Insets.toPixels(this._imageBorder.contentInsets);
+        }
         if (this._borderType == Extras.TabPane.BORDER_TYPE_SURROUND) {
-            // Do nothing, pixelInsets values are correct.
+            if (this._imageBorder) {
+                pixelInsets[this._oppositeSide] += this._ibContentInsetsPx[this._oppositeSide];
+                pixelInsets.left += this._ibContentInsetsPx.left;
+                pixelInsets.right += this._ibContentInsetsPx.right;
+            }
         } else if (this._borderType == Extras.TabPane.BORDER_TYPE_PARALLEL_TO_TABS) {
+            if (this._imageBorder) {
+                this._imageBorder = {
+                    color: this._imageBorder.color,
+                    borderInsets: this._ibBorderInsetsPx.top + "px 0 " + this._ibBorderInsetsPx.bottom + "px",
+                    contentInsets: this._ibContentInsetsPx.top + "px 0 " + this._ibContentInsetsPx.bottom + "px",
+                    top: this._imageBorder.top,
+                    bottom: this._imageBorder.bottom
+                };
+                pixelInsets[this._oppositeSide] += this._ibContentInsetsPx[this._oppositeSide];
+            }
             pixelInsets.left = pixelInsets.right = 0;
-        } else if (this._tabPosition == Extras.TabPane.TAB_POSITION_BOTTOM) {
-            pixelInsets.left = pixelInsets.right = pixelInsets.top = 0;
         } else {
-            pixelInsets.left = pixelInsets.right = pixelInsets.bottom = 0;
+            if (this._imageBorder) {
+                var pre = this._tabPositionBottom ? "0 0 " : "";
+                var post = this._tabPositionBottom ? "" : " 0 0";
+                this._imageBorder = {
+                    color: this._imageBorder.color,
+                    borderInsets: pre + this._ibBorderInsetsPx[this._tabSide] + "px" + post,
+                    contentInsets: pre + this._ibContentInsetsPx[this._tabSide] + "px" + post,
+                    top: this._imageBorder.top
+                };
+            }
+            pixelInsets.left = pixelInsets.right = pixelInsets[this._oppositeSide] = 0;
         }
 
-        // Create Main Element
+        // Create Main Element.
         this._div = document.createElement("div");
         this._div.id = this.component.renderId;
-        this._div.style.cssText = "position:absolute;overflow:hidden;top:" + pixelInsets.top + "px;right:" + pixelInsets.right +
+        this._div.style.cssText = "position:absolute;top:" + pixelInsets.top + "px;right:" + pixelInsets.right +
                 "px;bottom:" + pixelInsets.bottom + "px;left:" + pixelInsets.left + "px;";
                         
-        // Render Header Container
+        // Render Header Container.
         this._headerContainerDiv = document.createElement("div");
         this._headerContainerDiv.style.cssText = "position:absolute;overflow:hidden;z-index:1;" +
-                (this._tabPosition == Extras.TabPane.TAB_POSITION_BOTTOM ? "bottom" : "top") + ":0;" +
+                (this._tabPositionBottom ? "bottom" : "top") + ":0;" +
                 "left:" + this._tabInsetPx + "px;right:" + this._tabInsetPx + "px;";
                 
-        this._headerTabContainerDiv = document.createElement("div");
-        
-        this._headerTabContainerTable = document.createElement("table");
-        this._headerTabContainerTable.style.padding = 0;
-        this._headerTabContainerTable.cellPadding = 0;
-        this._headerTabContainerTable.cellSpacing = 0;
-        var tbody = document.createElement("tbody");
-        this._headerTabContainerTr = document.createElement("tr");
-        tbody.appendChild(this._headerTabContainerTr);
-        this._headerTabContainerTable.appendChild(tbody);
-        this._headerTabContainerDiv.appendChild(this._headerTabContainerTable);
-        this._headerContainerDiv.appendChild(this._headerTabContainerDiv);
-        
         Echo.Sync.Font.render(this.component.render("font"), this._headerContainerDiv);
         Echo.Sync.FillImage.render(this.component.render("tabBackgroundImage"), this._headerContainerDiv);
-    
         this._div.appendChild(this._headerContainerDiv);
         
-        // Render Content Container
-        this._contentContainerDiv = document.createElement("div");
-        this._contentContainerDiv.style.position = "absolute";
-        this._contentContainerDiv.style.overflow = "hidden";
-        Echo.Sync.renderComponentDefaults(this.component, this._contentContainerDiv);
-        
-        // Render Tabs
-        var activeTabFound = false;
-        var componentCount = this.component.getComponentCount();
-        for (var i = 0; i < componentCount; ++i) {
-            var child = this.component.getComponent(i);
-            if (this._activeTabId == child.renderId) {
-                activeTabFound = true;
+        // Render Image Border (optional).
+        if (this._imageBorder) {
+            this._borderDiv = Echo.Sync.FillImageBorder.renderContainer(this._imageBorder, { absolute: true });
+            if (this._tabPositionBottom) {
+                this._borderDiv.style.top = (0 - this._ibContentInsetsPx.top) + "px";
+                this._borderDiv.style.bottom = 0;
+            } else {
+                this._borderDiv.style.top = 0;
+                this._borderDiv.style.bottom = (0 - this._ibContentInsetsPx.bottom) + "px";
             }
-            var tab = new Extras.Sync.TabPane.Tab(child, this);
+            this._borderDiv.style.left = (0 - this._ibContentInsetsPx.left) + "px";
+            this._borderDiv.style.right = (0 - this._ibContentInsetsPx.right) + "px";
+            this._div.appendChild(this._borderDiv);
+        }
+        
+        // Render Content Container.
+        this._contentContainerDiv = document.createElement("div");
+        this._contentContainerDiv.style.cssText = "position:absolute;overflow:hidden;";
+        Echo.Sync.renderComponentDefaults(this.component, this._contentContainerDiv);
+        if (this._border) {
+            if (this._borderType == Extras.TabPane.BORDER_TYPE_NONE) {
+                this._contentContainerDiv.style.border = "0 none";
+            } else if (this._borderType == Extras.TabPane.BORDER_TYPE_SURROUND) {
+                Echo.Sync.Border.render(this._border, this._contentContainerDiv);
+            } else if (this._borderType == Extras.TabPane.BORDER_TYPE_PARALLEL_TO_TABS) {
+                Echo.Sync.Border.render(this._border, this._contentContainerDiv, "borderTop");
+                Echo.Sync.Border.render(this._border, this._contentContainerDiv, "borderBottom");
+            } else if (this._tabPositionBottom) {
+                Echo.Sync.Border.render(this._border, this._contentContainerDiv, "borderBottom");
+            } else {
+                Echo.Sync.Border.render(this._border, this._contentContainerDiv, "borderTop");
+            }
+        }
+        this._div.appendChild(this._contentContainerDiv);
+
+        this._verifyActiveTabAvailable();
+        
+        // Create tabs.
+        for (var i = 0; i < this.component.children.length; ++i) {
+            var tab = new Extras.Sync.TabPane.Tab(this.component.children[i], this);
             this._addTab(update, tab);
         }
-        
-        if (!activeTabFound) {
-            this._activeTabId = null;
-            if (componentCount > 0) {
-                this._selectTab(this.component.getComponent(0).renderId);
-            }
-        }
 
-        this._configureHeaderSizeRequired = true;
-        
-        if (this._borderType == Extras.TabPane.BORDER_TYPE_NONE) {
-            this._contentContainerDiv.style.border = "0 none";
-        } else if (this._borderType == Extras.TabPane.BORDER_TYPE_SURROUND) {
-            Echo.Sync.Border.render(this._tabActiveBorder, this._contentContainerDiv);
-        } else if (this._borderType == Extras.TabPane.BORDER_TYPE_PARALLEL_TO_TABS) {
-            Echo.Sync.Border.render(this._tabActiveBorder, this._contentContainerDiv, "borderTop");
-            Echo.Sync.Border.render(this._tabActiveBorder, this._contentContainerDiv, "borderBottom");
-        } else if (this._tabPosition == Extras.TabPane.TAB_POSITION_BOTTOM) {
-            Echo.Sync.Border.render(this._tabActiveBorder, this._contentContainerDiv, "borderBottom");
-        } else {
-            Echo.Sync.Border.render(this._tabActiveBorder, this._contentContainerDiv, "borderTop");
-        }
-        
-        this._div.appendChild(this._contentContainerDiv);
+        this._layoutRequired = true;
         
         parentElement.appendChild(this._div);
     },
     
     /** @see Echo.Render.ComponentSync#renderDisplay */
     renderDisplay: function() {
-        var img, oversize, i;
-
-        this._tabContainerWidth = new Core.Web.Measure.Bounds(this._headerContainerDiv).width;
-        this._totalTabWidth = new Core.Web.Measure.Bounds(this._headerTabContainerDiv.firstChild).width;
-
+        var i, tab;
+        
         Core.Web.VirtualPosition.redraw(this._div);
+        this._tabContainerWidth = new Core.Web.Measure.Bounds(this._div, 
+                { flags: Core.Web.Measure.Bounds.FLAG_MEASURE_DIMENSION }).width - (2 * this._tabInsetPx);
+        
+        this._renderHeaderUpdate();
+        
+        this._renderLayout();
+        
+        // Process a change in active tab, update displayed tab.
+        if (this._displayedTabId != this._activeTabId) {
+            if (this._displayedTabId != null) {
+                tab = this._getTabById(this._displayedTabId);
+                tab._renderState(false);
+            }
+            if (this._activeTabId != null) {
+                tab = this._getTabById(this._activeTabId);
+                tab._renderState(true);
+            }
+            this._displayedTabId = this._activeTabId;
+        }
+
+        this._renderHeaderPositions();
+
+        // Virtual positioning
+        if (this._borderDiv) {
+            Core.Web.VirtualPosition.redraw(this._borderDiv);
+            Echo.Sync.FillImageBorder.renderContainerDisplay(this._borderDiv);
+        }
+        
         Core.Web.VirtualPosition.redraw(this._contentContainerDiv);
         Core.Web.VirtualPosition.redraw(this._headerContainerDiv);
         
+        for (i = 0; i < this._tabs.length; ++i) {
+            this._tabs[i]._renderDisplay();
+        }
+
         // Re-bound scroll position.
         this.setScrollPosition(this.scrollPosition);
-
-        if (this._configureHeaderSizeRequired) {
-            this._configureHeaderSize();
-            
-            var imageListener = Core.method(this, function() {
-                if (this.component) { // Verify component still registered.
-                    this._configureHeaderSize();
-                }
-            });
-            Core.Web.Image.monitor(this._headerContainerDiv, imageListener);
-        } else {
-            // Only invoke renderDisplay on tabs if configureHeaderSize() invocation is not required,
-            // as configureHeaderSize() will do this work as well.
-            for (i = 0; i < this._tabs.length; ++i) {
-                this._tabs[i]._renderDisplay();
-            }
-        }
     },
     
     /** @see Echo.Render.ComponentSync#renderDispose */
@@ -574,14 +814,12 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
 
         this._activeTabId = null;
         for (var i = 0; i < this._tabs.length; i++) {
-            this._tabs[i]._dispose();
+            this._tabs[i]._renderDispose();
         }
         this._tabs = [];
         this._div = null;
+        this._borderDiv = null;
         this._headerContainerDiv = null;
-        this._headerTabContainerDiv = null;
-        this._headerTabContainerTable = null;
-        this._headerTabContainerTr = null;
         this._contentContainerDiv = null;
         if (this._previousControlDiv) {
             Core.Web.Event.removeAll(this._previousControlDiv);
@@ -593,6 +831,20 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         }
     },
     
+    /**
+     * Renders a full update to the header, if required.
+     */
+    _renderHeaderUpdate: function() {
+        if (!this._headerUpdateRequired) {
+            return;
+        }
+        this._headerUpdateRequired = false;
+        for (var i = 0; i < this._tabs.length; ++i) {
+            this._tabs[i]._loadProperties();
+            this._tabs[i]._renderHeaderState(this._tabs[i].id === this._activeTabId, false, true);
+        }
+    },
+    
     /** @see Echo.Render.ComponentSync#renderUpdate */
     renderUpdate: function(update) {
         var fullRender = false,
@@ -600,8 +852,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
             i;
         
         if (update.hasUpdatedLayoutDataChildren()) {
-            // Layout data children updated: must full render.
-            fullRender = true;
+            this._headerUpdateRequired = true;
         }
         if (!fullRender) {
             if (!Core.Arrays.containsAll(Extras.Sync.TabPane._supportedPartialProperties, 
@@ -620,8 +871,8 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
                     if (!tab) {
                         continue;
                     }
-                    if (tab._childComponent.renderId == this._activeTabId) {
-                        activeTabRemoved = true;
+                    if (removedChildren[i].renderId == this._displayedTabId) {
+                        this._displayedTabId = null;
                     }
                     this._removeTab(tab);
                 }
@@ -636,22 +887,17 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
             }
             if (update.hasUpdatedProperties()) {
                 // partial update
-                var activeTabUpdate = update.getUpdatedProperty("activeTabId");
-                if (activeTabUpdate) {
-                    activeTabRemoved = false;
-                    this._selectTab(activeTabUpdate.newValue);
-                } else {
-                    var activeTabIndexUpdate = update.getUpdatedProperty("activeTabIndex");
-                    if (activeTabIndexUpdate && activeTabIndexUpdate.newValue < this.component.children.length) {
-                        activeTabRemoved = false;
-                        this._selectTab(this.component.children[activeTabIndexUpdate.newValue].renderId);
+                if (update.getUpdatedProperty("activeTabId")) {
+                    this._activeTabId = update.getUpdatedProperty("activeTabId").newValue;
+                } else if (update.getUpdatedProperty("activeTabIndex")) {
+                    var newIndex = update.getUpdatedProperty("activeTabIndex").newValue;
+                    if (newIndex >= 0 && newIndex < this.component.children.length) {
+                        this._activeTabId = this.component.children[newIndex].renderId;
                     }
                 }
             }
-            if ((activeTabRemoved || this._activeTabId == null) && this.component.children.length > 0) {
-                this._selectTab(this.component.children[0].renderId);
-            }
-            this._configureHeaderSizeRequired = true;
+            this._verifyActiveTabAvailable();
+            this._layoutRequired = true;
         }
     
         if (fullRender) {
@@ -665,37 +911,12 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     },
     
     /**
-     * Changes the displayed active tab.
-     * 
-     * @param tabId {String} the id of the tab to select
-     */
-    _selectTab: function(tabId) {
-        if (tabId == this._activeTabId) {
-            return;
-        }
-        var tab;
-        if (this._activeTabId) {
-            tab = this._getTabById(this._activeTabId);
-            if (tab) {
-                tab._renderActiveState(false);
-            }
-        }
-        
-        tab = this._getTabById(tabId);
-        if (tab) {
-            this._activeTabId = tabId;
-            tab._renderActiveState(true);
-        } else {
-            this._activeTabId = null;
-        }
-    },
-    
-    /**
      * Enables/disables the scrolling controls used when the tab header is to wide to be displayed entirely at once.
      * This method will lazy-render the specified scrolling control if it has not been previously enabled. 
      * 
      * @param {Boolean} previous flag indicating which scrolling control should be enabled/disabled, true indicating the
      *        scroll-to-previous control, false indicating the scroll-to-next control
+     * @param {Boolean} enabled the new enabled state
      */
     _setOversizeEnabled: function(previous, enabled) {
         var controlDiv = previous ? this._previousControlDiv : this._nextControlDiv,
@@ -707,7 +928,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
             } else {
                 controlDiv = document.createElement("div");
                 controlDiv.style.cssText = "position:absolute;z-index:2;cursor:pointer;";
-                controlDiv.style[this._tabPosition === Extras.TabPane.TAB_POSITION_BOTTOM ? "bottom" : "top"] = "5px";
+                
                 controlDiv.style[previous ? "left" : "right"] = "2px";
                 
                 img = document.createElement("img");
@@ -720,20 +941,75 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
                 Core.Web.Event.Selection.disable(controlDiv);
 
                 if (previous) {
-                    img.src = this._icons.scrollLeftIcon ? this._icons.scrollLeftIcon :
+                    img.src = this._icons.scrollLeftIcon ? Echo.Sync.ImageReference.getUrl(this._icons.scrollLeftIcon) :
                             this.client.getResourceUrl("Extras", "image/tabpane/Previous.png");
-                    img.alt = "<";
                     this._previousControlDiv = controlDiv;
                 } else {
-                    img.src = this._icons.scrollRightIcon ? this._icons.scrollRightIcon :
+                    img.src = this._icons.scrollRightIcon ? Echo.Sync.ImageReference.getUrl(this._icons.scrollRightIcon) :
                             this.client.getResourceUrl("Extras", "image/tabpane/Next.png");
-                    img.alt = ">";
                     this._nextControlDiv = controlDiv;
                 }
                 this._div.appendChild(controlDiv);
+                
+                var tabContainerHeight = new Core.Web.Measure.Bounds(this._headerContainerDiv,
+                        { flags: Core.Web.Measure.Bounds.FLAG_MEASURE_DIMENSION }).height;
+                var imageListener = Core.method(this, function() {
+                    if (img.height && !isNaN(img.height)) {
+                        var imgOffset = Math.floor((tabContainerHeight - img.height) / 2);
+                        if (imgOffset > 0) {
+                            controlDiv.style[this._tabPositionBottom ? "bottom" : "top"] = imgOffset + "px";
+                        }
+                    }
+                });
+                Core.Web.Image.monitor(controlDiv, imageListener);
+                imageListener();
             }
         } else if (controlDiv) {
             controlDiv.style.display = "none";
+        }
+    },
+    
+    /**
+     * Sets the currently rolled-over tab.
+     * Enqueues a slightly delayed runnable to perform the operation in order to prevent flicker.
+     * 
+     * @param {String} tabId the tab id (renderId of child componeent)
+     * @param {Boolean} state the rollover state of the tab
+     */
+    _setRolloverTab: function(tabId, state) {
+        this._pendingRollover = { tabId: tabId, state: state };
+        if (!this._rolloverRunnable) {
+            this._rolloverRunnable = new Core.Web.Scheduler.MethodRunnable(Core.method(this, function() {
+                this._setRolloverTabImpl(this._pendingRollover.tabId, this._pendingRollover.state);
+            }));
+        }
+        Core.Web.Scheduler.add(this._rolloverRunnable);
+    },
+    
+    /**
+     * Implementation work method for setting currently rolled over tab.
+     * 
+     * @param {String} tabId the tab id (renderId of child componeent)
+     * @param {Boolean} state the rollover state of the tab
+     */
+    _setRolloverTabImpl: function(tabId, state) {
+        var rolloverTab = this._rolloverTabId && this._getTabById(this._rolloverTabId);
+        var tab = this._getTabById(tabId);
+        if (state) {
+            if (this._rolloverTabId != tabId) {
+                if (rolloverTab) {
+                    rolloverTab.setRollover(false, false);
+                }
+                this._rolloverTabId = tabId;
+                tab.setRollover(true);
+            }
+        } else {
+            if (this._rolloverTabId == tabId) {
+                this._rolloverTabId = null;
+                rolloverTab.setRollover(false, false);
+            } else {
+                // Tab state is already non-rollover, do nothing.
+            }
         }
     },
     
@@ -757,7 +1033,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
             bounded = true;
         }
         this.scrollPosition = position;
-        this._headerTabContainerDiv.style.marginLeft = (0 - position) + "px";
+        this._headerContainerDiv.style.marginLeft = (0 - position) + "px";
         
         if (oversize) {
             this._setOversizeEnabled(true, position > 0);
@@ -776,7 +1052,20 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
      * @param e the event
      */
     _tabSelectListener: function(e) {
-        this._selectTab(e.tab.renderId);
+        this._activeTabId = e.tab.renderId;
+        Echo.Render.renderComponentDisplay(this.component);
+    },
+    
+    /**
+     * Ensures an active tab is present, if possible.
+     */
+    _verifyActiveTabAvailable: function() {
+        for (var i = 0; i < this.component.children.length; ++i) {
+            if (this.component.children[i].renderId == this._activeTabId) {
+                return;
+            }
+        }
+        this._activeTabId = this.component.children.length === 0 ? null : this.component.children[0].renderId; 
     }
 });
 
@@ -792,7 +1081,7 @@ Extras.Sync.TabPane.Tab = Core.extend({
      * Initial (non-rendered) state is indicated by null.
      * @type Boolean
      */
-    _activeState: null,
+    _active: null,
     
     /**
      * The child component which will be rendered within the tab.
@@ -801,40 +1090,28 @@ Extras.Sync.TabPane.Tab = Core.extend({
     _childComponent: null,
     
     /**
+     * The FillImageBorder container component housing the tab, if in use.
+     * @type Element
+     */
+    _fibContainer: null,
+    
+    /**
      * The TabPane synchronization peer.
      * @type Extras.Sync.TabPane
      */
     _parent: null,
     
     /**
-     * TD element containing tab header (highest level element managed by Tab object in the header).
+     * DIV element containing tab header (highest level element managed by Tab object in the header).
      * @type Element
      */
-    _headerTd: null,
+    _headerDiv: null,
     
     /**
      * The DIV element which will contain the rendered child component.
      * @type Element
      */
     _contentDiv: null,
-    
-    /**
-     * TD element containing left-side tab trim.
-     * @type Element
-     */
-    _leftTd: null,
-    
-    /**
-     * Center TD element, containing tab header content.
-     * @type Element
-     */
-    _centerTd: null,
-    
-    /**
-     * TD element containing right-side tab trim.
-     * @type Element
-     */
-    _rightTd: null,
     
     /**
      * TD element containing close icon.
@@ -847,7 +1124,38 @@ Extras.Sync.TabPane.Tab = Core.extend({
      * @type Boolean
      */
     _tabCloseEnabled: false,
-
+    
+    /**
+     * The default set z-index of the tab.  This value is used to store the previous z-index value when
+     * a tab is rolled over (and its z-index is thus raised).
+     * @type Number
+     */
+    _defaultZIndex: 0,
+    
+    /**
+     * The total height of the active tab border and insets, in pixels.
+     * @type Number 
+     */
+    _activeSurroundHeight: null,
+    
+    /**
+     * The total height of the inactive tab border and insets, in pixels.
+     * @type Number 
+     */
+    _inactiveSurroundHeight: null,
+    
+    /**
+     * The DIV containing the tab's label, i.e., title and icon.
+     * @type Element
+     */
+    _labelDiv: null,
+    
+    /**
+     * The tab identifier, i.e., the renderId of the child component.
+     * @type String
+     */
+    id: null,
+    
     /**
      * Creates a new Tab instance.
      * 
@@ -855,44 +1163,10 @@ Extras.Sync.TabPane.Tab = Core.extend({
      * @param {Extras.Sync.TabPane} parent the TabPane synchronization peer
      */
     $construct: function(childComponent, parent) {
+        this.id = childComponent.renderId;
         // state
         this._childComponent = childComponent;
         this._parent = parent;
-        if (parent._tabCloseEnabled) {
-            var layoutData = this._childComponent.render("layoutData");
-            this._tabCloseEnabled = layoutData ? layoutData.closeEnabled : false;
-        } else {
-            this._tabCloseEnabled = false;
-        }
-    },
-    
-    /**
-     * Adds event listeners to the tab to handle click and mouse events.
-     */
-    _addEventListeners: function() {
-        Core.Web.Event.add(this._headerTd, "click", Core.method(this, this._processClick), false);
-        Core.Web.Event.Selection.disable(this._headerTd);
-        
-        if (this._tabCloseEnabled) {
-            Core.Web.Event.add(this._headerTd, "mouseover", Core.method(this, this._processEnter), false);
-            Core.Web.Event.add(this._headerTd, "mouseout", Core.method(this, this._processExit), false);
-        }
-    },
-    
-    /**
-     * Disposes of the tab, releasing any resources.
-     */
-    _dispose: function() {
-        Core.Web.Event.removeAll(this._headerTd);
-        
-        this._parent = null;
-        this._childComponent = null;
-        this._headerTd = null;
-        this._contentDiv = null;
-        this._leftTd = null;
-        this._centerTd = null;
-        this._rightTd = null;
-        this._closeIconTd = null;
     },
     
     /**
@@ -930,139 +1204,58 @@ Extras.Sync.TabPane.Tab = Core.extend({
     },
     
     /**
-     * Retrieves left-side tab image data.  The returned object contains fillImage and width properties.
+     * Returns the style property which should be used for a given tab property.
+     * Queries layout data and component properties.
+     * Queries rollover properties if applicable (and defaults to non-rollover property if unspecified).
      * 
-     * @param {Boolean} state the state of the tab, true for active, false for inactive
-     * @return a data object containing fillImage and width properties 
+     * @param {String} name the name of the property, first letter capitalized, e.g., "Background"
+     * @param {Boolean} active the active state
+     * @param {Boolean} rollover the rollover state
+     * @return the property value
      */
-    _getLeftImage: function(state) {
-        var propertyName = state ? "tabActiveLeftImage" : "tabInactiveLeftImage";
-        var image = this._parent.component.render(propertyName);
-        if (!image) {
-            return;
+    _getProperty: function(name, active, rollover) {
+        var value = this._layoutData[(active ? "active" : "inactive") + name] ||
+                this._parent.component.render((active ? "tabActive" : "tabInactive") + name);
+        if (!active && rollover) {
+            value = this._layoutData["rollover" + name] || this._parent.component.render("tabRollover" + name) || value;
         }
-        var fillImage = { url: (image.url ? image.url : image), repeat: "no-repeat", x: 0, y: 0 };
-        return { width: (image.width ? image.width : null), fillImage: fillImage };
+        return value;
     },
     
     /**
-     * Retrieves right-side tab image data.  The returned object contains fillImage and width properties.
+     * Determines the height of the border and insets surrounding the tab (supports both imageBorder and border properties).
+     * Uses layout data information if provided.
      * 
-     * @param {Boolean} state the state of the tab, true for active, false for inactive
-     * @return a data object containing fillImage and width properties 
+     * @param {Boolean} active true to measure the active border, false for the inactive border
+     * @return the combined top and bottom border height, in pixels
+     * @type Number
      */
-    _getRightImage: function(state) {
-        var propertyName = state ? "tabActiveRightImage" : "tabInactiveRightImage";
-        var image = this._parent.component.render(propertyName);
-        if (!image) {
-            return;
+    _getSurroundHeight: function(active) {
+        var insets, imageBorder, border, padding;
+        
+        insets = Echo.Sync.Insets.toPixels(this._getProperty("Insets", active, false) || Extras.Sync.TabPane._DEFAULTS.tabInsets);
+        padding = insets.top + insets.bottom;
+        
+        if (this._useImageBorder) {
+            imageBorder = this._getProperty("ImageBorder", active, false);
+            insets = Echo.Sync.Insets.toPixels(imageBorder.contentInsets);
+            return padding + insets.top + insets.bottom;
+        } else {
+            border = this._getProperty("Border", active, false) || 
+                    (active ? this._parent._tabActiveBorder : this._parent._tabInactiveBorder);
+            return padding + Echo.Sync.Border.getPixelSize(border, this._parent._tabSide); 
         }
-        var fillImage = { url: (image.url ? image.url : image), repeat: "no-repeat", x: "100%", y: 0 };
-        return { width: (image.width ? image.width : null), fillImage: fillImage };
     },
     
     /**
-     * Renders the tab active or inactive, updating header state and showing/hiding tab content.
-     * 
-     * @param {Boolean} state the state of the tab, true for active, false for inactive
+     * Loads state information.
      */
-    _renderActiveState: function(state) {
-        if (this._activeState === state) {
-            // Do nothing if values are unchanged.   
-            // Note initial value of oldValue is null.
-            return;
-        }
-        
-        var headerContentTable = this._headerTd.firstChild;
-        var centerTd = this._centerTd;
-        var contentDiv = this._contentDiv;
-        
-        var foreground;
-        var background;
-        var border;
-        if (state) {
-            foreground = this._parent.component.render("tabActiveForeground");
-            background = this._parent.component.render("tabActiveBackground");
-            border = this._parent._tabActiveBorder;
-        } else {
-            foreground = this._parent.component.render("tabInactiveForeground");
-            background = this._parent.component.render("tabInactiveBackground");
-            border = this._parent._tabInactiveBorder;
-        }
-        Echo.Sync.Color.renderClear(foreground, headerContentTable, "color");
-        Echo.Sync.Color.renderClear(background, headerContentTable, "backgroundColor");
-        headerContentTable.style.cursor = state ? "default" : "pointer";
-        
-        var backgroundImage;
-        if (state) {
-            backgroundImage = this._parent.component.render("tabActiveBackgroundImage");
-        } else {
-            backgroundImage = this._parent.component.render("tabInactiveBackgroundImage");
-        }
-        Echo.Sync.FillImage.renderClear(backgroundImage, centerTd, null);
-        
-        var activeBorderSize = Echo.Sync.Border.getPixelSize(this._parent._tabActiveBorder);
-        var inactiveBorderSize = Echo.Sync.Border.getPixelSize(this._parent._tabInactiveBorder);
-        
-        if (this._parent._tabPosition == Extras.TabPane.TAB_POSITION_BOTTOM) {
-            headerContentTable.style.marginTop = state ? 0 : activeBorderSize + "px";
-            headerContentTable.style.marginBottom = state ? 0 : this._parent._tabActiveHeightIncreasePx + "px";
-            centerTd.style.paddingTop = state ? (inactiveBorderSize + this._parent._tabActiveHeightIncreasePx )+ "px" : 0;
-            Echo.Sync.Border.render(border, headerContentTable, "borderBottom");
-        } else {
-            headerContentTable.style.marginBottom = state ? 0 : activeBorderSize + "px";
-            headerContentTable.style.marginTop = state ? 0 : this._parent._tabActiveHeightIncreasePx + "px";
-            centerTd.style.paddingBottom = state ? (inactiveBorderSize + this._parent._tabActiveHeightIncreasePx )+ "px" : 0;
-            Echo.Sync.Border.render(border, headerContentTable, "borderTop");
-        }
-        
-        
-        Echo.Sync.Border.render(border, headerContentTable, "borderLeft");
-        Echo.Sync.Border.render(border, headerContentTable, "borderRight");
-        
-        var font;
-        if (state) {
-            font = this._parent.component.render("tabActiveFont");
-        } else {
-            font = this._parent.component.render("tabInactiveFont");
-        }
-        Echo.Sync.Font.renderClear(font, headerContentTable);
-    
-        if (this._leftTd) {
-            var leftImage = this._getLeftImage(state); 
-            Echo.Sync.FillImage.renderClear(leftImage ? leftImage.fillImage : null, this._leftTd, null);
-            if (leftImage && leftImage.width) {
-                this._leftTd.style.width = leftImage.width.toString();
-            }
-        }
-        
-        if (this._rightTd) {
-            var rightImage = this._getRightImage(state); 
-            Echo.Sync.FillImage.renderClear(rightImage ? rightImage.fillImage : null, this._rightTd, null);
-            if (rightImage && rightImage.width) {
-                this._rightTd.style.width = rightImage.width.toString();
-            }
-        }
-        
-        if (this._activeState !== null && !state) {
-            // Notify child component hierarchy that it is being hidden (unless performing initial render,
-            // i.e., this._activeState === null).
-            Echo.Render.renderComponentHide(this._childComponent);
-        }
-        // show/hide content
-        if (Core.Web.Env.BROWSER_MOZILLA && !Core.Web.Env.BROWSER_FIREFOX) {
-            contentDiv.style.right = state ? "0" : "100%";
-            contentDiv.style.bottom = state ? "0" : "100%";
-        } else {
-            contentDiv.style.display = state ? "block" : "none";
-        }
-        if (state) {
-            // FIXME hack to notify the tab content component that it's size may have changed, this is
-            // required because any previous notifications could have taken place when this tab was hidden.
-            Echo.Render.renderComponentDisplay(this._childComponent);
-        }
-
-        this._activeState = state;
+    _loadProperties: function() {
+        this._layoutData = this._childComponent.render("layoutData") || {};
+        this._useImageBorder = this._getProperty("ImageBorder", false, false);
+        this._tabCloseEnabled = this._parent._tabCloseEnabled && this._layoutData.closeEnabled;
+        this._activeSurroundHeight = this._getSurroundHeight(true);
+        this._inactiveSurroundHeight = this._getSurroundHeight(false);
     },
     
     /**
@@ -1079,35 +1272,38 @@ Extras.Sync.TabPane.Tab = Core.extend({
             if (!this._tabCloseEnabled) {
                 return;
             }
-            this._parent.component.doTabClose(this._childComponent.renderId);
+            this._parent.component.doTabClose(this.id);
         } else {
             // tab clicked
-            this._parent.component.doTabSelect(this._childComponent.renderId);
+            this._parent.component.doTabSelect(this.id);
         }
     },
     
     /**
-     * Tab rollover enter handler.
+     * Tab close icon rollover enter/exit handler.
      * 
      * @param e the mouse event
      */
-    _processEnter: function(e) {
-        if (!this._parent || !this._parent.client || !this._parent.client.verifyInput(this._parent.component)) {
+    _processCloseRollover: function(e) {
+        var enter = e.type == "mouseover" || e.type == "mouseenter";
+        if (enter && (!this._parent || !this._parent.client || !this._parent.client.verifyInput(this._parent.component))) {
             return true;
         }
-        
-        var rollover = Core.Web.DOM.isAncestorOf(this._closeIconTd, e.target);
-        this._closeIconTd.firstChild.src = Echo.Sync.ImageReference.getUrl(this._getCloseImage(rollover));
+        this._closeIconTd.firstChild.src = Echo.Sync.ImageReference.getUrl(this._getCloseImage(enter));
+        return true;
     },
     
     /**
-     * Tab rollover exit handler.
+     * Tab rollover enter/exit handler.
      * 
      * @param e the mouse event
      */
-    _processExit: function(e) {
-        var rollover = Core.Web.DOM.isAncestorOf(this._closeIconTd, e.target);
-        this._closeIconTd.firstChild.src = Echo.Sync.ImageReference.getUrl(this._getCloseImage(false));
+    _processRollover: function(e) {
+        var enter = e.type == "mouseover" || e.type == "mouseenter";
+        if (enter && (!this._parent || !this._parent.client || !this._parent.client.verifyInput(this._parent.component))) {
+            return true;
+        }
+        this._parent._setRolloverTab(this.id, enter);
     },
     
     /**
@@ -1115,177 +1311,295 @@ Extras.Sync.TabPane.Tab = Core.extend({
      * 
      * @param {Echo.Update.ComponentUpdate} update the component update 
      */
-    _render: function(update) {
-        this._headerTd = this._renderHeader();
-        this._contentDiv = this._renderContent(update);
+    _renderAdd: function(update) {
+        this._loadProperties();
         
-        this._renderActiveState(this._childComponent.renderId == this._parent._activeTabId);
-        this._addEventListeners();
-    },
-    
-    /**
-     * Renders the close icon.
-     */
-    _renderCloseIcon: function() {
-        var td = document.createElement("td");
-        Echo.Sync.Alignment.render(this._parent.component.render("tabAlignment", 
-                Extras.Sync.TabPane._DEFAULTS.tabAlignment), td, true, this._parent.component);
-        td.style.padding = "0 0 0 " + this._parent.component.render("tabCloseIconTextMargin", 
-                Extras.Sync.TabPane._DEFAULTS.tabCloseIconTextMargin + "px");
-        td.style.cursor = "pointer";
-        var img = document.createElement("img");
-        img.src = Echo.Sync.ImageReference.getUrl(this._getCloseImage(false));
-        
-        if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
-            // remove auto-calculated width & height, to prevent problems with different image sizes
-            img.removeAttribute("width");
-            img.removeAttribute("height");
-        }
-        td.appendChild(img);
-        return td;
-    },
-    
-    /**
-     * Renders the content of a tab.
-     * 
-     * @param {Echo.Update.ComponentUpdate} update the component update 
-     */
-    _renderContent: function(update) {
-        var div = document.createElement("div");
-        div.style.cssText = "position:absolute;top:0;left:0;overflow:auto;";
+        // Header DIV
+        this._headerDiv = document.createElement("div");
+        this._headerDiv.style.cssText = "position:absolute;";
 
+        // Content DIV
+        this._contentDiv = document.createElement("div");
+        this._contentDiv.style.cssText = "position:absolute;top:0;left:0;overflow:auto;";
         // hide content
         if (Core.Web.Env.BROWSER_MOZILLA && !Core.Web.Env.BROWSER_FIREFOX) {
-            //FIXME doc or remove (and why no display=none?)
-            div.style.right = "100%";
-            div.style.bottom = "100%";
+            //FIXME doc/analyze/remove
+            this._contentDiv.style.right = "100%";
+            this._contentDiv.style.bottom = "100%";
         } else {
-            div.style.display = "none";
-            div.style.right = "0";
-            div.style.bottom = "0";
+            this._contentDiv.style.display = "none";
+            this._contentDiv.style.right = "0";
+            this._contentDiv.style.bottom = "0";
         }
-        Echo.Sync.Insets.render(this._getContentInsets(), div, "padding");
+        Echo.Sync.Insets.render(this._getContentInsets(), this._contentDiv, "padding");
+        Echo.Render.renderComponentAdd(update, this._childComponent, this._contentDiv);
         
-        Echo.Render.renderComponentAdd(update, this._childComponent, div);
-        
-        return div;
+        this._renderState(this.id == this._parent._activeTabId);
     },
     
     /**
      * Tab-specific renderDisplay() tasks.
      */
     _renderDisplay: function() {
+        if (this._fibContainer) {
+            Echo.Sync.FillImageBorder.renderContainerDisplay(this._fibContainer);
+            Core.Web.VirtualPosition.redraw(this._backgroundDiv);
+        }
         Core.Web.VirtualPosition.redraw(this._contentDiv);
     },
-
+    
     /**
-     * Renders the "header" of a tab, i.e., the tab label at the top/bottom of the TabPane.
+     * Disposes of the tab, releasing any resources.
      */
-    _renderHeader: function() {
-        var layoutData = this._childComponent.render("layoutData");
-        
-        var headerTd = document.createElement("td");
-        headerTd.style.padding = 0;
-        headerTd.style.border = "0px none";
-        
-        headerTd.vAlign = this._parent._tabPosition == Extras.TabPane.TAB_POSITION_BOTTOM ? "top" : "bottom";
-        
-        var tabTable = document.createElement("table");
-        tabTable.cellPadding = "0";
-        tabTable.cellSpacing = "0";
-        tabTable.style.padding = "0";
-        tabTable.style.marginRight = this._parent._tabSpacing.toString();
-        var width = this._parent.component.render("tabWidth");
-        if (width) {
-            tabTable.style.width = width.toString();
+    _renderDispose: function() {
+        Core.Web.Event.removeAll(this._headerDiv);
+        if (this._rolloverRunnable) {
+            Core.Web.Scheduler.remove(this._rolloverRunnable);
         }
-        
-        var tabTbody = document.createElement("tbody");
-        var tabTr = document.createElement("tr");
-        
-        // Render TD element to contain left border image (if required).
-        if (this._getLeftImage(true) != null || this._getLeftImage(false) != null) {
-            this._leftTd = document.createElement("td");
-            this._leftTd.appendChild(document.createTextNode("\u00a0"));
-            tabTr.appendChild(this._leftTd);
-        }
-        
-        // Render TD element to contain tab content.
-        var centerTd = document.createElement("td");
-        Echo.Sync.Insets.render(Extras.Sync.TabPane._DEFAULTS.tabInsets, centerTd, "padding");
-        
-        var labelDiv = document.createElement("div");
-        centerTd.appendChild(labelDiv);
-        
-        var icon = layoutData ? layoutData.icon : null;
-        var title = layoutData ? (layoutData.title ? layoutData.title : "*") : "*";
-        var closeIcon = this._parent._tabCloseEnabled && (this._tabCloseEnabled || this._parent._icons.disabledIcon);
-        if (icon || closeIcon) {
-            // Render Text and Icon(s)
-            var table = document.createElement("table");
-            table.style.padding = "0";
-            table.cellPadding = "0";
-            table.cellSpacing = "0";
-            var tbody = document.createElement("tbody");
-            var tr = document.createElement("tr");
-            if (icon) {
-                tr.appendChild(this._renderIcon(icon));
-            }
-            var textTd = document.createElement("td");
-            textTd.style.whiteSpace = "nowrap";
-            Echo.Sync.Alignment.render(this._parent.component.render("tabAlignment", 
-                    Extras.Sync.TabPane._DEFAULTS.tabAlignment), textTd, true, this._parent.component);
-            textTd.appendChild(document.createTextNode(title));
-            table.appendChild(tbody);
-            tbody.appendChild(tr);
-            tr.appendChild(textTd);
-            if (closeIcon) {
-                this._closeIconTd = this._renderCloseIcon();
-                tr.appendChild(this._closeIconTd);
-            }
-            labelDiv.appendChild(table);
-        } else {
-            // Render Text Only
-            labelDiv.style.whiteSpace = "nowrap";
-            Echo.Sync.Alignment.render(this._parent.component.render("tabAlignment", 
-                    Extras.Sync.TabPane._DEFAULTS.tabAlignment), labelDiv, true, this._parent.component);
-            labelDiv.appendChild(document.createTextNode(title));
-        }
-        if (this._parent.component.render("tabHeight")) {
-            Echo.Sync.Extent.render(this._parent.component.render("tabHeight"), labelDiv, "height", false, false);
-        }
-
-        tabTr.appendChild(centerTd);
-        this._centerTd = centerTd;
-    
-        // Render TD element to contain right border image (if required).
-        if (this._getRightImage(true) != null || this._getRightImage(false) != null) {
-            this._rightTd = document.createElement("td");
-            this._rightTd.appendChild(document.createTextNode("\u00a0"));
-            tabTr.appendChild(this._rightTd);
-        }
-    
-        tabTbody.appendChild(tabTr);
-        tabTable.appendChild(tabTbody);
-        headerTd.appendChild(tabTable);
-
-        return headerTd;
+        this._fibContainer = null;
+        this._parent = null;
+        this._childComponent = null;
+        this._headerDiv = null;
+        this._contentDiv = null;
+        this._closeIconTd = null;
+        this._iconImg = null;
+        this._closeImg = null;
+        this._heightTd = null;
+        this._labelDiv = null;
+        this._backgroundDiv = null;
     },
     
     /**
-     * Renders the icon of a tab.
+     * Renders the tab header.
      * 
-     * @param {#ImageReference} icon the icon 
+     * @param {Boolean} active the active state of the tab
      */
-    _renderIcon: function(icon) {
-        var td = document.createElement("td");
-        Echo.Sync.Alignment.render(this._parent.component.render("tabAlignment", 
-                Extras.Sync.TabPane._DEFAULTS.tabAlignment), td, true, this._parent.component);
-        var img = document.createElement("img");
-        img.src = Echo.Sync.ImageReference.getUrl(icon);
-        img.style.marginRight = this._parent.component.render("tabIconTextMargin", 
-                Extras.Sync.TabPane._DEFAULTS.tabIconTextMargin + "px");
-        td.appendChild(img);
-        return td;
+    _renderHeader: function(active) {
+        var tabPane = this._parent.component,
+            img, table, tr, td;
+        
+        Core.Web.Event.removeAll(this._headerDiv);
+        Core.Web.DOM.removeAllChildren(this._headerDiv);
+        
+        // Configure Header DIV.
+        this._headerDiv.style[this._parent._tabPositionBottom ? "top" : "bottom"] = 
+                active ? 0 : (this._parent._tabInactivePositionAdjustPx + "px");
+        if (this._layoutData.toolTipText) {
+            this._headerDiv.title = this._layoutData.toolTipText;
+        }
+        
+        // Create Label DIV.
+        this._labelDiv = document.createElement("div");
+        this._labelDiv.style.cssText = "position:relative;white-space:nowrap;overflow:hidden;";
+        Echo.Sync.Extent.render(this._parent.component.render("tabWidth"), this._labelDiv, "width", true, false);
+        var headerDivContent = this._labelDiv;
+
+        if (this._useImageBorder) {
+            var imageBorder = this._getProperty("ImageBorder", active, false);
+            this._fibContainer = headerDivContent =
+                    Echo.Sync.FillImageBorder.renderContainer(imageBorder, { child: this._labelDiv });
+            var fibContent = Echo.Sync.FillImageBorder.getContainerContent(this._fibContainer);
+            fibContent.style.zIndex = 2;
+            this._backgroundDiv = document.createElement("div");
+            this._backgroundDiv.style.cssText = "position:absolute;z-index:1;";
+            Echo.Sync.Insets.renderPosition(imageBorder.borderInsets, this._backgroundDiv);
+            this._fibContainer.appendChild(this._backgroundDiv);
+            
+            if (Core.Web.Env.BROWSER_INTERNET_EXPLORER && Core.Web.Env.BROWSER_VERSION_MAJOR === 6) {
+                headerDivContent = Extras.Sync.TabPane._createTable();
+                td = document.createElement("td");
+                td.style.cssText = "padding:0;";
+                td.appendChild(this._fibContainer);
+                headerDivContent.firstChild.firstChild.appendChild(td);
+            }
+        } else {
+            var border = this._getProperty("Border", active, false) || 
+                    (active ? this._parent._tabActiveBorder : this._parent._tabInactiveBorder);
+            this._backgroundDiv = null;
+            this._fibContainer = null;
+            Echo.Sync.Border.render(border, this._labelDiv, this._parent._tabPositionBottom ? "borderBottom" : "borderTop");
+            Echo.Sync.Border.render(border, this._labelDiv, "borderLeft");
+            Echo.Sync.Border.render(border, this._labelDiv, "borderRight");
+        }
+        
+        // Render Header Content.
+        var icon = this._layoutData && this._layoutData.icon;
+        var title = (this._layoutData ? this._layoutData.title : null) || "*";
+        var closeIcon = this._parent._tabCloseEnabled && (this._tabCloseEnabled || this._parent._icons.disabledIcon); //FIXME?
+
+        // Render Text and Icon(s)
+        table = Extras.Sync.TabPane._createTable();
+        tr = table.firstChild.firstChild;
+        
+        if (icon) {
+            td = document.createElement("td");
+            td.style.cssText = "padding:0;";
+            Echo.Sync.Alignment.render(this._parent.component.render("tabAlignment", 
+                    Extras.Sync.TabPane._DEFAULTS.tabAlignment), td, true, this._parent.component);
+            this._iconImg = document.createElement("img");
+            this._iconImg.style.marginRight = this._parent.component.render("tabIconTextMargin", 
+                    Extras.Sync.TabPane._DEFAULTS.tabIconTextMargin + "px");
+            td.appendChild(this._iconImg);
+            tr.appendChild(td);
+        }
+
+        this._heightTd = document.createElement("td");
+        this._heightTd.style.cssText = "padding:0px;width:0px;";
+        tr.appendChild(this._heightTd);
+        
+        td = document.createElement("td");
+        td.style.cssText = "padding:0;white-space:nowrap;";
+        Echo.Sync.Alignment.render(tabPane.render("tabAlignment", Extras.Sync.TabPane._DEFAULTS.tabAlignment), td, true, tabPane);
+        td.appendChild(document.createTextNode(title));
+        tr.appendChild(td);
+        
+        if (closeIcon) {
+            this._closeIconTd = document.createElement("td");
+            this._closeIconTd.style.cssText = "padding:0;";
+            Echo.Sync.Alignment.render(this._parent.component.render("tabAlignment", 
+                    Extras.Sync.TabPane._DEFAULTS.tabAlignment), this._closeIconTd, true, this._parent.component);
+            this._closeIconTd.style.padding = "0 0 0 " + this._parent.component.render("tabCloseIconTextMargin", 
+                    Extras.Sync.TabPane._DEFAULTS.tabCloseIconTextMargin + "px");
+            this._closeIconTd.style.cursor = "pointer";
+            this._closeImg = document.createElement("img");
+            Echo.Sync.ImageReference.renderImg(this._getCloseImage(false), this._closeImg);
+            this._closeIconTd.appendChild(this._closeImg);
+            tr.appendChild(this._closeIconTd);
+        }
+        this._labelDiv.appendChild(table);
+        
+        Core.Web.Event.Selection.disable(this._headerDiv);
+        Core.Web.Event.add(this._headerDiv, "click", Core.method(this, this._processClick), false);
+        Core.Web.Event.add(this._headerDiv, 
+                Core.Web.Env.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED ? "mouseenter" : "mouseover", 
+                Core.method(this, this._processRollover), false);
+        Core.Web.Event.add(this._headerDiv,
+                Core.Web.Env.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED ? "mouseleave" : "mouseout",
+                Core.method(this, this._processRollover), false);
+        if (this._tabCloseEnabled) {
+            Core.Web.Event.add(this._closeIconTd, 
+                    Core.Web.Env.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED ? "mouseenter" : "mouseover", 
+                    Core.method(this, this._processCloseRollover), false);
+            Core.Web.Event.add(this._closeIconTd,
+                    Core.Web.Env.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED ? "mouseleave" : "mouseout",
+                    Core.method(this, this._processCloseRollover), false);
+        }
+        
+        this._headerDiv.appendChild(headerDivContent);
+    },
+    
+    /**
+     * Renders the appearance of the tab header active or inactive.
+     * 
+     * @param {Boolean} active the active state of the tab, true for active, false for inactive
+     * @param {Boolean} rollover the rollover state of the tab, true for rolled over, false for not
+     * @param {Boolean} force force re-render of the tab, even if specified states are identical to rendered states
+     *        (method may normally perform no action under such conditions)
+     */
+    _renderHeaderState: function(active, rollover, force) {
+        var fullRender = !this._labelDiv || force;
+        
+        if (fullRender) {
+            this._renderHeader(active);
+        }
+        
+        if (!force && this._active == active && (active || !this._parent._tabRolloverEnabled || this._rolloverState == rollover)) {
+            return;
+        }
+        
+        if (rollover) {
+            this._defaultZIndex = this._headerDiv.style.zIndex;
+            this._headerDiv.style.zIndex = this._parent.component.children.length + 1;
+        } else {
+            this._headerDiv.style.zIndex = this._defaultZIndex;
+        }
+        
+        this._rolloverState = rollover;
+
+        var tabPane = this._parent.component,
+            img, table, tr, td;
+        
+        Echo.Sync.Color.renderClear(this._getProperty("Foreground", active, rollover), this._labelDiv, "color");
+        Echo.Sync.Font.renderClear(this._getProperty("Font", active, rollover), this._labelDiv);
+        this._labelDiv.style.cursor = active ? "default" : "pointer";
+        Echo.Sync.Insets.render(this._getProperty("Insets", active, false) || Extras.Sync.TabPane._DEFAULTS.tabInsets, 
+                this._labelDiv, "padding"); 
+                
+        this._headerDiv.style[this._parent._tabPositionBottom ? "top" : "bottom"] = 
+                active ? 0 : (this._parent._tabInactivePositionAdjustPx + "px");
+
+        if (active) {
+            this._labelDiv.style[this._parent._tabPositionBottom ? "paddingTop" : "paddingBottom"] =
+                    (parseInt(this._labelDiv.style[this._parent._tabPositionBottom ? "paddingTop" : "paddingBottom"], 10) +
+                    (this._parent._tabActiveHeightIncreasePx + this._parent._tabInactivePositionAdjustPx)) + "px";
+        }
+                
+        if (!fullRender) {
+            if (this._useImageBorder) {
+                // Render FillImageBorder style.
+                var imageBorder = this._getProperty("ImageBorder", active, rollover);
+                Echo.Sync.FillImageBorder.renderContainer(imageBorder, { update: this._fibContainer });
+                Echo.Sync.Insets.renderPosition(imageBorder.borderInsets, this._backgroundDiv);
+            } else {
+                // Render CSS border style.
+                var border = this._getProperty("Border", active, rollover) || 
+                        (active ? this._parent._tabActiveBorder : this._parent._tabInactiveBorder);
+                Echo.Sync.Border.render(border, this._labelDiv, this._parent._tabPositionBottom ? "borderBottom" : "borderTop");
+                Echo.Sync.Border.render(border, this._labelDiv, "borderLeft");
+                Echo.Sync.Border.render(border, this._labelDiv, "borderRight");
+            }
+        }
+        
+        Echo.Sync.Color.renderClear(this._getProperty("Background", active, rollover), 
+                this._backgroundDiv || this._labelDiv, "backgroundColor");
+        Echo.Sync.FillImage.renderClear(this._getProperty("BackgroundImage", active, rollover), 
+                this._backgroundDiv || this._labelDiv, null);
+
+        // Update icon.
+        if (this._layoutData && this._layoutData.icon) {
+            Echo.Sync.ImageReference.renderImg((active && this._layoutData.activeIcon) || 
+                    (rollover && this._layoutData.rolloverIcon) || this._layoutData.icon, this._iconImg);
+        }
+    },
+    
+    /**
+     * Renders the tab active or inactive, updating header state and showing/hiding tab content.
+     * 
+     * @param {Boolean} active the active state of the tab, true for active, false for inactive
+     */
+    _renderState: function(active) {
+        if (this._active === active) {
+            // Do nothing if values are unchanged.   
+            // Note initial value of oldValue is null.
+            return;
+        }
+        
+        this._renderHeaderState(active);
+
+        if (this._active !== null && !active) {
+            // Notify child component hierarchy that it is being hidden (unless performing initial render,
+            // i.e., this._active === null).
+            Echo.Render.renderComponentHide(this._childComponent);
+        }
+        // show/hide content
+        if (Core.Web.Env.BROWSER_MOZILLA && !Core.Web.Env.BROWSER_FIREFOX) {
+            this._contentDiv.style.right = active ? "0" : "100%";
+            this._contentDiv.style.bottom = active ? "0" : "100%";
+        } else {
+            this._contentDiv.style.display = active ? "block" : "none";
+        }
+        
+        this._active = active;
+    },
+    
+    /**
+     * Sets the rollover state of the tab.
+     * This is performed after a delay to avoid flickering.
+     * 
+     * @param {Boolean} rollover the desired rollover state
+     */
+    setRollover: function(rollover) {
+        this._renderHeaderState(this._active, rollover);
+        this._parent._renderHeaderPositions();
     }
 });

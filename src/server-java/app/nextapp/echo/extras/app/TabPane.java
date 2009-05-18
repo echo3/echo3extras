@@ -37,6 +37,7 @@ import nextapp.echo.app.Color;
 import nextapp.echo.app.Component;
 import nextapp.echo.app.Extent;
 import nextapp.echo.app.FillImage;
+import nextapp.echo.app.FillImageBorder;
 import nextapp.echo.app.Font;
 import nextapp.echo.app.ImageReference;
 import nextapp.echo.app.Insets;
@@ -62,8 +63,10 @@ implements Pane, PaneContainer {
     public static final String TAB_CLOSING_LISTENERS_CHANGED_PROPERTY = "tabClosingListeners";
     public static final String TAB_SELECTION_LISTENERS_CHANGED_PROPERTY = "tabSelectionListeners";
     
+    public static final String PROPERTY_BORDER = "border";
     public static final String PROPERTY_BORDER_TYPE = "borderType";
     public static final String PROPERTY_DEFAULT_CONTENT_INSETS = "defaultContentInsets";
+    public static final String PROPERTY_IMAGE_BORDER = "imageBorder";
     public static final String PROPERTY_INSETS = "insets";
     public static final String PROPERTY_ROLLOVER_SCROLL_LEFT_ICON = "rolloverScrollLeftIcon";
     public static final String PROPERTY_ROLLOVER_SCROLL_RIGHT_ICON = "rolloverScrollRightIcon";
@@ -75,6 +78,8 @@ implements Pane, PaneContainer {
     public static final String PROPERTY_TAB_ACTIVE_FONT = "tabActiveFont";
     public static final String PROPERTY_TAB_ACTIVE_FOREGROUND = "tabActiveForeground";
     public static final String PROPERTY_TAB_ACTIVE_HEIGHT_INCREASE = "tabActiveHeightIncrease";
+    public static final String PROPERTY_TAB_ACTIVE_IMAGE_BORDER = "tabActiveImageBorder";
+    public static final String PROPERTY_TAB_ACTIVE_INSETS = "tabActiveInsets";
     public static final String PROPERTY_TAB_ACTIVE_LEFT_IMAGE = "tabActiveLeftImage";
     public static final String PROPERTY_TAB_ACTIVE_RIGHT_IMAGE = "tabActiveRightImage";
     public static final String PROPERTY_TAB_ALIGNMENT = "tabAlignment";
@@ -91,11 +96,22 @@ implements Pane, PaneContainer {
     public static final String PROPERTY_TAB_INACTIVE_BORDER = "tabInactiveBorder";
     public static final String PROPERTY_TAB_INACTIVE_FONT = "tabInactiveFont";
     public static final String PROPERTY_TAB_INACTIVE_FOREGROUND = "tabInactiveForeground";
+    public static final String PROPERTY_TAB_INACTIVE_IMAGE_BORDER = "tabInactiveImageBorder";
+    public static final String PROPERTY_TAB_INACTIVE_INSETS = "tabInactiveInsets";
     public static final String PROPERTY_TAB_INACTIVE_LEFT_IMAGE = "tabInactiveLeftImage";
     public static final String PROPERTY_TAB_INACTIVE_RIGHT_IMAGE = "tabInactiveRightImage";
     public static final String PROPERTY_TAB_INSET = "tabInset";
+    public static final String PROPERTY_TAB_MAXIMUM_WIDTH = "tabMaximumWidth";
     public static final String PROPERTY_TAB_POSITION = "tabPosition";
     public static final String PROPERTY_TAB_ROLLOVER_CLOSE_ICON = "tabRolloverCloseIcon";
+    public static final String PROPERTY_TAB_ROLLOVER_BACKGROUND = "tabRolloverBackground";
+    public static final String PROPERTY_TAB_ROLLOVER_BACKGROUND_IMAGE = "tabRolloverBackgroundImage";
+    public static final String PROPERTY_TAB_ROLLOVER_BORDER = "tabRolloverBorder";
+    public static final String PROPERTY_TAB_ROLLOVER_ENABLED = "tabRolloverEnabled";
+    public static final String PROPERTY_TAB_ROLLOVER_FONT = "tabRolloverFont";
+    public static final String PROPERTY_TAB_ROLLOVER_FOREGROUND = "tabRolloverForeground";
+    public static final String PROPERTY_TAB_ROLLOVER_IMAGE_BORDER = "tabRolloverImageBorder";
+    
     public static final String PROPERTY_TAB_SPACING = "tabSpacing";
     public static final String PROPERTY_TAB_WIDTH = "tabWidth";
     
@@ -226,8 +242,19 @@ implements Pane, PaneContainer {
     }
     
     /**
+     * Returns the border surrounding the entire <code>TabPane</code>.
+     * This property will have no effect if an <code>imageBorder</code> has been configured.
+     * 
+     * @return the border
+     */
+    public Border getBorder() {
+        return (Border) get(PROPERTY_BORDER);
+    }
+    
+    /**
      * Returns the mode in which the border will be drawn around the 
      * <code>TabPane</code>.
+     * This property will affect the rendering of both <code>border</code> and <code>imageBorder</code> properties.
      * 
      * @return the border border type, one of the following values:
      *         <ul>
@@ -254,6 +281,16 @@ implements Pane, PaneContainer {
      */
     public Insets getDefaultContentInsets() {
         return (Insets) get(PROPERTY_DEFAULT_CONTENT_INSETS);
+    }
+    
+    /**
+     * Returns the <code>FillImageBorder</code> surrounding the entire TabPane.
+     * If this property is set, it will override the value of the <code>border</code> property.
+     * 
+     * @return the image border
+     */
+    public FillImageBorder getImageBorder() {
+        return (FillImageBorder) get(PROPERTY_IMAGE_BORDER);
     }
     
     /**
@@ -324,8 +361,8 @@ implements Pane, PaneContainer {
     }
 
     /**
-     * Returns the <code>Border</code> used to draw the active tab and 
-     * surround the content of the <code>TabPane</code>.
+     * Returns the <code>Border</code> used to draw the active tab.
+     * If the <code>border</code> property is not set as well, this border will surround the entire <code>TabPane</code>.
      * 
      * @return the border
      */
@@ -362,9 +399,29 @@ implements Pane, PaneContainer {
     }
     
     /**
+     * Returns the insets of active tabs.
+     * 
+     * @return the active tab insets
+     */
+    public Insets getTabActiveInsets() {
+        return (Insets) get(PROPERTY_TAB_ACTIVE_INSETS);
+    }
+    
+    /**
+     * Returns the <code>FillImageBorder</code> used to draw the active tab.
+     * 
+     * @return the border
+     */
+    public FillImageBorder getTabActiveImageBorder() {
+        return (FillImageBorder) get(PROPERTY_TAB_ACTIVE_IMAGE_BORDER);
+    }
+    
+    /**
      * Returns the left image used to render active tabs.
      * 
      * @return the active tab left image
+     * @deprecated <code>FillImageBorder</code>s should be used to render complex tabs
+     * @see #getTabActiveImageBorder
      */
     public ImageReference getTabActiveLeftImage() {
         return (ImageReference) get(PROPERTY_TAB_ACTIVE_LEFT_IMAGE);
@@ -374,6 +431,8 @@ implements Pane, PaneContainer {
      * Returns the right image used to render active tabs.
      * 
      * @return the active tab right image
+     * @deprecated <code>FillImageBorder</code>s should be used to render complex tabs
+     * @see #getTabActiveImageBorder
      */
     public ImageReference getTabActiveRightImage() {
         return (ImageReference) get(PROPERTY_TAB_ACTIVE_RIGHT_IMAGE);
@@ -396,7 +455,6 @@ implements Pane, PaneContainer {
     public FillImage getTabBackgroundImage() {
         return (FillImage) get(PROPERTY_TAB_BACKGROUND_IMAGE);
     }
-
     
     /**
      * Returns the close icon displayed in the tabs.
@@ -499,9 +557,29 @@ implements Pane, PaneContainer {
     }
 
     /**
+     * Returns the <code>FillImageBorder</code> used to draw inactive tabs.
+     * 
+     * @return the border
+     */
+    public FillImageBorder getTabInactiveImageBorder() {
+        return (FillImageBorder) get(PROPERTY_TAB_INACTIVE_IMAGE_BORDER);
+    }
+    
+    /**
+     * Returns the insets of inactive tabs.
+     * 
+     * @return the inactive tab insets
+     */
+    public Insets getTabInactiveInsets() {
+        return (Insets) get(PROPERTY_TAB_INACTIVE_INSETS);
+    }
+
+    /**
      * Returns the left image used to render inactive tabs.
      * 
      * @return the inactive tab left image
+     * @deprecated <code>FillImageBorder</code>s should be used to render complex tabs
+     * @see #getTabInactiveImageBorder
      */
     public ImageReference getTabInactiveLeftImage() {
         return (ImageReference) get(PROPERTY_TAB_INACTIVE_LEFT_IMAGE);
@@ -511,6 +589,8 @@ implements Pane, PaneContainer {
      * Returns the right image used to render inactive tabs.
      * 
      * @return the inactive tab right image
+     * @deprecated <code>FillImageBorder</code>s should be used to render complex tabs
+     * @see #getTabInactiveImageBorder
      */
     public ImageReference getTabInactiveRightImage() {
         return (ImageReference) get(PROPERTY_TAB_INACTIVE_RIGHT_IMAGE);
@@ -524,6 +604,15 @@ implements Pane, PaneContainer {
      */
     public Extent getTabInset() {
         return (Extent) get(PROPERTY_TAB_INSET);
+    }
+    
+    /**
+     * Returns the maximum allowed width of a tab.
+     * 
+     * @return the maximum tab width
+     */
+    public Extent getTabMaximumWidth() {
+        return (Extent) get(PROPERTY_TAB_MAXIMUM_WIDTH);
     }
     
     /**
@@ -542,6 +631,33 @@ implements Pane, PaneContainer {
     }
     
     /**
+     * Returns the background color used to render rolled over tabs.
+     * 
+     * @return the rollover tab background
+     */
+    public Color getTabRolloverBackground() {
+        return (Color) get(PROPERTY_TAB_ROLLOVER_BACKGROUND);
+    }
+    
+    /**
+     * Returns the background image used to render rolled over tabs.
+     * 
+     * @return the rollover tab background image
+     */
+    public FillImage getTabRolloverBackgroundImage() {
+        return (FillImage) get(PROPERTY_TAB_ROLLOVER_BACKGROUND_IMAGE);
+    }
+    
+    /**
+     * Returns the <code>Border</code> used to draw rolled over tabs.
+     * 
+     * @return the rollover border
+     */
+    public Border getTabRolloverBorder() {
+        return (Border) get(PROPERTY_TAB_ROLLOVER_BORDER);
+    }
+    
+    /**
      * Returns the close icon that is displayed when the mouse cursor is inside
      * its bounds.
      * 
@@ -551,6 +667,33 @@ implements Pane, PaneContainer {
         return (ImageReference) get(PROPERTY_TAB_ROLLOVER_CLOSE_ICON);
     }
     
+    /**
+     * Returns the font used to render rolled over tabs.
+     * 
+     * @return the rollover tab font
+     */
+    public Font getTabRolloverFont() {
+        return (Font) get(PROPERTY_TAB_ROLLOVER_FONT);
+    }
+    
+    /**
+     * Returns the foreground color used to render rolled over tabs.
+     * 
+     * @return the rollover tab foreground
+     */
+    public Color getTabRolloverForeground() {
+        return (Color) get(PROPERTY_TAB_ROLLOVER_FOREGROUND);
+    }
+
+    /**
+     * Returns the <code>FillImageBorder</code> used to draw rolled over tabs.
+     * 
+     * @return the rollover image border
+     */
+    public FillImageBorder getTabRolloverImageBorder() {
+        return (FillImageBorder) get(PROPERTY_TAB_ROLLOVER_IMAGE_BORDER);
+    }
+
     /**
      * Returns the horizontal space between individual tabs.
      * 
@@ -612,6 +755,16 @@ implements Pane, PaneContainer {
      */
     public boolean isTabCloseIconRolloverEnabled() {
         Boolean value = (Boolean) get(PROPERTY_TAB_CLOSE_ICON_ROLLOVER_ENABLED);
+        return value == null ? false : value.booleanValue();
+    }
+    
+    /**
+     * Determines if tab rollover effects are enabled.
+     * 
+     * @return true if tab rollover effects are enabled
+     */
+    public boolean isTabRolloverEnabled() {
+        Boolean value = (Boolean) get(PROPERTY_TAB_ROLLOVER_ENABLED);
         return value == null ? false : value.booleanValue();
     }
     
@@ -682,8 +835,19 @@ implements Pane, PaneContainer {
     }
     
     /**
+     * Sets the border surrounding the entire <code>TabPane</code>.
+     * This property will have no effect if an <code>imageBorder</code> has been configured.
+     * 
+     * @param newValue the new border
+     */
+    public void setBorder(Border newValue) {
+        set(PROPERTY_BORDER, newValue);
+    }
+    
+    /**
      * Sets the mode in which the border will be drawn around the 
      * <code>TabPane</code>.
+     * This property will affect the rendering of both <code>border</code> and <code>imageBorder</code> properties.
      * 
      * @param newValue the new border type one of the following values:
      *        <ul>
@@ -705,6 +869,16 @@ implements Pane, PaneContainer {
      */
     public void setDefaultContentInsets(Insets newValue) {
         set(PROPERTY_DEFAULT_CONTENT_INSETS, newValue);
+    }
+    
+    /**
+     * Sets the <code>FillImageBorder</code> surrounding the entire TabPane.
+     * If this property is set, it will override the value of the <code>border</code> property.
+     * 
+     * @param newValue the new image border
+     */
+    public void setImageBorder(FillImageBorder newValue) {
+        set(PROPERTY_IMAGE_BORDER, newValue);
     }
     
     /**
@@ -775,8 +949,8 @@ implements Pane, PaneContainer {
     }
     
     /**
-     * Sets the <code>Border</code> used to draw the active tab and 
-     * surround the content of the <code>TabPane</code>.
+     * Sets the <code>Border</code> used to draw the active tab.
+     * If the <code>border</code> property is not set as well, this border will surround the entire <code>TabPane</code>.
      * 
      * @param newValue the new border
      */
@@ -813,10 +987,30 @@ implements Pane, PaneContainer {
     }
     
     /**
+     * Sets the <code>FiillImageBorder</code> used to draw the active tab.
+     * 
+     * @param newValue the new border
+     */
+    public void setTabActiveImageBorder(FillImageBorder newValue) {
+        set(PROPERTY_TAB_ACTIVE_IMAGE_BORDER, newValue);
+    }
+    
+    /**
+     * Sets the insets of active tabs.
+     * 
+     * @param newValue the new active tab insets
+     */
+    public void setTabActiveInsets(Insets newValue) {
+        set(PROPERTY_TAB_ACTIVE_INSETS, newValue);
+    }
+
+    /**
      * Sets the left image used to render active tabs. The width of the image
      * must be set, and has to be a pixel value.
      * 
      * @param newValue the active tab left image
+     * @deprecated <code>FillImageBorder</code>s should be used to render complex tabs
+     * @see #setTabActiveImageBorder
      */
     public void setTabActiveLeftImage(ImageReference newValue) {
         set(PROPERTY_TAB_ACTIVE_LEFT_IMAGE, newValue);
@@ -827,6 +1021,8 @@ implements Pane, PaneContainer {
      * must be set, and has to be a pixel value.
      * 
      * @param newValue the active tab right image
+     * @deprecated <code>FillImageBorder</code>s should be used to render complex tabs
+     * @see #setTabActiveImageBorder
      */
     public void setTabActiveRightImage(ImageReference newValue) {
         set(PROPERTY_TAB_ACTIVE_RIGHT_IMAGE, newValue);
@@ -851,11 +1047,11 @@ implements Pane, PaneContainer {
     }
     
     /**
-     * Sets if tab close is enabled in general. Individual tabs can explicitly
+     * Sets the enabled state of tab close buttons.  Individual tabs can explicitly
      * disable close support using
      * {@link TabPaneLayoutData#setCloseEnabled(boolean)}.
      * 
-     * @param newValue the new state
+     * @param newValue true if tabs should be closable
      */
     public void setTabCloseEnabled(boolean newValue) {
         set(PROPERTY_TAB_CLOSE_ENABLED, new Boolean(newValue));
@@ -871,7 +1067,7 @@ implements Pane, PaneContainer {
     }
     
     /**
-     * Sets if close icon rollover effects are enabled.
+     * Sets the enabled state of tab close icon rollover effects.
      * 
      * @param newValue true if close icon rollover effects should be enabled
      */
@@ -972,10 +1168,30 @@ implements Pane, PaneContainer {
     }
 
     /**
+     * Sets the <code>FillImageBorder</code> used to draw inactive tabs.
+     * 
+     * @param newValue the new border
+     */
+    public void setTabInactiveImageBorder(FillImageBorder newValue) {
+        set(PROPERTY_TAB_INACTIVE_IMAGE_BORDER, newValue);
+    }
+    
+    /**
+     * Sets the insets of inactive tabs.
+     * 
+     * @param newValue the new inactive tab insets
+     */
+    public void setTabInactiveInsets(Insets newValue) {
+        set(PROPERTY_TAB_INACTIVE_INSETS, newValue);
+    }
+
+    /**
      * Sets the left image used to render inactive tabs. The width of the image
      * must be set, and has to be a pixel value.
      * 
      * @param newValue the inactive tab left image
+     * @deprecated <code>FillImageBorder</code>s should be used to render complex tabs
+     * @see #setTabInactiveImageBorder
      */
     public void setTabInactiveLeftImage(ImageReference newValue) {
         set(PROPERTY_TAB_INACTIVE_LEFT_IMAGE, newValue);
@@ -986,6 +1202,8 @@ implements Pane, PaneContainer {
      * must be set, and has to be a pixel value.
      * 
      * @param newValue the inactive tab right image
+     * @deprecated <code>FillImageBorder</code>s should be used to render complex tabs
+     * @see #setTabInactiveImageBorder
      */
     public void setTabInactiveRightImage(ImageReference newValue) {
         set(PROPERTY_TAB_INACTIVE_RIGHT_IMAGE, newValue);
@@ -999,6 +1217,15 @@ implements Pane, PaneContainer {
      */
     public void setTabInset(Extent newValue) {
         set(PROPERTY_TAB_INSET, newValue);
+    }
+    
+    /**
+     * Sets the maximum allowed width of a tab.
+     * 
+     * @param newValue the new maximum width
+     */
+    public void setTabMaximumWidth(Extent newValue) {
+        set(PROPERTY_TAB_MAXIMUM_WIDTH, newValue);
     }
     
     /**
@@ -1016,6 +1243,34 @@ implements Pane, PaneContainer {
     }
 
     /**
+     * Sets the background color used to render rolled over tabs.
+     * 
+     * @param newValue the new rollover tab background
+     */
+    public void setTabRolloverBackground(Color newValue) {
+        set(PROPERTY_TAB_ROLLOVER_BACKGROUND, newValue);
+    }
+    
+    /**
+     * Sets the background image used to render rolled over tabs.
+     * 
+     * @param newValue the new rollover tab background image
+     */
+    public void setTabRolloverBackgroundImage(FillImage newValue) {
+        set(PROPERTY_TAB_ROLLOVER_BACKGROUND_IMAGE, newValue);
+    }
+    
+    /**
+     * Sets the <code>Border</code> used to draw rolled over tabs in the 
+     * <code>TabPane</code>.
+     * 
+     * @param newValue the new rollover border
+     */
+    public void setTabRolloverBorder(Border newValue) {
+        set(PROPERTY_TAB_ROLLOVER_BORDER, newValue);
+    }
+    
+    /**
      * Sets the close icon that is displayed when the mouse cursor is inside
      * its bounds.
      * 
@@ -1025,6 +1280,42 @@ implements Pane, PaneContainer {
         set(PROPERTY_TAB_ROLLOVER_CLOSE_ICON, newValue);
     }
 
+    /**
+     * Sets the enabled state of tab rollover effects.
+     * 
+     * @param newValue true if tab rollover effects should be enabled
+     */
+    public void setTabRolloverEnabled(boolean newValue) {
+        set(PROPERTY_TAB_ROLLOVER_ENABLED, new Boolean(newValue));
+    }
+    
+    /**
+     * Sets the font used to render rolled over tabs.
+     * 
+     * @param newValue the new rollover tab font
+     */
+    public void setTabRolloverFont(Font newValue) {
+        set(PROPERTY_TAB_ROLLOVER_FONT, newValue);
+    }
+
+    /**
+     * Sets the foreground color used to render rolled over tabs.
+     * 
+     * @param newValue the new rollover tab foreground
+     */
+    public void setTabRolloverForeground(Color newValue) {
+        set(PROPERTY_TAB_ROLLOVER_FOREGROUND, newValue);
+    }
+
+    /**
+     * Sets the <code>FillImageBorder</code> used to draw rolled over tabs.
+     * 
+     * @param newValue the new rollover image border
+     */
+    public void setTabRolloverImageBorder(FillImageBorder newValue) {
+        set(PROPERTY_TAB_ROLLOVER_IMAGE_BORDER, newValue);
+    }
+    
     /**
      * Sets the horizontal space between individual tabs.
      * 

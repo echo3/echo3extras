@@ -34,7 +34,7 @@ Extras.RichTextArea = Core.extend(Echo.Component, {
     $load: function() {
         Echo.ComponentFactory.registerType("Extras.RichTextArea", this);
     },
-
+    
     /** @see Echo.Component#componentType */
     componentType: "Extras.RichTextArea",
 
@@ -49,12 +49,22 @@ Extras.RichTextArea = Core.extend(Echo.Component, {
     },
     
     /**
-     * Inserts HTML within the text area at the current cursor location.
+     * Executes a rich-text editing command.
      * 
+     * @param {String} commandName the command name
+     * @param {String} value the (optional) value to send
+     */
+    execCommand: function(commandName, value) {
+        this.fireEvent({type: "execCommand", source: this, commandName: commandName, value: value });
+    },
+    
+    /**
+     * Inserts HTML within the text area at the current cursor location.
+     *
      * @param {String} html the HTML to be inserted 
      */
     insertHtml: function(html) {
-        this.fireEvent({type: "insertHtml", source: this, html: html}); 
+        this.execCommand("insertHtml", html);
     }
 });
 
@@ -81,7 +91,7 @@ Extras.RichTextInput = Core.extend(Echo.Component, {
     
     /** @see Echo.Component#focusable */
     focusable: true,
-
+    
     /**
      * Processes a user action (pressing enter within text entry area).
      */
@@ -105,13 +115,13 @@ Extras.RichTextInput = Core.extend(Echo.Component, {
     execCommand: function(commandName, value) {
         this.fireEvent({type: "execCommand", source: this, commandName: commandName, value: value });
     },
-
+    
     /**
      * Inserts HTML within the text area at the current cursor location.
-     * 
+     *
      * @param {String} html the HTML to be inserted 
      */
     insertHtml: function(html) {
-        this.fireEvent({type: "insertHtml", source: this, html: html}); 
+        this.execCommand("insertHtml", html);
     }
 });

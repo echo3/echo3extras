@@ -49,6 +49,8 @@ import nextapp.echo.app.Row;
 import nextapp.echo.app.SplitPane;
 import nextapp.echo.app.event.ActionEvent;
 import nextapp.echo.app.event.ActionListener;
+import nextapp.echo.app.serial.SerialException;
+import nextapp.echo.app.serial.property.InsetsPeer;
 import nextapp.echo.extras.app.DropDownMenu;
 import nextapp.echo.extras.app.menu.DefaultMenuModel;
 import nextapp.echo.extras.app.menu.DefaultMenuSelectionModel;
@@ -319,6 +321,22 @@ public class AbstractTest extends SplitPane {
                 setTestComponentProperty(propertyName, Insets.class, null);
             }
         });
+    }
+
+    protected void addInsetsPropertyTests(String category, final String propertyName, Insets[] insets) {
+        for (int i = 0; i < insets.length; ++i) {
+            try {
+                final Insets testInsets = insets[i];
+                testControlsPane.addButton(category, propertyName + ": " + 
+                        (testInsets == null ? "null" : InsetsPeer.toString(testInsets)), new ActionListener(){
+                    public void actionPerformed(ActionEvent e) {
+                        setTestComponentProperty(propertyName, Insets.class, testInsets);
+                    }
+                });
+            } catch (SerialException ex) {
+                throw new IllegalArgumentException("Illegal insets: " + insets[i]);
+            }
+        }
     }
     
     protected void addStandardIntegrationTests() {

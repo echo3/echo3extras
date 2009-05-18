@@ -120,6 +120,8 @@ public class BorderPaneTest extends AbstractTest {
         
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "foreground");
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "background");
+        addFillImagePropertyTests(TestControlPane.CATEGORY_PROPERTIES, BorderPane.PROPERTY_BACKGROUND_IMAGE, 
+                StyleUtil.TEST_FILL_IMAGES);
         addInsetsPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "insets");
         
         testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Border = Null", new ActionListener() {

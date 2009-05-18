@@ -51,6 +51,8 @@ import nextapp.echo.extras.testapp.TestControlPane;
  */
 public class RichTextAreaTest extends AbstractTest {
     
+    private static String globalClipboardText;
+    
     private ContentPane mainContent;
     private RichTextArea richTextArea;
 
@@ -63,7 +65,27 @@ public class RichTextAreaTest extends AbstractTest {
         richTextArea = createStyledRTA();
         mainContent.add(richTextArea);
         
+        InteractiveApp.getApp().setFocusedComponent(richTextArea);
+        
         setTestComponent(mainContent, richTextArea);
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Display Text", new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                InteractiveApp.getApp().consoleWrite("RichTextArea text: \"" + richTextArea.getText() + "\"");
+            }
+        });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Store Text to Global Clipboard", new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                globalClipboardText = richTextArea.getText();
+            }
+        });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Load Text from Global Clipboard", new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                richTextArea.setText(globalClipboardText);
+            }
+        });
         
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "foreground");
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "background");
@@ -91,12 +113,6 @@ public class RichTextAreaTest extends AbstractTest {
         testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Text: This is <b>underline</b>.", new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 richTextArea.setText("This is <u>underline</u>.");
-            }
-        });
-        
-        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Display Text", new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                InteractiveApp.getApp().consoleWrite("RichTextArea text: \"" + richTextArea.getText() + "\"");
             }
         });
         

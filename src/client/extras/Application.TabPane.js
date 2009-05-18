@@ -4,6 +4,8 @@
  *
  * @cp {String} activeTabId the renderId of the active tab
  * @cp {Number} activeTabIndex the index of the active tab
+ * @sp {#Border} border the border surrounding the content of the tab pane (note that <code>tabActiveBorder</code> will be used
+ *     for this purpose if this property is not configured) 
  * @sp {Number} borderType the border border type, one of the following values:
  *     <ul>
  *      <li><code>BORDER_TYPE_NONE</code></li>
@@ -11,42 +13,80 @@
  *      <li><code>BORDER_TYPE_PARALLEL_TO_TABS</code></li>
  *      <li><code>BORDER_TYPE_SURROUND</code></li>
  *     </ul> 
- * @sp {#Insets} defaultContentInsets the default content inset margin 
+ * @sp {#Insets} defaultContentInsets the default content inset margin
+ * @sp {#FillImageBorder} imageBorder the image border to display around the entire <code>TabPane</code>
  * @sp {#Insets} insets the inset margin around the entire <code>TabPane</code>
- * @sp {#FillImage} tabBackgroundImage the background image displayed behind the tabs
- * @sp {#ImageReference} tabActiveLeftImage the left image used to render active tabs
- * @sp {#ImageReference} tabActiveRightImage the right image used to render active tabs
+ * @sp {#ImageReference} rolloverScrollLeftIcon the rolled-over version of <code>scrollLeftIcon</code>
+ * @sp {#ImageReference} rolloverScrollRightIcon the rolled-over version of <code>scrollRightIcon</code>
+ * @sp {#ImageReference} scrollLeftIcon the scroll icon to display to enable scrolling of the header to the left
+ * @sp {#ImageReference} scrollRightIcon the scroll icon to display to enable scrolling of the header to the right
  * @sp {#Color} tabActiveBackground the background color used to render active tabs
  * @sp {#FillImage} tabActiveBackgroundImage the background image used to render active tabs
  * @sp {#Border} tabActiveBorder the border surrounding the active tab and the content of the <code>TabPane</code>
  * @sp {#Font} tabActiveFont the font used to render active tabs
  * @sp {#Color} tabActiveForeground the foreground color used to render active tabs
- * @sp {#Extent} tabHeight the height of an individual (inactive) tab 
  * @sp {#Extent} tabActiveHeightIncrease the height increase of active tabs
- * @sp {#ImageReference} tabInactiveLeftImage the left image used to render inactive tabs
- * @sp {#ImageReference} tabInactiveRightImage the right image used to render inactive tabs
+ * @sp {#FillImageBorder} tabActiveImageBorder the image border to display around active tabs
+ * @sp {#Insets} tabActiveInsets the inset margin used to render active tabs
+ * @sp {#Alignment} tabAlignment the alignment within an individual tab
+ * @sp {#FillImage} tabBackgroundImage the background image displayed behind the tabs
+ * @sp {Boolean} tabCloseEnabled flag indicating whether tabs may be closed
+ * @sp {#ImageReference} tabCloseIcon the tab close icon
+ * @sp {Boolean} tabCloseIconRolloverEnabled flag indicating whether tab close icon rollover effects are enabled
+ * @sp {#ImageReference} tabDisabledCloseIcon the tab close icon for tabs that may not be closed
+ * @sp {#Extent} tabHeight the minimum height of an individual (inactive) tab
  * @sp {#Color} tabInactiveBackground the background color used to render inactive tabs
  * @sp {#FillImage} tabInactiveBackgroundImage the background image used to render inactive tabs
  * @sp {#Border} tabInactiveBorder the border surrounding inactive tabs
  * @sp {#Font} tabInactiveFont the font used to render inactive tabs
  * @sp {#Color} tabInactiveForeground the foreground color used to render inactive tabs
- * @sp {#Extent} tabIconTextMargin the margin size between the icon and the text
+ * @sp {#FillImageBorder} tabInactiveImageBorder the image border to display around inactive tabs
+ * @sp {#Insets} tabInactiveInsets the inset margin used to render inactive tabs
+ * @sp {#Extent} tabIconTextMargin the margin size between the tab icon and the text
  * @sp {#Extent} tabInset the horizontal distance from which all tabs are inset from the edge of the <code>TabPane</code>
- * @sp {#Extent} tabSpacing the horizontal space between individual tabs
+ * @sp {#Extent} tabMaximumWidth the maximum allowed width for a single tab (percent values may be used)
  * @sp {Number} tabPosition the position where the tabs are located relative to the pane content, one of the following values:
+ * @sp {#Color} tabRolloverBackground the background used to render rolled over tabs
+ * @sp {#FillImage} tabRolloverBackgroundImage the background image used to render rolled over tabs
+ * @sp {#Border} tabRolloverBorder the border used to render rolled over tabs
+ * @sp {Boolean} tabRolloverEnabled flag indicating whether tab rollover effects are enabled
+ * @sp {#Font} tabRolloverFont the font used to render rolled over tabs
+ * @sp {#Color} tabRolloverForeground the foreground color used to render rolled over tabs
+ * @sp {#FillImageBorder} tabRolloverImageBorder the image border used to render rolled over tabs
+ * @sp {#ImageReference} tabRolloverCloseIcon the tab close rollover effect icon
+ * @sp {#Extent} tabSpacing the horizontal space between individual tabs
  *     <ul>
  *      <li><code>TAB_POSITION_TOP</code></li>
  *      <li><code>TAB_POSITION_BOTTOM</code></li>
  *     </ul>
- * @sp {#Extent} tabWidth the width of an individual tab
- * @sp {#Alignment} tabAlignment the alignment within an individual tab
- * @sp {Boolean} tabCloseEnabled flag indicating whether tabs may be closed
- * @sp {Boolean} tabCloseIconRolloverEnabled flag indicating whether tab close icon rollover effects are enabled
- * @sp {#ImageReference} tabCloseIcon the tab close icon
- * @sp {#ImageReference} tabDisabledCloseIcon the tab close icon for tabs that may not be closed
- * @sp {#ImageReference} tabRolloverCloseIcon the tab close rollover effect icon
+ * @sp {#Extent} tabWidth the width of an individual tab (setting tabMaximumWidth is generally preferred)
+ * @ldp {#Color} activeBackground the active background color
+ * @ldp {#FillImage} activeBackgroundImage the active background image
+ * @ldp {#Border} activeBorder the active border
+ * @ldp {#Font} activeFont the active font
+ * @ldp {#Color} activeForeground the active foreground color
+ * @ldp {#ImageReference} activeIcon the active icon (icon property is used when inactive)
+ * @ldp {#FillImageBorder} activeImageBorder the active image border
+ * @ldp {#Insets} activeInsets the active insets
+ * @ldp {Boolean} closeEnabled flag indicating whether close is enabled (default is true, only effective when containing
+ *      <code>TabPane</code> allows closing tabs)
  * @ldp {#ImageReference} icon the icon to display within a tab
+ * @ldp {#Color} inactiveBackground the inactive background color
+ * @ldp {#FillImage} inactiveBackgroundImage the inactive background image
+ * @ldp {#Border} inactiveBorder the inactive border
+ * @ldp {#Font} inactiveFont the inactive font
+ * @ldp {#Color} inactiveForeground the inactive foreground color
+ * @ldp {#FillImageBorder} inactiveImageBorder the inactive image border
+ * @ldp {#Insets} inactiveInsets the inactive insets
+ * @ldp {#Color} rolloverBackground the rollover background color
+ * @ldp {#FillImage} rolloverBackgroundImage the rollover background image
+ * @ldp {#Border} rolloverBorder the rollover border
+ * @ldp {#Font} rolloverFont the rollover font
+ * @ldp {#Color} rolloverForeground the rollover foreground color
+ * @ldp {#ImageReference} rolloverIcon the rollover icon
+ * @ldp {#FillImageBorder} rolloverImageBorder the rollover image border
  * @ldp {String} title the text to display within a tab
+ * @ldp {String} toolTipText the tool tip text to display when a tab is rolled over
  * @event tabClose An event fired when the user requests to close a tab.
  * @event tabSelect An event fired when the user selects a tab. 
  */

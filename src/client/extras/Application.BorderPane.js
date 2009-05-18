@@ -3,6 +3,7 @@
  * <code>FillImageBorder</code> around its content. May contain only one
  * child. May contain a pane component as a child.
  * 
+ * @sp {#FillImage} backgroundImage  the content background image
  * @sp {#FillImageBorder} border the border with which to surround the content
  * @sp {#Insets} insets the inset margin between border and content
  */

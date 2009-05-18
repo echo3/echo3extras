@@ -33,7 +33,7 @@ import nextapp.echo.app.Component;
 
 /**
  * ToolTipContainer component: a container which may contain two children, the first of which is always displayed and the second of
- * which is displayed with the mouse is hovered over the first. May contain zero, one, or two components as children. Many not
+ * which is displayed with the mouse is hovered over the first. May contain zero, one, or two components as children. May not
  * contain <code>Pane</code> components.
  */
 public class ToolTipContainer extends Component {

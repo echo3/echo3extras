@@ -30,6 +30,7 @@
 package nextapp.echo.extras.app;
 
 import nextapp.echo.app.Component;
+import nextapp.echo.app.FillImage;
 import nextapp.echo.app.FillImageBorder;
 import nextapp.echo.app.Insets;
 import nextapp.echo.app.Pane;
@@ -42,8 +43,18 @@ import nextapp.echo.app.PaneContainer;
 public class BorderPane extends Component 
 implements Pane, PaneContainer {
     
+    public static final String PROPERTY_BACKGROUND_IMAGE = "backgroundImage";
     public static final String PROPERTY_BORDER = "border";
     public static final String PROPERTY_INSETS = "insets";
+    
+    /**
+     * Returns the background image.
+     * 
+     * @return the background image
+     */
+    public FillImage getBackgroundImage() {
+        return (FillImage) get(PROPERTY_BACKGROUND_IMAGE);
+    }
     
     /**
      * Returns the configured border.
@@ -53,6 +64,7 @@ implements Pane, PaneContainer {
     public FillImageBorder getBorder() {
         return (FillImageBorder) get(PROPERTY_BORDER);
     }
+    
     /**
      * Returns the inset margin.
      * 
@@ -62,6 +74,15 @@ implements Pane, PaneContainer {
         return (Insets) get(PROPERTY_INSETS);
     }
     
+    /**
+     * Sets the background image.
+     * 
+     * @param newValue the new background image
+     */
+    public void setBackgroundImage(FillImage newValue) {
+        set(PROPERTY_BACKGROUND_IMAGE, newValue);
+    }
+
     /**
      * Sets the border.
      * 

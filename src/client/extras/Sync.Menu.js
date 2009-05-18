@@ -297,6 +297,9 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
             Echo.Sync.FillImage.render(this.client.getResourceUrl("Echo", "resource/Transparent.gif"), this._overlay[name]);
             Core.Web.VirtualPosition.redraw(this._overlay[name]);
         }
+      
+        // Force redraw after body modification.
+        this.client.forceRedraw();
     },
     
     /**
@@ -310,6 +313,9 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
             document.body.removeChild(this._overlay[name]);
         }
         this._overlay = null;
+
+        // Force redraw after body modification.
+        this.client.forceRedraw();
     },
     
     /**
@@ -547,6 +553,8 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
     close: function() {
         Core.Web.Event.removeAll(this.element);
         document.body.removeChild(this.element);
+        // Force redraw after body modification.
+        this.client.forceRedraw();
         this.element = null;
         this.itemElements = null;
         this._activeItem = null;
@@ -815,6 +823,8 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
             fadeAnimation.start();
         }
         document.body.appendChild(this.element);
+        // Force redraw after body modification.
+        this.client.forceRedraw();
 
         Core.Web.Event.add(this.element, "click", Core.method(this, this._processClick), false);
         Core.Web.Event.add(this.element, "mouseover", Core.method(this, this._processItemEnter), false);

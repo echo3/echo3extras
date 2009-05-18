@@ -30,9 +30,13 @@
 package nextapp.echo.extras.testapp.testscreen;
 
 import nextapp.echo.app.Color;
+import nextapp.echo.app.Component;
 import nextapp.echo.app.ContentPane;
 import nextapp.echo.app.Extent;
+import nextapp.echo.app.FillImage;
+import nextapp.echo.app.FillImageBorder;
 import nextapp.echo.app.ImageReference;
+import nextapp.echo.app.Insets;
 import nextapp.echo.app.Label;
 import nextapp.echo.app.ResourceImageReference;
 import nextapp.echo.app.SplitPane;
@@ -59,6 +63,47 @@ import nextapp.echo.extras.testapp.TestControlPane;
  * Interactive test module for <code>TabPane</code>s.
  */
 public class TabPaneTest extends AbstractTest {
+
+    private static final String FIB1_BASE = "/nextapp/echo/extras/testapp/resource/image/window/simple/Border";
+    
+    private static final FillImageBorder FIB1_SURROUND = 
+            new FillImageBorder(null, new Insets(17, 17, 23, 23), new Insets(8, 8, 14, 14), 
+            new FillImage[] {
+                new FillImage(new ResourceImageReference(FIB1_BASE + "topLeft.png")),
+                new FillImage(new ResourceImageReference(FIB1_BASE + "top.png")),
+                new FillImage(new ResourceImageReference(FIB1_BASE + "topRight.png")),
+                new FillImage(new ResourceImageReference(FIB1_BASE + "left.png")),
+                new FillImage(new ResourceImageReference(FIB1_BASE + "right.png")),
+                new FillImage(new ResourceImageReference(FIB1_BASE + "bottomLeft.png")),
+                new FillImage(new ResourceImageReference(FIB1_BASE + "bottom.png")),
+                new FillImage(new ResourceImageReference(FIB1_BASE + "bottomRight.png"))
+            });
+    
+    private static final FillImageBorder FIB1_TOP = 
+            new FillImageBorder(null, new Insets(17, 17, 23, 0), new Insets(8, 8, 14, 0), 
+            new FillImage[] {
+                new FillImage(new ResourceImageReference(FIB1_BASE + "topLeft.png")),
+                new FillImage(new ResourceImageReference(FIB1_BASE + "top.png")),
+                new FillImage(new ResourceImageReference(FIB1_BASE + "topRight.png")),
+                new FillImage(new ResourceImageReference(FIB1_BASE + "left.png")),
+                new FillImage(new ResourceImageReference(FIB1_BASE + "right.png")),
+                null,
+                null,
+                null
+            });
+    
+    private static final FillImageBorder FIB1_BOTTOM = 
+            new FillImageBorder(null, new Insets(17, 0, 23, 23), new Insets(8, 0, 14, 14), 
+            new FillImage[] {
+                null,
+                null,
+                null,
+                new FillImage(new ResourceImageReference(FIB1_BASE + "left.png")),
+                new FillImage(new ResourceImageReference(FIB1_BASE + "right.png")),
+                new FillImage(new ResourceImageReference(FIB1_BASE + "bottomLeft.png")),
+                new FillImage(new ResourceImageReference(FIB1_BASE + "bottom.png")),
+                new FillImage(new ResourceImageReference(FIB1_BASE + "bottomRight.png"))
+            });
     
     private static final ImageReference[] LEFT_IMAGES = new ImageReference[] {
         null, new ResourceImageReference(Styles.IMAGE_PATH + "TabLeft.png", new Extent(10), null)
@@ -76,7 +121,7 @@ public class TabPaneTest extends AbstractTest {
     
     private static final Extent[] EXTENT_VALUES = new Extent[] {
         null, new Extent(0), new Extent(1), new Extent(2), new Extent(5), new Extent(10), new Extent(20),
-        new Extent(25), new Extent(32), new Extent(40)
+        new Extent(25), new Extent(32), new Extent(40), new Extent(60)
     };
     
     private static final Extent[] EXTENT_WIDTH_VALUES = new Extent[] {
@@ -92,6 +137,279 @@ public class TabPaneTest extends AbstractTest {
         final TabPane tabPane = new TabPane();
         add(tabPane);
         setTestComponent(this, tabPane);
+        
+        // Configurations
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONFIGURATIONS, "Clear All Graphic Borders", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setTabActiveImageBorder(null);
+                tabPane.setTabInactiveImageBorder(null);
+                tabPane.setImageBorder(null);
+                tabPane.setTabSpacing(null);
+            }
+        });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONFIGURATIONS, "Change LayoutData", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int count = tabPane.getComponentCount();
+                if (count == 0) {
+                    return;
+                }
+                
+                int tabIndex = (int) (Math.random() * count);
+                Component component = tabPane.getComponent(tabIndex);
+                TabPaneLayoutData oldLD = (TabPaneLayoutData) component.getLayoutData();
+                String title = oldLD == null ? "" : oldLD.getTitle();
+                
+                TabPaneLayoutData newLD = new TabPaneLayoutData();
+                newLD.setTitle(title + "^");
+                newLD.setInactiveBackground(StyleUtil.randomBrightColor());
+                newLD.setActiveBackground(StyleUtil.randomBrightColor());
+                component.setLayoutData(newLD);
+            }
+        });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONFIGURATIONS, "Minimum Height Normal Border", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                while (tabPane.getComponentCount() < 3) {
+                    Component tab = createTestTab();
+                    if (tabPane.getComponentCount() % 2 != 0) {
+                        TabPaneLayoutData ld = (TabPaneLayoutData) tab.getLayoutData();
+                        ld.setIcon(Styles.ICON_24_YES);
+                    }
+                    tabPane.add(tab);
+                }
+                tabPane.setBorderType(TabPane.BORDER_TYPE_ADJACENT_TO_TABS);
+                tabPane.setTabHeight(new Extent(60));
+                tabPane.setTabRolloverEnabled(true);
+                tabPane.setTabActiveBackground(Color.RED);
+                tabPane.setTabInactiveBackground(Color.YELLOW);
+                tabPane.setTabInactiveForeground(Color.BLUE);
+                tabPane.setTabRolloverBackground(Color.GREEN);
+            }
+        });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONFIGURATIONS, "All Graphic Border Test + Icons", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                while (tabPane.getComponentCount() < 3) {
+                    Component tab = createTestTab();
+                    if (tabPane.getComponentCount() % 2 != 0) {
+                        TabPaneLayoutData ld = (TabPaneLayoutData) tab.getLayoutData();
+                        ld.setIcon(Styles.ICON_24_YES);
+                    }
+                    tabPane.add(tab);
+                }
+                tabPane.setBorderType(TabPane.BORDER_TYPE_ADJACENT_TO_TABS);
+                tabPane.setImageBorder(FIB1_SURROUND);
+                tabPane.setTabRolloverEnabled(true);
+                tabPane.setTabActiveBackground(Color.RED);
+                tabPane.setTabActiveImageBorder(FIB1_TOP);
+                tabPane.setTabInactiveBackground(Color.YELLOW);
+                tabPane.setTabInactiveForeground(Color.BLUE);
+                tabPane.setTabInactiveImageBorder(FIB1_TOP);
+                tabPane.setTabSpacing(new Extent(-25));
+                tabPane.setTabRolloverBackground(Color.GREEN);
+            }
+        });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONFIGURATIONS, "All Graphic Border Test + Icons + Long Labels: 35%", 
+                new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                while (tabPane.getComponentCount() < 5) {
+                    Component tab = createTestTab();
+                    if (tabPane.getComponentCount() % 2 != 0) {
+                        TabPaneLayoutData ld = (TabPaneLayoutData) tab.getLayoutData();
+                        ld.setTitle(ld.getTitle() + ", this is a really long label that should be cut off by maximum width.");
+                    }
+                    tabPane.add(tab);
+                }
+                tabPane.setTabMaximumWidth(new Extent(35, Extent.PERCENT));
+                tabPane.setBorderType(TabPane.BORDER_TYPE_ADJACENT_TO_TABS);
+                tabPane.setImageBorder(FIB1_SURROUND);
+                tabPane.setTabRolloverEnabled(true);
+                tabPane.setTabActiveBackground(Color.RED);
+                tabPane.setTabActiveImageBorder(FIB1_TOP);
+                tabPane.setTabInactiveBackground(Color.YELLOW);
+                tabPane.setTabInactiveForeground(Color.BLUE);
+                tabPane.setTabInactiveImageBorder(FIB1_TOP);
+                tabPane.setTabSpacing(new Extent(-25));
+                tabPane.setTabRolloverBackground(Color.GREEN);
+            }
+        });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONFIGURATIONS, "All Graphic Border Test + Icons + Long Labels: 200px",
+                new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                while (tabPane.getComponentCount() < 5) {
+                    Component tab = createTestTab();
+                    if (tabPane.getComponentCount() % 2 != 0) {
+                        TabPaneLayoutData ld = (TabPaneLayoutData) tab.getLayoutData();
+                        ld.setTitle(ld.getTitle() + ", this is a really long label that should be cut off by maximum width.");
+                    }
+                    tabPane.add(tab);
+                }
+                tabPane.setTabMaximumWidth(new Extent(200));
+                tabPane.setBorderType(TabPane.BORDER_TYPE_ADJACENT_TO_TABS);
+                tabPane.setImageBorder(FIB1_SURROUND);
+                tabPane.setTabRolloverEnabled(true);
+                tabPane.setTabActiveBackground(Color.RED);
+                tabPane.setTabActiveImageBorder(FIB1_TOP);
+                tabPane.setTabInactiveBackground(Color.YELLOW);
+                tabPane.setTabInactiveForeground(Color.BLUE);
+                tabPane.setTabInactiveImageBorder(FIB1_TOP);
+                tabPane.setTabSpacing(new Extent(-25));
+                tabPane.setTabRolloverBackground(Color.GREEN);
+            }
+        });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONFIGURATIONS, "All Graphic Border Test + Icons (No RO)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                while (tabPane.getComponentCount() < 3) {
+                    Component tab = createTestTab();
+                    if (tabPane.getComponentCount() % 2 != 0) {
+                        TabPaneLayoutData ld = (TabPaneLayoutData) tab.getLayoutData();
+                        ld.setIcon(Styles.ICON_24_YES);
+                    }
+                    tabPane.add(tab);
+                }
+                tabPane.setBorderType(TabPane.BORDER_TYPE_ADJACENT_TO_TABS);
+                tabPane.setImageBorder(FIB1_SURROUND);
+                tabPane.setTabRolloverEnabled(false);
+                tabPane.setTabActiveBackground(Color.RED);
+                tabPane.setTabActiveImageBorder(FIB1_TOP);
+                tabPane.setTabInactiveBackground(Color.YELLOW);
+                tabPane.setTabInactiveForeground(Color.BLUE);
+                tabPane.setTabInactiveImageBorder(FIB1_TOP);
+                tabPane.setTabSpacing(new Extent(-25));
+            }
+        });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONFIGURATIONS, "All Graphic Border Test", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                while (tabPane.getComponentCount() < 3) {
+                    tabPane.add(createTestTab());
+                }
+                tabPane.setBorderType(TabPane.BORDER_TYPE_ADJACENT_TO_TABS);
+                tabPane.setImageBorder(FIB1_SURROUND);
+                tabPane.setTabRolloverEnabled(true);
+                tabPane.setTabActiveBackground(Color.RED);
+                tabPane.setTabActiveImageBorder(FIB1_TOP);
+                tabPane.setTabInactiveBackground(Color.YELLOW);
+                tabPane.setTabInactiveForeground(Color.BLUE);
+                tabPane.setTabInactiveImageBorder(FIB1_TOP);
+                tabPane.setTabSpacing(new Extent(-25));
+                tabPane.setTabRolloverBackground(Color.GREEN);
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONFIGURATIONS, "All Graphic Border Test (Surround)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                while (tabPane.getComponentCount() < 3) {
+                    tabPane.add(createTestTab());
+                }
+                while (tabPane.getComponentCount() < 5) {
+                    TabPaneTest tabPaneTest = new TabPaneTest();
+                    TabPaneLayoutData layoutData = new TabPaneLayoutData();
+                    layoutData.setTitle("TPT #" + tabNumber++);
+                    tabPaneTest.setLayoutData(layoutData);
+                    tabPane.add(tabPaneTest);
+                }
+                tabPane.setBorderType(TabPane.BORDER_TYPE_SURROUND);
+                tabPane.setImageBorder(FIB1_SURROUND);
+                tabPane.setTabRolloverEnabled(true);
+                tabPane.setTabActiveBackground(Color.RED);
+                tabPane.setTabActiveImageBorder(FIB1_TOP);
+                tabPane.setTabInactiveBackground(Color.YELLOW);
+                tabPane.setTabInactiveForeground(Color.BLUE);
+                tabPane.setTabInactiveImageBorder(FIB1_TOP);
+                tabPane.setTabSpacing(new Extent(-25));
+                tabPane.setTabRolloverBackground(Color.GREEN);
+            }
+        });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONFIGURATIONS, "Basic Rollover Test", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                while (tabPane.getComponentCount() < 3) {
+                    tabPane.add(createTestTab());
+                }
+                tabPane.setTabRolloverEnabled(true);
+                tabPane.setTabActiveBackground(Color.RED);
+                tabPane.setTabInactiveBackground(Color.YELLOW);
+                tabPane.setTabInactiveForeground(Color.BLUE);
+                tabPane.setTabRolloverBackground(Color.GREEN);
+            }
+        });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONFIGURATIONS, "Basic Large Icon Test", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                while (tabPane.getComponentCount() < 3) {
+                    Component tab = createTestTab();
+                    if (tabPane.getComponentCount() % 2 != 0) {
+                        TabPaneLayoutData ld = (TabPaneLayoutData) tab.getLayoutData();
+                        ld.setIcon(Styles.ICON_24_YES);
+                    }
+                    tabPane.add(tab);
+                }
+                tabPane.setTabRolloverEnabled(true);
+                tabPane.setTabActiveBackground(Color.RED);
+                tabPane.setTabInactiveBackground(Color.YELLOW);
+                tabPane.setTabInactiveForeground(Color.BLUE);
+                tabPane.setTabRolloverBackground(Color.GREEN);
+            }
+        });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONFIGURATIONS, "Basic Rollover Test + tooltips", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                while (tabPane.getComponentCount() < 3) {
+                    Component testTab = createTestTab();
+                    TabPaneLayoutData ld = (TabPaneLayoutData) testTab.getLayoutData();
+                    ld.setToolTipText(ld.getTitle() + ":tip");
+                    tabPane.add(testTab);
+                }
+                tabPane.setTabRolloverEnabled(true);
+                tabPane.setTabActiveBackground(Color.RED);
+                tabPane.setTabInactiveBackground(Color.YELLOW);
+                tabPane.setTabInactiveForeground(Color.BLUE);
+                tabPane.setTabRolloverBackground(Color.GREEN);
+            }
+        });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONFIGURATIONS, "Basic Rollover Test with Rollover Close Icons", 
+                new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                while (tabPane.getComponentCount() < 3) {
+                    tabPane.add(createTestTab());
+                }
+                tabPane.setTabRolloverEnabled(true);
+                tabPane.setTabActiveBackground(Color.RED);
+                tabPane.setTabInactiveBackground(Color.YELLOW);
+                tabPane.setTabRolloverBackground(Color.GREEN);
+                tabPane.setTabCloseIconRolloverEnabled(true);
+                tabPane.setTabCloseEnabled(true);
+                tabPane.setTabCloseIcon(CLOSE_ICON_IMAGES[1]);
+                tabPane.setTabRolloverCloseIcon(CLOSE_ICON_IMAGES[3]);
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONFIGURATIONS, "FIB Sizing Test Top", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                while (tabPane.getComponentCount() < 3) {
+                    tabPane.add(createTestTab());
+                }
+                while(tabPane.getComponentCount() < 5) {
+                    tabPane.add(createTestTab(Styles.ICON_24_YES));
+                }
+                tabPane.setTabRolloverEnabled(true);
+                tabPane.setTabActiveImageBorder(new FillImageBorder(new Color(0xff0000), new Insets(2, 2, 2, 0), 
+                        new Insets(2, 2, 2, 0)));
+                tabPane.setTabInactiveImageBorder(new FillImageBorder(new Color(0xffff00), new Insets(2, 2, 2, 0), 
+                        new Insets(2, 2, 2, 0)));
+                tabPane.setTabRolloverImageBorder(new FillImageBorder(new Color(0x00ff00), new Insets(2, 2, 2, 0), 
+                        new Insets(2, 2, 2, 0)));
+                tabPane.setTabActiveBackground(new Color(0x7f0000));
+                tabPane.setTabInactiveBackground(new Color(0x7f7f00));
+                tabPane.setTabRolloverBackground(new Color(0x007f00));
+            }
+        });
         
         // Add/Remove Tabs
 
@@ -194,6 +512,15 @@ public class TabPaneTest extends AbstractTest {
             public void actionPerformed(ActionEvent e) {
                 Label label = createTestTab();
                 label.setText(StyleUtil.QUASI_LATIN_TEXT_1);
+                tabPane.add(label);
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add Label With Long String", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Label label = createTestTab();
+                TabPaneLayoutData ld = (TabPaneLayoutData) label.getLayoutData();
+                ld.setTitle(ld.getTitle() + ", this is a really long tab title that should be cut off by maximum width.");
                 tabPane.add(label);
             }
         });
@@ -366,6 +693,33 @@ public class TabPaneTest extends AbstractTest {
             }
         });
 
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add Label (Color LayoutData)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Component tab = createTestTab();
+                TabPaneLayoutData ld = (TabPaneLayoutData) tab.getLayoutData();
+                ld.setActiveForeground(StyleUtil.randomColor());
+                ld.setActiveBackground(StyleUtil.randomColor());
+                ld.setInactiveForeground(StyleUtil.randomColor());
+                ld.setInactiveBackground(StyleUtil.randomColor());
+                ld.setRolloverForeground(StyleUtil.randomColor());
+                ld.setRolloverBackground(StyleUtil.randomColor());
+                tabPane.add(tab);
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add Label (FIB LayoutData)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Component tab = createTestTab();
+                TabPaneLayoutData ld = (TabPaneLayoutData) tab.getLayoutData();
+                ld.setActiveBackground(StyleUtil.randomColor());
+                ld.setInactiveBackground(StyleUtil.randomColor());
+                ld.setRolloverBackground(StyleUtil.randomColor());
+                ld.setActiveImageBorder(FIB1_SURROUND);
+                ld.setInactiveImageBorder(FIB1_SURROUND);
+                tabPane.add(tab);
+            }
+        });
+
         testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Remove Last Tab", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (tabPane.getComponentCount() > 0) {
@@ -375,7 +729,7 @@ public class TabPaneTest extends AbstractTest {
         });
 
         // General Properties
-
+        
         testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Tab Position = Top", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tabPane.setTabPosition(TabPane.TAB_POSITION_TOP);
@@ -396,7 +750,8 @@ public class TabPaneTest extends AbstractTest {
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_BACKGROUND);
         addFontPropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_FONT);
         addAlignmentPropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_ALIGNMENT);
-        addFillImagePropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_BACKGROUND_IMAGE, StyleUtil.TEST_FILL_IMAGES);
+        addFillImagePropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_BACKGROUND_IMAGE, 
+                StyleUtil.TEST_FILL_IMAGES);
         addFontPropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_ACTIVE_FONT);
         addFontPropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_INACTIVE_FONT);
         
@@ -420,36 +775,175 @@ public class TabPaneTest extends AbstractTest {
                 tabPane.setBorderType(TabPane.BORDER_TYPE_SURROUND);
             }
         });
+
+        
+        addBorderPropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_BORDER);
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "imageBorder: (Surround)", 
+                new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setImageBorder(FIB1_SURROUND);
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "imageBorder: (Top)", 
+                new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setImageBorder(FIB1_TOP);
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "imageBorder: (Bottom)", 
+                new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setImageBorder(FIB1_BOTTOM);
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "imageBorder: (Solid)", 
+                new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setImageBorder(new FillImageBorder(Color.RED, new Insets(4), new Insets(2)));
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Clear imageBorder", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setImageBorder(null);
+            }
+        });
         
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_ACTIVE_BACKGROUND);
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_ACTIVE_FOREGROUND);
         addBorderPropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_ACTIVE_BORDER);
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "tabActiveImageBorder: (Surround)", 
+                new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setTabActiveImageBorder(FIB1_SURROUND);
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "tabActiveImageBorder: (Top)", 
+                new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setTabActiveImageBorder(FIB1_TOP);
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "tabActiveImageBorder: (Bottom)", 
+                new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setTabActiveImageBorder(FIB1_BOTTOM);
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "tabActiveImageBorder: (Solid)", 
+                new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setTabActiveImageBorder(new FillImageBorder(Color.RED, new Insets(4), new Insets(2)));
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Clear Tab Active Image Border", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setTabActiveImageBorder(null);
+            }
+        });
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_INACTIVE_BACKGROUND);
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_INACTIVE_FOREGROUND);
         addBorderPropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_INACTIVE_BORDER);
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "tabInactiveImageBorder: (Surround)", 
+                new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setTabInactiveImageBorder(FIB1_SURROUND);
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "tabInactiveImageBorder: (Top)", 
+                new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setTabInactiveImageBorder(FIB1_TOP);
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "tabInactiveImageBorder: (Bottom)", 
+                new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setTabInactiveImageBorder(FIB1_BOTTOM);
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "tabInactiveImageBorder: (Solid)", 
+                new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setTabInactiveImageBorder(new FillImageBorder(Color.RED, new Insets(4), new Insets(2)));
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Clear Tab Inactive Image Border", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setTabInactiveImageBorder(null);
+            }
+        });
+        
+        addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_ROLLOVER_BACKGROUND);
+        addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_ROLLOVER_FOREGROUND);
+        addBorderPropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_ROLLOVER_BORDER);
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "tabRolloverImageBorder: (Top)", 
+                new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setTabRolloverImageBorder(FIB1_TOP);
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "tabRolloverImageBorder: (Bottom)", 
+                new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setTabRolloverImageBorder(FIB1_BOTTOM);
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "tabRolloverImageBorder: (Solid)", 
+                new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setTabRolloverImageBorder(new FillImageBorder(Color.RED, new Insets(4), new Insets(2)));
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Clear Tab Rollover Image Border", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setTabRolloverImageBorder(null);
+            }
+        });
+
+
+
+        addBooleanPropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_ROLLOVER_ENABLED);
         
         addImageReferencePropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_ACTIVE_LEFT_IMAGE, LEFT_IMAGES);
         addImageReferencePropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_INACTIVE_LEFT_IMAGE, LEFT_IMAGES);
         addImageReferencePropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_ACTIVE_RIGHT_IMAGE, RIGHT_IMAGES);
-        addImageReferencePropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_INACTIVE_RIGHT_IMAGE, RIGHT_IMAGES);
+        addImageReferencePropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_INACTIVE_RIGHT_IMAGE, 
+                RIGHT_IMAGES);
         
         addFillImagePropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_ACTIVE_BACKGROUND_IMAGE, 
                 StyleUtil.TEST_FILL_IMAGES);
         addFillImagePropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_INACTIVE_BACKGROUND_IMAGE, 
                 StyleUtil.TEST_FILL_IMAGES);
         
-        addInsetsPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "insets");
+        addInsetsPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "insets", new Insets[]{null, new Insets(0), new Insets(1), 
+                new Insets(2), new Insets(5), new Insets(10), new Insets(20),
+                new Insets(25), new Insets(-1), new Insets(-2), new Insets(-5), new Insets(-10), new Insets(-20), new Insets(-25)});
+        addInsetsPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "tabActiveInsets", new Insets[]{null, new Insets(0), 
+                new Insets(1), new Insets(2), new Insets(5), new Insets(10), new Insets(20), new Insets(25)});
+        addInsetsPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "tabInactiveInsets", new Insets[]{null, new Insets(0), 
+                new Insets(1), new Insets(2), new Insets(5), new Insets(10), new Insets(20), new Insets(25)});
         addInsetsPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "defaultContentInsets");
         addExtentPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "tabInset", 
                 new Extent[]{null, new Extent(0), new Extent(1), new Extent(2), new Extent(5), new Extent(10), new Extent(20)});
         addExtentPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "tabSpacing", 
-                new Extent[]{null, new Extent(0), new Extent(1), new Extent(2), new Extent(5), new Extent(10), new Extent(20)});
+                new Extent[]{null, new Extent(0), new Extent(1), new Extent(2), new Extent(5), new Extent(10), new Extent(20),
+                new Extent(25), new Extent(-1), new Extent(-2), new Extent(-5), new Extent(-10), new Extent(-20), new Extent(-25)});
         
         addBooleanPropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_CLOSE_ENABLED);
         addImageReferencePropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_CLOSE_ICON, CLOSE_ICON_IMAGES);
-        addImageReferencePropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_DISABLED_CLOSE_ICON, CLOSE_ICON_IMAGES);
+        addImageReferencePropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_DISABLED_CLOSE_ICON, 
+                CLOSE_ICON_IMAGES);
         addBooleanPropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_CLOSE_ICON_ROLLOVER_ENABLED);
-        addImageReferencePropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_ROLLOVER_CLOSE_ICON, CLOSE_ICON_IMAGES);
+        addImageReferencePropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_ROLLOVER_CLOSE_ICON, 
+                CLOSE_ICON_IMAGES);
 
         // Selection Properties
 

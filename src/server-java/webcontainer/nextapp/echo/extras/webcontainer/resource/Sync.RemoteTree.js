@@ -19,7 +19,9 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
                 open: "image/tree/Open.gif",
                 openBottom: "image/tree/Open.gif",
                 closed: "image/tree/Closed.gif",
-                closedBottom: "image/tree/Closed.gif"
+                closedBottom: "image/tree/Closed.gif",
+                join: "image/tree/Transparent.gif",
+                joinBottom: "image/tree/Transparent.gif"
             },
             1: {
                 vertical: "image/tree/VerticalSolid.gif",
@@ -102,12 +104,14 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
         tableElement.appendChild(this._buggerTBody);
         //--
         
-        if (this.component.treeStructure) {
-            // structure already set on component, local style property can only contain update
-            this._mergeTreeStructureUpdate(this.component.get("treeStructure"));
+        var localStructure = this.component.get("treeStructure");
+        var fullLocalStructure = localStructure != null && localStructure.fullRefresh;
+        if (fullLocalStructure) {
+            // tree structure in local style is a full structure
+            this.component.treeStructure = localStructure[0];
         } else {
-            // initial render
-            this.component.treeStructure = this.component.get("treeStructure")[0];
+            // local style structure contains a partial update
+            this._mergeTreeStructureUpdate(localStructure);
         }
         this.columnCount = this.component.get("columnCount");
         

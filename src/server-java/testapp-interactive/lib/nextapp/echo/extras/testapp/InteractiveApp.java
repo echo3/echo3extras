@@ -49,6 +49,20 @@ import nextapp.echo.app.Window;
 public class InteractiveApp extends ApplicationInstance {
 
     /**
+     * Initial test name.
+     */
+    public static final String INITIAL_TEST;
+    static {
+        String value;
+        try {
+            value = System.getProperty("test");
+        } catch (SecurityException ex) {
+            value = null;
+        }
+        INITIAL_TEST = value;
+    }
+
+    /**
      * A boolean flag indicating whether the application is running on a live
      * demo server.  This flag is used to disable certain tests based on 
      * whether the <code>nextapp.echo.demoserver</code> system property is
@@ -109,7 +123,7 @@ public class InteractiveApp extends ApplicationInstance {
      * interactive test to run.
      */
     public void displayTestPane() {
-        mainWindow.setContent(new TestPane());
+        mainWindow.setContent(new TestPane(null));
         console = null;
     }
     
@@ -129,7 +143,11 @@ public class InteractiveApp extends ApplicationInstance {
         setStyleSheet(Styles.DEFAULT_STYLE_SHEET);
         mainWindow = new Window();
         mainWindow.setTitle("NextApp Echo3 Extras Test Application");
-        mainWindow.setContent(new WelcomePane());
+        if (INITIAL_TEST == null) {
+            mainWindow.setContent(new WelcomePane());
+        } else {
+            mainWindow.setContent(new TestPane(INITIAL_TEST));
+        }
         
         return mainWindow;
     }
