@@ -486,7 +486,13 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
      * @param {String} value the command value
      */
     _execCommand: function(commandName, value) {
-        this._loadRange();
+        if (this._selectionRange) {
+            // Select range if it exists.
+            this._loadRange();
+        } else {
+            // Create range if none exists.
+            this._storeRange();
+        }
         
         switch (commandName) {
         case "deleteTableColumn":
