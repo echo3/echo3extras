@@ -69,24 +69,24 @@ public class TabPaneTest extends AbstractTest {
     private static final FillImageBorder FIB1_SURROUND = 
             new FillImageBorder(null, new Insets(17, 17, 23, 23), new Insets(8, 8, 14, 14), 
             new FillImage[] {
-                new FillImage(new ResourceImageReference(FIB1_BASE + "topLeft.png")),
-                new FillImage(new ResourceImageReference(FIB1_BASE + "top.png")),
-                new FillImage(new ResourceImageReference(FIB1_BASE + "topRight.png")),
-                new FillImage(new ResourceImageReference(FIB1_BASE + "left.png")),
-                new FillImage(new ResourceImageReference(FIB1_BASE + "right.png")),
-                new FillImage(new ResourceImageReference(FIB1_BASE + "bottomLeft.png")),
-                new FillImage(new ResourceImageReference(FIB1_BASE + "bottom.png")),
-                new FillImage(new ResourceImageReference(FIB1_BASE + "bottomRight.png"))
+                new FillImage(new ResourceImageReference(FIB1_BASE + "TopLeft.png")),
+                new FillImage(new ResourceImageReference(FIB1_BASE + "Top.png")),
+                new FillImage(new ResourceImageReference(FIB1_BASE + "TopRight.png")),
+                new FillImage(new ResourceImageReference(FIB1_BASE + "Left.png")),
+                new FillImage(new ResourceImageReference(FIB1_BASE + "Right.png")),
+                new FillImage(new ResourceImageReference(FIB1_BASE + "BottomLeft.png")),
+                new FillImage(new ResourceImageReference(FIB1_BASE + "Bottom.png")),
+                new FillImage(new ResourceImageReference(FIB1_BASE + "BottomRight.png"))
             });
     
     private static final FillImageBorder FIB1_TOP = 
             new FillImageBorder(null, new Insets(17, 17, 23, 0), new Insets(8, 8, 14, 0), 
             new FillImage[] {
-                new FillImage(new ResourceImageReference(FIB1_BASE + "topLeft.png")),
-                new FillImage(new ResourceImageReference(FIB1_BASE + "top.png")),
-                new FillImage(new ResourceImageReference(FIB1_BASE + "topRight.png")),
-                new FillImage(new ResourceImageReference(FIB1_BASE + "left.png")),
-                new FillImage(new ResourceImageReference(FIB1_BASE + "right.png")),
+                new FillImage(new ResourceImageReference(FIB1_BASE + "TopLeft.png")),
+                new FillImage(new ResourceImageReference(FIB1_BASE + "Top.png")),
+                new FillImage(new ResourceImageReference(FIB1_BASE + "TopRight.png")),
+                new FillImage(new ResourceImageReference(FIB1_BASE + "Left.png")),
+                new FillImage(new ResourceImageReference(FIB1_BASE + "Right.png")),
                 null,
                 null,
                 null
@@ -98,11 +98,11 @@ public class TabPaneTest extends AbstractTest {
                 null,
                 null,
                 null,
-                new FillImage(new ResourceImageReference(FIB1_BASE + "left.png")),
-                new FillImage(new ResourceImageReference(FIB1_BASE + "right.png")),
-                new FillImage(new ResourceImageReference(FIB1_BASE + "bottomLeft.png")),
-                new FillImage(new ResourceImageReference(FIB1_BASE + "bottom.png")),
-                new FillImage(new ResourceImageReference(FIB1_BASE + "bottomRight.png"))
+                new FillImage(new ResourceImageReference(FIB1_BASE + "Left.png")),
+                new FillImage(new ResourceImageReference(FIB1_BASE + "Right.png")),
+                new FillImage(new ResourceImageReference(FIB1_BASE + "BottomLeft.png")),
+                new FillImage(new ResourceImageReference(FIB1_BASE + "Bottom.png")),
+                new FillImage(new ResourceImageReference(FIB1_BASE + "BottomRight.png"))
             });
     
     private static final ImageReference[] LEFT_IMAGES = new ImageReference[] {
