@@ -68,7 +68,9 @@ public class RichTextAreaPeer extends AbstractComponentSynchronizePeer {
     private static final String RESOURCE_DIR = "nextapp/echo/extras/webcontainer/resource/";
     
     private static final Service RICH_TEXT_AREA_SERVICE = JavaScriptService.forResources("EchoExtras.RichTextArea",
-            new String[] { RESOURCE_DIR + "Application.RichTextArea.js",
+            new String[] { RESOURCE_DIR + "Application.RichTextInput.js",
+                           RESOURCE_DIR + "Application.RichTextArea.js",
+                           RESOURCE_DIR + "Sync.RichTextInput.js",
                            RESOURCE_DIR + "Sync.RichTextArea.js",
                            RESOURCE_DIR + "RemoteClient.RichTextArea.js" });
     
