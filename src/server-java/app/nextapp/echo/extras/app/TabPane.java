@@ -74,6 +74,7 @@ implements Pane, PaneContainer {
     public static final String PROPERTY_SCROLL_RIGHT_ICON = "scrollRightIcon";
     public static final String PROPERTY_TAB_ACTIVE_BACKGROUND = "tabActiveBackground";
     public static final String PROPERTY_TAB_ACTIVE_BACKGROUND_IMAGE = "tabActiveBackgroundImage";
+    public static final String PROPERTY_TAB_ACTIVE_BACKGROUND_INSETS = "tabActiveBackgroundInsets";
     public static final String PROPERTY_TAB_ACTIVE_BORDER = "tabActiveBorder";
     public static final String PROPERTY_TAB_ACTIVE_FONT = "tabActiveFont";
     public static final String PROPERTY_TAB_ACTIVE_FOREGROUND = "tabActiveForeground";
@@ -93,6 +94,7 @@ implements Pane, PaneContainer {
     public static final String PROPERTY_TAB_ICON_TEXT_MARGIN = "tabIconTextMargin";
     public static final String PROPERTY_TAB_INACTIVE_BACKGROUND = "tabInactiveBackground";
     public static final String PROPERTY_TAB_INACTIVE_BACKGROUND_IMAGE = "tabInactiveBackgroundImage";
+    public static final String PROPERTY_TAB_INACTIVE_BACKGROUND_INSETS = "tabInactiveBackgroundInsets";
     public static final String PROPERTY_TAB_INACTIVE_BORDER = "tabInactiveBorder";
     public static final String PROPERTY_TAB_INACTIVE_FONT = "tabInactiveFont";
     public static final String PROPERTY_TAB_INACTIVE_FOREGROUND = "tabInactiveForeground";
@@ -106,6 +108,7 @@ implements Pane, PaneContainer {
     public static final String PROPERTY_TAB_ROLLOVER_CLOSE_ICON = "tabRolloverCloseIcon";
     public static final String PROPERTY_TAB_ROLLOVER_BACKGROUND = "tabRolloverBackground";
     public static final String PROPERTY_TAB_ROLLOVER_BACKGROUND_IMAGE = "tabRolloverBackgroundImage";
+    public static final String PROPERTY_TAB_ROLLOVER_BACKGROUND_INSETS = "tabRolloverBackgroundInsets";
     public static final String PROPERTY_TAB_ROLLOVER_BORDER = "tabRolloverBorder";
     public static final String PROPERTY_TAB_ROLLOVER_ENABLED = "tabRolloverEnabled";
     public static final String PROPERTY_TAB_ROLLOVER_FONT = "tabRolloverFont";
@@ -361,6 +364,16 @@ implements Pane, PaneContainer {
     }
 
     /**
+     * Returns the inset margin displayed around the background color/image used to render active tabs.
+     * Rendered only when image borders are used.
+     * 
+     * @return the inset margin
+     */
+    public Insets getTabActiveBackgroundInsets() {
+        return (Insets) get(PROPERTY_TAB_ACTIVE_BACKGROUND_INSETS);
+    }
+
+    /**
      * Returns the <code>Border</code> used to draw the active tab.
      * If the <code>border</code> property is not set as well, this border will surround the entire <code>TabPane</code>.
      * 
@@ -530,6 +543,16 @@ implements Pane, PaneContainer {
     }
     
     /**
+     * Returns the inset margin displayed around the background color/image used to render inactive tabs.
+     * Rendered only when image borders are used.
+     * 
+     * @return the inset margin
+     */
+    public Insets getTabInactiveBackgroundInsets() {
+        return (Insets) get(PROPERTY_TAB_INACTIVE_BACKGROUND_INSETS);
+    }
+
+    /**
      * Returns the <code>Border</code> used to draw inactive tabs.
      * 
      * @return the border
@@ -648,6 +671,16 @@ implements Pane, PaneContainer {
         return (FillImage) get(PROPERTY_TAB_ROLLOVER_BACKGROUND_IMAGE);
     }
     
+    /**
+     * Returns the inset margin displayed around the background color/image used to render rolled over tabs.
+     * Rendered only when image borders are used.
+     * 
+     * @return the inset margin
+     */
+    public Insets getTabRolloverBackgroundInsets() {
+        return (Insets) get(PROPERTY_TAB_ROLLOVER_BACKGROUND_INSETS);
+    }
+
     /**
      * Returns the <code>Border</code> used to draw rolled over tabs.
      * 
@@ -949,6 +982,16 @@ implements Pane, PaneContainer {
     }
     
     /**
+     * Sets the inset margin displayed around the background color/image used to render active tabs.
+     * Rendered only when image borders are used.
+     * 
+     * @param newValue the new inset margin
+     */
+    public void setTabActiveBackgroundInsets(Insets newValue) {
+        set(PROPERTY_TAB_ACTIVE_BACKGROUND_INSETS, newValue);
+    }
+
+    /**
      * Sets the <code>Border</code> used to draw the active tab.
      * If the <code>border</code> property is not set as well, this border will surround the entire <code>TabPane</code>.
      * 
@@ -1140,6 +1183,16 @@ implements Pane, PaneContainer {
     }
     
     /**
+     * Sets the inset margin displayed around the background color/image used to render inactive tabs.
+     * Rendered only when image borders are used.
+     * 
+     * @param newValue the new inset margin
+     */
+    public void setTabInactiveBackgroundInsets(Insets newValue) {
+        set(PROPERTY_TAB_INACTIVE_BACKGROUND_INSETS, newValue);
+    }
+
+    /**
      * Sets the <code>Border</code> used to draw inactive tabs in the 
      * <code>TabPane</code>.
      * 
@@ -1260,6 +1313,16 @@ implements Pane, PaneContainer {
         set(PROPERTY_TAB_ROLLOVER_BACKGROUND_IMAGE, newValue);
     }
     
+    /**
+     * Sets the inset margin displayed around the background color/image used to render rolled over tabs.
+     * Rendered only when image borders are used.
+     * 
+     * @param newValue the new inset margin
+     */
+    public void setTabRolloverBackgroundInsets(Insets newValue) {
+        set(PROPERTY_TAB_ROLLOVER_BACKGROUND_INSETS, newValue);
+    }
+
     /**
      * Sets the <code>Border</code> used to draw rolled over tabs in the 
      * <code>TabPane</code>.

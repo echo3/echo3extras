@@ -50,6 +50,7 @@ public class TabPaneLayoutData implements LayoutData {
     private static class Data {
         private Color activeBackground;
         private FillImage activeBackgroundImage;
+        private Insets activeBackgroundInsets;
         private Border activeBorder;
         private Font activeFont;
         private Color activeForeground;
@@ -59,6 +60,7 @@ public class TabPaneLayoutData implements LayoutData {
         private boolean closeEnabled = true;
         private Color inactiveBackground;
         private FillImage inactiveBackgroundImage;
+        private Insets inactiveBackgroundInsets;
         private Border inactiveBorder;
         private Font inactiveFont;
         private Color inactiveForeground;
@@ -66,6 +68,7 @@ public class TabPaneLayoutData implements LayoutData {
         private Insets inactiveInsets;
         private Color rolloverBackground;
         private FillImage rolloverBackgroundImage;
+        private Insets rolloverBackgroundInsets;
         private Border rolloverBorder;
         private Font rolloverFont;
         private Color rolloverForeground;
@@ -94,6 +97,16 @@ public class TabPaneLayoutData implements LayoutData {
      */
     public FillImage getActiveBackgroundImage() {
         return data == null ? null : data.activeBackgroundImage;
+    }
+    
+    /**
+     * Returns the inset margin displayed around the background color/image when the tab is active.
+     * (rendered only when image borders are used)
+     * 
+     * @return the inset margin
+     */
+    public Insets getActiveBackgroundInsets() {
+        return data == null ? null : data.activeBackgroundInsets;
     }
 
     /**
@@ -190,6 +203,16 @@ public class TabPaneLayoutData implements LayoutData {
     }
 
     /**
+     * Returns the inset margin displayed around the background color/image when the tab is inactive.
+     * (rendered only when image borders are used)
+     * 
+     * @return the inset margin
+     */
+    public Insets getInactiveBackgroundInsets() {
+        return data == null ? null : data.inactiveBackgroundInsets;
+    }
+
+    /**
      * Returns the inactive border of the tab.
      * 
      * @return the inactive border
@@ -250,6 +273,16 @@ public class TabPaneLayoutData implements LayoutData {
      */
     public FillImage getRolloverBackgroundImage() {
         return data == null ? null : data.rolloverBackgroundImage;
+    }
+    
+    /**
+     * Returns the inset margin displayed around the background color/image when the tab is rolled over.
+     * (rendered only when image borders are used)
+     * 
+     * @return the inset margin
+     */
+    public Insets getRolloverBackgroundInsets() {
+        return data == null ? null : data.rolloverBackgroundInsets;
     }
 
     /**
@@ -340,6 +373,16 @@ public class TabPaneLayoutData implements LayoutData {
      */
     public void setActiveBackgroundImage(FillImage activeBackgroundImage) {
         getData().activeBackgroundImage = activeBackgroundImage;
+    }
+    
+    /**
+     * Sets the inset margin displayed around the background color/image when the tab is active.
+     * (rendered only when image borders are used)
+     * 
+     * @param activeBackgroundInsets the new inset margin
+     */
+    public void setActiveBackgroundInsets(Insets activeBackgroundInsets) {
+        getData().activeBackgroundInsets = activeBackgroundInsets;
     }
 
     /**
@@ -433,6 +476,16 @@ public class TabPaneLayoutData implements LayoutData {
     }
 
     /**
+     * Sets the inset margin displayed around the background color/image when the tab is inactive.
+     * (rendered only when image borders are used)
+     * 
+     * @param inactiveBackgroundInsets the new inset margin
+     */
+    public void setInactiveBackgroundInsets(Insets inactiveBackgroundInsets) {
+        getData().inactiveBackgroundInsets = inactiveBackgroundInsets;
+    }
+
+    /**
      * Sets the inactive border of the tab.
      * 
      * @param inactiveBorder the new inactive border
@@ -493,6 +546,16 @@ public class TabPaneLayoutData implements LayoutData {
      */
     public void setRolloverBackgroundImage(FillImage rolloverBackgroundImage) {
         getData().rolloverBackgroundImage = rolloverBackgroundImage;
+    }
+
+    /**
+     * Sets the inset margin displayed around the background color/image when the tab is rolled over.
+     * (rendered only when image borders are used)
+     * 
+     * @param rolloverBackgroundInsets the new inset margin
+     */
+    public void setRolloverBackgroundInsets(Insets rolloverBackgroundInsets) {
+        getData().rolloverBackgroundInsets = rolloverBackgroundInsets;
     }
 
     /**

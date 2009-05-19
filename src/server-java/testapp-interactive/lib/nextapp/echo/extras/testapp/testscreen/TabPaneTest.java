@@ -189,7 +189,8 @@ public class TabPaneTest extends AbstractTest {
             }
         });
         
-        testControlsPane.addButton(TestControlPane.CATEGORY_CONFIGURATIONS, "All Graphic Border Test + Icons", new ActionListener() {
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONFIGURATIONS, "All Graphic Border Test + Icons",
+                new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 while (tabPane.getComponentCount() < 3) {
                     Component tab = createTestTab();
@@ -203,8 +204,10 @@ public class TabPaneTest extends AbstractTest {
                 tabPane.setImageBorder(FIB1_SURROUND);
                 tabPane.setTabRolloverEnabled(true);
                 tabPane.setTabActiveBackground(Color.RED);
+                tabPane.setTabActiveBackgroundInsets(new Insets(8, 8, 14, 0));
                 tabPane.setTabActiveImageBorder(FIB1_TOP);
                 tabPane.setTabInactiveBackground(Color.YELLOW);
+                tabPane.setTabInactiveBackgroundInsets(new Insets(8, 8, 14, 0));
                 tabPane.setTabInactiveForeground(Color.BLUE);
                 tabPane.setTabInactiveImageBorder(FIB1_TOP);
                 tabPane.setTabSpacing(new Extent(-25));
@@ -262,7 +265,8 @@ public class TabPaneTest extends AbstractTest {
             }
         });
         
-        testControlsPane.addButton(TestControlPane.CATEGORY_CONFIGURATIONS, "All Graphic Border Test + Icons (No RO)", new ActionListener() {
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONFIGURATIONS, "All Graphic Border Test + Icons (No RO)",
+                new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 while (tabPane.getComponentCount() < 3) {
                     Component tab = createTestTab();
@@ -301,7 +305,8 @@ public class TabPaneTest extends AbstractTest {
                 tabPane.setTabRolloverBackground(Color.GREEN);
             }
         });
-        testControlsPane.addButton(TestControlPane.CATEGORY_CONFIGURATIONS, "All Graphic Border Test (Surround)", new ActionListener() {
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONFIGURATIONS, "All Graphic Border Test (Surround)", 
+                new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 while (tabPane.getComponentCount() < 3) {
                     tabPane.add(createTestTab());

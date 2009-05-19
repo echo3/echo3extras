@@ -22,6 +22,8 @@
  * @sp {#ImageReference} scrollRightIcon the scroll icon to display to enable scrolling of the header to the right
  * @sp {#Color} tabActiveBackground the background color used to render active tabs
  * @sp {#FillImage} tabActiveBackgroundImage the background image used to render active tabs
+ * @sp {#Insets} tabActiveBackgroundInsets the inset margin displayed around the background color/image used to render active tabs
+ *     (rendered only when image borders are used)
  * @sp {#Border} tabActiveBorder the border surrounding the active tab and the content of the <code>TabPane</code>
  * @sp {#Font} tabActiveFont the font used to render active tabs
  * @sp {#Color} tabActiveForeground the foreground color used to render active tabs
@@ -37,6 +39,8 @@
  * @sp {#Extent} tabHeight the minimum height of an individual (inactive) tab
  * @sp {#Color} tabInactiveBackground the background color used to render inactive tabs
  * @sp {#FillImage} tabInactiveBackgroundImage the background image used to render inactive tabs
+ * @sp {#Insets} tabInactiveBackgroundInsets the inset margin displayed around the background color/image used to render inactive
+ *     tabs (rendered only when image borders are used)
  * @sp {#Border} tabInactiveBorder the border surrounding inactive tabs
  * @sp {#Font} tabInactiveFont the font used to render inactive tabs
  * @sp {#Color} tabInactiveForeground the foreground color used to render inactive tabs
@@ -48,6 +52,8 @@
  * @sp {Number} tabPosition the position where the tabs are located relative to the pane content, one of the following values:
  * @sp {#Color} tabRolloverBackground the background used to render rolled over tabs
  * @sp {#FillImage} tabRolloverBackgroundImage the background image used to render rolled over tabs
+ * @sp {#Insets} tabRolloverBackgroundInsets the inset margin displayed around the background color/image used to render rolled 
+ *     over tabs (rendered only when image borders are used)
  * @sp {#Border} tabRolloverBorder the border used to render rolled over tabs
  * @sp {Boolean} tabRolloverEnabled flag indicating whether tab rollover effects are enabled
  * @sp {#Font} tabRolloverFont the font used to render rolled over tabs
@@ -62,6 +68,8 @@
  * @sp {#Extent} tabWidth the width of an individual tab (setting tabMaximumWidth is generally preferred)
  * @ldp {#Color} activeBackground the active background color
  * @ldp {#FillImage} activeBackgroundImage the active background image
+ * @ldp {#Insets} activeBackgroundInsets the inset margin displayed around the background color/image when the tab is active
+ *      (rendered only when image borders are used)
  * @ldp {#Border} activeBorder the active border
  * @ldp {#Font} activeFont the active font
  * @ldp {#Color} activeForeground the active foreground color
@@ -73,6 +81,8 @@
  * @ldp {#ImageReference} icon the icon to display within a tab
  * @ldp {#Color} inactiveBackground the inactive background color
  * @ldp {#FillImage} inactiveBackgroundImage the inactive background image
+ * @ldp {#Insets} inactiveBackgroundInsets the inset margin displayed around the background color/image when the tab is inactive
+ *      (rendered only when image borders are used)
  * @ldp {#Border} inactiveBorder the inactive border
  * @ldp {#Font} inactiveFont the inactive font
  * @ldp {#Color} inactiveForeground the inactive foreground color
@@ -80,6 +90,8 @@
  * @ldp {#Insets} inactiveInsets the inactive insets
  * @ldp {#Color} rolloverBackground the rollover background color
  * @ldp {#FillImage} rolloverBackgroundImage the rollover background image
+ * @ldp {#Insets} rolloverBackgroundInsets the inset margin displayed around the background color/image when the tab is rolled over
+ *      (rendered only when image borders are used)
  * @ldp {#Border} rolloverBorder the rollover border
  * @ldp {#Font} rolloverFont the rollover font
  * @ldp {#Color} rolloverForeground the rollover foreground color

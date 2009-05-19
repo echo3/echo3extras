@@ -1396,13 +1396,14 @@ Extras.Sync.TabPane.Tab = Core.extend({
 
         if (this._useImageBorder) {
             var imageBorder = this._getProperty("ImageBorder", active, false);
+            var backgroundInsets = this._getProperty("BackgroundInsets", active, false);
             this._fibContainer = headerDivContent =
                     Echo.Sync.FillImageBorder.renderContainer(imageBorder, { child: this._labelDiv });
             var fibContent = Echo.Sync.FillImageBorder.getContainerContent(this._fibContainer);
             fibContent.style.zIndex = 2;
             this._backgroundDiv = document.createElement("div");
             this._backgroundDiv.style.cssText = "position:absolute;z-index:1;";
-            Echo.Sync.Insets.renderPosition(imageBorder.borderInsets, this._backgroundDiv);
+            Echo.Sync.Insets.renderPosition(backgroundInsets || imageBorder.borderInsets, this._backgroundDiv);
             this._fibContainer.appendChild(this._backgroundDiv);
             
             if (Core.Web.Env.BROWSER_INTERNET_EXPLORER && Core.Web.Env.BROWSER_VERSION_MAJOR === 6) {
@@ -1538,8 +1539,9 @@ Extras.Sync.TabPane.Tab = Core.extend({
             if (this._useImageBorder) {
                 // Render FillImageBorder style.
                 var imageBorder = this._getProperty("ImageBorder", active, rollover);
+                var backgroundInsets = this._getProperty("BackgroundInsets", active, rollover);
                 Echo.Sync.FillImageBorder.renderContainer(imageBorder, { update: this._fibContainer });
-                Echo.Sync.Insets.renderPosition(imageBorder.borderInsets, this._backgroundDiv);
+                Echo.Sync.Insets.renderPosition(backgroundInsets || imageBorder.borderInsets, this._backgroundDiv);
             } else {
                 // Render CSS border style.
                 var border = this._getProperty("Border", active, rollover) || 
