@@ -1,4 +1,34 @@
 /**
+ * Abstract base class for menu components. Provides common functionality.
+ */
+Extras.MenuComponent = Core.extend(Echo.Component, {
+    
+    $abstract: true,
+    
+    /** @see Echo.Component#modalSupport */
+    modalSupport: true,
+    
+    /** @see Echo.Component#focusable */
+    focusable: true,
+    
+    /**
+     * Processes the user selection an item.
+     * 
+     * @param {Extras.ItemModel} itemModel the selected item
+     */
+    doAction: function(itemModel) {
+        var path = itemModel.getItemPositionPath().join(".");
+        if (itemModel instanceof Extras.ToggleOptionModel) {
+            var stateModel = this.get("stateModel");
+            if (stateModel) {
+                stateModel.setSelected(itemModel.modelId, !stateModel.isSelected(itemModel.modelId));
+            }
+        }
+        this.fireEvent({type: "action", source: this, data: path, modelId: itemModel.modelId});
+    }
+});
+
+/**
  * ContextMenu component. May not contain child components.
  * 
  * @sp {#FillImage} backgroundImage the background image that will be displayed
@@ -26,7 +56,7 @@
  *     activate menu when contents are context-clicked.</li>
  *     </ul>
  */
-Extras.ContextMenu = Core.extend(Echo.Component, {
+Extras.ContextMenu = Core.extend(Extras.MenuComponent, {
 
     $static: {
     
@@ -54,23 +84,7 @@ Extras.ContextMenu = Core.extend(Echo.Component, {
     },
 
     /** @see Echo.Component#componentType */
-    componentType: "Extras.ContextMenu",
-    
-    /** @see Echo.Component#modalSupport */
-    modalSupport: true,
-    
-    /** @see Echo.Component#focusable */
-    focusable: true,
-    
-    /**
-     * Processes the user selection an item.
-     * 
-     * @param {Extras.ItemModel} itemModel the selected item
-     */
-    doAction: function(itemModel) {
-        var path = itemModel.getItemPositionPath().join(".");
-        this.fireEvent({type: "action", source: this, data: path, modelId: itemModel.modelId});
-    }
+    componentType: "Extras.ContextMenu"
 });
 
 /**
@@ -125,30 +139,14 @@ Extras.ContextMenu = Core.extend(Echo.Component, {
  *     item is selected
  * @sp {#Extent} width the width of the drop down box
  */
-Extras.DropDownMenu = Core.extend(Echo.Component, {
+Extras.DropDownMenu = Core.extend(Extras.MenuComponent, {
 
     $load: function() {
         Echo.ComponentFactory.registerType("Extras.DropDownMenu", this);
     },
 
     /** @see Echo.Component#componentType */
-    componentType: "Extras.DropDownMenu",
-
-    /** @see Echo.Component#modalSupport */
-    modalSupport: true,
-    
-    /** @see Echo.Component#focusable */
-    focusable: true,
-
-    /**
-     * Processes the user selection an item.
-     * 
-     * @param {Extras.ItemModel} itemModel the selected item
-     */
-    doAction: function(itemModel) {
-        var path = itemModel.getItemPositionPath().join(".");
-        this.fireEvent({type: "action", source: this, data: path, modelId: itemModel.modelId});
-    }
+    componentType: "Extras.DropDownMenu"
 });
 
 /**
@@ -190,30 +188,14 @@ Extras.DropDownMenu = Core.extend(Echo.Component, {
  * @sp {#Color} selectionForeground the foreground color used to highlight the
  *     currently selected menu item
  */
-Extras.MenuBarPane = Core.extend(Echo.Component, {
+Extras.MenuBarPane = Core.extend(Extras.MenuComponent, {
 
     $load: function() {
         Echo.ComponentFactory.registerType("Extras.MenuBarPane", this);
     },
     
     /** @see Echo.Component#componentType */
-    componentType: "Extras.MenuBarPane",
-    
-    /** @see Echo.Component#modalSupport */
-    modalSupport: true,
-    
-    /** @see Echo.Component#focusable */
-    focusable: true,
-
-    /**
-     * Processes the user selection an item.
-     * 
-     * @param {Extras.ItemModel} itemModel the selected item
-     */
-    doAction: function(itemModel) {
-        var path = itemModel.getItemPositionPath().join(".");
-        this.fireEvent({type: "action", source: this, data: path, modelId: itemModel.modelId});
-    }
+    componentType: "Extras.MenuBarPane"
 });
 
 /**
