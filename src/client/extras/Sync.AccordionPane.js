@@ -242,24 +242,10 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
     },
 
     /**
-     * Removes a tab from an AccordionPane.
-     *
-     * @param tab the tab to remove
-     */
-    _removeTab: function(tab) {
-        var tabIndex = Core.Arrays.indexOf(this.tabs, tab);
-        this.tabs.splice(tabIndex, 1);
-    
-        tab.tabDiv.parentNode.removeChild(tab.tabDiv);
-        tab.containerDiv.parentNode.removeChild(tab.containerDiv);
-        tab.dispose();
-    },
-    
-    /**
      * "Rotates" the AccordionPane to display the specified tab.
      *
-     * @param oldTabId {String} the currently displayed tab id
-     * @param newTabId {String} the id of the tab that will be displayed
+     * @param {String} oldTabId the currently displayed tab id
+     * @param {String} newTabId the id of the tab that will be displayed
      */
     _rotateTabs: function(oldTabId, newTabId) {
         var oldTab = this._getTabById(oldTabId);
@@ -284,7 +270,7 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
     /**
      * Selects a specific tab.
      * 
-     * @param tabId {String} the id of the tab to select
+     * @param {String} tabId the id of the tab to select
      */
     _selectTab: function(tabId) {
         if (tabId == this._activeTabId) {
