@@ -35,7 +35,7 @@ package nextapp.echo.extras.app.menu;
 public interface RadioOptionModel extends ToggleOptionModel {
     
     /**
-     * Returns a group identifier assocciated with this
+     * Returns a group identifier associated with this
      * <code>RadioButtonOptionModel</code>. When multiple
      * <code>RadioButtonOptionModel</code>s have the same
      * <code>groupId</code>, only one may be selected at a time.
