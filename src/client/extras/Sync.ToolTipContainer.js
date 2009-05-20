@@ -29,7 +29,7 @@ Extras.Sync.ToolTipContainer = Core.extend(Echo.Render.ComponentSync, {
     /**
      * Renders container element for the applied-to component and the applied-to component itself.
      * 
-     * @param {Echo.Update.ComponentUpdate} the update 
+     * @param {Echo.Update.ComponentUpdate} update the update 
      */
     _createApplyTo: function(update) {
         var applyToComponent = this.component.getComponent(0);
@@ -54,7 +54,7 @@ Extras.Sync.ToolTipContainer = Core.extend(Echo.Render.ComponentSync, {
     /**
      * Renders tool tip container element, contained component.
      * 
-     * @param {Echo.Update.ComponentUpdate} the update 
+     * @param {Echo.Update.ComponentUpdate} update the update 
      */
     _createToolTip: function(update) {
         var div = document.createElement("div");
