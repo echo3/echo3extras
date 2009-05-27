@@ -490,7 +490,7 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
             if (foreground) {
                 Echo.Sync.Color.render(foreground, tabDiv, "color");
             }
-            Echo.Sync.Font.render(this._parent.component.render("tabRolloverFont", font), tabDiv);
+            Echo.Sync.Font.render(this._parent.component.render("tabRolloverFont"), tabDiv);
             var rolloverBorder = this._parent.component.render("tabRolloverBorder");
             if (!rolloverBorder) {
                 rolloverBorder = border;
