@@ -240,7 +240,7 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
 
         return fullRender;
     },
-
+    
     /**
      * "Rotates" the AccordionPane to display the specified tab.
      *
@@ -406,7 +406,7 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
         if (!this._parent || !this._parent.client || !this._parent.client.verifyInput(this._parent.component)) {
             return;
         }
-        this._renderActiveState(true);
+        this._renderState(true);
     },
     
     /**
@@ -418,7 +418,7 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
         if (!this._parent || !this._parent.client || !this._parent.client.verifyInput(this._parent.component)) {
             return;
         }
-        this._renderActiveState(false);
+        this._renderState(false);
     },
     
     /**
@@ -457,23 +457,23 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
         
         this.containerDiv.appendChild(this.contentDiv);
         
-        this._renderActiveState(false);
+        this._renderState(false);
         this._addEventListeners();
     },
     
     /**
      * Renders the tab active or inactive, updating header state.
      * 
-     * @param {Boolean} state the state of the tab, true for active, false for inactive
+     * @param {Boolean} rollover the rollover state of the tab, true for active, false for inactive
      */
-    _renderActiveState: function(state) {
+    _renderState: function(rollover) {
         var tabDiv = this.tabDiv,
             border = this._parent.component.render("tabBorder", Extras.Sync.AccordionPane._DEFAULTS.tabBorder),
             borderData,
             borderDataBottom,
             background = this._parent.component.render("tabBackground", Extras.Sync.AccordionPane._DEFAULTS.tabBackground);
             
-        if (state) {
+        if (rollover) {
             var rolloverBackground = this._parent.component.render("tabRolloverBackground");
             if (!rolloverBackground) {
                 rolloverBackground = Echo.Sync.Color.adjust(background, 20, 20, 20);
@@ -490,6 +490,7 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
             if (foreground) {
                 Echo.Sync.Color.render(foreground, tabDiv, "color");
             }
+            Echo.Sync.Font.render(this._parent.component.render("tabRolloverFont", font), tabDiv);
             var rolloverBorder = this._parent.component.render("tabRolloverBorder");
             if (!rolloverBorder) {
                 rolloverBorder = border;
@@ -512,6 +513,7 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
             Echo.Sync.Color.render(background, tabDiv, "backgroundColor");
             Echo.Sync.Color.render(this._parent.component.render("tabForeground", 
                     Extras.Sync.AccordionPane._DEFAULTS.tabForeground), tabDiv, "color");
+            Echo.Sync.Font.renderClear(this._parent.component.render("tabFont"), tabDiv)
             tabDiv.style.backgroundImage = "";
             tabDiv.style.backgroundPosition = "";
             tabDiv.style.backgroundRepeat = "";

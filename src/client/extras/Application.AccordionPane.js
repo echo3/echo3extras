@@ -13,11 +13,13 @@
  * @sp {#Color} tabBackground the tab background color
  * @sp {#FillImage} tabBackgroundImage the tab background image
  * @sp {#Border} tabBorder the tab border
+ * @sp {#Font} tabFont the tab font
  * @sp {#Color} tabForeground the tab foreground color
  * @sp {#Insets} tabInsets the tab inset margin
  * @sp {#Color} tabRolloverBackground the tab rollover background color
  * @sp {#FillImage} tabRolloverBackgroundImage the tab rollover background image
  * @sp {#Border} tabRolloverBorder the tab rollover border
+ * @sp {#Font} tabRolloverFont the tab rollover font
  * @sp {Boolean} tabRolloverEnabled flag indicating whether rollover effects are
  *     enabled
  * @sp {#Color} tabRolloverForeground the tab rollover foreground color
