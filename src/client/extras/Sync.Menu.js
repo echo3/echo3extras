@@ -1476,9 +1476,10 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
         
         Echo.Sync.renderComponentDefaults(this.component, menuBarDiv);
         var border = this.component.render("border", Extras.Sync.Menu.DEFAULTS.border);
-        this._menuBarBorderHeight = Echo.Sync.Border.getPixelSize(border, "top") + Echo.Sync.Border.getPixelSize(border, "bottom"); 
-        Echo.Sync.Border.render(border, menuBarDiv, "borderTop");
-        Echo.Sync.Border.render(border, menuBarDiv, "borderBottom");
+        var multisided = Echo.Sync.Border.isMultisided(border);
+        this._menuBarBorderHeight = Echo.Sync.Border.getPixelSize(border, "top") + Echo.Sync.Border.getPixelSize(border, "bottom");
+        Echo.Sync.Border.render(multisided ? border.top : border, menuBarDiv, "borderTop");
+        Echo.Sync.Border.render(multisided ? border.bottom : border, menuBarDiv, "borderBottom");
         Echo.Sync.FillImage.render(this.component.render("backgroundImage"), menuBarDiv); 
         
         this._menuBarTable = document.createElement("table");
