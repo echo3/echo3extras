@@ -159,7 +159,10 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
         }
         
         if (notifyComponentUpdate) {
-            Echo.Render.renderComponentDisplay(this.component);
+            Echo.Render.notifyResize(this.component);
+            for (var i = 0; i < this.tabs.length; ++i) {
+                this.tabs[i].renderDisplay();
+            }
         }
     },
     
