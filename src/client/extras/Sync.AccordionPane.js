@@ -160,9 +160,7 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
         
         if (notifyComponentUpdate) {
             Echo.Render.notifyResize(this.component);
-            for (var i = 0; i < this.tabs.length; ++i) {
-                this.tabs[i].renderDisplay();
-            }
+            this.renderDisplayTabs();
         }
     },
     
@@ -196,6 +194,13 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
         if (!this.rotation) {
             this.redrawTabs(false);
         }
+        this.renderDisplayTabs();
+    },
+    
+    /**
+     * Invokes renderDisplay() implementations on tabs.
+     */
+    renderDisplayTabs: function() {
         for (var i = 0; i < this.tabs.length; ++i) {
             this.tabs[i].renderDisplay();
         }
