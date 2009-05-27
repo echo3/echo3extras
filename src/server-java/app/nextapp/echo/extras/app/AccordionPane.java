@@ -35,6 +35,7 @@ import nextapp.echo.app.Border;
 import nextapp.echo.app.Color;
 import nextapp.echo.app.Component;
 import nextapp.echo.app.FillImage;
+import nextapp.echo.app.Font;
 import nextapp.echo.app.Insets;
 import nextapp.echo.app.Pane;
 import nextapp.echo.app.PaneContainer;
@@ -60,12 +61,14 @@ implements Pane, PaneContainer {
     public static final String PROPERTY_TAB_BACKGROUND = "tabBackground";
     public static final String PROPERTY_TAB_BACKGROUND_IMAGE = "tabBackgroundImage";
     public static final String PROPERTY_TAB_BORDER = "tabBorder";
+    public static final String PROPERTY_TAB_FONT = "tabFont";
     public static final String PROPERTY_TAB_FOREGROUND = "tabForeground";
     public static final String PROPERTY_TAB_INSETS = "tabInsets";
     public static final String PROPERTY_TAB_ROLLOVER_BACKGROUND = "tabRolloverBackground";
     public static final String PROPERTY_TAB_ROLLOVER_BACKGROUND_IMAGE = "tabRolloverBackgroundImage";
     public static final String PROPERTY_TAB_ROLLOVER_BORDER = "tabRolloverBorder";
     public static final String PROPERTY_TAB_ROLLOVER_ENABLED = "tabRolloverEnabled";
+    public static final String PROPERTY_TAB_ROLLOVER_FONT = "tabRolloverFont";
     public static final String PROPERTY_TAB_ROLLOVER_FOREGROUND = "tabRolloverForeground";
     
     /**
@@ -164,6 +167,15 @@ implements Pane, PaneContainer {
     }
     
     /**
+     * Returns the tab font.
+     * 
+     * @return the tab font
+     */
+    public Font getTabFont() {
+        return (Font) get(PROPERTY_TAB_FONT);
+    }
+    
+    /**
      * Returns the tab foreground color.
      *
      * @return the tab foreground color
@@ -206,6 +218,15 @@ implements Pane, PaneContainer {
      */
     public Border getTabRolloverBorder() {
         return (Border) get(PROPERTY_TAB_ROLLOVER_BORDER);
+    }
+    
+    /**
+     * Returns the tab rollover font.
+     * 
+     * @return the tab rollover font
+     */
+    public Font getTabRolloverFont() {
+        return (Font) get(PROPERTY_TAB_ROLLOVER_FONT);
     }
     
     /**
@@ -338,6 +359,15 @@ implements Pane, PaneContainer {
     }
     
     /**
+     * Sets the tab font.
+     *
+     * @param newValue the new tab font
+     */
+    public void setTabFont(Font newValue) {
+        set(PROPERTY_TAB_FONT, newValue);
+    }
+
+    /**
      * Sets the tab foreground color.
      *
      * @param newValue the new tab foreground color
@@ -389,6 +419,15 @@ implements Pane, PaneContainer {
      */
     public void setTabRolloverEnabled(boolean newValue) {
         set(PROPERTY_TAB_ROLLOVER_ENABLED, new Boolean(newValue));
+    }
+    
+    /**
+     * Sets the tab rollover font.
+     *
+     * @param newValue the new tab rollover font
+     */
+    public void setTabRolloverFont(Font newValue) {
+        set(PROPERTY_TAB_ROLLOVER_FONT, newValue);
     }
     
     /**
