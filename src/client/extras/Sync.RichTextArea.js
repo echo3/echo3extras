@@ -139,10 +139,10 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
     _processDialogCloseRef: null,
 
     /**
-     * Method reference to _processComponentExecCommand().
+     * Listener to receive execCommand events from component.
      * @type Function
      */
-    _processComponentExecCommandRef: null,
+    _execCommandListener: null,
 
     $load: function() {
         Echo.Render.registerPeer("Extras.RichTextArea", this);
@@ -284,7 +284,9 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
     
     /** Constructor. */
     $construct: function() {
-        this._processComponentExecCommandRef = Core.method(this, this._processComponentExecCommand);
+        this._execCommandListener = Core.method(this, function(e) {
+            this.execCommand(e.commandName, e.value);
+        });
         this._processDialogCloseRef = Core.method(this, this._processDialogClose);
         this._toolbarButtons = { };
     },
@@ -293,7 +295,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
      * Adds listeners to supported Extras.RichTextArea object.
      */
     _addComponentListeners: function() {
-        this.component.addListener("execCommand", this._processComponentExecCommandRef);
+        this.component.addListener("execCommand", this._execCommandListener);
     },
 
     /** @see #Echo.Arc.ComponentSync#createComponent */
@@ -907,7 +909,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
      * Removes listeners from supported Extras.RichTextArea object.
      */
     _removeComponentListeners: function() {
-        this.component.removeListener("execCommand", this._processComponentExecCommandRef);
+        this.component.removeListener("execCommand", this._execCommandListener);
     },
     
     /** @see Echo.Render.ComponentSync#renderAdd */
