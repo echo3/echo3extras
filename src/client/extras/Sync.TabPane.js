@@ -442,8 +442,8 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
             
             // Set z-index of tab based on position (left to right increase, but with active tab above all inactive tabs,
             // and rollover tab above all tabs).
-            this._tabs[i]._headerDiv.style.zIndex = (this._rolloverTabId === this._tabs[i].id) ? (this._tabs.length + 1) : 
-                    (this._tabs[i]._active ? this._tabs.length : i);
+            this._tabs[i]._headerDiv.style.zIndex = (this._rolloverTabId === this._tabs[i].id) ? (this._tabs.length) : 
+                    (this._tabs[i]._active ? this._tabs.length + 1: i);
             
             // Move rendering cursor to right / calculate total width.
             this._totalTabWidth += headerDivBounds.width;
@@ -1510,7 +1510,7 @@ Extras.Sync.TabPane.Tab = Core.extend({
         
         if (rollover) {
             this._defaultZIndex = this._headerDiv.style.zIndex;
-            this._headerDiv.style.zIndex = this._parent.component.children.length + 1;
+            this._headerDiv.style.zIndex = this._parent.component.children.length;
         } else {
             this._headerDiv.style.zIndex = this._defaultZIndex;
         }
