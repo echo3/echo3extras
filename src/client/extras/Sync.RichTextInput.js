@@ -396,11 +396,6 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
     _execCommandListener: null,
     
     /**
-     * Listener to receive focus events from containing application.
-     */
-    _applicationFocusListener: null,
-    
-    /**
      * Root DIV element of rendered DOM hierarchy.
      * @type Element
      */
@@ -430,22 +425,12 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
         this._execCommandListener = Core.method(this, function(e) {
             this._execCommand(e.commandName, e.value);
         });
-        if (Core.Web.Env.ENGINE_MSHTML) {
-            this._applicationFocusListener = Core.method(this, function(e) {
-                if (e.oldValue == this.component && e.newValue != this.component) {
-                    this._iframe.contentWindow.blur();
-                }
-            });
-        }
     },
     
     /**
      * Adds listeners to supported Extras.RichTextInput object.
      */
     _addComponentListeners: function() {
-        if (this._applicationFocusListener) {
-            this.component.application.addListener("focus", this._applicationFocusListener);
-        }
         this.component.addListener("execCommand", this._execCommandListener);
         this.component.addListener("property", this._propertyListener);
     },
@@ -823,9 +808,6 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
      * Removes listeners from supported Extras.RichTextInput object.
      */
     _removeComponentListeners: function() {
-        if (this._applicationFocusListener) {
-            this.component.application.removeListener("focus", this._applicationFocusListener);
-        }
         this.component.removeListener("execCommand", this._execCommandListener);
         this.component.removeListener("property", this._propertyListener);
     },
