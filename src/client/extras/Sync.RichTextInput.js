@@ -56,25 +56,6 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
         }),
         
         /**
-         * Serialization peer for <code>EditedHtml</code> instances.
-         * The toString() method of the object is invoked.
-         */
-        EditedHtmlSerialPeer: Core.extend(Echo.Serial.PropertyTranslator, {
-            
-            $static: {
-                
-                /** @see Echo.Serial.PropertyTranslator#toXml */
-                toXml: function(client, pElement, value) {
-                    pElement.appendChild(pElement.ownerDocument.createTextNode(value.toString()));
-                }
-            },
-            
-            $load: function() {
-                Echo.Serial.addPropertyTranslator("Extras.RichTextInput.EditedHtml", this);
-            }
-        }),
-
-        /**
          * HTML manipulation/cleaning utilities.
          */
         Html: {
@@ -415,6 +396,11 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
     _execCommandListener: null,
     
     /**
+     * Listener to receive focus events from containing application.
+     */
+    _applicationFocusListener: null,
+    
+    /**
      * Root DIV element of rendered DOM hierarchy.
      * @type Element
      */
@@ -444,12 +430,22 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
         this._execCommandListener = Core.method(this, function(e) {
             this._execCommand(e.commandName, e.value);
         });
+        if (Core.Web.Env.ENGINE_MSHTML) {
+            this._applicationFocusListener = Core.method(this, function(e) {
+                if (e.oldValue == this.component && e.newValue != this.component) {
+                    this._iframe.contentWindow.blur();
+                }
+            });
+        }
     },
     
     /**
      * Adds listeners to supported Extras.RichTextInput object.
      */
     _addComponentListeners: function() {
+        if (this._applicationFocusListener) {
+            this.component.application.addListener("focus", this._applicationFocusListener);
+        }
         this.component.addListener("execCommand", this._execCommandListener);
         this.component.addListener("property", this._propertyListener);
     },
@@ -664,9 +660,8 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
         this._document.body.innerHTML = text;
         
         //FIXME always grabbing focus, this may be undesired...necessary to maintain focus though.
-        this.renderFocus();
-        this.component.doCursorStyleChange(new Extras.Sync.RichTextInput.Html.StyleData(
-              this._selectionRange.getContainingNode()));
+//        this.renderFocus();
+        this.component.doCursorStyleChange(new Extras.Sync.RichTextInput.Html.StyleData(this._selectionRange.getContainingNode()));
     },
     
     /**
@@ -676,6 +671,12 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
     _loadRange: function() {
         if (this._selectionRange) {
             this._selectionRange.activate();
+            if (Core.Web.Env.ENGINE_MSHTML && this.component.application.getFocusedComponent() != this.component) {
+                // MSIE: Blur focus from content window in the event that it is not currently focused.
+                // If this operation is not performed, text may be entered into the window, but key events
+                // will not be processed by listeners, resulting in an out-of-sync condition.
+                this._iframe.contentWindow.blur();
+            }
         }
     },
     
@@ -691,6 +692,19 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
     },
     
     /**
+     * Processes a focus event within the input document.
+     * 
+     * @param e the event
+     */
+    _processFocus: function(e) {
+        if (!this.client || !this.client.verifyInput(this.component)) {
+            Core.Web.DOM.preventEventDefault(e);
+            return;
+        }
+        this.client.application.setFocusedComponent(this.component);
+    },
+    
+    /**
      * Processes a key press event within the input document.
      * 
      * @param e the event
@@ -700,7 +714,7 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
             Core.Web.DOM.preventEventDefault(e);
             return;
         }
-
+        this.client.application.setFocusedComponent(this.component);
         if (e.keyCode == 13) {
             this._processNewLine();
             this._fireAction = true;
@@ -717,6 +731,7 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
             Core.Web.DOM.preventEventDefault(e);
             return;
         }
+        this.client.application.setFocusedComponent(this.component);
     },
     
     /**
@@ -752,6 +767,7 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
             Core.Web.DOM.preventEventDefault(e);
             return;
         }
+        this.client.application.setFocusedComponent(this.component);
     },
 
     /**
@@ -809,6 +825,9 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
      * Removes listeners from supported Extras.RichTextInput object.
      */
     _removeComponentListeners: function() {
+        if (this._applicationFocusListener) {
+            this.component.application.removeListener("focus", this._applicationFocusListener);
+        }
         this.component.removeListener("execCommand", this._execCommandListener);
         this.component.removeListener("property", this._propertyListener);
     },
@@ -900,6 +919,7 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
             }
         }
         
+        Core.Web.Event.add(this._document, "focus",  Core.method(this, this._processFocus), false);
         Core.Web.Event.add(this._document, "keydown",  Core.method(this, this._processKeyDown), false);
         Core.Web.Event.add(this._document, "keypress",  Core.method(this, this._processKeyPress), false);
         Core.Web.Event.add(this._document, "keyup", Core.method(this, this._processKeyUp), false);
