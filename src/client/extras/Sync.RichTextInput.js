@@ -714,7 +714,6 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
             Core.Web.DOM.preventEventDefault(e);
             return;
         }
-        this.client.application.setFocusedComponent(this.component);
         if (e.keyCode == 13) {
             this._processNewLine();
             this._fireAction = true;
@@ -731,7 +730,6 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
             Core.Web.DOM.preventEventDefault(e);
             return;
         }
-        this.client.application.setFocusedComponent(this.component);
     },
     
     /**
