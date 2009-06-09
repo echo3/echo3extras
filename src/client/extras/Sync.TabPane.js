@@ -1438,8 +1438,8 @@ Extras.Sync.TabPane.Tab = Core.extend({
             Echo.Sync.Alignment.render(this._parent.component.render("tabAlignment", 
                     Extras.Sync.TabPane._DEFAULTS.tabAlignment), td, true, this._parent.component);
             this._iconImg = document.createElement("img");
-            this._iconImg.style.marginRight = this._parent.component.render("tabIconTextMargin", 
-                    Extras.Sync.TabPane._DEFAULTS.tabIconTextMargin + "px");
+            this._iconImg.style.marginRight = Echo.Sync.Extent.toCssValue(this._parent.component.render("tabIconTextMargin", 
+                    Extras.Sync.TabPane._DEFAULTS.tabIconTextMargin), true, false);
             td.appendChild(this._iconImg);
             tr.appendChild(td);
         }
@@ -1459,8 +1459,9 @@ Extras.Sync.TabPane.Tab = Core.extend({
             this._closeIconTd.style.cssText = "padding:0;";
             Echo.Sync.Alignment.render(this._parent.component.render("tabAlignment", 
                     Extras.Sync.TabPane._DEFAULTS.tabAlignment), this._closeIconTd, true, this._parent.component);
-            this._closeIconTd.style.padding = "0 0 0 " + this._parent.component.render("tabCloseIconTextMargin", 
-                    Extras.Sync.TabPane._DEFAULTS.tabCloseIconTextMargin + "px");
+            this._closeIconTd.style.padding = "0 0 0 " + Echo.Sync.Extent.toCssValue(
+                    this._parent.component.render("tabCloseIconTextMargin", Extras.Sync.TabPane._DEFAULTS.tabCloseIconTextMargin), 
+                    true, false);
             this._closeIconTd.style.cursor = "pointer";
             this._closeImg = document.createElement("img");
             Echo.Sync.ImageReference.renderImg(this._getCloseImage(false), this._closeImg);
