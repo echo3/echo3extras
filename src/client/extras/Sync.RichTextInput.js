@@ -509,6 +509,7 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
             } else {
                 this._document.execCommand("inserthtml", false, value);
             }
+            this._storeRange();
             break;
         default: 
             this._document.execCommand(commandName, false, value);
