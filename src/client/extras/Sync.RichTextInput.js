@@ -412,6 +412,8 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
      * @type Document
      */
     _document: null,
+    
+    _temporaryCssStyleEnabled: false,
 
     /**
      * Constructor.
@@ -467,6 +469,11 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
      * @param {String} value the command value
      */
     _execCommand: function(commandName, value) {
+        if (this._temporaryCssStyleEnabled) {
+            this._document.execCommand("styleWithCSS", false, false);
+            this._temporaryCssStyleEnabled = false;
+        }
+        
         if (this._selectionRange) {
             // Select range if it exists.
             this._loadRange();
@@ -495,7 +502,7 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
             if (Core.Web.Env.ENGINE_GECKO) {
                 this._document.execCommand("styleWithCSS", false, true);
                 this._document.execCommand("hilitecolor", false, value);
-                this._document.execCommand("styleWithCSS", false, false);
+                this._temporaryCssStyleEnabled = true;
             } else {
                 this._document.execCommand(Core.Web.Env.ENGINE_MSHTML ? "backcolor" : "hilitecolor", false, value);
             }
@@ -625,7 +632,7 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
      * @see #_storeData
      */
     _loadData: function() {
-        var text = this.component.get("text") || "<p></p>";
+        var text = this.component.get("text") || (Core.Web.Env.ENGINE_GECKO ? "<p><br/></p>" : "<p></p>");
         
         if (text instanceof Extras.Sync.RichTextInput.EditedHtml) {
             // Current component text is represented by an EditedHtml object, which references the editable text document 
@@ -645,8 +652,6 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
         this._renderedHtml = text;
         this._document.body.innerHTML = text;
         
-        //FIXME always grabbing focus, this may be undesired...necessary to maintain focus though.
-//        this.renderFocus();
         this.component.doCursorStyleChange(new Extras.Sync.RichTextInput.Html.StyleData(this._selectionRange.getContainingNode()));
     },
     
