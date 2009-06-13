@@ -521,7 +521,7 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
             Echo.Sync.Color.render(background, tabDiv, "backgroundColor");
             Echo.Sync.Color.render(this._parent.component.render("tabForeground", 
                     Extras.Sync.AccordionPane._DEFAULTS.tabForeground), tabDiv, "color");
-            Echo.Sync.Font.renderClear(this._parent.component.render("tabFont"), tabDiv)
+            Echo.Sync.Font.renderClear(this._parent.component.render("tabFont"), tabDiv);
             tabDiv.style.backgroundImage = "";
             tabDiv.style.backgroundPosition = "";
             tabDiv.style.backgroundRepeat = "";
