@@ -29,6 +29,8 @@
 
 package nextapp.echo.extras.app;
 
+import java.util.Map;
+
 import nextapp.echo.app.Border;
 import nextapp.echo.app.Component;
 import nextapp.echo.app.FillImage;
@@ -37,6 +39,7 @@ import nextapp.echo.app.event.DocumentListener;
 import nextapp.echo.app.text.Document;
 import nextapp.echo.app.text.StringDocument;
 
+//FIXME review features icon/names, remove warning.
 /**
  * RichTextArea component: a rich text user input field which allows the user to
  * select text styles, and insert/manipulate objects such as links, images, enumerated
@@ -49,6 +52,8 @@ import nextapp.echo.app.text.StringDocument;
  * JavaScript code in URLs that would execute in the other users' browsers. Any
  * cleaning operations must be performed on the client that will render such
  * HTML (not the client sending it) or on a central trusted server.
+ * 
+ * WARNING: Feature/icon names are under review, subject to change.
  */
 public class RichTextArea extends Component {
 
@@ -93,6 +98,81 @@ public class RichTextArea extends Component {
     public static final String ICON_TABLE = "table";
     public static final String ICON_UNDERLINE = "underline";
     public static final String ICON_UNDO = "undo";
+    
+    /** 
+     * Feature name describing pulldown menu placed above the editor. 
+     * Either this feature and/or the toolbar must be enabled to access to the majority of other features. 
+     */
+    public static final String FEATURE_MENU = "menu";
+    
+    /** 
+     * Feature name describing tool bar placed above the editor. 
+     * Either this feature and/or the menu must be enabled to access to the majority of other features. 
+     */
+    public static final String FEATURE_TOOLBAR = "toolbar";
+    
+    /** Feature name describing undo/redo functions. */
+    public static final String FEATURE_UNDO = "undo";
+    
+    /** Feature name describing clipboard access (cut/copy/paste) features. */
+    public static final String FEATURE_CLIPBOARD = "clipboard";
+    
+    /** Feature name describing paragraph alignment settings (left/center/right/justify). */
+    public static final String FEATURE_ALIGNMENT = "alignment";
+    
+    /** Feature name describing capability to set foreground color of text to arbitrary colors. */
+    public static final String FEATURE_FOREGROUND = "foreground";
+    
+    /** Feature name describing capability to set background color of text to arbitrary colors. */
+    public static final String FEATURE_BACKGROUND = "background";
+    
+    /** 
+     * Feature name describing capability to add lists, both numbered and bulleted.
+     * Equivalent to setting both <code>FEATURE_NUMBERED_LIST</code> and <code>FEATURE_BULLETED_LIST</code>. 
+     */
+    public static final String FEATURE_LIST = "list";
+    
+    /** Feature name describing capability to add bulleted lists. */
+    public static final String FEATURE_BULLETED_LIST = "bulletedList";
+    
+    /** Feature name describing capability to add numbered lists. */
+    public static final String FEATURE_NUMBERED_LIST = "numberedList";
+    
+    /** Feature name describing capability to add and manipulate tables. */
+    public static final String FEATURE_TABLE = "table";
+    
+    /** 
+     * Feature name describing capability to add images.  
+     * Default implementation provides capability to add images by entering URL only. 
+     */
+    public static final String FEATURE_IMAGE = "image";
+    
+    /** Feature name describing capability to add horizontal rules. */
+    public static final String FEATURE_HORIZONTAL_RULE = "horizontalRule";
+
+    /** Feature name describing capability to add hyperlinks to arbitrary URLs. */
+    public static final String FEATURE_HYPERLINK = "hyperlink";
+
+    /** Feature name describing capability to display fonts in superscript and subscript. */
+    public static final String FEATURE_SUBSCRIPT = "subscript";
+    
+    /** Feature name describing capability to display bold text. */
+    public static final String FEATURE_BOLD = "bold";
+    
+    /** Feature name describing capability to display italic text. */
+    public static final String FEATURE_ITALIC = "italic";
+    
+    /** Feature name describing capability to display underline text. */
+    public static final String FEATURE_UNDERLINE = "underline";
+    
+    /** Feature name describing capability to display strike-through text. */
+    public static final String FEATURE_STRIKETHROUGH = "strikethrough";
+    
+    /** Feature name describing capability to control paragraph style, e.g., add headings. */
+    public static final String FEATURE_PARAGRAPH_STYLE= "paragraphStyle";
+    
+    /** Feature name describing capability to control paragraph indentation level. */
+    public static final String FEATURE_INDENT= "indent";
 
     public static final String DOCUMENT_CHANGED_PROPERTY = "document";
 
@@ -102,6 +182,7 @@ public class RichTextArea extends Component {
     public static final String PROPERTY_CONTROL_PANE_ROW_STYLE_NAME = "controlPaneRowStyleName";
 
     public static final String PROPERTY_CONTROL_PANE_SPLIT_PANE_STYLE_NAME = "controlPaneSplitPaneStyleName";
+    public static final String PROPERTY_FEATURES = "features";
     public static final String PROPERTY_ICONS = "icons";
     public static final String PROPERTY_MENU_STYLE_NAME = "menuStyleName";
     public static final String PROPERTY_TOOLBAR_BUTTON_STYLE_NAME = "toolbarButtonStyleName";
@@ -182,6 +263,10 @@ public class RichTextArea extends Component {
      */
     public Document getDocument() {
         return document;
+    }
+    
+    public Map getFeatures() {
+        return (Map) get(PROPERTY_FEATURES);
     }
     
     public IconSet getIcons() {
@@ -272,6 +357,10 @@ public class RichTextArea extends Component {
         }
         newValue.addDocumentListener(documentListener);
         document = newValue;
+    }
+    
+    public void setFeatures(Map newValue) {
+        set(PROPERTY_FEATURES, newValue);
     }
     
     public void setIcons(IconSet newValue) {

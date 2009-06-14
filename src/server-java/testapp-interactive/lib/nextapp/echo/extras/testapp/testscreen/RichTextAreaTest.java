@@ -29,7 +29,9 @@
 
 package nextapp.echo.extras.testapp.testscreen;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import nextapp.echo.app.Button;
 import nextapp.echo.app.Column;
@@ -174,6 +176,23 @@ public class RichTextAreaTest extends AbstractTest {
                 icons.addIcon(RichTextArea.ICON_ALIGNMENT_JUSTIFY,
                         new ResourceImageReference("nextapp/echo/extras/webcontainer/resource/image/richtext/AlignJustify.gif"));  
                 richTextArea.setIcons(icons);
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Feature Set: Default", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                richTextArea.setFeatures(null);
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Feature Set: B/I/U Only", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Map features = new HashMap();
+                features.put(RichTextArea.FEATURE_TOOLBAR, Boolean.TRUE);
+                features.put(RichTextArea.FEATURE_BOLD, Boolean.TRUE);
+                features.put(RichTextArea.FEATURE_ITALIC, Boolean.TRUE);
+                features.put(RichTextArea.FEATURE_UNDERLINE, Boolean.TRUE);
+                richTextArea.setFeatures(features);
             }
         });
         

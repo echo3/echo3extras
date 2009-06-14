@@ -387,9 +387,11 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         
         if (features.list || features.horizontalRule || features.image || features.hyperlink) {
             var insertMenu = new Extras.MenuModel(null, this.msg["Menu.Insert"], null);
-            if (features.list) {
+            if (features.list || features.unorderedList) {
                 insertMenu.addItem(new Extras.OptionModel("/insertunorderedlist", this.msg["Menu.BulletedList"],
                         this.icons.bulletedList));
+            }
+            if (features.list || features.orderedList) {
                 insertMenu.addItem(new Extras.OptionModel("/insertorderedlist", this.msg["Menu.NumberedList"],
                         this.icons.numberedList));
             }
@@ -636,9 +638,11 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         // Insert Tools
         if (features.list || features.horizontalRule || features.image || features.hyperlink || features.table) {
             row = new Echo.Row();
-            if (features.list) {
+            if (features.list || features.unorderedList) {
                 row.add(this._createToolbarButton("Bulleted List", this.icons.bulletedList, this.msg["Menu.BulletedList"], 
                         this._processCommand, "insertunorderedlist"));
+            }
+            if (features.list || features.orderedList) {
                 row.add(this._createToolbarButton("Numbered List", this.icons.numberedList, this.msg["Menu.NumberedList"], 
                         this._processCommand, "insertorderedlist"));
             }
