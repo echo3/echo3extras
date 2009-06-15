@@ -1268,7 +1268,7 @@ Extras.Sync.RichTextArea.ImageDialog = Core.extend(Extras.Sync.RichTextArea.Abst
                 Extras.Sync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL,
                 {
                     title: rta.peer.msg["ImageDialog.Title"], 
-                    image: rta.peer.icons.image
+                    icon: rta.peer.icons.image
                 },
                 new Echo.Column({
                     insets: 10,
