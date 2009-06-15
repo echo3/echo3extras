@@ -730,7 +730,8 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         var iconNames = {
             "16": [ "alignmentCenter", "alignmentJustify", "alignmentLeft", "alignmentRight",
                 "background", "bold", "bulletedList", "cancel", "copy", "cut", "delete", "foreground", "horizontalRule",
-                "hyperlink", "image", "indent", "italic", "numberedList", "ok", "outdent", "paste", "redo", "selectAll",
+                "hyperlink", "image", "indent", "italic", "numberedList", "ok", "outdent", "paste", "plainText", 
+                "redo", "selectAll", "strikethrough",
                 "subscript", "superscript", "table", "tableInsertRow", "tableDeleteRow", "tableInsertColumn", "tableDeleteColumn",
                 "underline", "undo" ],
             "24": [ "ok", "cancel" ]

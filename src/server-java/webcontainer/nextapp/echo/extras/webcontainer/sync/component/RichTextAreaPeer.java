@@ -100,8 +100,10 @@ public class RichTextAreaPeer extends AbstractComponentSynchronizePeer {
         resources.add("Extras", "image/richtext/Icon16NumberedList.png", ContentType.IMAGE_PNG);
         resources.add("Extras", "image/richtext/Icon16Outdent.png", ContentType.IMAGE_PNG);
         resources.add("Extras", "image/richtext/Icon16Paste.png", ContentType.IMAGE_PNG);
+        resources.add("Extras", "image/richtext/Icon16PlainText.png", ContentType.IMAGE_PNG);
         resources.add("Extras", "image/richtext/Icon16Redo.png", ContentType.IMAGE_PNG);
         resources.add("Extras", "image/richtext/Icon16SelectAll.png", ContentType.IMAGE_PNG);
+        resources.add("Extras", "image/richtext/Icon16Strikethrough.png", ContentType.IMAGE_PNG);
         resources.add("Extras", "image/richtext/Icon16Subscript.png", ContentType.IMAGE_PNG);
         resources.add("Extras", "image/richtext/Icon16Superscript.png", ContentType.IMAGE_PNG);
         resources.add("Extras", "image/richtext/Icon16Table.png", ContentType.IMAGE_PNG);
