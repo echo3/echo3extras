@@ -728,12 +728,12 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
      */
     _getDefaultIcons: function() {
         var iconNames = {
-            "16": [ "alignmentCenter", "alignmentJustify", "alignmentLeft", "alignmentRight",
+            "16": [ "alignment", "alignmentCenter", "alignmentJustify", "alignmentLeft", "alignmentRight",
                 "background", "bold", "bulletedList", "cancel", "copy", "cut", "delete", "foreground", "horizontalRule",
-                "hyperlink", "image", "indent", "italic", "numberedList", "ok", "outdent", "paste", "plainText", 
-                "redo", "selectAll", "strikethrough",
+                "hyperlink", "image", "indent", "italic", "numberedList", "ok", "outdent", "paragraphStyle", "paste", "plainText", 
+                "redo", "selectAll", "strikethrough", 
                 "subscript", "superscript", "table", "tableInsertRow", "tableDeleteRow", "tableInsertColumn", "tableDeleteColumn",
-                "underline", "undo" ],
+                "textStyle", "underline", "undo" ],
             "24": [ "ok", "cancel" ]
         };
         var defaultIcons = { };

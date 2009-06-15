@@ -81,6 +81,7 @@ public class RichTextAreaPeer extends AbstractComponentSynchronizePeer {
         addLocaleService(Locale.GERMAN, "de");
         CommonResources.install();
         ResourceRegistry resources = WebContainerServlet.getResourceRegistry();
+        resources.add("Extras", "image/richtext/Icon16Alignment.png", ContentType.IMAGE_PNG);
         resources.add("Extras", "image/richtext/Icon16AlignmentCenter.png", ContentType.IMAGE_PNG);
         resources.add("Extras", "image/richtext/Icon16AlignmentJustify.png", ContentType.IMAGE_PNG);
         resources.add("Extras", "image/richtext/Icon16AlignmentLeft.png", ContentType.IMAGE_PNG);
@@ -100,6 +101,7 @@ public class RichTextAreaPeer extends AbstractComponentSynchronizePeer {
         resources.add("Extras", "image/richtext/Icon16NumberedList.png", ContentType.IMAGE_PNG);
         resources.add("Extras", "image/richtext/Icon16Outdent.png", ContentType.IMAGE_PNG);
         resources.add("Extras", "image/richtext/Icon16Paste.png", ContentType.IMAGE_PNG);
+        resources.add("Extras", "image/richtext/Icon16ParagraphStyle.png", ContentType.IMAGE_PNG);
         resources.add("Extras", "image/richtext/Icon16PlainText.png", ContentType.IMAGE_PNG);
         resources.add("Extras", "image/richtext/Icon16Redo.png", ContentType.IMAGE_PNG);
         resources.add("Extras", "image/richtext/Icon16SelectAll.png", ContentType.IMAGE_PNG);
@@ -111,6 +113,7 @@ public class RichTextAreaPeer extends AbstractComponentSynchronizePeer {
         resources.add("Extras", "image/richtext/Icon16TableDeleteRow.png", ContentType.IMAGE_PNG);
         resources.add("Extras", "image/richtext/Icon16TableInsertColumn.png", ContentType.IMAGE_PNG);
         resources.add("Extras", "image/richtext/Icon16TableDeleteColumn.png", ContentType.IMAGE_PNG);
+        resources.add("Extras", "image/richtext/Icon16TextStyle.png", ContentType.IMAGE_PNG);
         resources.add("Extras", "image/richtext/Icon16Underline.png", ContentType.IMAGE_PNG);
         resources.add("Extras", "image/richtext/Icon16Undo.png", ContentType.IMAGE_PNG);
         resources.add("Extras", "image/richtext/Icon24Ok.png", ContentType.IMAGE_PNG);
