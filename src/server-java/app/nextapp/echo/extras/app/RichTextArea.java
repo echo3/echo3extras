@@ -269,8 +269,8 @@ public class RichTextArea extends Component {
         return (Map) get(PROPERTY_FEATURES);
     }
     
-    public IconSet getIcons() {
-        return (IconSet) get(PROPERTY_ICONS);
+    public Map getIcons() {
+        return (Map) get(PROPERTY_ICONS);
     }
     
     public String getMenuStyleName() {
@@ -363,7 +363,7 @@ public class RichTextArea extends Component {
         set(PROPERTY_FEATURES, newValue);
     }
     
-    public void setIcons(IconSet newValue) {
+    public void setIcons(Map newValue) {
         set(PROPERTY_ICONS, newValue);
     }
     

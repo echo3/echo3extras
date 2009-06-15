@@ -41,7 +41,6 @@ import nextapp.echo.app.ResourceImageReference;
 import nextapp.echo.app.WindowPane;
 import nextapp.echo.app.event.ActionEvent;
 import nextapp.echo.app.event.ActionListener;
-import nextapp.echo.extras.app.DefaultIconSet;
 import nextapp.echo.extras.app.RichTextArea;
 import nextapp.echo.extras.testapp.AbstractTest;
 import nextapp.echo.extras.testapp.InteractiveApp;
@@ -124,11 +123,11 @@ public class RichTextAreaTest extends AbstractTest {
             }
         });
         
-        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Icon Set: Custom 1", new ActionListener(){
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Icon Set: Test (Weird)", new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                DefaultIconSet icons = new DefaultIconSet();
-                icons.addIcon(RichTextArea.ICON_FOREGROUND,
-                        new ResourceImageReference("nextapp/echo/extras/webcontainer/resource/image/richtext/Foreground.gif"));
+                Map icons = new HashMap();
+                icons.put(RichTextArea.ICON_FOREGROUND,
+                        new ResourceImageReference("nextapp/echo/extras/webcontainer/resource/image/richtext/Icon24Ok.png"));
                 richTextArea.setIcons(icons);
             }
         });
