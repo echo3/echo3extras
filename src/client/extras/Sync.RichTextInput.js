@@ -483,16 +483,16 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
         }
         
         switch (commandName) {
-        case "deleteTableColumn":
+        case "tableDeleteColumn":
             this._deleteTableColumn();
             break;
-        case "deleteTableRow":
+        case "tableDeleteRow":
             this._deleteTableRow();
             break;
-        case "insertTableColumn":
+        case "tableInsertColumn":
             this._insertTableColumn();
             break;
-        case "insertTableRow":
+        case "tableInsertRow":
             this._insertTableRow();
             break;
         case "foreground":

@@ -483,12 +483,17 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
 
         if (features.table) {
             var tableMenu = new Extras.MenuModel(null, this.msg["Menu.Table"], null);
-            tableMenu.addItem(new Extras.OptionModel("newTable", this.msg["Menu.Table.New"], this.icons.table));
+            tableMenu.addItem(new Extras.OptionModel("tableNew", this.msg["Menu.Table.New"], this.icons.table));
             tableMenu.addItem(new Extras.SeparatorModel());
-            tableMenu.addItem(new Extras.OptionModel("/insertTableRow", this.msg["Menu.Table.InsertRow"], null));
-            tableMenu.addItem(new Extras.OptionModel("/insertTableColumn", this.msg["Menu.Table.InsertColumn"], null));
-            tableMenu.addItem(new Extras.OptionModel("/deleteTableRow", this.msg["Menu.Table.DeleteRow"], null));
-            tableMenu.addItem(new Extras.OptionModel("/deleteTableColumn", this.msg["Menu.Table.DeleteColumn"], null));
+            tableMenu.addItem(new Extras.OptionModel("/tableInsertRow", this.msg["Menu.Table.InsertRow"], 
+                    this.icons.tableInsertRow));
+            tableMenu.addItem(new Extras.OptionModel("/tableInsertColumn", this.msg["Menu.Table.InsertColumn"], 
+                    this.icons.tableInsertColumn));
+            tableMenu.addItem(new Extras.SeparatorModel());
+            tableMenu.addItem(new Extras.OptionModel("/tableDeleteRow", this.msg["Menu.Table.DeleteRow"], 
+                    this.icons.tableDeleteRow));
+            tableMenu.addItem(new Extras.OptionModel("/tableDeleteColumn", this.msg["Menu.Table.DeleteColumn"], 
+                    this.icons.tableDeleteColumn));
             
             menu.addItem(tableMenu);
         }
@@ -725,8 +730,9 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         var iconNames = {
             "16": [ "alignmentCenter", "alignmentJustify", "alignmentLeft", "alignmentRight",
                 "background", "bold", "bulletedList", "cancel", "copy", "cut", "delete", "foreground", "horizontalRule",
-                "hyperlink", "image", "indent", "italic", "numberedList", "ok", "outdent", "paste", "redo",
-                "subscript", "superscript", "table", "underline", "undo" ],
+                "hyperlink", "image", "indent", "italic", "numberedList", "ok", "outdent", "paste", "redo", "selectAll",
+                "subscript", "superscript", "table", "tableInsertRow", "tableDeleteRow", "tableInsertColumn", "tableDeleteColumn",
+                "underline", "undo" ],
             "24": [ "ok", "cancel" ]
         };
         var defaultIcons = { };
@@ -877,7 +883,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
             case "background":
                 this.processSetBackground();
                 break;
-            case "newTable":
+            case "tableNew":
                 this.processNewTable();
                 break;
             case "inserthyperlink":
