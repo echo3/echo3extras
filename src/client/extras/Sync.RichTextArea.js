@@ -717,30 +717,25 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
         return this._mainDiv;
     },
     
-    /** 
-     * Returns the default icon URL for the specified icon name.
-     * 
-     * @param {String} name the icon name
-     * @return the icon URL
-     * @type String
-     */
-    _getDefaultIcon: function(name) {
-        return this.client.getResourceUrl("Extras", "image/richtext/" + name + ".gif");
-    },
-    
     /**
      * Creates and returns a default icon name to URL map object.
      * @type Object
      */
     _getDefaultIcons: function() {
-        var iconNames = [ "alignmentCenter", "alignmentJustify", "alignmentLeft", "alignmentRight",
-            "background", "bold", "bulletedList", "cancel", "copy", "cut", "foreground", "horizontalRule",
-            "hyperlink", "image", "ident", "italic", "numberedList", "ok", "outdent", "paste", "redo",
-            "subscript", "superscript", "table", "underline", "undo" ];
+        var iconNames = {
+            "16": [ "alignmentCenter", "alignmentJustify", "alignmentLeft", "alignmentRight",
+                "background", "bold", "bulletedList", "cancel", "copy", "cut", "delete", "foreground", "horizontalRule",
+                "hyperlink", "image", "indent", "italic", "numberedList", "ok", "outdent", "paste", "redo",
+                "subscript", "superscript", "table", "underline", "undo" ],
+            "24": [ "ok", "cancel" ]
+        };
         var defaultIcons = { };
-        for (var i = 0; i < iconNames.length; ++i) {
-            var iconResource = iconNames[i].charAt(0).toUpperCase() + iconNames[i].substring(1);
-            defaultIcons[iconNames[i]] = this.client.getResourceUrl("Extras", "image/richtext/" + iconResource + ".gif");
+        for (var size in iconNames) {
+            for (var i = 0; i < iconNames[size].length; ++i) {
+                var iconResource = iconNames[size][i].charAt(0).toUpperCase() + iconNames[size][i].substring(1);
+                defaultIcons[iconNames[size][i]] = this.client.getResourceUrl("Extras", 
+                        "image/richtext/Icon" + size + iconResource + ".png");
+            }
         }
         return defaultIcons;
     },
