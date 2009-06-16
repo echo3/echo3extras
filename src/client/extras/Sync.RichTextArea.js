@@ -1581,7 +1581,6 @@ Extras.Sync.RichTextArea.TableSizeSelectorPeer = Core.extend(Echo.Render.Compone
     _processMouseDown: function(e) {
         this._dragInProgress = true;
         this._processMouseSelection(e);
-        Core.Web.DOM.preventEventDefault(e);
         return true;
     },
     
@@ -1654,6 +1653,7 @@ Extras.Sync.RichTextArea.TableSizeSelectorPeer = Core.extend(Echo.Render.Compone
         
         this._div.appendChild(this._table);
         
+        Core.Web.Event.Selection.disable(this._div);
         Core.Web.Event.add(this._div, "mousedown", Core.method(this, this._processMouseDown), false);
         Core.Web.Event.add(this._div, "mousemove", Core.method(this, this._processMouseMove), false);
         Core.Web.Event.add(this._div, "mouseup", Core.method(this, this._processMouseUp), false);
