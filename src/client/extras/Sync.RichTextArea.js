@@ -1494,6 +1494,10 @@ Extras.Sync.RichTextArea.TableDialog = Core.extend(Extras.Sync.RichTextArea.Abst
     },
     
     _processSelectorUpdate: function(e) {
+        var columns = parseInt(this._sizeSelector.get("columns"), 10),
+            rows = parseInt(this._sizeSelector.get("rows"), 10);
+        this._columnsField.set("text", columns);
+        this._rowsField.set("text", rows);
     },
     
     _processTextUpdate: function(e) {
@@ -1548,11 +1552,9 @@ Extras.Sync.RichTextArea.TableSizeSelectorPeer = Core.extend(Echo.Render.Compone
      */
     _table: null,
     
-    _processMouseDown: function(e) {
-        
-    },
+    _dragInProgress: false,
     
-    _drawSelection: function(e) {
+    _drawSelection: function() {
         var rows = parseInt(this.component.render("rows", 0), 10),
             columns = parseInt(this.component.render("columns", 0), 10),
             tr = this._table.firstChild.firstChild,
@@ -1574,6 +1576,44 @@ Extras.Sync.RichTextArea.TableSizeSelectorPeer = Core.extend(Echo.Render.Compone
             tr = tr.nextSibling;
             ++y;
         }
+    },
+    
+    _processMouseDown: function(e) {
+        this._dragInProgress = true;
+        this._processMouseSelection(e);
+        return true;
+    },
+    
+    _processMouseMove: function(e) {
+        if (this._dragInProgress) {
+            this._processMouseSelection(e);
+        }
+        return true;
+    },
+    
+    _processMouseSelection: function(e) {
+        var x = 0, y = 0,
+            element = e.target;
+        if (!element.nodeName || element.nodeName.toLowerCase() != "td") {
+            return;
+        }
+        while (element.previousSibling) {
+            ++x;
+            element = element.previousSibling;
+        }
+        element = element.parentNode;
+        while (element.previousSibling) {
+            ++y;
+            element = element.previousSibling;
+        }
+        this.component.set("columns", x + 1);
+        this.component.set("rows", y + 1);
+        
+    },
+    
+    _processMouseUp: function(e) {
+        this._dragInProgress = false;
+        return true;
     },
     
     /** @see Echo.Render.ComponentSync#renderAdd */
@@ -1614,6 +1654,8 @@ Extras.Sync.RichTextArea.TableSizeSelectorPeer = Core.extend(Echo.Render.Compone
         this._div.appendChild(this._table);
         
         Core.Web.Event.add(this._div, "mousedown", Core.method(this, this._processMouseDown), false);
+        Core.Web.Event.add(this._div, "mousemove", Core.method(this, this._processMouseMove), false);
+        Core.Web.Event.add(this._div, "mouseup", Core.method(this, this._processMouseUp), false);
         parentElement.appendChild(this._div);
         
         this._drawSelection();
@@ -1630,6 +1672,11 @@ Extras.Sync.RichTextArea.TableSizeSelectorPeer = Core.extend(Echo.Render.Compone
     
     /** @see Echo.Render.ComponentSync#renderUpdate */
     renderUpdate: function(update) {
+        if (update.isUpdatedPropertySetIn({ columns: true, rows: true })) {
+            this._drawSelection();
+            return;
+        }
+
         var element = this._div;
         var containerElement = element.parentNode;
         Echo.Render.renderComponentDispose(update, update.parent);
@@ -1638,8 +1685,6 @@ Extras.Sync.RichTextArea.TableSizeSelectorPeer = Core.extend(Echo.Render.Compone
         return true;
     }
 });
-
-
 
 /**
  * Toolbar button component: a simple button component which optionally provides the capability to be toggled on/off.
