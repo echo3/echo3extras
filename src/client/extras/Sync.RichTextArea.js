@@ -1419,11 +1419,11 @@ Extras.Sync.RichTextArea.TableDialog = Core.extend(Extras.Sync.RichTextArea.Abst
                 Extras.Sync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL, {
                     title: rta.peer.msg["TableDialog.Title"], 
                     icon: rta.peer.icons.table,
-                    contentWidth: "40em"
+                    contentWidth: "35em"
                 },
                 new Echo.Row({
-                    insets: 10,
-                    cellSpacing: 10,
+                    insets: "1em",
+                    cellSpacing: "1em",
                     children: [
                         this._sizeSelector = new Extras.Sync.RichTextArea.TableSizeSelector({
                             rows: 2,
