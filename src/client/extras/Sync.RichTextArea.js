@@ -1398,7 +1398,7 @@ Extras.Sync.RichTextArea.MessageDialog = Core.extend(
                 new Echo.Label({
                     text: message,
                     layoutData: {
-                        insets: 30 
+                        insets: 30
                     }
                 }));
     }
@@ -1418,33 +1418,55 @@ Extras.Sync.RichTextArea.TableDialog = Core.extend(Extras.Sync.RichTextArea.Abst
         Extras.Sync.RichTextArea.AbstractDialog.call(this, rta,
                 Extras.Sync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL, {
                     title: rta.peer.msg["TableDialog.Title"], 
-                    icon: rta.peer.icons.table
+                    icon: rta.peer.icons.table,
+                    contentWidth: "45em"
                 },
-                new Echo.Grid({
-                    width: "100%",
-                    columnWidth: ["25%", "75%"],
+                new Echo.Row({
                     insets: 10,
+                    cellSpacing: 10,
                     children: [
-                        new Echo.Label({
-                            text: rta.peer.msg["TableDialog.PromptRows"],
-                            layoutData: {
-                                alignment: "trailing"
+                        this._sizeSelector = new Extras.Sync.RichTextArea.TableSizeSelector({
+                            rows: 2,
+                            columns: 3,
+                            events: {
+                                property: Core.method(this, this._processSelectorUpdate)
                             }
                         }),
-                        this._rowsField = new Echo.TextField({
-                            text: "2",
-                            width: "100%"
-                        }),
-                        new Echo.Label({
-                            text: rta.peer.msg["TableDialog.PromptColumns"],
-                            layoutData: {
-                                alignment: "trailing"
-                            }
-                        }),
-                        this._columnsField = new Echo.TextField({
-                            text: "3",
-                            width: "100%"
-                        })
+                        new Echo.Grid({
+                            width: "100%",
+                            columnWidth: ["25%", "75%"],
+                            insets: 3,
+                            children: [
+                                new Echo.Label({
+                                    text: rta.peer.msg["TableDialog.PromptRows"],
+                                    layoutData: {
+                                        alignment: "trailing"
+                                    }
+                                }),
+                                this._rowsField = new Echo.TextField({
+                                    text: "2",
+                                    alignment: "center",
+                                    width: "5em",
+                                    events: {
+                                        property: Core.method(this, this._processTextUpdate)
+                                    }
+                                }),
+                                new Echo.Label({
+                                    text: rta.peer.msg["TableDialog.PromptColumns"],
+                                    layoutData: {
+                                        alignment: "trailing"
+                                    }
+                                }),
+                                this._columnsField = new Echo.TextField({
+                                    text: "3",
+                                    alignment: "center",
+                                    width: "5em",
+                                    events: {
+                                        property: Core.method(this, this._processTextUpdate)
+                                    }
+                                })
+                            ]
+                        })                    
                     ]
                 }));
     },
@@ -1469,8 +1491,155 @@ Extras.Sync.RichTextArea.TableDialog = Core.extend(Extras.Sync.RichTextArea.Abst
         }
         this.parent.remove(this);
         this.fireEvent({type: "tableInsert", source: this, data: data});
+    },
+    
+    _processSelectorUpdate: function(e) {
+    },
+    
+    _processTextUpdate: function(e) {
+        var columns = parseInt(this._columnsField.get("text"), 10),
+            rows = parseInt(this._rowsField.get("text"), 10);
+        if (!isNaN(columns)) {
+            this._sizeSelector.set("columns", columns);
+        }
+        if (!isNaN(rows)) {
+            this._sizeSelector.set("rows", rows);
+        }
+        return true;
     }
 });
+
+/**
+ * Component to interactively select initial number of columns/rows for a table.
+ * 
+ * @cp {Number} rows the selected number of rows
+ * @cp {Number} columns the selected number of columns
+ * @sp {Number} rowSize the number of rows to display
+ * @sp {Number} columnSize the number of columns to display
+ * @sp {#Border} border the border to use for drawing table cells
+ * @sp {#Color} selectedBackground the background color for drawing selected table cells
+ * @sp {#Border} selectedBorder the border to use for drawing selected table cells
+ */
+Extras.Sync.RichTextArea.TableSizeSelector = Core.extend(Echo.Component, {
+    
+    $load: function() {
+        Echo.ComponentFactory.registerType("Extras.RichTextTableSizeSelector", this);
+    },
+    
+    /** @see Echo.Component#componentType */
+    componentType: "Extras.RichTextTableSizeSelector"
+});
+
+Extras.Sync.RichTextArea.TableSizeSelectorPeer = Core.extend(Echo.Render.ComponentSync, {
+
+    $load: function() {
+        Echo.Render.registerPeer("Extras.RichTextTableSizeSelector", this);
+    },
+    
+    /**
+     * Main container DIV element.
+     * @type Element
+     */
+    _div: null,
+    
+    /**
+     * Table element.
+     * @type Element
+     */
+    _table: null,
+    
+    _processMouseDown: function(e) {
+        
+    },
+    
+    _drawSelection: function(e) {
+        var rows = parseInt(this.component.render("rows", 0), 10),
+            columns = parseInt(this.component.render("columns", 0), 10),
+            tr = this._table.firstChild.firstChild,
+            y = 0,
+            td, x, selected, border, background;
+            
+        while (tr) {
+            td = tr.firstChild;
+            x = 0;
+            while (td) {
+                selected = x < columns  && y < rows;
+                background = selected ? this._selectedBackground : null;
+                border = selected ? this._selectedBorder : this._border;
+                Echo.Sync.Color.renderClear(background, td, "backgroundColor");
+                Echo.Sync.Border.renderClear(border, td);
+                td = td.nextSibling;
+                ++x;
+            }
+            tr = tr.nextSibling;
+            ++y;
+        }
+    },
+    
+    /** @see Echo.Render.ComponentSync#renderAdd */
+    renderAdd: function(update, parentElement) {
+        var tbody, protoTr, tr, td, y, x, colGroup, col;
+        
+        this._rowSize = this.component.render("rowSize", 10);
+        this._columnSize = this.component.render("columnSize", 15);
+            
+        this._border = this.component.render("border", "1px outset #cfcfcf");
+        this._selectedBorder = this.component.render("selectedBorder", "1px outset #ffffaf");
+        this._selectedBackground = this.component.render("selectedBackground", "#ffffaf");
+        
+        this._div = document.createElement("div");
+        this._div.id = this.component.renderId;
+        
+        this._table = document.createElement("table");
+        this._table.cellPadding = 0;
+        this._table.cellSpacing = 0;
+        this._table.style.cssText = "padding:0;border:none;font-size:1px;";
+        Echo.Sync.Color.render(this.component.render("background", "#cfcfcf"), this._table, "backgroundColor");
+        tbody = document.createElement("tbody");
+        this._table.appendChild(tbody);
+        
+        protoTr = document.createElement("tr");
+        for (x = 0; x < this._columnSize; ++x) {
+            td = document.createElement("td");
+            td.style.cssText = "padding:0;width:16px;height:16px;";
+            td.appendChild(document.createTextNode("\u00a0"));
+            Echo.Sync.Border.render(this._border, td);
+            protoTr.appendChild(td);
+        }
+        
+        for (y = 0; y < this._rowSize; ++y) {
+            tbody.appendChild(protoTr.cloneNode(true));
+        }
+        
+        this._div.appendChild(this._table);
+        
+        Core.Web.Event.add(this._div, "mousedown", Core.method(this, this._processMouseDown), false);
+        parentElement.appendChild(this._div);
+        
+        this._drawSelection();
+    },
+    
+    
+    /** @see Echo.Render.ComponentSync#renderDispose */
+    renderDispose: function(update) {
+        Core.Web.Event.removeAll(this._div);
+        this._table = null;
+        this._div = null;
+    },
+    
+    
+    /** @see Echo.Render.ComponentSync#renderUpdate */
+    renderUpdate: function(update) {
+        var element = this._div;
+        var containerElement = element.parentNode;
+        Echo.Render.renderComponentDispose(update, update.parent);
+        containerElement.removeChild(element);
+        this.renderAdd(update, containerElement);
+        return true;
+    }
+});
+
+
 
 /**
  * Toolbar button component: a simple button component which optionally provides the capability to be toggled on/off.
