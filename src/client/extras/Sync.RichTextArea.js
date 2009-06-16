@@ -1419,7 +1419,7 @@ Extras.Sync.RichTextArea.TableDialog = Core.extend(Extras.Sync.RichTextArea.Abst
                 Extras.Sync.RichTextArea.AbstractDialog.TYPE_OK_CANCEL, {
                     title: rta.peer.msg["TableDialog.Title"], 
                     icon: rta.peer.icons.table,
-                    contentWidth: "45em"
+                    contentWidth: "40em"
                 },
                 new Echo.Row({
                     insets: 10,
@@ -1581,6 +1581,7 @@ Extras.Sync.RichTextArea.TableSizeSelectorPeer = Core.extend(Echo.Render.Compone
     _processMouseDown: function(e) {
         this._dragInProgress = true;
         this._processMouseSelection(e);
+        Core.Web.DOM.preventEventDefault(e);
         return true;
     },
     
@@ -1623,9 +1624,9 @@ Extras.Sync.RichTextArea.TableSizeSelectorPeer = Core.extend(Echo.Render.Compone
         this._rowSize = this.component.render("rowSize", 10);
         this._columnSize = this.component.render("columnSize", 15);
             
-        this._border = this.component.render("border", "1px outset #cfcfcf");
-        this._selectedBorder = this.component.render("selectedBorder", "1px outset #ffffaf");
-        this._selectedBackground = this.component.render("selectedBackground", "#ffffaf");
+        this._border = this.component.render("border", "1px outset #dfdfdf");
+        this._selectedBorder = this.component.render("selectedBorder", "1px outset #4f4f5f");
+        this._selectedBackground = this.component.render("selectedBackground", "#4f4f5f");
         
         this._div = document.createElement("div");
         this._div.id = this.component.renderId;
@@ -1634,7 +1635,7 @@ Extras.Sync.RichTextArea.TableSizeSelectorPeer = Core.extend(Echo.Render.Compone
         this._table.cellPadding = 0;
         this._table.cellSpacing = 0;
         this._table.style.cssText = "padding:0;border:none;font-size:1px;";
-        Echo.Sync.Color.render(this.component.render("background", "#cfcfcf"), this._table, "backgroundColor");
+        Echo.Sync.Color.render(this.component.render("background", "#dfdfdf"), this._table, "backgroundColor");
         tbody = document.createElement("tbody");
         this._table.appendChild(tbody);
         
