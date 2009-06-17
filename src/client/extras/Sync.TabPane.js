@@ -197,10 +197,17 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
     _contentContainerDiv: null,
     
     /**
+     * Element containing _headerContainerDiv.
+     */
+    _headerContainerBoundsDiv: null,
+    
+    /**
      * Element containing tab headers.
+     * This element is contained withing the _headerContainerBoundsDiv, and positioned left/right to facilitate scrolling of 
+     * tab headers.
      * @type Element
      */
-    _headerContainer: null,
+    _headerContainerDiv: null,
     
     /**
      * The renderId of the active tab.
@@ -356,13 +363,14 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         }
         
         var borderSize = this._borderType == Extras.TabPane.BORDER_TYPE_NONE ? 0 : Echo.Sync.Border.getPixelSize(this._border);
-        this._headerContainerDiv.style.height = this._headerHeight + "px";
+        this._headerContainerBoundsDiv.style.height = this._headerHeight + "px";
         this._contentContainerDiv.style.left = this._contentContainerDiv.style.right = 
                 this._contentContainerDiv.style[this._oppositeSide] = 0;
         this._contentContainerDiv.style[this._tabSide] = (this._headerHeight - borderSize) + "px";
         
         Core.Web.VirtualPosition.redraw(this._contentContainerDiv);
         Core.Web.VirtualPosition.redraw(this._headerContainerDiv);
+        Core.Web.VirtualPosition.redraw(this._headerContainerBoundsDiv);
         for (var i = 0; i < this._tabs.length; ++i) {
             this._tabs[i]._renderDisplay();
         }
@@ -706,15 +714,19 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         this._div.style.cssText = "position:absolute;top:" + pixelInsets.top + "px;right:" + pixelInsets.right +
                 "px;bottom:" + pixelInsets.bottom + "px;left:" + pixelInsets.left + "px;";
                         
-        // Render Header Container.
-        this._headerContainerDiv = document.createElement("div");
-        this._headerContainerDiv.style.cssText = "position:absolute;overflow:hidden;z-index:1;" +
+        this._headerContainerBoundsDiv = document.createElement("div");
+        this._headerContainerBoundsDiv.style.cssText = "position:absolute;overflow:hidden;z-index:1;" +
                 (this._tabPositionBottom ? "bottom" : "top") + ":0;" +
                 "left:" + this._tabInsetPx + "px;right:" + this._tabInsetPx + "px;";
+        this._div.appendChild(this._headerContainerBoundsDiv);
+                
+        // Render Header Container.
+        this._headerContainerDiv = document.createElement("div");
+        this._headerContainerDiv.style.cssText = "position:absolute;left:0;right:0;top:0;bottom:0;";
                 
         Echo.Sync.Font.render(this.component.render("font"), this._headerContainerDiv);
         Echo.Sync.FillImage.render(this.component.render("tabBackgroundImage"), this._headerContainerDiv);
-        this._div.appendChild(this._headerContainerDiv);
+        this._headerContainerBoundsDiv.appendChild(this._headerContainerDiv);
         
         // Render Image Border (optional).
         if (this._imageBorder) {
@@ -819,6 +831,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         this._tabs = [];
         this._div = null;
         this._borderDiv = null;
+        this._headerContainerBoundsDiv = null;
         this._headerContainerDiv = null;
         this._contentContainerDiv = null;
         if (this._previousControlDiv) {
@@ -1033,7 +1046,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
             bounded = true;
         }
         this.scrollPosition = position;
-        this._headerContainerDiv.style.marginLeft = (0 - position) + "px";
+        this._headerContainerDiv.style.left = (0 - position) + "px";
         
         if (oversize) {
             this._setOversizeEnabled(true, position > 0);
