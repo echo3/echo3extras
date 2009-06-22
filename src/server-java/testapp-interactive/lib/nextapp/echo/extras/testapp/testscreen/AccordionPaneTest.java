@@ -82,6 +82,32 @@ public class AccordionPaneTest extends AbstractTest {
             }
         });
 
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add Label with Icon", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Label label = new Label("Accordion Pane Child " + tabNumber);
+                label.setBackground(StyleUtil.randomBrightColor());
+                AccordionPaneLayoutData layoutData = new AccordionPaneLayoutData();
+                layoutData.setTitle("Label #" + tabNumber);
+                layoutData.setIcon(Styles.ICON_24_YES);
+                label.setLayoutData(layoutData);
+                accordionPane.add(label);
+                ++tabNumber;
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add Label with Huge Icon", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Label label = new Label("Accordion Pane Child " + tabNumber);
+                label.setBackground(StyleUtil.randomBrightColor());
+                AccordionPaneLayoutData layoutData = new AccordionPaneLayoutData();
+                layoutData.setTitle("Label #" + tabNumber);
+                layoutData.setIcon(Styles.ICON_64_INFORMATION);
+                label.setLayoutData(layoutData);
+                accordionPane.add(label);
+                ++tabNumber;
+            }
+        });
+
         testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add Big Label", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Label label = createTestTab();

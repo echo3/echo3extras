@@ -39,6 +39,18 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
      * @type String
      */
     _activeTabId: null,
+
+    /**
+     * Flag indicating whether new images have been loaded, requiring a redraw/possible-resize of tabs.
+     * @type Boolean
+     */
+    _newImagesLoaded: null,
+    
+    /**
+     * Flag indicating whether renderDisplay is scheduled to be executed.
+     * @type Boolean
+     */
+    _pendingRenderDisplay: false,
     
     /**
      * Animated rotation currently in progress (null when not animating).
@@ -64,12 +76,20 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
      * @type Function 
      */
     _tabSelectListenerRef: null,
+    
+    /**
+     * Method reference to image load monitoring function.
+     * Rendering tabs register image loading listeners to this reference.
+     * @type Function
+     */
+    imageMonitorRef: null,
 
     /** Constructor. */
     $construct: function() {
         this.tabs = [];
         this.resetOverflowForAnimation = Core.Web.Env.BROWSER_MOZILLA || Core.Web.Env.BROWSER_INTERNET_EXPLORER;
         this._tabSelectListenerRef = Core.method(this, this._tabSelectListener);
+        this.imageMonitorRef = Core.method(this, this._imageMonitor);
     },
     
     /**
@@ -110,6 +130,22 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
             }
             return tabHeight;
         }
+    },
+    
+    /**
+     * Image monitor implementation.
+     */
+    _imageMonitor: function() {
+        if (this._newImagesLoaded) {
+            return;
+        }
+        this._newImagesLoaded = true;
+        Core.Web.Scheduler.run(Core.method(this, function() {
+            if (this.client && !this._pendingRenderDisplay) {
+                this.redrawTabs(false);
+            }
+            this._newImagesLoaded = false;
+        }));
     },
     
     /**
@@ -187,10 +223,13 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
         }
         
         parentElement.appendChild(this.div);
+        
+        this._pendingRenderDisplay = true;
     },
     
     /** @see Echo.Render.ComponentSync#renderDisplay */
     renderDisplay: function() {
+        this._pendingRenderDisplay = false;
         if (!this.rotation) {
             this.redrawTabs(false);
         }
@@ -450,6 +489,8 @@ Extras.Sync.AccordionPane.Tab = Core.extend({
             Echo.Sync.ImageReference.renderImg(layoutData.icon, img);
             img.style.paddingRight = "3px";
             this.tabDiv.appendChild(img);
+            
+            Core.Web.Image.monitor(this.tabDiv, this._parent.imageMonitorRef);
         }
         
         this.tabDiv.appendChild(document.createTextNode(layoutData.title ? layoutData.title : "\u00a0"));
