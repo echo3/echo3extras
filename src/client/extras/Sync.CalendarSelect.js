@@ -353,6 +353,11 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
     _div: null,
     
     /**
+     * Container element for month/year fields.
+     */
+    _monthYearInput: null,
+    
+    /**
      * Month SELECT field.
      * @type Element
      */
@@ -798,10 +803,13 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
     
     /** @see Echo.Render.ComponentSync#renderAdd */
     renderAdd: function(update, parentElement) {
+        update = null; // Update is forcibly set to null, as this method may in some circumstances be invoked internally with
+                       // a null update.
+        
         this._msg = Extras.Sync.CalendarSelect.resource.get(this.component.getRenderLocale());
         this._icons = { };
 
-        var i, j, td, tr, x, cellDiv, dayOfWeekName, monthYearDiv, monthYearInput, headerWidth,
+        var i, j, td, tr, x, cellDiv, dayOfWeekName, monthYearDiv, headerWidth,
             enabled = this.component.isRenderEnabled(),
             dayOfWeekNameAbbreviationLength = parseInt(this.component.render("dayOfWeekNameAbbreviationLength", 2), 10),
             date = this.component.get("date");
@@ -819,8 +827,8 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         };
         this._monthData = new Extras.Sync.CalendarSelect.MonthData(this._date.year, this._date.month, this._firstDayOfWeek);    
 
-        monthYearInput = this._createMonthYearInput();
-        this._monthYearWidth = new Core.Web.Measure.Bounds(monthYearInput).width + 10; //FIXME hardcoded.
+        this._monthYearInput = this._createMonthYearInput();
+        this._monthYearWidth = new Core.Web.Measure.Bounds(this._monthYearInput).width + 10; //FIXME hardcoded.
     
         this._loadRenderData();
 
@@ -841,7 +849,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         monthYearDiv = document.createElement("div");
         monthYearDiv.align = "center";
         monthYearDiv.style.cssText = "padding:2px 5px;white-space:nowrap;overflow:hidden;"; //FIXME hardcoded
-        monthYearDiv.appendChild(monthYearInput);
+        monthYearDiv.appendChild(this._monthYearInput);
         this._div.appendChild(monthYearDiv);
         
         this._calendarDiv = document.createElement("div");
@@ -906,10 +914,17 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         Core.Web.Event.add(this._calendarDiv, "mouseout", Core.method(this, this._processDateRolloverExit), false);
 
         this._updateMonthYearSelection();
+        
+        Core.Web.Image.monitor(this._div, Core.method(this, function() {
+            this._renderSizeUpdate();
+        }));
     },
     
     /** @see Echo.Render.ComponentSync#renderDispose */
     renderDispose: function(update) {
+        update = null; // Update is forcibly set to null, as this method may in some circumstances be invoked internally with
+                       // a null update.
+
         Core.Web.Event.removeAll(this._monthSelect);
         Core.Web.Event.removeAll(this._yearField);
         Core.Web.Event.removeAll(this._yearDecSpan);
@@ -922,11 +937,30 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         this._dayContainerDiv = null;
         this._scrollContainer = null;
         this._calendarDiv = null;
+        this._monthYearInput = null;
+    },
+    
+    /**
+     * Detects if the CalendarSelect is properly sized (i.e., as a result of additional images having been loaded) and
+     * re-renders it if required.
+     */
+    _renderSizeUpdate: function() {
+        var monthYearWidth = new Core.Web.Measure.Bounds(this._monthYearInput).width + 10;  //FIXME hardcoded.
+        if (this._monthYearWidth === monthYearWidth) {
+            return;
+        }
+        
+        // Perform full render if required.
+        var element = this._div;
+        var containerElement = element.parentNode;
+        this.renderDispose(null);
+        containerElement.removeChild(element);
+        this.renderAdd(null, containerElement);
     },
     
     /** @see Echo.Render.ComponentSync#renderUpdate */
     renderUpdate: function(update) {
-        if (update.isUpdatedPropertySetIn({date: true })) {
+        if (update && update.isUpdatedPropertySetIn({date: true })) {
             var date = this.component.get("date") || new Date();
             if (this._date.month == date.getMonth() && this._date.day == date.getDate() && this._date.year == date.getFullYear()) {
                  return false;
