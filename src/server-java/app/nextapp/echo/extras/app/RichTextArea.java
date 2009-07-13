@@ -96,6 +96,10 @@ public class RichTextArea extends Component {
     public static final String ICON_SUBSCRIPT = "subscript";
     public static final String ICON_SUPERSCRIPT = "superscript";
     public static final String ICON_TABLE = "table";
+    public static final String ICON_TABLE_COLUMN_DELETE = "tableDeleteColumn";
+    public static final String ICON_TABLE_COLUMN_INSERT = "tableInsertColumn";
+    public static final String ICON_TABLE_ROW_DELETE = "tableDeleteRow";
+    public static final String ICON_TABLE_ROW_INSERT = "tableInsertRow";
     public static final String ICON_UNDERLINE = "underline";
     public static final String ICON_UNDO = "undo";
     
