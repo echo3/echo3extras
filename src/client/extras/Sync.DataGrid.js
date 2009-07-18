@@ -12,9 +12,24 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
     
     $static: {
                 
+        /**
+         * Horizontal/Vertical constant for left direction.
+         */
         LEFT: { h: -1, v: 0 },
+        
+        /**
+         * Horizontal/Vertical constant for right direction.
+         */
         RIGHT: { h: 1, v: 0 },
+        
+        /**
+         * Horizontal/Vertical constant for up direction.
+         */
         UP: { h: 0, v: -1 },
+
+        /**
+         * Horizontal/Vertical constant for down direction.
+         */
         DOWN: { h: 0, v: 1 },
 
         INDEX: 0,
