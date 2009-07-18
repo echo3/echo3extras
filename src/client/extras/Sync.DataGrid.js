@@ -32,10 +32,6 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
          */
         DOWN: { h: 0, v: 1 },
 
-        INDEX: 0,
-        PX: 1,
-        PERECNT: 2,
-
         REGION_LOCATIONS: {
             topLeft:     { h: -1, v: -1 },
             top:         { h:  0, v: -1 },
@@ -204,13 +200,19 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             
             /**
              * Cell index information object.  Contains integer "top", "right", "left", and "bottom" properties, 
-             * each of which indicates the index of cells at that edge of the tile.
+             * each of which indicates the index of cells at that edge of the tile.  
+             *
+             * As an example, if the DataGrid's tile size were 12 columns by 6 rows, then for the tile in the second column 
+             * of the second row, this value would be { top: 6, left: 12, bottom: 11, right: 23 } assuming that the the data 
+             * grid had at least  12 rows and 24 columns.  If the data grid only had 9 rows and 18 columns, this value would 
+             * be { top: 6, left: 12, bottom: 8, right: 17 }.
              */
             cellIndex: null,
             
             /**
              * Tile index information object.  Contains row and column properties indicating the row/column of the tile
-             * within the grid of tiles.
+             * within the grid of tiles.  The upper left tile would be at column 0, row 0.  The tile to the right would 
+             * be at column 1, row 0.
              */
             tileIndex: null,
 
@@ -1082,6 +1084,8 @@ Core.Debug.consoleWrite("dist-value = " + (dist - value));
 
 /**
  * Renders a scrolling container for the DataGrid, processing scroll events and managing scroll bar positions.
+ * Features an "accumulator" so as not to fire events overly frequently, e.g., mousewheel scrolling must stop for a (very) 
+ * brief period of time before a scroll event is fired.
  */
 Extras.Sync.DataGrid.ScrollContainer = Core.extend({
 
@@ -1096,9 +1100,22 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
     
     size: 5,
     
+    /**
+     * Horizontal scroll position, a value between 0 and 1.
+     * @type Number
+     */
     scrollX: 0,
+
+    /**
+     * Vertical scroll position, a value between 0 and 1.
+     * @type Number
+     */
     scrollY: 0,
     
+    /**
+     * Singleton listener to invoke when scroll position changes.
+     * @type Function
+     */
     onScroll: null,
 
     /**
