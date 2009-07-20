@@ -231,7 +231,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             /**
              * Creates a new <code>Tile</code>.
              *
-             * @param {Extras.Sync.DataGrid} dataGrid  the containing data grid peer
+             * @param {Extras.Sync.DataGrid} dataGrid the containing data grid peer
              * @param {Extras.Sync.DataGrid.Region} region the containing region
              * @param {Number} tileColumnIndex the column index of the tile
              * @param {Number} tileRowIndex the row index of the tile
@@ -243,52 +243,71 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 this.tileIndex = { column: tileColumnIndex, row: tileRowIndex };
                 this.region = region;
                 
-                this.cellIndex = { };
-                
-                // Determine left cell.
-                switch (this.region.location.h) {
-                case 0: 
-                    this.cellIndex.left = this.tileIndex.column * this.dataGrid.tileSize.columns + this.dataGrid.fixedCells.left;
-                    break;
-                case -1:
-                    this.cellIndex.left = this.tileIndex.column * this.dataGrid.tileSize.columns;
-                    break;
-                case 1:
-                    // FIXME Impl.
-                    throw new Error("unsupported");
-                }
-                
-                // Determine top cell.
-                switch (this.region.location.v) {
-                case 0: 
-                    this.cellIndex.top = this.tileIndex.row * this.dataGrid.tileSize.rows + this.dataGrid.fixedCells.top;
-                    break;
-                case -1:
-                    this.cellIndex.top = this.tileIndex.row * this.dataGrid.tileSize.rows;
-                    break;
-                case 1:
-                    // FIXME Impl.
-                    throw new Error("unsupported");
-                }
-                
                 this.edge = { 
                     left: this.tileIndex.column === 0,
                     top: this.tileIndex.row === 0
                 };
                 
-                // Determine right cell.
-                this.cellIndex.right = this.cellIndex.left + this.dataGrid.tileSize.columns - 1;
-                if (this.cellIndex.right >= this.dataGrid.size.columns - this.dataGrid.fixedCells.right - 1) {
-                    this.cellIndex.right = this.dataGrid.size.columns - this.dataGrid.fixedCells.right - 1;
-                    this.edge.right = true;
+                this.cellIndex = { };
+                
+                // Determine horizontal data.
+                switch (this.region.location.h) {
+                case -1:
+                    this.cellIndex.left = this.tileIndex.column * this.dataGrid.tileSize.columns;
+                    this.cellIndex.right = this.cellIndex.left + this.dataGrid.tileSize.columns - 1;
+                    if (this.cellIndex.right >= this.dataGrid.fixedCells.left) {
+                        this.cellIndex.right = this.dataGrid.fixedCells.left - 1;
+                        this.edge.right = true;
+                    }
+                    break;
+                case 0: 
+                    this.cellIndex.left = this.tileIndex.column * this.dataGrid.tileSize.columns + this.dataGrid.fixedCells.left;
+                    this.cellIndex.right = this.cellIndex.left + this.dataGrid.tileSize.columns - 1;
+                    if (this.cellIndex.right >= this.dataGrid.size.columns - this.dataGrid.fixedCells.right - 1) {
+                        this.cellIndex.right = this.dataGrid.size.columns - this.dataGrid.fixedCells.right - 1;
+                        this.edge.right = true;
+                    }
+                    break;
+                case 1:
+                    this.cellIndex.left = this.dataGrid.size.columns - this.dataGrid.fixedCells.right - 
+                            (this.tileIndex.column * this.dataGrid.tileSize.columns);
+                    this.cellIndex.right = this.cellIndex.left + this.dataGrid.tileSize.columns - 1;
+                    if (this.cellIndex.right >= this.dataGrid.size.columns - 1) {
+                        this.cellIndex.right = this.dataGrid.size.columns - 1;
+                        this.edge.right = true;
+                    }
+                    break;
+                }
+                
+                // Determine vertical data.
+                switch (this.region.location.v) {
+                case -1:
+                    this.cellIndex.top = this.tileIndex.row * this.dataGrid.tileSize.rows;
+                    this.cellIndex.bottom = this.cellIndex.top + this.dataGrid.tileSize.rows - 1;
+                    if (this.cellIndex.bottom >= this.dataGrid.fixedCells.top) {
+                        this.cellIndex.bottom = this.dataGrid.fixedCells.top - 1;
+                        this.edge.bottom = true;
+                    }
+                    break;
+                case 0: 
+                    this.cellIndex.top = this.tileIndex.row * this.dataGrid.tileSize.rows + this.dataGrid.fixedCells.top;
+                    this.cellIndex.bottom = this.cellIndex.top + this.dataGrid.tileSize.rows - 1;
+                    if (this.cellIndex.bottom >= this.dataGrid.size.rows - this.dataGrid.fixedCells.bottom - 1) {
+                        this.cellIndex.bottom = this.dataGrid.size.rows - this.dataGrid.fixedCells.bottom - 1;
+                        this.edge.bottom = true;
+                    }
+                    break;
+                case 1:
+                    this.cellIndex.top = this.dataGrid.size.rows - this.dataGrid.fixedCells.bottom - 
+                            (this.tileIndex.row * this.dataGrid.tileSize.rows);
+                    this.cellIndex.bottom = this.cellIndex.top + this.dataGrid.tileSize.rows - 1;
+                    if (this.cellIndex.bottom >= this.dataGrid.size.rows - 1) {
+                        this.cellIndex.bottom = this.dataGrid.size.rows - 1;
+                        this.edge.bottom = true;
+                    }
+                    break;
                 }
 
-                // Determine bottom cell.
-                this.cellIndex.bottom = this.cellIndex.top + this.dataGrid.tileSize.rows - 1;
-                if (this.cellIndex.bottom >= this.dataGrid.size.rows - this.dataGrid.fixedCells.bottom - 1) {
-                    this.cellIndex.bottom = this.dataGrid.size.rows - this.dataGrid.fixedCells.bottom - 1;
-                    this.edge.bottom = true;
-                }
             },
             
             /**
@@ -819,7 +838,7 @@ Core.Debug.consoleWrite("px=" + px);
         while (value < dist) {
             var size = getSize(index);
             if (value + size > dist) {
-Core.Debug.consoleWrite("dist-value = " + (dist - value));                
+Core.Debug.consoleWrite("dist-value = " + (dist - value)); 
                 index += inc * ((dist - value) / size); 
                 value = dist;
             } else {
@@ -833,6 +852,8 @@ Core.Debug.consoleWrite("dist-value = " + (dist - value));
         } else {
             this.position.y = index;
         }
+
+Core.Debug.consoleWrite("Position: " + Core.Debug.toString(this.position));
     },
     
     adjustPositionPx: function(xPx, yPx) {
