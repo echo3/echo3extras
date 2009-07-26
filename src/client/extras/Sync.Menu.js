@@ -403,6 +403,11 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
         this.deactivate();
     },
     
+    /** @see Echo.Render.ComponentSync#renderHide */
+    renderHide: function() {
+        this.deactivate();
+    },
+    
     /** @see Echo.Render.ComponentSync#renderUpdate */
     renderUpdate: function(update) {
         if (update.isUpdatedPropertySetIn({modal: true})) {
