@@ -326,6 +326,7 @@ public class TestPane extends ContentPane {
                 menuVerticalPane.add(content);
             } else {
                 menuVerticalPane.add(blinkContainer);
+                blinkContainer.removeAll();
                 blinkContainer.add(content);
             }
         } catch (ClassNotFoundException ex) {
