@@ -10,14 +10,14 @@ import nextapp.echo.webcontainer.Service;
 import nextapp.echo.webcontainer.WebContainerServlet;
 import nextapp.echo.webcontainer.service.JavaScriptService;
 
-public class BlinkComponent  extends Component 
+public class BlinkComponent extends Component 
 implements Pane, PaneContainer {
 
-    private static final Service TEST_SERVICE = JavaScriptService.forResource("BlinkComponent", 
+    private static final Service BLINK_COMPONENT_SERVICE = JavaScriptService.forResource("BlinkComponent", 
             "nextapp/echo/extras/testapp/resource/js/BlinkComponent.js");
     
     static {
-        WebContainerServlet.getServiceRegistry().add(TEST_SERVICE);
+        WebContainerServlet.getServiceRegistry().add(BLINK_COMPONENT_SERVICE);
     }
     
     public static class Peer extends AbstractComponentSynchronizePeer {
@@ -42,7 +42,7 @@ implements Pane, PaneContainer {
         public void init(Context context, Component component) {
             super.init(context, component);
             ServerMessage serverMessage = (ServerMessage) context.get(ServerMessage.class);
-            serverMessage.addLibrary(TEST_SERVICE.getId());
+            serverMessage.addLibrary(BLINK_COMPONENT_SERVICE.getId());
         }
     }
     

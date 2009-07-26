@@ -101,6 +101,8 @@ public class TestPane extends ContentPane {
     };
     
     private SplitPane menuVerticalPane;
+    private BlinkComponent blinkContainer;
+    private String activeTestName;
     
     public TestPane(String testName) {
         super();
@@ -183,6 +185,8 @@ public class TestPane extends ContentPane {
                 null));
         optionsMenu.addItem(new DefaultOptionModel("OpenModalDialog",
                 "Open Model Dialog", null));
+        optionsMenu.addItem(new DefaultToggleOptionModel("BlinkContent",
+                "Blink Content (renderHide/Display test)"));
         optionsMenu.addItem(new SeparatorModel());
         optionsMenu.addItem(localesMenu);
         optionsMenu.addItem(new SeparatorModel());
@@ -231,6 +235,15 @@ public class TestPane extends ContentPane {
                     if (showBackground) {
                         setBackgroundImage(background);
                     }
+                } else if ("BlinkContent".equals(id)) {
+                    if (blinkContainer == null) {
+                        blinkContainer = new BlinkComponent();
+                    } else {
+                        blinkContainer = null;
+                    }
+                    if (activeTestName != null) {
+                        startTest(activeTestName);
+                    }
                 }
                 fireStateChanged();
             }
@@ -249,6 +262,8 @@ public class TestPane extends ContentPane {
                     return Styles.FILL_IMAGE_SILVER_LINE.equals(background);
                 } else if ("BackgroundBlue".equals(id)) {
                     return Styles.FILL_IMAGE_LIGHT_BLUE_LINE.equals(background);
+                } else if ("BlinkContent".equals(id)) {
+                    return blinkContainer != null;
                 } else if (id.startsWith("Locale_")) {
                     String language = id.substring("Locale_".length());
                     if ("Default".equals(language)) {
@@ -300,13 +315,19 @@ public class TestPane extends ContentPane {
     
     private void startTest(String testName) {
         try {
+            this.activeTestName = testName;
             String screenClassName = "nextapp.echo.extras.testapp.testscreen." + testName;
             Class screenClass = Class.forName(screenClassName);
             Component content = (Component) screenClass.newInstance();
             if (menuVerticalPane.getComponentCount() > 1) {
                 menuVerticalPane.remove(1);
             }
-            menuVerticalPane.add(content);
+            if (blinkContainer == null) {
+                menuVerticalPane.add(content);
+            } else {
+                menuVerticalPane.add(blinkContainer);
+                blinkContainer.add(content);
+            }
         } catch (ClassNotFoundException ex) {
             add(new MessageDialog("Cannot Load Test", ex.toString(),
                     Styles.ICON_64_ERROR, MessageDialog.CONTROLS_OK));
