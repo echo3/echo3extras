@@ -1373,6 +1373,7 @@ Extras.Sync.RichTextArea.OverlayPanePeer = Core.extend(Echo.Render.ComponentSync
         this._div = null;
     },
     
+    /** @see Echo.Render.ComponentSync#renderHide */
     renderHide: function() {
         this._div.style.display = "none";
     },
