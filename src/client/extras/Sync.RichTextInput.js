@@ -944,7 +944,7 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
             }
         }
     },
-
+    
     /** @see Echo.Render.ComponentSync#renderFocus */
     renderFocus: function() {
         if (Core.Web.Env.BROWSER_SAFARI) {
@@ -953,6 +953,11 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
         }
         Core.Web.DOM.focusElement(this._iframe.contentWindow);
         this.client.forceRedraw();
+    },
+    
+    /** @see Echo.Render.ComponentSync#renderHide */
+    renderHide: function() {
+        Core.Debug.consoleWrite("renderHide");
     },
     
     /** @see Echo.Render.ComponentSync#renderUpdate */

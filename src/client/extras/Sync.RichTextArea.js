@@ -1357,6 +1357,7 @@ Extras.Sync.RichTextArea.OverlayPanePeer = Core.extend(Echo.Render.ComponentSync
     
     /** @see Echo.Render.ComponentSync#renderDisplay */
     renderDisplay: function(update) {
+        this._div.style.display = "block";
         Core.Web.VirtualPosition.redraw(this._div);
     },
     
@@ -1370,6 +1371,10 @@ Extras.Sync.RichTextArea.OverlayPanePeer = Core.extend(Echo.Render.ComponentSync
             this._div.parentNode.removeChild(this._div);
         }
         this._div = null;
+    },
+    
+    renderHide: function() {
+        this._div.style.display = "none";
     },
     
     /** @see Echo.Render.ComponentSync#renderUpdate */
