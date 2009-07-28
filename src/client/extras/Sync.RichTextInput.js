@@ -915,6 +915,14 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
         this._documentRendered = true;
     },
     
+    _renderDocumentRemove: function() {
+        while (this._document.body.firstChild) {
+            this._document.body.removeChild(this._document.body.firstChild);
+        }
+        this._documentRendered = false;
+        Core.Debug.consoleWrite("RDR OK");
+    },
+    
     /** @see Echo.Render.ComponentSync#renderDispose */
     renderDispose: function(update) {
         this._removeComponentListeners();
@@ -957,7 +965,9 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
     
     /** @see Echo.Render.ComponentSync#renderHide */
     renderHide: function() {
-        Core.Debug.consoleWrite("renderHide");
+        this._renderedHtml = this._document.body.innerHTML;
+        this._renderDocumentRemove();
+        Core.Debug.consoleWrite("renderHide:" + this._document.body.innerHTML);
     },
     
     /** @see Echo.Render.ComponentSync#renderUpdate */
