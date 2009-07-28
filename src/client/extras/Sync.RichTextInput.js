@@ -915,12 +915,16 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
         this._documentRendered = true;
     },
     
+    /**
+     * Clears the editable document, disposing any resources related to it.
+     * Invoked by renderHide() implementation.
+     */
     _renderDocumentRemove: function() {
+        Core.Web.Event.removeAll(this._document);
         while (this._document.body.firstChild) {
             this._document.body.removeChild(this._document.body.firstChild);
         }
         this._documentRendered = false;
-        Core.Debug.consoleWrite("RDR OK");
     },
     
     /** @see Echo.Render.ComponentSync#renderDispose */
@@ -965,9 +969,11 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
     
     /** @see Echo.Render.ComponentSync#renderHide */
     renderHide: function() {
+        // Store rendered HTML.
         this._renderedHtml = this._document.body.innerHTML;
+        
+        // Clear editable document and dispose resources.
         this._renderDocumentRemove();
-        Core.Debug.consoleWrite("renderHide:" + this._document.body.innerHTML);
     },
     
     /** @see Echo.Render.ComponentSync#renderUpdate */
