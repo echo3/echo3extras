@@ -312,6 +312,9 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
             activate: function() {
                 if (this.domRange) {
                     var selection = this.window.getSelection();
+                    if (!selection) {
+                        return;
+                    }
                     selection.removeAllRanges();
                     selection.addRange(this.domRange);
                 } else if (this.ieRange) {
@@ -660,6 +663,7 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
      * @see #_storeRange
      */
     _loadRange: function() {
+Core.Debug.consoleWrite("LOADRANGE");            
         if (this._selectionRange) {
             this._selectionRange.activate();
             if (Core.Web.Env.ENGINE_MSHTML && this.component.application.getFocusedComponent() != this.component) {
@@ -969,7 +973,8 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
     
     /** @see Echo.Render.ComponentSync#renderHide */
     renderHide: function() {
-        // Store rendered HTML.
+        // Store state.
+        this._storeRange();
         this._renderedHtml = this._document.body.innerHTML;
         
         // Clear editable document and dispose resources.
