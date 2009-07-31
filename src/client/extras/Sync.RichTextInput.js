@@ -440,6 +440,7 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
         this.component.addListener("property", this._propertyListener);
     },
     
+
     /**
      * Deletes a column from an HTML table containing the current selection.
      * Takes no action in the event that the selection is not in a table cell. 
@@ -463,6 +464,16 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
             return;
         }
         tr.parentNode.removeChild(tr);
+    },
+
+    /**
+     * Disposes of current selection range.
+     */
+    _disposeRange: function() {
+        if (this._selectionRange) {
+            //FIXME 
+            this._selectionRange.dispose();
+        }
     },
     
     /**
@@ -975,8 +986,10 @@ Core.Debug.consoleWrite("LOADRANGE");
     
     /** @see Echo.Render.ComponentSync#renderHide */
     renderHide: function() {
+        // Dispose selection range (critical for MSIE).
+        this._disposeRange();
+        
         // Store state.
-        this._storeRange();
         this._renderedHtml = this._document.body.innerHTML;
         
         // Clear editable document and dispose resources.
@@ -1013,10 +1026,7 @@ Core.Debug.consoleWrite("LOADRANGE");
      * @see #_loadRange
      */
     _storeRange: function() {
-        if (this._selectionRange) {
-            //FIXME 
-            this._selectionRange.dispose();
-        }
+        this._disposeRange();
         this._selectionRange = new Extras.Sync.RichTextInput.Range(this._iframe.contentWindow);
     },
 
