@@ -1449,7 +1449,6 @@ Extras.Sync.RichTextArea.TableDialog = Core.extend(Extras.Sync.RichTextArea.Abst
                         }),
                         new Echo.Grid({
                             width: "100%",
-                            columnWidth: ["25%", "75%"],
                             insets: 3,
                             children: [
                                 new Echo.Label({
