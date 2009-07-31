@@ -857,7 +857,7 @@ Core.Debug.consoleWrite("LOADRANGE");
                 // Not added to parent.
                 return;
             }
-            if (element.style.display == "none") {
+            if (element.nodeType == 1 && element.style.display == "none") {
                 // Not rendered.
                 return;
             }
@@ -948,6 +948,8 @@ Core.Debug.consoleWrite("LOADRANGE");
             this._renderDocument();
         }
 
+        this.client.forceRedraw();
+        
         var bounds = new Core.Web.Measure.Bounds(this._div.parentNode);
         
         if (bounds.height) {

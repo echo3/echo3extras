@@ -948,6 +948,7 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
     renderDisplay: function() {
         Core.Web.VirtualPosition.redraw(this._mainDiv);
         Echo.Arc.ComponentSync.prototype.renderDisplay.call(this);
+        this.client.forceRedraw();
     },
     
     /** @see Echo.Render.ComponentSync#renderDispose */
