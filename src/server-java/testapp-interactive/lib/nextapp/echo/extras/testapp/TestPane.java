@@ -185,8 +185,13 @@ public class TestPane extends ContentPane {
                 null));
         optionsMenu.addItem(new DefaultOptionModel("OpenModalDialog",
                 "Open Model Dialog", null));
-        optionsMenu.addItem(new DefaultToggleOptionModel("BlinkContent",
-                "Blink Content (renderHide/Display test)"));
+        
+        DefaultMenuModel blinkMenu = new DefaultMenuModel(null, "Blink (Hide/Display) Testing");
+        blinkMenu.addItem(new DefaultRadioOptionModel("BlinkDefault", "BlinkContent", "Disable"));
+        blinkMenu.addItem(new DefaultRadioOptionModel("BlinkAuto", "BlinkContent", "Automatic (Blinking Content)"));
+        blinkMenu.addItem(new DefaultRadioOptionModel("BlinkManual", "BlinkContent", "Manual"));
+        optionsMenu.addItem(blinkMenu);
+        
         optionsMenu.addItem(new SeparatorModel());
         optionsMenu.addItem(localesMenu);
         optionsMenu.addItem(new SeparatorModel());
@@ -235,12 +240,19 @@ public class TestPane extends ContentPane {
                     if (showBackground) {
                         setBackgroundImage(background);
                     }
-                } else if ("BlinkContent".equals(id)) {
-                    if (blinkContainer == null) {
-                        blinkContainer = new BlinkComponent();
-                    } else {
-                        blinkContainer = null;
+                } else if (selected && "BlinkDefault".equals(id)) {
+                    blinkContainer = null;
+                    if (activeTestName != null) {
+                        startTest(activeTestName);
                     }
+                } else if (selected && "BlinkAuto".equals(id)) {
+                    blinkContainer = new BlinkComponent();
+                    blinkContainer.setInterval(3000);
+                    if (activeTestName != null) {
+                        startTest(activeTestName);
+                    }
+                } else if (selected && "BlinkManual".equals(id)) {
+                    blinkContainer = new BlinkComponent();
                     if (activeTestName != null) {
                         startTest(activeTestName);
                     }
@@ -262,8 +274,12 @@ public class TestPane extends ContentPane {
                     return Styles.FILL_IMAGE_SILVER_LINE.equals(background);
                 } else if ("BackgroundBlue".equals(id)) {
                     return Styles.FILL_IMAGE_LIGHT_BLUE_LINE.equals(background);
-                } else if ("BlinkContent".equals(id)) {
-                    return blinkContainer != null;
+                } else if ("BlinkDefault".equals(id)) {
+                    return blinkContainer == null;
+                } else if ("BlinkAuto".equals(id)) {
+                    return blinkContainer != null && blinkContainer.getInterval() > 0;
+                } else if ("BlinkManual".equals(id)) {
+                    return blinkContainer != null && blinkContainer.getInterval() <= 0;
                 } else if (id.startsWith("Locale_")) {
                     String language = id.substring("Locale_".length());
                     if ("Default".equals(language)) {

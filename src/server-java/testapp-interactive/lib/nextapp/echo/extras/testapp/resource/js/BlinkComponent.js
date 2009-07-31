@@ -19,14 +19,15 @@ BlinkComponent = Core.extend(Echo.Component, {
 BlinkComponent.Sync = Core.extend(Echo.Render.ComponentSync, {
     
     _div: null,
+    _toggleDiv: null,
     _hidingDiv: null,
-    _flashRunnable: null,
+    _toggleRunnable: null,
     
     $load: function() {
         Echo.Render.registerPeer("BlinkComponent", this);
     },
     
-    _flash: function() {
+    _toggle: function() {
         if (this._div === this._hidingDiv.parentNode) {
             // Remove child, invoke renderComponentHide().
             if (this.component.children.length > 0) {
@@ -55,14 +56,29 @@ BlinkComponent.Sync = Core.extend(Echo.Render.ComponentSync, {
         }
         
         parentElement.appendChild(this._div);
-        this._flashRunnable = new Core.Web.Scheduler.MethodRunnable(Core.method(this, this._flash), 
-                this.component.render("interval", 3000), true);
-        Core.Web.Scheduler.add(this._flashRunnable);
+        var interval = this.component.render("interval")
+        if (interval > 0) {
+            this._toggleRunnable = new Core.Web.Scheduler.MethodRunnable(Core.method(this, this._toggle), 
+                    this.component.render("interval", 3000), true);
+            Core.Web.Scheduler.add(this._toggleRunnable);
+        } else {
+            this._toggleDiv = document.createElement("div");
+            this._toggleDiv.style.cssText = "position:absolute;z-index:32767;bottom:0;right:0;background-color:#abcdef;"
+                    + "border:1px outset #abcdef;padding:2px 10px;cursor:pointer;";
+            this._toggleDiv.appendChild(document.createTextNode("Show/Hide"));
+            Core.Web.Event.add(this._toggleDiv, "click", Core.method(this, this._toggle));
+            this._div.appendChild(this._toggleDiv);
+        }
     },
     
     /** @see Echo.Render.ComponentSync#renderDispose */
     renderDispose: function(update) {
-        Core.Web.Scheduler.remove(this._flashRunnable);
+        if (this._toggleDiv) {
+            Core.Web.Event.removeAll(this._toggleDiv);
+        }
+        if (this._toggleRunnable) {
+            Core.Web.Scheduler.remove(this._toggleRunnable);
+        }
         this._hidingDiv = null;
         this._div = null;
     },
