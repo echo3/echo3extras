@@ -1358,7 +1358,10 @@ Extras.Sync.RichTextArea.OverlayPanePeer = Core.extend(Echo.Render.ComponentSync
     
     /** @see Echo.Render.ComponentSync#renderDisplay */
     renderDisplay: function(update) {
-        this._div.style.display = "block";
+        if (this._div.style.display != "block") {
+            this._div.style.display = "block";
+            this.client.forceRedraw();
+        }
         Core.Web.VirtualPosition.redraw(this._div);
     },
     
