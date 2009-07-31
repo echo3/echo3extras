@@ -1633,7 +1633,7 @@ Extras.Sync.RichTextArea.TableSizeSelectorPeer = Core.extend(Echo.Render.Compone
     
     /** @see Echo.Render.ComponentSync#renderAdd */
     renderAdd: function(update, parentElement) {
-        var tbody, protoTr, tr, td, y, x, colGroup, col;
+        var tbody, protoTr, tr, td, y, x;
         
         this._rowSize = this.component.render("rowSize", 10);
         this._columnSize = this.component.render("columnSize", 15);
@@ -1649,6 +1649,7 @@ Extras.Sync.RichTextArea.TableSizeSelectorPeer = Core.extend(Echo.Render.Compone
         this._table.cellPadding = 0;
         this._table.cellSpacing = 0;
         this._table.style.cssText = "padding:0;border:none;font-size:1px;";
+        this._table.style.width = (this._columnSize * 18) + "px";
         Echo.Sync.Color.render(this.component.render("background", "#dfdfdf"), this._table, "backgroundColor");
         tbody = document.createElement("tbody");
         this._table.appendChild(tbody);
