@@ -1164,6 +1164,12 @@ Extras.Sync.TabPane.Tab = Core.extend({
     _labelDiv: null,
     
     /**
+     * DIV containing the tab's text content.  The width of this DIV is measured and set when using maximum tab widths.
+     * @type Element
+     */
+    _textDiv: null,
+    
+    /**
      * The tab identifier, i.e., the renderId of the child component.
      * @type String
      */
