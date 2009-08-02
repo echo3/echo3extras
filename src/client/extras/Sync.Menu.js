@@ -61,12 +61,6 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
      */
     _processMaskClickRef: null,
     
-    /** 
-     * Reference to menu key press listener.
-     * @type Function 
-     */
-    _processKeyPressRef: null,
-    
     /**
      * The collection of named overlay elements (top/left/right/bottom) deployed to cover non-menu elements of the
      * screen with transparent DIVs when the menu is active.  This allows the menu to receive de-activation events,
@@ -79,7 +73,6 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
      */
     $construct: function() {
         this._processMaskClickRef = Core.method(this, this._processMaskClick);
-        this._processKeyPressRef = Core.method(this, this.processKeyPress);
         this._openMenuPath = [];
     },
 
@@ -117,9 +110,6 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
             
             this.client.application.setFocusedComponent(this.component);
             Core.Web.DOM.focusElement(this.element);
-            Core.Web.Event.add(this.element, 
-                    Core.Web.Env.QUIRK_IE_KEY_DOWN_EVENT_REPEAT ? "keydown" : "keypress",
-                    this._processKeyPressRef, true);
             
             return true;
         },
@@ -149,17 +139,6 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
             this.component.doAction(itemModel);
         },
         
-        /**
-         * Key press listener.
-         */
-        processKeyPress: function(e) {
-            if (e.keyCode == 27) {
-                this.deactivate();
-                return false;
-            }
-            return true;
-        },
-        
         renderFocus: function() {
             Core.Web.DOM.focusElement(this.element);
         }
@@ -186,6 +165,17 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
         
         Core.Web.Event.add(document.body, "click", this._processMaskClickRef, false);
         Core.Web.Event.add(document.body, "contextmenu", this._processMaskClickRef, false);
+    },
+    
+    /**
+     * Processes a key down event.
+     */
+    clientKeyDown: function(e) {
+        if (e.keyCode == 27) {
+            this.deactivate();
+            return false;
+        }
+        return true;
     },
     
     /**
@@ -221,10 +211,6 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
         }
         this.active = false;
 
-        Core.Web.Event.remove(this.element, 
-                Core.Web.Env.QUIRK_IE_KEY_DOWN_EVENT_REPEAT ? "keydown" : "keypress",
-                this._processKeyPressRef, true);
-        
         this.closeAll();
         this.removeMask();
     },
