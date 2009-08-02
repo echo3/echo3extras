@@ -146,11 +146,14 @@ Extras.Sync.ToolTipContainer = Core.extend(Echo.Render.ComponentSync, {
                 // Create container for/render "tool tip" component.
                 this._toolTipDiv = document.createElement("div");
                 this._toolTipDiv.style.cssText = "position:absolute;z-index:30000;overflow:hidden;";
+                
+                var toolTipContentDiv = document.createElement("div");
                 var width = this.component.render("width");
                 if (width) {
-                    this._toolTipDiv.style.width = Echo.Sync.Extent.toCssValue(width);
+                    toolTipContentDiv.style.width = Echo.Sync.Extent.toCssValue(width);
                 }
-                Echo.Render.renderComponentAdd(update, this.component.children[1], this._toolTipDiv);
+                Echo.Render.renderComponentAdd(update, this.component.children[1], toolTipContentDiv);
+                this._toolTipDiv.appendChild(toolTipContentDiv);
             }
         }
         
