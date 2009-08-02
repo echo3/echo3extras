@@ -27,47 +27,6 @@ Extras.Sync.ToolTipContainer = Core.extend(Echo.Render.ComponentSync, {
     _toolTipDiv: null,
     
     /**
-     * Renders container element for the applied-to component and the applied-to component itself.
-     * 
-     * @param {Echo.Update.ComponentUpdate} update the update 
-     */
-    _createApplyTo: function(update) {
-        var applyToComponent = this.component.getComponent(0);
-        
-        var div = document.createElement("div");
-        div.style.cursor = "default";
-        Echo.Render.renderComponentAdd(update, applyToComponent, div);
-        
-        if (this.component.getComponentCount() > 1) {
-            Core.Web.Event.add(div,
-                    Core.Web.Env.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED ? "mouseenter" : "mouseover", 
-                    Core.method(this, this._processRolloverEnter), true);
-            Core.Web.Event.add(div,
-                    Core.Web.Env.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED ? "mouseleave" : "mouseout", 
-                    Core.method(this, this._processRolloverExit), true);
-            Core.Web.Event.add(div, "mousemove", Core.method(this, this._processMove), true);
-        }
-        
-        return div;
-    },
-    
-    /**
-     * Renders tool tip container element, contained component.
-     * 
-     * @param {Echo.Update.ComponentUpdate} update the update 
-     */
-    _createToolTip: function(update) {
-        var div = document.createElement("div");
-        div.style.cssText = "position:absolute;z-index:30000;overflow:hidden;";
-        var width = this.component.render("width");
-        if (width) {
-            div.style.width = Echo.Sync.Extent.toCssValue(width);
-        }
-        Echo.Render.renderComponentAdd(update, this.component.getComponent(1), div);
-        return div;
-    },
-    
-    /**
      * Positions tool tip over applied-to component based on mouse position.
      * 
      * @param e a mouse event containing mouse cursor positioning information
@@ -166,15 +125,33 @@ Extras.Sync.ToolTipContainer = Core.extend(Echo.Render.ComponentSync, {
     renderAdd: function(update, parentElement) {
         this._div = document.createElement("div");
         this._div.id = this.component.renderId;
-        var componentCount = this.component.getComponentCount();
         
-        if (componentCount > 0) {
-            this._applyDiv = this._createApplyTo(update);
+        if (this.component.children.length > 0) {
+            // Render main "apply to" component.
+            this._applyDiv = document.createElement("div");
+            this._applyDiv.style.cursor = "default";
+            Echo.Render.renderComponentAdd(update, this.component.children[0], this._applyDiv);
             this._div.appendChild(this._applyDiv);
-        }
-        
-        if (componentCount > 1) {
-            this._toolTipDiv = this._createToolTip(update);
+            
+            if (this.component.children.length > 1) {
+                // Register listeners on "apply to" component container.
+                Core.Web.Event.add(this._applyDiv,
+                        Core.Web.Env.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED ? "mouseenter" : "mouseover", 
+                        Core.method(this, this._processRolloverEnter), true);
+                Core.Web.Event.add(this._applyDiv,
+                        Core.Web.Env.PROPRIETARY_EVENT_MOUSE_ENTER_LEAVE_SUPPORTED ? "mouseleave" : "mouseout", 
+                        Core.method(this, this._processRolloverExit), true);
+                Core.Web.Event.add(this._applyDiv, "mousemove", Core.method(this, this._processMove), true);
+    
+                // Create container for/render "tool tip" component.
+                this._toolTipDiv = document.createElement("div");
+                this._toolTipDiv.style.cssText = "position:absolute;z-index:30000;overflow:hidden;";
+                var width = this.component.render("width");
+                if (width) {
+                    this._toolTipDiv.style.width = Echo.Sync.Extent.toCssValue(width);
+                }
+                Echo.Render.renderComponentAdd(update, this.component.children[1], this._toolTipDiv);
+            }
         }
         
         parentElement.appendChild(this._div);
