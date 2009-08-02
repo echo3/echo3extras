@@ -148,6 +148,28 @@ public class TabPaneTest extends AbstractTest {
                 tabPane.setTabSpacing(null);
             }
         });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONFIGURATIONS, "Closable with Long Labels (Bug 421)", 
+                new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                while (tabPane.getComponentCount() < 5) {
+                    Component tab = createTestTab();
+                    if (tabPane.getComponentCount() % 2 != 0) {
+                        TabPaneLayoutData ld = (TabPaneLayoutData) tab.getLayoutData();
+                        ld.setTitle(ld.getTitle() + ", this is a really long label that should be cut off by maximum width.");
+                    }
+                    tabPane.add(tab);
+                }
+                tabPane.setTabCloseEnabled(true);
+                tabPane.setTabMaximumWidth(new Extent(35, Extent.PERCENT));
+                tabPane.setBorderType(TabPane.BORDER_TYPE_ADJACENT_TO_TABS);
+                tabPane.setTabRolloverEnabled(true);
+                tabPane.setTabActiveBackground(Color.RED);
+                tabPane.setTabInactiveBackground(Color.YELLOW);
+                tabPane.setTabInactiveForeground(Color.BLUE);
+                tabPane.setTabRolloverBackground(Color.GREEN);
+            }
+        });
         
         testControlsPane.addButton(TestControlPane.CATEGORY_CONFIGURATIONS, "Change LayoutData", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
