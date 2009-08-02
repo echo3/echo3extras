@@ -58,8 +58,7 @@ Extras.Sync.ToolTipContainer = Core.extend(Echo.Render.ComponentSync, {
      */
     _createToolTip: function(update) {
         var div = document.createElement("div");
-        div.style.zIndex = 30000;
-        div.style.position = "absolute";
+        div.style.cssText = "position:absolute;z-index:30000;overflow:hidden;";
         var width = this.component.render("width");
         if (width) {
             div.style.width = Echo.Sync.Extent.toCssValue(width);
@@ -74,6 +73,8 @@ Extras.Sync.ToolTipContainer = Core.extend(Echo.Render.ComponentSync, {
      * @param e a mouse event containing mouse cursor positioning information
      */
     _positionToolTip: function(e) {
+        this._toolTipDiv.style.height = "";
+        
         // Determine cursor position.
         var cursorX = (e.pageX || (e.clientX + (document.documentElement.scrollLeft || document.body.scrollLeft)));
         var cursorY = (e.pageY || (e.clientY + (document.documentElement.scrollTop || document.body.scrollTop)));
@@ -105,6 +106,15 @@ Extras.Sync.ToolTipContainer = Core.extend(Echo.Render.ComponentSync, {
         // Render tip position.
         this._toolTipDiv.style.left = tipX + "px";
         this._toolTipDiv.style.top = tipY + "px";
+        
+        tipBounds = new Core.Web.Measure.Bounds(this._toolTipDiv);
+        if (tipBounds.left + tipBounds.width > bodyBounds.width) {
+            this._toolTipDiv.style.width = (bodyBounds.width - tipBounds.left) + "px";
+            tipBounds = new Core.Web.Measure.Bounds(this._toolTipDiv);
+        }
+        if (tipBounds.top + tipBounds.height > bodyBounds.height) {
+            this._toolTipDiv.style.height = (bodyBounds.height - tipBounds.top) + "px";
+        }
     },
     
     /**

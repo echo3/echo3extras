@@ -68,5 +68,11 @@ public class ToolTipContainerTest extends AbstractTest {
                 tooltip.add(new Label(StyleUtil.QUASI_LATIN_TEXT_1));
             }
         });
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Large/Wide Label", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tooltip.removeAll();
+                tooltip.add(new Label("Thisisalongwordwithoutanyspacesinittotestwidth. " + StyleUtil.QUASI_LATIN_TEXT_1));
+            }
+        });
     }
 }
