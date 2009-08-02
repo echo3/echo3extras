@@ -56,7 +56,7 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
         this._dragStop();
         
         this._overlayDiv = document.createElement("div");
-        this._overlayDiv.style.cssText = "position:absolute;z-index:32767;width:100%;height:100%;cursor:pointer;";
+        this._overlayDiv.style.cssText = "position:absolute;z-index:30000;width:100%;height:100%;cursor:pointer;";
         Echo.Sync.FillImage.render(this.client.getResourceUrl("Echo", "resource/Transparent.gif"), this._overlayDiv);
 
         this._dragDiv = this._div.cloneNode(true);

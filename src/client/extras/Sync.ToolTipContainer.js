@@ -58,7 +58,7 @@ Extras.Sync.ToolTipContainer = Core.extend(Echo.Render.ComponentSync, {
      */
     _createToolTip: function(update) {
         var div = document.createElement("div");
-        div.style.zIndex = 32767;
+        div.style.zIndex = 30000;
         div.style.position = "absolute";
         var width = this.component.render("width");
         if (width) {

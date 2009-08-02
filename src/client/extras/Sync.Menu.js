@@ -16,13 +16,7 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
             selectionForeground: "#ffffff",
             selectionBackground: "#3f3f3f",
             border: "1px outset #cfcfcf"
-        },
-        
-        /**
-         * Highest possible z-index.
-         * @type Number
-         */
-        MAX_Z_INDEX: 65535
+        }
     }, 
     
     /**
@@ -267,28 +261,28 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
 
         if (bounds.top > 0) {
             this._overlay.top = document.createElement("div");
-            this._overlay.top.style.cssText = "position:absolute;z-index:32767;top:0;left:0;width:100%;" +
+            this._overlay.top.style.cssText = "position:absolute;z-index:30000;top:0;left:0;width:100%;" +
                     "height:" + bounds.top + "px;";
             document.body.appendChild(this._overlay.top);
         }
         
         if (bottom < domainBounds.height) {
             this._overlay.bottom = document.createElement("div");
-            this._overlay.bottom.style.cssText = "position:absolute;z-index:32767;bottom:0;left:0;width:100%;" +
+            this._overlay.bottom.style.cssText = "position:absolute;z-index:30000;bottom:0;left:0;width:100%;" +
                     "top:" + bottom + "px;";
             document.body.appendChild(this._overlay.bottom);
         }
 
         if (bounds.left > 0) {
             this._overlay.left = document.createElement("div");
-            this._overlay.left.style.cssText = "position:absolute;z-index:32767;left:0;" +
+            this._overlay.left.style.cssText = "position:absolute;z-index:30000;left:0;" +
                     "width:" + bounds.left + "px;top:" + bounds.top + "px;height:" + bounds.height + "px;";
             document.body.appendChild(this._overlay.left);
         }
 
         if (right < domainBounds.width) {
             this._overlay.right = document.createElement("div");
-            this._overlay.right.style.cssText = "position:absolute;z-index:32767;right:0;" +
+            this._overlay.right.style.cssText = "position:absolute;z-index:30000;right:0;" +
                     "left:" + right + "px;top:" + bounds.top + "px;height:" + bounds.height + "px;";
             document.body.appendChild(this._overlay.right);
         }
@@ -579,7 +573,7 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
 
         this.element = document.createElement("div");
         this.element.style.position = "absolute";
-        this.element.style.zIndex = Extras.Sync.Menu.MAX_Z_INDEX;
+        this.element.style.zIndex = 30050;
         
         var opacity = (Core.Web.Env.NOT_SUPPORTED_CSS_OPACITY ? 100 : this.component.render("menuOpacity", 100)) / 100;
 

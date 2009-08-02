@@ -1346,7 +1346,7 @@ Extras.Sync.RichTextArea.OverlayPanePeer = Core.extend(Echo.Render.ComponentSync
     renderAdd: function(update, parentElement) {
         this._div = document.createElement("div");
         this.client.addElement(this._div);
-        this._div.style.cssText = "position:absolute;top:0;right:0;bottom:0;left:0;z-index:32767;";
+        this._div.style.cssText = "position:absolute;top:0;right:0;bottom:0;left:0;z-index:20000;";
         if (this.component.children.length == 1) {
             Echo.Render.renderComponentAdd(update, this.component.children[0], this._div);
         } else if (this.component.children.length > 1) {

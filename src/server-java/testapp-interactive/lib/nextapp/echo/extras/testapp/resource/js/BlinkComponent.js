@@ -63,7 +63,7 @@ BlinkComponent.Sync = Core.extend(Echo.Render.ComponentSync, {
             Core.Web.Scheduler.add(this._toggleRunnable);
         } else {
             this._toggleDiv = document.createElement("div");
-            this._toggleDiv.style.cssText = "position:absolute;z-index:32767;bottom:0;right:0;background-color:#abcdef;"
+            this._toggleDiv.style.cssText = "position:absolute;z-index:30000;bottom:0;right:0;background-color:#abcdef;"
                     + "border:1px outset #abcdef;padding:2px 10px;cursor:pointer;";
             this._toggleDiv.appendChild(document.createTextNode("Show/Hide"));
             Core.Web.Event.add(this._toggleDiv, "click", Core.method(this, this._toggle));

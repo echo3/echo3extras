@@ -328,7 +328,7 @@ Extras.Sync.TransitionPane.BlindTransition = Core.extend(Extras.Sync.TransitionP
         this._reverse = this.transitionPane.type === Extras.TransitionPane.TYPE_BLIND_BLACK_OUT;
 
         this._maskDiv = document.createElement("div");
-        this._maskDiv.style.cssText = "position:absolute;width:100%;height:100%;z-index:32767;";
+        this._maskDiv.style.cssText = "position:absolute;width:100%;height:100%;z-index:30000;";
         this.transitionPane.contentDiv.appendChild(this._maskDiv);
     },
 
@@ -536,7 +536,7 @@ Extras.Sync.TransitionPane.FadeOpacityColorTransition = Core.extend(Extras.Sync.
     /** @see Extras.Sync.Animation#init */
     init: function() {
         this._maskDiv = document.createElement("div");
-        this._maskDiv.style.cssText = "position:absolute;width:100%;height:100%;z-index:32767;";
+        this._maskDiv.style.cssText = "position:absolute;width:100%;height:100%;z-index:30000;";
         if (Core.Web.Env.PROPRIETARY_IE_OPACITY_FILTER_REQUIRED) {
             this._maskDiv.style.filter = "alpha(opacity=0)";
         } else {
