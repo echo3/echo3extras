@@ -416,11 +416,11 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
             // Clear height/width settings.
             this._tabs[i]._heightTd.style.height = clearHeight;
             if (maximumTabWidthPx) {
-                this._tabs[i]._labelDiv.style.width = "";
-                var labelBounds = new Core.Web.Measure.Bounds(this._tabs[i]._labelDiv, 
+                this._tabs[i]._textDiv.style.width = "";
+                var labelBounds = new Core.Web.Measure.Bounds(this._tabs[i]._textDiv, 
                             { flags: Core.Web.Measure.Bounds.FLAG_MEASURE_DIMENSION });
                 if (labelBounds.width > maximumTabWidthPx) {
-                    this._tabs[i]._labelDiv.style.width = maximumTabWidthPx + "px";
+                    this._tabs[i]._textDiv.style.width = maximumTabWidthPx + "px";
                 }
             }
             
@@ -1376,6 +1376,7 @@ Extras.Sync.TabPane.Tab = Core.extend({
         this._contentDiv = null;
         this._closeIconTd = null;
         this._iconImg = null;
+        this._textDiv = null;
         this._closeImg = null;
         this._heightTd = null;
         this._labelDiv = null;
@@ -1462,9 +1463,13 @@ Extras.Sync.TabPane.Tab = Core.extend({
         tr.appendChild(this._heightTd);
         
         td = document.createElement("td");
-        td.style.cssText = "padding:0;white-space:nowrap;";
+        td.style.cssText = "padding:0;";
         Echo.Sync.Alignment.render(tabPane.render("tabAlignment", Extras.Sync.TabPane._DEFAULTS.tabAlignment), td, true, tabPane);
-        td.appendChild(document.createTextNode(title));
+        this._textDiv = document.createElement("div");
+        this._textDiv.style.cssText = "overflow:hidden;white-space:nowrap;";
+        this._textDiv.appendChild(document.createTextNode(title));
+        td.appendChild(this._textDiv);
+        
         tr.appendChild(td);
         
         if (closeIcon) {
