@@ -40,7 +40,7 @@ Extras.Sync.ToolTipContainer = Core.extend(Echo.Render.ComponentSync, {
         
         // Determine size of window and tip.
         var bodyBounds = new Core.Web.Measure.Bounds(document.body);
-        var tipBounds = new Core.Web.Measure.Bounds(this._toolTipDiv);
+        var tipBounds = new Core.Web.Measure.Bounds(this._toolTipDiv.firstChild);
         
         // Load default tip position.
         var tipX = cursorX + 10;
@@ -66,14 +66,7 @@ Extras.Sync.ToolTipContainer = Core.extend(Echo.Render.ComponentSync, {
         this._toolTipDiv.style.left = tipX + "px";
         this._toolTipDiv.style.top = tipY + "px";
         
-        tipBounds = new Core.Web.Measure.Bounds(this._toolTipDiv);
-        if (tipBounds.left + tipBounds.width > bodyBounds.width) {
-            this._toolTipDiv.style.width = (bodyBounds.width - tipBounds.left) + "px";
-            tipBounds = new Core.Web.Measure.Bounds(this._toolTipDiv);
-        }
-        if (tipBounds.top + tipBounds.height > bodyBounds.height) {
-            this._toolTipDiv.style.height = (bodyBounds.height - tipBounds.top) + "px";
-        }
+        Core.Web.VirtualPosition.redraw(this._toolTipDiv);
     },
     
     /**
@@ -145,9 +138,10 @@ Extras.Sync.ToolTipContainer = Core.extend(Echo.Render.ComponentSync, {
     
                 // Create container for/render "tool tip" component.
                 this._toolTipDiv = document.createElement("div");
-                this._toolTipDiv.style.cssText = "position:absolute;z-index:30000;overflow:hidden;";
+                this._toolTipDiv.style.cssText = "position:absolute;z-index:30000;overflow:hidden;right:0;bottom:0;";
                 
                 var toolTipContentDiv = document.createElement("div");
+                toolTipContentDiv.style.cssText = "position:absolute;"; 
                 var width = this.component.render("width");
                 if (width) {
                     toolTipContentDiv.style.width = Echo.Sync.Extent.toCssValue(width);
