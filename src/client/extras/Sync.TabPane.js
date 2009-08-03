@@ -1031,12 +1031,15 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
      * 
      * @param {Number} position the scroll position, in pixels
      * @return a boolean state indicating whether the scroll position could be set exactly (true) or was bounded by
-     *         an attempt to be scrolled to far (false)
+     *         an attempt too be scrolled to far (false)
      * @type Boolean
      */
     setScrollPosition: function(position) {
         var bounded = false,
             oversize = this._totalTabWidth > this._tabContainerWidth;
+            
+        // Set position to zero in the event that header is not oversize.
+        position = oversize ? position : 0;
             
         if (position < 0) {
             position = 0;
