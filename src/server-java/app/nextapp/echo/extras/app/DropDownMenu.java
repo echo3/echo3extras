@@ -45,7 +45,7 @@ import nextapp.echo.extras.app.menu.MenuStateModel;
 import nextapp.echo.extras.app.menu.OptionModel;
 
 /**
- * EXPERIMENTAL: Under Development, API may change.
+ * A drop-down menu component which may be used as an inline menu or as a stateful hierarchal selection component.
  */
 public class DropDownMenu extends AbstractMenuComponent {
     
@@ -77,6 +77,9 @@ public class DropDownMenu extends AbstractMenuComponent {
     public static final String SELECTION_CHANGED_PROPERTY = "selection";
     public static final String SELECTION_MODEL_CHANGED_PROPERTY = "selectionModel";
     
+    /**
+     * The selection model.
+     */
     private MenuSelectionModel selectionModel;
     
     /**
