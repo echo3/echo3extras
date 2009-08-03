@@ -137,10 +137,6 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
          */
         processAction: function(itemModel) {
             this.component.doAction(itemModel);
-        },
-        
-        renderFocus: function() {
-            Core.Web.DOM.focusElement(this.element);
         }
     },
 
@@ -381,6 +377,11 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
     /** @see Echo.Render.ComponentSync#renderUpdate */
     renderDispose: function(update) {
         this.deactivate();
+    },
+    
+    /** @see Echo.Render.ComponentSync#renderFocus */
+    renderFocus: function() {
+        Core.Web.DOM.focusElement(this.element);
     },
     
     /** @see Echo.Render.ComponentSync#renderHide */
