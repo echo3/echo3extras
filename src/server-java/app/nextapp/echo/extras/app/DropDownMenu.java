@@ -79,8 +79,14 @@ public class DropDownMenu extends AbstractMenuComponent {
     
     private MenuSelectionModel selectionModel;
     
+    /**
+     * Internal change listener.
+     */
     private ChangeListener changeListener = new ChangeListener(){
     
+        /**
+         * @see nextapp.echo.app.event.ChangeListener#stateChanged(nextapp.echo.app.event.ChangeEvent)
+         */
         public void stateChanged(ChangeEvent e) {
             firePropertyChange(SELECTION_CHANGED_PROPERTY, null, null);
         }
@@ -112,12 +118,20 @@ public class DropDownMenu extends AbstractMenuComponent {
      * <code>MenuStateModel</code> to provide state information.
      * 
      * @param model the model
-     * @param stateModel the selection model
+     * @param stateModel the state model
      */
     public DropDownMenu(MenuModel model, MenuStateModel stateModel) {
         super(model, stateModel);
     }
     
+    /**
+     * Creates a new <code>DropDownMenu</code> displaying the specified
+     * <code>MenuModel</code> and determining selection via the specified
+     * <code>MenuSelectionModel<code>.
+     * 
+     * @param model the model
+     * @param selectionModel the selection model
+     */
     public DropDownMenu(MenuModel model, MenuSelectionModel selectionModel) {
         super(model, null);
         setSelectionModel(selectionModel);
@@ -146,6 +160,11 @@ public class DropDownMenu extends AbstractMenuComponent {
         }
     }
     
+    /**
+     * Returns the <code>MenuSelectionModel</code>.
+     * 
+     * @return the <code>MenuSelectionModel</code>
+     */
     public MenuSelectionModel getSelectionModel() {
         return selectionModel;
     }
