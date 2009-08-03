@@ -684,10 +684,7 @@ Extras.Sync.Menu.RenderedMenu = Core.extend({
 
                 menuItemContentTd = document.createElement("td");
                 Echo.Sync.Insets.render(textPadding, menuItemContentTd, "padding");
-                var lineWrap = this.component.render("lineWrap");
-                if (lineWrap != null && !lineWrap) {
-                    menuItemContentTd.style.whiteSpace = "nowrap";
-                }
+                menuItemContentTd.style.whiteSpace = "nowrap";
                 if (this.stateModel && !this.stateModel.isEnabled(item.modelId)) {
                     Echo.Sync.Color.render(this.component.render("disabledForeground", 
                             Extras.Sync.Menu.DEFAULTS.disabledForeground), menuItemContentTd, "color");
@@ -1176,7 +1173,10 @@ Extras.Sync.DropDownMenu = Core.extend(Extras.Sync.Menu, {
         relativeDiv.appendChild(expandDiv);
   
         this._contentDiv = document.createElement("div");
-        this._contentDiv.style.cssText = "float:left;white-space:nowrap;";
+        this._contentDiv.style.cssText = "float:left;";
+        if (!this.component.render("lineWrap")) {
+            this._contentDiv.style.whiteSpace = "nowrap";
+        }
         Echo.Sync.Insets.render(this.component.render("insets", "2px 5px"), this._contentDiv, "padding");
         dropDownDiv.appendChild(this._contentDiv);
         
