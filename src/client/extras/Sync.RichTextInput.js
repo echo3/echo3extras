@@ -249,7 +249,7 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
                 html = html || "<p></p>";
                 html = html.replace(Extras.Sync.RichTextInput.Html._LEADING_WHITESPACE, "");
                 html = html.replace(Extras.Sync.RichTextInput.Html._TRAILING_WHITESPACE, "");
-                if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
+                if (Core.Web.Env.ENGINE_MSHTML) {
                     html = html.replace(Extras.Sync.RichTextInput.Html._MSIE_INVALID_FONT_COLOR_REPL, "$1\"$2\"$3");
                     html = html.replace(Extras.Sync.RichTextInput.Html._MSIE_INVALID_FONT_BACKGROUND_REPL, "$1background-color");
                 }
@@ -292,7 +292,7 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
              */
             $construct: function(targetWindow) {
                 this.window = targetWindow;
-                if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
+                if (Core.Web.Env.ENGINE_MSHTML) {
                     this.ieRange = targetWindow.document.selection.createRange();
                     if (this.ieRange.parentElement().ownerDocument != targetWindow.document) {
                         targetWindow.focus();
@@ -522,7 +522,7 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
             }
             break;
         case "insertHtml":
-            if (Core.Web.Env.BROWSER_INTERNET_EXPLORER) {
+            if (Core.Web.Env.ENGINE_MSHTML) {
                 if (!this._selectionRange) {
                     this._storeRange(); 
                 }
