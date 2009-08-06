@@ -87,7 +87,7 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
     /** Constructor. */
     $construct: function() {
         this.tabs = [];
-        this.resetOverflowForAnimation = Core.Web.Env.BROWSER_MOZILLA || Core.Web.Env.BROWSER_INTERNET_EXPLORER;
+        this.resetOverflowForAnimation = Core.Web.Env.ENGINE_GECKO || Core.Web.Env.ENGINE_MSHTML;
         this._tabSelectListenerRef = Core.method(this, this._tabSelectListener);
         this.imageMonitorRef = Core.method(this, this._imageMonitor);
     },
