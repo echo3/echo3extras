@@ -78,7 +78,21 @@ public class MenuBarPaneTest extends AbstractTest {
         splitPane.add(menu);
         
         setTestComponent(splitPane, menu);
-
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Test Model", new ActionListener(){
+        
+            public void actionPerformed(ActionEvent e) {
+                menu.setModel(createMenuModel());
+            }
+        });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Empty Model", new ActionListener(){
+        
+            public void actionPerformed(ActionEvent e) {
+                menu.setModel(new DefaultMenuModel());
+            }
+        });
+        
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "foreground");
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "background");
         addBorderPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "border");
