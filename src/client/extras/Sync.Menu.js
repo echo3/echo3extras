@@ -1478,7 +1478,9 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
         var menuBarTr = document.createElement("tr");
         menuBarTbody.appendChild(menuBarTr);
         
-        if (this.menuModel != null) {
+        if (this.menuModel == null || this.menuModel.items.length === 0) {
+            menuBarTr.appendChild(this._createMenuBarItem("\u00a0", null));
+        } else {
             var items = this.menuModel.items;
             for (var i = 0; i < items.length; ++i) {
                 var item = items[i];
@@ -1488,13 +1490,14 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
                     this.itemElements[item.id] = menuBarItemTd;
                 }
             }
+
+            Core.Web.Event.add(menuBarDiv, "click", Core.method(this, this._processClick), false);
+            Core.Web.Event.add(menuBarDiv, "mouseover", Core.method(this, this._processItemEnter), false);
+            Core.Web.Event.add(menuBarDiv, "mouseout", Core.method(this, this._processItemExit), false);
         }
         
-        Core.Web.Event.add(menuBarDiv, "click", Core.method(this, this._processClick), false);
-        Core.Web.Event.add(menuBarDiv, "mouseover", Core.method(this, this._processItemEnter), false);
-        Core.Web.Event.add(menuBarDiv, "mouseout", Core.method(this, this._processItemExit), false);
         Core.Web.Event.Selection.disable(menuBarDiv);
-    
+        
         return menuBarDiv;
     },
     
