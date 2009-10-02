@@ -32,9 +32,10 @@ package nextapp.echo.extras.app;
 import nextapp.echo.app.Component;
 
 /**
- * ToolTipContainer component: a container which may contain two children, the first of which is always displayed and the second of
- * which is displayed when the mouse is hovered over the first. May contain zero, one, or two components as children. May not
- * contain <code>Pane</code> components.
+ * ToolTipContainer component: A container which enables the use of arbitrary components as tooltip content.
+ * May contain up to two child components, the first of which is always displayed and
+ * the second of which is displayed as a tooltip when the mouse is hovered over the first.
+ * May not contain <code>Pane</code>components.
  */
 public class ToolTipContainer extends Component {
     
