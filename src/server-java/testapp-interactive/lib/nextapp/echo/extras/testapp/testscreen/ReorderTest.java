@@ -29,6 +29,9 @@
 
 package nextapp.echo.extras.testapp.testscreen;
 
+import nextapp.echo.app.Border;
+import nextapp.echo.app.Color;
+import nextapp.echo.app.Extent;
 import nextapp.echo.app.Insets;
 import nextapp.echo.app.Label;
 import nextapp.echo.app.Row;
@@ -54,12 +57,16 @@ public class ReorderTest extends AbstractTest {
         
         for (int i = 0; i < 6; ++i) {
             Row row = new Row();
-            row.setInsets(new Insets(5));
+            row.setBorder(new Border(1, new Color(0xddddff), Border.STYLE_OUTSET));
+            row.setBackground(new Color(0xddddff));
+            row.setInsets(new Insets(10, 5));
+            row.setCellSpacing(new Extent(10));
+            
+            row.add(new ReorderHandle());
             
             Label label = new Label("Label #" + i);
             row.add(label);
             
-            row.add(new ReorderHandle());
             reorder.add(row);
         }
         
