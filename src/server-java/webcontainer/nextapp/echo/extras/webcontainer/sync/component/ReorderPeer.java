@@ -87,9 +87,9 @@ public class ReorderPeer extends AbstractComponentSynchronizePeer {
      * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#getInputPropertyClass(java.lang.String)
      */
     public Class getInputPropertyClass(String propertyName) {
-        if (Reorder.ORDER_CHANGED_PROPERTY.equals(propertyName)) {
-            return int.class;
-        }
+//        if (Reorder.ORDER_CHANGED_PROPERTY.equals(propertyName)) {
+//            return int.class;
+//        }
         return null;
     }
 
