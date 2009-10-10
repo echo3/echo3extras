@@ -134,6 +134,8 @@ public class TestPane extends ContentPane {
                 "Menu Bar Pane", Styles.ICON_16_MENU_BAR_PANE));
         testsMenu.addItem(new DefaultOptionModel("Launch_RichTextAreaTest",
                 "Rich Text Area", Styles.ICON_16_RICH_TEXT_AREA));
+        testsMenu.addItem(new DefaultOptionModel("Launch_ReorderTest",
+                "Reorder", null));
         testsMenu.addItem(new DefaultOptionModel("Launch_TabPaneTest", "Tab Pane",
                 Styles.ICON_16_TAB_PANE));
         testsMenu.addItem(new DefaultOptionModel("Launch_ToolTipContainerTest", "Tooltip Container",

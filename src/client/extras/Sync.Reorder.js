@@ -1,0 +1,238 @@
+/**
+ * Component rendering peer: Reorder
+ */
+Extras.Reorder.Sync = Core.extend(Echo.Render.ComponentSync, {
+    
+    $static: {
+        _supportedPartialProperties: ["order"]
+    },  
+    
+    $load: function() {
+        Echo.Render.registerPeer("Extras.Reorder", this);
+    },
+    
+    _div: null,
+    _mouseUpRef: null,
+    _mouseMoveRef: null,
+    _movingDiv: null,
+    _dragDiv: null,
+    
+    _sourceIndex: null,
+    _targetIndex: null,
+    
+    /**
+     * Array of <code>Core.Web.Measure.Bounds</code> instances describing boundaries of child elements.
+     * Indices of this array correspond to render ordered of child elements.  This array is nulled when
+     * elements are reordered, and recalculated by <code>_getIndex()</code> when required.
+     * @type Array
+     */
+    _childBounds: null,
+    
+    $construct: function() {
+        this._mouseUpRef = Core.method(this, this._mouseUp);
+        this._mouseMoveRef = Core.method(this, this._mouseMove);
+    },
+    
+    /**
+     * Determines the index of the child element at the specified y-coordinate.
+     * 
+     * @param mouseY the event clientY value, i.e., distance from top of screen.
+     */
+    _getIndex: function(mouseY) {
+        var index = 0, childDiv = null;
+        
+        if (!this._childBounds) {
+            this._childBounds = [];
+            childDiv = this._div.firstChild;
+            while (childDiv) {
+                this._childBounds.push(new Core.Web.Measure.Bounds(childDiv));
+                childDiv = childDiv.nextSibling;
+            }
+        }
+        
+        if (mouseY < this._childBounds[0].top) {
+            // Before first index: return first index.
+            return 0;
+        }
+
+        for (var index = 0; index < this._childBounds.length; ++index) {
+            if (mouseY >= this._childBounds[index].top && 
+                    mouseY <= this._childBounds[index].top + this._childBounds[index].height) {
+                return index;
+            }
+        }
+        
+        // After last index: return last index.
+        return index - 1;
+    },
+    
+    _mouseDown: function(e) {
+        var handle = null,
+            index,
+            node = e.target;
+        while (node != null && node != this._div) {
+            if (node.__REORDER_HANDLE) {
+                handle = node;
+                break;
+            }
+            node = node.parentNode;
+        }
+        if (!handle) {
+            return;
+        }
+        
+        while (node.parentNode != this._div) {
+            node = node.parentNode;
+        }
+        this._movingDiv = node;
+        
+        node = this._div.firstChild;
+        index = 0;
+        while (node != this._movingDiv) {
+            node = node.nextSibling;
+            ++index;
+        }
+        
+        this._sourceIndex = index;
+        this._targetIndex = index;
+        
+        Core.Web.Event.add(document.body, "mouseup", this._mouseUpRef);
+        Core.Web.Event.add(document.body, "mousemove", this._mouseMoveRef);
+        this._movingDivBounds = new Core.Web.Measure.Bounds(this._movingDiv);
+        
+        this._dragOffsetY =  e.clientY - this._movingDivBounds.top;
+        
+        this._dragDiv = this._movingDiv.cloneNode(true);
+        this._dragDiv.style.opacity = 0.8;
+        this._dragDiv.style.position = "absolute";
+        this._dragDiv.style.zIndex = 1000;
+        this._dragDiv.style.left = this._movingDivBounds.left + "px";
+        this._dragDiv.style.top = this._movingDivBounds.top + "px";
+        this._dragDiv.style.width = this._movingDivBounds.width + "px";
+        this._dragDiv.style.height = this._movingDivBounds.height + "px";
+        document.body.appendChild(this._dragDiv);
+
+        this._movingDiv.style.visibility = "hidden";
+        Core.Web.DOM.preventEventDefault(e);
+    },
+    
+    _mouseMove: function(e) {
+        this._dragDiv.style.top = (e.clientY - this._dragOffsetY) + "px";
+        var hoverIndex = this._getIndex(e.clientY);
+        if (hoverIndex != this._targetIndex) {
+            this._div.removeChild(this._movingDiv);
+            if (hoverIndex < this._div.childNodes.length) {
+                this._div.insertBefore(this._movingDiv, this._div.childNodes[hoverIndex]);
+            } else {
+                this._div.appendChild(this._movingDiv);
+            }
+            this._childBounds = null;
+            this._targetIndex = hoverIndex; 
+        }
+    },
+    
+    _mouseUp: function(e) {
+        document.body.removeChild(this._dragDiv);
+        this._dragDiv = null;
+        
+        Core.Web.Event.remove(document.body, "mouseup", this._mouseUpRef);
+        Core.Web.Event.remove(document.body, "mousemove", this._mouseMoveRef);
+        this._movingDiv.style.visibility = "visible";
+        this._movingDiv = null;
+Core.Debug.consoleWrite(this.component.get("order"));
+Core.Debug.consoleWrite("move: " + this._sourceIndex + " > " + this._targetIndex);
+        this.component.reorder(this._sourceIndex, this._targetIndex);
+Core.Debug.consoleWrite(this.component.get("order"));
+    },
+    
+    /** @see Echo.Render.ComponentSync#renderAdd */
+    renderAdd: function(update, parent) {
+        this._div = document.createElement("div");
+        this._div.id = this.component.renderId;
+        this._div.style.cssText = "";
+        
+        
+        
+        var i, order;
+        var order = this.component.get("order");
+        if (!order) {
+//            order = [];
+//            for (i = 0; i < componentOrder.length; ++i) {
+//                this._order[i] = componentOrder[i];
+//            }
+        }
+        
+        for (var i = 0; i < this.component.children.length; ++i) {
+            var cell = document.createElement("div");
+            Echo.Render.renderComponentAdd(update, this.component.children[i], cell);
+            this._div.appendChild(cell);
+        }
+        
+        Core.Web.Event.add(this._div, "mousedown", Core.method(this, this._mouseDown));
+        parent.appendChild(this._div);
+    },
+    
+    /** @see Echo.Render.ComponentSync#renderDispose */
+    renderDispose: function(update) {
+        Core.Web.Event.removeAll(this._div);
+        this._div = null;
+    },
+    
+    /** @see Echo.Render.ComponentSync#renderUpdate */
+    renderUpdate: function(update) {
+        var fullRender = update.hasAddedChildren() || update.hasRemovedChildren() || 
+                !update.isUpdatedPropertySetIn({ order: true });
+        if (fullRender) {
+            var element = this._div;
+            var containerElement = element.parentNode;
+            this.renderDispose(update);
+            containerElement.removeChild(element);
+            this.renderAdd(update, containerElement);
+        }
+        return fullRender;
+    }
+});
+
+/**
+ * Component rendering peer: Reorder.Handle
+ */
+Extras.Reorder.Handle.Sync = Core.extend(Echo.Render.ComponentSync, {
+    
+    $load: function() {
+        Echo.Render.registerPeer("Extras.Reorder.Handle", this);
+    },
+    
+    _span: null,
+    _img: null,
+    
+    /** @see Echo.Render.ComponentSync#renderAdd */
+    renderAdd: function(update, parent) {
+        this._span = document.createElement("span");
+        this._span.__REORDER_HANDLE = true;
+        this._span.id = this.component.renderId;
+        this._span.style.cssText = "";
+        
+        this._img = document.createElement("img");
+        this._img.src = this.component.render("icon", this.client.getResourceUrl("Extras", "image/reorder/Icon32Move.png"));
+        this._span.appendChild(this._img);
+        
+        parent.appendChild(this._span);
+    },
+    
+    /** @see Echo.Render.ComponentSync#renderDispose */
+    renderDispose: function(update) {
+        Core.Web.Event.removeAll(this._span);
+        this._span = null;
+        this._img = null;
+    },
+    
+    /** @see Echo.Render.ComponentSync#renderUpdate */
+    renderUpdate: function(update) {
+        var element = this._span;
+        var containerElement = element.parentNode;
+        this.renderDispose(update);
+        containerElement.removeChild(element);
+        this.renderAdd(update, containerElement);
+        return false; // Does not allow child components.
+    }
+});
