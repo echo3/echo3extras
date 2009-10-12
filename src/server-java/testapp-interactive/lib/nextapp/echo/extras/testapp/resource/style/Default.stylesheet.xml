@@ -140,6 +140,8 @@
  </s>
  <s n="Default" t="nextapp.echo.app.WindowPane">
   <!-- Container-specific property to enable Internet Explorer PNG Alpha Renderer for shadow window border. -->
+  <p n="openAnimationTime" t="i">200</p>
+  <p n="closeAnimationTime" t="i">200</p>
   <p n="ieAlphaRenderBorder" t="b">true</p>
   <p n="titleInsets" t="Insets">5px 10px</p>
   <p n="titleBackground" t="Color">#2f2f4f</p>
