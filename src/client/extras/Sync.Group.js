@@ -64,6 +64,9 @@ Extras.Sync.Group = Core.extend(Echo.Render.ComponentSync, {
         
         this._div = document.createElement("div");
         this._div.id = this.component.renderId;
+        if (Core.Web.Env.QUIRK_IE_HAS_LAYOUT) {
+            this._div.style.cssText = "zoom:1;";
+        }
         Echo.Sync.Color.render(this.component.render("foreground"), this._div, "color");
         Echo.Sync.LayoutDirection.render(this.component.getLayoutDirection(), this._div);
     
