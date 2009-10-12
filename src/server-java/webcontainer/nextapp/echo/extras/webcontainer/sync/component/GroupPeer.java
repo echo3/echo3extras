@@ -56,14 +56,14 @@ public class GroupPeer extends AbstractComponentSynchronizePeer {
     static {
         CommonResources.install();
         ResourceRegistry resources = WebContainerServlet.getResourceRegistry();
-        resources.add("Extras", "image/group/GroupBorderTopLeft.png", ContentType.IMAGE_PNG);
-        resources.add("Extras", "image/group/GroupBorderTopRight.png", ContentType.IMAGE_PNG);
-        resources.add("Extras", "image/group/GroupBorderBottomLeft.png", ContentType.IMAGE_PNG);
-        resources.add("Extras", "image/group/GroupBorderBottomRight.png", ContentType.IMAGE_PNG);
-        resources.add("Extras", "image/group/GroupBorderTop.png", ContentType.IMAGE_PNG);
-        resources.add("Extras", "image/group/GroupBorderLeft.png", ContentType.IMAGE_PNG);
-        resources.add("Extras", "image/group/GroupBorderRight.png", ContentType.IMAGE_PNG);
-        resources.add("Extras", "image/group/GroupBorderBottom.png", ContentType.IMAGE_PNG);
+        resources.add("Extras", "image/group/TopLeft.png", ContentType.IMAGE_PNG);
+        resources.add("Extras", "image/group/TopRight.png", ContentType.IMAGE_PNG);
+        resources.add("Extras", "image/group/BottomLeft.png", ContentType.IMAGE_PNG);
+        resources.add("Extras", "image/group/BottomRight.png", ContentType.IMAGE_PNG);
+        resources.add("Extras", "image/group/Top.png", ContentType.IMAGE_PNG);
+        resources.add("Extras", "image/group/Left.png", ContentType.IMAGE_PNG);
+        resources.add("Extras", "image/group/Right.png", ContentType.IMAGE_PNG);
+        resources.add("Extras", "image/group/Bottom.png", ContentType.IMAGE_PNG);
         WebContainerServlet.getServiceRegistry().add(GROUP_SERVICE);
     }
     
