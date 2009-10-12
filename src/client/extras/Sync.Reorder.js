@@ -16,6 +16,7 @@ Extras.Reorder.Sync = Core.extend(Echo.Render.ComponentSync, {
     _mouseMoveRef: null,
     _movingDiv: null,
     _dragDiv: null,
+    _overlayDiv: null,
     
     _sourceIndex: null,
     _targetIndex: null,
@@ -31,6 +32,35 @@ Extras.Reorder.Sync = Core.extend(Echo.Render.ComponentSync, {
     $construct: function() {
         this._mouseUpRef = Core.method(this, this._mouseUp);
         this._mouseMoveRef = Core.method(this, this._mouseMove);
+    },
+    
+    /**
+     * Starts a drag operation.
+     */
+    _dragStart: function() {
+        this._dragStop();
+
+        this._overlayDiv = document.createElement("div");
+        this._overlayDiv.style.cssText = "position:absolute;z-index:30000;width:100%;height:100%;cursor:pointer;";
+        Echo.Sync.FillImage.render(this.client.getResourceUrl("Echo", "resource/Transparent.gif"), this._overlayDiv);
+ 
+        document.body.appendChild(this._overlayDiv);
+
+        Core.Web.Event.add(document.body, "mousemove", this._mouseMoveRef, true);
+        Core.Web.Event.add(document.body, "mouseup", this._mouseUpRef, true);
+    },
+    
+    /**
+     * Stop a drag operation.
+     */
+    _dragStop: function() {
+        Core.Web.Event.remove(document.body, "mousemove", this._mouseMoveRef, true);
+        Core.Web.Event.remove(document.body, "mouseup", this._mouseUpRef, true);
+
+        if (this._overlayDiv) {
+            document.body.removeChild(this._overlayDiv);
+            this._overlayDiv = null;
+        }
     },
     
     /**
@@ -81,6 +111,9 @@ Extras.Reorder.Sync = Core.extend(Echo.Render.ComponentSync, {
             return;
         }
         
+        Core.Web.dragInProgress = true;
+        Core.Web.DOM.preventEventDefault(e);
+        
         while (node.parentNode != this._div) {
             node = node.parentNode;
         }
@@ -96,8 +129,8 @@ Extras.Reorder.Sync = Core.extend(Echo.Render.ComponentSync, {
         this._sourceIndex = index;
         this._targetIndex = index;
         
-        Core.Web.Event.add(document.body, "mouseup", this._mouseUpRef);
-        Core.Web.Event.add(document.body, "mousemove", this._mouseMoveRef);
+        this._dragStart();
+        
         this._movingDivBounds = new Core.Web.Measure.Bounds(this._movingDiv);
         
         this._dragOffsetY =  e.clientY - this._movingDivBounds.top;
@@ -113,7 +146,6 @@ Extras.Reorder.Sync = Core.extend(Echo.Render.ComponentSync, {
         document.body.appendChild(this._dragDiv);
 
         this._movingDiv.style.visibility = "hidden";
-        Core.Web.DOM.preventEventDefault(e);
     },
     
     _mouseMove: function(e) {
@@ -132,17 +164,15 @@ Extras.Reorder.Sync = Core.extend(Echo.Render.ComponentSync, {
     },
     
     _mouseUp: function(e) {
+        Core.Web.dragInProgress = false;
         document.body.removeChild(this._dragDiv);
         this._dragDiv = null;
         
-        Core.Web.Event.remove(document.body, "mouseup", this._mouseUpRef);
-        Core.Web.Event.remove(document.body, "mousemove", this._mouseMoveRef);
+        this._dragStop();
+        
         this._movingDiv.style.visibility = "visible";
         this._movingDiv = null;
-Core.Debug.consoleWrite(this.component.get("order"));
-Core.Debug.consoleWrite("move: " + this._sourceIndex + " > " + this._targetIndex);
         this.component.reorder(this._sourceIndex, this._targetIndex);
-Core.Debug.consoleWrite(this.component.get("order"));
     },
     
     /** @see Echo.Render.ComponentSync#renderAdd */
@@ -151,16 +181,9 @@ Core.Debug.consoleWrite(this.component.get("order"));
         this._div.id = this.component.renderId;
         this._div.style.cssText = "";
         
-        
-        
         var i, order;
         var order = this.component.get("order");
-        if (!order) {
-//            order = [];
-//            for (i = 0; i < componentOrder.length; ++i) {
-//                this._order[i] = componentOrder[i];
-//            }
-        }
+        //FIXME render in spec'ed order.
         
         for (var i = 0; i < this.component.children.length; ++i) {
             var cell = document.createElement("div");
@@ -210,7 +233,7 @@ Extras.Reorder.Handle.Sync = Core.extend(Echo.Render.ComponentSync, {
         this._span = document.createElement("span");
         this._span.__REORDER_HANDLE = true;
         this._span.id = this.component.renderId;
-        this._span.style.cssText = "";
+        this._span.style.cssText = "cursor:pointer;";
         
         this._img = document.createElement("img");
         this._img.src = this.component.render("icon", this.client.getResourceUrl("Extras", "image/reorder/Icon32Move.png"));
