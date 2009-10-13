@@ -228,6 +228,7 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         var offset = Core.Web.DOM.getEventOffset(e);
         this._h = (this._svHeight - (offset.y - 7)) * 360 / this._svHeight;
         this._updateDisplayedColor();
+        Core.Web.DOM.preventEventDefault(e);
     },
     
     /**
@@ -274,6 +275,7 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         this._v = (offset.x - this._svXOffset) / this._svWidth;
         this._s = 1 - ((offset.y - this._svYOffset) / this._svHeight);
         this._updateDisplayedColor();
+        Core.Web.DOM.preventEventDefault(e);
     },
     
     /** @see Echo.Render.ComponentSync#renderAdd */
