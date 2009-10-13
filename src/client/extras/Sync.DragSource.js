@@ -159,9 +159,18 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
      * @type Element
      */
     _findElement: function(searchElement, x, y) {
-        if (searchElement.style.display == "none" || searchElement.style.visibility == "hidden" || 
-                (searchElement.nodeName && searchElement.nodeName.toLowerCase() == "colgroup")) {
-            // Ignore non-displayed elements, hidden elements, and COLGROUP elements.
+        if (searchElement.style.display == "none") {
+            // Not displayed.
+            return null;
+        }
+
+        if (searchElement.style.visibility == "hidden") {
+            // Not visible.
+            return null;
+        }
+        
+        if (searchElement.nodeName && searchElement.nodeName.toLowerCase() == "colgroup") {
+            // Ignore colgroups.
             return null;
         }
 
@@ -220,21 +229,18 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
      * @return the highest candidate element
      * @type Element
      */
-    _findHighestCandidate: function(searchElement, candidates) {
+    _findHighestCandidate: function(parentElement, candidates) {
         var candidatePaths = [];
-        var candidateIndex;
-        for (candidateIndex = 0; candidateIndex < candidates.length; ++candidateIndex) {
-            candidatePaths[candidateIndex] = [];
-            var element = candidates[candidateIndex];
-            if (element.style.zIndex) {
-                candidatePaths[candidateIndex].unshift(element.style.zIndex);
-            }
-            while (element != searchElement) {
-                element = element.parentNode;
+        var iCandidate;
+        for (iCandidate = 0; iCandidate < candidates.length; ++iCandidate) {
+            candidatePaths[iCandidate] = [];
+            var element = candidates[iCandidate];
+            do {
                 if (element.style.zIndex) {
-                    candidatePaths[candidateIndex].unshift(element.style.zIndex);
+                    candidatePaths[iCandidate].unshift(element.style.zIndex);
                 }
-            }
+                element = element.parentNode;
+            } while (element != parentElement);
         }
         
         var elementIndex = 0;
@@ -243,17 +249,17 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
             elementsFoundOnIteration = false;
             var highestZIndex = 0;
             var highestCandidateIndices = [];
-            for (candidateIndex = 0; candidateIndex < candidatePaths.length; ++candidateIndex) {
-                if (elementIndex < candidatePaths[candidateIndex].length) {
-                    var zIndex = candidatePaths[candidateIndex][elementIndex];
+            for (iCandidate = 0; iCandidate < candidatePaths.length; ++iCandidate) {
+                if (elementIndex < candidatePaths[iCandidate].length) {
+                    var zIndex = candidatePaths[iCandidate][elementIndex];
                     if (zIndex && zIndex > 0 && zIndex >= highestZIndex) {
                         if (zIndex == highestZIndex) {
                             // Value is equal to previous highest found, add to list of highest.
-                            highestCandidateIndices.push(candidateIndex);
+                            highestCandidateIndices.push(iCandidate);
                         } else {
                             // Value is greater than highest found, clear list of highest and add.
                             highestCandidateIndices = [];
-                            highestCandidateIndices.push(candidateIndex);
+                            highestCandidateIndices.push(iCandidate);
                         }
                     }
                     elementsFoundOnIteration = true;
@@ -271,6 +277,7 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
                 }
                 candidates = remainingCandidates;
             }
+            ++elementIndex;
         } while (elementsFoundOnIteration);
         
         return candidates[candidates.length - 1];
