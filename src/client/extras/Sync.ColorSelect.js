@@ -288,7 +288,7 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
                 this.component.render("valueWidth", Extras.ColorSelect.DEFAULT_VALUE_WIDTH), true);
         this._svHeight = Echo.Sync.Extent.toPixels(
                 this.component.render("saturationHeight", Extras.ColorSelect.DEFAULT_SATURATION_HEIGHT), false);
-        this._hueWidth = Echo.Sync.Extent.toPixels(
+        this._hWidth = Echo.Sync.Extent.toPixels(
                 this.component.render("hueWidth", Extras.ColorSelect.DEFAULT_HUE_WIDTH), true);
         var displayHeight = Core.Web.Measure.extentToPixels("1em", false);
     
@@ -299,7 +299,7 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         this._div = document.createElement("div");
         this._div.id = this.component.renderId;
         this._div.style.cssText = "position:relative;left:0;top:0;overflow:hidden;";
-        this._div.style.width = (this._svWidth + this._hueWidth + 29) + "px";
+        this._div.style.width = (this._svWidth + this._hWidth + 29) + "px";
         this._div.style.height = (this._svHeight + 18 + displayHeight) +"px";
         
         // Create saturation / value selector.
@@ -329,9 +329,9 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         
         // Create hue selector.
         var hDiv = document.createElement("div");
-        hDiv.style.cssText = "position:absolute;top:7px;";
+        hDiv.style.cssText = "position:absolute;top:7px;overflow:hidden;";
         hDiv.style.left = (this._svWidth + 22) + "px";
-        hDiv.style.width = this._hueWidth + "px";
+        hDiv.style.width = this._hWidth + "px";
         hDiv.style.height = this._svHeight + "px";
         this._div.appendChild(hDiv);
     
@@ -339,24 +339,13 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
             var hGradientImg = document.createElement("img");
             hGradientImg.src = hGradientImageSrc;
             hGradientImg.style.cssText = "position:absolute;left:0;top:0;";
-            hGradientImg.style.width = this._hueWidth + "px";
+            hGradientImg.style.width = this._hWidth + "px";
             hGradientImg.style.height = this._svHeight + "px";
             hDiv.appendChild(hGradientImg);
         }
         
-        this._hLineDiv = document.createElement("div");
-        this._hLineDiv.style.cssText = "position:absolute;height:11px;overflow:hidden;";
-        this._hLineDiv.style.left = (this._svWidth + 15) + "px";
-        this._hLineDiv.style.top = (this._svHeight + 2) + "px";
-        this._hLineDiv.style.width = (this._hueWidth + 14) + "px";
-        this._div.appendChild(this._hLineDiv);
-        
-        var hLineBarDiv = document.createElement("div");
-        hLineBarDiv.style.cssText = "position:absolute;left:7px;top:4px;height:1px;font-size:1px;line-height:0;";
-        hLineBarDiv.style.borderTop = this._cursorBorderLight;
-        hLineBarDiv.style.borderBottom = this._cursorBorderDark;
-        hLineBarDiv.style.width = this._hueWidth + "px";
-        this._hLineDiv.appendChild(hLineBarDiv);
+        this._hCursorDiv = this._createHCursor();
+        hDiv.appendChild(this._hCursorDiv);
         
         this._colorDiv = document.createElement("div");
         this._colorDiv.style.cssText = 
@@ -364,7 +353,7 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
                 "overflow:hidden;border:1px #000000 outset;font-family:monospace;text-align:center;";
         this._colorDiv.style.height = displayHeight + "px";
         this._colorDiv.style.top = (this._svHeight + 16) + "px";
-        this._colorDiv.style.width = (this._svWidth + this._hueWidth + 13) + "px";
+        this._colorDiv.style.width = (this._svWidth + this._hWidth + 13) + "px";
         if (this.component.render("displayValue")) {
             this._colorDiv.appendChild(document.createTextNode("#000000"));
         }
@@ -381,7 +370,7 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         this._hListenerDiv = document.createElement("div");
         this._hListenerDiv.style.cssText = "position:absolute;z-index:1;top:0;cursor:crosshair;";
         this._hListenerDiv.style.left = (this._svWidth + 15) + "px";
-        this._hListenerDiv.style.width = (this._hueWidth + 14) + "px";
+        this._hListenerDiv.style.width = (this._hWidth + 14) + "px";
         this._hListenerDiv.style.height = (this._svHeight + 16) + "px";
         this._hListenerDiv.style.backgroundImage = "url(" +
                 this.client.getResourceUrl("Echo", "resource/Transparent.gif") + ")";
@@ -392,6 +381,16 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         Core.Web.Event.add(this._svListenerDiv, "mousedown", Core.method(this, this._processSVMouseDown), false);
         Core.Web.Event.add(this._hListenerDiv, "mousedown", Core.method(this, this._processHMouseDown), false);
         this._setColor(this.component.get("color"));
+    },
+    
+    _createHCursor: function() {
+        var div = document.createElement("div");
+        div.style.cssText = "position:absolute;font-size:1px;line-height:0;";
+        div.style.width = this._hWidth + "px";
+        div.style.height = (this._barRadius * 2 - 1) + "px";
+        div.style.borderTop = this._cursorBorderLight;
+        div.style.borderBottom = this._cursorBorderDark;
+        return div;
     },
     
     _createSVCursor: function() {
@@ -458,6 +457,7 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
                 line.style.left = (this._svWidth + this._boxRadius) + "px";
             }
         }
+        
         return line;
     },
     
@@ -576,13 +576,13 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         this._svCursorDiv.style.top = (sy - this._svHeight) + "px";
         this._svCursorDiv.style.left = (vx - this._svWidth) + "px";
         
-        var hLineTop = Math.floor((360 - this._h) / 360 * this._svHeight) + 2;
-        if (hLineTop < 2) {
-            hLineTop = 2;
-        } else if (hLineTop > this._svHeight + 2) {
-            hLineTop = this._svHeight + 2;
+        var hy = Math.floor((360 - this._h) / 360 * this._svHeight);
+        if (hy < 0) {
+            hy = 0;
+        } else if (hy > this._svHeight) {
+            hy = this._svHeight;
         }
-        this._hLineDiv.style.top = hLineTop + "px";
+        this._hCursorDiv.style.top = hy - this._barRadius + "px";
     }
 });
 
