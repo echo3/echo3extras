@@ -1206,6 +1206,9 @@ Extras.Sync.RemoteTree = Core.extend(Echo.Render.ComponentSync, {
                 Core.Web.Event.removeAll(e);
             }
         }
+        
+        this._buggerTBody = null;        
+        this._buggerRow = null;        
         this._effectBorderRows = null;
         this._prevMaxDepth = null;
         //this.component.treeStructure = null;
