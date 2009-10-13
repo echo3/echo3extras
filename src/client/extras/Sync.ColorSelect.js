@@ -294,7 +294,7 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         
         // Create saturation / value selector.
         this._svDiv = document.createElement("div");
-        this._svDiv.style.cssText = "position:absolute;background-color:#ff0000";
+        this._svDiv.style.cssText = "position:absolute;background-color:#ff0000;overflow:hidden;";
         this._svDiv.style.left = this._svXOffset + "px";
         this._svDiv.style.top = this._svYOffset + "px";
         this._svDiv.style.width = this._valueWidth + "px";
@@ -385,7 +385,7 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
     
     _createSVCursor: function() {
         var barDistance = 1;
-        var boxDistance = 4;
+        var boxDistance = 5;
         
         var div = document.createElement("div");
         div.style.cssText = "position:absolute;";
@@ -396,6 +396,11 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         div.appendChild(this._createSVBoxCorner(false, false, barDistance, boxDistance));
         div.appendChild(this._createSVBoxCorner(true, false, barDistance, boxDistance));
         div.appendChild(this._createSVBoxCorner(false, true, barDistance, boxDistance));
+        
+        div.appendChild(this._createSVLine(true, true, barDistance, boxDistance));
+        div.appendChild(this._createSVLine(false, true, barDistance, boxDistance));
+        div.appendChild(this._createSVLine(true, false, barDistance, boxDistance));
+        div.appendChild(this._createSVLine(false, false, barDistance, boxDistance));
         
         return div;
     },
@@ -412,6 +417,30 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         corner.style[left ? "borderLeft" : "borderRight"]  = "1px solid #ffffff";
         corner.style[top ? "borderTop" : "borderBottom"] = "1px solid #ffffff";
         return corner;
+    },
+    
+    _createSVLine: function(leading, vertical, barDistance, boxDistance) {
+        var line = document.createElement("div");
+        line.style.cssText = "position:absolute;";
+        line.style[vertical ? "borderLeft" : "borderTop"] = "1px solid #ffffff";
+        line.style[vertical ? "borderRight" : "borderBottom"] = "1px solid #ffffff";
+        
+        if (vertical) {
+            line.style.left = (this._valueWidth - barDistance) + "px";
+            line.style.height = (this._saturationHeight - boxDistance) + "px";
+            line.style.width = barDistance + "px";
+            if (!leading) {
+                line.style.top = (this._saturationHeight + boxDistance) + "px";
+            }
+        } else {
+            line.style.top = (this._saturationHeight - barDistance) + "px";
+            line.style.width = (this._valueWidth - boxDistance) + "px";
+            line.style.height = barDistance + "px";
+            if (!leading) {
+                line.style.left = (this._valueWidth + boxDistance) + "px";
+            }
+        }
+        return line;
     },
     
     /** @see Echo.Render.ComponentSync#renderDispose */
