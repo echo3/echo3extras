@@ -35,10 +35,12 @@ import nextapp.echo.app.Button;
 import nextapp.echo.app.Color;
 import nextapp.echo.app.Column;
 import nextapp.echo.app.Component;
+import nextapp.echo.app.ContentPane;
 import nextapp.echo.app.Extent;
 import nextapp.echo.app.Insets;
 import nextapp.echo.app.Label;
 import nextapp.echo.app.Row;
+import nextapp.echo.app.WindowPane;
 import nextapp.echo.app.event.ActionEvent;
 import nextapp.echo.app.event.ActionListener;
 import nextapp.echo.extras.app.DragSource;
@@ -57,9 +59,12 @@ public class DragSourceTest extends AbstractTest {
     public DragSourceTest() {
         super("DragSource", Styles.ICON_16_DRAG_SOURCE);
         
+        ContentPane testContentPane = new ContentPane();
+        add(testContentPane);
+        
         Column containerColumn = new Column();
         containerColumn.setCellSpacing(new Extent(20));
-        add(containerColumn);
+        testContentPane.add(containerColumn);
         
         for (int i = 0; i < 10; ++i) {
             containerColumn.add(new Label("This content present to enable scrollbar for testing."));
@@ -79,16 +84,44 @@ public class DragSourceTest extends AbstractTest {
         buttonColumn.setBorder(new Border(2, Color.BLUE, Border.STYLE_INSET));
         buttonColumn.add(new Label("Drag Sources: Buttons"));
         
-        final Column dropTarget1 = new Column();
+        Column dropTarget1 = new Column();
         dropTarget1.setBorder(new Border(2, Color.RED, Border.STYLE_OUTSET));
         dropTarget1.add(new Label("Drop Target 1"));
         dropTarget1.setRenderId("DropTarget1");
 
-        final Column dropTarget2 = new Column();
+        Column dropTarget2 = new Column();
         dropTarget2.setBorder(new Border(2, Color.RED, Border.STYLE_OUTSET));
         dropTarget2.setInsets(new Insets(10));
         dropTarget2.add(new Label("Drop Target 2"));
         dropTarget2.setRenderId("DropTarget2");
+        
+        WindowPane dropWindow1 = new WindowPane();
+        dropWindow1.setPositionX(new Extent(100, Extent.PERCENT));
+        dropWindow1.setPositionY(new Extent(0, Extent.PX));
+        dropWindow1.setStyleName("Default");
+        dropWindow1.setTitle("Drop Window 1");
+        testContentPane.add(dropWindow1);
+
+        final Column windowDropTarget1 = new Column();
+        windowDropTarget1.setBorder(new Border(2, Color.RED, Border.STYLE_OUTSET));
+        windowDropTarget1.setInsets(new Insets(10));
+        windowDropTarget1.add(new Label("Window Drop Target 1"));
+        windowDropTarget1.setRenderId("WindowDropTarget1");
+        dropWindow1.add(windowDropTarget1);
+        
+        WindowPane dropWindow2 = new WindowPane();
+        dropWindow2.setPositionX(new Extent(100, Extent.PERCENT));
+        dropWindow2.setPositionY(new Extent(100, Extent.PERCENT));
+        dropWindow2.setStyleName("Default");
+        dropWindow2.setTitle("Drop Window 2");
+        testContentPane.add(dropWindow2);
+
+        final Column windowDropTarget2 = new Column();
+        windowDropTarget2.setBorder(new Border(2, Color.RED, Border.STYLE_OUTSET));
+        windowDropTarget2.setInsets(new Insets(10));
+        windowDropTarget2.add(new Label("Window Drop Target 2"));
+        windowDropTarget2.setRenderId("WindowDropTarget2");
+        dropWindow2.add(windowDropTarget2);
         
         Column embeddedColumn = new Column();
         embeddedColumn.setBorder(new Border(2, Color.GREEN, Border.STYLE_INSET));
@@ -108,6 +141,8 @@ public class DragSourceTest extends AbstractTest {
             DragSource ds = new DragSource(label);
             ds.addDropTarget(dropTarget1.getRenderId());
             ds.addDropTarget(dropTarget2.getRenderId());
+            ds.addDropTarget(windowDropTarget1.getRenderId());
+            ds.addDropTarget(windowDropTarget2.getRenderId());
             ds.addDropListener(new DropListener() {
                 public void dropPerformed(DropEvent event) {
                     DragSource dragged = (DragSource) event.getSource();
@@ -131,6 +166,8 @@ public class DragSourceTest extends AbstractTest {
             DragSource ds = new DragSource(button);
             ds.addDropTarget(dropTarget1.getRenderId());
             ds.addDropTarget(dropTarget2.getRenderId());
+            ds.addDropTarget(windowDropTarget1.getRenderId());
+            ds.addDropTarget(windowDropTarget2.getRenderId());
             ds.addDropListener(new DropListener() {
                 public void dropPerformed(DropEvent event) {
                     DragSource dragged = (DragSource) event.getSource();
