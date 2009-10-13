@@ -314,31 +314,7 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
             }
         }
         
-        this._svCursorDiv = document.createElement("div");
-        this._svCursorDiv.style.cssText = "position:absolute;";
-        this._svCursorDiv.style.width = (this._valueWidth * 2 - 1) + "px";
-        this._svCursorDiv.style.height = (this._saturationHeight * 2 - 1) + "px";
-        
-        var boxTL = document.createElement("div");
-        boxTL.style.cssText = "position:absolute;";
-        boxTL.style.top = (this._valueWidth - 4) + "px";
-        boxTL.style.left = (this._saturationHeight - 4) + "px";
-        boxTL.style.width = 4 + "px";
-        boxTL.style.height = 4 + "px";
-        boxTL.style.borderTop = "1px solid #ffffff";
-        boxTL.style.borderLeft = "1px solid #ffffff";
-        this._svCursorDiv.appendChild(boxTL);
-        
-        var boxBR = document.createElement("div");
-        boxBR.style.cssText = "position:absolute;";
-        boxBR.style.top = (this._valueWidth) + "px";
-        boxBR.style.left = (this._saturationHeight) + "px";
-        boxBR.style.width = 4 + "px";
-        boxBR.style.height = 4 + "px";
-        boxBR.style.borderBottom = "1px solid #ffffff";
-        boxBR.style.borderRight = "1px solid #ffffff";
-        this._svCursorDiv.appendChild(boxBR);
-        
+        this._svCursorDiv = this._createSVCursor();
         this._svDiv.appendChild(this._svCursorDiv);
         
         // Create hue selector.
@@ -407,6 +383,37 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         this._setColor(this.component.get("color"));
     },
     
+    _createSVCursor: function() {
+        var barDistance = 1;
+        var boxDistance = 4;
+        
+        var div = document.createElement("div");
+        div.style.cssText = "position:absolute;";
+        div.style.width = (this._valueWidth * 2 - 1) + "px";
+        div.style.height = (this._saturationHeight * 2 - 1) + "px";
+        
+        div.appendChild(this._createSVBoxCorner(true, true, barDistance, boxDistance));
+        div.appendChild(this._createSVBoxCorner(false, false, barDistance, boxDistance));
+        div.appendChild(this._createSVBoxCorner(true, false, barDistance, boxDistance));
+        div.appendChild(this._createSVBoxCorner(false, true, barDistance, boxDistance));
+        
+        return div;
+    },
+    
+    _createSVBoxCorner: function(left, top, barDistance, boxDistance) {
+        var corner = document.createElement("div");
+        corner.style.cssText = "position:absolute;";
+
+        corner.style.left = (this._valueWidth + (left ? 0 - boxDistance : barDistance)) + "px";
+        corner.style.top = (this._saturationHeight + (top ? 0 - boxDistance : barDistance)) + "px";
+        corner.style.width = (boxDistance - barDistance) + "px";
+        corner.style.height = (boxDistance - barDistance) + "px";
+        
+        corner.style[left ? "borderLeft" : "borderRight"]  = "1px solid #ffffff";
+        corner.style[top ? "borderTop" : "borderBottom"] = "1px solid #ffffff";
+        return corner;
+    },
+    
     /** @see Echo.Render.ComponentSync#renderDispose */
     renderDispose: function(update) { 
         Core.Web.Event.removeAll(this._svListenerDiv);
@@ -468,7 +475,6 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
                 this._h += 360;
             }
         }
-
 
         this._updateDisplayedColor();
     },
