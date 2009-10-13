@@ -156,17 +156,17 @@ Extras.Sync.ToolTipContainer = Core.extend(Echo.Render.ComponentSync, {
     
     /** @see Echo.Render.ComponentSync#renderDispose */
     renderDispose: function(update) {
-        this._div = null;
-        
         if (this._applyDiv) {
             Core.Web.Event.removeAll(this._applyDiv);
-            this._applyDiv = null;
         }
         
         if (this._toolTipDiv && this._toolTipDiv.parentNode === document.body) {
             document.body.removeChild(this._toolTipDiv);
-            this._toolTipDiv = null;
         }
+
+        this._div = null;
+        this._applyDiv = null;
+        this._toolTipDiv = null;
     },
     
     /** @see Echo.Render.ComponentSync#renderUpdate */
