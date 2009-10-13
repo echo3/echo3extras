@@ -170,6 +170,10 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
      */
     _processSVMouseUpRef: null,
     
+    _cursorBorderLight: "1px solid #ffffff",
+    
+    _cursorBorderDark: "1px solid #afafaf",
+    
     _svXOffset: 7,
     
     _svYOffset: 7,
@@ -342,8 +346,9 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         this._div.appendChild(this._hLineDiv);
         
         var hLineBarDiv = document.createElement("div");
-        hLineBarDiv.style.cssText = "position:absolute;left:7px;top:4px;height:1px;font-size:1px;" +
-                "border-top:1px #000000 solid;border-bottom:1px #000000 solid;line-height:0;";
+        hLineBarDiv.style.cssText = "position:absolute;left:7px;top:4px;height:1px;font-size:1px;line-height:0;";
+        hLineBarDiv.style.borderTop = this._cursorBorderLight;
+        hLineBarDiv.style.borderBottom = this._cursorBorderDark;
         hLineBarDiv.style.width = this._hueWidth + "px";
         this._hLineDiv.appendChild(hLineBarDiv);
         
@@ -391,9 +396,6 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         div.style.cssText = "position:absolute;";
         div.style.width = (this._svWidth * 2 - 1) + "px";
         div.style.height = (this._svHeight * 2 - 1) + "px";
-        
-        this._cursorBorderLight = "1px solid #ffffff";
-        this._cursorBorderDark = "1px solid #8f8f8f";
         
         div.appendChild(this._createSVBoxCorner(true, true, barDistance, boxDistance));
         div.appendChild(this._createSVBoxCorner(false, false, barDistance, boxDistance));
