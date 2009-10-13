@@ -469,8 +469,9 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         this._svDiv = null;
         this._svListenerDiv = null;
         this._hListenerDiv = null;
-        this._hLineDiv = null;
         this._svCursorDiv = null;
+        this._hCursorDiv = null;
+        this._colorDiv = null;
     },
     
     /** @see Echo.Render.ComponentSync#renderUpdate */
@@ -585,4 +586,3 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         this._hCursorDiv.style.top = hy - this._barRadius + "px";
     }
 });
-
