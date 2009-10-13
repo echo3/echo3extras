@@ -410,7 +410,7 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
     
     _createSVBoxCorner: function(left, top, barDistance, boxDistance) {
         var corner = document.createElement("div");
-        corner.style.cssText = "position:absolute;";
+        corner.style.cssText = "position:absolute;line-height:0;font-size:1px;";
 
         corner.style.left = (this._svWidth + (left ? 0 - boxDistance : barDistance)) + "px";
         corner.style.top = (this._svHeight + (top ? 0 - boxDistance : barDistance)) + "px";
@@ -433,7 +433,8 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
     
     _createSVLine: function(leading, vertical, barDistance, boxDistance) {
         var line = document.createElement("div");
-        line.style.cssText = "position:absolute;";
+        line.style.cssText = "position:absolute;line-height:0;font-size:1px;";
+        
         line.style[vertical ? "borderLeft" : "borderTop"] = this._cursorBorderLight;
         line.style[vertical ? "borderRight" : "borderBottom"] = this._cursorBorderDark;
         
