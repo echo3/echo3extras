@@ -222,7 +222,7 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
      */
     _processHUpdate: function(e) {
         var offset = Core.Web.DOM.getEventOffset(e);
-        this._h = (this._saturationHeight - (offset.y - 7)) * 360 / this._saturationHeight;
+        this._h = (this._svHeight - (offset.y - 7)) * 360 / this._svHeight;
         this._updateDisplayedColor();
     },
     
@@ -267,16 +267,16 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
      */
     _processSVUpdate: function(e) {
         var offset = Core.Web.DOM.getEventOffset(e);
-        this._v = (offset.x - this._svXOffset) / this._valueWidth;
-        this._s = 1 - ((offset.y - this._svYOffset) / this._saturationHeight);
+        this._v = (offset.x - this._svXOffset) / this._svWidth;
+        this._s = 1 - ((offset.y - this._svYOffset) / this._svHeight);
         this._updateDisplayedColor();
     },
     
     /** @see Echo.Render.ComponentSync#renderAdd */
     renderAdd: function(update, parentElement) {
-        this._valueWidth = Echo.Sync.Extent.toPixels(
+        this._svWidth = Echo.Sync.Extent.toPixels(
                 this.component.render("valueWidth", Extras.ColorSelect.DEFAULT_VALUE_WIDTH), true);
-        this._saturationHeight = Echo.Sync.Extent.toPixels(
+        this._svHeight = Echo.Sync.Extent.toPixels(
                 this.component.render("saturationHeight", Extras.ColorSelect.DEFAULT_SATURATION_HEIGHT), false);
         this._hueWidth = Echo.Sync.Extent.toPixels(
                 this.component.render("hueWidth", Extras.ColorSelect.DEFAULT_HUE_WIDTH), true);
@@ -289,16 +289,16 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         this._div = document.createElement("div");
         this._div.id = this.component.renderId;
         this._div.style.cssText = "position:relative;left:0;top:0;overflow:hidden;";
-        this._div.style.width = (this._valueWidth + this._hueWidth + 29) + "px";
-        this._div.style.height = (this._saturationHeight + 18 + displayHeight) +"px";
+        this._div.style.width = (this._svWidth + this._hueWidth + 29) + "px";
+        this._div.style.height = (this._svHeight + 18 + displayHeight) +"px";
         
         // Create saturation / value selector.
         this._svDiv = document.createElement("div");
         this._svDiv.style.cssText = "position:absolute;background-color:#ff0000;overflow:hidden;";
         this._svDiv.style.left = this._svXOffset + "px";
         this._svDiv.style.top = this._svYOffset + "px";
-        this._svDiv.style.width = this._valueWidth + "px";
-        this._svDiv.style.height = this._saturationHeight + "px";
+        this._svDiv.style.width = this._svWidth + "px";
+        this._svDiv.style.height = this._svHeight + "px";
         this._div.appendChild(this._svDiv);
         
         if (svGradientImageSrc) {
@@ -308,8 +308,8 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
             } else {
                 var svGradientImg = document.createElement("img");
                 svGradientImg.src = svGradientImageSrc;
-                svGradientImg.style.width = this._valueWidth + "px";
-                svGradientImg.style.height = this._saturationHeight + "px";
+                svGradientImg.style.width = this._svWidth + "px";
+                svGradientImg.style.height = this._svHeight + "px";
                 this._svDiv.appendChild(svGradientImg);
             }
         }
@@ -320,9 +320,9 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         // Create hue selector.
         var hDiv = document.createElement("div");
         hDiv.style.cssText = "position:absolute;top:7px;";
-        hDiv.style.left = (this._valueWidth + 22) + "px";
+        hDiv.style.left = (this._svWidth + 22) + "px";
         hDiv.style.width = this._hueWidth + "px";
-        hDiv.style.height = this._saturationHeight + "px";
+        hDiv.style.height = this._svHeight + "px";
         this._div.appendChild(hDiv);
     
         if (hGradientImageSrc) {
@@ -330,14 +330,14 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
             hGradientImg.src = hGradientImageSrc;
             hGradientImg.style.cssText = "position:absolute;left:0;top:0;";
             hGradientImg.style.width = this._hueWidth + "px";
-            hGradientImg.style.height = this._saturationHeight + "px";
+            hGradientImg.style.height = this._svHeight + "px";
             hDiv.appendChild(hGradientImg);
         }
         
         this._hLineDiv = document.createElement("div");
         this._hLineDiv.style.cssText = "position:absolute;height:11px;overflow:hidden;";
-        this._hLineDiv.style.left = (this._valueWidth + 15) + "px";
-        this._hLineDiv.style.top = (this._saturationHeight + 2) + "px";
+        this._hLineDiv.style.left = (this._svWidth + 15) + "px";
+        this._hLineDiv.style.top = (this._svHeight + 2) + "px";
         this._hLineDiv.style.width = (this._hueWidth + 14) + "px";
         this._div.appendChild(this._hLineDiv);
         
@@ -352,8 +352,8 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
                 "position:absolute;left:7px;color:#ffffff;background-color:#000000;text-align:center;vertical-align:middle;" +
                 "overflow:hidden;border:1px #000000 outset;font-family:monospace;text-align:center;";
         this._colorDiv.style.height = displayHeight + "px";
-        this._colorDiv.style.top = (this._saturationHeight + 16) + "px";
-        this._colorDiv.style.width = (this._valueWidth + this._hueWidth + 13) + "px";
+        this._colorDiv.style.top = (this._svHeight + 16) + "px";
+        this._colorDiv.style.width = (this._svWidth + this._hueWidth + 13) + "px";
         if (this.component.render("displayValue")) {
             this._colorDiv.appendChild(document.createTextNode("#000000"));
         }
@@ -361,17 +361,17 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         
         this._svListenerDiv = document.createElement("div");
         this._svListenerDiv.style.cssText = "position:absolute;z-index:1;left:0;top:0;cursor:crosshair;";
-        this._svListenerDiv.style.width = (this._valueWidth + 14) + "px";
-        this._svListenerDiv.style.height = (this._saturationHeight + 14) + "px";
+        this._svListenerDiv.style.width = (this._svWidth + 14) + "px";
+        this._svListenerDiv.style.height = (this._svHeight + 14) + "px";
         this._svListenerDiv.style.backgroundImage = "url(" +
                 this.client.getResourceUrl("Echo", "resource/Transparent.gif") + ")";
         this._div.appendChild(this._svListenerDiv);
         
         this._hListenerDiv = document.createElement("div");
         this._hListenerDiv.style.cssText = "position:absolute;z-index:1;top:0;cursor:crosshair;";
-        this._hListenerDiv.style.left = (this._valueWidth + 15) + "px";
+        this._hListenerDiv.style.left = (this._svWidth + 15) + "px";
         this._hListenerDiv.style.width = (this._hueWidth + 14) + "px";
-        this._hListenerDiv.style.height = (this._saturationHeight + 16) + "px";
+        this._hListenerDiv.style.height = (this._svHeight + 16) + "px";
         this._hListenerDiv.style.backgroundImage = "url(" +
                 this.client.getResourceUrl("Echo", "resource/Transparent.gif") + ")";
         this._div.appendChild(this._hListenerDiv);
@@ -389,8 +389,11 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         
         var div = document.createElement("div");
         div.style.cssText = "position:absolute;";
-        div.style.width = (this._valueWidth * 2 - 1) + "px";
-        div.style.height = (this._saturationHeight * 2 - 1) + "px";
+        div.style.width = (this._svWidth * 2 - 1) + "px";
+        div.style.height = (this._svHeight * 2 - 1) + "px";
+        
+        this._cursorBorderLight = "1px solid #ffffff";
+        this._cursorBorderDark = "1px solid #8f8f8f";
         
         div.appendChild(this._createSVBoxCorner(true, true, barDistance, boxDistance));
         div.appendChild(this._createSVBoxCorner(false, false, barDistance, boxDistance));
@@ -409,35 +412,44 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         var corner = document.createElement("div");
         corner.style.cssText = "position:absolute;";
 
-        corner.style.left = (this._valueWidth + (left ? 0 - boxDistance : barDistance)) + "px";
-        corner.style.top = (this._saturationHeight + (top ? 0 - boxDistance : barDistance)) + "px";
+        corner.style.left = (this._svWidth + (left ? 0 - boxDistance : barDistance)) + "px";
+        corner.style.top = (this._svHeight + (top ? 0 - boxDistance : barDistance)) + "px";
         corner.style.width = (boxDistance - barDistance) + "px";
         corner.style.height = (boxDistance - barDistance) + "px";
         
-        corner.style[left ? "borderLeft" : "borderRight"]  = "1px solid #ffffff";
-        corner.style[top ? "borderTop" : "borderBottom"] = "1px solid #ffffff";
+        if (left) {
+            corner.style.borderLeft = this._cursorBorderLight;
+        } else {
+            corner.style.borderRight = this._cursorBorderDark;
+        }
+        
+        if (top ) {
+            corner.style.borderTop = this._cursorBorderLight;
+        } else {
+            corner.style.borderBottom = this._cursorBorderDark;
+        }
         return corner;
     },
     
     _createSVLine: function(leading, vertical, barDistance, boxDistance) {
         var line = document.createElement("div");
         line.style.cssText = "position:absolute;";
-        line.style[vertical ? "borderLeft" : "borderTop"] = "1px solid #ffffff";
-        line.style[vertical ? "borderRight" : "borderBottom"] = "1px solid #ffffff";
+        line.style[vertical ? "borderLeft" : "borderTop"] = this._cursorBorderLight;
+        line.style[vertical ? "borderRight" : "borderBottom"] = this._cursorBorderDark;
         
         if (vertical) {
-            line.style.left = (this._valueWidth - barDistance) + "px";
-            line.style.height = (this._saturationHeight - boxDistance) + "px";
+            line.style.left = (this._svWidth - barDistance) + "px";
+            line.style.height = (this._svHeight - boxDistance) + "px";
             line.style.width = barDistance + "px";
             if (!leading) {
-                line.style.top = (this._saturationHeight + boxDistance) + "px";
+                line.style.top = (this._svHeight + boxDistance) + "px";
             }
         } else {
-            line.style.top = (this._saturationHeight - barDistance) + "px";
-            line.style.width = (this._valueWidth - boxDistance) + "px";
+            line.style.top = (this._svHeight - barDistance) + "px";
+            line.style.width = (this._svWidth - boxDistance) + "px";
             line.style.height = barDistance + "px";
             if (!leading) {
-                line.style.left = (this._valueWidth + boxDistance) + "px";
+                line.style.left = (this._svWidth + boxDistance) + "px";
             }
         }
         return line;
@@ -541,28 +553,28 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
             this._colorDiv.childNodes[0].nodeValue = renderHexTriplet;
         }
         
-        var sy = Math.floor((1 - this._s) * this._saturationHeight);
+        var sy = Math.floor((1 - this._s) * this._svHeight);
         if (sy < 0) {
              sy = 0;
-        } else if (sy > this._saturationHeight) {
-            sy = this._saturationHeight;
+        } else if (sy > this._svHeight) {
+            sy = this._svHeight;
         }
         
-        var vx = Math.floor(this._v * this._valueWidth);
+        var vx = Math.floor(this._v * this._svWidth);
         if (vx < 0) {
             vx = 0;
-        } else if (vx > this._valueWidth) {
-            vx = this._valueWidth;
+        } else if (vx > this._svWidth) {
+            vx = this._svWidth;
         }
         
-        this._svCursorDiv.style.top = (sy - this._saturationHeight) + "px";
-        this._svCursorDiv.style.left = (vx - this._valueWidth) + "px";
+        this._svCursorDiv.style.top = (sy - this._svHeight) + "px";
+        this._svCursorDiv.style.left = (vx - this._svWidth) + "px";
         
-        var hLineTop = Math.floor((360 - this._h) / 360 * this._saturationHeight) + 2;
+        var hLineTop = Math.floor((360 - this._h) / 360 * this._svHeight) + 2;
         if (hLineTop < 2) {
             hLineTop = 2;
-        } else if (hLineTop > this._saturationHeight + 2) {
-            hLineTop = this._saturationHeight + 2;
+        } else if (hLineTop > this._svHeight + 2) {
+            hLineTop = this._svHeight + 2;
         }
         this._hLineDiv.style.top = hLineTop + "px";
     }
