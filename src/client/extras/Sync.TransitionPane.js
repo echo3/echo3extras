@@ -161,7 +161,7 @@ Extras.Sync.TransitionPane = Core.extend(Echo.Render.ComponentSync, {
         if (this._transition) {
             this._transition.abort();
         }
-        this._childDiv = null;
+        this.childDiv = null;
         this.contentDiv = null;
         this._containerDiv = null;
     },
