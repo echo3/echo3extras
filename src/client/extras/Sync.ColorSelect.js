@@ -314,6 +314,38 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
             }
         }
         
+        this._svCursorDiv = document.createElement("div");
+        this._svCursorDiv.style.cssText = "position:absolute;";
+        this._svCursorDiv.style.width = (this._valueWidth * 2 - 1) + "px";
+        this._svCursorDiv.style.height = (this._saturationHeight * 2 - 1) + "px";
+        
+        var boxTL = document.createElement("div");
+        boxTL.style.cssText = "position:absolute;";
+        boxTL.style.top = (this._valueWidth - 4) + "px";
+        boxTL.style.left = (this._saturationHeight - 4) + "px";
+        boxTL.style.width = 4 + "px";
+        boxTL.style.height = 4 + "px";
+        boxTL.style.borderTop = "1px solid #ffffff";
+        boxTL.style.borderLeft = "1px solid #ffffff";
+        this._svCursorDiv.appendChild(boxTL);
+        
+        var boxBR = document.createElement("div");
+        boxBR.style.cssText = "position:absolute;";
+        boxBR.style.top = (this._valueWidth) + "px";
+        boxBR.style.left = (this._saturationHeight) + "px";
+        boxBR.style.width = 4 + "px";
+        boxBR.style.height = 4 + "px";
+        boxBR.style.borderBottom = "1px solid #ffffff";
+        boxBR.style.borderRight = "1px solid #ffffff";
+        this._svCursorDiv.appendChild(boxBR);
+        
+        this._svDiv.appendChild(this._svCursorDiv);
+        
+//        this._svCursorDiv.style.top = "-50px";
+//        this._svCursorDiv.style.left = "-50px";
+        
+        
+        
         // Create container for value selecion bar.
         this._vLineDiv = document.createElement("div");
         this._vLineDiv.style.cssText = "position:absolute;left:2px;top:0;width:11px;overflow:hidden;";
@@ -417,6 +449,7 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         this._hLineDiv = null;
         this._sLineDiv = null;
         this._vLineDiv = null;
+        this._svCursorDiv = null;
     },
     
     /** @see Echo.Render.ComponentSync#renderUpdate */
@@ -521,6 +554,9 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
             vLineLeft = this._valueWidth + 2;
         }
         this._vLineDiv.style.left = vLineLeft + "px";
+        
+        this._svCursorDiv.style.top = (sLineTop - this._saturationHeight) + "px";
+        this._svCursorDiv.style.left = (vLineLeft - this._valueWidth) + "px";
         
         var hLineTop = Math.floor((360 - this._h) / 360 * this._saturationHeight) + 2;
         if (hLineTop < 2) {
