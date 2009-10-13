@@ -341,37 +341,6 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         
         this._svDiv.appendChild(this._svCursorDiv);
         
-//        this._svCursorDiv.style.top = "-50px";
-//        this._svCursorDiv.style.left = "-50px";
-        
-        
-        
-        // Create container for value selecion bar.
-        this._vLineDiv = document.createElement("div");
-        this._vLineDiv.style.cssText = "position:absolute;left:2px;top:0;width:11px;overflow:hidden;";
-        this._vLineDiv.style.height = (this._saturationHeight + 14) + "px";
-        this._div.appendChild(this._vLineDiv);
-    
-        // Create value selection bar line.
-        var vLineBarDiv = document.createElement("div");
-        vLineBarDiv.style.cssText = "position:absolute;top:7px;left:5px;width:1px;background-color:#000000;";
-        vLineBarDiv.style.height = this._saturationHeight + "px";
-        this._vLineDiv.appendChild(vLineBarDiv);
-    
-        // Create saturation selection bar container.
-        this._sLineDiv = document.createElement("div");
-        this._sLineDiv.style.cssText = "position:absolute;left:0;height:11px;overflow:hidden;";
-        this._sLineDiv.style.top = (this._saturationHeight + 2) + "px";
-        this._sLineDiv.style.width = (this._valueWidth + 14) + "px";
-        this._div.appendChild(this._sLineDiv);
-        
-        // Create saturation selection bar line.
-        var sLineBarDiv = document.createElement("div");
-        sLineBarDiv.style.cssText = 
-                "position:absolute;left:7px;top:5px;height:1px;font-size:1px;border-top:1px #000000 solid;line-height:0;";
-        sLineBarDiv.style.width = this._valueWidth + "px";
-        this._sLineDiv.appendChild(sLineBarDiv);
-    
         // Create hue selector.
         var hDiv = document.createElement("div");
         hDiv.style.cssText = "position:absolute;top:7px;";
@@ -447,8 +416,6 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         this._svListenerDiv = null;
         this._hListenerDiv = null;
         this._hLineDiv = null;
-        this._sLineDiv = null;
-        this._vLineDiv = null;
         this._svCursorDiv = null;
     },
     
@@ -539,25 +506,22 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
             this._colorDiv.childNodes[0].nodeValue = renderHexTriplet;
         }
         
-        var sLineTop = Math.floor((1 - this._s) * this._saturationHeight);
-        if (sLineTop < 0) {
-             sLineTop = 0;
-        } else if (sLineTop > this._saturationHeight) {
-            sLineTop = this._saturationHeight;
+        var sy = Math.floor((1 - this._s) * this._saturationHeight);
+        if (sy < 0) {
+             sy = 0;
+        } else if (sy > this._saturationHeight) {
+            sy = this._saturationHeight;
         }
         
-        var vLineLeft = Math.floor(this._v * this._valueWidth);
-        if (vLineLeft < 0) {
-            vLineLeft = 0;
-        } else if (vLineLeft > this._valueWidth) {
-            vLineLeft = this._valueWidth;
+        var vx = Math.floor(this._v * this._valueWidth);
+        if (vx < 0) {
+            vx = 0;
+        } else if (vx > this._valueWidth) {
+            vx = this._valueWidth;
         }
         
-        this._sLineDiv.style.top = (sLineTop + 2) + "px";
-        this._vLineDiv.style.left = (vLineLeft + 2) + "px";
-        
-        this._svCursorDiv.style.top = (sLineTop - this._saturationHeight) + "px";
-        this._svCursorDiv.style.left = (vLineLeft - this._valueWidth) + "px";
+        this._svCursorDiv.style.top = (sy - this._saturationHeight) + "px";
+        this._svCursorDiv.style.left = (vx - this._valueWidth) + "px";
         
         var hLineTop = Math.floor((360 - this._h) / 360 * this._saturationHeight) + 2;
         if (hLineTop < 2) {
