@@ -11,6 +11,41 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
          */
         RGB: Core.extend({
             
+            $static: {
+                
+                /**
+                 * Converts an HSV color to an RGB color.
+                 * 
+                 * @param {Number} h the color hue
+                 * @param {Number} s the color saturation
+                 * @param {Number} v the color value
+                 * @return an RGB color
+                 * @type Extras.Sync.ColorSelect.RGB 
+                 */
+                _fromHsv: function(h, s, v) {
+                    var r, g, b;
+                    if (s === 0) {
+                        r = g = b = v;
+                    } else {
+                        h /= 60;
+                        var i = Math.floor(h);
+                        var f = h - i;
+                        var p = v * (1 - s);
+                        var q = v * (1 - s * f);
+                        var t = v * (1 - s * (1 - f));
+                        switch (i) {
+                        case 0:  r = v; g = t; b = p; break;
+                        case 1:  r = q; g = v; b = p; break;
+                        case 2:  r = p; g = v; b = t; break;
+                        case 3:  r = p; g = q; b = v; break;
+                        case 4:  r = t; g = p; b = v; break;
+                        default: r = v; g = p; b = q; break;
+                        }
+                    }
+                    return new Extras.Sync.ColorSelect.RGB(Math.round(r * 255), Math.round(g * 255), Math.round(b * 255));
+                }
+            },
+            
             /** 
              * Red value, 0-255.
              * @type Number
@@ -134,6 +169,10 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
      * @type Function
      */
     _processSVMouseUpRef: null,
+    
+    _svXOffset: 7,
+    
+    _svYOffset: 7,
 
     $construct: function() {
         this._processHMouseMoveRef = Core.method(this, this._processHMouseMove);
@@ -142,38 +181,6 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         this._processSVMouseUpRef = Core.method(this, this._processSVMouseUp);
     },
         
-    /**
-     * Converts an HSV color to an RGB color.
-     * 
-     * @param {Number} h the color hue
-     * @param {Number} s the color saturation
-     * @param {Number} v the color value
-     * @return an RGB color
-     * @type Extras.Sync.ColorSelect.RGB 
-     */
-    _hsvToRgb: function(h, s, v) {
-        var r, g, b;
-        if (s === 0) {
-            r = g = b = v;
-        } else {
-            h /= 60;
-            var i = Math.floor(h);
-            var f = h - i;
-            var p = v * (1 - s);
-            var q = v * (1 - s * f);
-            var t = v * (1 - s * (1 - f));
-            switch (i) {
-            case 0:  r = v; g = t; b = p; break;
-            case 1:  r = q; g = v; b = p; break;
-            case 2:  r = p; g = v; b = t; break;
-            case 3:  r = p; g = q; b = v; break;
-            case 4:  r = t; g = p; b = v; break;
-            default: r = v; g = p; b = q; break;
-            }
-        }
-        return new Extras.Sync.ColorSelect.RGB(Math.round(r * 255), Math.round(g * 255), Math.round(b * 255));
-    },
-    
     /**
      * Processes a hue selector mouse down event.
      * 
@@ -260,8 +267,8 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
      */
     _processSVUpdate: function(e) {
         var offset = Core.Web.DOM.getEventOffset(e);
-        this._v = (offset.x - 7) / this._valueWidth;
-        this._s = 1 - ((offset.y - 7) / this._saturationHeight);
+        this._v = (offset.x - this._svXOffset) / this._valueWidth;
+        this._s = 1 - ((offset.y - this._svYOffset) / this._saturationHeight);
         this._updateDisplayedColor();
     },
     
@@ -277,10 +284,6 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
     
         var svGradientImageSrc = this.client.getResourceUrl("Extras", "image/colorselect/ColorSelectSVGradient.png");
         var hGradientImageSrc = this.client.getResourceUrl("Extras", "image/colorselect/ColorSelectHGradient.png");
-        var arrowDownImageSrc = this.client.getResourceUrl("Extras", "image/colorselect/ColorSelectArrowDown.gif");
-        var arrowUpImageSrc = this.client.getResourceUrl("Extras", "image/colorselect/ColorSelectArrowUp.gif");
-        var arrowRightImageSrc = this.client.getResourceUrl("Extras", "image/colorselect/ColorSelectArrowRight.gif");
-        var arrowLeftImageSrc = this.client.getResourceUrl("Extras", "image/colorselect/ColorSelectArrowLeft.gif");
         
         // Create main container div element, relatively positioned.
         this._div = document.createElement("div");
@@ -291,7 +294,9 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         
         // Create saturation / value selector.
         this._svDiv = document.createElement("div");
-        this._svDiv.style.cssText = "position:absolute;left:7px;top:7px;background-color:#ff0000";
+        this._svDiv.style.cssText = "position:absolute;background-color:#ff0000";
+        this._svDiv.style.left = this._svXOffset + "px";
+        this._svDiv.style.top = this._svYOffset + "px";
         this._svDiv.style.width = this._valueWidth + "px";
         this._svDiv.style.height = this._saturationHeight + "px";
         this._div.appendChild(this._svDiv);
@@ -315,43 +320,18 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         this._vLineDiv.style.height = (this._saturationHeight + 14) + "px";
         this._div.appendChild(this._vLineDiv);
     
-        // Create value selection bar top arrow.
-        if (arrowDownImageSrc) {
-            var vLineTopImg = document.createElement("img");
-            vLineTopImg.src = arrowDownImageSrc;
-            vLineTopImg.style.cssText = "position:absolute;left:0;top:0;";
-            this._vLineDiv.appendChild(vLineTopImg);
-        }
-        
         // Create value selection bar line.
         var vLineBarDiv = document.createElement("div");
         vLineBarDiv.style.cssText = "position:absolute;top:7px;left:5px;width:1px;background-color:#000000;";
         vLineBarDiv.style.height = this._saturationHeight + "px";
         this._vLineDiv.appendChild(vLineBarDiv);
     
-        // Create value selection bar bottom arrow.
-        if (arrowUpImageSrc) {
-            var vLineBottomImg = document.createElement("img");
-            vLineBottomImg.src = arrowUpImageSrc;
-            vLineBottomImg.style.cssText = "position:absolute;left:0;";
-            vLineBottomImg.style.top = (this._saturationHeight + 7) + "px";
-            this._vLineDiv.appendChild(vLineBottomImg);
-        }
-        
         // Create saturation selection bar container.
         this._sLineDiv = document.createElement("div");
         this._sLineDiv.style.cssText = "position:absolute;left:0;height:11px;overflow:hidden;";
         this._sLineDiv.style.top = (this._saturationHeight + 2) + "px";
         this._sLineDiv.style.width = (this._valueWidth + 14) + "px";
         this._div.appendChild(this._sLineDiv);
-        
-        // Create saturation selection bar left arrow.
-        if (arrowRightImageSrc) {
-            var sLineLeftImg = document.createElement("img");
-            sLineLeftImg.src = arrowRightImageSrc;
-            sLineLeftImg.style.cssText = "position:absolute;left:0;top:0;";
-            this._sLineDiv.appendChild(sLineLeftImg);
-        }
         
         // Create saturation selection bar line.
         var sLineBarDiv = document.createElement("div");
@@ -360,15 +340,6 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         sLineBarDiv.style.width = this._valueWidth + "px";
         this._sLineDiv.appendChild(sLineBarDiv);
     
-        // Create saturation selection bar right arrow.
-        if (arrowLeftImageSrc) {
-            var sLineRightImg = document.createElement("img");
-            sLineRightImg.src = arrowLeftImageSrc;
-            sLineRightImg.style.cssText = "position:absolute;top:0;";
-            sLineRightImg.style.left = this._valueWidth + 7 + "px";
-            this._sLineDiv.appendChild(sLineRightImg);
-        }
-        
         // Create hue selector.
         var hDiv = document.createElement("div");
         hDiv.style.cssText = "position:absolute;top:7px;";
@@ -393,24 +364,9 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         this._hLineDiv.style.width = (this._hueWidth + 14) + "px";
         this._div.appendChild(this._hLineDiv);
         
-        if (arrowRightImageSrc) {
-            var hLineLeftImg = document.createElement("img");
-            hLineLeftImg.src = arrowRightImageSrc;
-            hLineLeftImg.style.cssText = "position:absolute;left:0;top:0;";
-            this._hLineDiv.appendChild(hLineLeftImg);
-        }
-    
-        if (arrowLeftImageSrc) {
-            var hLineRightImg = document.createElement("img");
-            hLineRightImg.src = arrowLeftImageSrc;
-            hLineRightImg.style.cssText = "position:absolute;top:0;";
-            hLineRightImg.style.left = (this._hueWidth + 7) + "px";
-            this._hLineDiv.appendChild(hLineRightImg);
-        }
-        
         var hLineBarDiv = document.createElement("div");
-        hLineBarDiv.style.cssText =
-                "position:absolute;left:7px;top:5px;height:1px;font-size:1px;border-top:1px #000000 solid;line-height:0;";
+        hLineBarDiv.style.cssText = "position:absolute;left:7px;top:4px;height:1px;font-size:1px;" +
+                "border-top:1px #000000 solid;border-bottom:1px #000000 solid;line-height:0;";
         hLineBarDiv.style.width = this._hueWidth + "px";
         this._hLineDiv.appendChild(hLineBarDiv);
         
@@ -522,7 +478,7 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
      * @private
      */
     _storeColor: function() {
-        var renderColor = this._hsvToRgb(this._h, this._s, this._v);
+        var renderColor = Extras.Sync.ColorSelect.RGB._fromHsv(this._h, this._s, this._v);
         var renderHexTriplet = renderColor.toHexTriplet();
         this.component.set("color", renderHexTriplet);
     },
@@ -533,14 +489,14 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
     _updateDisplayedColor: function() {
         var baseColor;
         if (this.component.isRenderEnabled()) {
-            baseColor = this._hsvToRgb(this._h, 1, 1);
+            baseColor = Extras.Sync.ColorSelect.RGB._fromHsv(this._h, 1, 1);
         } else {
             // Use a dull base color to enable a disabled effect.
-            baseColor = this._hsvToRgb(this._h, 0.3, 0.7);
+            baseColor = Extras.Sync.ColorSelect.RGB._fromHsv(this._h, 0.3, 0.7);
         }
         this._svDiv.style.backgroundColor = baseColor.toHexTriplet();
     
-        var renderColor = this._hsvToRgb(this._h, this._s, this._v);
+        var renderColor = Extras.Sync.ColorSelect.RGB._fromHsv(this._h, this._s, this._v);
         
         var renderHexTriplet = renderColor.toHexTriplet();
         this._colorDiv.style.backgroundColor = renderHexTriplet;
