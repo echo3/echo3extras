@@ -377,6 +377,7 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
     /** @see Echo.Render.ComponentSync#renderUpdate */
     renderDispose: function(update) {
         this.deactivate();
+        this.element = null;
     },
     
     /** @see Echo.Render.ComponentSync#renderFocus */
