@@ -539,21 +539,22 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
             this._colorDiv.childNodes[0].nodeValue = renderHexTriplet;
         }
         
-        var sLineTop = Math.floor((1 - this._s) * this._saturationHeight) + 2;
-        if (sLineTop < 2) {
-             sLineTop = 2;
-        } else if (sLineTop > this._saturationHeight + 2) {
-            sLineTop = this._saturationHeight + 2;
+        var sLineTop = Math.floor((1 - this._s) * this._saturationHeight);
+        if (sLineTop < 0) {
+             sLineTop = 0;
+        } else if (sLineTop > this._saturationHeight) {
+            sLineTop = this._saturationHeight;
         }
-        this._sLineDiv.style.top = sLineTop + "px";
         
-        var vLineLeft = Math.floor(this._v * this._valueWidth) + 2;
-        if (vLineLeft < 2) {
-            vLineLeft = 2;
-        } else if (vLineLeft > this._valueWidth + 2) {
-            vLineLeft = this._valueWidth + 2;
+        var vLineLeft = Math.floor(this._v * this._valueWidth);
+        if (vLineLeft < 0) {
+            vLineLeft = 0;
+        } else if (vLineLeft > this._valueWidth) {
+            vLineLeft = this._valueWidth;
         }
-        this._vLineDiv.style.left = vLineLeft + "px";
+        
+        this._sLineDiv.style.top = (sLineTop + 2) + "px";
+        this._vLineDiv.style.left = (vLineLeft + 2) + "px";
         
         this._svCursorDiv.style.top = (sLineTop - this._saturationHeight) + "px";
         this._svCursorDiv.style.left = (vLineLeft - this._valueWidth) + "px";
