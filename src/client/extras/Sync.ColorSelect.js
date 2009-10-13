@@ -178,6 +178,10 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
     
     _svYOffset: 7,
 
+    _barRadius: 2,
+    
+    _boxRadius: 5,
+    
     $construct: function() {
         this._processHMouseMoveRef = Core.method(this, this._processHMouseMove);
         this._processHMouseUpRef = Core.method(this, this._processHMouseUp);
@@ -391,35 +395,32 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
     },
     
     _createSVCursor: function() {
-        var barRadius = 2;
-        var boxRadius = 5;
-        
         var div = document.createElement("div");
         div.style.cssText = "position:absolute;";
         div.style.width = (this._svWidth * 2 - 1) + "px";
         div.style.height = (this._svHeight * 2 - 1) + "px";
         
-        div.appendChild(this._createSVBoxCorner(true, true, barRadius, boxRadius));
-        div.appendChild(this._createSVBoxCorner(false, false, barRadius, boxRadius));
-        div.appendChild(this._createSVBoxCorner(true, false, barRadius, boxRadius));
-        div.appendChild(this._createSVBoxCorner(false, true, barRadius, boxRadius));
+        div.appendChild(this._createSVCursorCorner(true, true));
+        div.appendChild(this._createSVCursorCorner(false, false));
+        div.appendChild(this._createSVCursorCorner(true, false));
+        div.appendChild(this._createSVCursorCorner(false, true));
         
-        div.appendChild(this._createSVLine(true, true, barRadius, boxRadius));
-        div.appendChild(this._createSVLine(false, true, barRadius, boxRadius));
-        div.appendChild(this._createSVLine(true, false, barRadius, boxRadius));
-        div.appendChild(this._createSVLine(false, false, barRadius, boxRadius));
+        div.appendChild(this._createSVCursorLine(true, true));
+        div.appendChild(this._createSVCursorLine(false, true));
+        div.appendChild(this._createSVCursorLine(true, false));
+        div.appendChild(this._createSVCursorLine(false, false));
         
         return div;
     },
     
-    _createSVBoxCorner: function(left, top, barRadius, boxRadius) {
+    _createSVCursorCorner: function(left, top) {
         var corner = document.createElement("div");
         corner.style.cssText = "position:absolute;line-height:0;font-size:1px;";
 
-        corner.style.left = (this._svWidth + (left ? 0 - boxRadius : barRadius)) + "px";
-        corner.style.top = (this._svHeight + (top ? 0 - boxRadius : barRadius)) + "px";
-        corner.style.width = (boxRadius - barRadius) + "px";
-        corner.style.height = (boxRadius - barRadius) + "px";
+        corner.style.left = (this._svWidth + (left ? 0 - this._boxRadius : this._barRadius)) + "px";
+        corner.style.top = (this._svHeight + (top ? 0 - this._boxRadius : this._barRadius)) + "px";
+        corner.style.width = (this._boxRadius - this._barRadius) + "px";
+        corner.style.height = (this._boxRadius - this._barRadius) + "px";
         
         if (left) {
             corner.style.borderLeft = this._cursorBorderLight;
@@ -435,7 +436,7 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         return corner;
     },
     
-    _createSVLine: function(leading, vertical, barRadius, boxRadius) {
+    _createSVCursorLine: function(leading, vertical) {
         var line = document.createElement("div");
         line.style.cssText = "position:absolute;line-height:0;font-size:1px;";
         
@@ -443,18 +444,18 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         line.style[vertical ? "borderRight" : "borderBottom"] = this._cursorBorderDark;
         
         if (vertical) {
-            line.style.left = (this._svWidth - barRadius) + "px";
-            line.style.height = (this._svHeight - boxRadius) + "px";
-            line.style.width = (barRadius * 2 - 1) + "px";
+            line.style.left = (this._svWidth - this._barRadius) + "px";
+            line.style.height = (this._svHeight - this._boxRadius) + "px";
+            line.style.width = (this._barRadius * 2 - 1) + "px";
             if (!leading) {
-                line.style.top = (this._svHeight + boxRadius) + "px";
+                line.style.top = (this._svHeight + this._boxRadius) + "px";
             }
         } else {
-            line.style.top = (this._svHeight - barRadius) + "px";
-            line.style.width = (this._svWidth - boxRadius) + "px";
-            line.style.height = (barRadius * 2 - 1) + "px";
+            line.style.top = (this._svHeight - this._barRadius) + "px";
+            line.style.width = (this._svWidth - this._boxRadius) + "px";
+            line.style.height = (this._barRadius * 2 - 1) + "px";
             if (!leading) {
-                line.style.left = (this._svWidth + boxRadius) + "px";
+                line.style.left = (this._svWidth + this._boxRadius) + "px";
             }
         }
         return line;
