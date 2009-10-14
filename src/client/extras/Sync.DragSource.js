@@ -260,6 +260,7 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
                             // Value is greater than highest found, clear list of highest and add.
                             highestCandidateIndices = [];
                             highestCandidateIndices.push(iCandidate);
+                            highestZIndex = zIndex;
                         }
                     }
                     elementsFoundOnIteration = true;
