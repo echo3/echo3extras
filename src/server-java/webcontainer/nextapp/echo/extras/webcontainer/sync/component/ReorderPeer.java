@@ -54,7 +54,8 @@ public class ReorderPeer extends AbstractComponentSynchronizePeer {
 
     static final Service REORDER_SERVICE = JavaScriptService.forResources("EchoExtras.Reorder",
             new String[] {  "nextapp/echo/extras/webcontainer/resource/Application.Reorder.js",  
-                            "nextapp/echo/extras/webcontainer/resource/Sync.Reorder.js"});
+                            "nextapp/echo/extras/webcontainer/resource/Sync.Reorder.js",
+                            "nextapp/echo/extras/webcontainer/resource/Sync.RemoteReorder.js"});
     static {
         CommonResources.install();
         ResourceRegistry resources = WebContainerServlet.getResourceRegistry();
@@ -73,7 +74,7 @@ public class ReorderPeer extends AbstractComponentSynchronizePeer {
      * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#getClientComponentType(boolean)
      */
     public String getClientComponentType(boolean mode) {
-        return "Extras.Reorder";
+        return "Extras.RemoteReorder";
     }
 
     /**

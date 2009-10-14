@@ -17,6 +17,7 @@ Extras.Reorder.Sync = Core.extend(Echo.Render.ComponentSync, {
     _movingDiv: null,
     _dragDiv: null,
     _overlayDiv: null,
+    _order: null,
     
     _sourceIndex: null,
     _targetIndex: null,
@@ -181,13 +182,18 @@ Extras.Reorder.Sync = Core.extend(Echo.Render.ComponentSync, {
         this._div.id = this.component.renderId;
         this._div.style.cssText = "";
         
-        var i, order;
+        var i;
         var order = this.component.get("order");
-        //FIXME render in spec'ed order.
+        if (!order) {
+            order = [];
+            for (i = 0; i < this.component.children.length; ++i) {
+                order[i] = i;
+            }
+        }
         
-        for (var i = 0; i < this.component.children.length; ++i) {
+        for (i = 0; i < order.length; ++i) {
             var cell = document.createElement("div");
-            Echo.Render.renderComponentAdd(update, this.component.children[i], cell);
+            Echo.Render.renderComponentAdd(update, this.component.children[order[i]], cell);
             this._div.appendChild(cell);
         }
         

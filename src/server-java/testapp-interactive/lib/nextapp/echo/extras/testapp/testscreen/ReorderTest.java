@@ -40,7 +40,6 @@ import nextapp.echo.app.event.ActionListener;
 import nextapp.echo.extras.app.Reorder;
 import nextapp.echo.extras.app.ReorderHandle;
 import nextapp.echo.extras.testapp.AbstractTest;
-import nextapp.echo.extras.testapp.InteractiveApp;
 import nextapp.echo.extras.testapp.TestControlPane;
 
 /**
@@ -74,16 +73,16 @@ public class ReorderTest extends AbstractTest {
 
         testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Query Order", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                StringBuffer out = new StringBuffer();
-                int[] order = reorder.getOrder();
-                for (int i = 0; i < order.length; ++i) {
-                    if (i > 0) {
-                        out.append(", ");
-                    }
-                    out.append(i);
-                    InteractiveApp.getApp().consoleWrite("Order: " + out);
-                }
-                    
+//                StringBuffer out = new StringBuffer();
+//                int[] order = reorder.getOrder();
+//                for (int i = 0; i < order.length; ++i) {
+//                    if (i > 0) {
+//                        out.append(", ");
+//                    }
+//                    out.append(i);
+//                    InteractiveApp.getApp().consoleWrite("Order: " + out);
+//                }
+//                    
             }
         });
         
