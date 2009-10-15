@@ -20,8 +20,6 @@
 
 package nextapp.echo.extras.webcontainer.sync.component;
 
-import java.util.Iterator;
-
 import nextapp.echo.app.Component;
 import nextapp.echo.app.update.ClientUpdateManager;
 import nextapp.echo.app.util.Context;
@@ -83,7 +81,7 @@ public class ReorderPeer extends AbstractComponentSynchronizePeer {
      */
     public Class getInputPropertyClass(String propertyName) {
         if (Reorder.ORDER_CHANGED_PROPERTY.equals(propertyName)) {
-            return int[].class;
+            return String.class;
         }
         return null;
     }
@@ -93,42 +91,33 @@ public class ReorderPeer extends AbstractComponentSynchronizePeer {
      *      nextapp.echo.app.Component, java.lang.String, int)
      */
     public Object getOutputProperty(Context context, Component component, String propertyName, int propertyIndex) {
-        if (propertyName.equals(Reorder.ORDER_CHANGED_PROPERTY)) {
+        if (Reorder.ORDER_CHANGED_PROPERTY.equals(propertyName)) {
             int[] order = ((Reorder) component).getOrder();
-            return new Integer(order[propertyIndex]);
+            if (order == null) {
+                return null;
+            }
+            StringBuffer out = new StringBuffer();
+            for (int i = 0; i < order.length; ++i) {
+                if (i > 0) {
+                    out.append(",");
+                }
+                out.append(order[i]);
+            }
+            return out.toString();
         } else {
             return super.getOutputProperty(context, component, propertyName, propertyIndex);
         }
     }
 
     /**
-     * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#getOutputPropertyIndices(nextapp.echo.app.util.Context,
+     * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#getOutputPropertyMethodName(nextapp.echo.app.util.Context,
      *      nextapp.echo.app.Component, java.lang.String)
      */
-    public Iterator getOutputPropertyIndices(Context context, Component component, String propertyName) {
-        if (propertyName.equals(Reorder.ORDER_CHANGED_PROPERTY)) {
-            final int[] order = ((Reorder) component).getOrder();
-            if (order == null) {
-                return null;
-            }
-            return new Iterator() {
-
-                int i = 0;
-
-                public boolean hasNext() {
-                    return i < order.length;
-                }
-
-                public Object next() {
-                    return new Integer(i++);
-                }
-
-                public void remove() {
-                    throw new UnsupportedOperationException();
-                };
-            };
+    public String getOutputPropertyMethodName(Context context, Component component, String propertyName) {
+        if (Reorder.ORDER_CHANGED_PROPERTY.equals(propertyName)) {
+            return "loadOrder";
         } else {
-            return super.getOutputPropertyIndices(context, component, propertyName);
+            return super.getOutputPropertyMethodName(context, component, propertyName);
         }
     }
 
@@ -143,24 +132,13 @@ public class ReorderPeer extends AbstractComponentSynchronizePeer {
     }
 
     /**
-     * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#isOutputPropertyIndexed(nextapp.echo.app.util.Context,
-     *      nextapp.echo.app.Component, java.lang.String)
-     */
-    public boolean isOutputPropertyIndexed(Context context, Component component, String propertyName) {
-        if (propertyName.equals(Reorder.ORDER_CHANGED_PROPERTY)) {
-            return true;
-        } else {
-            return super.isOutputPropertyIndexed(context, component, propertyName);
-        }
-    }
-
-    /**
      * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#storeInputProperty(Context, Component, String, int, Object)
      */
     public void storeInputProperty(Context context, Component component, String propertyName, int propertyIndex, Object newValue) {
-         if (propertyName.equals(Reorder.ORDER_CHANGED_PROPERTY)) {
-             ClientUpdateManager clientUpdateManager = (ClientUpdateManager) context.get(ClientUpdateManager.class);
-             clientUpdateManager.setComponentProperty(component, Reorder.ORDER_CHANGED_PROPERTY, newValue);
-         }
+        if (propertyName.equals(Reorder.ORDER_CHANGED_PROPERTY)) {
+            ClientUpdateManager clientUpdateManager = (ClientUpdateManager) context.get(ClientUpdateManager.class);
+
+            clientUpdateManager.setComponentProperty(component, Reorder.ORDER_CHANGED_PROPERTY, null);
+        }
     }
 }

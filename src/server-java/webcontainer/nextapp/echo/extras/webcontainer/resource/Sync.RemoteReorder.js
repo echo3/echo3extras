@@ -4,7 +4,11 @@ Extras.RemoteReorder = Core.extend(Extras.Reorder, {
         Echo.ComponentFactory.registerType("Extras.RemoteReorder", this);
     },
 
-    componentType: "Extras.RemoteReorder"
+    componentType: "Extras.RemoteReorder",
+    
+    loadOrder: function(orderString) {
+        this.set("order", orderString ? orderString.split(",") : null);
+    }
 });
 
 /**
