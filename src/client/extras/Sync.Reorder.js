@@ -3,10 +3,6 @@
  */
 Extras.Reorder.Sync = Core.extend(Echo.Render.ComponentSync, {
     
-    $static: {
-        _supportedPartialProperties: ["order"]
-    },  
-    
     $load: function() {
         Echo.Render.registerPeer("Extras.Reorder", this);
     },
@@ -209,16 +205,12 @@ Extras.Reorder.Sync = Core.extend(Echo.Render.ComponentSync, {
     
     /** @see Echo.Render.ComponentSync#renderUpdate */
     renderUpdate: function(update) {
-        var fullRender = update.hasAddedChildren() || update.hasRemovedChildren() || 
-                !update.isUpdatedPropertySetIn({ order: true });
-        if (fullRender) {
-            var element = this._div;
-            var containerElement = element.parentNode;
-            this.renderDispose(update);
-            containerElement.removeChild(element);
-            this.renderAdd(update, containerElement);
-        }
-        return fullRender;
+        var element = this._div;
+        var containerElement = element.parentNode;
+        this.renderDispose(update);
+        containerElement.removeChild(element);
+        this.renderAdd(update, containerElement);
+        return true;
     }
 });
 

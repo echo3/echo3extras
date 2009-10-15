@@ -77,7 +77,7 @@ public class ReorderPeer extends AbstractComponentSynchronizePeer {
     public Class getComponentClass() {
         return Reorder.class;
     }
-
+    
     /**
      * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#getInputPropertyClass(java.lang.String)
      */
@@ -105,6 +105,7 @@ public class ReorderPeer extends AbstractComponentSynchronizePeer {
                 }
                 out.append(order[i]);
             }
+System.err.println("getOrder:" + out);            
             return out.toString();
         } else {
             return super.getOutputProperty(context, component, propertyName, propertyIndex);
