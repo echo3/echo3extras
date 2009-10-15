@@ -93,6 +93,38 @@ Extras.Reorder.Sync = Core.extend(Echo.Render.ComponentSync, {
         return index - 1;
     },
     
+    _getOrder: function() {
+        var i;
+        var requestOrder = this.component.get("order") || [];
+        var addedChildren = [];
+        var actualOrder = [];
+        
+        for (i = 0; i < requestOrder.length; ++i) {
+            if (requestOrder[i] >= this.component.children.length) {
+                // Invalid child index.
+                continue;
+            }
+            if (addedChildren[requestOrder[i]]) {
+                // Child already added.
+                continue;
+            }
+            // Mark child added.
+            addedChildren[requestOrder[i]] = true;
+            // Add child to actual order.
+            actualOrder.push(requestOrder[i]);
+        }
+        
+        // Render any children not specified in order.
+        for (i = 0; i < this.component.children.length; ++i) {
+            if (!addedChildren[i]) {
+                // Unrendered child found: render.
+                actualOrder.push(i);
+            }
+        }
+        
+        return actualOrder;
+    },
+    
     _mouseDown: function(e) {
         var handle = null,
             index,
@@ -172,58 +204,17 @@ Extras.Reorder.Sync = Core.extend(Echo.Render.ComponentSync, {
         this.component.reorder(this._sourceIndex, this._targetIndex);
     },
     
-    _getOrder: function() {
-        var order = this.component.get("order");
-        if (!order) {
-            order = [];
-        }
-        
-        for (i = 0; i < order.length; ++i) {
-            var cell = document.createElement("div");
-            Echo.Render.renderComponentAdd(update, this.component.children[order[i]], cell);
-            this._div.appendChild(cell);
-        }
-        
-        
-    },
-    
     /** @see Echo.Render.ComponentSync#renderAdd */
     renderAdd: function(update, parent) {
         this._div = document.createElement("div");
         this._div.id = this.component.renderId;
         this._div.style.cssText = "";
         
-        var i, cell;
-        var order = this.component.get("order") || [];
-        
-        var availableChildren = this.component.children.slice();
-        
-        // Render children in order.
-        for (i = 0; i < order.length; ++i) {
-            // Only render if child exists at position specified in order.
-            if (order[i] < availableChildren.length) {
-                var child = availableChildren[order[i]];
-                // Only render child if it has not been previously rendered.
-                if (child) {
-                    // Mark child as rendered.
-                    availableChildren[order[i]] = null;
-                    
-                    // Render child.
-                    cell = document.createElement("div");
-                    Echo.Render.renderComponentAdd(update, child, cell);
-                    this._div.appendChild(cell);
-                }
-            }
-        }
-        
-        // Render any children not specified in order.
-        for (i = 0; i < availableChildren.length; ++i) {
-            if (availableChildren[i]) {
-                // Unrendered child found: render.
-                cell = document.createElement("div");
-                Echo.Render.renderComponentAdd(update, availableChildren[i], cell);
-                this._div.appendChild(cell);
-            }
+        var order = this._getOrder();
+        for (var i = 0; i < order.length; ++i) {
+            var cell = document.createElement("div");
+            Echo.Render.renderComponentAdd(update, this.component.children[order[i]], cell);
+            this._div.appendChild(cell);
         }
         
         Core.Web.Event.add(this._div, "mousedown", Core.method(this, this._mouseDown));
