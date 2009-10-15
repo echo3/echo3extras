@@ -40,6 +40,7 @@ import nextapp.echo.app.event.ActionListener;
 import nextapp.echo.extras.app.Reorder;
 import nextapp.echo.extras.app.ReorderHandle;
 import nextapp.echo.extras.testapp.AbstractTest;
+import nextapp.echo.extras.testapp.InteractiveApp;
 import nextapp.echo.extras.testapp.TestControlPane;
 
 /**
@@ -73,25 +74,76 @@ public class ReorderTest extends AbstractTest {
 
         testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Query Order", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-//                StringBuffer out = new StringBuffer();
-//                int[] order = reorder.getOrder();
-//                for (int i = 0; i < order.length; ++i) {
-//                    if (i > 0) {
-//                        out.append(", ");
-//                    }
-//                    out.append(i);
-//                    InteractiveApp.getApp().consoleWrite("Order: " + out);
-//                }
-//                    
+                StringBuffer out = new StringBuffer();
+                int[] order = reorder.getOrder();
+                if (order == null) {
+                    out.append("NULL");
+                } else {
+                    for (int i = 0; i < order.length; ++i) {
+                        if (i > 0) {
+                            out.append(", ");
+                        }
+                        out.append(i);
+                    }
+                }
+                InteractiveApp.getApp().consoleWrite("Order: " + out);
             }
         });
         
-        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Order 0, 1, 3, 5, 2, 4", new ActionListener() {
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Order 012345", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                reorder.setOrder(new int[]{0, 1, 3, 5, 2, 4});
+                reorder.setOrder(new int[]{0, 1, 2, 3, 4, 5});
             }
         });
         
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Order 543210", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                reorder.setOrder(new int[]{5, 4, 3, 2, 1, 0});
+            }
+        });
+                
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Order 0123456", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                reorder.setOrder(new int[]{0, 1, 2, 3, 4, 5, 6});
+            }
+        });
+                
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Order 6543210", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                reorder.setOrder(new int[]{6, 5, 4, 3, 2, 1, 0});
+            }
+        });
+                
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Order 01234", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                reorder.setOrder(new int[]{0, 1, 2, 3, 4});
+            }
+        });
+                
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Order 43210", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                reorder.setOrder(new int[]{4, 3, 2, 1, 0});
+            }
+        });
+                
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Order Null", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                reorder.setOrder(null);
+            }
+        });
+                
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Order []", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                reorder.setOrder(new int[0]);
+            }
+        });
+                
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Order 111222", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                reorder.setOrder(new int[]{1, 1, 1, 2, 2, 2});
+            }
+        });
+                
         // Integration
         
         addStandardIntegrationTests();
