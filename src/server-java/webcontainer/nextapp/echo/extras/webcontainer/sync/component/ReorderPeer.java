@@ -20,6 +20,8 @@
 
 package nextapp.echo.extras.webcontainer.sync.component;
 
+import java.util.StringTokenizer;
+
 import nextapp.echo.app.Component;
 import nextapp.echo.app.update.ClientUpdateManager;
 import nextapp.echo.app.util.Context;
@@ -137,8 +139,16 @@ public class ReorderPeer extends AbstractComponentSynchronizePeer {
     public void storeInputProperty(Context context, Component component, String propertyName, int propertyIndex, Object newValue) {
         if (propertyName.equals(Reorder.ORDER_CHANGED_PROPERTY)) {
             ClientUpdateManager clientUpdateManager = (ClientUpdateManager) context.get(ClientUpdateManager.class);
-
-            clientUpdateManager.setComponentProperty(component, Reorder.ORDER_CHANGED_PROPERTY, null);
+            String orderString = (String) newValue;
+            StringTokenizer st = new StringTokenizer(orderString, ",");
+            int[] order = new int[component.getComponentCount()];
+            int i = 0;
+            while (st.hasMoreTokens() && i < order.length) {
+                String s = st.nextToken();
+                order[i] = Integer.parseInt(s);
+                ++i;
+            }
+            clientUpdateManager.setComponentProperty(component, Reorder.ORDER_CHANGED_PROPERTY, order);
         }
     }
 }

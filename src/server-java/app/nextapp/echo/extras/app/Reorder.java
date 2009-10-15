@@ -32,6 +32,17 @@ public class Reorder extends Component {
     }
     
     /**
+     * @see nextapp.echo.app.Component#processInput(java.lang.String, java.lang.Object)
+     */
+    public void processInput(String inputName, Object inputValue) {
+        if (ORDER_CHANGED_PROPERTY.equals(inputName)) {
+            setOrder((int[]) inputValue);
+        } else {
+            super.processInput(inputName, inputValue);
+        }
+    }
+
+    /**
      * Removes a <code>ChangeListener</code> from being notified of order changes.
      * 
      * @param l the listener to remove
