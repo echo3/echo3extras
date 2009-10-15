@@ -53,13 +53,6 @@ Extras.Reorder = Core.extend(Echo.Component, {
      */
     reorder: function(sourceIndex, targetIndex) {
         var i, oldOrder = this.getOrder(), newOrder;
-        if (!oldOrder) {
-            // Create order if not available.
-            oldOrder = [];
-            for (i = 0; i < this.children.length; ++i) {
-                oldOrder[i] = i;
-            }
-        }
         newOrder = oldOrder.slice();
         newOrder.splice(sourceIndex, 1);
         newOrder.splice(targetIndex, 0, oldOrder[sourceIndex]);
