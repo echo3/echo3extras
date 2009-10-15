@@ -13,6 +13,14 @@ Extras.Reorder = Core.extend(Echo.Component, {
     /** @see Echo.Component#componentType */
     componentType: "Extras.Reorder",
     
+    /**
+     * Returns the actual order of the children.
+     * This method will always return a valid value regardless of the value of the order property.  It will always specify
+     * every child exactly one time.
+     * 
+     * @return the order
+     * @type Array
+     */
     getOrder: function() {
         var i;
         var requestOrder = this.get("order") || [];
