@@ -13,6 +13,38 @@ Extras.Reorder = Core.extend(Echo.Component, {
     /** @see Echo.Component#componentType */
     componentType: "Extras.Reorder",
     
+    getOrder: function() {
+        var i;
+        var requestOrder = this.get("order") || [];
+        var addedChildren = [];
+        var actualOrder = [];
+        
+        for (i = 0; i < requestOrder.length; ++i) {
+            if (requestOrder[i] >= this.children.length) {
+                // Invalid child index.
+                continue;
+            }
+            if (addedChildren[requestOrder[i]]) {
+                // Child already added.
+                continue;
+            }
+            // Mark child added.
+            addedChildren[requestOrder[i]] = true;
+            // Add child to actual order.
+            actualOrder.push(requestOrder[i]);
+        }
+        
+        // Render any children not specified in order.
+        for (i = 0; i < this.children.length; ++i) {
+            if (!addedChildren[i]) {
+                // Unrendered child found: render.
+                actualOrder.push(i);
+            }
+        }
+        
+        return actualOrder;
+    },
+    
     /**
      * Moves a child component from the specified source index to the new target index.
      * 
@@ -20,7 +52,7 @@ Extras.Reorder = Core.extend(Echo.Component, {
      * @param {Number} targetIndex the target index
      */
     reorder: function(sourceIndex, targetIndex) {
-        var i, oldOrder = this.get("order"), newOrder;
+        var i, oldOrder = this.getOrder(), newOrder;
         if (!oldOrder) {
             // Create order if not available.
             oldOrder = [];
