@@ -83,7 +83,7 @@ public class ReorderTest extends AbstractTest {
                         if (i > 0) {
                             out.append(", ");
                         }
-                        out.append(i);
+                        out.append(order[i]);
                     }
                 }
                 InteractiveApp.getApp().consoleWrite("Order: " + out);

@@ -26,7 +26,7 @@ Extras.RemoteReorder.Sync = Core.extend(Extras.Reorder.Sync, {
      */
     storeProperty: function(clientMessage, propertyName) {
         if (propertyName == "order") {
-            var order = this.component.get("order");
+            var order = this.component.getOrder();
             clientMessage.storeProperty(this.component.renderId, propertyName, order == null ? null : order.join(","));
             return true;
         } else {
