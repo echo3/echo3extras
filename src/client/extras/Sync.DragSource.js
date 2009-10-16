@@ -48,13 +48,24 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
     },
     
     /**
-     * Start a drag operation.
+     * Prepare for a drag operation, register move/up listeners.
      * 
-     * @param the e relevant mouse down event which started the drag operation
+     * @param e the relevant mouse down event which started the drag operation
      */
-    _dragStart: function(e) {
+    _dragPreStart: function(e) {
         this._dragStop();
-        
+
+        Core.Web.Event.add(document.body, "mousemove", this._processMouseMoveRef, true);
+        Core.Web.Event.add(document.body, "mouseup", this._processMouseUpRef, true);
+    },
+    
+    /**
+     * Mouse has moved since drag operation was prepared, draw overlay DIV, create clone of
+     * dragged item.
+     * 
+     * @param e the relevant mouse move event
+     */
+    _dragMoveStart: function(e) {
         this._overlayDiv = document.createElement("div");
         this._overlayDiv.style.cssText = "position:absolute;z-index:30000;width:100%;height:100%;cursor:pointer;";
         Echo.Sync.FillImage.render(this.client.getResourceUrl("Echo", "resource/Transparent.gif"), this._overlayDiv);
@@ -65,11 +76,6 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
         this._overlayDiv.appendChild(this._dragDiv);
 
         document.body.appendChild(this._overlayDiv);
-
-        Core.Web.Event.add(document.body, "mousemove", this._processMouseMoveRef, true);
-        Core.Web.Event.add(document.body, "mouseup", this._processMouseUpRef, true);
-        
-        this._dragUpdate(e);
     },
     
     /**
@@ -320,7 +326,7 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
             return;
         }
         
-        this._dragStart(e);
+        this._dragPreStart(e);
     },
     
     /**
@@ -329,6 +335,10 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
      * @param e the event
      */
     _processMouseMove: function(e) {
+        Core.Web.DOM.preventEventDefault(e);
+        if (!this._dragDiv) {
+            this._dragMoveStart();
+        }
         this._dragUpdate(e);
     },
     
@@ -338,8 +348,14 @@ Extras.Sync.DragSource = Core.extend(Echo.Render.ComponentSync, {
      * @param e the event
      */
     _processMouseUp: function(e) {
+        var inProgress = !!this._dragDiv;
+        if (inProgress) {
+            Core.Web.DOM.preventEventDefault(e);
+        }
         this._dragStop();
-        this._dragDrop(e);
+        if (inProgress) {
+            this._dragDrop(e);
+        }
     },
     
     /** @see Echo.Render.ComponentSync#renderAdd */
