@@ -172,7 +172,13 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
     
     _cursorBorderLight: "1px solid #ffffff",
     
-    _cursorBorderDark: "1px solid #afafaf",
+    _cursorBorderDark: "1px solid #cfcfcf",
+    
+    _cursorBorderShadow: "1px solid #000000",
+    
+    _lineOpacity: 0.8,
+    
+    _shadowOpacity: 0.3,
     
     _svXOffset: 7,
     
@@ -180,7 +186,7 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
 
     _barRadius: 2,
     
-    _boxRadius: 5,
+    _boxRadius: 2,
     
     $construct: function() {
         this._processHMouseMoveRef = Core.method(this, this._processHMouseMove);
@@ -384,13 +390,29 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
     },
     
     _createHCursor: function() {
-        var div = document.createElement("div");
+        var container = document.createElement("div");
+        container.style.cssText = "position:absolute;";
+        var div;
+
+        div = document.createElement("div");
+        div.style.cssText = "position:absolute;font-size:1px;line-height:0;top:1px;";
+        div.style.opacity = this._shadowOpacity;
+        div.style.width = this._hWidth + "px";
+        div.style.height = (this._barRadius * 2 - 1) + "px";
+        div.style.borderTop = this._cursorBorderShadow;
+        div.style.borderBottom = this._cursorBorderShadow;
+        container.appendChild(div);
+        
+        div = document.createElement("div");
         div.style.cssText = "position:absolute;font-size:1px;line-height:0;";
+        div.style.opacity = this._lineOpacity;
         div.style.width = this._hWidth + "px";
         div.style.height = (this._barRadius * 2 - 1) + "px";
         div.style.borderTop = this._cursorBorderLight;
         div.style.borderBottom = this._cursorBorderDark;
-        return div;
+        container.appendChild(div);
+        
+        return container;
     },
     
     _createSVCursor: function() {
@@ -399,62 +421,51 @@ Extras.Sync.ColorSelect = Core.extend(Echo.Render.ComponentSync, {
         div.style.width = (this._svWidth * 2 - 1) + "px";
         div.style.height = (this._svHeight * 2 - 1) + "px";
         
-        div.appendChild(this._createSVCursorCorner(true, true));
-        div.appendChild(this._createSVCursorCorner(false, false));
-        div.appendChild(this._createSVCursorCorner(true, false));
-        div.appendChild(this._createSVCursorCorner(false, true));
+        var light, dark, o;
+
+        light = dark = this._cursorBorderShadow;
         
-        div.appendChild(this._createSVCursorLine(true, true));
-        div.appendChild(this._createSVCursorLine(false, true));
-        div.appendChild(this._createSVCursorLine(true, false));
-        div.appendChild(this._createSVCursorLine(false, false));
+        o = this._shadowOpacity;
+        
+        div.appendChild(this._createSVCursorLine(1, 1, true, true, light, dark, o));
+        div.appendChild(this._createSVCursorLine(1, 1, false, true, light, dark, o));
+        div.appendChild(this._createSVCursorLine(1, 1, true, false, light, dark, o));
+        div.appendChild(this._createSVCursorLine(1, 1, false, false, light, dark, o));
+
+        light = this._cursorBorderLight;
+        dark = this._cursorBorderDark;
+        
+        o = this._lineOpacity;
+
+        div.appendChild(this._createSVCursorLine(0, 0, true, true, light, dark, o));
+        div.appendChild(this._createSVCursorLine(0, 0, false, true, light, dark, o));
+        div.appendChild(this._createSVCursorLine(0, 0, true, false, light, dark, o));
+        div.appendChild(this._createSVCursorLine(0, 0, false, false, light, dark, o));
         
         return div;
     },
     
-    _createSVCursorCorner: function(left, top) {
-        var corner = document.createElement("div");
-        corner.style.cssText = "position:absolute;line-height:0;font-size:1px;";
-
-        corner.style.left = (this._svWidth + (left ? 0 - this._boxRadius : this._barRadius)) + "px";
-        corner.style.top = (this._svHeight + (top ? 0 - this._boxRadius : this._barRadius)) + "px";
-        corner.style.width = (this._boxRadius - this._barRadius) + "px";
-        corner.style.height = (this._boxRadius - this._barRadius) + "px";
-        
-        if (left) {
-            corner.style.borderLeft = this._cursorBorderLight;
-        } else {
-            corner.style.borderRight = this._cursorBorderDark;
-        }
-        
-        if (top ) {
-            corner.style.borderTop = this._cursorBorderLight;
-        } else {
-            corner.style.borderBottom = this._cursorBorderDark;
-        }
-        return corner;
-    },
-    
-    _createSVCursorLine: function(leading, vertical) {
+    _createSVCursorLine: function(x, y, leading, vertical, light, dark, opacity) {
         var line = document.createElement("div");
         line.style.cssText = "position:absolute;line-height:0;font-size:1px;";
+        line.style.opacity = opacity;
         
-        line.style[vertical ? "borderLeft" : "borderTop"] = this._cursorBorderLight;
-        line.style[vertical ? "borderRight" : "borderBottom"] = this._cursorBorderDark;
+        line.style[vertical ? "borderLeft" : "borderTop"] = light;
+        line.style[vertical ? "borderRight" : "borderBottom"] = dark;
         
         if (vertical) {
-            line.style.left = (this._svWidth - this._barRadius) + "px";
+            line.style.left = (x + this._svWidth - this._barRadius) + "px";
             line.style.height = (this._svHeight - this._boxRadius) + "px";
             line.style.width = (this._barRadius * 2 - 1) + "px";
             if (!leading) {
-                line.style.top = (this._svHeight + this._boxRadius) + "px";
+                line.style.top = (1 + y + this._svHeight + this._boxRadius) + "px";
             }
         } else {
-            line.style.top = (this._svHeight - this._barRadius) + "px";
+            line.style.top = (y + this._svHeight - this._barRadius) + "px";
             line.style.width = (this._svWidth - this._boxRadius) + "px";
             line.style.height = (this._barRadius * 2 - 1) + "px";
             if (!leading) {
-                line.style.left = (this._svWidth + this._boxRadius) + "px";
+                line.style.left = (1 + x + this._svWidth + this._boxRadius) + "px";
             }
         }
         
