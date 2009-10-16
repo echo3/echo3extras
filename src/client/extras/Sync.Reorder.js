@@ -66,11 +66,9 @@ Extras.Reorder.Sync = Core.extend(Echo.Render.ComponentSync, {
      * @param mouseY the event clientY value, i.e., distance from top of screen.
      */
     _getIndex: function(mouseY) {
-        var index = 0, childDiv = null;
-        
         if (!this._childBounds) {
             this._childBounds = [];
-            childDiv = this._div.firstChild;
+            var childDiv = this._div.firstChild;
             while (childDiv) {
                 this._childBounds.push(new Core.Web.Measure.Bounds(childDiv));
                 childDiv = childDiv.nextSibling;
@@ -82,15 +80,15 @@ Extras.Reorder.Sync = Core.extend(Echo.Render.ComponentSync, {
             return 0;
         }
 
-        for (var index = 0; index < this._childBounds.length; ++index) {
-            if (mouseY >= this._childBounds[index].top && 
-                    mouseY <= this._childBounds[index].top + this._childBounds[index].height) {
-                return index;
+        for (var i = 0; i < this._childBounds.length; ++i) {
+            if (mouseY >= this._childBounds[i].top && 
+                    mouseY <= this._childBounds[i].top + this._childBounds[i].height) {
+                return i;
             }
         }
         
         // After last index: return last index.
-        return index - 1;
+        return this._childBounds.length - 1;
     },
     
     _mouseDown: function(e) {
