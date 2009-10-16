@@ -7,6 +7,12 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
     $static: {
     
         /**
+         * Supported partial update properties. 
+         * @type Array
+         */
+        _supportedPartialProperties: { "activeTabId": true, "activeTabIndex": true },
+
+        /**
          * Default component property settings, used when supported component object does not provide settings. 
          */
         _DEFAULTS: {
@@ -268,8 +274,8 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
             // Add/remove/layout data change: full render.
             fullRender = true;
         } else {
-            var propertyNames = update.getUpdatedPropertyNames();
-            if (propertyNames.length == 1 && propertyNames[0] == "activeTabId") {
+            if (update.isUpdatedPropertySetIn(Extras.Sync.AccordionPane._supportedPartialProperties) &&
+                   update.getUpdatedProperty("activeTabId")) {
                 this._selectTab(update.getUpdatedProperty("activeTabId").newValue);
                 fullRender = false;
             } else {
