@@ -167,6 +167,36 @@ public class CalendarSelectTest extends AbstractTest {
                 calendarSelect.setLocale(Locale.GERMANY);
             }
         });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set First Day Of Week = 0", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                calendarSelect.setFirstDayOfWeek(0);
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set First Day Of Week = 1", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                calendarSelect.setFirstDayOfWeek(1);
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set First Day Of Week = 4", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                calendarSelect.setFirstDayOfWeek(5);
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set First Day Of Week = 6", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                calendarSelect.setFirstDayOfWeek(6);
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set First Day Of Week = Null", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                calendarSelect.set(CalendarSelect.PROPERTY_FIRST_DAY_OF_WEEK, null);
+            }
+        });
         
         addStandardIntegrationTests();
 

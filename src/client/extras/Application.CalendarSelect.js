@@ -13,6 +13,7 @@
  * @sp {#Border} dateBorder default border of date cells
  * @sp {#Color} dateForeground default foreground color of date cells
  * @sp {Number} dayOfWeekNameAbbreviationLength number of characters to use in abbreviated day names (default 2)
+ * @sp {Number} firstDayOfWeek the displayed first day of the week (0=Sunday, 1=Monday, ...)
  * @sp {#Color} headerBackground background color of the week header
  * @sp {#FillImage} headerBackgroundImage background image of the week header
  * @sp {#Color} headerForeground foreground color of the week header

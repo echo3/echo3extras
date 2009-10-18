@@ -52,6 +52,7 @@ public class CalendarSelect extends Component {
     public static final String PROPERTY_DATE_BORDER = "dateBorder";
     public static final String PROPERTY_DATE_FOREGROUND = "dateForeground";
     public static final String PROPERTY_DAY_OF_WEEK_ABBREVIATION_LENGTH = "dayOfWeekAbbreviationLength";
+    public static final String PROPERTY_FIRST_DAY_OF_WEEK = "firstDayOfWeek";
     public static final String PROPERTY_HEADER_BACKGROUND = "headerBackground";
     public static final String PROPERTY_HEADER_BACKGROUND_IMAGE = "headerBackgroundImage";
     public static final String PROPERTY_HEADER_FOREGROUND = "headerForeground";
@@ -165,6 +166,18 @@ public class CalendarSelect extends Component {
      */
     public Color getDateForeground() {
         return (Color) get(PROPERTY_DATE_FOREGROUND);
+    }
+    
+    /**
+     * Returns the first day of the week.
+     * If set, this value overrides any localized setting.
+     * A value of 0 indicates Sunday, a value of 1 indicates Monday.
+     * 
+     * @return the first day of the week
+     */
+    public int getFirstDayOfWeek() {
+        Integer value = (Integer) get(PROPERTY_FIRST_DAY_OF_WEEK);
+        return value == null ? 0 : value.intValue();
     }
     
     /**
@@ -356,6 +369,17 @@ public class CalendarSelect extends Component {
      */
     public void setDateForeground(Color newValue) {
         set(PROPERTY_DATE_FOREGROUND, newValue);
+    }
+    
+    /**
+     * Sets the first day of the week.
+     * If set, this value overrides any localized setting.
+     * A value of 0 indicates Sunday, a value of 1 indicates Monday.
+     * 
+     * @param newValue the first day of the week
+     */
+    public void setFirstDayOfWeek(int newValue) {
+        set(PROPERTY_FIRST_DAY_OF_WEEK, new Integer(newValue));
     }
 
     /**

@@ -814,7 +814,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
             dayOfWeekNameAbbreviationLength = parseInt(this.component.render("dayOfWeekNameAbbreviationLength", 2), 10),
             date = this.component.get("date");
 
-        this._firstDayOfWeek = parseInt(this._msg["FirstDayOfWeek"], 10) || 0;
+        this._firstDayOfWeek = parseInt(this.component.render("firstDayOfWeek", this._msg["FirstDayOfWeek"], 10)) || 0;
 
         if (!date) {
             date = new Date();
