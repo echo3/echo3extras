@@ -666,7 +666,10 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
         this._renderedHtml = text;
         this._document.body.innerHTML = text;
         
-        this.component.doCursorStyleChange(new Extras.Sync.RichTextInput.Html.StyleData(this._selectionRange.getContainingNode()));
+        if (this._selectionRange) {
+            this.component.doCursorStyleChange(new Extras.Sync.RichTextInput.Html.StyleData(
+                    this._selectionRange.getContainingNode()));
+        }
     },
     
     /**
@@ -674,7 +677,6 @@ Extras.Sync.RichTextInput = Core.extend(Echo.Render.ComponentSync, {
      * @see #_storeRange
      */
     _loadRange: function() {
-Core.Debug.consoleWrite("LOADRANGE");            
         if (this._selectionRange) {
             this._selectionRange.activate();
             if (Core.Web.Env.ENGINE_MSHTML && this.component.application.getFocusedComponent() != this.component) {
