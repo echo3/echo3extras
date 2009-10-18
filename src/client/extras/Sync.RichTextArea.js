@@ -965,7 +965,9 @@ Extras.Sync.RichTextArea = Core.extend(Echo.Arc.ComponentSync, {
     /** @see Echo.Render.ComponentSync#renderUpdate */
     renderUpdate: function(update) {
         if (update.isUpdatedPropertySetIn({text: true })) {
-            this._richTextInput.set("text", this.component.get("text"));
+            if (this._richTextInput) {
+                this._richTextInput.set("text", this.component.get("text"));
+            }
             update.renderContext.displayRequired = [];
             return;
         }

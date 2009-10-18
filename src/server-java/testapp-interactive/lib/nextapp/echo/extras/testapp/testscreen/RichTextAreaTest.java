@@ -42,6 +42,7 @@ import nextapp.echo.app.WindowPane;
 import nextapp.echo.app.event.ActionEvent;
 import nextapp.echo.app.event.ActionListener;
 import nextapp.echo.extras.app.RichTextArea;
+import nextapp.echo.extras.app.TabPane;
 import nextapp.echo.extras.testapp.AbstractTest;
 import nextapp.echo.extras.testapp.InteractiveApp;
 import nextapp.echo.extras.testapp.Styles;
@@ -181,6 +182,33 @@ public class RichTextAreaTest extends AbstractTest {
                     }
                 });
                 column.add(button2);
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_INTEGRATION, "Render in TabPane", new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                mainContent.removeAll();
+                TabPane tabPane = new TabPane();
+                mainContent.add(tabPane);
+                
+                Button button1 = new Button("Test");
+                button1.setStyleName("Default");
+                button1.addActionListener(new ActionListener(){
+                    public void actionPerformed(ActionEvent e) {
+                        InteractiveApp.getApp().consoleWrite("Button1 Clicked.");
+                    }
+                });
+                tabPane.add(button1);
+                
+                tabPane.add(richTextArea);
+                
+                Button button2 = new Button("Test");
+                button2.setStyleName("Default");
+                button2.addActionListener(new ActionListener(){
+                    public void actionPerformed(ActionEvent e) {
+                        InteractiveApp.getApp().consoleWrite("Button2 Clicked.");
+                    }
+                });
+                tabPane.add(button2);
             }
         });
         testControlsPane.addButton(TestControlPane.CATEGORY_INTEGRATION, "Add RTA WidndowPane", new ActionListener(){
