@@ -34,11 +34,14 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
+import nextapp.echo.app.Alignment;
+import nextapp.echo.app.Column;
 import nextapp.echo.app.Extent;
 import nextapp.echo.app.Insets;
 import nextapp.echo.app.WindowPane;
 import nextapp.echo.app.event.ActionEvent;
 import nextapp.echo.app.event.ActionListener;
+import nextapp.echo.app.layout.ColumnLayoutData;
 import nextapp.echo.extras.app.CalendarSelect;
 import nextapp.echo.extras.testapp.AbstractTest;
 import nextapp.echo.extras.testapp.InteractiveApp;
@@ -57,7 +60,11 @@ public class CalendarSelectTest extends AbstractTest {
         
         final CalendarSelect calendarSelect = new CalendarSelect();
         setTestComponent(this, calendarSelect);
-        add(calendarSelect);
+        
+        Column column = new Column();
+        add(column);
+        
+        column.add(calendarSelect);
         
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, CalendarSelect.PROPERTY_FOREGROUND);
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, CalendarSelect.PROPERTY_BACKGROUND);
@@ -77,6 +84,18 @@ public class CalendarSelectTest extends AbstractTest {
                 calendarSelect.setStyleName(null);
             }
         });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "ColumnLayoutData = Null", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                calendarSelect.setLayoutData(null);
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "ColumnLayoutData = Center", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ColumnLayoutData layoutData = new ColumnLayoutData();
+                layoutData.setAlignment(Alignment.ALIGN_CENTER);
+                calendarSelect.setLayoutData(layoutData);
+            }
+        });
         testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Query Date", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Date date = calendarSelect.getDate();
@@ -90,6 +109,7 @@ public class CalendarSelectTest extends AbstractTest {
                 calendarSelect.setDate(calendar.getTime());
             }
         });
+        
         testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Add CalendarSelect WindowPane", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 WindowPane windowPane = new WindowPane("Calendar Select Test", new Extent(240), null);
@@ -103,6 +123,30 @@ public class CalendarSelectTest extends AbstractTest {
                 InteractiveApp.getApp().getDefaultWindow().getContent().add(windowPane);
             }
         });
+        
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Add Centered CalendarSelect WindowPane", 
+                new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                WindowPane windowPane = new WindowPane("Calendar Select Test", new Extent(240), null);
+                windowPane.setPositionX(new Extent((int) (Math.random() * 500)));
+                windowPane.setPositionY(new Extent((int) (Math.random() * 300) + 140));
+                windowPane.setWidth(new Extent(400));
+                windowPane.setStyleName("Default");
+                windowPane.setInsets(new Insets(10, 5));
+                Column column = new Column();
+                windowPane.add(column);
+                
+                CalendarSelect calendarSelect = new CalendarSelect();
+                ColumnLayoutData layoutData = new ColumnLayoutData();
+                layoutData.setAlignment(Alignment.ALIGN_CENTER);
+                calendarSelect.setLayoutData(layoutData);
+                calendarSelect.setStyleName("Default");
+                column.add(calendarSelect);
+                InteractiveApp.getApp().getDefaultWindow().getContent().add(windowPane);
+            }
+        });
+        
         testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Locale Null", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 calendarSelect.setLocale(null);
@@ -125,5 +169,6 @@ public class CalendarSelectTest extends AbstractTest {
         });
         
         addStandardIntegrationTests();
+
     }
 }
