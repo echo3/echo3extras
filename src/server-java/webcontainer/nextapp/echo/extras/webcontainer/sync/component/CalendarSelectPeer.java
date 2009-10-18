@@ -61,6 +61,11 @@ extends AbstractComponentSynchronizePeer {
     
     static {
         WebContainerServlet.getServiceRegistry().add(CALENDAR_SELECT_SERVICE);
+        CommonResources.install();
+        ResourceRegistry resources = WebContainerServlet.getResourceRegistry();
+        resources.add("Extras", "image/calendar/Increment.gif", ContentType.IMAGE_GIF);
+        resources.add("Extras", "image/calendar/Decrement.gif", ContentType.IMAGE_GIF);
+        
         addLocaleService(Locale.GERMAN, "de");
     }
     
@@ -69,10 +74,6 @@ extends AbstractComponentSynchronizePeer {
                 RESOURCE_DIR + "SyncLocale.CalendarSelect." + localeCode + ".js");
         WebContainerServlet.getServiceRegistry().add(service);
         LOCALE_SERVICES.put(locale, service);
-        CommonResources.install();
-        ResourceRegistry resources = WebContainerServlet.getResourceRegistry();
-        resources.add("Extras", "image/calendar/Increment.gif", ContentType.IMAGE_GIF);
-        resources.add("Extras", "image/calendar/Decrement.gif", ContentType.IMAGE_GIF);
     }
     
     public CalendarSelectPeer() {
