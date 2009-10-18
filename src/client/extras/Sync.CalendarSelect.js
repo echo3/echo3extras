@@ -834,7 +834,7 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
 
         this._div = document.createElement("div");
         this._div.id = this.component.renderId;
-        this._div.style.cssText = "width:" + (this._cellWidth * this._xSize) + "px;";
+        this._div.style.cssText = "text-align:left;width:" + (this._cellWidth * this._xSize) + "px;";
         
         Echo.Sync.LayoutDirection.render(this.component.getLayoutDirection(), this._div);
         Echo.Sync.Font.render(this._font, this._div);
