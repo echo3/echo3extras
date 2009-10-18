@@ -150,6 +150,13 @@ public class RichTextAreaTest extends AbstractTest {
             }
         });
         
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Feature Set: Empty", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Map features = new HashMap();
+                richTextArea.setFeatures(features);
+            }
+        });
+        
         addStandardIntegrationTests();
         testControlsPane.addButton(TestControlPane.CATEGORY_INTEGRATION, "Render in ContentPane", new ActionListener(){
             public void actionPerformed(ActionEvent e) {
