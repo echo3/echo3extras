@@ -1024,7 +1024,6 @@ Extras.Sync.RichTextArea.AbstractDialog = Core.extend(Echo.WindowPane, {
         // Build control.
         Echo.WindowPane.call(this, {
             styleName: rta.render("windowPaneStyleName"),
-            iconInsets: "6px 10px",
             contentWidth: "25em",
             modal: true,
             resizable: false,
