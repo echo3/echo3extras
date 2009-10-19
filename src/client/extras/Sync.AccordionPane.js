@@ -155,6 +155,16 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
     },
     
     /**
+     * Capturing Mouseover/out listener to prevent rollover effects from firing on children during transitions.
+     * Returns false if transition present.
+     * 
+     * @param e the rollover event
+     */
+    _processRollover: function(e) {
+        return !this.rotation;
+    },
+    
+    /**
      * Immediately redraws tabs in the appropriate positions, exposing the content of the 
      * selected tab.  Any active animated rotation is aborted.
      * 
@@ -218,6 +228,10 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
         this.div.style.cssText = "position:absolute;width:100%;height:100%;";
         Echo.Sync.renderComponentDefaults(this.component, this.div);
         
+        var rolloverMethod = Core.method(this, this._processRollover);
+        Core.Web.Event.add(this.div, "mouseover", rolloverMethod, true);
+        Core.Web.Event.add(this.div, "mouseout", rolloverMethod, true);
+        
         var componentCount = this.component.getComponentCount();
         for (var i = 0; i < componentCount; ++i) {
             var child = this.component.getComponent(i);
@@ -253,6 +267,7 @@ Extras.Sync.AccordionPane = Core.extend(Echo.Render.ComponentSync, {
     
     /** @see Echo.Render.ComponentSync#renderDispose */
     renderDispose: function(update) {
+        Core.Web.Event.removeAll(this.div);
         this.component.removeListener("tabSelect", this._tabSelectListenerRef);
 
         if (this.rotation) {
