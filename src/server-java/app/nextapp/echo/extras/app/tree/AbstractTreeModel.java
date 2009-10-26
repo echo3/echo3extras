@@ -51,13 +51,6 @@ implements TreeModel {
     public void removeTreeModelListener(TreeModelListener l) {
         listenerList.removeListener(TreeModelListener.class, l);
     }
-
-    /**
-     * @see nextapp.echo.extras.app.tree.TreeModel#valueForPathChanged(nextapp.echo.extras.app.tree.TreePath, java.lang.Object)
-     */
-    public void valueForPathChanged(TreePath path, Object newValue) {
-        // is this even needed?
-    }
     
     /**
      * Returns column names using a "spreadsheet-style" convention, i.e., 

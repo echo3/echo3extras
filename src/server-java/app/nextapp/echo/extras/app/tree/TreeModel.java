@@ -33,42 +33,95 @@ import java.io.Serializable;
 
 import nextapp.echo.extras.app.event.TreeModelListener;
 
+/**
+ * Model for representing tree data.
+ */
 public interface TreeModel extends Serializable {
 
+    /**
+     * Adds a <code>TreeModelListener</code> to receive notification of events.
+     * 
+     * @param l the listener to remove
+     */
     public void addTreeModelListener(TreeModelListener l);
     
-    public Object getRoot();
-
+    /**
+     * Returns the child of the specified parent node at the specified index.
+     * 
+     * @param parent the parent node
+     * @param index the child index
+     * @return the child node
+     */
     public Object getChild(Object parent, int index);
-    
+
+    /**
+     * Returns the number of child nodes in the specified parent.
+     * 
+     * @param parent the parent node
+     * @return the number of child nodes
+     */
     public int getChildCount(Object parent);
     
-    public boolean isLeaf(Object object);
-    
-    public void valueForPathChanged(TreePath path, Object newValue);
-
-    public int getIndexOfChild(Object parent, Object child);
+    /**
+     * Returns the type for the specified column index.
+     * 
+     * @param index the column index
+     * @return the column class
+     */
+    public Class getColumnClass(int index);
     
     /**
      * Returns the number of available columns.
+     * 
+     * @return the column count
      */
     public int getColumnCount();
+    
+    /**
+     * Returns the name for the specified column index.
+     * 
+     * @param index the column index
+     * @return the name
+     */
+    public String getColumnName(int index);
 
     /**
-     * Returns the name for column number <code>column</code>.
+     * Returns the index of the child within the parent.
+     * 
+     * @param parent the parent node
+     * @param child the child node
      */
-    public String getColumnName(int column);
-
+    public int getIndexOfChild(Object parent, Object child);
+    
     /**
-     * Returns the type for column number <code>column</code>.
+     * Returns the root node of the tree.
+     * 
+     * @return the root node object
      */
-    public Class getColumnClass(int column);
+    public Object getRoot();
 
     /**
      * Returns the value to be displayed for node <code>node</code>, 
-     * at column number <code>column</code>.
+     * at column number <code>columnIndex</code>.
+     * 
+     * @param columnIndex the column index
+     * @return the column value
      */
-    public Object getValueAt(Object node, int column);
+    public Object getValueAt(Object node, int columnIndex);
 
+    /**
+     * Determines whether the specified node is a leaf.  A leaf may not have children,
+     * but a node without children is not required to be a leaf.
+     * 
+     * @param object the node object
+     * @return true if the node object is a leaf
+     */
+    public boolean isLeaf(Object object);
+
+    /**
+     * Removes a <code>TreeModelListener</code> from receiving notification of events.
+     * 
+     * @param l the listener to remove
+     */
     public void removeTreeModelListener(TreeModelListener l);
 }
