@@ -10,8 +10,8 @@
  * any purpose other than testing it.
  * 
  * @cp {Extras.DataGrid.Model} model the data model
- * @cp {Number} rowIndex displayed origin row index
- * @cp {Number} columnIndex displayed origin column index
+ * @cp {Number} positionColumn displayed column position, a value between 0 and 1
+ * @cp {Number} positionRow displayed row position, a value between 0 and 1
  * @cp {Border} cellBorder default cell border
  * @sp {Number} fixedRowsTop the number of rows at the top which should not
  *     scroll
