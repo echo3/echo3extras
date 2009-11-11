@@ -217,10 +217,10 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             tileIndex: null,
 
             /**
-             * The rendered bounds of the tile.  Contains "top", "left", "width", and "height" properties describing
+             * The rendered position/size of the tile.  Contains "top", "left", "width", and "height" properties describing
              * rendered bounds of the tile.  Initialized when the tile is displayed.
              */
-            bounds: null,
+            positionPx: null,
             
             /**
              * The RenderContext instance specific to this tile.
@@ -320,12 +320,12 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             adjustPositionPx: function(h, v) {
                 if (this.div) {
                     if (h && !this.region.location.h) {
-                        this.bounds.left += h;
-                        this.div.style.left = this.bounds.left + "px";
+                        this.positionPx.left += h;
+                        this.div.style.left = this.positionPx.left + "px";
                     }
                     if (v && !this.region.location.v) {
-                        this.bounds.top += v;
-                        this.div.style.top = this.bounds.top + "px";
+                        this.positionPx.top += v;
+                        this.div.style.top = this.positionPx.top + "px";
                     }
                 }
                 
@@ -336,7 +336,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             
             /**
              * Renders the tile.  Sets the div and _table element properties, measures rendered tile and sets
-             * bounds property.
+             * positionPx property.
              */
             create: function() {
                 if (this.div) {
@@ -347,18 +347,18 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
 
                 var columnWidths = [];
                 
-                this.bounds = { };
+                this.positionPx = { };
                 
-                this.bounds.width = 0;
+                this.positionPx.width = 0;
                 for (column = this.cellIndex.left; column <= this.cellIndex.right; ++column) {
-                    this.bounds.width += columnWidths[column] = this.dataGrid._getColumnWidth(column);
+                    this.positionPx.width += columnWidths[column] = this.dataGrid._getColumnWidth(column);
                 }
 
                 this.div = document.createElement("div");
                 this.div.style.cssText = "position:absolute;";
 
                 this._table = this.dataGrid.getPrototypeTable().cloneNode(true);
-                this._table.style.width = this.bounds.width + "px";
+                this._table.style.width = this.positionPx.width + "px";
 
                 this.div.appendChild(this._table);
 
@@ -369,7 +369,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                         td.style.padding = 0;
                         Echo.Sync.Border.render(this.dataGrid._cellBorder, td);
                         if (row === this.cellIndex.top) {
-                            td.style.width = (columnWidths[column] - this.dataGrid._cellBorderWidth) + "px";
+                            td.style.width = (columnWidths[column] - this.dataGrid._cellBorderWidthPx) + "px";
                         }
                         var value = this.dataGrid._model.get(column, row);
                         if (value == null) {
@@ -383,9 +383,9 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                     this._table.firstChild.appendChild(tr);
                 }
                 
-                this.bounds.height = new Core.Web.Measure.Bounds(this.div).height;
+                this.positionPx.height = new Core.Web.Measure.Bounds(this.div).height;
                 
-                this.div.style.width = this.bounds.width + "px";
+                this.div.style.width = this.positionPx.width + "px";
             },
             
             /**
@@ -400,8 +400,8 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                     return;
                 }
                 this.create();
-                this.bounds.top = top;
-                this.bounds.left = left;
+                this.positionPx.top = top;
+                this.positionPx.left = left;
                 this.div.style.top = top + "px";
                 this.div.style.left = left + "px";
                 
@@ -422,8 +422,8 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
              * Determines if this tile is currently covering the bottom edge of the screen (pixel 0).
              */ 
             isEdgeBottom: function() {
-                return this.edge.bottom || (this.bounds.top < this.region.bounds.height && 
-                        this.bounds.top + this.bounds.height >= this.region.bounds.height);
+                return this.edge.bottom || (this.positionPx.top < this.region.bounds.height && 
+                        this.positionPx.top + this.positionPx.height >= this.region.bounds.height);
             },
             
             /**
@@ -431,15 +431,15 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
              */ 
             isEdgeLeft: function() {
                 return this.edge.left || this.tileIndex.column === 0 || 
-                        (this.bounds.left <= 0 && this.bounds.left + this.bounds.width > 0);
+                        (this.positionPx.left <= 0 && this.positionPx.left + this.positionPx.width > 0);
             },
             
             /**
              * Determines if this tile is currently covering the left edge of the screen (pixel 0).
              */ 
             isEdgeRight: function() {
-                return this.edge.right || (this.bounds.left < this.region.bounds.width && 
-                        this.bounds.left + this.bounds.width >= this.region.bounds.width);
+                return this.edge.right || (this.positionPx.left < this.region.bounds.width && 
+                        this.positionPx.left + this.positionPx.width >= this.region.bounds.width);
             },
             
             /**
@@ -447,7 +447,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
              */ 
             isEdgeTop: function() {
                 return this.edge.top || this.tileIndex.row === 0 || 
-                        (this.bounds.top <= 0 && this.bounds.top + this.bounds.height > 0);
+                        (this.positionPx.top <= 0 && this.positionPx.top + this.positionPx.height > 0);
             },
         
             /**
@@ -457,10 +457,10 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 if (!this.displayed) {
                     return false;
                 }
-                return Extras.Sync.DataGrid.intersect(this.bounds.left, this.bounds.left + this.bounds.width,
-                        0, this.region.bounds.width) &&
-                        Extras.Sync.DataGrid.intersect(this.bounds.top, this.bounds.top + this.bounds.height,
-                        0, this.region.bounds.height);
+                return Extras.Sync.DataGrid.intersect(this.positionPx.left, this.positionPx.left + 
+                        this.positionPx.width, 0, this.region.bounds.width) &&
+                        Extras.Sync.DataGrid.intersect(this.positionPx.top, this.positionPx.top + 
+                        this.positionPx.height, 0, this.region.bounds.height);
             },
 
             /**
@@ -505,6 +505,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
              * This object is organized like a two dimensional array, with rows as the first dimension and columns as the seccond,
              * e.g., requesting _tiles[4][2] would return the tile at row 4 (the fifth row) and column 2 (the third column).
              * Before making such a query one would have to ensure that _tiles[4] is defined.
+             * Though integer values are used, note that this is an object, not an array mapping.
              */
             _tiles: null,
             
@@ -550,7 +551,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 }
                 if (this.location.v === -1) {
                     this.element.style.top = 0;
-                } else if (this.location.h === 1) {
+                } else if (this.location.v === 1) {
                     this.element.style.bottom = 0;
                 }
             },
@@ -563,7 +564,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
              * @param {Number} y the number of vertical pixels to shift the tiles (positive values indicate downward)
              */
             adjustPositionPx: function(x, y) {
-                if (this.location.h && this.location.y) {
+                if (this.location.h && this.location.v) {
                     // This operation has no effect on corner tiles.
                     return;
                 }
@@ -619,8 +620,8 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 if (adjacentTile == null) {
                     return null;
                 }
-                adjacentTile.display(tile.bounds.left + (tile.bounds.width * direction.h), 
-                        tile.bounds.top + (tile.bounds.height * direction.v));
+                adjacentTile.display(tile.positionPx.left + (tile.positionPx.width * direction.h), 
+                        tile.positionPx.top + (tile.positionPx.height * direction.v));
                 return adjacentTile;
             },
             
@@ -717,7 +718,8 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 tile = this.getTile(tileColumnIndex, tileRowIndex);
                 tile.create();
                 
-                tile.display(x * (this.bounds.width - tile.bounds.width), y * (this.bounds.height - tile.bounds.height));
+                tile.display(x * (this.bounds.width - tile.positionPx.width), 
+                        y * (this.bounds.height - tile.positionPx.height));
                 
                 this.fill(false);
                 this.fill(true);
@@ -726,42 +728,39 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             /**
              * Updates the rendered bounds of the region.  The values passed always indicate the pixel bounds of the
              * center region of the DataGrid.
-             *
-             * @param {Number} left the offset from the left edge of the DataGrid to the left edge of the center region
-             * @param {Number} top the offset from the top edge of the DataGrid to the top edge of the center region
-             * @param {Number} right the offset from the right edge of the DataGrid to the right edge of the center region
-             * @param {Number} bottom the offset from the bottom edge of the DataGrid to the bottom edge of the center region
              */
-            updateBounds: function(left, top, right, bottom) {
+            notifySeparatorUpdate: function() {
+                var s = this.dataGrid.separatorPx;
+                
                 this.bounds = { };
                 switch (this.location.h) {
                 case -1: 
-                    this.element.style.width = left + "px"; 
-                    this.bounds.width = left;
+                    this.element.style.width = s.left + "px"; 
+                    this.bounds.width = s.left;
                     break;
                 case  0: 
-                    this.element.style.left = left + "px"; 
-                    this.element.style.right = right + "px"; 
-                    this.bounds.width = this.dataGrid.scrollContainer.bounds.width - left - right;
+                    this.element.style.left = s.left + "px"; 
+                    this.element.style.right = s.right + "px"; 
+                    this.bounds.width = this.dataGrid.scrollContainer.bounds.width - s.left - s.right;
                     break;
                 case  1: 
-                    this.element.style.width = right + "px"; 
-                    this.bounds.width = right;
+                    this.element.style.width = s.right + "px"; 
+                    this.bounds.width = s.right;
                     break;
                 }
                 switch (this.location.v) {
                 case -1: 
-                    this.element.style.height = top + "px"; 
-                    this.bounds.height = top;
+                    this.element.style.height = s.top + "px"; 
+                    this.bounds.height = s.top;
                     break;
                 case  0: 
-                    this.element.style.top = top + "px"; 
-                    this.element.style.bottom = bottom + "px"; 
-                    this.bounds.height = this.dataGrid.scrollContainer.bounds.height - top - bottom;
+                    this.element.style.top = s.top + "px"; 
+                    this.element.style.bottom = s.bottom + "px"; 
+                    this.bounds.height = this.dataGrid.scrollContainer.bounds.height - s.top - s.bottom;
                     break;
                 case  1: 
-                    this.element.style.height = bottom + "px"; 
-                    this.bounds.height = bottom;
+                    this.element.style.height = s.bottom + "px"; 
+                    this.bounds.height = s.bottom;
                     break;
                 }
             }
@@ -796,6 +795,14 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
      * Data model.
      */ 
     _model: null,
+    
+    /**
+     * Separator positions (separating fixed from scrolling content), in pixels.
+     * These values are calculated from the widths of the fixed cells.
+     * Contains top, left, right, and bottom integer properties.
+     * @type Object
+     */
+    separatorPx: null,
 
     /**
      * Size of grid in rows and columns.  Contains numeric rows and columns properties.
@@ -807,9 +814,17 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
      */
     scrollSize: null,
     
-    _cellBorderWidth: null,
+    /**
+     * Combined pixel width of the left and right borders of a cell.
+     * @type Number
+     */
+    _cellBorderWidthPx: null,
     
-    _cellBorderHeight: null,
+    /**
+     * combined pixel height of the top and bottom borders of a cell.
+     * @type Number
+     */
+    _cellBorderHeightPx: null,
     
     /**
      * Number of fixed cells in left, top, right, and bottom sides of the DataGrid.
@@ -817,10 +832,9 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
      */
     fixedCells: null,
     
-    fixedCellSizes: null,
-    
     /**
-     * The ScrollContainer.
+     * The <code>ScrollContainer</code>.
+     * @type Extras.Sync.DataGrid.ScrollContainer
      */
     scrollContainer: null,
     
@@ -837,9 +851,16 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
         this.scrollContainer.setPosition(this.position.x, this.position.y);
     },
 
+    /**
+     * Creates the <code>regions</code> property, containg 
+     * topLeft, top, topRight, left, center, right, bottomLeft, bottom, and bottomRight properties addressing each
+     * individual region.
+     * Calculates separator positions.
+     */
     _createRegions: function() {
         this.regions = { };
     
+        // Create top regions.
         if (this.fixedCells.top) {
             if (this.fixedCells.left) {
                 this.regions.topLeft = new Extras.Sync.DataGrid.Region(this, "topLeft");
@@ -850,6 +871,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             }
         }
         
+        // Create top bottom.
         if (this.fixedCells.bottom) {
             if (this.fixedCells.left) {
                 this.regions.bottomLeft = new Extras.Sync.DataGrid.Region(this, "bottomLeft");
@@ -860,27 +882,41 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             }
         }
         
+        // Create center regions.
         if (this.fixedCells.left) {
             this.regions.left = new Extras.Sync.DataGrid.Region(this, "left");
         }
-
         this.regions.center = new Extras.Sync.DataGrid.Region(this, "center");
-
         if (this.fixedCells.right) {
             this.regions.right = new Extras.Sync.DataGrid.Region(this, "right");
         }
         
+        // Add region elements to scroll container
         for (var name in this.regions) {
             this.scrollContainer.contentElement.appendChild(this.regions[name].element);
         }
         
-        this._updateRegionBounds();
+        // Calculate separator positions.
+        this._updateSeparators();
     },
     
+    /**
+     * Determines the width of the specified column.
+     * 
+     * @param column the column index
+     * @return the pixel width
+     * @type Number
+     */
     _getColumnWidth: function(column) {
-        return 80;
+        return 80; //FIXME
     },
     
+    /**
+     * Creates or retrieves the prototype table, consisting of a TABLE element with a single TBODY as its child.
+     * 
+     * @return the prototype table
+     * @type Element
+     */
     getPrototypeTable: function() {
         if (!this._prototypeTable) {
             this._prototypeTable = document.createElement("table");
@@ -892,15 +928,22 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
         return this._prototypeTable;
     },
     
+    /**
+     * Determines the height of the specified row.
+     * 
+     * @param row the row index
+     * @return the pixel width
+     * @type Number
+     */
     _getRowHeight: function(row) {
         return 17; //FIXME
     },
 
     _loadProperties: function() {
         this._cellBorder = this.component.render("cellBorder");
-        this._cellBorderHeight = Echo.Sync.Border.getPixelSize(this._cellBorder, "top") +
+        this._cellBorderHeightPx = Echo.Sync.Border.getPixelSize(this._cellBorder, "top") +
                 Echo.Sync.Border.getPixelSize(this._cellBorder, "bottom");
-        this._cellBorderWidth = Echo.Sync.Border.getPixelSize(this._cellBorder, "left") +
+        this._cellBorderWidthPx = Echo.Sync.Border.getPixelSize(this._cellBorder, "left") +
                 Echo.Sync.Border.getPixelSize(this._cellBorder, "right");
         this._model = this.component.get("model");
         this.fixedCells = {
@@ -908,14 +951,6 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             top: parseInt(this.component.render("fixedRowsTop", 0), 10),
             right: parseInt(this.component.render("fixedColumnsRight", 0), 10),
             bottom: parseInt(this.component.render("fixedRowsBottom", 0), 10)
-        };
-
-        // FIXME temporary
-        this.fixedCellSizes = { 
-            left: this.fixedCells.left * this._getColumnWidth(),
-            top: this.fixedCells.top * this._getRowHeight(),
-            right: this.fixedCells.right * this._getColumnWidth(),
-            bottom: this.fixedCells.bottom * this._getRowHeight()
         };
     },
     
@@ -985,7 +1020,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             this._fullRenderRequired = false;
         }
 
-        this._updateRegionBounds();
+        this._updateSeparators();
     },
     
     /** @see Echo.Render.ComponentSync#renderDispose */
@@ -1040,35 +1075,41 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
         }
     },
 
-    _updateRegionBounds: function() {
-        var i, name, left = 0, top = 0, right = 0, bottom = 0;
+    /**
+     * Updates the positions of region separators, storing left/top/right/bottom pixel position values in 
+     * the <code>separatorPx</code> property.
+     * Notifies regions of the update.
+     */
+    _updateSeparators: function() {
+        var i, name;
+        this.separatorPx = { left: 0, top: 0, right: 0, bottom: 0 };
         
         if (this.fixedCells.top) {
             for (i = 0; i < this.fixedCells.top; ++i) {
-                top += this._getRowHeight(i);
+                this.separatorPx.top += this._getRowHeight(i);
             }
         }
 
         if (this.fixedCells.bottom) {
             for (i = 0; i < this.fixedCells.bottom; ++i) {
-                bottom += this._getRowHeight(this.size.rows - i - 1);
+                this.separatorPx.bottom += this._getRowHeight(this.size.rows - i - 1);
             }
         }
 
         if (this.fixedCells.left) {
             for (i = 0; i < this.fixedCells.left; ++i) {
-                left += this._getColumnWidth(i);
+                this.separatorPx.left += this._getColumnWidth(i);
             }
         }
         
         if (this.fixedCells.right) {
             for (i = 0; i < this.fixedCells.right; ++i) {
-                right += this._getColumnWidth(this.size.columns - i - 1);
+                this.separatorPx.right += this._getColumnWidth(this.size.columns - i - 1);
             }
         }
         
         for (name in this.regions) {
-            this.regions[name].updateBounds(left, top, right, bottom);
+            this.regions[name].notifySeparatorUpdate();
         }
     }
 });
