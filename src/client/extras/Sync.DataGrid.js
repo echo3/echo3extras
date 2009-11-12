@@ -57,6 +57,51 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             return (b1 <= a1 && a1 <= b2) || (a1 <= b1 && b1 <= a2);
         },
         
+        ScrollPosition: Core.extend({
+            
+            xIndex: null,
+            
+            yIndex: null,
+            
+            xScroll: 0,
+            
+            yScroll: 0,
+            
+            load: function(component) {
+                this.setIndex(component.get("columnIndex"), component.get("rowIndex"));
+                this.setScroll(component.get("columnScroll"), component.get("rowScroll"));
+            },
+            
+            setIndex: function(x, y) {
+                if (x != null) {
+                    this.xIndex = x;
+                    this.xScroll = null;
+                }
+                if (y != null) {
+                    this.yIndex = x;
+                    this.yScroll = null;
+                }
+            },
+            
+            setScroll: function(x, y) {
+                if (x != null) {
+                    this.xScroll = x;
+                    this.xIndex = null;
+                }
+                if (y != null) {
+                    this.yScroll = y;
+                    this.yIndex = null;
+                }
+            },
+            
+            store: function(component) {
+                component.set("columnScroll", this.xScroll, true);
+                component.set("rowScroll", this.yScroll, true);
+                component.set("columnIndex", this.xIndex, true);
+                component.set("rowIndex", this.yIndex, true);
+            }
+        }),
+        
         /**
          * Abstract base class for cell renderers.
          */
@@ -314,17 +359,17 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
              * Adjusts the position of the tile.
              * Has no effect in directions in which the cell is fixed (per region location property).
              *
-             * @param {Number} h the number of pixels to adjust the tile horizontally
-             * @param {Number} v the number of pixels to adjust the tile vertically
+             * @param {Number} xPx the number of pixels to adjust the tile horizontally
+             * @param {Number} yPx the number of pixels to adjust the tile vertically
              */
-            adjustPositionPx: function(h, v) {
+            adjustPositionPx: function(xPx, yPx) {
                 if (this.div) {
-                    if (h && !this.region.location.h) {
-                        this.positionPx.left += h;
+                    if (xPx && !this.region.location.h) {
+                        this.positionPx.left += xPx;
                         this.div.style.left = this.positionPx.left + "px";
                     }
-                    if (v && !this.region.location.v) {
-                        this.positionPx.top += v;
+                    if (yPx && !this.region.location.v) {
+                        this.positionPx.top += yPx;
                         this.div.style.top = this.positionPx.top + "px";
                     }
                 }
@@ -679,6 +724,24 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 return tile;
             },
             
+            getPosition: function() {
+                if (this.location.h !== 0 || this.location.v !== 0) {
+                    throw new Error("Cannot invoke getPosition on tile other than center.");
+                }
+                
+                for (var rowIndex in this._tiles) {
+                    var row = this._tiles[rowIndex];
+                    for (var columnIndex in row) {
+                        var tile = row[columnIndex];
+                        if (tile.displayed) {
+                            Core.Debug.consoleWrite(Core.Debug.toString(tile.positionPx));
+                        }
+                    }
+                }
+                
+                return {x: 0, y: 0};
+            },
+            
             getTile: function(columnIndex, rowIndex) {
                 if (columnIndex < 0 || rowIndex < 0 ||
                         rowIndex > this.dataGrid.size.rows / this.dataGrid.tileSize.rows ||
@@ -700,12 +763,13 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             },
 
             /**
-             * Sets the position of the region.  Invocation will clear all existing tiles.
-             *
-             * @param {Number} x the horizontal position of the region, a value between 0 and 1
-             * @param {Number} y the vertical position of the region, a value between 0 and 1
+             * Renders the position of the region.  Invocation will clear all existing tiles.
              */
-            setPosition: function(x, y) {
+            renderScrollPosition: function() {
+                var x = (this.dataGrid.scrollPosition.xScroll || 0) / 100,
+                    y = (this.dataGrid.scrollPosition.yScroll || 0) / 100;
+Core.Debug.consoleWrite(Core.Debug.toString(this.dataGrid.scrollPosition));                    
+                
                 var tileRowIndex, tileColumnIndex, tile,
                     originColumn = this.dataGrid.scrollSize.columns * x,
                     originRow = this.dataGrid.scrollSize.rows * y;
@@ -783,11 +847,10 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
     _div: null,
     
     /**
-     * Current displayed scroll position.  Contains x and y properties.  Valid values are between 0 and 1.
-     * Example: A value of 0 indicates the top/leftmost position, a value of 1 indicates the bottom/rightmost
-     * position. A value of 0.2 indicates that the pixel at 20% of the 20% cell is displayed at 20% of the screen.  
+     * Current displayed scroll position.
+     * @type Extras.Sync.DataGrid.ScrollPosition 
      */
-    position: null,
+    scrollPosition: null,
     
     regions: null,
     
@@ -840,15 +903,26 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
     
     $construct: function() {
         this._div = null;
-        this.position = { x: 0, y: 0 };
+        this.scrollPosition = new Extras.Sync.DataGrid.ScrollPosition();
     },
     
     adjustPositionPx: function(xPx, yPx) {
+        if (this.scrollPosition.xScroll != null) {
+            if ((this.scrollPosition.xScroll <= 0 && xPx > 0) || (this.scrollPosition.xScroll >= 100 && xPx < 0)) {
+                xPx = 0;
+            }
+        }
+        if (this.scrollPosition.yScroll != null) {
+            if ((this.scrollPosition.yScroll <= 0 && yPx > 0) || (this.scrollPosition.yScroll >= 100 && yPx < 0)) {
+                yPx = 0;
+            }
+        }
+        
         for (var name in this.regions) {
             this.regions[name].adjustPositionPx(xPx, yPx);
         }
         
-        this.scrollContainer.setPosition(this.position.x, this.position.y);
+//        this.scrollContainer.setPosition(this.scrollPosition.xScroll, this.scrollPosition.yScroll);
     },
 
     /**
@@ -946,6 +1020,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
         this._cellBorderWidthPx = Echo.Sync.Border.getPixelSize(this._cellBorder, "left") +
                 Echo.Sync.Border.getPixelSize(this._cellBorder, "right");
         this._model = this.component.get("model");
+        this.scrollPosition.load(this.component);
         this.fixedCells = {
             left: parseInt(this.component.render("fixedColumnsLeft", 0), 10),
             top: parseInt(this.component.render("fixedRowsTop", 0), 10),
@@ -963,14 +1038,10 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 this._scrollIncrementalHorizontal(e.horizontalIncrement);
             }
         } else {
-            // FIXME temporary implementation for testing
-            if (e.vertical != null) {
-                this.component.set("positionRow", e.vertical, true);
-            }
-            if (e.horizontal != null) {
-                this.component.set("positionColumn", e.horizontal, true);
-            }
-            this.setPosition(this.component.get("positionColumn") || 0, this.component.get("positionRow") || 0);
+            this.scrollPosition.setScroll(e.horizontal == null ? null : e.horizontal * 100, 
+                    e.vertical == null ? null : e.vertical * 100);
+            this.scrollPosition.store(this.component);
+            this.renderScrollPosition();
         }
     },
     
@@ -1015,7 +1086,8 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                     rows: this.size.rows - this.fixedCells.top - this.fixedCells.bottom
                     
                 };
-                this.setPosition(this.component.get("positionColumn") || 0, this.component.get("positionRow") || 0);
+//                this.setPosition((this.component.get("columnScroll") || 0) / 100, (this.component.get("rowScroll") || 0) / 100);
+                this.renderScrollPosition();
             }
             this._fullRenderRequired = false;
         }
@@ -1056,25 +1128,16 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
     _scrollIncrementalVertical: function(percent) {
         var scrollPixels = Math.round(this.scrollContainer.bounds.height * percent / 10);
         this.adjustPositionPx(0, 0 - scrollPixels);
-        
-    },
-    
-    _scrollRowPercentVertical: function(percent) {
-        var row = this.size.rows * percent / 100;
     },
     
     /**
-     * Sets the position of the viewport.  Invocation will clear all existing tiles.
-     * 
-     * @param {Number} x the horizontal column position, a value between 0 and 1
-     * @param {Number} y the vertical row position, a value between 0 and 1
      */
-    setPosition: function(x, y) {
+    renderScrollPosition: function() {
         for (var name in this.regions) {
-            this.regions[name].setPosition(x, y);
+            this.regions[name].renderScrollPosition();
         }
     },
-
+    
     /**
      * Updates the positions of region separators, storing left/top/right/bottom pixel position values in 
      * the <code>separatorPx</code> property.
