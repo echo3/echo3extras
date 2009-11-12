@@ -78,7 +78,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                     this.xScroll = null;
                 }
                 if (y != null) {
-                    this.yIndex = x;
+                    this.yIndex = y;
                     this.yScroll = null;
                 }
             },
@@ -766,24 +766,40 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
              * Renders the position of the region.  Invocation will clear all existing tiles.
              */
             renderScrollPosition: function() {
-                var x = (this.dataGrid.scrollPosition.xScroll || 0) / 100,
-                    y = (this.dataGrid.scrollPosition.yScroll || 0) / 100;
-Core.Debug.consoleWrite(Core.Debug.toString(this.dataGrid.scrollPosition));                    
-                
-                var tileRowIndex, tileColumnIndex, tile,
-                    originColumn = this.dataGrid.scrollSize.columns * x,
-                    originRow = this.dataGrid.scrollSize.rows * y;
-                
+                var xFactor, yFactor, originColumn, originRow, tileRowIndex, tileColumnIndex, tile, 
+                    xPosition = 0, yPosition = 0;
+                    
                 this.clear();
-                
+                    
+                if (this.dataGrid.scrollPosition.xScroll != null) {
+                    xFactor = this.dataGrid.scrollPosition.xScroll / 100;
+                    originColumn = this.dataGrid.scrollSize.columns * xFactor;
+                } else {
+                    originColumn = this.dataGrid.scrollPosition.xIndex || 0;
+                }
                 tileColumnIndex = Math.floor(originColumn / this.dataGrid.tileSize.columns);
+                
+                if (this.dataGrid.scrollPosition.yScroll != null) {
+                    yFactor = this.dataGrid.scrollPosition.yScroll / 100;
+                    originRow = this.dataGrid.scrollSize.rows * yFactor;
+                } else {
+                    originRow = this.dataGrid.scrollPosition.yIndex || 0;
+                }
                 tileRowIndex = Math.floor(originRow / this.dataGrid.tileSize.rows);
+                
+Core.Debug.consoleWrite(tileColumnIndex + " /// " + tileRowIndex);                
                 
                 tile = this.getTile(tileColumnIndex, tileRowIndex);
                 tile.create();
                 
-                tile.display(x * (this.bounds.width - tile.positionPx.width), 
-                        y * (this.bounds.height - tile.positionPx.height));
+                if (this.dataGrid.scrollPosition.xScroll != null) {
+                    xPosition = xFactor * (this.bounds.width - tile.positionPx.width);
+                }
+                if (this.dataGrid.scrollPosition.yScroll != null) {
+                    yPosition = yFactor * (this.bounds.height - tile.positionPx.height);
+                }
+                
+                tile.display(xPosition, yPosition); 
                 
                 this.fill(false);
                 this.fill(true);
@@ -1038,8 +1054,8 @@ Core.Debug.consoleWrite(Core.Debug.toString(this.dataGrid.scrollPosition));
                 this._scrollIncrementalHorizontal(e.horizontalIncrement);
             }
         } else {
-            this.scrollPosition.setScroll(e.horizontal == null ? null : e.horizontal * 100, 
-                    e.vertical == null ? null : e.vertical * 100);
+            this.scrollPosition.setScroll(e.horizontal == null ? null : e.horizontal, 
+                    e.vertical == null ? null : e.vertical);
             this.scrollPosition.store(this.component);
             this.renderScrollPosition();
         }
@@ -1196,13 +1212,13 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
     size: 5,
     
     /**
-     * Horizontal scroll position, a value between 0 and 1.
+     * Horizontal scroll position, a value between 0 and 100.
      * @type Number
      */
     scrollX: 0,
 
     /**
-     * Vertical scroll position, a value between 0 and 1.
+     * Vertical scroll position, a value between 0 and 100.
      * @type Number
      */
     scrollY: 0,
@@ -1306,7 +1322,7 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
             return;
         }
 
-        this.scrollX = this._hScrollContainer.scrollLeft / ((this.size - 1) * this.bounds.width);
+        this.scrollX = 100 * this._hScrollContainer.scrollLeft / ((this.size - 1) * this.bounds.width);
         
         if (this.onScroll) {
             this.onScroll({source: this, type: "scroll", incremental: false,  horizontal: this.scrollX });
@@ -1323,7 +1339,7 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
             return;
         }
         
-        this.scrollY = this._vScrollContainer.scrollTop / ((this.size - 1) * this.bounds.height);
+        this.scrollY = 100 * this._vScrollContainer.scrollTop / ((this.size - 1) * this.bounds.height);
         
         if (this.onScroll) {
             this.onScroll({source: this, type: "scroll", incremental: false,  vertical: this.scrollY });
@@ -1379,10 +1395,13 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
     },
     
     setPosition: function(scrollX, scrollY) {
-        this.scrollX = scrollX;
-        this.scrollY = scrollY;
-        
-        this._hScrollContainer.scrollLeft = this.scrollX * ((this.size - 1) * this.bounds.width);
-        this._vScrollContainer.scrollTop = this.scrollY * ((this.size - 1) * this.bounds.height);
+        if (scrollX != null) {
+            this.scrollX = scrollX;
+            this._hScrollContainer.scrollLeft = this.scrollX / 100 * ((this.size - 1) * this.bounds.width);
+        }
+        if (scrollY != null) {
+            this.scrollY = scrollY;
+            this._vScrollContainer.scrollTop = this.scrollY / 100 * ((this.size - 1) * this.bounds.height);
+        }
     }
 });
