@@ -721,7 +721,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 return tile;
             },
             
-            getYScroll: function() {
+            getYIndexRange: function() {
                 if (this.location.h !== 0 || this.location.v !== 0) {
                     throw new Error("Cannot invoke getPositionV on tile other than center.");
                 }
@@ -744,11 +744,19 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                     }
                 }
                 
-                if (topTile && bottomTile) {
-                    var averageIndex = (topTile.cellIndex.top + bottomTile.cellIndex.bottom) / 2;
-                    return 100 * averageIndex / this.dataGrid.size.rows;
-                } else if (topTile) {
-                    return 100 * topTile.cellIndex.top / this.dataGrid.size.rows;
+                return {
+                    top: topTile ? topTile.cellIndex.top : null,
+                    bottom: bottomTile ? bottomTile.cellIndex.bottom : null
+                };
+            },
+            
+            getYScroll: function() {
+                var range = this.getYIndexRange();
+                
+                if (range.top != null && range.bottom != null) {
+                    return 100 * (range.top + range.bottom) / 2 / this.dataGrid.size.rows;
+                } else if (range.top != null) {
+                    return 100 * range.top / this.dataGrid.size.rows;
                 } else {
                     return 0;
                 }
