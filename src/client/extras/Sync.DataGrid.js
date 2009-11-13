@@ -358,19 +358,19 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             /**
              * Adjusts the position of the tile.
              * Has no effect in directions in which the cell is fixed (per region location property).
-             *
-             * @param {Number} xPx the number of pixels to adjust the tile horizontally
-             * @param {Number} yPx the number of pixels to adjust the tile vertically
              */
-            adjustPositionPx: function(xPx, yPx) {
+            adjustPositionPx: function(px, horizontal) {
                 if (this.div) {
-                    if (xPx && !this.region.location.h) {
-                        this.positionPx.left += xPx;
-                        this.div.style.left = this.positionPx.left + "px";
-                    }
-                    if (yPx && !this.region.location.v) {
-                        this.positionPx.top += yPx;
-                        this.div.style.top = this.positionPx.top + "px";
+                    if (horizontal) {
+                        if (!this.region.location.h) {
+                            this.positionPx.left += px;
+                            this.div.style.left = this.positionPx.left + "px";
+                        }
+                    } else {
+                        if (!this.region.location.v) {
+                            this.positionPx.top += px;
+                            this.div.style.top = this.positionPx.top + "px";
+                        }
                     }
                 }
                 
@@ -604,27 +604,24 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             /**
              * Adjusts the positions of tiles within the region, additionally filling in any areas that become
              * unoccupied as a result of the adjustment.
-             *
-             * @param {Number} x the number of horizontal pixels to shift the tiles (positive values indicate to the right)
-             * @param {Number} y the number of vertical pixels to shift the tiles (positive values indicate downward)
              */
-            adjustPositionPx: function(x, y) {
+            adjustPositionPx: function(px, horizontal) {
                 if (this.location.h && this.location.v) {
                     // This operation has no effect on corner tiles.
                     return;
                 }
             
-                x = this.location.h ? 0 : x;
-                y = this.location.v ? 0 : y;
                 var row, tile;
                 for (var rowIndex in this._tiles) {
                     row = this._tiles[rowIndex];
                     for (var columnIndex in row) {
                         tile = row[columnIndex];
-                        tile.adjustPositionPx(x, y);
+                        tile.adjustPositionPx(px, horizontal);
                     }
                 }
-                this.fill(y > 0);
+                
+                this.fill(false);
+                this.fill(true);
             },
             
             /**
@@ -787,8 +784,6 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 }
                 tileRowIndex = Math.floor(originRow / this.dataGrid.tileSize.rows);
                 
-Core.Debug.consoleWrite(tileColumnIndex + " /// " + tileRowIndex);                
-                
                 tile = this.getTile(tileColumnIndex, tileRowIndex);
                 tile.create();
                 
@@ -922,20 +917,33 @@ Core.Debug.consoleWrite(tileColumnIndex + " /// " + tileRowIndex);
         this.scrollPosition = new Extras.Sync.DataGrid.ScrollPosition();
     },
     
-    adjustPositionPx: function(xPx, yPx) {
-        if (this.scrollPosition.xScroll != null) {
-            if ((this.scrollPosition.xScroll <= 0 && xPx > 0) || (this.scrollPosition.xScroll >= 100 && xPx < 0)) {
-                xPx = 0;
+    adjustPositionPx: function(px, horizontal) {
+        if (horizontal) {
+            if (this.scrollPosition.xScroll != null) {
+                if ((this.scrollPosition.xScroll <= 0 && px > 0) || (this.scrollPosition.xScroll >= 100 && px < 0)) {
+                    return;
+                }
+            } else if (this.scrollPosition.xIndex != null) {
+                if (this.scrollPosition.xIndex <= 0 && px > 0) {
+                    return;
+                }
             }
-        }
-        if (this.scrollPosition.yScroll != null) {
-            if ((this.scrollPosition.yScroll <= 0 && yPx > 0) || (this.scrollPosition.yScroll >= 100 && yPx < 0)) {
-                yPx = 0;
+        } else {
+            if (this.scrollPosition.yScroll != null) {
+                if ((this.scrollPosition.yScroll <= 0 && px > 0) || (this.scrollPosition.yScroll >= 100 && px < 0)) {
+                    return;
+                }
+            } else if (this.scrollPosition.yIndex != null) {
+                if (this.scrollPosition.yIndex <= 0 && px > 0) {
+                    return;
+                }
             }
         }
         
+        
+        
         for (var name in this.regions) {
-            this.regions[name].adjustPositionPx(xPx, yPx);
+            this.regions[name].adjustPositionPx(px, horizontal);
         }
         
 //        this.scrollContainer.setPosition(this.scrollPosition.xScroll, this.scrollPosition.yScroll);
@@ -1048,10 +1056,9 @@ Core.Debug.consoleWrite(tileColumnIndex + " /// " + tileRowIndex);
     _processScroll: function(e) {
         if (e.incremental) {
             if (e.verticalIncrement) {
-                this._scrollIncrementalVertical(e.verticalIncrement);
-            }
-            if (e.horizontalIncrement) {
-                this._scrollIncrementalHorizontal(e.horizontalIncrement);
+                this._scrollIncremental(e.verticalIncrement, false);
+            } else if (e.horizontalIncrement) {
+                this._scrollIncremental(e.horizontalIncrement, true);
             }
         } else {
             this.scrollPosition.setScroll(e.horizontal == null ? null : e.horizontal, 
@@ -1102,7 +1109,6 @@ Core.Debug.consoleWrite(tileColumnIndex + " /// " + tileRowIndex);
                     rows: this.size.rows - this.fixedCells.top - this.fixedCells.bottom
                     
                 };
-//                this.setPosition((this.component.get("columnScroll") || 0) / 100, (this.component.get("rowScroll") || 0) / 100);
                 this.renderScrollPosition();
             }
             this._fullRenderRequired = false;
@@ -1130,20 +1136,12 @@ Core.Debug.consoleWrite(tileColumnIndex + " /// " + tileRowIndex);
     },
     
     /**
-     * Scrolls the viewable area left or right by a percentage of the viewable area width.
+     * Scrolls the viewable area horizontally or vertically by a percentage of the viewable area width/height.
      */
-    _scrollIncrementalHorizontal: function(percent) {
-        var scrollPixels = Math.round(this.scrollContainer.bounds.width * percent / 10);
-        this.adjustPositionPx(0 - scrollPixels, 0);
-        
-    },
-    
-    /**
-     * Scrolls the viewable area up or down by a percentage of the viewable area height.
-     */
-    _scrollIncrementalVertical: function(percent) {
-        var scrollPixels = Math.round(this.scrollContainer.bounds.height * percent / 10);
-        this.adjustPositionPx(0, 0 - scrollPixels);
+    _scrollIncremental: function(percent, horizontal) {
+        var scrollPixels = Math.round((horizontal ? this.scrollContainer.bounds.width : this.scrollContainer.bounds.height) * 
+                percent / 10);
+        this.adjustPositionPx(0 - scrollPixels, horizontal);
     },
     
     /**
@@ -1152,6 +1150,8 @@ Core.Debug.consoleWrite(tileColumnIndex + " /// " + tileRowIndex);
         for (var name in this.regions) {
             this.regions[name].renderScrollPosition();
         }
+        
+        this.scrollContainer.setPosition(this.scrollPosition.xScroll, this.scrollPosition.yScroll);
     },
     
     /**
@@ -1405,3 +1405,4 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
         }
     }
 });
+
