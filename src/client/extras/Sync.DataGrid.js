@@ -721,22 +721,37 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 return tile;
             },
             
-            getPosition: function() {
+            getYScroll: function() {
                 if (this.location.h !== 0 || this.location.v !== 0) {
-                    throw new Error("Cannot invoke getPosition on tile other than center.");
+                    throw new Error("Cannot invoke getPositionV on tile other than center.");
                 }
+                
+                var topTile, bottomTile;
                 
                 for (var rowIndex in this._tiles) {
                     var row = this._tiles[rowIndex];
                     for (var columnIndex in row) {
                         var tile = row[columnIndex];
-                        if (tile.displayed) {
-                            Core.Debug.consoleWrite(Core.Debug.toString(tile.positionPx));
+                        if (tile.displayed && tile.isOnScreen()) {
+                            if (tile.positionPx.top < 0) {
+                                topTile = tile;
+                            }
+                            if (tile.positionPx.top + tile.positionPx.height > this.bounds.height) {
+                                bottomTile = tile;
+                            }
+                            break;
                         }
                     }
                 }
                 
-                return {x: 0, y: 0};
+                if (topTile && bottomTile) {
+                    var averageIndex = (topTile.cellIndex.top + bottomTile.cellIndex.bottom) / 2;
+                    return 100 * averageIndex / this.dataGrid.size.rows;
+                } else if (topTile) {
+                    return 100 * topTile.cellIndex.top / this.dataGrid.size.rows;
+                } else {
+                    return 0;
+                }
             },
             
             getTile: function(columnIndex, rowIndex) {
@@ -940,13 +955,16 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             }
         }
         
-        
-        
         for (var name in this.regions) {
             this.regions[name].adjustPositionPx(px, horizontal);
         }
         
-//        this.scrollContainer.setPosition(this.scrollPosition.xScroll, this.scrollPosition.yScroll);
+        if (horizontal) {
+        } else {
+            var yScroll = this.regions.center.getYScroll();
+            Core.Debug.consoleWrite("ys=" + yScroll);
+            this.scrollContainer.setPosition(null, yScroll);
+        }
     },
 
     /**
@@ -1395,6 +1413,7 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
     },
     
     setPosition: function(scrollX, scrollY) {
+        this._lastScrollSetTime = new Date().getTime();
         if (scrollX != null) {
             this.scrollX = scrollX;
             this._hScrollContainer.scrollLeft = this.scrollX / 100 * ((this.size - 1) * this.bounds.width);
