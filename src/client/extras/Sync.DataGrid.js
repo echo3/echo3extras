@@ -721,47 +721,6 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 return tile;
             },
             
-            getYIndexRange: function() {
-                if (this.location.h !== 0 || this.location.v !== 0) {
-                    throw new Error("Cannot invoke getPositionV on tile other than center.");
-                }
-                
-                var topTile, bottomTile;
-                
-                for (var rowIndex in this._tiles) {
-                    var row = this._tiles[rowIndex];
-                    for (var columnIndex in row) {
-                        var tile = row[columnIndex];
-                        if (tile.displayed && tile.isOnScreen()) {
-                            if (tile.positionPx.top < 0) {
-                                topTile = tile;
-                            }
-                            if (tile.positionPx.top + tile.positionPx.height > this.bounds.height) {
-                                bottomTile = tile;
-                            }
-                            break;
-                        }
-                    }
-                }
-                
-                return {
-                    top: topTile ? topTile.cellIndex.top : null,
-                    bottom: bottomTile ? bottomTile.cellIndex.bottom : null
-                };
-            },
-            
-            getYScroll: function() {
-                var range = this.getYIndexRange();
-                
-                if (range.top != null && range.bottom != null) {
-                    return 100 * (range.top + range.bottom) / 2 / this.dataGrid.size.rows;
-                } else if (range.top != null) {
-                    return 100 * range.top / this.dataGrid.size.rows;
-                } else {
-                    return 0;
-                }
-            },
-            
             getTile: function(columnIndex, rowIndex) {
                 if (columnIndex < 0 || rowIndex < 0 ||
                         rowIndex > this.dataGrid.size.rows / this.dataGrid.tileSize.rows ||
@@ -780,6 +739,71 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                     cachedRow[columnIndex] = tile;
                 }
                 return tile;
+            },
+            
+            getYBorderTiles: function() {
+                if (this.location.h !== 0 || this.location.v !== 0) {
+                    throw new Error("Cannot invoke getPositionV on tile other than center.");
+                }
+                
+                var topTile, bottomTile;
+                
+                for (var rowIndex in this._tiles) {
+                    var row = this._tiles[rowIndex];
+                    for (var columnIndex in row) {
+                        var tile = row[columnIndex];
+                        if (tile.displayed && tile.isOnScreen()) {
+                            if (tile.positionPx.top <= 0) {
+                                topTile = tile;
+                            }
+                            if (tile.positionPx.top + tile.positionPx.height > this.bounds.height) {
+                                bottomTile = tile;
+                            }
+                            break;
+                        }
+                    }
+                    if (topTile && bottomTile) {
+                        break;
+                    }
+                }
+                
+                return {
+                    top: topTile, bottom: bottomTile
+                };
+            },
+            
+            getYIndexRange: function() {
+                var borderTiles = this.getYBorderTiles(),
+                    value = {}, rows;
+                
+                if (borderTiles.top) {
+                    rows = borderTiles.top.cellIndex.bottom - borderTiles.top.cellIndex.top + 1;
+                    value.top = borderTiles.top.cellIndex.top + 
+                            rows * (0 - borderTiles.top.positionPx.top) / borderTiles.top.positionPx.height;
+                }
+                
+                if (borderTiles.bottom) {
+                    rows = borderTiles.bottom.cellIndex.bottom - borderTiles.bottom.cellIndex.top + 1;
+                    value.bottom = 1 + borderTiles.bottom.cellIndex.bottom - 
+                            rows * (borderTiles.bottom.positionPx.top + borderTiles.bottom.positionPx.height - this.bounds.height) / 
+                            borderTiles.bottom.positionPx.height;
+                }
+
+Core.Debug.consoleWrite(Core.Debug.toString(value));                            
+                
+                return value;
+            },
+            
+            getYScroll: function() {
+                var range = this.getYIndexRange();
+                
+                if (range.top != null && range.bottom != null) {
+                    return 100 * (range.top + range.bottom) / 2 / this.dataGrid.size.rows;
+                } else if (range.top != null) {
+                    return 100 * range.top / this.dataGrid.size.rows;
+                } else {
+                    return 0;
+                }
             },
 
             /**
@@ -941,27 +965,27 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
     },
     
     adjustPositionPx: function(px, horizontal) {
-        if (horizontal) {
-            if (this.scrollPosition.xScroll != null) {
-                if ((this.scrollPosition.xScroll <= 0 && px > 0) || (this.scrollPosition.xScroll >= 100 && px < 0)) {
-                    return;
-                }
-            } else if (this.scrollPosition.xIndex != null) {
-                if (this.scrollPosition.xIndex <= 0 && px > 0) {
-                    return;
-                }
-            }
-        } else {
-            if (this.scrollPosition.yScroll != null) {
-                if ((this.scrollPosition.yScroll <= 0 && px > 0) || (this.scrollPosition.yScroll >= 100 && px < 0)) {
-                    return;
-                }
-            } else if (this.scrollPosition.yIndex != null) {
-                if (this.scrollPosition.yIndex <= 0 && px > 0) {
-                    return;
-                }
-            }
-        }
+//        if (horizontal) {
+//            if (this.scrollPosition.xScroll != null) {
+//                if ((this.scrollPosition.xScroll <= 0 && px > 0) || (this.scrollPosition.xScroll >= 100 && px < 0)) {
+//                    return;
+//                }
+//            } else if (this.scrollPosition.xIndex != null) {
+//                if (this.scrollPosition.xIndex <= 0 && px > 0) {
+//                    return;
+//                }
+//            }
+//        } else {
+//            if (this.scrollPosition.yScroll != null) {
+//                if ((this.scrollPosition.yScroll <= 0 && px > 0) || (this.scrollPosition.yScroll >= 100 && px < 0)) {
+//                    return;
+//                }
+//            } else if (this.scrollPosition.yIndex != null) {
+//                if (this.scrollPosition.yIndex <= 0 && px > 0) {
+//                    return;
+//                }
+//            }
+//        }
         
         for (var name in this.regions) {
             this.regions[name].adjustPositionPx(px, horizontal);
@@ -1060,7 +1084,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
      * @type Number
      */
     _getRowHeight: function(row) {
-        return 17; //FIXME
+        return 19; //FIXME
     },
 
     _loadProperties: function() {
