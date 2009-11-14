@@ -741,7 +741,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 return tile;
             },
             
-            getYBorderTiles: function() {
+            getBorderTilesY: function() {
                 if (this.location.h !== 0 || this.location.v !== 0) {
                     throw new Error("Cannot invoke getPositionV on tile other than center.");
                 }
@@ -772,40 +772,6 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 };
             },
             
-            getYIndexRange: function() {
-                var borderTiles = this.getYBorderTiles(),
-                    value = {}, rows;
-                
-                if (borderTiles.top) {
-                    rows = borderTiles.top.cellIndex.bottom - borderTiles.top.cellIndex.top + 1;
-                    value.top = borderTiles.top.cellIndex.top + 
-                            rows * (0 - borderTiles.top.positionPx.top) / borderTiles.top.positionPx.height;
-                }
-                
-                if (borderTiles.bottom) {
-                    rows = borderTiles.bottom.cellIndex.bottom - borderTiles.bottom.cellIndex.top + 1;
-                    value.bottom = 1 + borderTiles.bottom.cellIndex.bottom - 
-                            rows * (borderTiles.bottom.positionPx.top + borderTiles.bottom.positionPx.height - this.bounds.height) / 
-                            borderTiles.bottom.positionPx.height;
-                }
-
-Core.Debug.consoleWrite(Core.Debug.toString(value));                            
-                
-                return value;
-            },
-            
-            getYScroll: function() {
-                var range = this.getYIndexRange();
-                
-                if (range.top != null && range.bottom != null) {
-                    return 100 * (range.top + range.bottom) / 2 / this.dataGrid.size.rows;
-                } else if (range.top != null) {
-                    return 100 * range.top / this.dataGrid.size.rows;
-                } else {
-                    return 0;
-                }
-            },
-
             /**
              * Renders the position of the region.  Invocation will clear all existing tiles.
              */
@@ -910,6 +876,14 @@ Core.Debug.consoleWrite(Core.Debug.toString(value));
      */
     scrollPosition: null,
     
+    /**
+     * The displayed visible range of cell indices in the center region.
+     * Contains top, left, right, and bottom properties.  Values may be fractional when part of a cell is displayed.
+     * Bottom/right values will indicate an index of n + 1 if the entirety of cell n is displayed, 
+     * but none of cell n + 1 is displayed.
+     */
+    visibleRange: null,
+        
     regions: null,
     
     /**
@@ -961,6 +935,7 @@ Core.Debug.consoleWrite(Core.Debug.toString(value));
     
     $construct: function() {
         this._div = null;
+        this.visibleRange = {};
         this.scrollPosition = new Extras.Sync.DataGrid.ScrollPosition();
     },
     
@@ -993,7 +968,7 @@ Core.Debug.consoleWrite(Core.Debug.toString(value));
         
         if (horizontal) {
         } else {
-            var yScroll = this.regions.center.getYScroll();
+            var yScroll = this.getScrollY();
             Core.Debug.consoleWrite("ys=" + yScroll);
             this.scrollContainer.setPosition(null, yScroll);
         }
@@ -1085,6 +1060,24 @@ Core.Debug.consoleWrite(Core.Debug.toString(value));
      */
     _getRowHeight: function(row) {
         return 19; //FIXME
+    },
+
+    /**
+     * Determines the current vertical scroll position, based on the displayed position of the center region.
+     * 
+     * @return the vertical scroll position, a value between 0 and 100
+     * @type Number
+     */
+    getScrollY: function() {
+        this.updateVisibleRangeY();
+        
+        if (this.visibleRange.top != null && this.visibleRange.bottom != null) {
+            return 100 * (this.visibleRange.top + this.visibleRange.bottom) / 2 / this.size.rows;
+        } else if (this.visibleRange.top != null) {
+            return 100 * this.visibleRange.top / this.size.rows;
+        } else {
+            return 0;
+        }
     },
 
     _loadProperties: function() {
@@ -1239,6 +1232,27 @@ Core.Debug.consoleWrite(Core.Debug.toString(value));
         
         for (name in this.regions) {
             this.regions[name].notifySeparatorUpdate();
+        }
+    },
+    
+    /**
+     * Updates the <code>visibleRange.top</code> and <code>visibleRange.bottom</code> properties based on the displayed
+     * position of the center region.
+     */
+    updateVisibleRangeY: function() {
+        var borderTiles = this.regions.center.getBorderTilesY(), rows;
+        
+        if (borderTiles.top) {
+            rows = borderTiles.top.cellIndex.bottom - borderTiles.top.cellIndex.top + 1;
+            this.visibleRange.top = borderTiles.top.cellIndex.top + 
+                    rows * (0 - borderTiles.top.positionPx.top) / borderTiles.top.positionPx.height;
+        }
+        
+        if (borderTiles.bottom) {
+            rows = borderTiles.bottom.cellIndex.bottom - borderTiles.bottom.cellIndex.top + 1;
+            this.visibleRange.bottom = 1 + borderTiles.bottom.cellIndex.bottom - 
+                    rows * (borderTiles.bottom.positionPx.top + borderTiles.bottom.positionPx.height - 
+                    this.regions.center.bounds.height) / borderTiles.bottom.positionPx.height;
         }
     }
 });
