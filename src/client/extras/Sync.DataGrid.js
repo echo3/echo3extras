@@ -968,9 +968,8 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
         
         if (horizontal) {
         } else {
-            var yScroll = this.getScrollY();
-            Core.Debug.consoleWrite("ys=" + yScroll);
-            this.scrollContainer.setPosition(null, yScroll);
+            this.updateVisibleRangeY();
+            this._updateScrollContainerY();
         }
     },
 
@@ -1060,24 +1059,6 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
      */
     _getRowHeight: function(row) {
         return 19; //FIXME
-    },
-
-    /**
-     * Determines the current vertical scroll position, based on the displayed position of the center region.
-     * 
-     * @return the vertical scroll position, a value between 0 and 100
-     * @type Number
-     */
-    getScrollY: function() {
-        this.updateVisibleRangeY();
-        
-        if (this.visibleRange.top != null && this.visibleRange.bottom != null) {
-            return 100 * (this.visibleRange.top + this.visibleRange.bottom) / 2 / this.size.rows;
-        } else if (this.visibleRange.top != null) {
-            return 100 * this.visibleRange.top / this.size.rows;
-        } else {
-            return 0;
-        }
     },
 
     _loadProperties: function() {
@@ -1197,6 +1178,19 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
         this.scrollContainer.setPosition(this.scrollPosition.xScroll, this.scrollPosition.yScroll);
     },
     
+    /**
+     * Updates the vertical position of the scroll container based on the <code>visibleRange</code> property.
+     */
+    _updateScrollContainerY: function() {
+        var y = 0;
+        if (this.visibleRange.top != null && this.visibleRange.bottom != null) {
+            y = 100 * (this.visibleRange.top + this.visibleRange.bottom) / 2 / this.size.rows;
+        } else if (this.visibleRange.top != null) {
+            y = 100 * this.visibleRange.top / this.size.rows;
+        }
+        this.scrollContainer.setPosition(null, y);
+    },
+
     /**
      * Updates the positions of region separators, storing left/top/right/bottom pixel position values in 
      * the <code>separatorPx</code> property.
