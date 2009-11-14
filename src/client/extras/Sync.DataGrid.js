@@ -999,7 +999,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
 
             // Limit adjustment to 1/2 screen height.
             if (Math.abs(px) > this.regions.center.bounds.height / 2) {
-                px = this.regions.center.bounds.height / 2 * (px < 0 ? -1 : 1)
+                px = this.regions.center.bounds.height / 2 * (px < 0 ? -1 : 1);
             }
         }
         
