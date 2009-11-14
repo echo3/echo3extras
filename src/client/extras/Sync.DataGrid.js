@@ -940,27 +940,35 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
     },
     
     adjustPositionPx: function(px, horizontal) {
-//        if (horizontal) {
-//            if (this.scrollPosition.xScroll != null) {
-//                if ((this.scrollPosition.xScroll <= 0 && px > 0) || (this.scrollPosition.xScroll >= 100 && px < 0)) {
-//                    return;
-//                }
-//            } else if (this.scrollPosition.xIndex != null) {
-//                if (this.scrollPosition.xIndex <= 0 && px > 0) {
-//                    return;
-//                }
-//            }
-//        } else {
-//            if (this.scrollPosition.yScroll != null) {
-//                if ((this.scrollPosition.yScroll <= 0 && px > 0) || (this.scrollPosition.yScroll >= 100 && px < 0)) {
-//                    return;
-//                }
-//            } else if (this.scrollPosition.yIndex != null) {
-//                if (this.scrollPosition.yIndex <= 0 && px > 0) {
-//                    return;
-//                }
-//            }
-//        }
+        if (horizontal) {
+            if (Math.abs(px) > this.regions.center.bounds.width / 2) {
+                px = this.regions.center.bounds.width / 2 * (px < 0 ? -1 : 1);
+            }
+            
+            if (this.scrollPosition.xScroll != null) {
+                if ((this.scrollPosition.xScroll <= 0 && px > 0) || (this.scrollPosition.xScroll >= 100 && px < 0)) {
+                    return;
+                }
+            } else if (this.scrollPosition.xIndex != null) {
+                if (this.scrollPosition.xIndex <= 0 && px > 0) {
+                    return;
+                }
+            }
+        } else {
+            if (Math.abs(px) > this.regions.center.bounds.height / 2) {
+                px = this.regions.center.bounds.height / 2 * (px < 0 ? -1 : 1)
+            }
+
+            if (this.scrollPosition.yScroll != null) {
+                if ((this.scrollPosition.yScroll <= 0 && px > 0) || (this.scrollPosition.yScroll >= 100 && px < 0)) {
+                    return;
+                }
+            } else if (this.scrollPosition.yIndex != null) {
+                if (this.scrollPosition.yIndex <= 0 && px > 0) {
+                    return;
+                }
+            }
+        }
         
         for (var name in this.regions) {
             this.regions[name].adjustPositionPx(px, horizontal);
@@ -970,6 +978,8 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
         } else {
             this.updateVisibleRangeY();
             this._updateScrollContainerY();
+            this.scrollPosition.setIndex(null, this.visibleRange.top); 
+            this.scrollPosition.store(this.component);
         }
     },
 
