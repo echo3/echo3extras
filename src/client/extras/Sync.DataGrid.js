@@ -741,6 +741,37 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 return tile;
             },
             
+            getBorderTilesX: function() {
+                if (this.location.h !== 0 || this.location.v !== 0) {
+                    throw new Error("Cannot invoke getPositionV on tile other than center.");
+                }
+                
+                var leftTile, rightTile;
+                
+                for (var rowIndex in this._tiles) {
+                    var row = this._tiles[rowIndex];
+                    for (var columnIndex in row) {
+                        var tile = row[columnIndex];
+                        if (tile.displayed && tile.isOnScreen()) {
+                            if (tile.positionPx.left <= 0) {
+                                leftTile = tile;
+                            }
+                            if (tile.positionPx.left + tile.positionPx.width > this.bounds.width) {
+                                rightTile = tile;
+                            }
+                            break;
+                        }
+                    }
+                    if (leftTile && rightTile) {
+                        break;
+                    }
+                }
+                
+                return {
+                    left: leftTile, right: rightTile
+                };
+            },
+            
             getBorderTilesY: function() {
                 if (this.location.h !== 0 || this.location.v !== 0) {
                     throw new Error("Cannot invoke getPositionV on tile other than center.");
@@ -941,10 +972,6 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
     
     adjustPositionPx: function(px, horizontal) {
         if (horizontal) {
-            if (Math.abs(px) > this.regions.center.bounds.width / 2) {
-                px = this.regions.center.bounds.width / 2 * (px < 0 ? -1 : 1);
-            }
-            
             if (this.scrollPosition.xScroll != null) {
                 if ((this.scrollPosition.xScroll <= 0 && px > 0) || (this.scrollPosition.xScroll >= 100 && px < 0)) {
                     return;
@@ -954,11 +981,12 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                     return;
                 }
             }
-        } else {
-            if (Math.abs(px) > this.regions.center.bounds.height / 2) {
-                px = this.regions.center.bounds.height / 2 * (px < 0 ? -1 : 1)
+            
+            // Limit adjustment to 1/2 screen width.
+            if (Math.abs(px) > this.regions.center.bounds.width / 2) {
+                px = this.regions.center.bounds.width / 2 * (px < 0 ? -1 : 1);
             }
-
+        } else {
             if (this.scrollPosition.yScroll != null) {
                 if ((this.scrollPosition.yScroll <= 0 && px > 0) || (this.scrollPosition.yScroll >= 100 && px < 0)) {
                     return;
@@ -968,6 +996,11 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                     return;
                 }
             }
+
+            // Limit adjustment to 1/2 screen height.
+            if (Math.abs(px) > this.regions.center.bounds.height / 2) {
+                px = this.regions.center.bounds.height / 2 * (px < 0 ? -1 : 1)
+            }
         }
         
         for (var name in this.regions) {
@@ -975,6 +1008,10 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
         }
         
         if (horizontal) {
+            this.updateVisibleRangeX();
+            this._updateScrollContainerX();
+            this.scrollPosition.setIndex(this.visibleRange.left, null);
+            this.scrollPosition.store(this.component);
         } else {
             this.updateVisibleRangeY();
             this._updateScrollContainerY();
@@ -1189,6 +1226,19 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
     },
     
     /**
+     * Updates the horizontal position of the scroll container based on the <code>visibleRange</code> property.
+     */
+    _updateScrollContainerX: function() {
+        var x = 0;
+        if (this.visibleRange.left != null && this.visibleRange.right != null) {
+            x = 100 * (this.visibleRange.left + this.visibleRange.right) / 2 / this.size.columns;
+        } else if (this.visibleRange.left != null) {
+            x = 100 * this.visibleRange.left / this.size.columns;
+        }
+        this.scrollContainer.setPosition(x, null);
+    },
+    
+    /**
      * Updates the vertical position of the scroll container based on the <code>visibleRange</code> property.
      */
     _updateScrollContainerY: function() {
@@ -1236,6 +1286,27 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
         
         for (name in this.regions) {
             this.regions[name].notifySeparatorUpdate();
+        }
+    },
+    
+    /**
+     * Updates the <code>visibleRange.left</code> and <code>visibleRange.right</code> properties based on the displayed
+     * position of the center region.
+     */
+    updateVisibleRangeX: function() {
+        var borderTiles = this.regions.center.getBorderTilesX(), columns;
+        
+        if (borderTiles.left) {
+            columns = borderTiles.left.cellIndex.right - borderTiles.left.cellIndex.left + 1;
+            this.visibleRange.left = borderTiles.left.cellIndex.left + 
+                    columns * (0 - borderTiles.left.positionPx.left) / borderTiles.left.positionPx.width;
+        }
+        
+        if (borderTiles.right) {
+            columns = borderTiles.right.cellIndex.right - borderTiles.right.cellIndex.left + 1;
+            this.visibleRange.right = 1 + borderTiles.right.cellIndex.right - 
+                    columns * (borderTiles.right.positionPx.left + borderTiles.right.positionPx.width - 
+                    this.regions.center.bounds.width) / borderTiles.right.positionPx.width;
         }
     },
     
