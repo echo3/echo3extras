@@ -154,6 +154,12 @@ public class RichTextAreaPeer extends AbstractComponentSynchronizePeer {
         addRequiredComponentClass(WindowPane.class);
 
         addOutputProperty(RichTextArea.TEXT_CHANGED_PROPERTY);
+
+        addEvent(new EventPeer(RichTextArea.INPUT_ACTION, RichTextArea.ACTION_LISTENERS_CHANGED_PROPERTY) {
+            public boolean hasListeners(Context context, Component c) {
+                return ((RichTextArea) c).hasActionListeners();
+            }
+        });
     }
     
     /**

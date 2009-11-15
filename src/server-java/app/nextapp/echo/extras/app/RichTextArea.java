@@ -29,11 +29,14 @@
 
 package nextapp.echo.extras.app;
 
+import java.util.EventListener;
 import java.util.Map;
 
 import nextapp.echo.app.Border;
 import nextapp.echo.app.Component;
 import nextapp.echo.app.FillImage;
+import nextapp.echo.app.event.ActionEvent;
+import nextapp.echo.app.event.ActionListener;
 import nextapp.echo.app.event.DocumentEvent;
 import nextapp.echo.app.event.DocumentListener;
 import nextapp.echo.app.text.Document;
@@ -178,13 +181,17 @@ public class RichTextArea extends Component {
     /** Feature name describing capability to control paragraph indentation level. */
     public static final String FEATURE_INDENT= "indent";
 
+    public static final String ACTION_LISTENERS_CHANGED_PROPERTY = "actionListeners";
     public static final String DOCUMENT_CHANGED_PROPERTY = "document";
+    public static final String TEXT_CHANGED_PROPERTY = "text";
+    
+    public static final String INPUT_ACTION = "action";
 
+    public static final String PROPERTY_ACTION_COMMAND = "actionCommand";
     public static final String PROPERTY_BACKGROUND_IMAGE = "backgroundImage";
     public static final String PROPERTY_BORDER = "border";
     public static final String PROPERTY_CONTROL_PANE_BUTTON_STYLE_NAME = "controlPaneButtonStyleName";
     public static final String PROPERTY_CONTROL_PANE_ROW_STYLE_NAME = "controlPaneRowStyleName";
-
     public static final String PROPERTY_CONTROL_PANE_SPLIT_PANE_STYLE_NAME = "controlPaneSplitPaneStyleName";
     public static final String PROPERTY_FEATURES = "features";
     public static final String PROPERTY_ICONS = "icons";
@@ -192,7 +199,7 @@ public class RichTextArea extends Component {
     public static final String PROPERTY_TOOLBAR_BUTTON_STYLE_NAME = "toolbarButtonStyleName";
     public static final String PROPERTY_TOOLBAR_PANEL_STYLE_NAME = "toolbarPanelStyleName";
     public static final String PROPERTY_WINDOW_PANE_STYLE_NAME = "windowPaneStyleName";
-    public static final String TEXT_CHANGED_PROPERTY = "text";
+
     private Document document;
     
     /**
@@ -229,7 +236,47 @@ public class RichTextArea extends Component {
         super();
         setDocument(document);
     }
+    
+    /**
+     * Adds an <code>ActionListener</code> to the component.
+     * The <code>ActionListener</code> will be invoked when the user presses the ENTER key.
+     * 
+     * @param l the <code>ActionListener</code> to add
+     */
+    public void addActionListener(ActionListener l) {
+        getEventListenerList().addListener(ActionListener.class, l);
+        // Notification of action listener changes is provided due to 
+        // existence of hasActionListeners() method. 
+        firePropertyChange(ACTION_LISTENERS_CHANGED_PROPERTY, null, l);
+    }
 
+    /**
+     * Fires an action event to all listeners.
+     */
+    private void fireActionEvent() {
+        if (!hasEventListenerList()) {
+            return;
+        }
+        EventListener[] listeners = getEventListenerList().getListeners(ActionListener.class);
+        ActionEvent e = null;
+        for (int i = 0; i < listeners.length; ++i) {
+            if (e == null) {
+                e = new ActionEvent(this, (String) getRenderProperty(PROPERTY_ACTION_COMMAND));
+            } 
+            ((ActionListener) listeners[i]).actionPerformed(e);
+        }
+    }
+    
+    /**
+     * Returns the action command which will be provided in 
+     * <code>ActionEvent</code>s fired by this <code>TextComponent</code>.
+     * 
+     * @return the action command
+     */
+    public String getActionCommand() {
+        return (String) get(PROPERTY_ACTION_COMMAND);
+    }
+    
     /**
      * Returns the background image of the text entry area.
      * 
@@ -304,6 +351,15 @@ public class RichTextArea extends Component {
     public String getWindowPaneStyleName() {
         return (String) get(PROPERTY_WINDOW_PANE_STYLE_NAME);
     }
+
+    /**
+     * Determines if any <code>ActionListener</code>s are registered.
+     * 
+     * @return true if any action listeners are registered
+     */
+    public boolean hasActionListeners() {
+        return hasEventListenerList() && getEventListenerList().getListenerCount(ActionListener.class) != 0;
+    }
     
     /**
      * @see nextapp.echo.app.Component#processInput(java.lang.String, java.lang.Object)
@@ -313,7 +369,34 @@ public class RichTextArea extends Component {
         
         if (TEXT_CHANGED_PROPERTY.equals(inputName)) {
             setText((String) inputValue);
+        } else if (INPUT_ACTION.equals(inputName)) {
+            fireActionEvent();
         }
+    }
+    
+    /**
+     * Removes an <code>ActionListener</code> from the component.
+     * 
+     * @param l the <code>ActionListener</code> to remove
+     */
+    public void removeActionListener(ActionListener l) {
+        if (!hasEventListenerList()) {
+            return;
+        }
+        getEventListenerList().removeListener(ActionListener.class, l);
+        // Notification of action listener changes is provided due to 
+        // existence of hasActionListeners() method. 
+        firePropertyChange(ACTION_LISTENERS_CHANGED_PROPERTY, l, null);
+    }
+        
+    /**
+     * Sets the action command which will be provided in
+     * <code>ActionEvent</code>s fired by this component.
+     * 
+     * @param newValue the new action command
+     */
+    public void setActionCommand(String newValue) {
+        set(PROPERTY_ACTION_COMMAND, newValue);
     }
     
     /**

@@ -166,6 +166,19 @@ public class RichTextAreaTest extends AbstractTest {
             }
         });
         
+        // Listener Tests
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_LISTENERS, "Add ActionListener", new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                richTextArea.addActionListener(new ActionListener() {
+                    
+                    public void actionPerformed(ActionEvent e) {
+                        InteractiveApp.getApp().consoleWrite("Action event received: " + e.toString());
+                    }
+                });
+            }
+        });        
+        
         addStandardIntegrationTests();
         testControlsPane.addButton(TestControlPane.CATEGORY_INTEGRATION, "Render in ContentPane", new ActionListener(){
             public void actionPerformed(ActionEvent e) {
