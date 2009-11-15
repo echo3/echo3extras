@@ -43,6 +43,7 @@ import nextapp.echo.app.event.ActionEvent;
 import nextapp.echo.app.event.ActionListener;
 import nextapp.echo.extras.app.RichTextArea;
 import nextapp.echo.extras.app.TabPane;
+import nextapp.echo.extras.app.richtext.InsertHtmlCommand;
 import nextapp.echo.extras.testapp.AbstractTest;
 import nextapp.echo.extras.testapp.InteractiveApp;
 import nextapp.echo.extras.testapp.Styles;
@@ -163,6 +164,20 @@ public class RichTextAreaTest extends AbstractTest {
             public void actionPerformed(ActionEvent e) {
                 Map features = new HashMap();
                 richTextArea.setFeatures(features);
+            }
+        });
+        
+        // Command Tests
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_COMMANDS, "Insert 'hello'", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                getApplicationInstance().enqueueCommand(new InsertHtmlCommand(richTextArea, "hello"));
+            }
+        });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_COMMANDS, "Insert <hr>", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                getApplicationInstance().enqueueCommand(new InsertHtmlCommand(richTextArea, "<hr>"));
             }
         });
         

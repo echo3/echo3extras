@@ -41,3 +41,22 @@ Extras.Sync.RemoteRichTextArea = Core.extend(Extras.Sync.RichTextArea, {
         Echo.Render.registerPeer("Extras.RemoteRichTextArea", this);
     }
 });
+
+/**
+ * Command peer for InsertHtmlCommand.
+ */
+Extras.Sync.RemoteRichTextArea.InsertHtmlCommand = Core.extend(Echo.RemoteClient.CommandExec, {
+    
+    $static: {
+
+        /** @see Echo.RemoteClient.CommandExecProcessor#execute */
+        execute: function(client, commandData) {
+            var rta = client.application.getComponentByRenderId(commandData.renderId);
+            rta.insertHtml(commandData.html);
+        }
+     },
+     
+     $load: function() {
+        Echo.RemoteClient.CommandExecProcessor.registerPeer("nextapp.echo.extras.app.richtext.InsertHtmlCommand", this);
+     }
+});
