@@ -37,11 +37,27 @@ Extras.Sync.RemoteRichTextArea = Core.extend(Extras.Sync.RichTextArea, {
         })
     },
     
+    processInsertHyperlink: function() {
+        if (this.component.render("overrideInsertHyperlink")) {
+            this.component.fireEvent({ source: this.component, type: "operation", data: "insertHyperlink" });
+        } else {
+            Extras.Sync.RichTextArea.prototype.processInsertHyperlink.call(this);
+        }
+    },
+    
     processInsertImage: function() {
         if (this.component.render("overrideInsertImage")) {
             this.component.fireEvent({ source: this.component, type: "operation", data: "insertImage" });
         } else {
             Extras.Sync.RichTextArea.prototype.processInsertImage.call(this);
+        }
+    },
+    
+    processInsertTable: function() {
+        if (this.component.render("overrideInsertTable")) {
+            this.component.fireEvent({ source: this.component, type: "operation", data: "insertTable" });
+        } else {
+            Extras.Sync.RichTextArea.prototype.processInsertTable.call(this);
         }
     },
 

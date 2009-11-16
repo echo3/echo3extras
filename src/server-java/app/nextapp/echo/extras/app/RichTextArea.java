@@ -197,6 +197,8 @@ public class RichTextArea extends Component {
     public static final String INPUT_OPERATION = "operation";
     
     public static final String OPERATION_INSERT_IMAGE = "insertImage";
+    public static final String OPERATION_INSERT_HYPERLINK = "insertHyperlink";
+    public static final String OPERATION_INSERT_TABLE = "insertTable";
 
     public static final String PROPERTY_ACTION_COMMAND = "actionCommand";
     public static final String PROPERTY_BACKGROUND_IMAGE = "backgroundImage";
@@ -207,7 +209,9 @@ public class RichTextArea extends Component {
     public static final String PROPERTY_FEATURES = "features";
     public static final String PROPERTY_ICONS = "icons";
     public static final String PROPERTY_MENU_STYLE_NAME = "menuStyleName";
+    public static final String PROPERTY_OVERRIDE_INSERT_HYPERLINK = "overrideInsertHyperlink";
     public static final String PROPERTY_OVERRIDE_INSERT_IMAGE = "overrideInsertImage";
+    public static final String PROPERTY_OVERRIDE_INSERT_TABLE = "overrideInsertTable";
     public static final String PROPERTY_TOOLBAR_BUTTON_STYLE_NAME = "toolbarButtonStyleName";
     public static final String PROPERTY_TOOLBAR_PANEL_STYLE_NAME = "toolbarPanelStyleName";
     public static final String PROPERTY_WINDOW_PANE_STYLE_NAME = "windowPaneStyleName";
@@ -462,6 +466,17 @@ public class RichTextArea extends Component {
     }
     
     /**
+     * Determines whether the insert hyperlink operation is overridden, i.e., whether insert hyperlink requests will be sent
+     * to the server via a <code>RichTextOperationEvent</code>.
+     * 
+     * @return true if the operation is overridden
+     */
+    public boolean isOverrideInsertHyperlink() {
+        Boolean value = (Boolean) get(PROPERTY_OVERRIDE_INSERT_HYPERLINK);
+        return value != null && value.booleanValue();
+    }
+    
+    /**
      * Determines whether the insert image operation is overridden, i.e., whether insert image requests will be sent
      * to the server via a <code>RichTextOperationEvent</code>.
      * 
@@ -469,6 +484,17 @@ public class RichTextArea extends Component {
      */
     public boolean isOverrideInsertImage() {
         Boolean value = (Boolean) get(PROPERTY_OVERRIDE_INSERT_IMAGE);
+        return value != null && value.booleanValue();
+    }
+    
+    /**
+     * Determines whether the insert table operation is overridden, i.e., whether insert table requests will be sent
+     * to the server via a <code>RichTextOperationEvent</code>.
+     * 
+     * @return true if the operation is overridden
+     */
+    public boolean isOverrideInsertTable() {
+        Boolean value = (Boolean) get(PROPERTY_OVERRIDE_INSERT_TABLE);
         return value != null && value.booleanValue();
     }
     
@@ -619,6 +645,16 @@ public class RichTextArea extends Component {
     }
     
     /**
+     * Sets whether the insert hyperlink operation is overridden, i.e., whether insert hyperlink requests will be sent
+     * to the server via a <code>RichTextOperationEvent</code>.
+     * 
+     * @param newValue the new override state
+     */
+    public void setOverrideInsertHyperlink(boolean newValue) {
+        set(PROPERTY_OVERRIDE_INSERT_HYPERLINK, Boolean.valueOf(newValue));
+    }
+    
+    /**
      * Sets whether the insert image operation is overridden, i.e., whether insert image requests will be sent
      * to the server via a <code>RichTextOperationEvent</code>.
      * 
@@ -626,6 +662,16 @@ public class RichTextArea extends Component {
      */
     public void setOverrideInsertImage(boolean newValue) {
         set(PROPERTY_OVERRIDE_INSERT_IMAGE, Boolean.valueOf(newValue));
+    }
+    
+    /**
+     * Sets whether the insert table operation is overridden, i.e., whether insert table requests will be sent
+     * to the server via a <code>RichTextOperationEvent</code>.
+     * 
+     * @param newValue the new override state
+     */
+    public void setOverrideInsertTable(boolean newValue) {
+        set(PROPERTY_OVERRIDE_INSERT_TABLE, Boolean.valueOf(newValue));
     }
     
     /**

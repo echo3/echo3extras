@@ -65,8 +65,16 @@ public class RichTextAreaTest extends AbstractTest {
     private RichTextOperationListener operationListener = new RichTextOperationListener() {
         
         public void operationPerformed(RichTextOperationEvent e) {
-            getApplicationInstance().enqueueCommand(new InsertHtmlCommand((Component) e.getSource(), 
-                    "<img src=\"http://www.nextapp.com/home/images/logo.png\"/>"));
+            if (RichTextArea.OPERATION_INSERT_HYPERLINK.equals(e.getOperationId())) {
+                getApplicationInstance().enqueueCommand(new InsertHtmlCommand((Component) e.getSource(), 
+                        "<a href=\"http://www.nextapp.com\">www.nextapp.com</a>"));
+            } else if (RichTextArea.OPERATION_INSERT_IMAGE.equals(e.getOperationId())) {
+                getApplicationInstance().enqueueCommand(new InsertHtmlCommand((Component) e.getSource(), 
+                        "<img src=\"http://www.nextapp.com/home/images/logo.png\"/>"));
+            } else if (RichTextArea.OPERATION_INSERT_TABLE.equals(e.getOperationId())) {
+                getApplicationInstance().enqueueCommand(new InsertHtmlCommand((Component) e.getSource(), 
+                        "<table border=\"1\"><tbody><tr><td>Alpha</td><td>Bravo</td></tr></tbody></table>"));
+            } 
         }
     };  
 
@@ -178,17 +186,48 @@ public class RichTextAreaTest extends AbstractTest {
             }
         });
         
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Add Override: Insert Hyperlink", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                richTextArea.setOverrideInsertHyperlink(true);
+                if (!richTextArea.hasOperationListeners()) {
+                    richTextArea.addOperationListener(operationListener);
+                }
+            }
+        });
+        
         testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Add Override: Insert Image", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 richTextArea.setOverrideInsertImage(true);
-                richTextArea.addOperationListener(operationListener);
+                if (!richTextArea.hasOperationListeners()) {
+                    richTextArea.addOperationListener(operationListener);
+                }
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Add Override: Insert Table", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                richTextArea.setOverrideInsertTable(true);
+                if (!richTextArea.hasOperationListeners()) {
+                    richTextArea.addOperationListener(operationListener);
+                }
+            }
+        });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Remove Override: Insert Hyperlink", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                richTextArea.setOverrideInsertHyperlink(false);
             }
         });
         
         testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Remove Override: Insert Image", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 richTextArea.setOverrideInsertImage(false);
-                richTextArea.removeOperationListener(operationListener);
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Remove Override: Insert Table", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                richTextArea.setOverrideInsertTable(false);
             }
         });
         
@@ -211,13 +250,24 @@ public class RichTextAreaTest extends AbstractTest {
         testControlsPane.addButton(TestControlPane.CATEGORY_LISTENERS, "Add ActionListener", new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 richTextArea.addActionListener(new ActionListener() {
-                    
                     public void actionPerformed(ActionEvent e) {
                         InteractiveApp.getApp().consoleWrite("Action event received: " + e.toString());
                     }
                 });
             }
-        });        
+        });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_LISTENERS, "Add OperationListener", new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                richTextArea.addOperationListener(operationListener);
+            }
+        });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_LISTENERS, "Remove OperationListener", new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                richTextArea.removeOperationListener(operationListener);
+            }
+        });
         
         addStandardIntegrationTests();
         testControlsPane.addButton(TestControlPane.CATEGORY_INTEGRATION, "Render in ContentPane", new ActionListener(){
