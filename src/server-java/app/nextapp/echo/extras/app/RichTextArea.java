@@ -58,6 +58,11 @@ import nextapp.echo.extras.app.event.RichTextOperationListener;
  * cleaning operations must be performed on the client that will render such
  * HTML (not the client sending it) or on a central trusted server.
  * 
+ * This component contains several String properties which end with the suffix "StyleName".
+ * These properties may be used to configure the look and feel of the <code>RichTextArea</code>, such
+ * that sub-components, e.g., its <code>MenuBarPane</code> or <code>WindowPane</code> will be styled
+ * in accordance with the containing application.  See the documentation of specific --StyleName() methods for details.  
+ * 
  * WARNING: Feature/icon names are under review, subject to change.
  */
 public class RichTextArea extends Component {
@@ -267,7 +272,7 @@ public class RichTextArea extends Component {
     }
 
     /**
-     * Fires an action event to all listeners.
+     * Fires an <code>ActionEvent</code> to all <code>ActionListener</code>s.
      */
     private void fireActionPerformed() {
         if (!hasEventListenerList()) {
@@ -284,7 +289,9 @@ public class RichTextArea extends Component {
     }
 
     /**
-     * Fires an action event to all listeners.
+     * Fires a <code>RichTextOperationEvent</code> event to all <code>RichTextOperationListener</code>s.
+     * 
+     * @param operationName the name of the operation
      */
     private void fireOperationPerformed(String operationName) {
         if (!hasEventListenerList()) {
@@ -328,14 +335,31 @@ public class RichTextArea extends Component {
         return (Border) get(PROPERTY_BORDER);
     }
     
+    /**
+     * Returns the style name to use for <code>Button</code>s added to "control panes".
+     * 
+     * @return the style name
+     */
     public String getControlPaneButtonStyleName() {
         return (String) get(PROPERTY_CONTROL_PANE_BUTTON_STYLE_NAME);
     }
     
+    /**
+     * Returns the style name to use for the "control pane" <code>Row</code>s.  These <code>Row</code>
+     * components are placed in <code>SplitPane</code>s and house control buttons for dialog windows (e.g., Ok/Cancel).
+     * 
+     * @return the style name
+     */
     public String getControlPaneRowStyleName() {
         return (String) get(PROPERTY_CONTROL_PANE_ROW_STYLE_NAME);
     }
     
+    /**
+     * Returns the style name for the <code>SplitPane</code> which divides a dialog window's content from its control pane 
+     * <code>Row</code>.
+     * 
+     * @return the style name
+     */
     public String getControlPaneSplitPaneStyleName() {
         return (String) get(PROPERTY_CONTROL_PANE_SPLIT_PANE_STYLE_NAME);
     }
@@ -349,14 +373,33 @@ public class RichTextArea extends Component {
         return document;
     }
     
+    /**
+     * Retrieves the map containing enabled features.  If null, the client will render its default feature-set.
+     * If non-null, only features specified in the features map will be available.  The <code>FEATURE_???</code> 
+     * constants should be used as keys, with values of <code>Boolean.TRUE</code> for enabled features.
+     * 
+     * @return the features map
+     */
     public Map getFeatures() {
         return (Map) get(PROPERTY_FEATURES);
     }
     
+    /**
+     * Retrieves the map containing customized icons.  If null, the client will use default icons.
+     * If non-null, any overridden icons will be used in place of the defaults.  The <code>ICON_???</code>
+     * constants should be used as keys, with <code>ImageReference</code> values.
+     * 
+     * @return the icons map
+     */
     public Map getIcons() {
         return (Map) get(PROPERTY_ICONS);
     }
     
+    /**
+     * Returns the style name for the <code>MenuBarPane</code> displayed by the text area.
+     * 
+     * @return the style name
+     */
     public String getMenuStyleName() {
         return (String) get(PROPERTY_MENU_STYLE_NAME);
     }
@@ -373,14 +416,29 @@ public class RichTextArea extends Component {
         return document.getText();
     }
     
+    /**
+     * Returns the style name for the toolbar <code>Button</code>s.
+     * 
+     * @return the style name
+     */
     public String getToolbarButtonStyleName() {
         return (String) get(PROPERTY_TOOLBAR_BUTTON_STYLE_NAME);
     }
     
+    /**
+     * Returns the style name for the toolbar <code>Panel</code>.
+     * 
+     * @return the style name
+     */
     public String getToolbarPanelStyleName() {
         return (String) get(PROPERTY_TOOLBAR_PANEL_STYLE_NAME);
     }
     
+    /**
+     * Returns the style name for <code>WindowPane</code>s displayed by the text area.
+     * 
+     * @return the style name
+     */
     public String getWindowPaneStyleName() {
         return (String) get(PROPERTY_WINDOW_PANE_STYLE_NAME);
     }
@@ -483,14 +541,31 @@ public class RichTextArea extends Component {
         set(PROPERTY_BORDER, newValue);
     }
 
+    /**
+     * Sets the style name to use for <code>Button</code>s added to "control panes".
+     * 
+     * @param newValue the new style name
+     */
     public void setControlPaneButtonStyleName(String newValue) {
         set(PROPERTY_CONTROL_PANE_BUTTON_STYLE_NAME, newValue);
     }
 
+    /**
+     * Sets the style name to use for the "control pane" <code>Row</code>s.  These <code>Row</code>
+     * components are placed in <code>SplitPane</code>s and house control buttons for dialog windows (e.g., Ok/Cancel).
+     * 
+     * @param newValue the new style name
+     */
     public void setControlPaneRowStyleName(String newValue) {
         set(PROPERTY_CONTROL_PANE_ROW_STYLE_NAME, newValue);
     }
     
+    /**
+     * Sets the style name for the <code>SplitPane</code> which divides a dialog window's content from its control pane 
+     * <code>Row</code>.
+     * 
+     * @param newValue the new style name
+     */
     public void setControlPaneSplitPaneStyleName(String newValue) {
         set(PROPERTY_CONTROL_PANE_SPLIT_PANE_STYLE_NAME, newValue);
     }
@@ -512,14 +587,33 @@ public class RichTextArea extends Component {
         document = newValue;
     }
     
+    /**
+     * Sets the map containing enabled features.  If null, the client will render its default feature-set.
+     * If non-null, only features specified in the features map will be available.  The <code>FEATURE_???</code> 
+     * constants should be used as keys, with values of <code>Boolean.TRUE</code> for enabled features.
+     * 
+     * @param newValue the new features map
+     */
     public void setFeatures(Map newValue) {
         set(PROPERTY_FEATURES, newValue);
     }
     
+    /**
+     * Sets the map containing customized icons.  If null, the client will use default icons.
+     * If non-null, any overridden icons will be used in place of the defaults.  The <code>ICON_???</code>
+     * constants should be used as keys, with <code>ImageReference</code> values.
+     * 
+     * @param newValue the new icons map
+     */
     public void setIcons(Map newValue) {
         set(PROPERTY_ICONS, newValue);
     }
     
+    /**
+     * Sets the style name for the <code>MenuBarPane</code> displayed by the text area.
+     * 
+     * @param newValue the new style name
+     */
     public void setMenuStyleName(String newValue) {
         set(PROPERTY_MENU_STYLE_NAME, newValue);
     }
@@ -543,14 +637,29 @@ public class RichTextArea extends Component {
         getDocument().setText(newValue);
     }
     
+    /**
+     * Sets the style name for the toolbar <code>Button</code>s.
+     * 
+     * @param newValue the new style name
+     */
     public void setToolbarButtonStyleName(String newValue) {
         set(PROPERTY_TOOLBAR_BUTTON_STYLE_NAME, newValue);
     }
 
+    /**
+     * Sets the style name for the toolbar <code>Panel</code>.
+     * 
+     * @param newValue the new style name
+     */
     public void setToolbarPanelStyleName(String newValue) {
         set(PROPERTY_TOOLBAR_PANEL_STYLE_NAME, newValue);
     }
 
+    /**
+     * Sets the style name for the toolbar <code>Panel</code>.
+     * 
+     * @param newValue the new style name
+     */
     public void setWindowPaneStyleName(String newValue) {
         set(PROPERTY_WINDOW_PANE_STYLE_NAME, newValue);
     }
