@@ -35,6 +35,7 @@ import java.util.Map;
 
 import nextapp.echo.app.Button;
 import nextapp.echo.app.Column;
+import nextapp.echo.app.Component;
 import nextapp.echo.app.ContentPane;
 import nextapp.echo.app.Extent;
 import nextapp.echo.app.ResourceImageReference;
@@ -43,6 +44,8 @@ import nextapp.echo.app.event.ActionEvent;
 import nextapp.echo.app.event.ActionListener;
 import nextapp.echo.extras.app.RichTextArea;
 import nextapp.echo.extras.app.TabPane;
+import nextapp.echo.extras.app.event.RichTextOperationEvent;
+import nextapp.echo.extras.app.event.RichTextOperationListener;
 import nextapp.echo.extras.app.richtext.InsertHtmlCommand;
 import nextapp.echo.extras.testapp.AbstractTest;
 import nextapp.echo.extras.testapp.InteractiveApp;
@@ -58,6 +61,14 @@ public class RichTextAreaTest extends AbstractTest {
     
     private ContentPane mainContent;
     private RichTextArea richTextArea;
+    
+    private RichTextOperationListener operationListener = new RichTextOperationListener() {
+        
+        public void operationPerformed(RichTextOperationEvent e) {
+            getApplicationInstance().enqueueCommand(new InsertHtmlCommand((Component) e.getSource(), 
+                    "<img src=\"http://www.nextapp.com/home/images/logo.png\"/>"));
+        }
+    };  
 
     public RichTextAreaTest() {
         super("RichTextArea", Styles.ICON_16_RICH_TEXT_AREA);
@@ -164,6 +175,20 @@ public class RichTextAreaTest extends AbstractTest {
             public void actionPerformed(ActionEvent e) {
                 Map features = new HashMap();
                 richTextArea.setFeatures(features);
+            }
+        });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Add Override: Insert Image", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                richTextArea.setOverrideInsertImage(true);
+                richTextArea.addOperationListener(operationListener);
+            }
+        });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Remove Override: Insert Image", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                richTextArea.setOverrideInsertImage(false);
+                richTextArea.removeOperationListener(operationListener);
             }
         });
         

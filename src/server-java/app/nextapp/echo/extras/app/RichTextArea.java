@@ -41,6 +41,8 @@ import nextapp.echo.app.event.DocumentEvent;
 import nextapp.echo.app.event.DocumentListener;
 import nextapp.echo.app.text.Document;
 import nextapp.echo.app.text.StringDocument;
+import nextapp.echo.extras.app.event.RichTextOperationEvent;
+import nextapp.echo.extras.app.event.RichTextOperationListener;
 
 //FIXME review features icon/names, remove warning.
 /**
@@ -183,9 +185,13 @@ public class RichTextArea extends Component {
 
     public static final String ACTION_LISTENERS_CHANGED_PROPERTY = "actionListeners";
     public static final String DOCUMENT_CHANGED_PROPERTY = "document";
+    public static final String OPERATION_LISTENERS_CHANGED_PROPERTY = "operationListeners";
     public static final String TEXT_CHANGED_PROPERTY = "text";
     
     public static final String INPUT_ACTION = "action";
+    public static final String INPUT_OPERATION = "operation";
+    
+    public static final String OPERATION_INSERT_IMAGE = "insertImage";
 
     public static final String PROPERTY_ACTION_COMMAND = "actionCommand";
     public static final String PROPERTY_BACKGROUND_IMAGE = "backgroundImage";
@@ -196,6 +202,7 @@ public class RichTextArea extends Component {
     public static final String PROPERTY_FEATURES = "features";
     public static final String PROPERTY_ICONS = "icons";
     public static final String PROPERTY_MENU_STYLE_NAME = "menuStyleName";
+    public static final String PROPERTY_OVERRIDE_INSERT_IMAGE = "overrideInsertImage";
     public static final String PROPERTY_TOOLBAR_BUTTON_STYLE_NAME = "toolbarButtonStyleName";
     public static final String PROPERTY_TOOLBAR_PANEL_STYLE_NAME = "toolbarPanelStyleName";
     public static final String PROPERTY_WINDOW_PANE_STYLE_NAME = "windowPaneStyleName";
@@ -245,15 +252,24 @@ public class RichTextArea extends Component {
      */
     public void addActionListener(ActionListener l) {
         getEventListenerList().addListener(ActionListener.class, l);
-        // Notification of action listener changes is provided due to 
-        // existence of hasActionListeners() method. 
         firePropertyChange(ACTION_LISTENERS_CHANGED_PROPERTY, null, l);
+    }
+    
+    /**
+     * Adds a <code>RichTextOperationListener</code> to the component.
+     * The <code>RichTextOperationListener</code> will be invoked when the user performs an overridden operation.
+     * 
+     * @param l the <code>RichTextOperationListener</code> to add
+     */
+    public void addOperationListener(RichTextOperationListener l) {
+        getEventListenerList().addListener(RichTextOperationListener.class, l);
+        firePropertyChange(OPERATION_LISTENERS_CHANGED_PROPERTY, null, l);
     }
 
     /**
      * Fires an action event to all listeners.
      */
-    private void fireActionEvent() {
+    private void fireActionPerformed() {
         if (!hasEventListenerList()) {
             return;
         }
@@ -264,6 +280,23 @@ public class RichTextArea extends Component {
                 e = new ActionEvent(this, (String) getRenderProperty(PROPERTY_ACTION_COMMAND));
             } 
             ((ActionListener) listeners[i]).actionPerformed(e);
+        }
+    }
+
+    /**
+     * Fires an action event to all listeners.
+     */
+    private void fireOperationPerformed(String operationName) {
+        if (!hasEventListenerList()) {
+            return;
+        }
+        EventListener[] listeners = getEventListenerList().getListeners(RichTextOperationListener.class);
+        RichTextOperationEvent e = null;
+        for (int i = 0; i < listeners.length; ++i) {
+            if (e == null) {
+                e = new RichTextOperationEvent(this, operationName);
+            } 
+            ((RichTextOperationListener) listeners[i]).operationPerformed(e);
         }
     }
     
@@ -360,6 +393,26 @@ public class RichTextArea extends Component {
     public boolean hasActionListeners() {
         return hasEventListenerList() && getEventListenerList().getListenerCount(ActionListener.class) != 0;
     }
+
+    /**
+     * Determines if any <code>OperationListener</code>s are registered.
+     * 
+     * @return true if any operation listeners are registered
+     */
+    public boolean hasOperationListeners() {
+        return hasEventListenerList() && getEventListenerList().getListenerCount(RichTextOperationListener.class) != 0;
+    }
+    
+    /**
+     * Determines whether the insert image operation is overridden, i.e., whether insert image requests will be sent
+     * to the server via a <code>RichTextOperationEvent</code>.
+     * 
+     * @return true if the operation is overridden
+     */
+    public boolean isOverrideInsertImage() {
+        Boolean value = (Boolean) get(PROPERTY_OVERRIDE_INSERT_IMAGE);
+        return value != null && value.booleanValue();
+    }
     
     /**
      * @see nextapp.echo.app.Component#processInput(java.lang.String, java.lang.Object)
@@ -370,7 +423,9 @@ public class RichTextArea extends Component {
         if (TEXT_CHANGED_PROPERTY.equals(inputName)) {
             setText((String) inputValue);
         } else if (INPUT_ACTION.equals(inputName)) {
-            fireActionEvent();
+            fireActionPerformed();
+        } else if (INPUT_OPERATION.equals(inputName)) {
+            fireOperationPerformed((String) inputValue);
         }
     }
     
@@ -384,11 +439,22 @@ public class RichTextArea extends Component {
             return;
         }
         getEventListenerList().removeListener(ActionListener.class, l);
-        // Notification of action listener changes is provided due to 
-        // existence of hasActionListeners() method. 
         firePropertyChange(ACTION_LISTENERS_CHANGED_PROPERTY, l, null);
     }
         
+    /**
+     * Removes a <code>RichTextOperationListener</code> from the component.
+     * 
+     * @param l the <code>RichTextOperationListener</code> to remove
+     */
+    public void removeOperationListener(RichTextOperationListener l) {
+        if (!hasEventListenerList()) {
+            return;
+        }
+        getEventListenerList().removeListener(RichTextOperationListener.class, l);
+        firePropertyChange(OPERATION_LISTENERS_CHANGED_PROPERTY, l, null);
+    }
+
     /**
      * Sets the action command which will be provided in
      * <code>ActionEvent</code>s fired by this component.
@@ -456,6 +522,16 @@ public class RichTextArea extends Component {
     
     public void setMenuStyleName(String newValue) {
         set(PROPERTY_MENU_STYLE_NAME, newValue);
+    }
+    
+    /**
+     * Sets whether the insert image operation is overridden, i.e., whether insert image requests will be sent
+     * to the server via a <code>RichTextOperationEvent</code>.
+     * 
+     * @param newValue the new override state
+     */
+    public void setOverrideInsertImage(boolean newValue) {
+        set(PROPERTY_OVERRIDE_INSERT_IMAGE, Boolean.valueOf(newValue));
     }
     
     /**

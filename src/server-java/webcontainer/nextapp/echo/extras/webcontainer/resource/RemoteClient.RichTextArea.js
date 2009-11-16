@@ -36,6 +36,14 @@ Extras.Sync.RemoteRichTextArea = Core.extend(Extras.Sync.RichTextArea, {
             }
         })
     },
+    
+    processInsertImage: function() {
+        if (this.component.render("overrideInsertImage")) {
+            this.component.fireEvent({ source: this.component, type: "operation", data: "insertImage" });
+        } else {
+            Extras.Sync.RichTextArea.prototype.processInsertImage.call(this);
+        }
+    },
 
     $load: function() {
         Echo.Render.registerPeer("Extras.RemoteRichTextArea", this);
