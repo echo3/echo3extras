@@ -634,7 +634,6 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                         break;
                     }
                 }
-                Core.Debug.consoleWrite("hasTop=" + hasTop);
             },
             
             /**
@@ -803,8 +802,12 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                                     topTile = tile;
                                 }
                             }
-                            if (tile.positionPx.top + tile.positionPx.height > this.bounds.height) {
-                                bottomTile = tile;
+                            var tileBottomPx = this.bounds.height - (tile.positionPx.top + tile.positionPx.height);
+                            if (bottomPx == null || tileBottomPx < bottomPx) {
+                                bottomPx = tileBottomPx;
+                                if (bottomPx <= 0) {
+                                    bottomTile = tile;
+                                }
                             }
                             break;
                         }
@@ -1017,7 +1020,12 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             this.scrollPosition.store(this.component);
         } else {
             if (this.overscroll.top && this.overscroll.top > 0) {
-                this._adjustRegionPositionPx(0 - this.overscroll.top, horizontal, true);
+                this._adjustRegionPositionPx(0 - this.overscroll.top, horizontal);
+            } else if (this.overscroll.bottom && this.overscroll.bottom > 0) {
+                this._adjustRegionPositionPx(this.overscroll.bottom, horizontal);
+                if (this.overscroll.top && this.overscroll.top > 0) {
+                    this._adjustRegionPositionPx(0 - this.overscroll.top, horizontal);
+                }
             }
             
             this._updateScrollContainerY();
@@ -1352,8 +1360,10 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             this.visibleRange.bottom = 1 + borderTiles.bottom.cellIndex.bottom - 
                     rows * (borderTiles.bottom.positionPx.top + borderTiles.bottom.positionPx.height - 
                     this.regions.center.bounds.height) / borderTiles.bottom.positionPx.height;
+            this.overscroll.bottom = null;
         } else {
             this.visibleRange.bottom = null;
+            this.overscroll.bottom = borderTiles.bottomPx;
         }
     }
 });
@@ -1556,7 +1566,6 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
         this.bounds = new Core.Web.Measure.Bounds(this.contentElement);
         this._scrollHeight = new Core.Web.Measure.Bounds(this._hScrollContent).height;
         this._scrollWidth = new Core.Web.Measure.Bounds(this._vScrollContent).width;
-        Core.Debug.consoleWrite(this.bounds);
     },
     
     setPosition: function(scrollX, scrollY) {
