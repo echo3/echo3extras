@@ -57,6 +57,10 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             return (b1 <= a1 && a1 <= b2) || (a1 <= b1 && b1 <= a2);
         },
         
+        RangeError: Core.extend(Error, {
+            
+        }),
+        
         ScrollPosition: Core.extend({
             
             xIndex: null,
@@ -356,20 +360,15 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             
             /**
              * Adjusts the position of the tile.
-             * Has no effect in directions in which the cell is fixed (per region location property).
              */
             adjustPositionPx: function(px, horizontal) {
                 if (this.div) {
                     if (horizontal) {
-                        if (!this.region.location.h) {
-                            this.positionPx.left += px;
-                            this.div.style.left = this.positionPx.left + "px";
-                        }
+                        this.positionPx.left += px;
+                        this.div.style.left = this.positionPx.left + "px";
                     } else {
-                        if (!this.region.location.v) {
-                            this.positionPx.top += px;
-                            this.div.style.top = this.positionPx.top + "px";
-                        }
+                        this.positionPx.top += px;
+                        this.div.style.top = this.positionPx.top + "px";
                     }
                 }
                 
@@ -619,8 +618,23 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                     }
                 }
                 
+                if (false) {
+                    throw new Extras.Sync.DataGrid.RangeError();
+                }
+                
                 this.fill(false);
                 this.fill(true);
+                
+                var hasTop = false, hasBottom = false;
+                for (var rowIndex in this._tiles) {
+                    if (rowIndex == 0) {
+                        hasTop = true;
+                    }
+                    if (hasTop && hasBottom) {
+                        break;
+                    }
+                }
+                Core.Debug.consoleWrite("hasTop=" + hasTop);
             },
             
             /**
@@ -776,15 +790,18 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                     throw new Error("Cannot invoke getPositionV on tile other than center.");
                 }
                 
-                var topTile, bottomTile;
+                var topTile, bottomTile, topPx = null, bottomPx = null;
                 
                 for (var rowIndex in this._tiles) {
                     var row = this._tiles[rowIndex];
                     for (var columnIndex in row) {
                         var tile = row[columnIndex];
                         if (tile.displayed && tile.isOnScreen()) {
-                            if (tile.positionPx.top <= 0) {
-                                topTile = tile;
+                            if (topPx == null || tile.positionPx.top < topPx) {
+                                topPx = tile.positionPx.top;
+                                if (topPx <= 0) {
+                                    topTile = tile;
+                                }
                             }
                             if (tile.positionPx.top + tile.positionPx.height > this.bounds.height) {
                                 bottomTile = tile;
@@ -798,7 +815,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 }
                 
                 return {
-                    top: topTile, bottom: bottomTile
+                    top: topTile, bottom: bottomTile, topPx: topPx, bottomPx: bottomPx
                 };
             },
             
@@ -913,6 +930,15 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
      * but none of cell n + 1 is displayed.
      */
     visibleRange: null,
+    
+    /**
+     * Amount by which the edges of the top-/left-/right-bottom-most tiles are overscrolling their maximums.
+     * Contains top, left, right, and bottom properties as pixels values.
+     * This property is used to take corrective action to avoid overscrolling content.
+     * Example, a value of 48 for the "top" property indicates that the topmost tile of the center region has been scrolled
+     * such that its top edge is 48 pixels below the top edge of the region.  
+     */
+    overscroll: null,
         
     regions: null,
     
@@ -966,66 +992,48 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
     $construct: function() {
         this._div = null;
         this.visibleRange = {};
+        this.overscroll = {};
         this.scrollPosition = new Extras.Sync.DataGrid.ScrollPosition();
     },
     
     adjustPositionPx: function(px, horizontal) {
         if (horizontal) {
-            if (this.scrollPosition.xScroll != null) {
-                if ((this.scrollPosition.xScroll <= 0 && px > 0) || (this.scrollPosition.xScroll >= 100 && px < 0)) {
-                    return;
-                }
-            } else if (this.scrollPosition.xIndex != null) {
-                if (this.scrollPosition.xIndex <= 0 && px > 0) {
-                    return;
-                }
-            }
-            
             // Limit adjustment to 1/2 screen width.
             if (Math.abs(px) > this.regions.center.bounds.width / 2) {
                 px = this.regions.center.bounds.width / 2 * (px < 0 ? -1 : 1);
             }
         } else {
-            if (this.scrollPosition.yScroll != null) {
-                if ((this.scrollPosition.yScroll <= 0 && px > 0) || (this.scrollPosition.yScroll >= 100 && px < 0)) {
-                    return;
-                }
-            } else if (this.scrollPosition.yIndex != null) {
-                if (this.scrollPosition.yIndex <= 0 && px > 0) {
-                    return;
-                }
-            }
-
             // Limit adjustment to 1/2 screen height.
             if (Math.abs(px) > this.regions.center.bounds.height / 2) {
                 px = this.regions.center.bounds.height / 2 * (px < 0 ? -1 : 1);
             }
         }
         
-        for (var name in this.regions) {
-            this.regions[name].adjustPositionPx(px, horizontal);
-        }
-        
+        this._adjustRegionPositionPx(px, horizontal);
+
         if (horizontal) {
-            this.updateVisibleRangeX();
             this._updateScrollContainerX();
             this.scrollPosition.setIndex(this.visibleRange.left, null);
             this.scrollPosition.store(this.component);
         } else {
-            this.updateVisibleRangeY();
-            if (this.visibleRange.top === null) {
-                // FIXME Temporary bounding code. 
-                this.component.set("rowIndex", null);
-                this.component.set("rowScroll", 0);
-            } else if (this.visibleRange.bottom === null && this.visibleRange.top !== 0) {
-                // FIXME Temporary bounding code. 
-                this.component.set("rowIndex", null);
-                this.component.set("rowScroll", 100);
-            } else {
-                this._updateScrollContainerY();
-                this.scrollPosition.setIndex(null, this.visibleRange.top); 
-                this.scrollPosition.store(this.component);
+            if (this.overscroll.top && this.overscroll.top > 0) {
+                this._adjustRegionPositionPx(0 - this.overscroll.top, horizontal, true);
             }
+            
+            this._updateScrollContainerY();
+            this.scrollPosition.setIndex(null, this.visibleRange.top); 
+            this.scrollPosition.store(this.component);
+        }
+    },
+    
+    _adjustRegionPositionPx: function(px, horizontal) {
+        for (var name in this.regions) {
+            this.regions[name].adjustPositionPx(px, horizontal);
+        }
+        if (horizontal) {
+            this.updateVisibleRangeX();
+        } else {
+            this.updateVisibleRangeY();
         }
     },
 
@@ -1329,13 +1337,14 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
      */
     updateVisibleRangeY: function() {
         var borderTiles = this.regions.center.getBorderTilesY(), rows;
-        
         if (borderTiles.top) {
             rows = borderTiles.top.cellIndex.bottom - borderTiles.top.cellIndex.top + 1;
             this.visibleRange.top = borderTiles.top.cellIndex.top + 
                     rows * (0 - borderTiles.top.positionPx.top) / borderTiles.top.positionPx.height;
+            this.overscroll.top = null;
         } else {
             this.visibleRange.top = null;
+            this.overscroll.top = borderTiles.topPx;
         }
         
         if (borderTiles.bottom) {
