@@ -352,7 +352,6 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                     }
                     break;
                 }
-
             },
             
             /**
@@ -606,8 +605,8 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
              * unoccupied as a result of the adjustment.
              */
             adjustPositionPx: function(px, horizontal) {
-                if (this.location.h && this.location.v) {
-                    // This operation has no effect on corner tiles.
+                if ((this.location.h && horizontal) || (this.location.v && !horizontal)) {
+                    // Return immediately if region is not scrollable in specified direction.
                     return;
                 }
             
@@ -1014,9 +1013,19 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             this.scrollPosition.store(this.component);
         } else {
             this.updateVisibleRangeY();
-            this._updateScrollContainerY();
-            this.scrollPosition.setIndex(null, this.visibleRange.top); 
-            this.scrollPosition.store(this.component);
+            if (this.visibleRange.top === null) {
+                // FIXME Temporary bounding code. 
+                this.component.set("rowIndex", null);
+                this.component.set("rowScroll", 0);
+            } else if (this.visibleRange.bottom === null && this.visibleRange.top !== 0) {
+                // FIXME Temporary bounding code. 
+                this.component.set("rowIndex", null);
+                this.component.set("rowScroll", 100);
+            } else {
+                this._updateScrollContainerY();
+                this.scrollPosition.setIndex(null, this.visibleRange.top); 
+                this.scrollPosition.store(this.component);
+            }
         }
     },
 
@@ -1300,6 +1309,8 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             columns = borderTiles.left.cellIndex.right - borderTiles.left.cellIndex.left + 1;
             this.visibleRange.left = borderTiles.left.cellIndex.left + 
                     columns * (0 - borderTiles.left.positionPx.left) / borderTiles.left.positionPx.width;
+        } else {
+            this.visibleRange.left = null;
         }
         
         if (borderTiles.right) {
@@ -1307,6 +1318,8 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             this.visibleRange.right = 1 + borderTiles.right.cellIndex.right - 
                     columns * (borderTiles.right.positionPx.left + borderTiles.right.positionPx.width - 
                     this.regions.center.bounds.width) / borderTiles.right.positionPx.width;
+        } else {
+            this.visibleRange.right = null;
         }
     },
     
@@ -1321,6 +1334,8 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             rows = borderTiles.top.cellIndex.bottom - borderTiles.top.cellIndex.top + 1;
             this.visibleRange.top = borderTiles.top.cellIndex.top + 
                     rows * (0 - borderTiles.top.positionPx.top) / borderTiles.top.positionPx.height;
+        } else {
+            this.visibleRange.top = null;
         }
         
         if (borderTiles.bottom) {
@@ -1328,6 +1343,8 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             this.visibleRange.bottom = 1 + borderTiles.bottom.cellIndex.bottom - 
                     rows * (borderTiles.bottom.positionPx.top + borderTiles.bottom.positionPx.height - 
                     this.regions.center.bounds.height) / borderTiles.bottom.positionPx.height;
+        } else {
+            this.visibleRange.bottom = null;
         }
     }
 });
