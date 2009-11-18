@@ -1,3 +1,5 @@
+//FIXME ensure corner/side regions are not being unnecessarily scrolled via scrollbar (and others)
+
 /**
  * Component rendering peer: DataGrid.
  * This class should not be extended by developers, the implementation is subject to change.
@@ -318,7 +320,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                     }
                     break;
                 case 1:
-                    this.cellIndex.left = this.dataGrid.size.columns - this.dataGrid.fixedCells.right - 
+                    this.cellIndex.left = this.dataGrid.size.columns - this.dataGrid.fixedCells.right + 
                             (this.tileIndex.column * this.dataGrid.tileSize.columns);
                     this.cellIndex.right = this.cellIndex.left + this.dataGrid.tileSize.columns - 1;
                     if (this.cellIndex.right >= this.dataGrid.size.columns - 1) {
@@ -347,7 +349,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                     }
                     break;
                 case 1:
-                    this.cellIndex.top = this.dataGrid.size.rows - this.dataGrid.fixedCells.bottom - 
+                    this.cellIndex.top = this.dataGrid.size.rows - this.dataGrid.fixedCells.bottom + 
                             (this.tileIndex.row * this.dataGrid.tileSize.rows);
                     this.cellIndex.bottom = this.cellIndex.top + this.dataGrid.tileSize.rows - 1;
                     if (this.cellIndex.bottom >= this.dataGrid.size.rows - 1) {
@@ -553,6 +555,11 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             _tiles: null,
             
             /**
+             * Cell count size for region, contains rows and columns numeric properties.
+             */
+            size: null,
+            
+            /**
              * 
              */
             bounds: null,
@@ -579,6 +586,8 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
              *        topLeft, top, topRight, left, center, right, bottomLeft, bottom, bottomRight
              */
             $construct: function(dataGrid, name) {
+                var rows, columns;
+
                 this.dataGrid = dataGrid;
                 this.name = name;
                 this._tiles = { };
@@ -586,17 +595,45 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
 
                 this.element = document.createElement("div");
                 this.element.style.cssText = "position:absolute;overflow:hidden;";
+                if (this.location.h != 0 || this.location.v != 0) {
+                    //FIXME temporary background color for non center regions.
+                    this.element.style.backgroundColor = "#dfffdf";
+                }
                 
-                if (this.location.h === -1) {
-                    this.element.style.left = 0;
-                } else if (this.location.h === 1) {
-                    this.element.style.right = 0;
-                }
-                if (this.location.v === -1) {
+                switch (this.location.v) {
+                case -1:
                     this.element.style.top = 0;
-                } else if (this.location.v === 1) {
+                    rows = this.dataGrid.fixedCells.top;
+                    break;
+                case 0:
+                    rows = this.dataGrid.scrollSize.rows;
+                    break;
+                case 1:
                     this.element.style.bottom = 0;
+                    rows = this.dataGrid.fixedCells.bottom;
+                    break;
                 }
+                
+                switch (this.location.h) {
+                case -1:
+                    this.element.style.left = 0;
+                    columns = this.dataGrid.fixedCells.left;
+                    break;
+                case 0:
+                    columns = this.dataGrid.scrollSize.columns;;
+                    break;
+                case 1:
+                    this.element.style.right = 0;
+                    columns = this.dataGrid.fixedCells.right;
+                    break;
+                }
+                
+                this.size = { columns: columns, rows: rows };
+                
+                this.tileCount = { 
+                    columns: Math.ceil(columns / this.dataGrid.tileSize.columns), 
+                    rows: Math.ceil(rows / this.dataGrid.tileSize.rows)
+                };
             },
 
             /**
@@ -703,7 +740,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                         while (tile.isOnScreen() && !tile.isEdgeRight()) {
                             tile = this.displayTileAdjacent(tile, Extras.Sync.DataGrid.RIGHT);
                         }
-                        
+
                         // Move down/up.
                         originTile = this.displayTileAdjacent(originTile, fromBottom ? 
                                 Extras.Sync.DataGrid.UP : Extras.Sync.DataGrid.DOWN);
@@ -734,9 +771,8 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             },
             
             getTile: function(columnIndex, rowIndex) {
-                if (columnIndex < 0 || rowIndex < 0 ||
-                        rowIndex > this.dataGrid.size.rows / this.dataGrid.tileSize.rows ||
-                        columnIndex > this.dataGrid.size.columns / this.dataGrid.tileSize.columns) {
+                if (columnIndex < 0 || rowIndex < 0 || columnIndex > this.size.columns / this.dataGrid.tileSize.columns || 
+                        rowIndex > this.size.rows / this.dataGrid.tileSize.rows) {
                     return null;
                 }
                 var cachedRow = this._tiles[rowIndex];
@@ -1015,9 +1051,9 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
         this._adjustRegionPositionPx(px, horizontal);
 
         if (horizontal) {
-            this._updateScrollContainerX();
-            this.scrollPosition.setIndex(this.visibleRange.left, null);
-            this.scrollPosition.store(this.component);
+//            this._updateScrollContainerX();
+//            this.scrollPosition.setIndex(this.visibleRange.left, null);
+//            this.scrollPosition.store(this.component);
         } else {
             if (this.overscroll.top && this.overscroll.top > 0) {
                 this._adjustRegionPositionPx(0 - this.overscroll.top, horizontal);
@@ -1028,9 +1064,9 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 }
             }
             
-            this._updateScrollContainerY();
-            this.scrollPosition.setIndex(null, this.visibleRange.top); 
-            this.scrollPosition.store(this.component);
+//            this._updateScrollContainerY();
+//            this.scrollPosition.setIndex(null, this.visibleRange.top); 
+//            this.scrollPosition.store(this.component);
         }
     },
     
@@ -1130,7 +1166,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
      * @type Number
      */
     _getRowHeight: function(row) {
-        return 19; //FIXME
+        return 19; //FIXME, manually set to approximate value until measuring code in place.
     },
 
     _loadProperties: function() {
@@ -1187,14 +1223,9 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
         this.scrollContainer.renderDisplay();
         
         if (this._fullRenderRequired) {
-        
-            this._createRegions();
-
             if (this._model == null) {
-                this.size = {
-                    columns: 0,
-                    rows: 0
-                };
+                this.size = { columns: 0, rows: 0 };
+                this.scrollSize = { columns: 0, rows: 0 };
             } else {
                 this.size = {
                     columns: this._model.getColumnCount(),
@@ -1203,8 +1234,12 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 this.scrollSize = {
                     columns: this.size.columns - this.fixedCells.left - this.fixedCells.right,
                     rows: this.size.rows - this.fixedCells.top - this.fixedCells.bottom
-                    
                 };
+            }
+            
+            this._createRegions();
+            
+            if (this._model) {
                 this.renderScrollPosition();
             }
             this._fullRenderRequired = false;
