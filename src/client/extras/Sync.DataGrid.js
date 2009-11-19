@@ -405,7 +405,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                     tr = document.createElement("tr");
                     for (column = this.cellIndex.left; column <= this.cellIndex.right; ++column) {
                         td = document.createElement("td");
-                        td.style.padding = 0;
+                        td.style.cssText = "padding:0;overflow:hidden;";
                         Echo.Sync.Border.render(this.dataGrid._cellBorder, td);
                         if (row === this.cellIndex.top) {
                             td.style.width = (columnWidths[column] - this.dataGrid._cellBorderWidthPx) + "px";
@@ -430,19 +430,33 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             /**
              * Displays the tile at the specified coordinates.
              * Does nothing if the tile is already displayed.
+             * The right and bottom positions will override left and top, if specified.
+             * Note that the tile's CSS position will be set using left/top, even when 
+             * right/bottom are specified (measured width/height will be used to position
+             * it correctly in such a scenario). 
              *
              * @param {Number} left the left pixel coordinate of the tile within the region
              * @param {Number} top the top pixel coordinate of the tile within the region
+             * @param {Number} right the right pixel coordinate of the tile within the region
+             * @param {Number} bottom the bottom pixel coordinate of the tile within the region
              */
-            display: function(left, top) {
+            display: function(left, top, right, bottom) {
                 if (this.displayed) {
                     return;
                 }
                 this.create();
-                this.positionPx.top = top;
-                this.positionPx.left = left;
+
+                if (right != null) {
+                    left = right - this.positionPx.width;
+                }
+                if (bottom != null) {
+                    top = bottom - this.positionPx.height;
+                }
+                
                 this.div.style.top = top + "px";
                 this.div.style.left = left + "px";
+                this.positionPx.top = top;
+                this.positionPx.left = left;
                 
                 this.containerElement.appendChild(this.div);
                 this.displayed = true;
@@ -701,8 +715,31 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 if (adjacentTile == null) {
                     return null;
                 }
-                adjacentTile.display(tile.positionPx.left + (tile.positionPx.width * direction.h), 
-                        tile.positionPx.top + (tile.positionPx.height * direction.v));
+                
+                var left, right, top, bottom;
+                switch (direction.h) {
+                case -1:
+                    right = tile.positionPx.left;
+                    break;
+                case 1:
+                    left = tile.positionPx.left + tile.positionPx.width;
+                    break;
+                default:
+                    left = tile.positionPx.left;
+                }
+                switch (direction.v) {
+                case -1:
+                    bottom = tile.positionPx.top;
+                    break;
+                case 1:
+                    top = tile.positionPx.top + tile.positionPx.height;
+                    break;
+                default:
+                    top = tile.positionPx.top;
+                }
+                
+                adjacentTile.display(left, top, right, bottom);
+                
                 return adjacentTile;
             },
             
@@ -1204,7 +1241,6 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                     e.vertical == null ? null : e.vertical);
             this.scrollPosition.store(this.component);
             
-            
             for (var name in this.regions) {
                 if ((e.horizontal && this.regions[name].location.h === 0) ||
                         (e.vertical && this.regions[name].location.v === 0)) {
@@ -1463,7 +1499,6 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
         this.rootElement = document.createElement("div");
         this.rootElement.style.cssText = "position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden;";
         
-        
         this._vScrollContainer = document.createElement("div");
         this._vScrollContainer.style.cssText = "position:absolute;top:0;bottom:0;right:0;overflow:scroll;";
         this._vScrollContainer.style.width = (1 + Core.Web.Measure.SCROLL_WIDTH) + "px";
@@ -1533,7 +1568,8 @@ Extras.Sync.DataGrid.ScrollContainer = Core.extend({
      * scroll bar having been adjusted programmatically.  
      */
     _isUserScroll: function() {
-        return (new Date().getTime() - this._lastScrollSetTime) > 100; 
+        //FIXME this is not going to work.
+        return (new Date().getTime() - this._lastScrollSetTime) > 400; 
     },
     
     /**
