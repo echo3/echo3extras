@@ -1,5 +1,3 @@
-//FIXME ensure corner/side regions are not being unnecessarily scrolled via scrollbar (and others)
-
 /**
  * Component rendering peer: DataGrid.
  * This class should not be extended by developers, the implementation is subject to change.
@@ -58,10 +56,6 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
         intersect: function(a1, a2, b1, b2) {
             return (b1 <= a1 && a1 <= b2) || (a1 <= b1 && b1 <= a2);
         },
-        
-        RangeError: Core.extend(Error, {
-            
-        }),
         
         ScrollPosition: Core.extend({
             
@@ -655,10 +649,6 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                     }
                 }
                 
-                if (false) {
-                    throw new Extras.Sync.DataGrid.RangeError();
-                }
-                
                 this.fill(false);
                 this.fill(true);
                 
@@ -859,42 +849,58 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             },
             
             /**
-             * Renders the position of the region.  Invocation will clear all existing tiles.
+             * Renders all tiles in the region.  Invocation will clear all existing tiles.
              */
-            renderScrollPosition: function() {
-                var xFactor, yFactor, originColumn, originRow, tileRowIndex, tileColumnIndex, tile, 
+            renderTiles: function() {
+                var xFactor, yFactor, originColumn, originRow, tileRowIndex = 0, tileColumnIndex = 0, tile, 
                     xPosition = 0, yPosition = 0;
                     
                 this.clear();
                     
-                if (this.dataGrid.scrollPosition.xScroll != null) {
-                    xFactor = this.dataGrid.scrollPosition.xScroll / 100;
-                    originColumn = this.dataGrid.scrollSize.columns * xFactor;
-                } else {
-                    originColumn = this.dataGrid.scrollPosition.xIndex || 0;
+                // Calculate horizontal scroll position, if required.
+                if (this.location.h === 0) {
+                    if (this.dataGrid.scrollPosition.xScroll != null) {
+                        xFactor = this.dataGrid.scrollPosition.xScroll / 100;
+                        originColumn = this.dataGrid.scrollSize.columns * xFactor;
+                    } else {
+                        originColumn = this.dataGrid.scrollPosition.xIndex || 0;
+                    }
+                    tileColumnIndex = Math.floor(originColumn / this.dataGrid.tileSize.columns);
                 }
-                tileColumnIndex = Math.floor(originColumn / this.dataGrid.tileSize.columns);
                 
-                if (this.dataGrid.scrollPosition.yScroll != null) {
-                    yFactor = this.dataGrid.scrollPosition.yScroll / 100;
-                    originRow = this.dataGrid.scrollSize.rows * yFactor;
-                } else {
-                    originRow = this.dataGrid.scrollPosition.yIndex || 0;
+                // Calculate vertical scroll position, if required.
+                if (this.location.v === 0) {
+                    if (this.dataGrid.scrollPosition.yScroll != null) {
+                        yFactor = this.dataGrid.scrollPosition.yScroll / 100;
+                        originRow = this.dataGrid.scrollSize.rows * yFactor;
+                    } else {
+                        originRow = this.dataGrid.scrollPosition.yIndex || 0;
+                    }
+                    tileRowIndex = Math.floor(originRow / this.dataGrid.tileSize.rows);
                 }
-                tileRowIndex = Math.floor(originRow / this.dataGrid.tileSize.rows);
                 
+                // Create origin tile
                 tile = this.getTile(tileColumnIndex, tileRowIndex);
                 tile.create();
                 
-                if (this.dataGrid.scrollPosition.xScroll != null) {
-                    xPosition = xFactor * (this.bounds.width - tile.positionPx.width);
+                // Determine horizontal position.
+                if (this.location.h === 0) {
+                    if (this.dataGrid.scrollPosition.xScroll != null) {
+                        xPosition = xFactor * (this.bounds.width - tile.positionPx.width);
+                    }
                 }
-                if (this.dataGrid.scrollPosition.yScroll != null) {
-                    yPosition = yFactor * (this.bounds.height - tile.positionPx.height);
+
+                // Determine vertical position.
+                if (this.location.v === 0) {
+                    if (this.dataGrid.scrollPosition.yScroll != null) {
+                        yPosition = yFactor * (this.bounds.height - tile.positionPx.height);
+                    }
                 }
                 
+                // Display origin tile.
                 tile.display(xPosition, yPosition); 
                 
+                // Fill region.
                 this.fill(false);
                 this.fill(true);
             },
@@ -1051,9 +1057,9 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
         this._adjustRegionPositionPx(px, horizontal);
 
         if (horizontal) {
-//            this._updateScrollContainerX();
-//            this.scrollPosition.setIndex(this.visibleRange.left, null);
-//            this.scrollPosition.store(this.component);
+            this._updateScrollContainerX();
+            this.scrollPosition.setIndex(this.visibleRange.left, null);
+            this.scrollPosition.store(this.component);
         } else {
             if (this.overscroll.top && this.overscroll.top > 0) {
                 this._adjustRegionPositionPx(0 - this.overscroll.top, horizontal);
@@ -1064,9 +1070,9 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 }
             }
             
-//            this._updateScrollContainerY();
-//            this.scrollPosition.setIndex(null, this.visibleRange.top); 
-//            this.scrollPosition.store(this.component);
+            this._updateScrollContainerY();
+            this.scrollPosition.setIndex(null, this.visibleRange.top); 
+            this.scrollPosition.store(this.component);
         }
     },
     
@@ -1196,7 +1202,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             this.scrollPosition.setScroll(e.horizontal == null ? null : e.horizontal, 
                     e.vertical == null ? null : e.vertical);
             this.scrollPosition.store(this.component);
-            this.renderScrollPosition();
+            this.renderRegionTiles(true, e.horizontal);
         }
     },
     
@@ -1240,7 +1246,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             this._createRegions();
             
             if (this._model) {
-                this.renderScrollPosition();
+                this.renderRegionTiles();
             }
             this._fullRenderRequired = false;
         }
@@ -1277,9 +1283,9 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
     
     /**
      */
-    renderScrollPosition: function() {
+    renderRegionTiles: function() {
         for (var name in this.regions) {
-            this.regions[name].renderScrollPosition();
+            this.regions[name].renderTiles();
         }
         
         this.scrollContainer.setPosition(this.scrollPosition.xScroll, this.scrollPosition.yScroll);
