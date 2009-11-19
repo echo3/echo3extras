@@ -854,7 +854,8 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             renderTiles: function() {
                 var xFactor, yFactor, originColumn, originRow, tileRowIndex = 0, tileColumnIndex = 0, tile, 
                     xPosition = 0, yPosition = 0;
-                    
+                   
+                // Clear.
                 this.clear();
                     
                 // Calculate horizontal scroll position, if required.
@@ -879,7 +880,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                     tileRowIndex = Math.floor(originRow / this.dataGrid.tileSize.rows);
                 }
                 
-                // Create origin tile
+                // Create origin tile.
                 tile = this.getTile(tileColumnIndex, tileRowIndex);
                 tile.create();
                 
@@ -1202,7 +1203,15 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             this.scrollPosition.setScroll(e.horizontal == null ? null : e.horizontal, 
                     e.vertical == null ? null : e.vertical);
             this.scrollPosition.store(this.component);
-            this.renderRegionTiles(true, e.horizontal);
+            
+            
+            for (var name in this.regions) {
+                if ((e.horizontal && this.regions[name].location.h === 0) ||
+                        (e.vertical && this.regions[name].location.v === 0)) {
+                    this.regions[name].renderTiles();
+                }
+            }
+            this.scrollContainer.setPosition(this.scrollPosition.xScroll, this.scrollPosition.yScroll);
         }
     },
     
@@ -1287,7 +1296,6 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
         for (var name in this.regions) {
             this.regions[name].renderTiles();
         }
-        
         this.scrollContainer.setPosition(this.scrollPosition.xScroll, this.scrollPosition.yScroll);
     },
     
