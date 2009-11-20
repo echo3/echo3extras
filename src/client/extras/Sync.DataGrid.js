@@ -714,9 +714,10 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             },
 
             /**
-             * Displays a tile immediately adjacent to a tile.
+             * Positions a tile immediately adjacent to another tile.
              *
              * @param {Echo.Sync.DataGrid.Tile} tile the origin tile
+             * @param {Echo.Sync.DataGrid.Tile} adjacentTile the adjacent tile
              * @param direction the adjacent direction, one of the following values (defined in Extras.Sync.DataGrid):
              *        <ul>
              *         <li><code>LEFT</code></li>
@@ -724,19 +725,8 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
              *         <li><code>UP</code></li>
              *         <li><code>DOWN</code></li>
              *        </ul>
-             * @return the adjacent tile
-             * @type Echo.Sync.DataGrid.Tile
              */
-            displayTileAdjacent: function(tile, direction) {
-                if (!tile.displayed) {
-                    throw new Error("Tile not displayed, cannot position adjacent tile: " + tile);
-                }
-                
-                var adjacentTile = this.getTile(tile.tileIndex.column + direction.h, tile.tileIndex.row + direction.v);
-                if (adjacentTile == null) {
-                    return null;
-                }
-                
+            positionTileAdjacent: function(tile, adjacentTile, direction) {
                 var left, right, top, bottom;
                 switch (direction.h) {
                 case -1:
@@ -761,8 +751,6 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 }
                 
                 adjacentTile.display(left, top, right, bottom);
-                
-                return adjacentTile;
             },
             
             /**
@@ -772,13 +760,16 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
              */
             fill: function(fromBottom) {
                 // Find top/bottommost tile.
-                var tile = this._findVerticalEdgeTile(fromBottom);
+                var tile = this._findVerticalEdgeTile(fromBottom),
+                    adjacentTile;
 
                 // Move left, displaying tiles until left edge tile is reached.
                 while (!tile.isEdgeLeft()) {
-                    tile = this.displayTileAdjacent(tile, Extras.Sync.DataGrid.LEFT);
+                    adjacentTile = this.getTile(tile.tileIndex.column - 1, tile.tileIndex.row);
+                    this.positionTileAdjacent(tile, adjacentTile, Extras.Sync.DataGrid.LEFT);
+                    tile = adjacentTile;
                 }
-                
+                    
                 var leftEdgeTile = tile;
                 
                 if (leftEdgeTile == null) {
@@ -789,15 +780,23 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                         // Move right.
                         tile = leftEdgeTile;
                         while (tile.isOnScreen() && !tile.isEdgeRight()) {
-                            tile = this.displayTileAdjacent(tile, Extras.Sync.DataGrid.RIGHT);
+                            adjacentTile = this.getTile(tile.tileIndex.column + 1, tile.tileIndex.row);
+                            this.positionTileAdjacent(tile, adjacentTile, Extras.Sync.DataGrid.RIGHT);
+                            tile = adjacentTile;
                         }
                         
                         this.synchronizeHeights(leftEdgeTile);
 
                         // Move down/up.
-                        leftEdgeTile = this.displayTileAdjacent(leftEdgeTile, fromBottom ? 
-                                Extras.Sync.DataGrid.UP : Extras.Sync.DataGrid.DOWN);
-                    } while (leftEdgeTile != null && leftEdgeTile.isOnScreen());
+                        adjacentTile = this.getTile(leftEdgeTile.tileIndex.column, 
+                                leftEdgeTile.tileIndex.row + (fromBottom ? -1 : 1));
+                        if (adjacentTile == null) {
+                            break;
+                        }
+                        this.positionTileAdjacent(leftEdgeTile, adjacentTile, 
+                                fromBottom ? Extras.Sync.DataGrid.UP : Extras.Sync.DataGrid.DOWN);
+                        leftEdgeTile = adjacentTile;
+                    } while (leftEdgeTile.isOnScreen());
                 }
             },
             
@@ -1010,7 +1009,6 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
             },
             
             synchronizeHeights: function(leftEdgeTile) {
-Core.Debug.consoleWrite("sh:" + leftEdgeTile);                
                 var tile = leftEdgeTile, 
                     tiles = [ leftEdgeTile ],
                     maxHeight, 
