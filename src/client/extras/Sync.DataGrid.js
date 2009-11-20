@@ -416,15 +416,32 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                             // Remove when bounding is working properly.
                             value = "\u00a0";
                         }
-                        td.appendChild(document.createTextNode(value));
+                        
+                        var values = value.toString().split("\n");
+                        for (var iValue = 0; iValue < values.length; ++iValue) {
+                            if (iValue > 0) {
+                                td.appendChild(document.createElement("br"));
+                            }
+                            td.appendChild(document.createTextNode(values[iValue]));
+                        }
                         tr.appendChild(td);
                     }
                     this._table.firstChild.appendChild(tr);
                 }
                 
-                this.positionPx.height = new Core.Web.Measure.Bounds(this.div).height;
-                
                 this.div.style.width = this.positionPx.width + "px";
+                
+                this.dataGrid.measureDiv.appendChild(this.div);
+                this.positionPx.height = this.div.offsetHeight || 100;
+                
+                this.positionPx.rowHeights = [];
+                var tr = this._table.firstChild.firstChild;
+                while (tr) {
+                    this.positionPx.rowHeights.push(tr.offsetHeight);
+                    tr = tr.nextSibling;
+                }
+                
+                this.dataGrid.measureDiv.removeChild(this.div);
             },
             
             /**
@@ -526,8 +543,12 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 }
             },
             
-            synchronizeHeights: function() {
-                //FIXME sync row  heights with horizontally adjacent displayed tiles.
+            setRowHeight: function(row, newHeight) {
+                var oldHeight = this.positionPx.rowHeights[row];
+                var tbody = this._table.firstChild;
+                tbody.childNodes[row].style.height = newHeight + "px";
+                this.positionPx.rowHeights[row] = newHeight;
+                this.positionPx.height += newHeight - oldHeight;
             },
             
             /** @see Object#toString */
@@ -727,6 +748,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 default:
                     left = tile.positionPx.left;
                 }
+                
                 switch (direction.v) {
                 case -1:
                     bottom = tile.positionPx.top;
@@ -750,28 +772,32 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
              */
             fill: function(fromBottom) {
                 // Find top/bottommost tile.
-                var originTile = this._findVerticalEdgeTile(fromBottom);
+                var tile = this._findVerticalEdgeTile(fromBottom);
 
                 // Move left, displaying tiles until left edge tile is reached.
-                while (!originTile.isEdgeLeft()) {
-                    originTile = this.displayTileAdjacent(originTile, Extras.Sync.DataGrid.LEFT);
+                while (!tile.isEdgeLeft()) {
+                    tile = this.displayTileAdjacent(tile, Extras.Sync.DataGrid.LEFT);
                 }
                 
-                if (originTile == null) {
+                var leftEdgeTile = tile;
+                
+                if (leftEdgeTile == null) {
                     //FIXME impl.
-                    alert("FIXME...can't find origin tile, scenario not handled yet.");
+                    alert("FIXME...can't find left edge tile, scenario not handled yet.");
                 } else {
                     do {
                         // Move right.
-                        var tile = originTile;
+                        tile = leftEdgeTile;
                         while (tile.isOnScreen() && !tile.isEdgeRight()) {
                             tile = this.displayTileAdjacent(tile, Extras.Sync.DataGrid.RIGHT);
                         }
+                        
+                        this.synchronizeHeights(leftEdgeTile);
 
                         // Move down/up.
-                        originTile = this.displayTileAdjacent(originTile, fromBottom ? 
+                        leftEdgeTile = this.displayTileAdjacent(leftEdgeTile, fromBottom ? 
                                 Extras.Sync.DataGrid.UP : Extras.Sync.DataGrid.DOWN);
-                    } while (originTile != null && originTile.isOnScreen());
+                    } while (leftEdgeTile != null && leftEdgeTile.isOnScreen());
                 }
             },
             
@@ -981,6 +1007,43 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                     this.bounds.height = s.bottom;
                     break;
                 }
+            },
+            
+            synchronizeHeights: function(leftEdgeTile) {
+Core.Debug.consoleWrite("sh:" + leftEdgeTile);                
+                var tile = leftEdgeTile, 
+                    tiles = [ leftEdgeTile ],
+                    maxHeight, 
+                    differentHeights,
+                    iRow,
+                    iTile;
+                    
+                while (tile.isOnScreen() && !tile.isEdgeRight()) {
+                    tile = this.getTile(tile.tileIndex.column + 1, tile.tileIndex.row);
+                    tiles.push(tile);
+                }
+                tile = null;
+                
+                for (iRow = 0; iRow < leftEdgeTile.positionPx.rowHeights.length; ++iRow) {
+                    maxHeight = leftEdgeTile.positionPx.rowHeights[iRow];
+                    differentHeights = false;
+                    for (var iTile = 1; iTile < tiles.length; ++iTile) {
+                        if (tiles[iTile].positionPx.rowHeights[iRow] != maxHeight) {
+                            differentHeights = true;
+                            if (tiles[iTile].positionPx.rowHeights[iRow] > maxHeight) {
+                                maxHeight = tiles[iTile].positionPx.rowHeights[iRow];
+                            }
+                        }
+                    }
+                    if (differentHeights) {
+                        for (var iTile = 0; iTile < tiles.length; ++iTile) {
+                            tiles[iTile].setRowHeight(iRow, maxHeight);
+                        }
+                        Core.Debug.consoleWrite("adjust");
+                    } else {
+                        Core.Debug.consoleWrite("no adjust");
+                    }
+                }
             }
         })
     },
@@ -989,8 +1052,8 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
      * Number of rows per tile.  The last tile may have fewer rows.
      */
     tileSize: {
-        columns: 12,
-        rows: 6
+        columns: 5,
+        rows: 3
     },
     
     _fullRenderRequired: null,
@@ -999,6 +1062,8 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
      * Root DIV element of rendered component.
      */ 
     _div: null,
+    
+    measureDiv: null,
     
     /**
      * Current displayed scroll position.
@@ -1257,6 +1322,10 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
         this._div.style.cssText = "position:absolute;top:0;left:0;right:0;bottom:0;";
         this._div.id = this.component.renderId;
         
+        this.measureDiv = document.createElement("div");
+        this.measureDiv.style.cssText = "position:absolute;top:0;width:1600px;height:1200px;left:-1600px;overflow:hidden;";
+        this._div.appendChild(this.measureDiv);
+        
         this.scrollContainer = new Extras.Sync.DataGrid.ScrollContainer();
         this.scrollContainer.configure(10, 10);
         this.scrollContainer.onScroll = Core.method(this, this._processScroll);
@@ -1305,6 +1374,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
         this._prototypeTable = null;
         this.regions = null;
         this._div = null;
+        this.measureDiv = null;
     },
 
     /** @see Echo.Render.ComponentSync#renderUpdate */
