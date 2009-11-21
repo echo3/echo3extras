@@ -34,6 +34,7 @@ import nextapp.echo.app.Color;
 import nextapp.echo.app.Component;
 import nextapp.echo.app.FillImage;
 import nextapp.echo.app.ImageReference;
+import nextapp.echo.app.PaneContainer;
 import nextapp.echo.extras.app.menu.AbstractMenuComponent;
 import nextapp.echo.extras.app.menu.MenuModel;
 import nextapp.echo.extras.app.menu.MenuStateModel;
@@ -42,10 +43,13 @@ import nextapp.echo.extras.app.menu.MenuStateModel;
  * A component that shows a menu when right-clicked, i.e. a context menu. This
  * component supports at most one child which, when present, will be used as
  * visible content. The component itself will not be visible.
+ * Note this component may only contain a <code>Pane</code> in the event that its parent is 
+ * also a <code>PaneContainer</code>.
  * 
  * @author n.beekman
  */
-public class ContextMenu extends AbstractMenuComponent {
+public class ContextMenu extends AbstractMenuComponent 
+implements PaneContainer {
     
     public static final int ACTIVATION_MODE_CLICK = 1;
     public static final int ACTIVATION_MODE_CONTEXT_CLICK = 2;
@@ -62,7 +66,7 @@ public class ContextMenu extends AbstractMenuComponent {
     public static final String PROPERTY_SELECTION_FOREGROUND = "selectionForeground";
     
     /**
-     * Creates a new <code>ContextMenu</code>  with an empty
+     * Creates a new <code>ContextMenu</code> with an empty
      * <code>DefaultMenuModel</code> as its model and a
      * <code>DefaultMenuStateModel</code> to provide state information.
      */
