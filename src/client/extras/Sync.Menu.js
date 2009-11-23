@@ -1002,7 +1002,7 @@ Extras.Sync.ContextMenu = Core.extend(Extras.Sync.Menu, {
     
     /** @see Echo.Render.ComponentSync#renderUpdate */
     renderUpdate: function(update) {
-        if (update.isUpdatedPropertySetIn({ stateModel: true, model: true })) {
+        if (update.isUpdatedPropertySetIn({ modal: true, stateModel: true, model: true })) {
             // partial update
             var removedChildren = update.getRemovedChildren();
             if (removedChildren) {
