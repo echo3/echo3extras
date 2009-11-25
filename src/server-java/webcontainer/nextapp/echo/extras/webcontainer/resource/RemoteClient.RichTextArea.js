@@ -75,8 +75,11 @@ Extras.Sync.RemoteRichTextArea.InsertHtmlCommand = Core.extend(Echo.RemoteClient
 
         /** @see Echo.RemoteClient.CommandExecProcessor#execute */
         execute: function(client, commandData) {
-            var rta = client.application.getComponentByRenderId(commandData.renderId);
-            rta.insertHtml(commandData.html);
+            // Delay execution, such that update will be stored in outgoing client message.
+            Core.Web.Scheduler.run(Core.method(this, function() {
+                var rta = client.application.getComponentByRenderId(commandData.renderId);
+                rta.insertHtml(commandData.html);
+            }));
         }
      },
      
