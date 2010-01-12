@@ -128,8 +128,12 @@ public class TestPane extends ContentPane {
                 "Drag and Drop", Styles.ICON_16_DRAG_SOURCE));
         testsMenu.addItem(new DefaultOptionModel("Launch_DropDownMenuTest",
                 "Drop Down Menu", Styles.ICON_16_DROP_DOWN_MENU));
+        testsMenu.addItem(new DefaultOptionModel("Launch_FlowViewerTest", "FlowViewer",
+                null));
         testsMenu.addItem(new DefaultOptionModel("Launch_GroupTest", "Group",
                 Styles.ICON_16_GROUP));
+        testsMenu.addItem(new DefaultOptionModel("Launch_ListViewerTest", "ListViewer",
+                null));
         testsMenu.addItem(new DefaultOptionModel("Launch_MenuBarPaneTest",
                 "Menu Bar Pane", Styles.ICON_16_MENU_BAR_PANE));
         testsMenu.addItem(new DefaultOptionModel("Launch_RichTextAreaTest",
