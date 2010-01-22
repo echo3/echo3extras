@@ -29,9 +29,34 @@
 
 package nextapp.echo.extras.app;
 
+import nextapp.echo.app.Extent;
 import nextapp.echo.extras.app.viewer.Viewer;
 
 public class ListViewer extends Viewer {
 
+    public static final String PROPERTY_COLUMN_WIDTH = "columnWidth";
     
+    /**
+     * Returns the width of the specified column.
+     * This property supports <code>Extent</code>s with
+     * fixed or percentile units.
+     * 
+     * @param columnIndex the column index
+     * @return the width
+     */
+    public Extent getColumnWidth(int columnIndex) {
+        return (Extent) getIndex(PROPERTY_COLUMN_WIDTH, columnIndex);
+    }
+
+    /**
+     * Sets the width of the specified column.
+     * This property supports <code>Extent</code>s with
+     * fixed or percentile units.
+     * 
+     * @param columnIndex the column index
+     * @param newValue the new width
+     */
+    public void setColumnWidth(int columnIndex, Extent newValue) {
+        setIndex(PROPERTY_COLUMN_WIDTH, columnIndex, newValue);
+    }
 }
