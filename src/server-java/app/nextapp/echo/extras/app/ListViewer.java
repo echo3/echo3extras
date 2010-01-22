@@ -32,6 +32,9 @@ package nextapp.echo.extras.app;
 import nextapp.echo.app.Extent;
 import nextapp.echo.extras.app.viewer.Viewer;
 
+/**
+ * Viewer component which displays items in a vertically scrollable list.
+ */
 public class ListViewer extends Viewer {
 
     public static final String PROPERTY_COLUMN_WIDTH = "columnWidth";

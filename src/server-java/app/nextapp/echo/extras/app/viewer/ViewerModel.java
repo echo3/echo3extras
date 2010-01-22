@@ -41,6 +41,27 @@ public interface ViewerModel {
     public void addViewerModelListener(ViewerModelListener l);
 
     /**
+     * Used to notify the model that specific indices may soon be retrieved.
+     * This method will always be invoked immediately before an array of
+     * indices are retrieved.
+     * If there is no benefit to fetching data in groups, a do-nothing
+     * implementation should be used.
+     * 
+     * @param startIndex the first index (inclusive) of the model which may soon be retrieved
+     * @param endIndex the last index (exclusive) of the model which may soon be retrieved
+     */
+    public void fetch(int startIndex, int endIndex);
+    
+    /**
+     * Retrieves the model value at the specified index.
+     * The retrieved index must be within the range of those specified on the last call to <code>fetch()</code>.
+     * 
+     * @param index the model index to retrieve
+     * @return the model value
+     */
+    public Object get(int index);
+    
+    /**
      * Adds a listener that will be notified of changes/
      *
      * @param l the listener to add
