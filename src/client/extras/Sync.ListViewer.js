@@ -10,7 +10,7 @@ Extras.Sync.ListViewer = Core.extend(Echo.Render.ComponentSync, {
     _cellHeight: null,
     
     _borderHeight: 0,
-    _columnWidthsPx: null,
+    _columnWidthPx: null,
     _columnDivs: null,
     _protoCell: null,
     _div: null,
@@ -59,32 +59,32 @@ Extras.Sync.ListViewer = Core.extend(Echo.Render.ComponentSync, {
         var i = 0,
             availableWidth = this._listBounds.width;
         
-        this._columnWidthsPx = [];
+        this._columnWidthPx = [];
         var totalPercentWidth = 0;
-        var columnWidths = this._renderer.columnWidths || ["100%"];
+        var columnWidth = this.component.render("columnWidth", ["100%"]);
         
         // Calculate sum of percentage widths *and* store absolute widths.
         // Subtract absolute widths from available width.
-        for (i = 0; i < columnWidths.length; ++i) {
-            if (Echo.Sync.Extent.isPercent(columnWidths[i])) {
-                totalPercentWidth += parseInt(columnWidths[i], 10);
+        for (i = 0; i < columnWidth.length; ++i) {
+            if (Echo.Sync.Extent.isPercent(columnWidth[i])) {
+                totalPercentWidth += parseInt(columnWidth[i], 10);
             } else {
-                this._columnWidthsPx[i] = Echo.Sync.Extent.toPixels(columnWidths[i]);
-                availableWidth -= this._columnWidthsPx[i];
+                this._columnWidthPx[i] = Echo.Sync.Extent.toPixels(columnWidth[i]);
+                availableWidth -= this._columnWidthPx[i];
             }
         }
         
         // Divide remaining width amongst percent-based columns.
         var availablePercentWidth = availableWidth;
-        for (i = 0; i < columnWidths.length; ++i) {
-            if (Echo.Sync.Extent.isPercent(columnWidths[i])) {
-                this._columnWidthsPx[i] = Math.floor(availablePercentWidth * parseInt(columnWidths[i], 10) / 100);
-                availableWidth -= this._columnWidthsPx[i];
+        for (i = 0; i < columnWidth.length; ++i) {
+            if (Echo.Sync.Extent.isPercent(columnWidth[i])) {
+                this._columnWidthPx[i] = Math.floor(availablePercentWidth * parseInt(columnWidth[i], 10) / 100);
+                availableWidth -= this._columnWidthPx[i];
             }
         }
         
         // Add any remaining width to final column to ensure 100% coverage.
-        this._columnWidthsPx[this._columnWidthsPx.length - 1] += availableWidth;
+        this._columnWidthPx[this._columnWidthPx.length - 1] += availableWidth;
     },
     
     _clearContent: function() {
@@ -218,12 +218,12 @@ Extras.Sync.ListViewer = Core.extend(Echo.Render.ComponentSync, {
     renderAdd: function(update, parentElement) {
         this._columnsRendered = false;
 
-        this._columnNames = this.component.render("columnNames");
+        this._columnNames = this.component.render("columnName");
         
         this._model = this.component.get("model") || new Extras.Viewer.NullModel();
         this._model.addUpdateListener(this._updateListenerRef);
         
-        this._renderer = this.component.get("renderer") || new Extras.Sync.ListViewer.NullRenderer();
+        this._renderer = this.component.get("renderer") || new Extras.Sync.ListViewer.ColumnRenderer();
         
         this._calculateCellHeight();
         
@@ -294,8 +294,8 @@ Extras.Sync.ListViewer = Core.extend(Echo.Render.ComponentSync, {
         this._headerColumnDivs = [];
         this._columnDivs = [];
         var position = 0;
-        for (var i = 0; i < this._columnWidthsPx.length; ++i) {
-            var width = Math.max(0, this._columnWidthsPx[i]);
+        for (var i = 0; i < this._columnWidthPx.length; ++i) {
+            var width = Math.max(0, this._columnWidthPx[i]);
             if (this._columnNames && this._columnNames[i]) {
                 this._headerColumnDivs[i] = document.createElement("div");
                 this._headerColumnDivs[i].style.cssText = "position:absolute;top:0;overflow:hidden;";
@@ -553,7 +553,7 @@ Extras.Sync.ListViewer.Renderer = Core.extend({
     
     $abstract: {
         
-        columnWidths: null,
+        columnWidth: null,
         
         render: function(component, modelValue, index, targetCells) { },
         
@@ -561,11 +561,27 @@ Extras.Sync.ListViewer.Renderer = Core.extend({
     }
 });
 
-Extras.Sync.ListViewer.NullRenderer = Core.extend(Extras.Sync.ListViewer.Renderer, {
+Extras.Sync.ListViewer.ColumnRenderer = Core.extend(Extras.Sync.ListViewer.Renderer, {
     
-    columnWidths: [ ],
+    $virtual: {
+        renderColumn: function(component, modelValue, index, targetCell, columnModelValue, columnIndex) {
+            targetCell.apendChild(document.createTextNode(columnModelValue.toString()));
+        }
+    },
     
-    render: function(component, modelValue, index, targetCells) { },
+    columnWidth: [ ],
+    
+    columnPropertyNames: null,
+    
+    render: function(component, modelValue, index, targetCells) {
+        var value, i;
+        for (i = 0; i < targetCells.length; ++i) {
+            value = modelValue[(this.columnPropertyNames ? this.columnPropertyNames[i] : null) || i];
+            if (value != null) {
+                this.renderColumn(component, modelValue, index, targetCells[i], value, i);
+            }
+        }
+    },
     
     dispose: function(component, modelValue, index, targetCells) { }
 });

@@ -29,6 +29,7 @@
 
 package nextapp.echo.extras.app;
 
+import nextapp.echo.app.Color;
 import nextapp.echo.app.Extent;
 import nextapp.echo.extras.app.viewer.Viewer;
 
@@ -38,6 +39,20 @@ import nextapp.echo.extras.app.viewer.Viewer;
 public class ListViewer extends Viewer {
 
     public static final String PROPERTY_COLUMN_WIDTH = "columnWidth";
+    public static final String PROPERTY_COLUMN_NAME = "columnName";
+    
+    public static final String PROPERTY_HEADER_BACKGROUND = "headerBackground";
+    public static final String PROPERTY_HEADER_FOREGROUND = "headerForeground";
+    
+    /**
+     * Returns the name of the specified column.
+     * 
+     * @param columnIndex the column index
+     * @return the name
+     */
+    public String getColumnName(int columnIndex) {
+        return (String) getIndex(PROPERTY_COLUMN_NAME, columnIndex);
+    }
     
     /**
      * Returns the width of the specified column.
@@ -52,6 +67,34 @@ public class ListViewer extends Viewer {
     }
 
     /**
+     * Returns the background color of the list header row.
+     * 
+     * @return the color
+     */
+    public Color getHeaderBackground() {
+        return (Color) get(PROPERTY_HEADER_BACKGROUND);
+    }
+    
+    /**
+     * Returns the foreground color of the list header row.
+     * 
+     * @return the color
+     */
+    public Color getHeaderForeground() {
+        return (Color) get(PROPERTY_HEADER_FOREGROUND);
+    }
+    
+    /**
+     * Sets the name of the specified column.
+     * 
+     * @param columnIndex the column index
+     * @param newValue the new name
+     */
+    public void setColumnName(int columnIndex, String newValue) {
+        setIndex(PROPERTY_COLUMN_NAME, columnIndex, newValue);
+    }
+    
+    /**
      * Sets the width of the specified column.
      * This property supports <code>Extent</code>s with
      * fixed or percentile units.
@@ -61,5 +104,23 @@ public class ListViewer extends Viewer {
      */
     public void setColumnWidth(int columnIndex, Extent newValue) {
         setIndex(PROPERTY_COLUMN_WIDTH, columnIndex, newValue);
+    }
+
+    /**
+     * Sets the background color of the list header row.
+     * 
+     * @param newValue the new color
+     */
+    public void setHeaderBackground(Color newValue) {
+        set(PROPERTY_HEADER_BACKGROUND, newValue);
+    }
+    
+    /**
+     * Sets the foreground color of the list header row.
+     * 
+     * @param newValue the new color
+     */
+    public void setHeaderForeground(Color newValue) {
+        set(PROPERTY_HEADER_FOREGROUND, newValue);
     }
 }

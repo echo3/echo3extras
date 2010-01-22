@@ -29,6 +29,8 @@
 
 package nextapp.echo.extras.testapp.testscreen;
 
+import nextapp.echo.app.Color;
+import nextapp.echo.app.Extent;
 import nextapp.echo.extras.app.ListViewer;
 import nextapp.echo.extras.testapp.AbstractTest;
 
@@ -40,6 +42,18 @@ public class ListViewerTest extends AbstractTest {
     public ListViewerTest() {
         super("ListViewer", null);
         final ListViewer listViewer = new ListViewer();
+        listViewer.setColumnWidth(0, new Extent(50));
+        listViewer.setColumnWidth(1, new Extent(40, Extent.PERCENT));
+        listViewer.setColumnWidth(2, new Extent(5, Extent.EM));
+        listViewer.setColumnWidth(3, new Extent(60, Extent.PERCENT));
+        
+        listViewer.setColumnName(0, "a:50px");
+        listViewer.setColumnName(1, "b:40%");
+        listViewer.setColumnName(2, "c:5em");
+        listViewer.setColumnName(3, "d:60%");
+        
+        listViewer.setHeaderBackground(new Color(0x2f2f2f));
+        listViewer.setHeaderForeground(new Color(0xffffff));
         
         add(listViewer);
         setTestComponent(this, listViewer);
