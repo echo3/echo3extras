@@ -62,6 +62,13 @@ public interface ViewerModel {
     public Object get(int index);
     
     /**
+     * Returns the size of the model.
+     * 
+     * @return the size of the model
+     */
+    public int size();
+    
+    /**
      * Adds a listener that will be notified of changes/
      *
      * @param l the listener to add

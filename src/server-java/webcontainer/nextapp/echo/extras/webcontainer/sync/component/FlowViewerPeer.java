@@ -66,6 +66,5 @@ public class FlowViewerPeer extends AbstractViewerPeer {
     public void init(Context context, Component component) {
         super.init(context, component);
         ServerMessage serverMessage = (ServerMessage) context.get(ServerMessage.class);
-        serverMessage.addLibrary(BASE_JS_SERVICE.getId());
         serverMessage.addLibrary(JS_SERVICE.getId());
     }}

@@ -553,8 +553,6 @@ Extras.Sync.ListViewer.Renderer = Core.extend({
     
     $abstract: {
         
-        columnWidth: null,
-        
         render: function(component, modelValue, index, targetCells) { },
         
         dispose: function(component, modelValue, index, targetCells) { }
@@ -568,8 +566,6 @@ Extras.Sync.ListViewer.ColumnRenderer = Core.extend(Extras.Sync.ListViewer.Rende
             targetCell.apendChild(document.createTextNode(columnModelValue.toString()));
         }
     },
-    
-    columnWidth: [ ],
     
     columnPropertyNames: null,
     
