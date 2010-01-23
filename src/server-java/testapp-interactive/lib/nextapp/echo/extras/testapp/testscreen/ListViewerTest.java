@@ -32,6 +32,7 @@ package nextapp.echo.extras.testapp.testscreen;
 import nextapp.echo.app.Color;
 import nextapp.echo.app.Extent;
 import nextapp.echo.extras.app.ListViewer;
+import nextapp.echo.extras.app.viewer.AbstractViewerModel;
 import nextapp.echo.extras.testapp.AbstractTest;
 
 /**
@@ -54,6 +55,17 @@ public class ListViewerTest extends AbstractTest {
         
         listViewer.setHeaderBackground(new Color(0x2f2f2f));
         listViewer.setHeaderForeground(new Color(0xffffff));
+        
+        listViewer.setModel(new AbstractViewerModel() {
+            
+            public int size() {
+                return 500;
+            }
+            
+            public Object get(int index) {
+                return new Integer(index);
+            }
+        });
         
         add(listViewer);
         setTestComponent(this, listViewer);
