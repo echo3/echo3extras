@@ -194,13 +194,15 @@ public abstract class AbstractViewerPeer extends AbstractComponentSynchronizePee
             ModelData modelData = (ModelData) propertyValue;
             ViewerModel model = modelData.getModel();
             Element modelElement = propertyElement.getOwnerDocument().createElement("model");
-            modelElement.setAttribute("sz", Integer.toString(model.size()));
+            int size = model.size();
+            modelElement.setAttribute("sz", Integer.toString(size));
             modelElement.setAttribute("is", Integer.toString(modelData.getStartIndex()));
-            modelElement.setAttribute("ie", Integer.toString(modelData.getEndIndex()));
+            modelElement.setAttribute("ie", Integer.toString(Math.min(size, modelData.getEndIndex())));
             renderModelDataContent(context, modelData, modelElement);
             propertyElement.appendChild(modelElement);
         }
-    }    
+    }
+
     /**
      * Renders the content of a model data property to XML.  Appends created property elements to specified parent element.
      * 
@@ -212,7 +214,8 @@ public abstract class AbstractViewerPeer extends AbstractComponentSynchronizePee
     public static void renderModelDataContent(Context context, ModelData modelData, Element parentElement) 
     throws SerialException {
         PropertyPeerFactory factory = (PropertyPeerFactory) context.get(PropertyPeerFactory.class);
-        for (int i = modelData.getStartIndex(); i < modelData.getEndIndex(); ++i) {
+        int endIndex = Math.min(modelData.getEndIndex(), modelData.getModel().size());
+        for (int i = modelData.getStartIndex(); i < endIndex; ++i) {
             Element pElement = parentElement.getOwnerDocument().createElement("p");
             Object modelValue = modelData.getModel().get(i);
             if (modelValue != null) {
@@ -225,7 +228,8 @@ public abstract class AbstractViewerPeer extends AbstractComponentSynchronizePee
     
     private static final Service BASE_JS_SERVICE = JavaScriptService.forResources("EchoExtras.Viewer",
             new String[] {  "nextapp/echo/extras/webcontainer/resource/Application.Viewer.js",  
-                            "nextapp/echo/extras/webcontainer/resource/Sync.Viewer.js"});
+                            "nextapp/echo/extras/webcontainer/resource/Sync.Viewer.js",
+                            "nextapp/echo/extras/webcontainer/resource/RemoteClient.Viewer.js"});
     static {
         WebContainerServlet.getServiceRegistry().add(BASE_JS_SERVICE);
         WebContainerServlet.getServiceRegistry().add(MODEL_SERVICE);
@@ -239,6 +243,18 @@ public abstract class AbstractViewerPeer extends AbstractComponentSynchronizePee
         addOutputProperty(Viewer.MODEL_CHANGED_PROPERTY);
     }
 
+    /**
+     * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#getOutputProperty(
+     *      nextapp.echo.app.util.Context, nextapp.echo.app.Component, java.lang.String, int)
+     */
+    public Object getOutputProperty(Context context, Component component, String propertyName, int propertyIndex) {
+        Viewer viewer = (Viewer) component;
+        if (propertyName.equals(Viewer.MODEL_CHANGED_PROPERTY)) {
+            return new ModelData(viewer.getModel(), 0, 20);
+        } else {
+            return super.getOutputProperty(context, component, propertyName, propertyIndex);
+        }
+    }
 
     /**
      * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#init(nextapp.echo.app.util.Context, Component)

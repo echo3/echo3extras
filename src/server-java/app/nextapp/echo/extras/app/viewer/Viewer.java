@@ -40,6 +40,17 @@ import nextapp.echo.extras.app.event.ViewerModelListener;
  */
 public abstract class Viewer extends Component 
 implements Pane {
+    
+    private class NullViewerModel extends AbstractViewerModel {
+
+        public Object get(int index) {
+            return null;
+        }
+
+        public int size() {
+            return 0;
+        }
+    }
 
     public static final String ACTION_LISTENERS_CHANGED_PROPERTY = "actionListeners";
     public static final String MODEL_CHANGED_PROPERTY = "model";
@@ -50,6 +61,15 @@ implements Pane {
         public void viewerChanged(ViewerModelEvent e) {
         }
     };
+    
+    public Viewer() {
+        this(null);
+    }
+    
+    public Viewer(ViewerModel model) {
+        super();
+        setModel(model == null ? new NullViewerModel() : model);
+    }
 
     /**
      * Adds an <code>ActionListener</code> to the viewer.

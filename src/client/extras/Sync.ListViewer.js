@@ -519,7 +519,7 @@ Extras.Sync.ListViewer = Core.extend(Echo.Render.ComponentSync, {
             contentDiv, y, x, cellDivs, cellDiv,
             selection = this.component.get("selection") || {};
         
-        if (stop < start) {
+        if (stop <= start) {
             return;
         }
         
@@ -571,6 +571,10 @@ Extras.Sync.ListViewer.ColumnRenderer = Core.extend(Extras.Sync.ListViewer.Rende
     
     render: function(component, modelValue, index, targetCells) {
         var value, i;
+Core.Debug.consoleWrite("Rendering index: " + index + ",length: " + targetCells.length);
+        if (!modelValue) {
+            return;
+        }
         for (i = 0; i < targetCells.length; ++i) {
             value = modelValue[(this.columnPropertyNames ? this.columnPropertyNames[i] : null) || i];
             if (value != null) {
