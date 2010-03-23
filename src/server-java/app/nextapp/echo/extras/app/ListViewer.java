@@ -29,6 +29,7 @@
 
 package nextapp.echo.extras.app;
 
+import nextapp.echo.app.Border;
 import nextapp.echo.app.Color;
 import nextapp.echo.app.Extent;
 import nextapp.echo.extras.app.viewer.Viewer;
@@ -40,9 +41,20 @@ public class ListViewer extends Viewer {
 
     public static final String PROPERTY_COLUMN_WIDTH = "columnWidth";
     public static final String PROPERTY_COLUMN_NAME = "columnName";
+    public static final String PROPERTY_BORDER = "border";
     
     public static final String PROPERTY_HEADER_BACKGROUND = "headerBackground";
     public static final String PROPERTY_HEADER_FOREGROUND = "headerForeground";
+
+    /**
+     * Returns the the cell border.  A multi-sided border may be used, e.g., if a single pixel wide border is desired between
+     * cells, or if only horizontal or vertical borders are desired.
+     * 
+     * @return the cell border
+     */
+    public Border getBorder() {
+        return (Border) get(PROPERTY_BORDER);
+    }
     
     /**
      * Returns the name of the specified column.
@@ -82,6 +94,16 @@ public class ListViewer extends Viewer {
      */
     public Color getHeaderForeground() {
         return (Color) get(PROPERTY_HEADER_FOREGROUND);
+    }
+    
+    /**
+     * Sets the the cell border.  A multi-sided border may be used, e.g., if a single pixel wide border is desired between
+     * cells, or if only horizontal or vertical borders are desired.
+     * 
+     * @param newValue the new cell border
+     */
+    public void setBorder(Border newValue) {
+        set(PROPERTY_BORDER, newValue);
     }
     
     /**

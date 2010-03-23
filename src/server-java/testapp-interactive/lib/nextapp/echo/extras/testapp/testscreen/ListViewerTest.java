@@ -29,6 +29,7 @@
 
 package nextapp.echo.extras.testapp.testscreen;
 
+import nextapp.echo.app.Border;
 import nextapp.echo.app.Color;
 import nextapp.echo.app.Extent;
 import nextapp.echo.extras.app.ListViewer;
@@ -52,6 +53,11 @@ public class ListViewerTest extends AbstractTest {
         listViewer.setColumnName(1, "b:40%");
         listViewer.setColumnName(2, "c:5em");
         listViewer.setColumnName(3, "d:60%");
+        
+        listViewer.setBorder(new Border(new Border.Side[] { new Border.Side(1, Color.BLACK, Border.STYLE_SOLID), 
+                new Border.Side(0, Color.BLACK, Border.STYLE_NONE),
+                new Border.Side(0, Color.BLACK, Border.STYLE_NONE),
+                new Border.Side(0, Color.BLACK, Border.STYLE_NONE) }));
         
         listViewer.setHeaderBackground(new Color(0x2f2f2f));
         listViewer.setHeaderForeground(new Color(0xffffff));

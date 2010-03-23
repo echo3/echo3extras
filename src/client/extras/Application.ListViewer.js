@@ -10,7 +10,7 @@
  * @cp {Array} columnWidth an array of column widths; may be specified as percentage or absolute extent values
  * 
  * @sp {#FillImage} backgroundImage background image to render behind entire component  
- * @sp {#Border} border the cell border (a multisided border may be used, e.g., if a single pixel wide border is desired between
+ * @sp {#Border} border the cell border (a multi-sided border may be used, e.g., if a single pixel wide border is desired between
  *     cells, or if only horizontal or vertical borders are desired
  * @sp {#Color} headerBackground the background color of header cells
  * @sp {#Color} headerForeground the foreground color of header cells
