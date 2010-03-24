@@ -563,7 +563,7 @@ Extras.Sync.ListViewer.ColumnRenderer = Core.extend(Extras.Sync.ListViewer.Rende
     
     $virtual: {
         renderColumn: function(component, modelValue, index, targetCell, columnModelValue, columnIndex) {
-            targetCell.apendChild(document.createTextNode(columnModelValue.toString()));
+            targetCell.appendChild(document.createTextNode(columnModelValue.toString()));
         }
     },
     
@@ -571,7 +571,6 @@ Extras.Sync.ListViewer.ColumnRenderer = Core.extend(Extras.Sync.ListViewer.Rende
     
     render: function(component, modelValue, index, targetCells) {
         var value, i;
-Core.Debug.consoleWrite("Rendering index: " + index + ",length: " + targetCells.length);
         if (!modelValue) {
             return;
         }
