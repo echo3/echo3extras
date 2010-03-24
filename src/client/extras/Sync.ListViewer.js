@@ -361,7 +361,8 @@ Extras.Sync.ListViewer = Core.extend(Echo.Render.ComponentSync, {
         
         this._renderedPosition = this._position;
         this._renderedStartIndex = Math.floor(this._position);
-        this._renderedEndIndex = Math.min(rowCount, Math.ceil(this._renderedStartIndex + this._listBounds.height / this._cellHeight));
+        this._renderedEndIndex = Math.min(rowCount, 
+                Math.ceil(this._renderedStartIndex + this._listBounds.height / this._cellHeight));
         
         contentDiv = document.createElement("div");
         for (y = this._renderedStartIndex; y < this._renderedEndIndex; ++y) {

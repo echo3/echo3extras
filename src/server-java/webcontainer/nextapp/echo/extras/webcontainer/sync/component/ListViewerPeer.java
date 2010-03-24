@@ -41,7 +41,8 @@ public class ListViewerPeer extends AbstractViewerPeer {
 
     private static final Service JS_SERVICE = JavaScriptService.forResources("EchoExtras.ListViewer",
             new String[] {  "nextapp/echo/extras/webcontainer/resource/Application.ListViewer.js",  
-                            "nextapp/echo/extras/webcontainer/resource/Sync.ListViewer.js"});
+                            "nextapp/echo/extras/webcontainer/resource/Sync.ListViewer.js",
+                            "nextapp/echo/extras/webcontainer/resource/Sync.RemoteListViewer.js"});
     static {
         WebContainerServlet.getServiceRegistry().add(JS_SERVICE);
     }
@@ -57,7 +58,7 @@ public class ListViewerPeer extends AbstractViewerPeer {
      * @see nextapp.echo.webcontainer.ComponentSynchronizePeer#getClientComponentType(boolean)
      */
     public String getClientComponentType(boolean mode) {
-        return "Extras.ListViewer";
+        return "Extras.Sync.RemoteListViewer";
     }
 
     /**

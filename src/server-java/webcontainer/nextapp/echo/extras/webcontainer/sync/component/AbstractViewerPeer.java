@@ -95,16 +95,22 @@ public abstract class AbstractViewerPeer extends AbstractComponentSynchronizePee
                 Viewer viewer = (Viewer) conn.getUserInstance().getComponentByClientRenderId(clientRenderId);
                 int startIndex = Integer.parseInt(request.getParameter("is"));
                 int endIndex = Integer.parseInt(request.getParameter("ie"));
-                int size = endIndex - startIndex + 1;
-                if (size > MAX_SIZE) {
-                    throw new IOException("Model request for " + size + " cells exceeded maximum size of " + size + " indices.");
+                int indexCount = endIndex - startIndex + 1;
+                if (indexCount > MAX_SIZE) {
+                    throw new IOException("Model request for " + indexCount + " cells exceeded maximum size of " + 
+                            indexCount + " indices.");
                 }
-                ModelData modelData = new ModelData(viewer.getModel(), startIndex, endIndex);
+                ViewerModel model = viewer.getModel();
+                ModelData modelData = new ModelData(model, startIndex, endIndex);
                 
                 Document document = DomUtil.createDocument("model", null, null, null);
                 Context context = new SynchronizationContext(conn, document);
                 
-                renderModelDataContent(context, modelData, document.getDocumentElement());
+                Element modelElement = document.getDocumentElement();
+                modelElement.setAttribute("sz", Integer.toString(model.size()));
+                modelElement.setAttribute("is", Integer.toString(modelData.getStartIndex()));
+                modelElement.setAttribute("ie", Integer.toString(Math.min(indexCount, modelData.getEndIndex())));
+                renderModelDataContent(context, modelData, modelElement);
                 
                 conn.setContentType(ContentType.TEXT_XML);
                 DomUtil.save(document, conn.getOutputStream(), null);
@@ -190,7 +196,7 @@ public abstract class AbstractViewerPeer extends AbstractComponentSynchronizePee
          */
         public void toXml(Context context, Class objectClass, Element propertyElement, Object propertyValue)
         throws SerialException {
-            propertyElement.setAttribute("t", "Extras.RemoteViewer.Model");
+            propertyElement.setAttribute("t", "Extras.Sync.RemoteViewer.ModelData");
             ModelData modelData = (ModelData) propertyValue;
             ViewerModel model = modelData.getModel();
             Element modelElement = propertyElement.getOwnerDocument().createElement("model");
@@ -240,21 +246,21 @@ public abstract class AbstractViewerPeer extends AbstractComponentSynchronizePee
      */
     public AbstractViewerPeer() {
         super();
-        addOutputProperty(Viewer.MODEL_CHANGED_PROPERTY);
+//        addOutputProperty(Viewer.MODEL_CHANGED_PROPERTY);
     }
 
-    /**
-     * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#getOutputProperty(
-     *      nextapp.echo.app.util.Context, nextapp.echo.app.Component, java.lang.String, int)
-     */
-    public Object getOutputProperty(Context context, Component component, String propertyName, int propertyIndex) {
-        Viewer viewer = (Viewer) component;
-        if (propertyName.equals(Viewer.MODEL_CHANGED_PROPERTY)) {
-            return new ModelData(viewer.getModel(), 0, 20);
-        } else {
-            return super.getOutputProperty(context, component, propertyName, propertyIndex);
-        }
-    }
+//    /**
+//     * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#getOutputProperty(
+//     *      nextapp.echo.app.util.Context, nextapp.echo.app.Component, java.lang.String, int)
+//     */
+//    public Object getOutputProperty(Context context, Component component, String propertyName, int propertyIndex) {
+//        Viewer viewer = (Viewer) component;
+//        if (propertyName.equals(Viewer.MODEL_CHANGED_PROPERTY)) {
+//            return new ModelData(viewer.getModel(), 0, 20);
+//        } else {
+//            return super.getOutputProperty(context, component, propertyName, propertyIndex);
+//        }
+//    }
 
     /**
      * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer#init(nextapp.echo.app.util.Context, Component)
