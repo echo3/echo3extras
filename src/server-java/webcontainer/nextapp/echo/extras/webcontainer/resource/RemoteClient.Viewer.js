@@ -14,9 +14,11 @@ Extras.Sync.RemoteViewer.Model = Core.extend(Extras.Viewer.CachingModel, {
     
     fetchImpl: function(startIndex, endIndex) {
         if (this._conn) {
+            Core.Debug.consoleWrite("BUSY: " + startIndex + "-" + endIndex);
             return;
         }
         
+        Core.Debug.consoleWrite("LOADING: " + startIndex + "-" + endIndex);
         var serviceUrl = this._component.peer.client.getServiceUrl("EchoExtras.Viewer.Model") +
                 "&cid=" + this._component.renderId + 
                 "&is=" + startIndex + 
@@ -33,6 +35,7 @@ Extras.Sync.RemoteViewer.Model = Core.extend(Extras.Viewer.CachingModel, {
         var size = parseInt(modelElement.getAttribute("sz"), 10);
         var startIndex = parseInt(modelElement.getAttribute("is"), 10);
         var endIndex = parseInt(modelElement.getAttribute("ie"), 10);
+        Core.Debug.consoleWrite("RETRIEVED: " + startIndex + "-" + endIndex);
         var invalidate = modelElement.getAttribute("inv") == "1";
         var i = startIndex;
         var items = []; 

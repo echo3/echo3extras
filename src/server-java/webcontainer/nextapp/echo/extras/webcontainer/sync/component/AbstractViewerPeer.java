@@ -109,7 +109,7 @@ public abstract class AbstractViewerPeer extends AbstractComponentSynchronizePee
                 Element modelElement = document.getDocumentElement();
                 modelElement.setAttribute("sz", Integer.toString(model.size()));
                 modelElement.setAttribute("is", Integer.toString(modelData.getStartIndex()));
-                modelElement.setAttribute("ie", Integer.toString(Math.min(indexCount, modelData.getEndIndex())));
+                modelElement.setAttribute("ie", Integer.toString(modelData.getEndIndex()));
                 renderModelDataContent(context, modelData, modelElement);
                 
                 conn.setContentType(ContentType.TEXT_XML);
