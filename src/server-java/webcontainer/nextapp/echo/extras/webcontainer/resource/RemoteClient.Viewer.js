@@ -6,6 +6,9 @@ Extras.Sync.RemoteViewer.Model = Core.extend(Extras.Viewer.CachingModel, {
     _component: null,
     _size: null,
     
+    _queuedStartIndex: null,
+    _queuedEndIndex: null,
+    
     $construct: function(component) {
         this._component = component;
         Extras.Viewer.CachingModel.call(this);
@@ -14,7 +17,8 @@ Extras.Sync.RemoteViewer.Model = Core.extend(Extras.Viewer.CachingModel, {
     
     fetchImpl: function(startIndex, endIndex) {
         if (this._conn) {
-            Core.Debug.consoleWrite("BUSY: " + startIndex + "-" + endIndex);
+            this._queuedStartIndex = startIndex;
+            this._queuedEndIndex = endIndex;
             return;
         }
         
@@ -47,6 +51,14 @@ Extras.Sync.RemoteViewer.Model = Core.extend(Extras.Viewer.CachingModel, {
         }
         this.cacheStore(startIndex, endIndex, items, size, invalidate);
         this._conn = null;
+        
+        if (this._queuedStartIndex != null) {
+            startIndex = this._queuedStartIndex;
+            endIndex = this._queuedEndIndex;
+            this._queuedStartIndex = null;
+            this._queuedEndIndex = null;
+            this.fetchImpl(startIndex, endIndex);
+        }
     }
 });
 
