@@ -67,6 +67,7 @@ extends AbstractComponentSynchronizePeer {
         resources.add("Extras", "image/calendar/Decrement.gif", ContentType.IMAGE_GIF);
         
         addLocaleService(Locale.GERMAN, "de");
+        addLocaleService(new Locale("bg"), "bg");        
     }
     
     private static void addLocaleService(Locale locale, String localeCode) {

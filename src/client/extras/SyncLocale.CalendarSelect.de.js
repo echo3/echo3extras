@@ -15,6 +15,7 @@ Extras.Sync.CalendarSelect.resource.set("de", {
     "Month.6":          "Juli",
     "Month.7":          "August",
     "Month.8":          "September",
+    "Month.9":          "Oktober",
     "Month.10":         "November",
     "Month.11":         "Dezember",
     "FirstDayOfWeek":   "1"
