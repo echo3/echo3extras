@@ -69,7 +69,7 @@ public class ListViewerTest extends AbstractTest {
             }
             
             public Object get(int index) {
-                return new Integer(index);
+                return Integer.toString(index);
             }
         });
         

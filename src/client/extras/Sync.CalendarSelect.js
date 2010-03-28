@@ -285,13 +285,13 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
                 if (cellIndex < this.firstCellPosition) {
                     date = this.month === 0 ? { month: 11, year: this.year - 1 } :
                             { month: this.month - 1, year: this.year };
-                    date.day = this.daysInPreviousMonth - this.firstDayOfMonth + cellIndex + 1;
-                } else if (cellIndex >= (this.firstDayOfMonth + this.daysInMonth)) {
+                    date.day = this.daysInPreviousMonth - this.firstCellPosition + cellIndex + 1;
+                } else if (cellIndex >= (this.firstCellPosition + this.daysInMonth)) {
                     date = this.month === 11 ? { month: 0, year: this.year + 1 } :
                             { month: this.month + 1, year: this.year };
-                    date.day = cellIndex - this.firstDayOfMonth - this.daysInMonth + 1;
+                    date.day = cellIndex - this.firstCellPosition - this.daysInMonth + 1;
                 } else {
-                    date = { month: this.month, year: this.year, day: cellIndex - this.firstDayOfMonth + 1 };
+                    date = { month: this.month, year: this.year, day: cellIndex - this.firstCellPosition + 1 };
                 }
                 return date;
             },
