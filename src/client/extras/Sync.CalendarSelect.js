@@ -1064,6 +1064,8 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         this._updateMonthYearSelection();
         
         this._storeValue();
+        
+        this.component.doAction();
     },
     
     /**

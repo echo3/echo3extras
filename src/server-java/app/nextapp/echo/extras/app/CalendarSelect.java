@@ -30,11 +30,14 @@
 package nextapp.echo.extras.app;
 
 import java.util.Date;
+import java.util.EventListener;
 
 import nextapp.echo.app.Border;
 import nextapp.echo.app.Color;
 import nextapp.echo.app.Component;
 import nextapp.echo.app.FillImage;
+import nextapp.echo.app.event.ActionEvent;
+import nextapp.echo.app.event.ActionListener;
 
 /**
  * <code>CalendarSelect</code> component: an input component which allows selection of a single date. Displays a representation of a
@@ -42,7 +45,12 @@ import nextapp.echo.app.FillImage;
  */
 public class CalendarSelect extends Component {
 
+    public static final String ACTION_LISTENERS_CHANGED_PROPERTY = "actionListeners";
+    
+    public static final String INPUT_ACTION = "action";
+   
     public static final String DATE_CHANGED_PROPERTY = "date";
+    public static final String PROPERTY_ACTION_COMMAND = "actionCommand";
     public static final String PROPERTY_ADJACENT_MONTH_DATE_BACKGROUND = "adjacentMonthDateBackground";
     public static final String PROPERTY_ADJACENT_MONTH_DATE_FOREGROUND = "adjacentMonthDateForeground";
     public static final String PROPERTY_BORDER = "border";
@@ -87,6 +95,51 @@ public class CalendarSelect extends Component {
         this.date = date;
     }
     
+    /**
+     * Adds an <code>ActionListener</code> to the <code>CalendarSelect</code>.
+     * The <code>ActionListener</code> will be invoked each time a date is selected,
+     * either by changing month, day, or year.
+     * <p>
+     * Beware of using this listener to *enforce* date selection within a range, as 
+     * the user may intend to modify one or parameter of a date such that it may
+     * be temporarily invalid.
+     * 
+     * @param l the <code>ActionListener</code> to add
+     */
+    public void addActionListener(ActionListener l) {
+        getEventListenerList().addListener(ActionListener.class, l);
+        // Notification of action listener changes is provided due to 
+        // existence of hasActionListeners() method. 
+        firePropertyChange(ACTION_LISTENERS_CHANGED_PROPERTY, null, l);
+    }
+
+    /**
+     * Fires an action event to all listeners.
+     */
+    private void fireActionEvent() {
+        if (!hasEventListenerList()) {
+            return;
+        }
+        EventListener[] listeners = getEventListenerList().getListeners(ActionListener.class);
+        ActionEvent e = null;
+        for (int i = 0; i < listeners.length; ++i) {
+            if (e == null) {
+                e = new ActionEvent(this, (String) getRenderProperty(PROPERTY_ACTION_COMMAND));
+            } 
+            ((ActionListener) listeners[i]).actionPerformed(e);
+        }
+    }
+
+    /**
+     * Returns the action command which will be provided in 
+     * <code>ActionEvent</code>s fired by this <code>CalendarSelect</code>.
+     * 
+     * @return the action command
+     */
+    public String getActionCommand() {
+        return (String) get(PROPERTY_ACTION_COMMAND);
+    }
+        
     /**
      * Returns the background color of dates in adjacent (previous/next) months.
      * 
@@ -280,12 +333,48 @@ public class CalendarSelect extends Component {
     }
     
     /**
+     * Determines if any <code>ActionListener</code>s are registered.
+     * 
+     * @return true if any action listeners are registered
+     */
+    public boolean hasActionListeners() {
+        return hasEventListenerList() && getEventListenerList().getListenerCount(ActionListener.class) != 0;
+    }
+    
+    /**
      * @see nextapp.echo.app.Component#processInput(java.lang.String, java.lang.Object)
      */
     public void processInput(String inputName, Object inputValue) {
         if (DATE_CHANGED_PROPERTY.equals(inputName)) {
             setDate((Date) inputValue);
+        } else if (INPUT_ACTION.equals(inputName)) {
+            fireActionEvent();
         }
+    }
+    
+    /**
+     * Removes an <code>ActionListener</code> from the <code>CalendarSelect</code>.
+     * 
+     * @param l the <code>ActionListener</code> to remove
+     */
+    public void removeActionListener(ActionListener l) {
+        if (!hasEventListenerList()) {
+            return;
+        }
+        getEventListenerList().removeListener(ActionListener.class, l);
+        // Notification of action listener changes is provided due to 
+        // existence of hasActionListeners() method. 
+        firePropertyChange(ACTION_LISTENERS_CHANGED_PROPERTY, l, null);
+    }
+    
+    /**
+     * Sets the action command which will be provided in
+     * <code>ActionEvent</code>s fired by this <code>CalendarSelect</code>.
+     * 
+     * @param newValue the new action command
+     */
+    public void setActionCommand(String newValue) {
+        set(PROPERTY_ACTION_COMMAND, newValue);
     }
 
     /**

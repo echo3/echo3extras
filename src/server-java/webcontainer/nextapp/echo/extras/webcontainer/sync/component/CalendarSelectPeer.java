@@ -80,6 +80,11 @@ extends AbstractComponentSynchronizePeer {
     public CalendarSelectPeer() {
         super();
         addOutputProperty(CalendarSelect.DATE_CHANGED_PROPERTY);
+        addEvent(new EventPeer(CalendarSelect.INPUT_ACTION, CalendarSelect.ACTION_LISTENERS_CHANGED_PROPERTY) {
+            public boolean hasListeners(Context context, Component c) {
+                return ((CalendarSelect) c).hasActionListeners();
+            }
+        });
     }
     
     /**

@@ -198,6 +198,25 @@ public class CalendarSelectTest extends AbstractTest {
             }
         });
         
+        // Listener Tests
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_LISTENERS, "Set ActionCommand", new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                calendarSelect.setActionCommand("ActionCommand " + (int) (Math.random() * 1000));
+            }
+        });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_LISTENERS, "Add ActionListener", new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                calendarSelect.addActionListener(new ActionListener() {
+                    
+                    public void actionPerformed(ActionEvent e) {
+                        InteractiveApp.getApp().consoleWrite("Action event received: " + e.toString());
+                    }
+                });
+            }
+        });
+        
         addStandardIntegrationTests();
 
     }
