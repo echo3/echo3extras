@@ -93,7 +93,7 @@ Extras.Sync.FlowViewer = Core.extend(Echo.Render.ComponentSync, {
         return -1;
     },
     
-    _processClick: function(e) {
+    _processClick: function(e, contextClick) {
         if (!this.client || !this.client.verifyInput(this.component)) {
             return;
         }
@@ -104,7 +104,8 @@ Extras.Sync.FlowViewer = Core.extend(Echo.Render.ComponentSync, {
         }
         
         var time = new Date().getTime();
-        if (this._lastClickIndex == index && time - this._lastClickTime < Extras.Sync.FlowViewer.DOUBLE_CLICK_TIME) {
+        if (!contextClick && this._lastClickIndex == index && 
+                time - this._lastClickTime < Extras.Sync.FlowViewer.DOUBLE_CLICK_TIME) {
             this._processDoubleClick(e);
             return;
         }
@@ -114,7 +115,7 @@ Extras.Sync.FlowViewer = Core.extend(Echo.Render.ComponentSync, {
 
         if (e.ctrlKey || e.metaKey || e.altKey) {
             var selection = this.component.get("selection") || {};
-            if (selection[index]) {
+            if (!contextClick && selection[index]) {
                 delete selection[index];
             } else {
                 selection[index] = true;
@@ -137,6 +138,11 @@ Extras.Sync.FlowViewer = Core.extend(Echo.Render.ComponentSync, {
             
             this._setHighlight(index, true);
         }
+    },
+    
+    _processContextMenu: function(e) {
+        this._processClick(e, true);
+        return true;
     },
     
     _processDoubleClick: function(e) {
@@ -182,6 +188,7 @@ Extras.Sync.FlowViewer = Core.extend(Echo.Render.ComponentSync, {
         
         parentElement.appendChild(this._div);
         
+        Core.Web.Event.add(this._div, "contextmenu", Core.method(this, this._processContextMenu), false);
         Core.Web.Event.add(this._div, "mouseup", Core.method(this, this._processClick), false);
         Core.Web.Event.Selection.disable(this._div);
     },
@@ -250,7 +257,9 @@ Extras.Sync.FlowViewer = Core.extend(Echo.Render.ComponentSync, {
             for (y = 0; y < rowsToRemove; ++y) {
                 for (x = 0; x < this._columnDivs.length; ++x) {
                     contentDiv = this._columnDivs[x].firstChild;
-                    contentDiv.removeChild(contentDiv.lastChild);
+                    if (contentDiv.lastChild) {
+                        contentDiv.removeChild(contentDiv.lastChild);
+                    }
                 }
             }
             
@@ -273,7 +282,9 @@ Extras.Sync.FlowViewer = Core.extend(Echo.Render.ComponentSync, {
             for (y = 0; y < rowsToRemove; ++y) {
                 for (x = 0; x < this._columnDivs.length; ++x) {
                     contentDiv = this._columnDivs[x].firstChild;
-                    contentDiv.removeChild(contentDiv.firstChild);
+                    if (contentDiv.firstChild) {
+                        contentDiv.removeChild(contentDiv.firstChild);
+                    }
                 }
             }
             
