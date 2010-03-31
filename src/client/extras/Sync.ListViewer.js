@@ -164,7 +164,7 @@ Extras.Sync.ListViewer = Core.extend(Echo.Render.ComponentSync, {
         this._setHighlight(index, false);
     },
     
-    _processClick: function(e) {
+    _processClick: function(e, contextClick) {
         if (!this.client || !this.client.verifyInput(this.component)) {
             return;
         }
@@ -175,7 +175,7 @@ Extras.Sync.ListViewer = Core.extend(Echo.Render.ComponentSync, {
         
         if (e.ctrlKey || e.metaKey || e.altKey) {
             var selection = this.component.get("selection") || {};
-            if (selection[index]) {
+            if (!contextClick && selection[index]) {
                 delete selection[index];
             } else {
                 selection[index] = true;
@@ -199,6 +199,11 @@ Extras.Sync.ListViewer = Core.extend(Echo.Render.ComponentSync, {
             
             this._setHighlight(index, true);
         }
+    },
+
+    _processContextMenu: function(e) {
+        this._processClick(e, true);
+        return true;
     },
     
     _processDoubleClick: function(e) {
@@ -260,6 +265,7 @@ Extras.Sync.ListViewer = Core.extend(Echo.Render.ComponentSync, {
         this._createProtoCell();
         
         Core.Web.Event.add(this._div, "click", Core.method(this, this._processClick), false);
+        Core.Web.Event.add(this._div, "contextmenu", Core.method(this, this._processContextMenu), false);
         Core.Web.Event.add(this._div, "dblclick", Core.method(this, this._processDoubleClick), false);
         if (this.component.render("rolloverEnabled")) {
             Core.Web.Event.add(this._div, "mouseover", Core.method(this, this._processRolloverEnter), false);
