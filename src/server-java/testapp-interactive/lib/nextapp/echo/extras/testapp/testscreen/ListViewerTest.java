@@ -69,7 +69,7 @@ public class ListViewerTest extends AbstractTest {
             }
             
             public Object get(int index) {
-                return Integer.toString(index);
+            	return new String[]{"a" + index, "b" + index * 2 + "c", "q"};
             }
         });
         

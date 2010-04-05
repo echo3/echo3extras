@@ -30,6 +30,7 @@
 package nextapp.echo.extras.webcontainer.sync.component;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -114,6 +115,7 @@ public abstract class AbstractViewerPeer extends AbstractComponentSynchronizePee
                 
                 conn.setContentType(ContentType.TEXT_XML);
                 DomUtil.save(document, conn.getOutputStream(), null);
+                DomUtil.save(document, new PrintWriter(System.err), null);
             } catch (SerialException ex) {
                 throw new SynchronizationException("Unable to render model data.", ex);
             } catch (SAXException ex) {
@@ -222,13 +224,30 @@ public abstract class AbstractViewerPeer extends AbstractComponentSynchronizePee
         PropertyPeerFactory factory = (PropertyPeerFactory) context.get(PropertyPeerFactory.class);
         int endIndex = Math.min(modelData.getEndIndex(), modelData.getModel().size());
         for (int i = modelData.getStartIndex(); i < endIndex; ++i) {
-            Element pElement = parentElement.getOwnerDocument().createElement("p");
-            Object modelValue = modelData.getModel().get(i);
-            if (modelValue != null) {
-                SerialPropertyPeer modelValuePeer = factory.getPeerForProperty(modelValue.getClass());
-                modelValuePeer.toXml(context, ViewerModel.class, pElement, modelValue);
+        	Object modelValue = modelData.getModel().get(i);
+            if (modelValue == null) {
+                Element pElement = parentElement.getOwnerDocument().createElement("p");
+                parentElement.appendChild(pElement);
+            } else {
+            	if (modelValue instanceof Object[]) {
+            		Object[] array = (Object[]) modelValue;
+            		for (int iArray = 0; iArray < array.length; ++iArray) {
+            			if (array[iArray] == null) {
+            				continue;
+            			}
+                        Element pElement = parentElement.getOwnerDocument().createElement("p");
+                        pElement.setAttribute("x", Integer.toString(iArray));
+                        SerialPropertyPeer modelValuePeer = factory.getPeerForProperty(array[iArray].getClass());
+                        modelValuePeer.toXml(context, ViewerModel.class, pElement, array[iArray]);
+                        parentElement.appendChild(pElement);
+            		}
+            	} else {
+                    Element pElement = parentElement.getOwnerDocument().createElement("p");
+                    SerialPropertyPeer modelValuePeer = factory.getPeerForProperty(modelValue.getClass());
+                    modelValuePeer.toXml(context, ViewerModel.class, pElement, modelValue);
+                    parentElement.appendChild(pElement);
+            	}
             }
-            parentElement.appendChild(pElement);
         }
     }
     
