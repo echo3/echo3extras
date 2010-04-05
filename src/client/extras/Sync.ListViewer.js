@@ -582,7 +582,15 @@ Extras.Sync.ListViewer.ColumnRenderer = Core.extend(Extras.Sync.ListViewer.Rende
             return;
         }
         for (i = 0; i < targetCells.length; ++i) {
-            value = modelValue[(this.columnPropertyNames ? this.columnPropertyNames[i] : null) || i];
+            if (this.columnPropertyNames) {
+                value = modelValue[this.columnPropertyNames[i] || i];
+            } else if (modelValue instanceof Array) {
+	            value = modelValue[i];
+            } else if (i === 0) {
+                value = modelValue;
+            } else {
+                value = null;
+            }
             if (value != null) {
                 this.renderColumn(component, modelValue, index, targetCells[i], value, i);
             }
