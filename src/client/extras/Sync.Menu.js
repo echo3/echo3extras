@@ -1184,6 +1184,7 @@ Extras.Sync.DropDownMenu = Core.extend(Extras.Sync.Menu, {
             this._contentDiv.style.whiteSpace = "nowrap";
         }
         Echo.Sync.Insets.render(this.component.render("insets", "2px 5px"), this._contentDiv, "padding");
+        Echo.Sync.Font.render(this.component.render("font"), this._contentDiv);
         dropDownDiv.appendChild(this._contentDiv);
         
         var clearDiv = document.createElement("div");
