@@ -914,10 +914,25 @@ Extras.Sync.CalendarSelect = Core.extend(Echo.Render.ComponentSync, {
         Core.Web.Event.add(this._calendarDiv, "mouseout", Core.method(this, this._processDateRolloverExit), false);
 
         this._updateMonthYearSelection();
-        
-        Core.Web.Image.monitor(this._div, Core.method(this, function() {
-            this._renderSizeUpdate();
-        }));
+        // This stuff handles the runaway recursion that happens in IE 9
+        if (this._numMonitorRegistrations === undefined) {
+            this._numMonitorRegistrations = 0;
+        }
+
+        var registerMonitor = true;
+        if ( (Core.Web.Env.BROWSER_INTERNET_EXPLORER && (Core.Web.Env.BROWSER_VERSION_MAJOR >= 9)) ) {
+            if (this._numMonitorRegistrations > 1) {
+                this._numMonitorRegistrations = 0;
+                registerMonitor = false;
+            }
+        }
+
+        if (registerMonitor) {
+            this._numMonitorRegistrations++;
+            Core.Web.Image.monitor(this._div, Core.method(this, function() {
+                this._renderSizeUpdate();
+            }));
+        }
     },
     
     /** @see Echo.Render.ComponentSync#renderDispose */
