@@ -1,0 +1,11 @@
+lib
+dist
+build
+custom-ant.properties
+.idea/workspace.xml
+.idea/misc.xml
+.idea/vcs.xml
+.idea/uiDesigner.xml
+.idea/copyright
+.idea/scopes
+.idea/inspectionProfiles
