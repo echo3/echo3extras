@@ -29,7 +29,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
 --> 
  
-<project name="NextApp_Echo_3_Extras" default="dist" basedir=".">
+<project name="echo3-extras" default="dist" basedir=".">
 
     <property environment="env"/>
     <property file="custom-ant.properties"/>
@@ -79,6 +79,7 @@
     <target name="dist.app" depends="clean,compile.app">
         <mkdir dir="${dir.dist.lib}"/>
         <jar jarfile="${dir.dist.lib}/${jarfile.extras.app}" basedir="${dir.build.server-java.app}"/>
+        <jar jarfile="${dir.dist.lib}/${srcfile.extras.app}" basedir="${dir.src.server-java.app}"/>
     </target>
     
     <target name="test.compile.app" depends="dist.app">
@@ -159,6 +160,7 @@
     <target name="dist.webcontainer" depends="clean,compile.webcontainer">
         <mkdir dir="${dir.dist.lib}"/>
         <jar jarfile="${dir.dist.lib}/${jarfile.extras.webcontainer}" basedir="${dir.build.server-java.webcontainer}"/>
+        <jar jarfile="${dir.dist.lib}/${srcfile.extras.webcontainer}" basedir="${dir.src.server-java.webcontainer}"/>
     </target>
         
     <target name="dist" depends="clean, dist.app, dist.webcontainer"/>
@@ -341,8 +343,6 @@
     </target>
 
 	<target name="mvn-install" depends="dist" description="Installs the jar into the local maven repository">
-		<jar basedir="${dir.src.server-java.app}" destfile="dist${file.separator}/echo3extras-app-sources.jar" />
-		<jar basedir="${dir.src.server-java.webcontainer}" destfile="dist${file.separator}/echo3extras-webcontainer-sources.jar" />
 		<condition property="onWindows">
 			<os family="windows"/>
 		</condition>
@@ -355,19 +355,19 @@
     	if="onWindows">
         <exec executable="cmd">
 			<arg value="/c"/>
-			<arg value="mvn install:install-file -DpomFile=resource/maven/echo3extras-app-pom.xml -Dfile=dist${file.separator}lib${file.separator}Echo3_Extras_App.jar"/>
+			<arg value="mvn install:install-file -DpomFile=resource/maven/echo3extras-app-pom.xml -Dfile=dist${file.separator}lib${file.separator}${jarfile.extras.app}"/>
 		</exec>
     	<exec executable="cmd">
             <arg value="/c"/>
-            <arg value="mvn install:install-file -DpomFile=resource/maven/echo3-app-pom.xml -Dfile=dist${file.separator}echo3extras-app-sources.jar -Dclassifier=sources"/>
+            <arg value="mvn install:install-file -DpomFile=resource/maven/echo3-app-pom.xml -Dfile=dist${file.separator}lib${file.separator}${srcfile.extras.app} -Dclassifier=sources"/>
 		</exec>
 		<exec executable="cmd">
 			<arg value="/c"/>
-			<arg value="mvn install:install-file -DpomFile=resource/maven/echo3extras-webcontainer-pom.xml -Dfile=dist${file.separator}lib${file.separator}Echo3_Extras_WebContainer.jar"/>
+			<arg value="mvn install:install-file -DpomFile=resource/maven/echo3extras-webcontainer-pom.xml -Dfile=dist${file.separator}lib${file.separator}${jarfile.extras.webcontainer}"/>
 		</exec>
     	<exec executable="cmd">
             <arg value="/c"/>
-            <arg value="mvn install:install-file -DpomFile=resource/maven/echo3-app-pom.xml -Dfile=dist${file.separator}echo3extras-webcontainer-sources.jar -Dclassifier=sources"/>
+            <arg value="mvn install:install-file -DpomFile=resource/maven/echo3-app-pom.xml -Dfile=dist${file.separator}lib${file.separator}${srcfile.extras.webcontainer} -Dclassifier=sources"/>
 		</exec>
     </target>
 	
@@ -377,24 +377,24 @@
     	<exec executable="mvn">
             <arg value="install:install-file"/>
         	<arg value="-DpomFile=resource/maven/echo3extras-app-pom.xml"/>
-            <arg value="-Dfile=dist${file.separator}lib${file.separator}Echo3_Extras_App.jar"/>
+            <arg value="-Dfile=dist${file.separator}lib${file.separator}${jarfile.extras.app}"/>
         </exec>
     	<exec executable="mvn">
             <arg value="install:install-file"/>
         	<arg value="-DpomFile=resource/maven/echo3extras-app-pom.xml"/>
     		<arg value="-Dclassifier=sources"/>
-            <arg value="-Dfile=dist${file.separator}echo3extras-app-sources.jar"/>
+            <arg value="-Dfile=dist${file.separator}lib${file.separator}${srcfile.extras.app}"/>
         </exec>
     	<exec executable="mvn">
             <arg value="install:install-file"/>
         	<arg value="-DpomFile=resource/maven/echo3extras-webcontainer-pom.xml"/>
-            <arg value="-Dfile=dist${file.separator}lib${file.separator}Echo3_Extras_WebContainer.jar"/>
+            <arg value="-Dfile=dist${file.separator}lib${file.separator}${jarfile.extras.webcontainer}"/>
         </exec>
         <exec executable="mvn">
             <arg value="install:install-file"/>
         	<arg value="-DpomFile=resource/maven/echo3extras-webcontainer-pom.xml"/>
         	<arg value="-Dclassifier=sources"/>
-			<arg value="-Dfile=dist${file.separator}echo3extras-webcontainer-sources.jar"/>
+			<arg value="-Dfile=dist${file.separator}lib${file.separator}${srcfile.extras.webcontainer}"/>
         </exec>
     </target>
     
