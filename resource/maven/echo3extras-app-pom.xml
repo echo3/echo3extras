@@ -1,25 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.nextapp</groupId>
-	<artifactId>echo3extras-app</artifactId>
-	<packaging>jar</packaging>
-	<name>Echo3 Extras</name>
-	<version>3.0.0-SNAPSHOT</version>
-	<description>Echo3 Extras AJAX Framework</description>
-	<issueManagement>
-		<url>http://bugs.nextapp.com/mantis</url>
-	</issueManagement>
-	<scm>
-		<connection>scm:svn:https://svn.nextapp.com/svn/echo3/trunk</connection>
-		<developerConnection>scm:svn:https://svn.nextapp.com/svn/echo3/trunk</developerConnection>
-		<url>https://svn.nextapp.com/svn/echo3/trunk</url>
-	</scm>
-	<dependencies>
-		<dependency>
-			<groupId>com.nextapp</groupId>
-			<artifactId>echo3-app</artifactId>
-			<version>3.0.0-SNAPSHOT</version>
-		</dependency>
-	</dependencies>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.nextapp</groupId>
+    <artifactId>echo3-extras</artifactId>
+    <packaging>jar</packaging>
+    <name>Echo3 Extras</name>
+    <version>${release.version}</version>
+    <description>Echo3 Extras AJAX Framework</description>
+    <url>http://echo.nextapp.com/site/echo3</url>
+
+    <developers>
+        <developer>
+            <id>tliebeck</id>
+            <name>Tod Liebeck</name>
+            <organization>NextApp, Inc.</organization>
+            <email>tliebeck@nextapp.com</email>
+            <roles>
+                <role>architect</role>
+                <role>developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>bschmid</id>
+            <name>Benjamin Schmid</name>
+            <organization>eXXcellent solutions GmbH</organization>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <licenses>
+        <license>
+            <name>MPL 1.1</name>
+            <url>http://www.mozilla.org/MPL/MPL-1.1.html</url>
+        </license>
+        <license>
+            <name>LGPL 2.1</name>
+            <url>http://www.gnu.org/licenses/lgpl-2.1.html</url>
+        </license>
+        <license>
+            <name>GPL 2.0</name>
+            <url>http://www.gnu.org/licenses/gpl-2.0.html</url>
+        </license>
+    </licenses>
+
+    <issueManagement>
+        <url>https://github.com/echo3/echo3extras/issues</url>
+    </issueManagement>
+
+    <scm>
+        <connection>scm:git:https://github.com/echo3/echo3extras.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:echo3/echo3extras.git</developerConnection>
+        <url>https://github.com/echo3/echo3extras</url>
+    </scm>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.nextapp</groupId>
+            <artifactId>echo3-app</artifactId>
+            <version>[${echo.version},)</version>
+        </dependency>
+        <dependency>
+            <groupId>com.nextapp</groupId>
+            <artifactId>echo3-extras-webcontainer</artifactId>
+            <version>${release.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
+
 </project>
+
