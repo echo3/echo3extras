@@ -118,6 +118,7 @@
             debug="${debug}" deprecation="yes" source="${ant.build.javac.source}" target="${ant.build.javac.target}">
             <classpath>
                 <pathelement path="${dir.dist.lib}/${jarfile.extras.app}"/>
+                <pathelement path="${junit.lib.jar}"/>
                 <pathelement path="${echo3.app.lib.jar}"/>
                 <pathelement path="${dir.dist.lib}/${jarfile.echo.app}"/>
             </classpath>
