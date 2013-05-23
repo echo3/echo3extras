@@ -1134,7 +1134,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         if (e.keyCode == 37) {
             // left
             if (activeTabIx != -1) {
-                if (activeTabIx == 0) {
+                if (activeTabIx === 0) {
                     this.component.doTabSelect(this._tabs[this._tabs.length - 1].id);
                 } else {
                     this.component.doTabSelect(this._tabs[activeTabIx - 1].id);
