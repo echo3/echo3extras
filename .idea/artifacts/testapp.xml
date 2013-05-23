@@ -1,0 +1,18 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="testapp">
+    <output-path>$PROJECT_DIR$/build/artifacts/testapp</output-path>
+    <root id="root">
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="app" />
+          <element id="module-output" name="webcontainer" />
+          <element id="module-output" name="echo3extras" />
+          <element id="module-output" name="client" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="echo3" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>

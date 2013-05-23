@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="echo3">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/echo3-app-3.0.1-SNAPSHOT.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/echo3-webcontainer-3.0.1-SNAPSHOT.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/lib/echo3-app-3.0.1-SNAPSHOT-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/echo3-webcontainer-3.0.1-SNAPSHOT-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
