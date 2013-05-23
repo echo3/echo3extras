@@ -7,15 +7,26 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="app" />
-    <orderEntry type="module-library">
-      <library>
+    <orderEntry type="module" module-name="app" exported="" />
+    <orderEntry type="module-library" exported="" scope="PROVIDED">
+      <library name="servlet-api-2.4">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../lib/servlet-api-2.5.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../lib/servlet-api-2.4.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../../../lib/servlet-api-2.5-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../lib/servlet-api-2.4-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library name="echo3-webcontainer-3.0.0">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../../lib/echo3-webcontainer-3.0.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/../../../lib/echo3-webcontainer-3.0.0-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>

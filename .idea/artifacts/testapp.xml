@@ -8,9 +8,15 @@
           <element id="module-output" name="webcontainer" />
           <element id="module-output" name="echo3-extras" />
           <element id="module-output" name="client" />
+          <element id="javaee-facet-classes" facet="testapp-interactive/web/testapp-webapp" />
+          <element id="module-output" name="testapp-interactive" />
         </element>
-        <element id="directory" name="lib" />
+        <element id="directory" name="lib">
+          <element id="library" level="module" name="echo3-webcontainer-3.0.0" module-name="webcontainer" />
+          <element id="library" level="module" name="echo3-app-3.0.0" module-name="app" />
+        </element>
       </element>
+      <element id="javaee-facet-resources" facet="testapp-interactive/web/testapp-webapp" />
     </root>
   </artifact>
 </component>
