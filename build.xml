@@ -201,7 +201,7 @@
         
     <target name="dist" depends="clean, dist.app, dist.webcontainer"/>
     
-    <target name="test" depends="test.app"/>
+    <target name="test" depends="test.app, jslint"/>
     
     <target name="compile.testapp" depends="dist">
         <mkdir dir="${dir.build.server-java.testapp}/WEB-INF/classes"/>
@@ -477,14 +477,14 @@
     </target>
 
     <target name="jslint.webcontainer">
-        <java fork="true" jar="${dir.resource.jslint}/rhino.jar">
+        <java fork="true" jar="${dir.resource.jslint}/rhino.jar" failonerror="true">
             <arg value="${dir.resource.jslint}/jslint.js"/>
             <arg value="${dir.src.server-java.webcontainer.res}/"/>
         </java>
     </target>
 
     <target name="jslint.extras">
-        <java fork="true" jar="${dir.resource.jslint}/rhino.jar">
+        <java fork="true" jar="${dir.resource.jslint}/rhino.jar" failonerror="true">
             <arg value="${dir.resource.jslint}/jslint.js"/>
             <arg value="${dir.src.client.extras}/"/>
         </java>
