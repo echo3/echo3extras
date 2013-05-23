@@ -36,6 +36,14 @@
  * @sp {#ImageReference} tabCloseIcon the tab close icon
  * @sp {Boolean} tabCloseIconRolloverEnabled flag indicating whether tab close icon rollover effects are enabled
  * @sp {#ImageReference} tabDisabledCloseIcon the tab close icon for tabs that may not be closed
+ * @sp {#Color} tabFocusedBackground the background used to render rolled over tabs
+ * @sp {#FillImage} tabFocusedBackgroundImage the background image used to render rolled over tabs
+ * @sp {#Insets} tabFocusedBackgroundInsets the inset margin displayed around the background color/image used to render rolled
+ *     over tabs (rendered only when image borders are used)
+ * @sp {#Border} tabFocusedBorder the border used to render rolled over tabs
+ * @sp {#Font} tabFocusedFont the font used to render rolled over tabs
+ * @sp {#Color} tabFocusedForeground the foreground color used to render rolled over tabs
+ * @sp {#FillImageBorder} tabFocusedImageBorder the image border used to render rolled over tabs
  * @sp {#Extent} tabHeight the minimum height of an individual (inactive) tab
  * @sp {#Color} tabInactiveBackground the background color used to render inactive tabs
  * @sp {#FillImage} tabInactiveBackgroundImage the background image used to render inactive tabs
@@ -163,6 +171,9 @@ Extras.TabPane = Core.extend(Echo.Component, {
 
     /** @see Echo.Component#pane */
     pane: true,
+
+    /** @see Echo.Component#focusable */
+    focusable: true,
     
     /**
      * Constructor.
@@ -171,6 +182,17 @@ Extras.TabPane = Core.extend(Echo.Component, {
     $construct: function(properties) {
         Echo.Component.call(this, properties);
         this.addListener("property", Core.method(this, this._tabChangeListener));
+    },
+
+    /**
+     * Returns the order in which the tab children should be focused. Only
+     * include the active tab in the focus order to avoid focusing hidden elements in
+     * inactive tabs.
+     *
+     * @returns {Array}
+     */
+    getFocusOrder: function() {
+        return this.get("activeTabIndex") != null ? [this.get("activeTabIndex")] : [0];
     },
     
     /**
@@ -195,19 +217,33 @@ Extras.TabPane = Core.extend(Echo.Component, {
      * Notifies listeners of a "tabSelect" event.
      * 
      * @param {String} tabId the renderId of the child tab component
+     * @param {Boolean} focus whether to focus the tab pane or not
      */
-    doTabSelect: function(tabId) {
+    doTabSelect: function(tabId, focus) {
         // Determine selected component.
         var tabComponent = this.application.getComponentByRenderId(tabId);
         if (!tabComponent || tabComponent.parent != this) {
             throw new Error("doTabSelect(): Invalid tab: " + tabId);
         }
-        
+
         // Store active tab id.
         this.set("activeTabId", tabId);
-        
+
         // Notify tabSelect listeners.
         this.fireEvent({ type: "tabSelect", source: this, tab: tabComponent, data: tabId });
+
+        if (focus) {
+            this.application.setFocusedComponent(this);
+        } else {
+            // Try to select a new element within the active tab
+            if (this.application.getFocusedComponent() != this) {
+                var nextComp = this.application.focusManager.find(tabComponent, false);
+                if (nextComp != null) {
+                    this.application.setFocusedComponent(nextComp);
+                }
+            }
+        }
+
     },
     
     /**

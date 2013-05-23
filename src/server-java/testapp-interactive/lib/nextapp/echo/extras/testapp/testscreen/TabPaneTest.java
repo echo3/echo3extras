@@ -905,6 +905,41 @@ public class TabPaneTest extends AbstractTest {
                 tabPane.setTabInactiveImageBorder(null);
             }
         });
+
+        addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_FOCUSED_BACKGROUND);
+        addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_FOCUSED_FOREGROUND);
+        addBorderPropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_FOCUSED_BORDER);
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "tabFocusedImageBorder: (Surround)",
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        tabPane.setTabFocusedImageBorder(FIB1_SURROUND);
+                    }
+                });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "tabFocusedImageBorder: (Top)",
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        tabPane.setTabFocusedImageBorder(FIB1_TOP);
+                    }
+                });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "tabFocusedImageBorder: (Bottom)",
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        tabPane.setTabFocusedImageBorder(FIB1_BOTTOM);
+                    }
+                });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "tabFocusedImageBorder: (Solid)",
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        tabPane.setTabFocusedImageBorder(new FillImageBorder(Color.RED, new Insets(4), new Insets(2)));
+                    }
+                });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Clear Tab Focused Image Border", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setTabFocusedImageBorder(null);
+            }
+        });
         
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_ROLLOVER_BACKGROUND);
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_ROLLOVER_FOREGROUND);
