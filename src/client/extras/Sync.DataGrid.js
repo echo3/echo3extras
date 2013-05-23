@@ -435,7 +435,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 this.positionPx.height = this.div.offsetHeight || 100;
                 
                 this.positionPx.rowHeights = [];
-                var tr = this._table.firstChild.firstChild;
+                tr = this._table.firstChild.firstChild;
                 while (tr) {
                     this.positionPx.rowHeights.push(tr.offsetHeight);
                     tr = tr.nextSibling;
@@ -624,7 +624,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
 
                 this.element = document.createElement("div");
                 this.element.style.cssText = "position:absolute;overflow:hidden;";
-                if (this.location.h != 0 || this.location.v != 0) {
+                if (this.location.h !== 0 || this.location.v !== 0) {
                     //FIXME temporary background color for non center regions.
                     this.element.style.backgroundColor = "#dfffdf";
                 }
@@ -649,7 +649,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                     columns = this.dataGrid.fixedCells.left;
                     break;
                 case 0:
-                    columns = this.dataGrid.scrollSize.columns;;
+                    columns = this.dataGrid.scrollSize.columns;
                     break;
                 case 1:
                     this.element.style.right = 0;
@@ -675,8 +675,8 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                     return;
                 }
             
-                var row, tile;
-                for (var rowIndex in this._tiles) {
+                var row, rowIndex, tile;
+                for (rowIndex in this._tiles) {
                     row = this._tiles[rowIndex];
                     for (var columnIndex in row) {
                         tile = row[columnIndex];
@@ -688,8 +688,8 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 this.fill(true);
                 
                 var hasTop = false, hasBottom = false;
-                for (var rowIndex in this._tiles) {
-                    if (rowIndex == 0) {
+                for (rowIndex in this._tiles) {
+                    if (rowIndex === 0) {
                         hasTop = true;
                     }
                     if (hasTop && hasBottom) {
@@ -1025,7 +1025,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                 for (iRow = 0; iRow < leftEdgeTile.positionPx.rowHeights.length; ++iRow) {
                     maxHeight = leftEdgeTile.positionPx.rowHeights[iRow];
                     differentHeights = false;
-                    for (var iTile = 1; iTile < tiles.length; ++iTile) {
+                    for (iTile = 1; iTile < tiles.length; ++iTile) {
                         if (tiles[iTile].positionPx.rowHeights[iRow] != maxHeight) {
                             differentHeights = true;
                             if (tiles[iTile].positionPx.rowHeights[iRow] > maxHeight) {
@@ -1034,7 +1034,7 @@ Extras.Sync.DataGrid = Core.extend(Echo.Render.ComponentSync, {
                         }
                     }
                     if (differentHeights) {
-                        for (var iTile = 0; iTile < tiles.length; ++iTile) {
+                        for (iTile = 0; iTile < tiles.length; ++iTile) {
                             tiles[iTile].setRowHeight(iRow, maxHeight);
                         }
                         Core.Debug.consoleWrite("adjust");
