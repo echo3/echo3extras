@@ -90,6 +90,13 @@ implements Pane, PaneContainer {
     public static final String PROPERTY_TAB_CLOSE_ICON_ROLLOVER_ENABLED = "tabCloseIconRolloverEnabled";
     public static final String PROPERTY_TAB_DEFAULT_CLOSE_OPERATION = "tabDefaultCloseOperation";
     public static final String PROPERTY_TAB_DISABLED_CLOSE_ICON = "tabDisabledCloseIcon";
+    public static final String PROPERTY_TAB_FOCUSED_BACKGROUND = "tabFocusedBackground";
+    public static final String PROPERTY_TAB_FOCUSED_BACKGROUND_IMAGE = "tabFocusedBackgroundImage";
+    public static final String PROPERTY_TAB_FOCUSED_BACKGROUND_INSETS = "tabFocusedBackgroundInsets";
+    public static final String PROPERTY_TAB_FOCUSED_BORDER = "tabFocusedBorder";
+    public static final String PROPERTY_TAB_FOCUSED_FONT = "tabFocusedFont";
+    public static final String PROPERTY_TAB_FOCUSED_FOREGROUND = "tabFocusedForeground";
+    public static final String PROPERTY_TAB_FOCUSED_IMAGE_BORDER = "tabFocusedImageBorder";
     public static final String PROPERTY_TAB_HEIGHT = "tabHeight";
     public static final String PROPERTY_TAB_ICON_TEXT_MARGIN = "tabIconTextMargin";
     public static final String PROPERTY_TAB_INACTIVE_BACKGROUND = "tabInactiveBackground";
@@ -114,10 +121,10 @@ implements Pane, PaneContainer {
     public static final String PROPERTY_TAB_ROLLOVER_FONT = "tabRolloverFont";
     public static final String PROPERTY_TAB_ROLLOVER_FOREGROUND = "tabRolloverForeground";
     public static final String PROPERTY_TAB_ROLLOVER_IMAGE_BORDER = "tabRolloverImageBorder";
-    
+
     public static final String PROPERTY_TAB_SPACING = "tabSpacing";
     public static final String PROPERTY_TAB_WIDTH = "tabWidth";
-    
+
     /**
      * Constant for the <code>borderType</code> property indicating that a
      * border should be drawn immediately adjacent to the tabs only.
@@ -499,6 +506,71 @@ implements Pane, PaneContainer {
      */
     public ImageReference getTabDisabledCloseIcon() {
         return (ImageReference) get(PROPERTY_TAB_DISABLED_CLOSE_ICON);
+    }
+
+    /**
+     * Returns the background color used to render the active tab when the tab pane is focused.
+     *
+     * @return the focused tab background
+     */
+    public Color getTabFocusedBackground() {
+        return (Color) get(PROPERTY_TAB_FOCUSED_BACKGROUND);
+    }
+
+    /**
+     * Returns the background image used to render the active tab when the tab pane is focused.
+     *
+     * @return the focused tab background image
+     */
+    public FillImage getTabFocusedBackgroundImage() {
+        return (FillImage) get(PROPERTY_TAB_FOCUSED_BACKGROUND_IMAGE);
+    }
+
+    /**
+     * Returns the inset margin displayed around the background color/image used to render the active tab when
+     * the tab pane is focused.
+     * Rendered only when image borders are used.
+     *
+     * @return the inset margin
+     */
+    public Insets getTabFocusedBackgroundInsets() {
+        return (Insets) get(PROPERTY_TAB_FOCUSED_BACKGROUND_INSETS);
+    }
+
+    /**
+     * Returns the <code>Border</code> used to draw the active tab when the tab pane is focused.
+     *
+     * @return the focused border
+     */
+    public Border getTabFocusedBorder() {
+        return (Border) get(PROPERTY_TAB_FOCUSED_BORDER);
+    }
+
+    /**
+     * Returns the font used to render the active tab when the tab pane is focused.
+     *
+     * @return the focused tab font
+     */
+    public Font getTabFocusedFont() {
+        return (Font) get(PROPERTY_TAB_FOCUSED_FONT);
+    }
+
+    /**
+     * Returns the foreground color used to render the active tab when the tab pane is focused.
+     *
+     * @return the focused tab foreground
+     */
+    public Color getTabFocusedForeground() {
+        return (Color) get(PROPERTY_TAB_FOCUSED_FOREGROUND);
+    }
+
+    /**
+     * Returns the <code>FillImageBorder</code> used to draw the active tab when the tab pane is focused.
+     *
+     * @return the focused image border
+     */
+    public FillImageBorder getTabFocusedImageBorder() {
+        return (FillImageBorder) get(PROPERTY_TAB_FOCUSED_IMAGE_BORDER);
     }
     
     /**
@@ -1139,6 +1211,71 @@ implements Pane, PaneContainer {
      */
     public void setTabDisabledCloseIcon(ImageReference newValue) {
         set(PROPERTY_TAB_DISABLED_CLOSE_ICON, newValue);
+    }
+
+    /**
+     * Sets the background color used to render the active tab when the tab pane is focused.
+     *
+     * @param newValue the new rollover tab background
+     */
+    public void setTabFocusedBackground(Color newValue) {
+        set(PROPERTY_TAB_FOCUSED_BACKGROUND, newValue);
+    }
+
+    /**
+     * Sets the background image used to render the active tab when the tab pane is focused.
+     *
+     * @param newValue the new rollover tab background image
+     */
+    public void setTabFocusedBackgroundImage(FillImage newValue) {
+        set(PROPERTY_TAB_FOCUSED_BACKGROUND_IMAGE, newValue);
+    }
+
+    /**
+     * Sets the inset margin displayed around the background color/image used to render the active tab when
+     * the tab pane is focused.
+     * Rendered only when image borders are used.
+     *
+     * @param newValue the new inset margin
+     */
+    public void setTabFocusedBackgroundInsets(Insets newValue) {
+        set(PROPERTY_TAB_FOCUSED_BACKGROUND_INSETS, newValue);
+    }
+
+    /**
+     * Sets the <code>Border</code> used to draw the active tab when the tab pane is focused.
+     *
+     * @param newValue the new rollover border
+     */
+    public void setTabFocusedBorder(Border newValue) {
+        set(PROPERTY_TAB_FOCUSED_BORDER, newValue);
+    }
+
+    /**
+     * Sets the font used to render the active tab when the tab pane is focused.
+     *
+     * @param newValue the new rollover tab font
+     */
+    public void setTabFocusedFont(Font newValue) {
+        set(PROPERTY_TAB_FOCUSED_FONT, newValue);
+    }
+
+    /**
+     * Sets the foreground color used to render the active tab when the tab pane is focused.
+     *
+     * @param newValue the new rollover tab foreground
+     */
+    public void setTabFocusedForeground(Color newValue) {
+        set(PROPERTY_TAB_FOCUSED_FOREGROUND, newValue);
+    }
+
+    /**
+     * Sets the <code>FillImageBorder</code> used to draw the active tab when the tab pane is focused.
+     *
+     * @param newValue the new rollover image border
+     */
+    public void setTabFocusedImageBorder(FillImageBorder newValue) {
+        set(PROPERTY_TAB_FOCUSED_IMAGE_BORDER, newValue);
     }
     
     /**

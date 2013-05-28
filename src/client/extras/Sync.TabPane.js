@@ -316,6 +316,12 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
      * @type Boolean
      */
     _rtl: false,
+
+    /**
+     * Focus proxy element which keeps track of the browser focus for the tab pane.
+     */
+    _focusAnchor: null,
+    _focusAnchorDiv: null,
     
     /**
      * Constructor.
@@ -733,6 +739,16 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
                 
         // Render Header Container.
         this._headerContainerDiv = document.createElement("div");
+
+        if (this._focusAnchor == null) {
+            this._focusAnchorDiv = document.createElement("div");
+            this._focusAnchorDiv.style.cssText = "width:0;height:0;overflow:hidden;";
+            this._focusAnchor = document.createElement("input");
+            this._focusAnchorDiv.appendChild(this._focusAnchor);
+            this._headerContainerDiv.appendChild(this._focusAnchorDiv);
+            this._addEventHandlers();
+        }
+
         this._headerContainerDiv.style.cssText = "position:absolute;left:0;right:0;top:0;bottom:0;";
                 
         Echo.Sync.Font.render(this.component.render("font"), this._headerContainerDiv);
@@ -846,6 +862,8 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         this._borderDiv = null;
         this._headerContainerBoundsDiv = null;
         this._headerContainerDiv = null;
+        this._focusAnchor = null;
+        this._focusAnchorDiv = null;
         this._contentContainerDiv = null;
         if (this._previousControlDiv) {
             Core.Web.Event.removeAll(this._previousControlDiv);
@@ -1099,6 +1117,80 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
             }
         }
         this._activeTabId = this.component.children.length === 0 ? null : this.component.children[0].renderId; 
+    },
+
+    /**
+     * Keydown event handler to change tabs with the keyboard's arrow keys
+     *
+     * @param e the event
+     */
+    _processKeyDown: function(e) {
+        var activeTabIx = -1;
+        for (var i = 0; i < this._tabs.length; i++) {
+            if (this._tabs[i].id == this._activeTabId) {
+                activeTabIx = i;
+            }
+        }
+        if (e.keyCode == 37) {
+            // left
+            if (activeTabIx != -1) {
+                if (activeTabIx === 0) {
+                    this.component.doTabSelect(this._tabs[this._tabs.length - 1].id);
+                } else {
+                    this.component.doTabSelect(this._tabs[activeTabIx - 1].id);
+                }
+            }
+        } else if (e.keyCode == 39) {
+            // right
+            if (activeTabIx != -1) {
+                this.component.doTabSelect(this._tabs[(activeTabIx + 1) % this._tabs.length].id);
+            }
+        }
+        return true;
+    },
+
+    /**
+     * Registers event handlers on the text component.
+     */
+    _addEventHandlers: function() {
+        Core.Web.Event.add(this._focusAnchor, "keydown", Core.method(this, this._processKeyDown), false);
+        Core.Web.Event.add(this._focusAnchor, "focus", Core.method(this, this.processFocus), false);
+        Core.Web.Event.add(this._focusAnchor, "blur", Core.method(this, this.processBlur), false);
+    },
+
+    /**
+     * Processes a focus blur event.
+     * Overriding implementations must invoke.
+     */
+    processBlur: function(e) {
+        this._focused = false;
+        this._headerUpdateRequired = true;
+        this.renderDisplay();
+        return true;
+    },
+
+    /**
+     * Processes a focus event. Notifies application of focus.
+     * Overriding implementations must invoke.
+     */
+    processFocus: function(e) {
+        this._focused = true;
+        this._headerUpdateRequired = true;
+        this.renderDisplay();
+        return false;
+    },
+
+    /**
+     * Focuses the tab pane
+     */
+    renderFocus: function() {
+        if (this._focused) {
+            return;
+        }
+        this._focused = true;
+        this._headerUpdateRequired = true;
+        this.renderDisplay();
+        Core.Web.DOM.focusElement(this._focusAnchor);
     }
 });
 
@@ -1250,13 +1342,18 @@ Extras.Sync.TabPane.Tab = Core.extend({
      * @param {String} name the name of the property, first letter capitalized, e.g., "Background"
      * @param {Boolean} active the active state
      * @param {Boolean} rollover the rollover state
+     * @param {Boolean} focus the focus state of the parent tab pane
      * @return the property value
      */
-    _getProperty: function(name, active, rollover) {
+    _getProperty: function(name, active, rollover, focus) {
         var value = this._layoutData[(active ? "active" : "inactive") + name] ||
                 this._parent.component.render((active ? "tabActive" : "tabInactive") + name);
         if (!active && rollover) {
             value = this._layoutData["rollover" + name] || this._parent.component.render("tabRollover" + name) || value;
+        }
+        if (active && focus) {
+            // Only use the focus style for the active tab
+            value = this._layoutData["focused" + name] || this._parent.component.render("tabFocused" + name) || value;
         }
         return value;
     },
@@ -1271,16 +1368,18 @@ Extras.Sync.TabPane.Tab = Core.extend({
      */
     _getSurroundHeight: function(active) {
         var insets, imageBorder, border, padding;
+
+        var focus = this._parent._focused;
         
-        insets = Echo.Sync.Insets.toPixels(this._getProperty("Insets", active, false) || Extras.Sync.TabPane._DEFAULTS.tabInsets);
+        insets = Echo.Sync.Insets.toPixels(this._getProperty("Insets", active, false, focus) || Extras.Sync.TabPane._DEFAULTS.tabInsets);
         padding = insets.top + insets.bottom;
         
         if (this._useImageBorder) {
-            imageBorder = this._getProperty("ImageBorder", active, false);
+            imageBorder = this._getProperty("ImageBorder", active, false, focus);
             insets = Echo.Sync.Insets.toPixels(imageBorder.contentInsets);
             return padding + insets.top + insets.bottom;
         } else {
-            border = this._getProperty("Border", active, false) || 
+            border = this._getProperty("Border", active, false, focus) ||
                     (active ? this._parent._tabActiveBorder : this._parent._tabInactiveBorder);
             return padding + Echo.Sync.Border.getPixelSize(border, this._parent._tabSide); 
         }
@@ -1291,7 +1390,7 @@ Extras.Sync.TabPane.Tab = Core.extend({
      */
     _loadProperties: function() {
         this._layoutData = this._childComponent.render("layoutData") || {};
-        this._useImageBorder = this._getProperty("ImageBorder", false, false);
+        this._useImageBorder = this._getProperty("ImageBorder", false, false, false);
         this._tabCloseEnabled = this._parent._tabCloseEnabled && this._layoutData.closeEnabled;
         this._activeSurroundHeight = this._getSurroundHeight(true);
         this._inactiveSurroundHeight = this._getSurroundHeight(false);
@@ -1314,7 +1413,7 @@ Extras.Sync.TabPane.Tab = Core.extend({
             this._parent.component.doTabClose(this.id);
         } else {
             // tab clicked
-            this._parent.component.doTabSelect(this.id);
+            this._parent.component.doTabSelect(this.id, this._parent._activeTabId == this.id);
         }
     },
     
@@ -1417,6 +1516,8 @@ Extras.Sync.TabPane.Tab = Core.extend({
     _renderHeader: function(active) {
         var tabPane = this._parent.component,
             img, table, tr, td;
+
+        var focus = this._parent._focused;
         
         Core.Web.Event.removeAll(this._headerDiv);
         Core.Web.DOM.removeAllChildren(this._headerDiv);
@@ -1435,8 +1536,8 @@ Extras.Sync.TabPane.Tab = Core.extend({
         var headerDivContent = this._labelDiv;
 
         if (this._useImageBorder) {
-            var imageBorder = this._getProperty("ImageBorder", active, false);
-            var backgroundInsets = this._getProperty("BackgroundInsets", active, false);
+            var imageBorder = this._getProperty("ImageBorder", active, false, focus);
+            var backgroundInsets = this._getProperty("BackgroundInsets", active, false, focus);
             this._fibContainer = headerDivContent =
                     Echo.Sync.FillImageBorder.renderContainer(imageBorder, { child: this._labelDiv });
             var fibContent = Echo.Sync.FillImageBorder.getContainerContent(this._fibContainer);
@@ -1454,7 +1555,7 @@ Extras.Sync.TabPane.Tab = Core.extend({
                 headerDivContent.firstChild.firstChild.appendChild(td);
             }
         } else {
-            var border = this._getProperty("Border", active, false) || 
+            var border = this._getProperty("Border", active, false, focus) ||
                     (active ? this._parent._tabActiveBorder : this._parent._tabInactiveBorder);
             this._backgroundDiv = null;
             this._fibContainer = null;
@@ -1544,11 +1645,13 @@ Extras.Sync.TabPane.Tab = Core.extend({
      */
     _renderHeaderState: function(active, rollover, force) {
         var fullRender = !this._labelDiv || force;
-        
+
         if (fullRender) {
             this._renderHeader(active);
         }
-        
+
+        var focus = this._parent._focused;
+
         if (!force && this._active == active && (active || !this._parent._tabRolloverEnabled || this._rolloverState == rollover)) {
             return;
         }
@@ -1565,10 +1668,10 @@ Extras.Sync.TabPane.Tab = Core.extend({
         var tabPane = this._parent.component,
             img, table, tr, td;
         
-        Echo.Sync.Color.renderClear(this._getProperty("Foreground", active, rollover), this._labelDiv, "color");
-        Echo.Sync.Font.renderClear(this._getProperty("Font", active, rollover), this._labelDiv);
+        Echo.Sync.Color.renderClear(this._getProperty("Foreground", active, rollover, focus), this._labelDiv, "color");
+        Echo.Sync.Font.renderClear(this._getProperty("Font", active, rollover, focus), this._labelDiv);
         this._labelDiv.style.cursor = active ? "default" : "pointer";
-        Echo.Sync.Insets.render(this._getProperty("Insets", active, false) || Extras.Sync.TabPane._DEFAULTS.tabInsets, 
+        Echo.Sync.Insets.render(this._getProperty("Insets", active, false, focus) || Extras.Sync.TabPane._DEFAULTS.tabInsets,
                 this._labelDiv, "padding"); 
                 
         this._headerDiv.style[this._parent._tabPositionBottom ? "top" : "bottom"] = 
@@ -1579,17 +1682,17 @@ Extras.Sync.TabPane.Tab = Core.extend({
                     (parseInt(this._labelDiv.style[this._parent._tabPositionBottom ? "paddingTop" : "paddingBottom"], 10) +
                     (this._parent._tabActiveHeightIncreasePx + this._parent._tabInactivePositionAdjustPx)) + "px";
         }
-                
+
         if (!fullRender) {
             if (this._useImageBorder) {
                 // Render FillImageBorder style.
-                var imageBorder = this._getProperty("ImageBorder", active, rollover);
-                var backgroundInsets = this._getProperty("BackgroundInsets", active, rollover);
+                var imageBorder = this._getProperty("ImageBorder", active, rollover, focus);
+                var backgroundInsets = this._getProperty("BackgroundInsets", active, rollover, focus);
                 Echo.Sync.FillImageBorder.renderContainer(imageBorder, { update: this._fibContainer });
                 Echo.Sync.Insets.renderPosition(backgroundInsets || imageBorder.borderInsets, this._backgroundDiv);
             } else {
                 // Render CSS border style.
-                var border = this._getProperty("Border", active, rollover) || 
+                var border = this._getProperty("Border", active, rollover, focus) ||
                         (active ? this._parent._tabActiveBorder : this._parent._tabInactiveBorder);
                 Echo.Sync.Border.render(border, this._labelDiv, this._parent._tabPositionBottom ? "borderBottom" : "borderTop");
                 Echo.Sync.Border.render(border, this._labelDiv, "borderLeft");
@@ -1597,9 +1700,9 @@ Extras.Sync.TabPane.Tab = Core.extend({
             }
         }
         
-        Echo.Sync.Color.renderClear(this._getProperty("Background", active, rollover), 
+        Echo.Sync.Color.renderClear(this._getProperty("Background", active, rollover, focus),
                 this._backgroundDiv || this._labelDiv, "backgroundColor");
-        Echo.Sync.FillImage.renderClear(this._getProperty("BackgroundImage", active, rollover), 
+        Echo.Sync.FillImage.renderClear(this._getProperty("BackgroundImage", active, rollover, focus),
                 this._backgroundDiv || this._labelDiv, null);
 
         // Update icon.
