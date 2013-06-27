@@ -59,7 +59,7 @@
         <dependency>
             <groupId>com.nextapp</groupId>
             <artifactId>echo3-webcontainer</artifactId>
-            <version>[${echo.version},</version>
+            <version>[${echo.version},)</version>
         </dependency>
         <dependency>
             <groupId>com.nextapp</groupId>
