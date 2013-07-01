@@ -11,3 +11,5 @@ custom-ant.properties
 .idea/copyright
 .idea/scopes
 .idea/inspectionProfiles
+tmp
+bin

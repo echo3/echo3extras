@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" output="tmp/eclipse_build_js/nextapp/echo/extras/webcontainer/resource/" path="src/client/extras"/>
+	<classpathentry kind="src" path="src/server-java/app"/>
+	<classpathentry kind="src" path="src/server-java/webcontainer"/>
+	<classpathentry kind="src" output="tmp/eclipse_build_testapp_interactive" path="src/server-java/testapp-interactive/lib"/>
+	<classpathentry kind="src" path="src/server-java/testapp-interactive/eclipse"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/echo3"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/hamcrest"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jetty"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/junit"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/servlet-api"/>
+	<classpathentry kind="output" path="tmp/eclipse_build"/>
+</classpath>
