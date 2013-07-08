@@ -11,5 +11,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jetty"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/junit"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/servlet-api"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jetty6"/>
 	<classpathentry kind="output" path="tmp/eclipse_build"/>
 </classpath>
