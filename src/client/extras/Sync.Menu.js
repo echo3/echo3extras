@@ -38,10 +38,9 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
     element: null,
     
     /**
-     * The active state of the menu, true when the menu is open.
-     * @type Boolean
+     * Flag indicating whether the menu is currently activated.
      */
-    active: false,
+    activated: false,
 
     /** 
      * Array containing <code>Extras.MenuModel</code>s representing currently open menu path. 
@@ -100,16 +99,22 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
          * Activates the menu component.
          * Adds rendering mask to screen, sets menu component as modal.
          */
-        activate: function() {
-            if (this.active) {
+        activate: function(triggerActivationEvent) {
+            if (this.activated) {
                 return false;
             }
+            
+            this.activated = true;
+            
             this.component.set("modal", true);
-            this.active = true;
             this.addMask();
             
             this.client.application.setFocusedComponent(this.component);
             Core.Web.DOM.focusElement(this.element);
+            
+            if (triggerActivationEvent) {
+                this.processActivation();
+            }
             
             return true;
         },
@@ -130,6 +135,13 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
             } else if (itemModel instanceof Extras.MenuModel) {
                 this._openMenu(itemModel);
             }
+        },
+        
+        /**
+         * Fires an activation event in response to the menu itself being opened/activated. 
+         */
+        processActivation: function() {
+            this.component.doActivation();
         },
         
         /**
@@ -202,10 +214,10 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
      */
     deactivate: function() {
         this.component.set("modal", false);
-        if (!this.active) {
+        if (!this.activated) {
             return;
         }
-        this.active = false;
+        this.activated = false;
 
         this.closeAll();
         this.removeMask();
@@ -346,8 +358,8 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
      * Handler for clicks on the overlay mask: de-activates menu.
      */
     _processMaskClick: function(e) {
+        Core.Web.DOM.preventEventDefault(e);
         this.deactivate();
-        return true;
     },
     
     /** 
@@ -372,6 +384,15 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
         this.element.tabIndex = "-1";
         this.element.style.outlineStyle = "none";
         parentElement.appendChild(this.element);
+        
+        this._opening = true;
+    },
+
+    /** @see Echo.Render.ComponentSync#renderDisplay */
+    renderDisplay: function() {
+        if (this._opening) {
+            this._opening = false;
+        }
     },
     
     /** @see Echo.Render.ComponentSync#renderUpdate */
@@ -392,7 +413,7 @@ Extras.Sync.Menu = Core.extend(Echo.Render.ComponentSync, {
     
     /** @see Echo.Render.ComponentSync#renderUpdate */
     renderUpdate: function(update) {
-        if (update.isUpdatedPropertySetIn({modal: true})) {
+        if (update.isUpdatedPropertySetIn({ active: true, modal: true })) {
             // Do not re-render on update to modal state.
             return;
         }
@@ -973,7 +994,7 @@ Extras.Sync.ContextMenu = Core.extend(Extras.Sync.Menu, {
         this._mouseX = e.pageX || (e.clientX + (document.documentElement.scrollLeft || document.body.scrollLeft));
         this._mouseY = e.pageY || (e.clientY + (document.documentElement.scrollTop || document.body.scrollTop));
         
-        this.activate();
+        this.activate(true);
         this.activateItem(this.menuModel);
     },
 
@@ -1030,7 +1051,7 @@ Extras.Sync.ContextMenu = Core.extend(Extras.Sync.Menu, {
                 this.stateModel = stateModelUpdate.newValue;
             }
             if (reOpenMenu) {
-                this.activate();
+                this.activate(false);
                 this.activateItem(this.menuModel);
             }
             return false;
@@ -1140,7 +1161,7 @@ Extras.Sync.DropDownMenu = Core.extend(Extras.Sync.Menu, {
         
         Core.Web.DOM.preventEventDefault(e);
     
-        this.activate();
+        this.activate(true);
         this.activateItem(this.menuModel);
     },
     
@@ -1389,7 +1410,7 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
                 this.deactivate();
                 this.processAction(itemModel);
             } else {
-                this.activate();
+                this.activate(true);
                 this._setActiveItem(itemModel, true);
             }
         } else {
@@ -1436,7 +1457,7 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
             return;
         }
         
-        if (this.active) {
+        if (this.activated) {
             if (state) {
                 this._setActiveItem(itemModel, itemModel instanceof Extras.MenuModel);
             }
@@ -1447,6 +1468,7 @@ Extras.Sync.MenuBarPane = Core.extend(Extras.Sync.Menu, {
     
     /** @see Echo.Render.ComponentSync#renderDisplay */
     renderDisplay: function() {
+        Extras.Sync.Menu.prototype.renderDisplay.call(this);
         Core.Web.VirtualPosition.redraw(this.element);
         var bounds = new Core.Web.Measure.Bounds(this.element.parentNode);
         var height = bounds.height - this._menuBarBorderHeight;

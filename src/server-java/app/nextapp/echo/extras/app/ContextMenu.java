@@ -51,8 +51,8 @@ import nextapp.echo.extras.app.menu.MenuStateModel;
 public class ContextMenu extends AbstractMenuComponent 
 implements PaneContainer {
     
-    public static final int ACTIVATION_MODE_CLICK = 1;
-    public static final int ACTIVATION_MODE_CONTEXT_CLICK = 2;
+    public static final int ACTIVATION_MODE_CLICK = 0x1;
+    public static final int ACTIVATION_MODE_CONTEXT_CLICK = 0x2;
     
     public static final String PROPERTY_ACTIVATION_MODE = "activationMode";
     public static final String PROPERTY_BACKGROUND_IMAGE = "backgroundImage";
