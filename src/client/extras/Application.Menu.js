@@ -1,5 +1,7 @@
 /**
  * Abstract base class for menu components. Provides common functionality.
+ * 
+ * @sp {Boolean} active flag indicated whether the menu is open
  */
 Extras.MenuComponent = Core.extend(Echo.Component, {
     
@@ -10,6 +12,13 @@ Extras.MenuComponent = Core.extend(Echo.Component, {
     
     /** @see Echo.Component#focusable */
     focusable: true,
+    
+    /**
+     * Process the activation of the menu.
+     */
+    doActivation: function() {
+        this.fireEvent({type: "activation", source: this });
+    },
     
     /**
      * Processes the user selection an item.
@@ -71,6 +80,8 @@ Extras.MenuComponent = Core.extend(Echo.Component, {
  *     are clicked.</li>
  *     <li><code>ACTIVATION_MODE_CONTEXT_CLICK</code>: (the default)
  *     activate menu when contents are context-clicked.</li>
+ *     <li><code>ACTIVATION_MODE_NOTIFY_ONLY</code>: flag indicating
+ *     that menu will not be opened automatically when activated.</li>
  *     </ul>
  */
 Extras.ContextMenu = Core.extend(Extras.MenuComponent, {
@@ -93,7 +104,16 @@ Extras.ContextMenu = Core.extend(Extras.MenuComponent, {
          * 
          * @type Number
          */
-        ACTIVATION_MODE_CONTEXT_CLICK: 2
+        ACTIVATION_MODE_CONTEXT_CLICK: 2,
+        
+        /**
+         * Value for <code>activationMode</code> property, indicating that the
+         * context menu should NOT be opened automatically when an appropriate
+         * activation click is received.
+         * 
+         * @type Number
+         */
+        ACTIVATION_MODE_NOTIFY_ONLY: 4
     },
 
     $load: function() {

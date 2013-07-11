@@ -29,13 +29,16 @@
 
 package nextapp.echo.extras.testapp.testscreen;
 
-import nextapp.echo.app.Column;
+import nextapp.echo.app.ContentPane;
 import nextapp.echo.app.FillImage;
 import nextapp.echo.app.Insets;
 import nextapp.echo.app.Label;
+import nextapp.echo.app.SplitPane;
 import nextapp.echo.app.event.ActionEvent;
 import nextapp.echo.app.event.ActionListener;
 import nextapp.echo.extras.app.ContextMenu;
+import nextapp.echo.extras.app.event.MenuActivationEvent;
+import nextapp.echo.extras.app.event.MenuActivationListener;
 import nextapp.echo.extras.app.menu.DefaultMenuModel;
 import nextapp.echo.extras.app.menu.DefaultMenuStateModel;
 import nextapp.echo.extras.app.menu.DefaultOptionModel;
@@ -58,14 +61,26 @@ public class ContextMenuTest extends AbstractTest {
             Styles.FILL_IMAGE_SHADOW_BACKGROUND_DARK_BLUE, Styles.FILL_IMAGE_SHADOW_BACKGROUND_LIGHT_BLUE,
             Styles.FILL_IMAGE_PEWTER_LINE, Styles.FILL_IMAGE_LIGHT_BLUE_LINE,
             Styles.FILL_IMAGE_SILVER_LINE};
+    
+    private int counter;
+    
+    private MenuActivationListener activationListener = new MenuActivationListener() {
+        @Override
+        public void menuActivated(MenuActivationEvent e) {
+            menu.setModel(createMenuModel(++counter));
+            InteractiveApp.getApp().consoleWrite("Menu activation: menu=" + e.getSource());
+        }
+    };
+    
+    private ContextMenu menu;
 
     public ContextMenuTest() {
         super("ContextMenu", Styles.ICON_16_CONTEXT_MENU);
         
-        Column menuCol = new Column();
-        menuCol.setInsets(new Insets(20));
+        ContentPane content = new ContentPane();
+        content.setInsets(new Insets(20));
         
-        final ContextMenu menu = new ContextMenu(new Label("Right-click me!"), createMenuModel());
+        menu = new ContextMenu(new Label("Right-click me!"), createMenuModel(0));
         menu.setStateModel(createMenuStateModel());
         menu.addActionListener(new ActionListener(){
         
@@ -73,12 +88,12 @@ public class ContextMenuTest extends AbstractTest {
                 InteractiveApp.getApp().consoleWrite("Menu action: menu=" + e.getSource() + ", command=" + e.getActionCommand());
             }
         });
-        menuCol.add(menu);
+        content.add(menu);
         
-        add(menuCol);
+        add(content);
         
-        setTestComponent(menuCol, menu);
-
+        setTestComponent(content, menu);
+        
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "foreground");
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "background");
         addBorderPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "border");
@@ -100,14 +115,37 @@ public class ContextMenuTest extends AbstractTest {
             }
         });
         
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Pane Content", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                menu.removeAll();
+                SplitPane sp = new SplitPane();
+                sp.setSeparatorVisible(true);
+                sp.setStyleName("DefaultResizable");
+                sp.add(new Label("One"));
+                sp.add(new Label("Two"));
+                menu.add(sp);
+            }
+        });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_LISTENERS, "Add Activation Listener", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                menu.addActivationListener(activationListener);
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_LISTENERS, "Remove Activation Listener", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                menu.removeActivationListener(activationListener);
+            }
+        });
+        
         addStandardIntegrationTests();
     }
     
-    private MenuModel createMenuModel() {
+    private MenuModel createMenuModel(int type) {
         DefaultMenuModel menuModel = new DefaultMenuModel();
         
-        DefaultMenuModel fileMenuModel = new DefaultMenuModel(null, "File");
-        fileMenuModel.addItem(new DefaultOptionModel("new", "New", null));
+        DefaultMenuModel fileMenuModel = new DefaultMenuModel(null, "File [" + type + "]");
+        fileMenuModel.addItem(new DefaultOptionModel("new" + type, "New" + type, null));
         fileMenuModel.addItem(new DefaultOptionModel("open", "Open", null));
         DefaultMenuModel openRecentMenuModel = new DefaultMenuModel(null, "Open Recent");
         openRecentMenuModel.addItem(new DefaultOptionModel("open-recent-1", "Hotel.pdf", null));
