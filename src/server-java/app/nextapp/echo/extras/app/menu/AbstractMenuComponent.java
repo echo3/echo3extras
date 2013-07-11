@@ -36,14 +36,18 @@ import nextapp.echo.app.event.ActionEvent;
 import nextapp.echo.app.event.ActionListener;
 import nextapp.echo.app.event.ChangeEvent;
 import nextapp.echo.app.event.ChangeListener;
+import nextapp.echo.extras.app.event.MenuActivationEvent;
+import nextapp.echo.extras.app.event.MenuActivationListener;
 
 public abstract class AbstractMenuComponent extends Component {
 
     public static final String INPUT_ACTION = "action";
+    public static final String INPUT_ACTIVATION = "activation";
     public static final String MODEL_CHANGED_PROPERTY = "model";
     public static final String STATE_MODEL_CHANGED_PROPERTY = "stateModel";
     
     public static final String ACTION_LISTENERS_CHANGED_PROPERTY = "actionListeners";
+    public static final String ACTIVATION_LISTENERS_CHANGED_PROPERTY = "activationListeners";
 
     public static final String PROPERTY_ANIMATION_TIME = "animationTime";
     
@@ -87,6 +91,17 @@ public abstract class AbstractMenuComponent extends Component {
      */
     public void addActionListener(ActionListener l) {
         getEventListenerList().addListener(ActionListener.class, l);
+        firePropertyChange(ACTION_LISTENERS_CHANGED_PROPERTY, null, l);
+    }
+    
+    /**
+     * Adds an <code>ActionListener</code> to be notified when the menu is activated. 
+     * 
+     * @param l the listener to add
+     */
+    public void addActivationListener(MenuActivationListener l) {
+        getEventListenerList().addListener(MenuActivationListener.class, l);
+        firePropertyChange(ACTIVATION_LISTENERS_CHANGED_PROPERTY, null, l);
     }
     
     /**
@@ -100,13 +115,21 @@ public abstract class AbstractMenuComponent extends Component {
     }
     
     /**
-     * Determines if the menu has any <code>ActionListener</code>s 
-     * registered.
+     * Determines if the menu has any <code>ActionListener</code>s registered.
      * 
      * @return true if any action listeners are registered
      */
     public boolean hasActionListeners() {
         return hasEventListenerList() && getEventListenerList().getListenerCount(ActionListener.class) != 0;
+    }
+   
+    /**
+     * Determines if the menu has any <code>ActivationListener</code>s registered.
+     * 
+     * @return true if any action listeners are registered
+     */
+    public boolean hasActivationListeners() {
+        return hasEventListenerList() && getEventListenerList().getListenerCount(MenuActivationListener.class) != 0;
     }
    
     /**
@@ -160,6 +183,27 @@ public abstract class AbstractMenuComponent extends Component {
     }
     
     /**
+     * Programmatically activates the menu.
+     */
+    public void doActivation() {
+        fireMenuActivated();
+    }
+    
+    /**
+     * Notifies <code>MenuActivationListener</code>s that the menu has been activated.
+     */
+    protected void fireMenuActivated() {
+        if (!hasEventListenerList()) {
+            return;
+        }
+        MenuActivationEvent e = new MenuActivationEvent(this);
+        EventListener[] listeners = getEventListenerList().getListeners(MenuActivationListener.class);
+        for (int i = 0; i < listeners.length; ++i) {
+            ((MenuActivationListener) listeners[i]).menuActivated(e);
+        }
+    }
+    
+    /**
      * Notifies <code>ActionListener</code>s that an option was chosen. 
      * 
      * @param optionModel the selected <code>OptionModel</code>
@@ -192,7 +236,7 @@ public abstract class AbstractMenuComponent extends Component {
     public MenuStateModel getStateModel() {
         return stateModel;
     }
-
+    
     /**
      * @see nextapp.echo.app.Component#processInput(java.lang.String, java.lang.Object)
      */
@@ -200,6 +244,8 @@ public abstract class AbstractMenuComponent extends Component {
         if (INPUT_ACTION.equals(name)) {
             OptionModel optionModel = (OptionModel) value;
             doAction(optionModel);
+        } else if (INPUT_ACTIVATION.equals(name)) {
+            doActivation();
         }
     }
     
@@ -211,6 +257,18 @@ public abstract class AbstractMenuComponent extends Component {
      */
     public void removeActionListener(ActionListener l) {
         getEventListenerList().removeListener(ActionListener.class, l);
+        firePropertyChange(ACTION_LISTENERS_CHANGED_PROPERTY, l, null);
+
+    }
+    
+    /**
+     * Removes an <code>ActionListener</code> from being notified when the menu is activated. 
+     * 
+     * @param l the listener to remove
+     */
+    public void removeActivationListener(MenuActivationListener l) {
+        getEventListenerList().removeListener(MenuActivationListener.class, l);
+        firePropertyChange(ACTIVATION_LISTENERS_CHANGED_PROPERTY, l, null);
     }
     
     /**
@@ -221,7 +279,7 @@ public abstract class AbstractMenuComponent extends Component {
     public void setAnimationTime(int newValue) {
         set(PROPERTY_ANIMATION_TIME, new Integer(newValue));
     }
-
+    
     /**
      * Sets the model.
      * 
