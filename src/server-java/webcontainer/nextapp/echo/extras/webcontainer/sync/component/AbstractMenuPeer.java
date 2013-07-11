@@ -176,6 +176,28 @@ abstract class AbstractMenuPeer extends AbstractComponentSynchronizePeer {
                         getItemModel(menuComponent, (String) eventData));
             }
         });
+        
+        addEvent(new AbstractComponentSynchronizePeer.EventPeer(AbstractMenuComponent.INPUT_ACTIVATION, 
+                AbstractMenuComponent.ACTIVATION_LISTENERS_CHANGED_PROPERTY) {
+            
+            /**
+             * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer.EventPeer#hasListeners(
+             *      nextapp.echo.app.util.Context, nextapp.echo.app.Component)
+             */
+            public boolean hasListeners(Context context, Component component) {
+                return ((AbstractMenuComponent) component).hasActivationListeners();
+            }
+            
+            /**
+             * @see nextapp.echo.webcontainer.AbstractComponentSynchronizePeer.EventPeer#processEvent(
+             *      nextapp.echo.app.util.Context, nextapp.echo.app.Component, java.lang.Object)
+             */
+            public void processEvent(Context context, Component component, Object eventData) {
+                AbstractMenuComponent menuComponent = (AbstractMenuComponent) component;
+                ClientUpdateManager clientUpdateManager = (ClientUpdateManager) context.get(ClientUpdateManager.class);
+                clientUpdateManager.setComponentAction(menuComponent, AbstractMenuComponent.INPUT_ACTIVATION, null);
+            }
+        });
     }
     
     /**
