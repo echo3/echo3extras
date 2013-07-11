@@ -1164,7 +1164,6 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
      */
     processBlur: function(e) {
         this._focused = false;
-        this._headerUpdateRequired = true;
         this.renderDisplay();
         return true;
     },
