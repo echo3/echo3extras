@@ -107,10 +107,11 @@
         </copy>
     </target>
     
-    <target name="dist.app" depends="clean,compile.app">
+    <target name="dist.app" depends="clean,compile.app,doc.app">
         <mkdir dir="${dir.dist.lib}"/>
         <jar jarfile="${dir.dist.lib}/${jarfile.extras.app}" basedir="${dir.build.server-java.app}"/>
         <jar jarfile="${dir.dist.lib}/${srcfile.extras.app}" basedir="${dir.src.server-java.app}"/>
+        <jar jarfile="${dir.dist.lib}/${docfile.extras.app}" basedir="${dir.javadoc.app.public}"/>
     </target>
     
     <target name="test.compile.app" depends="dist.app">
@@ -193,15 +194,16 @@
         </copy>
     </target>
     
-    <target name="dist.webcontainer" depends="clean,compile.webcontainer">
+    <target name="dist.webcontainer" depends="clean,compile.webcontainer,doc.webcontainer">
         <mkdir dir="${dir.dist.lib}"/>
         <jar jarfile="${dir.dist.lib}/${jarfile.extras.webcontainer}" basedir="${dir.build.server-java.webcontainer}"/>
         <jar jarfile="${dir.dist.lib}/${srcfile.extras.webcontainer}" basedir="${dir.src.server-java.webcontainer}"/>
+        <jar jarfile="${dir.dist.lib}/${docfile.extras.webcontainer}" basedir="${dir.javadoc.webcontainer.public}"/>
     </target>
         
     <target name="dist" depends="clean, dist.app, dist.webcontainer"/>
     
-    <target name="test" depends="test.app, jslint"/>
+    <target name="test" depends="test.app, dist.webcontainer, jslint"/>
     
     <target name="compile.testapp" depends="dist">
         <mkdir dir="${dir.build.server-java.testapp}/WEB-INF/classes"/>
