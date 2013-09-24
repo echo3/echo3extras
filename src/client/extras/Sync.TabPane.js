@@ -772,7 +772,7 @@ Extras.Sync.TabPane = Core.extend(Echo.Render.ComponentSync, {
         
         // Render Content Container.
         this._contentContainerDiv = document.createElement("div");
-        this._contentContainerDiv.style.cssText = "position:absolute;overflow:hidden;";
+        this._contentContainerDiv.style.cssText = "position:absolute;overflow:auto;";
         Echo.Sync.renderComponentDefaults(this.component, this._contentContainerDiv);
         if (this._border) {
             if (this._borderType == Extras.TabPane.BORDER_TYPE_NONE) {
@@ -1457,7 +1457,7 @@ Extras.Sync.TabPane.Tab = Core.extend({
 
         // Content DIV
         this._contentDiv = document.createElement("div");
-        this._contentDiv.style.cssText = "position:absolute;top:0;left:0;overflow:auto;";
+        this._contentDiv.style.cssText = "position:absolute;top:0;left:0;";
         // hide content
         if (Core.Web.Env.BROWSER_MOZILLA && !Core.Web.Env.BROWSER_FIREFOX) {
             //FIXME doc/analyze/remove
